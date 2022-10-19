@@ -259,7 +259,7 @@ class Assertions:
         )
 
     @staticmethod
-    def assertdifferentinstances(
+    def assertnotsameinstances(
             obj1,  # type: typing.Optional[object]
             obj2,  # type: typing.Optional[object]
             err=None,  # type: assertionhelpers.ErrParamType
