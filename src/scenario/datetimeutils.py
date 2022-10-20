@@ -31,6 +31,13 @@ import typing
 
 
 __doc__ += """
+.. py:attribute:: DURATION_REGEX
+
+    Regular expression matching a duration as displayed by :mod:`scenario` (i.e. last part of ISO8601).
+"""
+DURATION_REGEX = r"[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3,}"  # type: str
+
+__doc__ += """
 .. py:attribute:: ISO8601_REGEX
 
     Regular expression matching ISO8601 date/times.
@@ -40,32 +47,48 @@ ISO8601_REGEX = r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3
 
 def toiso8601(
         timestamp,  # type: float
+        timezone=None,  # type: typing.Optional[typing.Union[str, datetime.tzinfo]]
 ):  # type: (...) -> str
     """
-    Formats a timestamp to a UTC ISO8601 string.
+    Formats a timestamp to a ISO8601 string.
 
     :param timestamp: Input timestamp.
-    :return: UTC ISO8601 string.
+    :param timezone: Optional timezone specification. ``None`` stands for the local timezone.
+    :return: ISO8601 string.
     :raise ValueError: When the operation could not be completed.
     """
-    assert sys.version_info >= (3, 6)
-    return (
-        datetime.datetime.fromtimestamp(timestamp)
-        # Let's use the .astimezone() method in order to attach a .tzinfo with the datetime object.
-        .astimezone(datetime.timezone.utc)
-        # .isoformat() then adds a final "+00:00" pattern for the UTC timezone specification.
-        # The 'microseconds' time spec ensures microseconds are formatted even though equal to 0.
-        .isoformat(timespec="microseconds")
-    )
+    from . import timezoneutils
+    from .scenarioconfig import SCENARIO_CONFIG
+
+    # Create a `datetime.datetime` instance from the timestamp.
+    _dt = datetime.datetime.fromtimestamp(timestamp)  # type: datetime.datetime
+
+    # Make it timezone-aware.
+    _tz = None  # type: typing.Optional[datetime.tzinfo]
+    if timezone is None:
+        timezone = SCENARIO_CONFIG.timezone()
+    if isinstance(timezone, datetime.tzinfo):
+        _tz = timezone
+    elif isinstance(timezone, str):
+        _tz = timezoneutils.fromstr(timezone)
+    if _tz is None:
+        # Local timezone.
+        _dt = _dt.astimezone()
+    else:
+        _dt = _dt.astimezone(_tz)
+
+    # `isoformat()` method sets the "[+-]HH:MM" timezone specification.
+    # The 'microseconds' time spec ensures microseconds are formatted even though equal to 0.
+    return _dt.isoformat(timespec="microseconds")
 
 
 def fromiso8601(
         iso8601,  # type: str
 ):  # type: (...) -> float
     """
-    Parses a UTC ISO8601 string in a timestamp.
+    Parses a ISO8601 string in a timestamp.
 
-    :param iso8601: Input UTC ISO8601 string.
+    :param iso8601: Input ISO8601 string.
     :return: Timestamp.
     :raise ValueError: When the operation could not be completed.
     """
@@ -83,8 +106,9 @@ def fromiso8601(
         # Fix the ISO8601 timezone specification from ISO8601 to `datetime` format,
         # so that we can use the '%z' format specification for `datetime.datetime.strptime()` to handle it.
         # See: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
-        if iso8601.endswith("+00:00"):
-            iso8601 = iso8601[:-len("+00:00")] + "+0000"
+        _match = re.match(r"^(.*)([+-])([0-9]{2}):([0-9]{2})$", iso8601)  # type: typing.Optional[typing.Match[str]]
+        if _match:
+            iso8601 = _match.group(1) + _match.group(2) + _match.group(3) + _match.group(4)
 
         return (
             datetime.datetime.strptime(iso8601, "%Y-%m-%dT%H:%M:%S.%f%z")
@@ -130,7 +154,7 @@ def f2strduration(
         _seconds = int(duration / 1.0)  # type: int
         duration -= _seconds * 1.0
         _micros = int(duration * 1000000.0)  # type: int
-        _duration = "%02d:%02d:%02d.%06d" % (_hours, _minutes, _seconds, _micros)
+        _duration = f"{_hours:02d}:{_minutes:02d}:{_seconds:02d}.{_micros:06d}"
     return _duration
 
 
@@ -144,10 +168,10 @@ def str2fduration(
     :return: Time duration.
     """
     _match = re.match(r"^(\d+):(\d+):(\d+)\.(\d+)$", duration)  # type: typing.Optional[typing.Match[str]]
-    assert _match, "'%s' invalid duration format" % duration
-    return (
-        int(_match.group(1)) * 3600.0
-        + int(_match.group(2)) * 60.0
-        + int(_match.group(3)) * 1.0
-        + int(_match.group(4)) / math.pow(10, len(_match.group(4)))
-    )
+    assert _match, f"{duration!r} invalid duration format"
+    return sum([
+        int(_match.group(1)) * 3600.0,
+        int(_match.group(2)) * 60.0,
+        int(_match.group(3)) * 1.0,
+        int(_match.group(4)) / math.pow(10, len(_match.group(4))),
+    ])

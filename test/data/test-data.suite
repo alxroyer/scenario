@@ -19,3 +19,6 @@
 # - Does not include 'xyz/packagescenario.py' deliberately.
 # - Does not include the scenario samples in the 'errors' directory neither.
 *.py
+
+# Exclude the 'waitingscenario.py' in order to speed up the campaign test suite.
+- waitingscenario.py

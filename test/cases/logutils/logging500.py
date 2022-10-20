@@ -76,7 +76,7 @@ class CheckNoConsoleLogging(scenario.test.VerificationStep):
                 self.subprocess.stderr,
                 evidence="Standard error",
             )
-        if self.RESULT("In spite nothing has been displayed in the console, the scenario returned %d (SUCCESS)." % scenario.ErrorCode.SUCCESS):
+        if self.RESULT(f"In spite nothing has been displayed in the console, the scenario returned {scenario.ErrorCode.SUCCESS} (SUCCESS)."):
             self.assertequal(
                 self.subprocess.returncode, scenario.ErrorCode.SUCCESS,
                 evidence="Return code",

@@ -42,13 +42,13 @@ class LoggerScenario(scenario.Scenario):
             scenario.logging.debug("Main logger debug line")
 
     def step120(self):  # type: (...) -> None
-        self.STEP("'%s' logger logging" % LoggerScenario.LOGGER_DEBUG_CLASS)
+        self.STEP(f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger logging")
 
-        if self.ACTION("Generate an error line with the '%s' logger." % LoggerScenario.LOGGER_DEBUG_CLASS):
-            self.sample_logger.error("'%s' logger error line" % LoggerScenario.LOGGER_DEBUG_CLASS)
-        if self.ACTION("Generate a warning line with the '%s' logger." % LoggerScenario.LOGGER_DEBUG_CLASS):
-            self.sample_logger.warning("'%s' logger warning line" % LoggerScenario.LOGGER_DEBUG_CLASS)
-        if self.ACTION("Generate an info line with the '%s' logger." % LoggerScenario.LOGGER_DEBUG_CLASS):
-            self.sample_logger.info("'%s' logger info line" % LoggerScenario.LOGGER_DEBUG_CLASS)
-        if self.ACTION("Generate a debug line with the '%s' logger." % LoggerScenario.LOGGER_DEBUG_CLASS):
-            self.sample_logger.debug("'%s' logger debug line" % LoggerScenario.LOGGER_DEBUG_CLASS)
+        if self.ACTION(f"Generate an error line with the '{LoggerScenario.LOGGER_DEBUG_CLASS}' logger."):
+            self.sample_logger.error(f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger error line")
+        if self.ACTION(f"Generate a warning line with the '{LoggerScenario.LOGGER_DEBUG_CLASS}' logger."):
+            self.sample_logger.warning(f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger warning line")
+        if self.ACTION(f"Generate an info line with the '{LoggerScenario.LOGGER_DEBUG_CLASS}' logger."):
+            self.sample_logger.info(f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger info line")
+        if self.ACTION(f"Generate a debug line with the '{LoggerScenario.LOGGER_DEBUG_CLASS}' logger."):
+            self.sample_logger.debug(f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger debug line")

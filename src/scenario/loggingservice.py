@@ -52,9 +52,6 @@ class LoggingService:
         """
         from .loggermain import MAIN_LOGGER
         from .loghandler import LogHandler
-        from .logstats import LOG_STATS
-
-        LOG_STATS.debugstats()
 
         if LogHandler.file_handler:
             if LogHandler.file_handler in MAIN_LOGGER.logging_instance.handlers:

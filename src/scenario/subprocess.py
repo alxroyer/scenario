@@ -94,12 +94,7 @@ class SubProcess:
         """
         from .reflex import qualname
 
-        return "%s(%s, cwd=%s, env=%s)" % (
-            qualname(type(self)),
-            repr(self._cmd_line),
-            repr(self._cwd),
-            repr(self._env),
-        )
+        return f"{qualname(type(self))}({self._cmd_line!r}, cwd={self._cwd!r}, env={self._env!r})"
 
     def __str__(self):  # type: (...) -> str
         """
@@ -108,7 +103,7 @@ class SubProcess:
         _str = self.tostring()[2:-1]  # type: str
         if len(_str) > 64 - 3:
             _str = _str[:64-3] + "..."
-        return "$(%s)" % _str
+        return f"$({_str})"
 
     def tostring(self):  # type: (...) -> str
         """
@@ -121,7 +116,7 @@ class SubProcess:
         if _args and (_args[0] == sys.executable):
             _args[0] = "python"
 
-        return "$(%s)" % " ".join(_args)
+        return f"$({' '.join(_args)})"
 
     def addargs(
             self,  # type: VarSubProcessType
@@ -261,14 +256,14 @@ class SubProcess:
         The sub-process return code is available through the :attr:`returncode` attribute.
         """
         if self._async:
-            self._log(logging.DEBUG, "Launching %s" % self.tostring())
+            self._log(logging.DEBUG, "Launching %s", self.tostring())
         else:
-            self._log(logging.DEBUG, "Executing %s" % self.tostring())
+            self._log(logging.DEBUG, "Executing %s", self.tostring())
 
         # Prepare the current working directory.
         _cwd = pathlib.Path.cwd()  # type: AnyPathType
         if self._cwd:
-            self._log(logging.DEBUG, "  cwd: '%s'" % self._cwd)
+            self._log(logging.DEBUG, "  cwd: '%s'", self._cwd)
             _cwd = self._cwd
 
         # Prepare the command line arguments.
@@ -289,7 +284,7 @@ class SubProcess:
         # Prepare environment variables.
         _env = os.environ.copy()  # type: typing.Dict[str, str]
         if self._env:
-            self._log(logging.DEBUG, "  additional env: %s" % repr(self._env))
+            self._log(logging.DEBUG, "  additional env: %r", self._env)
             for _var in self._env:  # type: str
                 if isinstance(self._env[_var], os.PathLike):
                     _env[_var] = os.fspath(self._env[_var])
@@ -306,13 +301,13 @@ class SubProcess:
                 stderr=subprocess.PIPE
             )
         except Exception as _err:
-            self._onerror("Error while executing %s: %s" % (self, _err))
+            self._onerror("Error while executing %s: %s", self, _err)
             return self
 
         # Launch the stdout and stderr reader threads.
-        self._stdout_reader = threading.Thread(name="%s[stdout]" % self, target=self._readstdoutthread)
+        self._stdout_reader = threading.Thread(name=f"{self}[stdout]", target=self._readstdoutthread)
         self._stdout_reader.start()
-        self._stderr_reader = threading.Thread(name="%s[stderr]" % self, target=self._readstderrthread)
+        self._stderr_reader = threading.Thread(name=f"{self}[stderr]", target=self._readstderrthread)
         self._stderr_reader.start()
 
         # Wait for the end of the sub-process.
@@ -321,7 +316,7 @@ class SubProcess:
                 self.wait(timeout=timeout)
             except TimeoutError as _err:
                 self._popen.kill()
-                self._onerror("%s timeout: %s" % (self, _err))
+                self._onerror("%s timeout: %s", self, _err)
 
         return self
 
@@ -352,7 +347,7 @@ class SubProcess:
             _line = _line.rstrip(b'\r\n')
 
             # Debug the line.
-            self._log(logging.DEBUG, "  stdout: %s" % repr(_line))
+            self._log(logging.DEBUG, "  stdout: %r", _line)
 
             # Call the user handler.
             if self._stdout_line_handler:
@@ -377,7 +372,7 @@ class SubProcess:
             _line = _line.rstrip(b'\r\n')
 
             # Debug the line.
-            self._log(logging.DEBUG, "  stderr: %s" % repr(_line))
+            self._log(logging.DEBUG, "  stderr: %r", _line)
 
             # Call the user handler.
             if self._stderr_line_handler:
@@ -408,15 +403,15 @@ class SubProcess:
         :return: ``self``
         :raise TimeoutError: When the sub-process did not terminate within ``timeout`` seconds.
         """
-        from .assertionhelpers import saferepr
+        from .debugutils import saferepr
 
         if not self._popen:
-            raise ValueError("%s: Cannot wait before the process is created" % self)
+            raise ValueError(f"{self}: Cannot wait before the process is created")
         try:
             if timeout is not None:
-                self._log(logging.DEBUG, "Waiting for %s to terminate within %f seconds" % (self.tostring(), timeout))
+                self._log(logging.DEBUG, "Waiting for %s to terminate within %f seconds", self.tostring(), timeout)
             else:
-                self._log(logging.DEBUG, "Waiting for %s to terminate..." % self.tostring())
+                self._log(logging.DEBUG, "Waiting for %s to terminate...", self.tostring())
             self.returncode = self._popen.wait(timeout=timeout)
         except subprocess.TimeoutExpired as _err:
             raise TimeoutError(str(_err))
@@ -429,7 +424,7 @@ class SubProcess:
             self._stderr_reader.join()
 
         if self.returncode != 0:
-            self._onerror("%s failed: retcode=%s, stderr=%s" % (self.tostring(), repr(self.returncode), saferepr(self.stderr)))
+            self._onerror("%s failed: retcode=%r, stderr=%s", self.tostring(), self.returncode, saferepr(self.stderr))
 
         return self
 
@@ -454,6 +449,7 @@ class SubProcess:
     def _onerror(
             self,
             error_message,  # type: str
+            *args  # type: typing.Any
     ):  # type: (...) -> None
         """
         Error management.
@@ -461,10 +457,11 @@ class SubProcess:
         Optionally logs the error and terminates the main process.
 
         :param error_message: Error message.
+        :param args: Error message arguments.
         """
         # Optionally log the error, i.e. when the main process will be stopped.
         if self._exit_on_error_code is not None:
-            self._log(logging.ERROR, error_message)
+            self._log(logging.ERROR, error_message, *args)
 
         # Optionally terminate the main process.
         if self._exit_on_error_code is not None:
@@ -474,15 +471,17 @@ class SubProcess:
             self,
             level,  # type: int
             message,  # type: str
+            *args,  # type: typing.Any
     ):  # type: (...) -> None
         """
         Pushes a log line to the attached logger, if any.
 
         :param level: Log level.
         :param message: Log message.
+        :param args: Format arguments.
         """
         if self._logger:
-            self._logger.log(level, message)
+            self._logger.log(level, message, *args)
 
 
 if typing.TYPE_CHECKING:

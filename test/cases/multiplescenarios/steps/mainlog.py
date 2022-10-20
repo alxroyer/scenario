@@ -31,29 +31,29 @@ class CheckMultipleScenariosMainLog(LogVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Multiple scenario log output")
 
-        if self.RESULT("The '%s' scenario has been executed." % scenario.test.paths.FAILING_SCENARIO):
-            self.assertline("SCENARIO '%s'" % scenario.test.paths.FAILING_SCENARIO, evidence=True)
-            self.assertline("END OF '%s'" % scenario.test.paths.FAILING_SCENARIO, evidence=True)
+        if self.RESULT(f"The '{scenario.test.paths.FAILING_SCENARIO}' scenario has been executed."):
+            self.assertline(f"SCENARIO '{scenario.test.paths.FAILING_SCENARIO}'", evidence=True)
+            self.assertline(f"END OF '{scenario.test.paths.FAILING_SCENARIO}'", evidence=True)
 
-        if self.RESULT("The '%s' scenario has been executed." % scenario.test.paths.SUPERSCENARIO_SCENARIO):
-            self.assertline("SCENARIO '%s'" % scenario.test.paths.SUPERSCENARIO_SCENARIO, evidence=True)
-            self.assertline("END OF '%s'" % scenario.test.paths.SUPERSCENARIO_SCENARIO, evidence=True)
+        if self.RESULT(f"The '{scenario.test.paths.SUPERSCENARIO_SCENARIO}' scenario has been executed."):
+            self.assertline(f"SCENARIO '{scenario.test.paths.SUPERSCENARIO_SCENARIO}'", evidence=True)
+            self.assertline(f"END OF '{scenario.test.paths.SUPERSCENARIO_SCENARIO}'", evidence=True)
 
-        if self.RESULT("The '%s' scenario has been executed before the '%s' one."
-                       % (scenario.test.paths.FAILING_SCENARIO, scenario.test.paths.SUPERSCENARIO_SCENARIO)):
+        if self.RESULT(f"The '{scenario.test.paths.FAILING_SCENARIO}' scenario has been executed "
+                       f"before the '{scenario.test.paths.SUPERSCENARIO_SCENARIO}' one."):
             self.assertless(
                 self._scenarioendpos(scenario.test.paths.FAILING_SCENARIO), self._scenariostartpos(scenario.test.paths.SUPERSCENARIO_SCENARIO),
-                evidence="'%s' (end) v/s '%s' (start) positions" % (scenario.test.paths.FAILING_SCENARIO, scenario.test.paths.SUPERSCENARIO_SCENARIO),
+                evidence=f"'{scenario.test.paths.FAILING_SCENARIO}' (end) v/s '{scenario.test.paths.SUPERSCENARIO_SCENARIO}' (start) positions",
             )
 
     def _scenariostartpos(
             self,
             path,  # type: scenario.Path
     ):  # type: (...) -> int
-        return self.subprocess.stdout.find(self.tobytes("SCENARIO '%s'" % path))
+        return self.subprocess.stdout.find(self.tobytes(f"SCENARIO '{path}'"))
 
     def _scenarioendpos(
             self,
             path,  # type: scenario.Path
     ):  # type: (...) -> int
-        return self.subprocess.stdout.find(self.tobytes("END OF '%s'" % path))
+        return self.subprocess.stdout.find(self.tobytes(f"END OF '{path}'"))

@@ -57,21 +57,21 @@ class Step(scenario.Step):
     def testdatafromjson(
             self,
             json_data,  # type: typing.Optional[JSONDict]
-            json_path,  # type: typing.Optional[str]
+            jsonpath,  # type: typing.Optional[str]
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
     ):  # type: (...) -> typing.Any
         """
         Helps walking through JSON test data.
 
         :param json_data: JSON test data to walk through. Possibly no valid data while the test is not actually being executed.
-        :param json_path: JSON Path required.
+        :param jsonpath: JSONPath required.
         :param type: Expected type.
         :return: Test data, or empty dictionary when the test is not being executed.
         """
         if not self.doexecute():
             return {}
         else:
-            return self.assertjson(json_data, json_path, type=type)
+            return self.assertjson(json_data, jsonpath, type=type)
 
     def assertsubprocessretcode(
             self,
@@ -88,7 +88,7 @@ class Step(scenario.Step):
         """
         self.assertequal(
             subprocess.returncode, retcode,
-            "%s returned %s" % (subprocess, subprocess.returncode),
+            f"{subprocess} returned {subprocess.returncode!r}",
             evidence=evidence,
         )
 

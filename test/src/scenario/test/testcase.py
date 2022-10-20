@@ -83,7 +83,7 @@ class TestCase(scenario.Scenario):
         _tmp_path = tempfile.mktemp(dir=_day_tmp_dir, prefix=_prefix, suffix=_suffix)  # type: str
 
         self._tmp_paths.append(scenario.Path(_tmp_path))
-        self.debug("New tmp path: '%s'" % self._tmp_paths[-1])
+        self.debug("New tmp path: '%s'", self._tmp_paths[-1])
         return self._tmp_paths[-1]
 
     def rmtmpfiles(
@@ -101,16 +101,16 @@ class TestCase(scenario.Scenario):
             _tmp_path = self._tmp_paths.pop(0)  # type: scenario.Path
             if _tmp_path.is_file():
                 # Remove the file when it exists.
-                self.debug("Removing '%s'" % _tmp_path)
+                self.debug("Removing '%s'", _tmp_path)
                 _tmp_path.unlink()
             # Remove empty directories.
             while not _tmp_path.is_dir():
                 _tmp_path = _tmp_path.parent
             while _tmp_path.is_dir() and (not _tmp_path.samefile(scenario.Path.tmp())):
                 if not _tmp_path.iterdir():
-                    self.debug("Removing '%s'" % _tmp_path)
+                    self.debug("Removing '%s'", _tmp_path)
                     _tmp_path.rmdir()
                     _tmp_path = _tmp_path.parent
                 else:
-                    self.debug("Non-empty directory '%s'" % _tmp_path)
+                    self.debug("Non-empty directory '%s'", _tmp_path)
                     break

@@ -190,7 +190,13 @@
               "errors": [],
               "warnings": [],
               "subscenarios": []
-            },
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the class logger.",
+          "executions": [
             {
               "time": {
                 "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -201,7 +207,13 @@
               "errors": [],
               "warnings": [],
               "subscenarios": []
-            },
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the class logger.",
+          "executions": [
             {
               "time": {
                 "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -229,18 +241,13 @@
               "errors": [],
               "warnings": [],
               "subscenarios": []
-            },
-            {
-              "time": {
-                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "elapsed": SSS.mmmmmm
-              },
-              "evidence": [],
-              "errors": [],
-              "warnings": [],
-              "subscenarios": []
-            },
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the class logger.",
+          "executions": [
             {
               "time": {
                 "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -256,23 +263,20 @@
         },
         {
           "type": "ACTION",
-          "description": "Push indentation to the class logger.",
-          "executions": []
-        },
-        {
-          "type": "ACTION",
           "description": "Log something with the class logger.",
-          "executions": []
-        },
-        {
-          "type": "ACTION",
-          "description": "Push indentation to the class logger.",
-          "executions": []
-        },
-        {
-          "type": "ACTION",
-          "description": "Log something with the class logger.",
-          "executions": []
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
         },
         {
           "type": "ACTION",
@@ -391,7 +395,13 @@
               "errors": [],
               "warnings": [],
               "subscenarios": []
-            },
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the main logger.",
+          "executions": [
             {
               "time": {
                 "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -402,7 +412,13 @@
               "errors": [],
               "warnings": [],
               "subscenarios": []
-            },
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the main logger.",
+          "executions": [
             {
               "time": {
                 "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -430,18 +446,13 @@
               "errors": [],
               "warnings": [],
               "subscenarios": []
-            },
-            {
-              "time": {
-                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "elapsed": SSS.mmmmmm
-              },
-              "evidence": [],
-              "errors": [],
-              "warnings": [],
-              "subscenarios": []
-            },
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the main logger.",
+          "executions": [
             {
               "time": {
                 "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -457,23 +468,20 @@
         },
         {
           "type": "ACTION",
-          "description": "Push indentation to the main logger.",
-          "executions": []
-        },
-        {
-          "type": "ACTION",
           "description": "Log something with the main logger.",
-          "executions": []
-        },
-        {
-          "type": "ACTION",
-          "description": "Push indentation to the main logger.",
-          "executions": []
-        },
-        {
-          "type": "ACTION",
-          "description": "Log something with the main logger.",
-          "executions": []
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
         },
         {
           "type": "ACTION",

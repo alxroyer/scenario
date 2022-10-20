@@ -33,7 +33,7 @@ class FailingScenario(scenario.Scenario):
 
         if self.ACTION("Memorize 'step010-1' as the last checkpoint."):
             self.last_checkpoint = "step010-1"
-            self.evidence("Last checkpoint: '%s'" % self.last_checkpoint)
+            self.evidence(f"Last checkpoint: {self.last_checkpoint!r}")
 
         if self.ACTION("Generate an exception without catching it."):
             self.fail("This is an exception.")  # location: step010-exception
@@ -42,16 +42,16 @@ class FailingScenario(scenario.Scenario):
 
         if self.ACTION("Memorize 'step010-2' as the last checkpoint."):
             self.last_checkpoint = "step010-2"
-            self.evidence("Last checkpoint: '%s'" % self.last_checkpoint)
+            self.evidence(f"Last checkpoint: {self.last_checkpoint!r}")
 
     def step020(self):  # type: (...) -> None  # location: step020
         self.STEP("Successful step")
 
         if self.ACTION("Check the last checkpoint."):
-            self.evidence("Last checkpoint: '%s'" % self.last_checkpoint)
+            self.evidence(f"Last checkpoint: {self.last_checkpoint!r}")
         if self.RESULT("The last checkpoint is... whatever."):
             pass
 
         if self.ACTION("Memorize 'step020-1' as the last checkpoint."):
             self.last_checkpoint = "step020-1"
-            self.evidence("Last checkpoint: '%s'" % self.last_checkpoint)
+            self.evidence(f"Last checkpoint: {self.last_checkpoint!r}")

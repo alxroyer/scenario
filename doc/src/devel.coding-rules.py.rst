@@ -25,9 +25,16 @@ Strings
 
 .. todo:: Documentation needed for string coding rules:
 
-    - Use of f-strings
-    - Use of ``""`` / ``r""`` / ``rf""`` (double quote) to enclose ``str`` strings
-    - Use of ``b''`` / ``rb''`` / ``rfb''`` (simple quotes) to enclose ``bytes`` strings
+    - Differenciate strings and byte-strings:
+        - Use of ``""`` / ``r""`` / ``f""`` (double quote) to enclose ``str`` strings
+            - Except for strings in f-string {}-blocks.
+        - Use of ``b''`` / ``rb''`` (simple quotes) to enclose ``bytes`` strings
+    - Use f-strings
+        - Except for debugging (for optimization concerns)
+        - Except for assertion errors and evidence (for optimization concerns)
+        - Except for regex (because of '{}' escaping)
+        - Except for bytes (f-strings not available)
+    - Use *repr* specification (``f"{...!r}"`` / ``"%r"``) instead of calling ``repr()`` (for optimization concerns)
 
 
 .. _coding-rules.py.namings:
@@ -267,7 +274,7 @@ Use the ``typing.TYPE_CHECKING`` pattern for two reasons only:
     Let's illustrate that point with an example.
 
     Let the ``a.py`` module define a super class :py:class:`A`
-    with a :py:meth:`getb()` method returning a :py:class:`B` instance or :py:const:`None`:
+    with a :py:meth:`getb()` method returning a :py:class:`B` instance or ``None``:
 
     .. code-block:: python
 

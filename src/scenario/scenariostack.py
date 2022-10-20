@@ -72,8 +72,7 @@ class BuildingContext:
         :param scenario_definition: Scenario definition being built.
         """
         self.__scenario_definitions.append(scenario_definition)
-        SCENARIO_STACK.debug("building.pushscenariodefinition(): scenario_definition = 0x%x / %s"
-                             % (id(scenario_definition), repr(scenario_definition)))
+        SCENARIO_STACK.debug("building.pushscenariodefinition(): scenario_definition = 0x%x / %r", id(scenario_definition), scenario_definition)
         SCENARIO_STACK.pushindentation()
 
     def popscenariodefinition(
@@ -87,13 +86,12 @@ class BuildingContext:
         """
         if self.__scenario_definitions and (scenario_definition is self.__scenario_definitions[-1]):
             SCENARIO_STACK.popindentation()
-            SCENARIO_STACK.debug("building.popscenariodefinition(): scenario_definition = 0x%x / %s"
-                                 % (id(scenario_definition), repr(scenario_definition)))
+            SCENARIO_STACK.debug("building.popscenariodefinition(): scenario_definition = 0x%x / %r", id(scenario_definition), scenario_definition)
             self.__scenario_definitions.pop()
         else:
             SCENARIO_STACK.raisecontexterror(
-                "building.popscenariodefinition(): No such scenario_definition = 0x%x / %s"
-                % (id(scenario_definition), repr(scenario_definition))
+                f"building.popscenariodefinition(): No such scenario_definition "
+                f"0x{id(scenario_definition):x} / {scenario_definition!r}",
             )
 
     @property
@@ -154,8 +152,7 @@ class BuildingContext:
         # Check scenario definition originators correspond to the scenario definition currently being built.
         # Should never happen, but if not, just display a warning.
         if isinstance(originator, ScenarioDefinition) and (originator is not self.scenario_definition):
-            SCENARIO_STACK.warning("BuildingContext.fromoriginator(): Unexpected originator %s, %s expected"
-                                   % (repr(originator), repr(self.scenario_definition)))
+            SCENARIO_STACK.warning(f"BuildingContext.fromoriginator(): Unexpected originator {originator!r}, {self.scenario_definition!r} expected")
 
         # Return the originator given by default.
         return originator
@@ -199,7 +196,7 @@ class ScenarioStack(Logger):
         """
         Initializes an empty scenario execution stack.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
         from .logextradata import LogExtraData
 
         Logger.__init__(self, log_class=DebugClass.SCENARIO_STACK)
@@ -229,7 +226,7 @@ class ScenarioStack(Logger):
 
         :param scenario_execution: Scenario execution to set on top of the scenario execution stack.
         """
-        self.debug("pushscenarioexecution(): Pushing scenario execution %s" % repr(scenario_execution))
+        self.debug("pushscenarioexecution(): Pushing scenario execution %r", scenario_execution)
 
         if not self.__scenario_executions:
             self.history.append(scenario_execution)
@@ -292,7 +289,7 @@ class ScenarioStack(Logger):
         Tells whether the given scenario corresponds to the main one under execution.
 
         :param scenario: Scenario definition or scenario execution to check.
-        :return: :const:`True` if the scenario corresponds to the main scenario, :const:`False` otherwise.
+        :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
         _scenario_definition = None  # type: typing.Optional[ScenarioDefinition]
         if isinstance(scenario, ScenarioDefinition):
@@ -340,7 +337,7 @@ class ScenarioStack(Logger):
         Tells whether the given scenario corresponds to the one on top of the scenario stack.
 
         :param scenario: Scenario definition or scenario execution to check.
-        :return: :const:`True` if the scenario corresponds to the main scenario, :const:`False` otherwise.
+        :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
         _scenario_definition = None  # type: typing.Optional[ScenarioDefinition]
         if isinstance(scenario, ScenarioDefinition):
@@ -362,7 +359,7 @@ class ScenarioStack(Logger):
         Compared with :attr:`current_step_execution`,
         this method returns the step definition whatever the execution mode of the :class:`.scenariorunner.ScenarioRunner`.
 
-        :const:`None` if no current step definition under execution.
+        ``None`` if no current step definition under execution.
         """
         if self.current_scenario_execution:
             return self.current_scenario_execution.current_step_definition
@@ -378,7 +375,7 @@ class ScenarioStack(Logger):
         Compared with :attr:`current_step_definition`,
         this method may not return a step execution instance when the :class:`.scenariorunner.ScenarioRunner` is building objects.
 
-        :const:`None` if no current step execution instance.
+        ``None`` if no current step execution instance.
         """
         if self.current_step_definition and self.current_step_definition.executions:
             return self.current_step_definition.executions[-1]
@@ -391,7 +388,7 @@ class ScenarioStack(Logger):
 
         Out of the current step definition or step execution.
 
-        :const:`None` current action / expected result definition.
+        ``None`` current action / expected result definition.
         """
         if self.current_step_execution:
             return self.current_step_execution.current_action_result_definition
@@ -406,7 +403,7 @@ class ScenarioStack(Logger):
 
         Out of the current step execution.
 
-        :const:`None` if no current action / expected result execution instance.
+        ``None`` if no current action / expected result execution instance.
         """
         if self.current_action_result_definition and self.current_action_result_definition.executions:
             return self.current_action_result_definition.executions[-1]
@@ -445,20 +442,16 @@ class ScenarioStack(Logger):
         :raise ScenarioStack.ContextError: Systematically.
         """
         self.error("")
-        self.error("Invalid scenario context: %s" % error_message)
+        self.error(f"Invalid scenario context: {error_message}")
         self.error("")
         self.error("Building context:")
-        self.error("- scenario definition = %s" % repr(self.building.scenario_definition))
-        self.error("- step definition = %s" % repr(self.building.step_definition))
+        self.error(f"- scenario definition = {self.building.scenario_definition!r}")
+        self.error(f"- step definition = {self.building.step_definition!r}")
         self.error("Execution stack:")
-        self.error("- main scenario: definition = %s, execution = %s"
-                   % (repr(self.main_scenario_definition), repr(self.main_scenario_execution)))
-        self.error("- current scenario: definition = %s, execution = %s"
-                   % (repr(self.current_scenario_definition), repr(self.current_scenario_execution)))
-        self.error("- current step: definition = %s, execution = %s"
-                   % (repr(self.current_step_definition), repr(self.current_step_execution)))
-        self.error("- current action/result: definition = %s, execution = %s"
-                   % (repr(self.current_action_result_definition), repr(self.current_action_result_execution)))
+        self.error(f"- main scenario: definition = {self.main_scenario_definition!r}, execution = {self.main_scenario_execution!r}")
+        self.error(f"- current scenario: definition = {self.current_scenario_definition!r}, execution = {self.current_scenario_execution!r}")
+        self.error(f"- current step: definition = {self.current_step_definition!r}, execution = {self.current_step_execution!r}")
+        self.error(f"- current action/result: definition = {self.current_action_result_definition!r}, execution = {self.current_action_result_execution!r}")
         self.error("")
         raise ScenarioStack.ContextError()
 

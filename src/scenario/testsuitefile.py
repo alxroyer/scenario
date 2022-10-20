@@ -43,7 +43,7 @@ class TestSuiteFile(Logger):
 
         :param path: Test suite file path.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
         from .path import Path
 
         Logger.__init__(self, log_class=DebugClass.TEST_SUITE_FILE)
@@ -64,13 +64,13 @@ class TestSuiteFile(Logger):
         """
         from .reflex import qualname
 
-        return "<%s path='%s'>" % (qualname(type(self)), self.path)
+        return f"<{qualname(type(self))} path='{self.path}'>"
 
     def read(self):  # type: (...) -> bool
         """
         Reads and parses the test suite file.
 
-        :return: :const:`True` for success, :const:`False` otherwise.
+        :return: ``True`` for success, ``False`` otherwise.
         """
         from .path import Path
         from .textfile import TextFile
@@ -79,7 +79,7 @@ class TestSuiteFile(Logger):
         self.script_paths = []
 
         # Foe each line in the campaign file.
-        self.debug("Reading '%s'" % self.path)
+        self.debug("Reading '%s'", self.path)
         self.pushindentation()
         for _line in TextFile(self.path, "r").readlines():  # type: str
             _line = _line.strip()
@@ -91,18 +91,18 @@ class TestSuiteFile(Logger):
             if _line.startswith("-"):
                 # Black list.
                 _line = _line[1:].strip()
-                self.debug("Black list line: %s" % repr(_line))
+                self.debug("Black list line: %r", _line)
                 self.pushindentation()
                 for _rm_path in self.path.parent.glob(_line):  # type: Path
                     for _test_script_path in self.script_paths:  # type: Path
                         if _test_script_path.samefile(_rm_path):
-                            self.debug("- '%s'" % _test_script_path)
+                            self.debug("- '%s'", _test_script_path)
                             self.script_paths.remove(_test_script_path)
                 self.popindentation()
 
             else:
                 # White list.
-                self.debug("White list line: %s" % repr(_line))
+                self.debug("White list line: %r", _line)
                 self.pushindentation()
                 if _line.startswith("+"):
                     _line = _line[1:].strip()
@@ -116,11 +116,11 @@ class TestSuiteFile(Logger):
                                 _add_path = None
                                 break
                         if _add_path is not None:
-                            self.debug("+ '%s'" % _add_path)
+                            self.debug("+ '%s'", _add_path)
                             self.script_paths.append(_add_path)
                 else:
                     _add_path = self.path.parent / _line  # Type already declared above
-                    self.debug("+ '%s'" % _add_path)
+                    self.debug("+ '%s'", _add_path)
                     self.script_paths.append(_add_path)
                 self.popindentation()
         self.popindentation()

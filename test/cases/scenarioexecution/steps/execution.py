@@ -19,6 +19,7 @@ import typing
 
 import scenario
 import scenario.test
+import scenario.text
 
 # Related steps:
 from steps.commonargs import ExecCommonArgs
@@ -74,7 +75,7 @@ class ExecScenario(ExecCommonArgs):
 
         # Sub-scenario.
         if self.subscenario_path:
-            _action_description += ", with '%s' for sub-scenario" % self.subscenario_path
+            _action_description += f", with '{self.subscenario_path}' for sub-scenario"
 
             if self.doexecute():
                 self.subprocess.setconfigvalue(SuperScenario.ConfigKey.SUBSCENARIO_PATH, self.subscenario_path)
@@ -104,9 +105,7 @@ class ExecScenario(ExecCommonArgs):
 
         # Return code.
         if self.expected_return_code is not None:
-            _result_description = "The scenario launcher returned "  # type: str
-            _result_description += "the %d (%s) error code." % (self.expected_return_code.value, self.expected_return_code.name)
-            if self.RESULT(_result_description):
+            if self.RESULT(f"The scenario launcher returned the {self.expected_return_code.value} ({self.expected_return_code.name}) error code."):
                 self.assertequal(
                     self.subprocess.returncode, self.expected_return_code,
                     evidence="Return code",
@@ -116,8 +115,4 @@ class ExecScenario(ExecCommonArgs):
         """
         :return: "'%s', '%s', (...) and '%s'"-like string computed from :attr:`scenario_paths`.
         """
-        _str = ", ".join(["'%s'" % _scenario_path for _scenario_path in self.scenario_paths[:-1]])  # type: str
-        if _str:
-            _str += " and "
-        _str += "'%s'" % self.scenario_paths[-1]
-        return _str
+        return scenario.text.comalist(self.scenario_paths, quotes=True)

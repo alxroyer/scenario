@@ -29,7 +29,7 @@ class EnsureInternetConnection(scenario.test.Step):
         if self.RESULT("github.com responded successfully."):
             self.assertsubprocessretcode(
                 _subprocess, 0,
-                evidence="%s return code" % _subprocess,
+                evidence=f"{_subprocess} return code",
             )
 
     @staticmethod

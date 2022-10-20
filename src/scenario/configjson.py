@@ -22,6 +22,9 @@ import json
 import typing
 
 if typing.TYPE_CHECKING:
+    # `KeyType` used in method signatures.
+    # Type declared for type checking only.
+    from .configtypes import KeyType
     # `AnyPathType` used in method signatures and type definitions.
     # Type declared for type checking only.
     from .path import AnyPathType
@@ -35,21 +38,49 @@ class ConfigJson:
     @staticmethod
     def loadfile(
             path,  # type: AnyPathType
+            root="",  # type: KeyType
     ):  # type: (...) -> None
         """
         Loads a JSON configuration file.
 
         :param path: Path of the JSON file to load.
+        :param root: Root key to load the JSON file from.
+        """
+        from .configdb import CONFIG_DB
+        from .path import Path
+        from .textfile import guessencoding
+
+        CONFIG_DB.debug("Loading JSON file '%s'", path)
+
+        # Read the JSON file.
+        with Path(path).open("r", encoding=guessencoding(path)) as _file:  # type: typing.TextIO
+            _data = json.load(_file)  # type: typing.Any
+            _file.close()
+
+        # Push the data to the configuration database.
+        CONFIG_DB.set(root, _data, origin=path)
+
+        CONFIG_DB.debug("JSON file '%s' successfully read", path)
+
+    @staticmethod
+    def savefile(
+            path,  # type: AnyPathType
+            root="",  # type: KeyType
+    ):  # type: (...) -> None
+        """
+        Saves a JSON configuration file.
+
+        :param path: Path of the JSON file to save.
+        :param root: Root key to save data from.
         """
         from .configdb import CONFIG_DB
         from .path import Path
 
-        CONFIG_DB.debug("Loading JSON file '%s'" % path)
+        CONFIG_DB.debug("Saving JSON file '%s'", path)
 
-        # Read the JSON file.
-        _data = json.load(Path(path).open("rb"))  # type: typing.Any
+        # Save the JSON file. Use UTF-8 encoding.
+        with Path(path).open("w", encoding="utf-8") as _file:  # type: typing.TextIO
+            json.dump(CONFIG_DB.get(root), _file)
+            _file.close()
 
-        # Push the data to the configuration database.
-        CONFIG_DB.set("", _data, origin=path)
-
-        CONFIG_DB.debug("JSON file '%s' successfully read" % path)
+        CONFIG_DB.debug("JSON file '%s' successfully saved", path)

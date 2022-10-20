@@ -71,7 +71,7 @@ class LogGenerator:
                 _tmp_outdir = MAIN_PATH / "out"
         _xml_report_out_path = self.outdir / (_basename_no_ext + ".xml")  # type: scenario.Path
 
-        scenario.logging.info("Updating %s" % _log_out_path)
+        scenario.logging.info(f"Updating {_log_out_path}")
         _subprocess = SubProcess(sys.executable, script)  # type: SubProcess
         _subprocess.addargs("--config-value", "scenario.log_color", "0")
         _subprocess.addargs("--config-value", "scenario.log_date_time", "0")
@@ -81,7 +81,7 @@ class LogGenerator:
         if json_report:
             _subprocess.addargs("--json-report", _json_report_out_path)
         if _tmp_outdir:
-            scenario.logging.debug("Creating directory '%s'" % _tmp_outdir)
+            scenario.logging.debug("Creating directory '%s'", _tmp_outdir)
             _tmp_outdir.mkdir(parents=True, exist_ok=True)
             _subprocess.addargs("--outdir", _tmp_outdir)
         _subprocess.setcwd(MAIN_PATH)
@@ -92,7 +92,7 @@ class LogGenerator:
         _log_lines = []  # type: typing.List[bytes]
         _summary_total_line_index = -1  # type: int
         for _log_line in _subprocess.stdout.splitlines():  # type: bytes
-            scenario.logging.debug("Log line: %s" % repr(_log_line))
+            scenario.logging.debug("Log line: %r", _log_line)
 
             # Ensure the local 'scenario' path is not displayed in the documentation.
             _log_line = re.sub(rb'^(INFO +)Main path: \'.*\'$', b'\\1Main path: \'/path/to/scenario\'', _log_line)
@@ -106,24 +106,24 @@ class LogGenerator:
 
             _log_lines.append(_log_line)
 
-        # scenario.logging.info("Updating %s" % _log_out_path)  # Already logged above
+        # scenario.logging.info(f"Updating {_log_out_path}")  # Already logged above
         self._dumptext(_log_out_path, b'\n'.join(_log_lines))
 
         # Dump the scenario executions summary when required.
         if summary and (_summary_total_line_index > 0):
             _log_summary_out_path = self.outdir / (_basename_no_ext + ".summary.log")  # type: scenario.Path
-            scenario.logging.info("Updating %s" % _log_summary_out_path)
+            scenario.logging.info(f"Updating {_log_summary_out_path}")
             self._dumptext(_log_summary_out_path, b'\n'.join(_log_lines[_summary_total_line_index - 1:]))
 
         # Replace execution times in the JSON and XML reports with substitution patterns.
         if json_report:
-            scenario.logging.info("Updating %s" % _json_report_out_path)
+            scenario.logging.info(f"Updating {_json_report_out_path}")
             _json_data = _json_report_out_path.read_bytes()  # type: bytes
             _json_data = re.sub(rb'"(start|end)": "%s"' % ISO_8601_REGEX, rb'"\1": "%s"' % ISO_8601_SUBST, _json_data)
             _json_data = re.sub(rb'"elapsed": %s' % FLOAT_DURATION_REGEX, rb'"elapsed": %s' % FLOAT_DURATION_SUBST, _json_data)
             self._dumptext(_json_report_out_path, _json_data)
         if xml_report:
-            scenario.logging.info("Updating %s" % _xml_report_out_path)
+            scenario.logging.info(f"Updating {_xml_report_out_path}")
             assert _tmp_outdir, "Temporary output directory should have been determined before"
             _xml_data = (_tmp_outdir / "campaign.xml").read_bytes()  # type: bytes
             _xml_data = re.sub(rb'time="%s"' % FLOAT_DURATION_REGEX, rb'time="%s"' % FLOAT_DURATION_SUBST, _xml_data)
@@ -132,7 +132,7 @@ class LogGenerator:
             self._dumptext(_xml_report_out_path, _xml_data)
 
         if _tmp_outdir:
-            scenario.logging.debug("Removing directory '%s'" % _tmp_outdir)
+            scenario.logging.debug("Removing directory '%s'", _tmp_outdir)
             shutil.rmtree(_tmp_outdir)
 
     def _dumptext(

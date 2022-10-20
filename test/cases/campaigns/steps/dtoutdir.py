@@ -15,6 +15,8 @@
 # limitations under the License.
 
 import math
+import re
+import time
 import typing
 
 import scenario
@@ -31,7 +33,7 @@ class CheckCampaignNoDtOutdir(scenario.test.VerificationStep):
 
         _outdir_content = []  # type: typing.List[scenario.Path]
         if self.ACTION("Read the directory pointed by the campaign command line."):
-            self.evidence("Reading '%s'" % self.getexecstep(ExecCampaign).cmdline_outdir_path)
+            self.evidence(f"Reading '{self.getexecstep(ExecCampaign).cmdline_outdir_path}'")
             _outdir_content = list(self.getexecstep(ExecCampaign).cmdline_outdir_path.iterdir())
 
         if self.RESULT("The directory contains no subdirectories."):
@@ -53,7 +55,7 @@ class CheckCampaignDtOutdir(scenario.test.VerificationStep):
 
         _outdir_content = []  # type: typing.List[scenario.Path]
         if self.ACTION("Read the directory pointed by the campaign command line."):
-            self.evidence("Reading '%s'" % self.getexecstep(ExecCampaign).cmdline_outdir_path)
+            self.evidence(f"Reading '{self.getexecstep(ExecCampaign).cmdline_outdir_path}'")
             _outdir_content = list(self.getexecstep(ExecCampaign).cmdline_outdir_path.iterdir())
 
         _timestamp = 0.0  # type: float
@@ -67,14 +69,16 @@ class CheckCampaignDtOutdir(scenario.test.VerificationStep):
                 _final_outdir_path,
                 evidence="Date/time directory",
             )
-            _iso8601 = "%sT%s.000000+00:00" % (
-                _final_outdir_path.name[:len("XXXX-XX-XX")],
-                _final_outdir_path.name[len("XXXX-XX-XXT"):].replace("-", ":"),
+            _local_timezone = scenario.datetime.toiso8601(time.time())[-len("+00:00"):]  # type: str
+            _iso8601 = re.sub(
+                r"^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})$",
+                r"\1-\2-\3T\4:\5:\6.000000" + _local_timezone,
+                _final_outdir_path.name,
             )  # type: str
             _timestamp = scenario.datetime.fromiso8601(_iso8601)
-            self.evidence("ISO8601 date/time: %s = %f" % (_iso8601, _timestamp))
+            self.evidence(f"ISO8601 date/time: {_iso8601} = {_timestamp}")
 
-        if self.RESULT("The ISO8601 date corresponds to step %s." % repr(self.exec_step)):
+        if self.RESULT(f"The ISO8601 date corresponds to step {self.exec_step!r}."):
             # Due to the fact that the output directory lacks the milliseconds / microseconds in its name,
             # the `asserttimeinstep()` may fail.
             # self.asserttimeinstep(
@@ -86,7 +90,9 @@ class CheckCampaignDtOutdir(scenario.test.VerificationStep):
             _end = math.ceil(_step_execution.getendtime(expect=True))  # type: float
             self.assertbetweenorequal(
                 _timestamp, _start, _end,
-                err="Output directory date/time %s does not take place in step %s execution %s"
-                    % (scenario.datetime.f2strtime(_timestamp), repr(self.exec_step), str(_step_execution.time)),
+                err=scenario.debug.FmtAndArgs(
+                    "Output directory date/time %s does not take place in step %r execution %s",
+                    scenario.debug.callback(scenario.datetime.f2strtime, _timestamp), self.exec_step, _step_execution.time,
+                ),
                 evidence="Timestamp",
             )

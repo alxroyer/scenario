@@ -66,12 +66,10 @@ class CampaignArgs(Args):
         self.addarg("Output directory", "_outdir", Path).define(
             "--outdir", metavar="OUTDIR_PATH",
             action="store", type=str,
-            help="Output directory to store test results into.%s" % (
-                " Defaults to the current directory." if self._default_outdir_cwd else "",
-            ),
+            help=f"Output directory to store test results into.{' Defaults to the current directory.' if self._default_outdir_cwd else ''}",
         )
 
-        #: :const:`True` when an output subdirectory in :attr:`CampaignArgs.outdir` named with the campaign execution date and time should be created.
+        #: ``True`` when an output subdirectory in :attr:`CampaignArgs.outdir` named with the campaign execution date and time should be created.
         self.create_dt_subdir = True  # type: bool
         self.addarg("Create date-time subdirectory", "create_dt_subdir", bool).define(
             "--dt-subdir",
@@ -119,7 +117,7 @@ class CampaignArgs(Args):
         """
         from .loggermain import MAIN_LOGGER
 
-        if not Args._checkargs(self, args):
+        if not super()._checkargs(args):
             return False
 
         if self._outdir is None:
@@ -133,7 +131,7 @@ class CampaignArgs(Args):
 
         for _test_suite_path in self.test_suite_paths:  # type: Path
             if not _test_suite_path.is_file():
-                MAIN_LOGGER.error("No such file '%s'" % _test_suite_path)
+                MAIN_LOGGER.error(f"No such file '{_test_suite_path}'")
                 return False
 
         return True

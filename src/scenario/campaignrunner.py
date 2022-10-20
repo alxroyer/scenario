@@ -55,7 +55,7 @@ class CampaignRunner(Logger):
         """
         Configures logging for the :class:`CampaignRunner` class.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
 
         Logger.__init__(self, log_class=DebugClass.CAMPAIGN_RUNNER)
 
@@ -195,7 +195,8 @@ class CampaignRunner(Logger):
         from .campaignlogging import CAMPAIGN_LOGGING
         from .configdb import CONFIG_DB
         from .confignode import ConfigNode
-        from .datetimeutils import ISO8601_REGEX
+        from .datetimeutils import f2strduration, ISO8601_REGEX
+        from .debugloggers import ExecTimesLogger
         from .handlers import HANDLERS
         from .path import Path
         from .scenarioconfig import SCENARIO_CONFIG
@@ -206,9 +207,13 @@ class CampaignRunner(Logger):
         from .subprocess import SubProcess
         from .testerrors import TestError
 
+        _exec_times_logger = ExecTimesLogger("CampaignRunner._exectestcase()")  # type: ExecTimesLogger
+
         HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
+        _exec_times_logger.tick("After *before-test-case* handlers")
 
         CAMPAIGN_LOGGING.begintestcase(test_case_execution)
+        _exec_times_logger.tick("Starting test case")
         test_case_execution.time.setstarttime()
 
         # Prepare output paths.
@@ -261,34 +266,39 @@ class CampaignRunner(Logger):
             _fallback_errors.execution.errors.append(TestError(error_message))
 
         # Execute the scenario.
+        _exec_times_logger.tick("Executing the sub-process")
         _subprocess.setlogger(self).run(timeout=SCENARIO_CONFIG.scenariotimeout())
-        self.debug("%s returned %s" % (_subprocess, _subprocess.returncode))
+        _exec_times_logger.tick("After sub-process execution")
+        self.debug("%s returned %r", _subprocess, _subprocess.returncode)
 
         # Analyze scenario return code.
         if _subprocess.returncode is None:
-            _fallbackerror("'%s' did not return within %s seconds" % (test_case_execution.script_path, _subprocess.time.elapsed))
+            _fallbackerror(f"'{test_case_execution.script_path}' did not return within {_subprocess.time.elapsed} seconds")
         elif _subprocess.returncode != 0:
             try:
                 _returncode_desc = str(ErrorCode(_subprocess.returncode))  # type: str
             except ValueError as _err:
                 _returncode_desc = str(_err)  # Type already declared above.
-            _fallbackerror("'%s' failed with error code %d (%s)" % (test_case_execution.script_path, _subprocess.returncode, _returncode_desc))
+            _fallbackerror(f"'{test_case_execution.script_path}' failed with error code {_subprocess.returncode!r} ({_returncode_desc})")
+        _exec_times_logger.tick("After post-analyses")
 
         # Read the log outfile.
         if test_case_execution.log.path.is_file():
             # Don't bother with errors, keep going on.
-            self.debug("Reading '%s'" % test_case_execution.log.path)
+            self.debug("Reading '%s'", test_case_execution.log.path)
             test_case_execution.log.read()
         else:
-            self.debug("No such file '%s'" % test_case_execution.log.path)
+            self.debug("No such file '%s'", test_case_execution.log.path)
+        _exec_times_logger.tick("After reading the log file")
 
         # Read the JSON outfile.
         if test_case_execution.json.path.is_file():
             # Don't bother with errors, keep going on.
-            self.debug("Reading '%s'" % test_case_execution.json.path)
+            self.debug("Reading '%s'", test_case_execution.json.path)
             test_case_execution.json.read()
         else:
-            self.debug("No such file '%s'" % test_case_execution.json.path)
+            self.debug("No such file '%s'", test_case_execution.json.path)
+        _exec_times_logger.tick("After reading the JSON file")
 
         # Fix the scenario definition and execution instances, if not successfully read from the JSON report above.
         if not test_case_execution.scenario_execution:
@@ -317,10 +327,11 @@ class CampaignRunner(Logger):
             # thus we don't catch the 'No such file error'
             if _subprocess.returncode == ErrorCode.ARGUMENTS_ERROR:
                 if not test_case_execution.script_path.is_file():
-                    _fallbackerror("No such file '%s'" % test_case_execution.script_path)
+                    _fallbackerror(f"No such file '{test_case_execution.script_path}'")
 
             # Terminate the fake scenario execution.
             _fallback_errors.execution.time.setendtime()
+            _exec_times_logger.tick("After execution error management")
         # From now, the scenario execution instance necessarily exists.
         assert test_case_execution.scenario_execution
 
@@ -329,14 +340,17 @@ class CampaignRunner(Logger):
             for _error in test_case_execution.scenario_execution.errors:  # type: TestError
                 HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
         HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
+        _exec_times_logger.tick("After *after-test-case* handlers")
 
         # Terminate the test case instance.
+        _exec_times_logger.tick("Ending test case")
         test_case_execution.time.setendtime()
         CAMPAIGN_LOGGING.endtestcase(test_case_execution)
 
         # Feed the :attr:`.scenarioresults.SCENARIO_RESULTS` instance.
         SCENARIO_RESULTS.add(test_case_execution.scenario_execution)
 
+        _exec_times_logger.finish()
         return ErrorCode.SUCCESS
 
 

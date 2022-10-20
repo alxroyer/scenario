@@ -19,7 +19,6 @@ import typing
 from . import data
 from . import features
 from . import paths
-from . import textutils as text
 from .attributes import ScenarioAttribute
 from .expectations import ActionResultExpectations, ErrorExpectations, ScenarioExpectations, StatExpectations, StepExpectations
 from .expectations import CampaignExpectations, TestSuiteExpectations

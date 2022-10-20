@@ -23,6 +23,8 @@ import typing
 
 # `ActionResultDefinition` used in method signatures.
 from .actionresultdefinition import ActionResultDefinition
+# `StrEnum` used for inheritance.
+from .enumutils import StrEnum
 # `ScenarioDefinition` used in method signatures.
 from .scenariodefinition import ScenarioDefinition
 # `ScenarioExecution` used in method signatures.
@@ -45,18 +47,31 @@ class ScenarioLogging:
     #: The scenario stack indentation pattern ensures that the '|' lines are presented the 'ACTION: ' or 'RESULT: ' pattern they relate to.
     SCENARIO_STACK_INDENTATION_PATTERN = "      | "  # type: str
 
+    class _Call(StrEnum):
+        """
+        :class:`ScenarioLogging` call identifiers.
+        """
+        BEGIN_SCENARIO = "beginscenario"
+        BEGIN_ATTRIBUTES = "beginattributes"
+        ATTRIBUTE = "attribute"
+        END_ATTRIBUTES = "endattributes"
+        STEP_DESCRIPTION = "stepdescription"
+        ACTION = "action"
+        RESULT = "result"
+        END_SCENARIO = "endscenario"
+
     def __init__(self):  # type: (...) -> None
         """
         Initializes the last call history.
         """
         from .testerrors import KnownIssue
 
-        #: Last call history.
+        #: History of this class's method calls.
         #:
-        #: Fed with the name of this class's methods.
-        self._calls = []  # type: typing.List[str]
+        #: Makes it possible to adjust the display depending on the sequence of information.
+        self._calls = []  # type: typing.List[ScenarioLogging._Call]
 
-        #: Known isues already displayed.
+        #: Known issues already displayed.
         self._known_issues = []  # type: typing.List[KnownIssue]
 
     def beginscenario(
@@ -70,16 +85,16 @@ class ScenarioLogging:
         """
         from .loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.rawoutput("SCENARIO '%s'" % scenario_definition.name)
+        MAIN_LOGGER.rawoutput(f"SCENARIO '{scenario_definition.name}'")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
 
-        self._calls.append("beginscenario")
+        self._calls.append(ScenarioLogging._Call.BEGIN_SCENARIO)
 
     def beginattributes(self):  # type: (...) -> None
         """
         Marks the beginning of scenario attributes.
         """
-        self._calls.append("beginattributes")
+        self._calls.append(ScenarioLogging._Call.BEGIN_ATTRIBUTES)
 
     def attribute(
             self,
@@ -96,9 +111,9 @@ class ScenarioLogging:
         """
         from .loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.rawoutput("  %s: %s" % (name, value))
+        MAIN_LOGGER.rawoutput(f"  {name}: {value}")
 
-        self._calls.append("attribute")
+        self._calls.append(ScenarioLogging._Call.ATTRIBUTE)
 
     def endattributes(self):  # type: (...) -> None
         """
@@ -109,7 +124,7 @@ class ScenarioLogging:
 
         MAIN_LOGGER.rawoutput("")
 
-        self._calls.append("endattributes")
+        self._calls.append(ScenarioLogging._Call.END_ATTRIBUTES)
 
     def stepsection(
             self,
@@ -123,13 +138,18 @@ class ScenarioLogging:
         """
         from .loggermain import MAIN_LOGGER
 
-        # Add space between step sections.
-        MAIN_LOGGER.rawoutput("")
-        MAIN_LOGGER.rawoutput("")
+        # Add space between step sections:
+        # - two empty lines when following 'action' or 'result' lines,
+        # - only one otherwise.
+        if self._calls and (self._calls[-1] in (ScenarioLogging._Call.ACTION, ScenarioLogging._Call.RESULT)):
+            MAIN_LOGGER.rawoutput("")
+            MAIN_LOGGER.rawoutput("")
+        else:
+            MAIN_LOGGER.rawoutput("")
 
         MAIN_LOGGER.rawoutput("------------------------------------------------")
         assert step_section.description is not None
-        MAIN_LOGGER.rawoutput("  " + step_section.description)
+        MAIN_LOGGER.rawoutput(f"  {step_section.description}")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
 
     def stepdescription(
@@ -147,19 +167,14 @@ class ScenarioLogging:
         # Add space between two steps.
         MAIN_LOGGER.rawoutput("")
 
-        if ScenarioArgs.getinstance().doc_only:
-            _step_number = step_definition.number  # type: int
-        else:
-            assert step_definition.executions, "No executions yet for %s" % str(step_definition)
-            _step_number = step_definition.executions[-1].number  # Type already declared above.
-        _step_description = "STEP#%d" % _step_number  # type: str
+        _step_description = f"STEP#{step_definition.number}"  # type: str
         if step_definition.description is not None:
-            _step_description += ": %s" % step_definition.description
-        _step_description += " (%s)" % step_definition.location.tolongstring()
+            _step_description += f": {step_definition.description}"
+        _step_description += f" ({step_definition.location.tolongstring()})"
         MAIN_LOGGER.rawoutput(_step_description)
         MAIN_LOGGER.rawoutput("------------------------------------------------")
 
-        self._calls.append("stepdescription")
+        self._calls.append(ScenarioLogging._Call.STEP_DESCRIPTION)
 
     def actionresult(
             self,
@@ -178,12 +193,10 @@ class ScenarioLogging:
             # Add space before an action only after results.
             MAIN_LOGGER.rawoutput("")
 
-        _line = ("  %+" + str(self.ACTION_RESULT_MARGIN - 4) + "s: ") % str(actionresult.type).upper()  # type: str
-        _line += MAIN_LOGGER.getindentation()
-        _line += description
-        MAIN_LOGGER.rawoutput(_line)
+        MAIN_LOGGER.rawoutput(f"  {str(actionresult.type).upper():>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}{description}")
 
-        self._calls.append(str(actionresult.type).lower())
+        # Note: `str(actionresult.type)` is either 'ACTION' or 'RESULT'.
+        self._calls.append(ScenarioLogging._Call(str(actionresult.type).lower()))
 
     def error(
             self,
@@ -229,11 +242,7 @@ class ScenarioLogging:
         """
         from .loggermain import MAIN_LOGGER
 
-        _line = ("  %+" + str(self.ACTION_RESULT_MARGIN - 4) + "s: ") % "EVIDENCE"  # type: str
-        _line += MAIN_LOGGER.getindentation()
-        _line += "  -> "
-        _line += evidence
-        MAIN_LOGGER.rawoutput(_line)
+        MAIN_LOGGER.rawoutput(f"  {'EVIDENCE':>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}  -> {evidence}")
         # Do not append 'evidence' to :attr:`_calls` in order not to break the 'action'/'result' sequences.
 
     def endscenario(
@@ -251,13 +260,13 @@ class ScenarioLogging:
         from .scenariostack import SCENARIO_STACK
 
         MAIN_LOGGER.rawoutput("")
-        MAIN_LOGGER.rawoutput("END OF '%s'" % scenario_definition.name)
+        MAIN_LOGGER.rawoutput(f"END OF '{scenario_definition.name}'")
 
         # Reset the `_known_issues` history when this is the main scenario.
         if SCENARIO_STACK.ismainscenario(scenario_definition):
             self._known_issues = []
 
-        self._calls.append("endscenario")
+        self._calls.append(ScenarioLogging._Call.END_SCENARIO)
 
     def displaystatistics(
             self,
@@ -280,14 +289,11 @@ class ScenarioLogging:
             self.error(_error)
 
         # Terminate and display statistics.
-        MAIN_LOGGER.rawoutput("             Status: %s" % scenario_execution.status)
-        MAIN_LOGGER.rawoutput("    Number of STEPs: %s" % str(scenario_execution.step_stats))
-        MAIN_LOGGER.rawoutput("  Number of ACTIONs: %s" % str(scenario_execution.action_stats))
-        MAIN_LOGGER.rawoutput("  Number of RESULTs: %s" % str(scenario_execution.result_stats))
-        _elapsed = "None"  # type: str
-        if scenario_execution.time.elapsed is not None:
-            _elapsed = f2strduration(scenario_execution.time.elapsed)
-        MAIN_LOGGER.rawoutput("               Time: %s" % _elapsed)
+        MAIN_LOGGER.rawoutput(f"             Status: {scenario_execution.status}")
+        MAIN_LOGGER.rawoutput(f"    Number of STEPs: {scenario_execution.step_stats}")
+        MAIN_LOGGER.rawoutput(f"  Number of ACTIONs: {scenario_execution.action_stats}")
+        MAIN_LOGGER.rawoutput(f"  Number of RESULTs: {scenario_execution.result_stats}")
+        MAIN_LOGGER.rawoutput(f"               Time: {f2strduration(scenario_execution.time.elapsed)}")
         MAIN_LOGGER.rawoutput("")
 
 

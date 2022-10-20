@@ -30,7 +30,7 @@ CAMPAIGN
 
 END OF CAMPAIGN
 ------------------------------------------------
-            Number of test suites: 1
+          Number of test suites: 1
 
 DEBUG    JUnit report: 'out/campaign.xml'
 ------------------------------------------------

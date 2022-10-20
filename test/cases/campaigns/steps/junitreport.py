@@ -18,6 +18,7 @@ import typing
 
 import scenario
 import scenario.test
+import scenario.text
 
 # Related steps:
 from .execution import ExecCampaign
@@ -41,7 +42,7 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
 
         _campaign_execution = scenario.CampaignExecution(outdir=None)  # type: scenario.CampaignExecution
         if self.ACTION("Read the .xml campaign report file."):
-            self.evidence("Campaign report path: '%s'" % self.getexecstep(ExecCampaign).junit_report_path)
+            self.evidence(f"Campaign report path: '{self.getexecstep(ExecCampaign).junit_report_path}'")
             _campaign_execution_read = scenario.campaign_report.readjunitreport(self.getexecstep(ExecCampaign).junit_report_path)
             self.assertisnotnone(
                 _campaign_execution_read,
@@ -51,14 +52,15 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
             _campaign_execution = _campaign_execution_read
 
         if self.campaign_expectations.test_suite_expectations is not None:
-            if self.RESULT("The report file describes %d test suite(s):" % len(self.campaign_expectations.test_suite_expectations)):
+            _test_suites_txt = scenario.text.Countable("test suite", self.campaign_expectations.test_suite_expectations)  # type: scenario.text.Countable
+            if self.RESULT(f"The report file describes {len(_test_suites_txt)} {_test_suites_txt}{_test_suites_txt.ifany(':', '.')}"):
                 self.assertlen(
                     _campaign_execution.test_suite_executions, len(self.campaign_expectations.test_suite_expectations),
                     evidence="Number of test suites",
                 )
 
             for _test_suite_index in range(len(self.campaign_expectations.test_suite_expectations)):  # type: int
-                self.RESULT("- test suite #%d:" % (_test_suite_index + 1))
+                self.RESULT(f"- test suite #{_test_suite_index + 1}:")
                 scenario.logging.pushindentation()
                 self._checktestsuite(
                     self.testdatafromlist(
@@ -100,21 +102,22 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
                 evidence="Test suite file",
             )
         if test_suite_expectations.test_suite_path:
-            if self.RESULT("The test suite file path is '%s'." % test_suite_expectations.test_suite_path):
+            if self.RESULT(f"The test suite file path is '{test_suite_expectations.test_suite_path}'."):
                 self.assertsamepaths(
                     test_suite_execution.test_suite_file.path, test_suite_expectations.test_suite_path,
                     evidence="Test suite file",
                 )
 
         if test_suite_expectations.test_case_expectations is not None:
-            if self.RESULT("The test suite describes %d test case(s):" % len(test_suite_expectations.test_case_expectations)):
+            _test_cases_txt = scenario.text.Countable("test case", test_suite_expectations.test_case_expectations)  # type: scenario.text.Countable
+            if self.RESULT(f"The test suite describes {len(_test_cases_txt)} {_test_cases_txt}{_test_cases_txt.ifany(':', '.')}"):
                 self.assertlen(
                     test_suite_execution.test_case_executions, len(test_suite_expectations.test_case_expectations),
                     evidence="Number of test cases",
                 )
 
             for _test_case_index in range(len(test_suite_expectations.test_case_expectations)):  # type: int
-                self.RESULT("- test case #%d:" % (_test_case_index + 1))
+                self.RESULT(f"- test case #{_test_case_index + 1}:")
                 scenario.logging.pushindentation()
                 self._checktestcase(
                     self.testdatafromlist(
@@ -162,7 +165,7 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
                 evidence="Script path",
             )
         if scenario_expectations.script_path:
-            if self.RESULT("The scenario script path is '%s'." % scenario_expectations.script_path):
+            if self.RESULT(f"The scenario script path is '{scenario_expectations.script_path}'."):
                 self.assertsamepaths(
                     test_case_execution.script_path, scenario_expectations.script_path,
                     evidence="Script path",
@@ -180,14 +183,15 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
             )
 
         if scenario_expectations.status is not None:
-            if self.RESULT("The test case status is %s." % scenario_expectations.status):
+            if self.RESULT(f"The test case status is {scenario_expectations.status}."):
                 self.assertequal(
                     test_case_execution.status, scenario_expectations.status,
                     evidence="Status",
                 )
 
         if scenario_expectations.errors is not None:
-            if self.RESULT("%d error details are set:" % len(scenario_expectations.errors)):
+            _details_txt = scenario.text.Countable("detail", scenario_expectations.errors)  # type: scenario.text.Countable
+            if self.RESULT(f"{len(_details_txt)} error {_details_txt} {_details_txt.are} set{_details_txt.ifany(':', '.')}"):
                 self.assertlen(
                     test_case_execution.errors, len(scenario_expectations.errors),
                     evidence="number of errors",
@@ -198,35 +202,35 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
                     test_case_execution.errors, _error_index,
                     default=scenario.TestError(message=""),
                 )  # type: scenario.TestError
-                self.RESULT("- Error #%d:" % (_error_index + 1))
+                self.RESULT(f"- Error #{_error_index + 1}:")
                 scenario.logging.pushindentation()
                 if _error_expectations.cls is not None:
-                    if self.RESULT("Error class is %s." % _error_expectations.cls.__name__):
+                    if self.RESULT(f"Error class is {_error_expectations.cls.__name__}."):
                         self.assertisinstance(
                             _error, _error_expectations.cls,
                             evidence="Error class",
                         )
                 if _error_expectations.error_type is not None:
-                    if self.RESULT("Error type is %s." % repr(_error_expectations.error_type)):
+                    if self.RESULT(f"Error type is {_error_expectations.error_type!r}."):
                         assert isinstance(_error, scenario.ExceptionError)
                         self.assertequal(
                             _error.exception_type, _error_expectations.error_type,
                             evidence="Error type",
                         )
                 if _error_expectations.issue_id is not None:
-                    if self.RESULT("Issue id is %s." % repr(_error_expectations.issue_id)):
+                    if self.RESULT(f"Issue id is {_error_expectations.issue_id!r}."):
                         assert isinstance(_error, scenario.KnownIssue)
                         self.assertequal(
                             _error.issue_id, _error_expectations.issue_id,
                             evidence="Issue id",
                         )
-                if self.RESULT("Error message is %s." % repr(_error_expectations.message)):
+                if self.RESULT(f"Error message is {_error_expectations.message!r}."):
                     self.assertequal(
                         _error.message, _error_expectations.message,
                         evidence="Error message",
                     )
                 if _error_expectations.location is not None:
-                    if self.RESULT("Error location is %s." % repr(_error_expectations.location)):
+                    if self.RESULT(f"Error location is {_error_expectations.location!r}."):
                         self.assertequal(
                             _error.location.tolongstring() if _error.location else None, _error_expectations.location,
                             evidence="Error location",
@@ -260,16 +264,20 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
                 evidence="Total number of actions and results",
             )
         for _stat_type in ("steps", "actions", "results"):  # type: str
-            _expectation_attr_name = _stat_type[:-1] + "_stats"  # type: str
-            if getattr(expectations, _expectation_attr_name).total is not None:
-                if self.RESULT("The total number of %s is %d." % (_stat_type, getattr(expectations, _expectation_attr_name).total)):
+            _stat_expectations = getattr(expectations, _stat_type[:-1] + "_stats")  # type: scenario.test.StatExpectations
+            _stats = getattr(execution, _stat_type) if self.doexecute() else None  # type: typing.Optional[scenario.ExecTotalStats]
+            _stat_types_txt = scenario.text.Countable(_stat_type[:-1], None)  # type: scenario.text.Countable
+            if _stat_expectations.total is not None:
+                if self.RESULT(f"The total number of {_stat_types_txt.plural} is {_stat_expectations.total}."):
+                    assert _stats
                     self.assertequal(
-                        getattr(execution, _stat_type).total, getattr(expectations, _expectation_attr_name).total,
-                        evidence="Total number of %s" % _stat_type,
+                        _stats.total, _stat_expectations.total,
+                        evidence=f"Total number of {_stat_types_txt.plural}",
                     )
-            if getattr(expectations, _expectation_attr_name).executed is not None:
-                if self.RESULT("The number of %s executed is %d." % (_stat_type, getattr(expectations, _expectation_attr_name).executed)):
+            if _stat_expectations.executed is not None:
+                if self.RESULT(f"The number of {_stat_types_txt.plural} executed is {_stat_expectations.executed}."):
+                    assert _stats
                     self.assertequal(
-                        getattr(execution, _stat_type).executed, getattr(expectations, _expectation_attr_name).executed,
-                        evidence="Total number of steps",
+                        _stats.executed, _stat_expectations.executed,
+                        evidence=f"Total number of {_stat_types_txt.plural}",
                     )

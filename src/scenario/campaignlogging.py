@@ -23,6 +23,8 @@ import typing
 
 # `CampaignExecution`, `TestCaseExecution` and `TestSuiteExecution` used in method signatures.
 from .campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
+# `StrEnum` used for inheritance.
+from .enumutils import StrEnum
 
 
 class CampaignLogging:
@@ -30,12 +32,25 @@ class CampaignLogging:
     Campaign execution logging management.
     """
 
+    class _Call(StrEnum):
+        """
+        :class:`CampaignLogging` call identifiers.
+        """
+        BEGIN_CAMPAIGN = "begincampaign"
+        BEGIN_TEST_SUITE = "begintestsuite"
+        BEGIN_TEST_CASE = "begintestcase"
+        END_TEST_CASE = "endtestcase"
+        END_TEST_SUITE = "endtestsuite"
+        END_CAMPAIGN = "endcampaign"
+
     def __init__(self):  # type: (...) -> None
         """
         Initializes private instance members.
         """
-        #: History of this class's method calls. Makes it possible to adjust the display depending on the sequence of information.
-        self._calls = []  # type: typing.List[str]
+        #: History of this class's method calls.
+        #:
+        #: Makes it possible to adjust the display depending on the sequence of information.
+        self._calls = []  # type: typing.List[CampaignLogging._Call]
 
     def begincampaign(
             self,
@@ -51,7 +66,7 @@ class CampaignLogging:
         MAIN_LOGGER.rawoutput("CAMPAIGN")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
 
-        self._calls.append("begincampaign")
+        self._calls.append(CampaignLogging._Call.BEGIN_CAMPAIGN)
 
     def begintestsuite(
             self,
@@ -64,10 +79,10 @@ class CampaignLogging:
         """
         from .loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.rawoutput("  TEST SUITE '%s'" % test_suite_execution.test_suite_file.path)
+        MAIN_LOGGER.rawoutput(f"  TEST SUITE '{test_suite_execution.test_suite_file.path}'")
         MAIN_LOGGER.rawoutput("  ----------------------------------------------")
 
-        self._calls.append("begintestsuite")
+        self._calls.append(CampaignLogging._Call.BEGIN_TEST_SUITE)
 
     def begintestcase(
             self,
@@ -80,12 +95,12 @@ class CampaignLogging:
         """
         from .loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.rawoutput("    Executing '%s'" % test_case_execution.name)
+        MAIN_LOGGER.rawoutput(f"    Executing '{test_case_execution.name}'")
 
         # Ensure consecutive loggings will be indented below the line before.
         MAIN_LOGGER.pushindentation("      ")
 
-        self._calls.append("begintestcase")
+        self._calls.append(CampaignLogging._Call.BEGIN_TEST_CASE)
 
     def endtestcase(
             self,
@@ -101,9 +116,9 @@ class CampaignLogging:
         from .testerrors import TestError
 
         if test_case_execution.log.path and test_case_execution.log.path.is_file():
-            MAIN_LOGGER.debug("Log file:    '%s'" % test_case_execution.log.path)
+            MAIN_LOGGER.debug("Log file:    '%s'", test_case_execution.log.path)
         if test_case_execution.json.path and test_case_execution.json.path.is_file():
-            MAIN_LOGGER.debug("JSON report: '%s'" % test_case_execution.json.path)
+            MAIN_LOGGER.debug("JSON report: '%s'", test_case_execution.json.path)
 
         if test_case_execution.status == ExecutionStatus.WARNINGS:
             MAIN_LOGGER.warning(str(test_case_execution.status))
@@ -118,7 +133,7 @@ class CampaignLogging:
         # Break the test case logging indentation set in :meth:`begintestcase()`.
         MAIN_LOGGER.popindentation("      ")
 
-        self._calls.append("endtestcase")
+        self._calls.append(CampaignLogging._Call.END_TEST_CASE)
 
     def endtestsuite(
             self,
@@ -133,18 +148,18 @@ class CampaignLogging:
         from .loggermain import MAIN_LOGGER
 
         MAIN_LOGGER.rawoutput("")
-        MAIN_LOGGER.rawoutput("  END OF TEST SUITE '%s'" % test_suite_execution.test_suite_file.path)
+        MAIN_LOGGER.rawoutput(f"  END OF TEST SUITE '{test_suite_execution.test_suite_file.path}'")
         MAIN_LOGGER.rawoutput("  ----------------------------------------------")
-        MAIN_LOGGER.rawoutput("             Number of test cases: %d" % test_suite_execution.counts.total)
-        MAIN_LOGGER.rawoutput("         Number of tests in error: %d" % (test_suite_execution.counts.errors + test_suite_execution.counts.failures))
-        MAIN_LOGGER.rawoutput("    Number of tests with warnings: %d" % test_suite_execution.counts.warnings)
-        MAIN_LOGGER.rawoutput("                  Number of steps: %s" % str(test_suite_execution.steps))
-        MAIN_LOGGER.rawoutput("                Number of actions: %s" % str(test_suite_execution.actions))
-        MAIN_LOGGER.rawoutput("                Number of results: %s" % str(test_suite_execution.results))
-        MAIN_LOGGER.rawoutput("                             Time: %s" % f2strduration(test_suite_execution.time.elapsed))
+        MAIN_LOGGER.rawoutput(f"             Number of test cases: {test_suite_execution.counts.total}")
+        MAIN_LOGGER.rawoutput(f"         Number of tests in error: {test_suite_execution.counts.errors + test_suite_execution.counts.failures}")
+        MAIN_LOGGER.rawoutput(f"    Number of tests with warnings: {test_suite_execution.counts.warnings}")
+        MAIN_LOGGER.rawoutput(f"                  Number of steps: {test_suite_execution.steps}")
+        MAIN_LOGGER.rawoutput(f"                Number of actions: {test_suite_execution.actions}")
+        MAIN_LOGGER.rawoutput(f"                Number of results: {test_suite_execution.results}")
+        MAIN_LOGGER.rawoutput(f"                             Time: {f2strduration(test_suite_execution.time.elapsed)}")
         MAIN_LOGGER.rawoutput("")
 
-        self._calls.append("endtestsuite")
+        self._calls.append(CampaignLogging._Call.END_TEST_SUITE)
 
     def endcampaign(
             self,
@@ -162,20 +177,20 @@ class CampaignLogging:
 
         MAIN_LOGGER.rawoutput("END OF CAMPAIGN")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
-        MAIN_LOGGER.rawoutput("            Number of test suites: %d" % len(campaign_execution.test_suite_executions))
+        MAIN_LOGGER.rawoutput(f"          Number of test suites: {len(campaign_execution.test_suite_executions)}")
         if len(campaign_execution.test_suite_executions) > 1:
-            MAIN_LOGGER.rawoutput("           Number of test cases: %d" % campaign_execution.counts.total)
-            MAIN_LOGGER.rawoutput("       Number of tests in error: %d" % campaign_execution.counts.failures)
-            MAIN_LOGGER.rawoutput("  Number of tests with warnings: %d" % campaign_execution.counts.warnings)
-            MAIN_LOGGER.rawoutput("                Number of steps: %s" % str(campaign_execution.steps))
-            MAIN_LOGGER.rawoutput("              Number of actions: %s" % str(campaign_execution.actions))
-            MAIN_LOGGER.rawoutput("              Number of results: %s" % str(campaign_execution.results))
-            MAIN_LOGGER.rawoutput("                           Time: %s" % f2strduration(campaign_execution.time.elapsed))
+            MAIN_LOGGER.rawoutput(f"           Number of test cases: {campaign_execution.counts.total}")
+            MAIN_LOGGER.rawoutput(f"       Number of tests in error: {campaign_execution.counts.failures}")
+            MAIN_LOGGER.rawoutput(f"  Number of tests with warnings: {campaign_execution.counts.warnings}")
+            MAIN_LOGGER.rawoutput(f"                Number of steps: {campaign_execution.steps}")
+            MAIN_LOGGER.rawoutput(f"              Number of actions: {campaign_execution.actions}")
+            MAIN_LOGGER.rawoutput(f"              Number of results: {campaign_execution.results}")
+            MAIN_LOGGER.rawoutput(f"                           Time: {f2strduration(campaign_execution.time.elapsed)}")
         MAIN_LOGGER.rawoutput("")
 
-        MAIN_LOGGER.debug("JUnit report: '%s'" % campaign_execution.junit_path)
+        MAIN_LOGGER.debug("JUnit report: '%s'", campaign_execution.junit_path)
 
-        self._calls.append("endcampaign")
+        self._calls.append(CampaignLogging._Call.END_CAMPAIGN)
 
 
 __doc__ += """

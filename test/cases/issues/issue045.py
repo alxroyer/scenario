@@ -54,7 +54,7 @@ class CheckLocalImport(LogVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Local import")
 
-        if self.RESULT("The scenario returned %d (SUCCESS)." % int(scenario.ErrorCode.SUCCESS)):
+        if self.RESULT(f"The scenario returned {scenario.ErrorCode.SUCCESS} (SUCCESS)."):
             self.assertequal(
                 self.subprocess.returncode, scenario.ErrorCode.SUCCESS,
                 evidence="Return code",

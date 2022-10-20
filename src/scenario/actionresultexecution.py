@@ -61,4 +61,4 @@ class ActionResultExecution:
         """
         from .reflex import qualname
 
-        return "<%s of %s '%s'>" % (qualname(type(self)), self.definition.type, self.definition.description)
+        return f"<{qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"

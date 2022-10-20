@@ -214,7 +214,7 @@ class ScenarioExpectations:
             if isinstance(step_spec, str):
                 if _step_expectation.name == step_spec:
                     return _step_expectation
-        raise KeyError("No such step expectations %s" % repr(step_spec))
+        raise KeyError(f"No such step expectations {step_spec!r}")
 
 
 class StepExpectations:
@@ -231,11 +231,11 @@ class StepExpectations:
 
     def __str__(self):  # type: (...) -> str
         if self.number is not None:
-            return "step#%d" % self.number
+            return f"step#{self.number}"
         if self.name is not None:
-            return "step<name=%s>" % repr(self.name)
+            return f"step<name={self.name!r}>"
         if self.description is not None:
-            return "step<description=%s>" % repr(self.description)
+            return f"step<description={self.description!r}>"
         return "step<?>"
 
     def addaction(
@@ -274,7 +274,7 @@ class StepExpectations:
         """
         assert self.action_result_expectations, "No action/result expectations yet"
         if self.action_result_expectations[action_result_index].type != scenario.ActionResult.Type.ACTION:
-            raise KeyError("Action/result#%d: Not an action" % action_result_index)
+            raise KeyError(f"Action/result#{action_result_index}: Not an action")
         return self.action_result_expectations[action_result_index]
 
     def result(
@@ -289,7 +289,7 @@ class StepExpectations:
         """
         assert self.action_result_expectations, "No action/result expectations yet"
         if self.action_result_expectations[action_result_index].type != scenario.ActionResult.Type.RESULT:
-            raise KeyError("Action/result#%d: Not an expected result" % action_result_index)
+            raise KeyError(f"Action/result#{action_result_index}: Not an expected result")
         return self.action_result_expectations[action_result_index]
 
 

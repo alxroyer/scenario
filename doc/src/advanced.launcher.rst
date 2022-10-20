@@ -49,7 +49,7 @@ The :py:meth:`scenario.args.Args._checkargs()` method may be overloaded in order
 after the arguments have been parsed, and the :py:class:`scenario.args.Args` attributes have been updated:
 
 - Start or finish with calling the mother class's :py:meth:`scenario.scenarioargs.ScenarioArgs._checkargs()` method.
-- This method is expected to return :py:const:`True` or :py:const:`False` whether an error has been detected or not.
+- This method is expected to return ``True`` or ``False`` whether an error has been detected or not.
 
 .. Overload of the `_checkargs()` method.
 .. literalinclude:: ../../demo/run-demo.py

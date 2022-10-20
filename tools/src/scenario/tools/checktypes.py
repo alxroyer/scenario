@@ -37,7 +37,7 @@ class CheckTypes:
             self.addarg("All", "all", bool).define(
                 "--all",
                 action="store_true", default=False,
-                help="Show all errors. Only the %d first errors otherwise." % check_types.max_errors,
+                help=f"Show all errors. Only the {check_types.max_errors} first errors otherwise.",
             )
 
     def __init__(
@@ -66,7 +66,7 @@ class CheckTypes:
         checkthirdpartytoolversion("mypy", ["mypy", "--version"])
 
         # Mypy execution.
-        scenario.logging.info("Executing mypy with '%s'..." % self.mypy_conf_path)
+        scenario.logging.info(f"Executing mypy with '{self.mypy_conf_path}'...")
         _subprocess = SubProcess("mypy")  # type: SubProcess
         _subprocess.addargs("--config-file", self.mypy_conf_path)
         _subprocess.setcwd(self.main_path)

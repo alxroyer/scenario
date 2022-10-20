@@ -27,7 +27,8 @@ Mandatory:
 
 Recommended:
 
-- mypy (`https://pypi.org/project/mypy/ <https://pypi.org/project/mypy/>`_)
+- mypy (`https://pypi.org/project/mypy/ <https://pypi.org/project/mypy/>`_), tested with version 0.931
+- pytz (`https://pypi.org/project/pytz/ <https://pypi.org/project/pytz/>`_)
 - PyYAML (`https://pypi.org/project/PyYAML/ <https://pypi.org/project/PyYAML/>`_)
 
 Documentation generation (optional):

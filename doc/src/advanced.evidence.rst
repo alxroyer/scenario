@@ -34,6 +34,6 @@ lets you save evidence while the test is executed.
 
 :ref:`Assertion routines <assertions.evidence-param>` defined in the :py:class:`scenario.assertions.Assertions` class
 can be used to collect evidence as well.
-Set the optional ``evidence`` parameter to either :py:const:`True` or a string describing what is being checked.
+Set the optional ``evidence`` parameter to either ``True`` or a string describing what is being checked.
 
 Test evidence is saved with the scenario JSON reports in the 'evidence' list of each action or expected result execution.

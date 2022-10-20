@@ -42,8 +42,9 @@ class ScenarioArgs(Args):
         Declares the scenario runner program arguments,
         and binds them to the member fields.
 
-        :param positional_args: :const:`False` to disable the scenario path positional arguments definition.
-                                Useful for user programs that wish to redefine it.
+        :param positional_args:
+            ``False`` to disable the scenario path positional arguments definition.
+            Useful for user programs that wish to redefine it.
         """
         from .path import Path
 
@@ -51,7 +52,7 @@ class ScenarioArgs(Args):
 
         self.setdescription("Scenario test execution.")
 
-        #: :const:`True` when the test is executed for documentation generation only,
+        #: ``True`` when the test is executed for documentation generation only,
         #: i.e. the test script should not be executed.
         self.doc_only = False  # type: bool
         self.addarg("Doc only", "doc_only", bool).define(
@@ -61,7 +62,7 @@ class ScenarioArgs(Args):
         )
 
         #: JSON report output file path.
-        #: No JSON report when :const:`None`.
+        #: No JSON report when ``None``.
         self.json_report = None  # type: typing.Optional[Path]
         self.addarg("JSON output file", "json_report", Path).define(
             "--json-report", metavar="JSON_REPORT_PATH",
@@ -97,17 +98,17 @@ class ScenarioArgs(Args):
         """
         Checks scenario runner arguments once parsed.
 
-        :return: :const:`True` for success, :const:`False` otherwise.
+        :return: ``True`` for success, ``False`` otherwise.
         """
         from .loggermain import MAIN_LOGGER
         from .path import Path
 
-        if not Args._checkargs(self, args):
+        if not super()._checkargs(args):
             return False
 
         for _scenario_path in self.scenario_paths:  # type: Path
             if not _scenario_path.is_file():
-                MAIN_LOGGER.error("No such file '%s'" % _scenario_path)
+                MAIN_LOGGER.error(f"No such file '{_scenario_path}'")
                 return False
 
         # Multiple scenarios.

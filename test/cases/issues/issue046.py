@@ -19,6 +19,7 @@ import typing
 
 import scenario
 import scenario.test
+import scenario.text
 
 # Steps:
 from campaigns.steps.execution import ExecCampaign
@@ -40,14 +41,14 @@ class Issue46(scenario.test.TestCase):
 
         # Error message verifications.
         self.addstep(CheckErrorDisplay(ExecCampaign.getinstance(), scenario.test.paths.SYNTAX_ERROR_SCENARIO, {
-            "File \"%s\", line 31" % os.fspath(scenario.test.paths.SYNTAX_ERROR_SCENARIO): 2,  # location: SYNTAX_ERROR_SCENARIO/syntax-error
+            f"File \"{os.fspath(scenario.test.paths.SYNTAX_ERROR_SCENARIO)}\", line 31": 2,  # location: SYNTAX_ERROR_SCENARIO/syntax-error
             "SyntaxError: invalid syntax": 2,
         }))
         self.addstep(CheckErrorDisplay(ExecCampaign.getinstance(), scenario.test.paths.MISSING_SCENARIO_CLASS_SCENARIO, {
-            "LookupError: Could not find scenario class in '%s'" % scenario.test.paths.MISSING_SCENARIO_CLASS_SCENARIO: 2,
+            f"LookupError: Could not find scenario class in '{scenario.test.paths.MISSING_SCENARIO_CLASS_SCENARIO}'": 2,
         }))
         self.addstep(CheckErrorDisplay(ExecCampaign.getinstance(), scenario.test.paths.NO_SUCH_FILE_SCENARIO, {
-            "No such file '%s'" % scenario.test.paths.NO_SUCH_FILE_SCENARIO: 2,
+            f"No such file '{scenario.test.paths.NO_SUCH_FILE_SCENARIO}'": 2,
         }))
 
 
@@ -65,12 +66,12 @@ class CheckErrorDisplay(LogVerificationStep):
         self.error_messages = error_messages  # type: typing.Dict[str, int]
 
     def step(self):  # type: (...) -> None
-        self.STEP("'%s' error messages" % self.script_path)
+        self.STEP(f"'{self.script_path}' error messages")
 
         for _error_message in self.error_messages:  # type: str
             _count = self.error_messages[_error_message]  # type: int
-            if self.RESULT("The %s error message is displayed %d time(s) in the campaign log output." % (repr(_error_message), _count)):
+            if self.RESULT(f"The {_error_message!r} error message is displayed {scenario.text.adverbial(_count)} in the campaign log output."):
                 self.assertlinecount(
                     _error_message, _count,
-                    evidence="'%s' error message" % self.script_path,
+                    evidence=f"'{self.script_path}' error message",
                 )

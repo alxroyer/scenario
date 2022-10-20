@@ -20,6 +20,7 @@ import typing
 if typing.TYPE_CHECKING:
     from scenario.typing import JSONDict
 import scenario.test
+import scenario.text
 
 # Steps:
 from steps.common import ExecScenario
@@ -75,15 +76,15 @@ class CheckExceptionLocation(JsonReportFileVerificationStep):
         self.STEP("Exception location")
 
         _json_error = {}  # type: JSONDict
-        if self.ACTION("Get the %s error info from the JSON report" % scenario.test.text.ordinal(self.index)):
+        if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} error info from the JSON report"):
             _json_error = self.assertjson(
-                json.loads(self.report_path.read_bytes()), "errors[%d]" % self.index, type=dict,
+                json.loads(self.report_path.read_bytes()), f"errors[{self.index}]", type=dict,
                 evidence="Error info",
             )
 
-        if self.RESULT("The error location gives the fully qualified name of the method the exception occurred in: '%s'." % self.expected_fqn):
+        if self.RESULT(f"The error location gives the fully qualified name of the method the exception occurred in: '{self.expected_fqn}'."):
             self.assertendswith(
-                self.assertjson(_json_error, "location", type=str), ":" + self.expected_fqn,
+                self.assertjson(_json_error, "location", type=str), f":{self.expected_fqn}",
                 evidence="Error location",
             )
 
@@ -105,14 +106,14 @@ class CheckKnownIssueLocation(JsonReportFileVerificationStep):
         self.STEP("Known issue location")
 
         _json_known_issue = {}  # type: JSONDict
-        if self.ACTION("Get the %s known issue info from the JSON report" % scenario.test.text.ordinal(self.index)):
+        if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} known issue info from the JSON report"):
             _json_known_issue = self.assertjson(
-                json.loads(self.report_path.read_bytes()), "warnings[%d]" % self.index, type=dict,
+                json.loads(self.report_path.read_bytes()), f"warnings[{self.index}]", type=dict,
                 evidence="Known issue info",
             )
 
-        if self.RESULT("The known issue location gives the fully qualified name of the method it has been registered in: '%s'." % self.expected_fqn):
+        if self.RESULT(f"The known issue location gives the fully qualified name of the method it has been registered in: '{self.expected_fqn}'."):
             self.assertendswith(
-                self.assertjson(_json_known_issue, "location", type=str), ":" + self.expected_fqn,
+                self.assertjson(_json_known_issue, "location", type=str), f":{self.expected_fqn}",
                 evidence="Known issue location",
             )

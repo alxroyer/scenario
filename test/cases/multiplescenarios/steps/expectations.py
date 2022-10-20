@@ -20,6 +20,7 @@ import scenario
 if typing.TYPE_CHECKING:
     from scenario.typing import JSONDict
 import scenario.test
+import scenario.text
 
 # Related steps:
 from steps.commonargs import ExecCommonArgs
@@ -88,11 +89,11 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
 
         # Warning and error details.
         for _name in self._warnings_ref:
-            self._checkerrordetails(_name, self._warnings_ref[_name], "warning")
-            self._checkerrordetails(_name, self._warnings_ref[_name], "error")
+            self._checkerrordetails(_name, self._warnings_ref[_name], jsonpath="warnings")
+            self._checkerrordetails(_name, self._warnings_ref[_name], jsonpath="errors")
         for _name in self._errors_ref:
-            self._checkerrordetails(_name, self._errors_ref[_name], "warning")
-            self._checkerrordetails(_name, self._errors_ref[_name], "error")
+            self._checkerrordetails(_name, self._errors_ref[_name], jsonpath="warnings")
+            self._checkerrordetails(_name, self._errors_ref[_name], jsonpath="errors")
 
         # Extra info.
         for _name in self._success_ref:
@@ -107,43 +108,41 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         _name = ""  # type: str
         _index = 0  # type: int
 
-        if self.RESULT("The total statistics indicate a total number of tests of %d." % self._total_test_count):
+        if self.RESULT(f"The total statistics indicate a total number of tests of {self._total_test_count}."):
             self.assertjson(
                 self.parsed_data.json_total_stats, "tests.total", value=self._total_test_count,
                 evidence="Total number of tests",
             )
-        if self.RESULT("The total statistics indicate a number of tests with warnings of %d." % len(self._warnings_ref)):
+        if self.RESULT(f"The total statistics indicate a number of tests with warnings of {len(self._warnings_ref)}."):
             self.assertjson(
                 self.parsed_data.json_total_stats, "tests.warnings", value=len(self._warnings_ref),
                 evidence="Number of tests with warnings",
             )
-        if self.RESULT("The total statistics indicate a number of tests in error of %d." % len(self._errors_ref)):
+        if self.RESULT(f"The total statistics indicate a number of tests in error of {len(self._errors_ref)}."):
             self.assertjson(
                 self.parsed_data.json_total_stats, "tests.errors", value=len(self._errors_ref),
                 evidence="Number of tests in error",
             )
 
-        if self.RESULT("The output contains %d lines of scenario statistics." % self._total_test_count):
+        if self.RESULT(f"The output contains {self._total_test_count} lines of scenario statistics."):
             self.assertlen(
                 self.parsed_data.json_scenario_stats, self._total_test_count,
                 evidence="Number of scenario statistics lines",
             )
 
         _index = 0
-        if self.RESULT("The %d first line(s) correspond to the successful tests: %s. " % (
-                len(self._success_ref),
-                ", ".join(["'%s'" % _name for _name in self._success_ref]) if self._success_ref else "(no successful test)",
-        )):
+        if self.RESULT(f"The {len(self._success_ref)} first line(s) correspond to the successful tests: "
+                       f"{scenario.text.comalist(self._success_ref, quotes=True, when_empty='(no successful test)')}."):
             while _index < len(self._success_ref):
                 self.assertjson(
                     self.parsed_data.json_scenario_stats[_index], "status", value=str(scenario.ExecutionStatus.SUCCESS),
-                    evidence="Scenario #%d: success expected" % (_index + 1),
+                    evidence=f"Scenario #{_index + 1}: success expected",
                 )
                 _name = self.parsed_data.json_scenario_stats[_index]["name"]
                 self.assertin(
                     _name, self._success_ref,
-                    err="Unexpected status %s for test '%s'" % (scenario.ExecutionStatus.SUCCESS, _name),
-                    evidence="Scenario #%d: '%s'" % (_index + 1, _name),
+                    err=f"Unexpected status {scenario.ExecutionStatus.SUCCESS} for test '{_name}'",
+                    evidence=f"Scenario #{_index + 1}: '{_name}'",
                 )
                 # Store the JSON data with the corresponding expectations.
                 self._success_ref[_name].json = self.parsed_data.json_scenario_stats[_index]
@@ -152,20 +151,18 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             for _name in self._success_ref:
                 self.assertisnotnone(self._success_ref[_name].json, evidence=False)
 
-        if self.RESULT("The %d next line(s) correspond to the tests with warnings: %s." % (
-                len(self._warnings_ref),
-                ", ".join(["'%s'" % _name for _name in self._warnings_ref]) if self._warnings_ref else "(no test with warnings)",
-        )):
+        if self.RESULT(f"The {len(self._warnings_ref)} next line(s) correspond to the tests with warnings: "
+                       f"{scenario.text.comalist(self._warnings_ref, quotes=True, when_empty='(no test with warnings)')}."):
             while _index < len(self._success_ref) + len(self._warnings_ref):
                 self.assertjson(
                     self.parsed_data.json_scenario_stats[_index], "status", value=str(scenario.ExecutionStatus.WARNINGS),
-                    evidence="Scenario #%d: warnings expected" % (_index + 1),
+                    evidence=f"Scenario #{_index + 1}: warnings expected",
                 )
                 _name = self.parsed_data.json_scenario_stats[_index]["name"]
                 self.assertin(
                     _name, self._warnings_ref,
-                    err="Unexpected status %s for test '%s'" % (scenario.ExecutionStatus.WARNINGS, _name),
-                    evidence="Scenario #%d: '%s'" % (_index + 1, _name),
+                    err=f"Unexpected status {scenario.ExecutionStatus.WARNINGS} for test '{_name}'",
+                    evidence=f"Scenario #{_index + 1}: '{_name}'",
                 )
                 # Store the JSON data with the corresponding expectations.
                 self._warnings_ref[_name].json = self.parsed_data.json_scenario_stats[_index]
@@ -174,20 +171,18 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             for _name in self._warnings_ref:
                 self.assertisnotnone(self._warnings_ref[_name].json, evidence=False)
 
-        if self.RESULT("The %d last line(s) correspond to the tests in error: %s." % (
-                len(self._errors_ref),
-                ", ".join(["'%s'" % _name for _name in self._errors_ref]) if self._errors_ref else "(no test in error)",
-        )):
+        if self.RESULT(f"The {len(self._errors_ref)} last line(s) correspond to the tests in error: "
+                       f"{scenario.text.comalist(self._errors_ref, quotes=True, when_empty='(no test in error)')}."):
             while _index < len(self._success_ref) + len(self._warnings_ref) + len(self._errors_ref):
                 self.assertjson(
                     self.parsed_data.json_scenario_stats[_index], "status", value=str(scenario.ExecutionStatus.FAIL),
-                    evidence="Scenario #%d: failure expected" % (_index + 1),
+                    evidence=f"Scenario #{_index + 1}: failure expected",
                 )
                 _name = self.parsed_data.json_scenario_stats[_index]["name"]
                 self.assertin(
                     _name, self._errors_ref,
-                    err="Unexpected status %s for test '%s'" % (scenario.ExecutionStatus.FAIL, _name),
-                    evidence="Scenario #%d: '%s'" % (_index + 1, _name),
+                    err=f"Unexpected status {scenario.ExecutionStatus.FAIL} for test '{_name}'",
+                    evidence=f"Scenario #{_index + 1}: '{_name}'",
                 )
                 # Store the JSON data with the corresponding expectations.
                 self._errors_ref[_name].json = self.parsed_data.json_scenario_stats[_index]
@@ -208,7 +203,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             if stat_type.endswith("s"):
                 stat_type = stat_type[:-1]
             return any([
-                getattr(_scenario_expectations, "%s_stats" % stat_type).total is not None
+                getattr(_scenario_expectations, f"{stat_type}_stats").total is not None
                 for _scenario_expectations in self.scenario_expectations
             ])
 
@@ -220,7 +215,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                     if not self.doc_only:
                         _step_stats.executed += self.assertjson(self.parsed_data.json_scenario_stats[_index], "steps.executed", type=int)
                     _step_stats.total += self.assertjson(self.parsed_data.json_scenario_stats[_index], "steps.total", type=int)
-                    self.evidence("%s <= '%s'" % (str(_step_stats), self.assertjson(self.parsed_data.json_scenario_stats[_index], "name", type=str)))
+                    self.evidence(f"{_step_stats} <= '{self.assertjson(self.parsed_data.json_scenario_stats[_index], 'name', type=str)}'")
                 if not self.doc_only:
                     self.assertjson(
                         self.parsed_data.json_total_stats, "steps.executed", value=_step_stats.executed,
@@ -239,7 +234,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                     if not self.doc_only:
                         _action_stats.executed += self.assertjson(self.parsed_data.json_scenario_stats[_index], "actions.executed", type=int)
                     _action_stats.total += self.assertjson(self.parsed_data.json_scenario_stats[_index], "actions.total", type=int)
-                    self.evidence("%s <= '%s'" % (str(_action_stats), self.assertjson(self.parsed_data.json_scenario_stats[_index], "name", type=str)))
+                    self.evidence(f"{_action_stats} <= '{self.assertjson(self.parsed_data.json_scenario_stats[_index], 'name', type=str)}'")
                 if not self.doc_only:
                     self.assertjson(
                         self.parsed_data.json_total_stats, "actions.executed", value=_action_stats.executed,
@@ -258,7 +253,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                     if not self.doc_only:
                         _result_stats.executed += self.assertjson(self.parsed_data.json_scenario_stats[_index], "results.executed", type=int)
                     _result_stats.total += self.assertjson(self.parsed_data.json_scenario_stats[_index], "results.total", type=int)
-                    self.evidence("%s <= '%s'" % (str(_result_stats), self.assertjson(self.parsed_data.json_scenario_stats[_index], "name", type=str)))
+                    self.evidence(f"{_result_stats} <= '{self.assertjson(self.parsed_data.json_scenario_stats[_index], 'name', type=str)}'")
                 if not self.doc_only:
                     self.assertjson(
                         self.parsed_data.json_total_stats, "results.executed", value=_result_stats.executed,
@@ -277,10 +272,10 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                     _scenario_time = self.assertjson(self.parsed_data.json_scenario_stats[_index], "time", type=float)  # type: float
                     self.assertgreaterequal(
                         _scenario_time, 0.0,
-                        evidence="Scenario time '%s'" % _name,
+                        evidence=f"Scenario time '{_name}'",
                     )
                     _total_time += _scenario_time
-                    self.evidence("%s <= '%s'" % (scenario.datetime.f2strduration(_total_time), _name))
+                    self.evidence(f"{scenario.datetime.f2strduration(_total_time)} <= '{_name}'")
                 self.assertnear(
                     self.assertjson(self.parsed_data.json_total_stats, "time", type=float), _total_time, 0.100,
                     evidence="Total time",
@@ -290,28 +285,30 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             self,
             test_name,  # type: str
             scenario_data,  # type: CheckFinalResultsLogExpectations.ScenarioData
-            error_type,  # type: str
+            jsonpath,  # type: str
     ):  # type: (...) -> None
         _scenario_expectations = scenario_data.expectations  # type: scenario.test.ScenarioExpectations
         _json_scenario_stats = scenario_data.json or {}  # type: JSONDict
-        assert error_type in ("warning", "error")
-        _error_expectations_list = (
-            _scenario_expectations.warnings if error_type == "warning"
-            else _scenario_expectations.errors
-        )  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
-        _json_path_list = "%ss" % error_type  # type: str
+        assert jsonpath in ("warnings", "errors")
+        _error_expectations_list = None  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
+        if jsonpath == "warnings":
+            _error_expectations_list = _scenario_expectations.warnings
+        if jsonpath == "errors":
+            _error_expectations_list = _scenario_expectations.errors
 
         if _error_expectations_list is not None:
-            if self.RESULT("%d %ss are notified for '%s':" % (len(_error_expectations_list), error_type, test_name)):
+            assert jsonpath.endswith("s")
+            _errors_txt = scenario.text.Countable(jsonpath[:-1], _error_expectations_list)  # type: scenario.text.Countable
+            if self.RESULT(f"{len(_errors_txt)} {_errors_txt} {_errors_txt.are} notified for '{test_name}'{_errors_txt.ifany(':', '.')}"):
                 self.assertjson(
-                    _json_scenario_stats, _json_path_list, type=list, len=len(_error_expectations_list),
-                    evidence="Number of %ss" % error_type,
+                    _json_scenario_stats, jsonpath, type=list, len=len(_error_expectations_list),
+                    evidence=f"Number of {_errors_txt.plural}",
                 )
             for _index in range(len(_error_expectations_list)):  # type: int
                 _error_expectations = _error_expectations_list[_index]  # type: scenario.test.ErrorExpectations
 
-                self.RESULT("- %s #%d" % (error_type.capitalize(), _index + 1))
-                _json_path_error = "%s[%d]" % (_json_path_list, _index)  # type: str
+                self.RESULT(f"- {_errors_txt.singular.capitalize()} #{_index + 1}")
+                _jsonpath_error = f"{jsonpath}[{_index}]"  # type: str
                 scenario.logging.pushindentation()
 
                 # Note: `_error_expectations.cls` cannot be checked from JSON data.
@@ -321,27 +318,27 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                     # The error type is checked right after.
                     assert _error_expectations.error_type == "known-issue"
                 if _error_expectations.error_type is not None:
-                    if self.RESULT("Error type is %s." % repr(_error_expectations.error_type)):
+                    if self.RESULT(f"Error type is {_error_expectations.error_type!r}."):
                         self.assertjson(
-                            _json_scenario_stats, _json_path_error + ".type", value=_error_expectations.error_type,
+                            _json_scenario_stats, f"{_jsonpath_error}.type", value=_error_expectations.error_type,
                             evidence="Error type",
                         )
                 if _error_expectations.issue_id is not None:
-                    if self.RESULT("Issue id is %s." % repr(_error_expectations.issue_id)):
+                    if self.RESULT(f"Issue id is {_error_expectations.issue_id!r}."):
                         self.assertjson(
-                            _json_scenario_stats, _json_path_error + ".id", value=_error_expectations.issue_id,
+                            _json_scenario_stats, f"{_jsonpath_error}.id", value=_error_expectations.issue_id,
                             evidence="Issue id",
                         )
-                if self.RESULT("%s message is %s." % (error_type.capitalize(), repr(_error_expectations.message))):
+                if self.RESULT(f"{_errors_txt.singular.capitalize()} message is {_error_expectations.message!r}."):
                     self.assertjson(
-                        _json_scenario_stats, _json_path_error + ".message", value=_error_expectations.message,
-                        evidence="%s message" % error_type.capitalize(),
+                        _json_scenario_stats, f"{_jsonpath_error}.message", value=_error_expectations.message,
+                        evidence=f"{_errors_txt.singular.capitalize()} message",
                     )
                 if _error_expectations.location is not None:
-                    if self.RESULT("%s location is %s." % (error_type.capitalize(), repr(_error_expectations.location))):
+                    if self.RESULT(f"{_errors_txt.singular.capitalize()} location is {_error_expectations.location!r}."):
                         self.assertjson(
-                            _json_scenario_stats, _json_path_error + ".location", value=_error_expectations.location,
-                            evidence="%s location" % error_type.capitalize(),
+                            _json_scenario_stats, f"{_jsonpath_error}.location", value=_error_expectations.location,
+                            evidence=f"{_errors_txt.singular.capitalize()} location",
                         )
 
                 scenario.logging.popindentation()
@@ -355,24 +352,25 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             assert scenario.ConfigKey.RESULTS_EXTRA_INFO in self.getexecstep(ExecCommonArgs).config_values
             _extra_info_option = self.getexecstep(ExecCommonArgs).config_values[scenario.ConfigKey.RESULTS_EXTRA_INFO] or ""  # type: str
             if not _extra_info_option:
-                if self.RESULT("No extra info is displayed with the '%s' scenario." % _scenario_expectations.name):
+                if self.RESULT(f"No extra info is displayed with the '{_scenario_expectations.name}' scenario."):
                     assert scenario_data.json
                     self.assertisempty(
                         scenario_data.json["extra-info"] or "",
-                        evidence="'%s' extra info" % _scenario_expectations.name,
+                        evidence=f"'{_scenario_expectations.name}' extra info",
                     )
             else:
                 for _attribute_name in _extra_info_option.split(","):  # type: str
                     _attribute_name = _attribute_name.strip()
-                    self.assertisnotempty(_attribute_name, "Invalid attribute name '%s' in extra info option" % _attribute_name)
+                    self.assertisnotempty(_attribute_name, f"Invalid attribute name '{_attribute_name}' in extra info option")
                     self.assertin(
                         _attribute_name, _scenario_expectations.attributes,
-                        "No such attribute '%s' in '%s' attribute expectations" % (_attribute_name, _scenario_expectations.name),
+                        f"No such attribute '{_attribute_name}' in '{_scenario_expectations.name}' attribute expectations",
                     )
-                    if self.RESULT("The '%s' attribute of the '%s' scenario, i.e. '%s', is displayed with its extra info."
-                                   % (_attribute_name, _scenario_expectations.name, _scenario_expectations.attributes[_attribute_name])):
+                    if self.RESULT(f"The '{_attribute_name}' attribute of the '{_scenario_expectations.name}' scenario, "
+                                   f"i.e. {_scenario_expectations.attributes[_attribute_name]!r}, "
+                                   "is displayed with its extra info."):
                         assert scenario_data.json
                         self.assertin(
                             _scenario_expectations.attributes[_attribute_name], scenario_data.json["extra-info"],
-                            evidence="'%s' extra info - '%s' attribute" % (_scenario_expectations.name, _attribute_name),
+                            evidence=f"'{_scenario_expectations.name}' extra info - '{_attribute_name}' attribute",
                         )

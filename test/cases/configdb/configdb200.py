@@ -27,7 +27,7 @@ class ConfigDb200(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="JSON configuration file",
+            title="Load JSON configuration file",
             objective="Check that a JSON configuration file can be loaded.",
             features=[scenario.test.features.CONFIG_DB],
         )

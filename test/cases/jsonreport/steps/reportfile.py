@@ -28,5 +28,5 @@ class JsonReportFileVerificationStep(scenario.test.VerificationStep):
 
     @property
     def report_path(self):  # type: (...) -> scenario.Path
-        assert self.subprocess.report_path, "JSON report should have generated with %s" % self.subprocess
+        assert self.subprocess.report_path, f"JSON report should have generated with {self.subprocess}"
         return self.subprocess.report_path

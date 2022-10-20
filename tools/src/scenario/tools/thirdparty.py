@@ -33,8 +33,8 @@ def checkthirdpartytoolversion(
     :param tool_name: Tool name, for display purpose.
     :param cmd_line: Command line used to display the tool's version.
     :param cwd: Current working directory to use, if required.
-    :param exit_on_error: :const:`False` when the program should not fail if the tool is not found. :const:`True` by default.
-    :return: Version of the tool if found, :const:`None` otherwise.
+    :param exit_on_error: ``False`` when the program should not fail if the tool is not found. ``True`` by default.
+    :return: Version of the tool if found, ``None`` otherwise.
     """
     _cmd = SubProcess(*cmd_line)  # type: SubProcess
     if cwd:
@@ -44,7 +44,7 @@ def checkthirdpartytoolversion(
     if not _cmd.run():
         return None
 
-    scenario.logging.debug("%s: reading _version" % tool_name)
+    scenario.logging.debug("%s: reading _version", tool_name)
     _version = _cmd.stdout  # type: bytes
     if not _version:
         # dot, ... print out their version in stderr.
@@ -52,24 +52,24 @@ def checkthirdpartytoolversion(
     assert _version
 
     _version = _version.splitlines()[0].strip()
-    scenario.logging.debug("%s: _version=%s" % (tool_name, repr(_version)))
+    scenario.logging.debug("%s: _version=%r", tool_name, _version)
     # "Python 3.8.6"
     # "mypy 0.770"
     # "sphinx-apidoc 3.0.4"
     # "sphinx-build 3.0.4"
     if _version.lower().startswith(tool_name.lower().encode("utf-8")):
         _version = _version[len(tool_name):].lstrip()
-        scenario.logging.debug("%s: _version=%s" % (tool_name, repr(_version)))
+        scenario.logging.debug("%s: _version=%r", tool_name, _version)
     # "dot - graphviz version 2.44.1 (20200629.0800)"
     if b'version' in _version:
         _version = _version[_version.find(b'version') + len(b'version'):].lstrip()
-        scenario.logging.debug("%s: _version=%s" % (tool_name, repr(_version)))
+        scenario.logging.debug("%s: _version=%r", tool_name, _version)
     # "java version "1.8.0_251""
     if _version.startswith(b'"') and _version.endswith(b'"'):
         _version = _version[1:-1]
     # "chmod (GNU coreutils) 8.26"
     if _version.startswith(b'(') and (b')' in _version):
         _version = _version[_version.find(b')') + 1:].lstrip()
-        scenario.logging.debug("%s: _version=%s" % (tool_name, repr(_version)))
-    scenario.logging.info("VERSION: %s = %s" % (tool_name, _version.decode("utf-8")))
+        scenario.logging.debug("%s: _version=%r", tool_name, _version)
+    scenario.logging.info(f"VERSION: {tool_name} = {_version.decode('utf-8')}")
     return _version.decode("utf-8")

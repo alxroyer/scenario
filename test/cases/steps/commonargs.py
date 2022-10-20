@@ -19,6 +19,7 @@ import typing
 
 import scenario
 import scenario.test
+import scenario.text
 
 
 class ExecCommonArgs(scenario.test.ExecutionStep):
@@ -79,7 +80,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
                 else:
                     _action_description1 += ", with log colorization disabled"
             else:
-                _action_description1 += ", with %s=%s" % (scenario.enumutils.enum2str(_config_key), repr(_config_value))
+                _action_description1 += f", with {scenario.enumutils.enum2str(_config_key)}={_config_value!r}"
 
             if self.doexecute():
                 self.subprocess.unsetconfigvalue(_config_key)
@@ -90,9 +91,9 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
         _config_files_mentionned = 0  # type: int
         for _config_file_path in self.config_file_paths:  # type: scenario.Path
             if _config_files_mentionned == 0:
-                _action_description1 += ", with configuration file '%s'" % _config_file_path
+                _action_description1 += f", with configuration file '{_config_file_path}'"
             else:
-                _action_description1 += ", then '%s'" % _config_file_path
+                _action_description1 += f", then '{_config_file_path}'"
             _config_files_mentionned += 1
 
             if self.doexecute():
@@ -101,15 +102,8 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
         # Debug classes.
         if self.debug_classes is not None:
             if self.debug_classes:
-                _action_description1 += ", with "
-                if len(self.debug_classes) > 1:
-                    _action_description1 += ", ".join(["'%s'" % _debug_class for _debug_class in self.debug_classes[:-1]])
-                    _action_description1 += " and "
-                _action_description1 += "'%s'" % self.debug_classes[-1]
-                _action_description1 += " debug class"
-                if len(self.debug_classes) > 1:
-                    _action_description1 += "es"
-                _action_description1 += " enabled"
+                _action_description1 += f", with {scenario.text.comalist(self.debug_classes, quotes=True)} "
+                _action_description1 += f"{scenario.text.pluralize('debug class', len(self.debug_classes))} enabled"
 
                 if self.doexecute():
                     for _debug_class in self.debug_classes:  # type: str
@@ -147,16 +141,16 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
             default=None,  # type: bool
     ):  # type: (...) -> bool
         # This method only deals with configuration values passed on with the `config_values` parameter.
-        assert key in self.config_values, "Unknown configuration key '%s'" % key
+        assert key in self.config_values, f"Unknown configuration key {key!r}"
 
         # When the value was set to `None` (i.e. default behaviour),
         # expect the caller has provided the default value for the given configuration key.
         if self.config_values[key] is None:
-            assert default is not None, "Value is `None` for key '%s', please provide default value" % key
+            assert default is not None, f"Value is None for key {key!r}, please provide default value"
             return default
 
         # Use the `scenario.ConfigNode` class to interprete the string as a boolean value.
-        _config_node = scenario.ConfigNode("")  # type: scenario.ConfigNode
+        _config_node = scenario.ConfigNode(parent=None, key="foo")  # type: scenario.ConfigNode
         _config_node.set(self.config_values[key])
         return _config_node.cast(bool)
 
@@ -173,4 +167,4 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
         if isinstance(self.subprocess, scenario.test.CampaignSubProcess):
             _paths = self.subprocess.unit_paths
 
-        return ", ".join(["'%s'" % _scenario_path for _scenario_path in _paths])
+        return scenario.text.comalist(_paths, quotes=True)

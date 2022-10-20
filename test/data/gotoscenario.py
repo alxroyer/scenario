@@ -32,23 +32,23 @@ class GotoScenario(scenario.Scenario):
 
         if self.ACTION("Initialize counter A with 0."):
             self.a = 0
-            self.evidence("A = %d" % self.a)
+            self.evidence(f"A = {self.a}")
         if self.ACTION("Initialize counter B with 0."):
             self.b = 0
-            self.evidence("B = %d" % self.b)
+            self.evidence(f"B = {self.b}")
 
     def step010(self):  # type: (...) -> None  # location: step010
         self.STEP("A++")
 
         if self.ACTION("Increment counter A."):
             self.a += 1
-            self.evidence("A = %d" % self.a)
+            self.evidence(f"A = {self.a}")
 
     def step020(self):  # type: (...) -> None  # location: step020
         self.STEP("A?")
 
         if self.ACTION("While A is lower than 2, go back to step<010>, otherwise jump over step<030> and go to step<050>."):
-            self.evidence("A = %d" % self.a)
+            self.evidence(f"A = {self.a}")
             if self.a < 2:
                 self.goto("step010")
             else:
@@ -62,14 +62,14 @@ class GotoScenario(scenario.Scenario):
 
         if self.ACTION("Increment counter B."):
             self.b += 1
-            self.evidence("B = %d" % self.b)
+            self.evidence(f"B = {self.b}")
 
     def step040(self):  # type: (...) -> None  # location: step040
         self.STEP("Check A and B")
 
         if self.RESULT("Check counter A equals 2."):
-            self.evidence("A = %d" % self.a)
+            self.evidence(f"A = {self.a}")
             self.assertequal(self.a, 2)
         if self.RESULT("Check counter B equals 0."):
-            self.evidence("B = %d" % self.b)
+            self.evidence(f"B = {self.b}")
             self.assertequal(self.b, 0)

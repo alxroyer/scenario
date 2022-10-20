@@ -29,15 +29,15 @@ def shouldupdate(
 
     :param output: File to update.
     :param inputs: Input files.
-    :return: :const:`True` when an input file is newer than the output file, :const:`False` otherwise.
+    :return: ``True`` when an input file is newer than the output file, ``False`` otherwise.
     """
     def filetime(
             path,  # type: scenario.Path
     ):  # type: (...) -> float
         assert path.is_file()
         _stat = path.stat()  # type: os.stat_result
-        for _field in ["st_atime", "st_mtime", "st_ctime"]:  # type: str
-            scenario.logging.debug("%s: %s=%s" % (path, _field, scenario.datetime.toiso8601(getattr(_stat, _field))))
+        for _field in ("st_atime", "st_mtime", "st_ctime"):  # type: str
+            scenario.logging.debug("%s: %s=%s", path, _field, scenario.debug.callback(scenario.datetime.f2strtime, getattr(_stat, _field)))
         return float(_stat.st_atime) + (float(_stat.st_atime_ns) / 1000000.0)
     assert inputs
     for _input in inputs:  # type: scenario.Path

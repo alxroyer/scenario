@@ -51,15 +51,15 @@ class Args(Logger):
         Sets the main instance of :class:`Args`.
 
         :param instance: :class:`Args` instance.
-        :param warn_reset: Set to :const:`False` in order to avoid the warning to be logged.
+        :param warn_reset: Set to ``False`` in order to avoid the warning to be logged.
 
         When consecutive calls occur, the latest overwrites the previous,
-        and a warning is displayed unless ``warn_reset`` is set to :const:`False`.
+        and a warning is displayed unless ``warn_reset`` is set to ``False``.
         """
         from .loggermain import MAIN_LOGGER
 
         if Args._instance and (instance is not Args._instance) and warn_reset:
-            MAIN_LOGGER.warning("Multiple instances of argument parser: %s takes place of %s" % (repr(instance), repr(Args._instance)))
+            MAIN_LOGGER.warning(f"Multiple instances of argument parser: {instance!r} takes place of {Args._instance!r}")
         Args._instance = instance
 
     @classmethod
@@ -76,8 +76,8 @@ class Args(Logger):
         """
         from .reflex import qualname
 
-        assert Args._instance is not None, "No %s instance available" % qualname(cls)
-        assert isinstance(Args._instance, cls), "Wrong type %s, %s expected" % (qualname(type(Args._instance)), qualname(cls))
+        assert Args._instance is not None, f"No {qualname(cls)} instance available"
+        assert isinstance(Args._instance, cls), f"Wrong type {qualname(type(Args._instance))}, {qualname(cls)} expected"
         return Args._instance
 
     @classmethod
@@ -88,7 +88,7 @@ class Args(Logger):
         Checks whether the single instance of :class:`Args` is set and of the ``cls`` type.
 
         :param cls: Expected type.
-        :return: :const:`True` if the single :class:`Args` instance is of the given type, :const:`False` otherwise.
+        :return: ``True`` if the single :class:`Args` instance is of the given type, ``False`` otherwise.
         """
         return isinstance(Args._instance, cls)
 
@@ -99,12 +99,11 @@ class Args(Logger):
         """
         Defines common program arguments.
 
-        :param class_debugging: :const:`True` to enable per-class debugging.
-                                :const:`False` for unclassed debugging only.
+        :param class_debugging: ``True`` to enable per-class debugging, ``False`` for unclassed debugging only.
 
         When per-class debugging is enabled, the main logger debugging is enabled by default.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
         from .errcodes import ErrorCode
         from .path import Path
 
@@ -201,10 +200,11 @@ class Args(Logger):
 
         :param member_desc: Textual description of the program argument(s).
         :param member_name: Corresponding member name in the owner :class:`Args` instance.
-        :param member_type: Type of the program argument, or base type of the program arguments list.
-                            When defined as a 2 items tuple, the argument feeds a dictionary:
-                            the first item of the tuple shall be ``str`` (for the dictionary keys),
-                            and the second item gives the type of the dictionary values.
+        :param member_type:
+            Type of the program argument, or base type of the program arguments list.
+            When defined as a 2 items tuple, the argument feeds a dictionary:
+            the first item of the tuple shall be ``str`` (for the dictionary keys),
+            and the second item gives the type of the dictionary values.
         :return: :class:`Args.ArgInfo` instance whose :meth:`ArgInfo.define()` should be called onto.
 
         :meth:`ArgInfo.define()` should be called on the :class:`ArgInfo` object returned:
@@ -229,7 +229,7 @@ class Args(Logger):
         Parses program arguments.
 
         :param args: Argument list, without the program name.
-        :return: :const:`True` for success, :const:`False` otherwise.
+        :return: ``True`` for success, ``False`` otherwise.
         """
         from .configdb import CONFIG_DB
         from .errcodes import ErrorCode
@@ -291,7 +291,7 @@ class Args(Logger):
         Handler for special verifications on program arguments.
 
         :param args: The untyped object returned by :meth:`argparse.ArgumentParser.parse_args()`.
-        :return: :const:`True` for success, :const:`False` otherwise.
+        :return: ``True`` for success, ``False`` otherwise.
 
         Shall be overridden in subclasses.
         """
@@ -379,7 +379,7 @@ class ArgInfo:
 
         :param args_instance: :class:`Args` instance to feed.
         :param parsed_args: Opaque parsed object returned by the :mod:`argparse` library.
-        :return: :const:`True` when the operation succeeded, :const:`False` otherwise.
+        :return: ``True`` when the operation succeeded, ``False`` otherwise.
         """
         from .loggermain import MAIN_LOGGER
         from .path import Path
@@ -387,18 +387,18 @@ class ArgInfo:
 
         # Retrieve and check members from both: the :class:`Args` instance on the one hand, and the opaque parsed object on the other hand.
         if self.member_name not in vars(args_instance):
-            MAIN_LOGGER.error("No such attribute '%s' in %s" % (self.member_name, qualname(type(args_instance))))
+            MAIN_LOGGER.error(f"No such attribute '{self.member_name}' in {qualname(type(args_instance))}")
             return False
         _args_member = getattr(args_instance, self.member_name)  # type: typing.Any
         _parsed_member = getattr(parsed_args, self.member_name)  # type: typing.Any
-        args_instance.debug("ArgInfo['%s'].process(): _parsed_member = %s" % (self.member_name, repr(_parsed_member)))
+        args_instance.debug("ArgInfo['%s'].process(): _parsed_member = %r", self.member_name, _parsed_member)
         if _parsed_member is None:
             # No value => nothing to do.
             # Things will be checked later on with the :meth:`Args._checkargs()` handler.
             return True
         if self.key_type is not None:
             if not isinstance(_args_member, dict):
-                MAIN_LOGGER.error("Attribute '%s' in '%s' should be a dictionary" % (self.member_name, qualname(type(args_instance))))
+                MAIN_LOGGER.error(f"Attribute '{self.member_name}' in {qualname(type(args_instance))} should be a dictionary")
                 return False
 
         # Build the list of parsed values to process.
@@ -414,7 +414,7 @@ class ArgInfo:
             _parsed_key = ""  # type: str
             if self.key_type is not None:
                 if (not isinstance(_parsed_value, list)) or (len(_parsed_value) != 2) or (not isinstance(_parsed_value[0], str)):
-                    MAIN_LOGGER.error("%s should ba a [str, ANY] list" % repr(_parsed_value))
+                    MAIN_LOGGER.error(f"{_parsed_value!r} should be a [str, ANY] list")
                     return False
                 _parsed_key = _parsed_value[0]
                 _parsed_value = _parsed_value[1]
@@ -423,18 +423,18 @@ class ArgInfo:
             if (self.value_type is Path) and isinstance(_parsed_value, str):
                 _parsed_value = Path(_parsed_value)
             if (_parsed_value is not None) and (not isinstance(_parsed_value, self.value_type)):
-                MAIN_LOGGER.error("Wrong type %s, %s expected" % (repr(_parsed_value), self.value_type.__name__))
+                MAIN_LOGGER.error(f"Wrong type {_parsed_value!r}, {qualname(self.value_type)} expected")
                 return False
 
             # Save the value in the :class:`Args` instance.
             if self.key_type is not None:
-                args_instance.debug("%s: %s: %s" % (self.member_desc, _parsed_key, repr(_parsed_value)))
+                args_instance.debug("%s: %s: %r", self.member_desc, _parsed_key, _parsed_value)
                 _args_member[_parsed_key] = _parsed_value
             elif isinstance(_args_member, list):
-                args_instance.debug("%s: %d: %s" % (self.member_desc, len(_args_member), repr(_parsed_value)))
+                args_instance.debug("%s: %d: %r", self.member_desc, len(_args_member), _parsed_value)
                 _args_member.append(_parsed_value)
             else:
-                args_instance.debug("%s: %s" % (self.member_desc, repr(_parsed_value)))
+                args_instance.debug("%s: %r", self.member_desc, _parsed_value)
                 setattr(args_instance, self.member_name, _parsed_value)
 
         return True

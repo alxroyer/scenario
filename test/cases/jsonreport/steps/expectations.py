@@ -21,6 +21,7 @@ import scenario
 if typing.TYPE_CHECKING:
     from scenario.typing import JSONDict
 import scenario.test
+import scenario.text
 
 # Related steps:
 from scenarioexecution.steps.execution import ExecScenario
@@ -54,7 +55,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         # Read the JSON report file.
         if self.ACTION("Read the JSON report file."):
             self.json = json.loads(self.report_path.read_bytes())
-            self.debuglongtext(json.dumps(self.json, indent=2), max_lines=10)
+            self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
+                       extra=self.longtext(max_lines=10))
 
         self.checkjsonreport(self.json, self.scenario_expectations)
 
@@ -81,17 +83,18 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         # Do not debug the ``json_scenario`` content for the top scenario.
         # It has usually been debugged previously.
         if self.doexecute() and (len(self._scenario_tested_items) > 1):
-            self.debuglongtext("_checkscenario(): json_scenario = %s" % json.dumps(json_scenario, indent=2), max_lines=20)
+            self.debug("_checkscenario(): json_scenario = %s", scenario.debug.jsondump(json_scenario, indent=2),
+                       extra=self.longtext(max_lines=20))
 
         if scenario_expectations.name:
-            if self.RESULT("The test name is '%s'." % scenario_expectations.name):
+            if self.RESULT(f"The test name is '{scenario_expectations.name}'."):
                 self.assertjson(
                     json_scenario, "name", value=scenario_expectations.name,
                     evidence="Test name",
                 )
 
         if scenario_expectations.status is not None:
-            if self.RESULT("The test status is %s." % scenario_expectations.status):
+            if self.RESULT(f"The test status is {scenario_expectations.status}."):
                 self.assertjson(
                     json_scenario, "status", value=str(scenario_expectations.status),
                     evidence="Test status",
@@ -106,45 +109,51 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         ):  # type: scenario.test.StatExpectations
             if _stat_expectations.total is not None:
                 if _stat_expectations.executed is not None:
-                    if self.RESULT("Statistics report %d %s out of %d executed."
-                                   % (_stat_expectations.executed, _stat_expectations.item_type, _stat_expectations.total)):
+                    _stat_types_txt = scenario.text.Countable(_stat_expectations.item_type, _stat_expectations.executed)  # type: scenario.text.Countable
+                    if self.RESULT(f"Statistics report {len(_stat_types_txt)} executed {_stat_types_txt} out of {_stat_expectations.total}."):
                         self.assertjson(
-                            json_scenario, "stats.%s.executed" % _stat_expectations.item_type, value=_stat_expectations.executed,
+                            json_scenario, f"stats.{_stat_expectations.item_type}.executed", type=int, value=_stat_expectations.executed,
                             evidence="Executed",
                         )
                         self.assertjson(
-                            json_scenario, "stats.%s.total" % _stat_expectations.item_type, value=_stat_expectations.total,
+                            json_scenario, f"stats.{_stat_expectations.item_type}.total", type=int, value=_stat_expectations.total,
                             evidence="Total",
                         )
                 else:
-                    if self.RESULT("Statistics report %d %s definitions." % (_stat_expectations.total, _stat_expectations.item_type)):
+                    _stat_type_definitions_txt = scenario.text.Countable(f"{_stat_expectations.item_type} definition", _stat_expectations.total) \
+                        # type: scenario.text.Countable
+                    if self.RESULT(f"Statistics report {len(_stat_type_definitions_txt)} {_stat_type_definitions_txt}."):
                         self.assertjson(
-                            json_scenario, "stats.%s.total" % _stat_expectations.item_type, value=_stat_expectations.total,
+                            json_scenario, f"stats.{_stat_expectations.item_type}.total", type=int, value=_stat_expectations.total,
                             evidence="Total",
                         )
 
         if scenario_expectations.attributes is not None:
-            if self.RESULT("The JSON report gives %d scenario attribute(s):" % len(scenario_expectations.attributes)):
+            _attributes_txt = scenario.text.Countable("attribute", scenario_expectations.attributes)  # type: scenario.text.Countable
+            if self.RESULT(f"The JSON report gives {len(_attributes_txt)} scenario {_attributes_txt}{_attributes_txt.ifany(':', '.')}"):
                 self.assertjson(
                     json_scenario, "attributes", type=dict, len=len(scenario_expectations.attributes),
                     evidence="Number of scenario attributes",
                 )
             for _attribute_name in scenario_expectations.attributes:
-                if self.RESULT("- %s: %s" % (_attribute_name, scenario_expectations.attributes[_attribute_name])):
+                if self.RESULT(f"- {_attribute_name}: {scenario_expectations.attributes[_attribute_name]!r}"):
                     self.assertjson(
-                        json_scenario, "attributes.%s" % _attribute_name, value=scenario_expectations.attributes[_attribute_name],
-                        evidence="Attribute '%s'" % _attribute_name,
+                        json_scenario, f"attributes.{_attribute_name}", value=scenario_expectations.attributes[_attribute_name],
+                        evidence=f"Attribute '{_attribute_name}'",
                     )
 
         if scenario_expectations.step_expectations is not None:
+            _steps_txt = scenario.text.Countable("step", scenario_expectations.step_expectations)  # type: scenario.text.Countable
+            _executions_txt = scenario.text.Countable("execution", scenario_expectations.step_expectations)  # type: scenario.text.Countable
+
             if self.getexecstep(ExecScenario).doc_only:
-                if self.RESULT("%d steps are defined:" % len(scenario_expectations.step_expectations)):
+                if self.RESULT(f"{len(_steps_txt)} {_steps_txt} {_steps_txt.are} defined{_steps_txt.ifany(':', '.')}"):
                     self.assertjson(
                         json_scenario, "steps", type=list, len=len(scenario_expectations.step_expectations),
                         evidence="Number of steps",
                     )
             else:
-                if self.RESULT("%d step executions are described in the report:" % len(scenario_expectations.step_expectations)):
+                if self.RESULT(f"{len(_executions_txt)} step {_executions_txt} {_executions_txt.are} described in the report{_executions_txt.ifany(':', '.')}"):
                     _all_step_executions = []  # type: typing.List[JSONDict]
                     for _json_step_definition in self.assertjson(json_scenario, "steps", type=list):  # type: JSONDict
                         _all_step_executions.extend(self.assertjson(_json_step_definition, "executions", type=list))
@@ -153,7 +162,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                         evidence="Number of step executions",
                     )
             for _step_definition_index in range(len(scenario_expectations.step_expectations)):
-                self.RESULT("- Step #%d:" % (_step_definition_index + 1))
+                self.RESULT(f"- Step #{_step_definition_index + 1}:")
                 _step_expectations = scenario_expectations.step_expectations[_step_definition_index]  # type: scenario.test.StepExpectations
                 _json_searched_step_definition = {}  # type: JSONDict
                 if self.doexecute():
@@ -167,8 +176,9 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                         _json_searched_step_definition = _json_step_definition
                         break
                     if not _json_searched_step_definition:
-                        self.error("No such %s in %s" % (str(_step_expectations), json.dumps(json_scenario, indent=2)))
-                        self.fail("Could not check %s definition" % str(_step_expectations))
+                        self.error("No such %s in %s", _step_expectations, scenario.debug.jsondump(json_scenario, indent=2),
+                                   extra=self.longtext(max_lines=10))
+                        self.fail(f"Could not check {_step_expectations} definition")
                 scenario.logging.pushindentation()
                 self._checkstepdefinition(
                     json_step_definition=_json_searched_step_definition,
@@ -176,7 +186,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                 )
                 scenario.logging.popindentation()
             if not self.getexecstep(ExecScenario).doc_only:
-                if self.RESULT("%d step executions have been processed." % len(scenario_expectations.step_expectations)):
+                if self.RESULT(f"{len(_executions_txt)} step {_executions_txt} {_executions_txt.have} been processed."):
                     self.assertlen(
                         self._scenario_tested_items[-1].step_executions, len(scenario_expectations.step_expectations),
                         evidence="Step executions processed",
@@ -185,21 +195,22 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
     def _checkscenarioerrors(
             self,
             json_scenario,  # type: JSONDict
-            json_path,  # type: str
+            jsonpath,  # type: str
             error_expectation_list,  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
     ):  # type: (...) -> None
-        _error_type = json_path[:-1]  # type: str
+        assert jsonpath.endswith("s")
+        _errors_txt = scenario.text.Countable(jsonpath[:-1], error_expectation_list or 0)  # type: scenario.text.Countable
 
         if error_expectation_list is not None:
-            if self.RESULT("%d %s(s) are set:" % (len(error_expectation_list), _error_type)):
+            if self.RESULT(f"{len(_errors_txt)} {_errors_txt} {_errors_txt.are} set{_errors_txt.ifany(':', '.')}"):
                 self.assertjson(
-                    json_scenario, json_path, type=list, len=len(error_expectation_list),
-                    evidence="Number of %ss" % _error_type,
+                    json_scenario, jsonpath, type=list, len=len(error_expectation_list),
+                    evidence=f"Number of {_errors_txt.plural}",
                 )
             for _error_index in range(len(error_expectation_list)):  # type: int
                 _error_expectations = error_expectation_list[_error_index]  # type: scenario.test.ErrorExpectations
-                self.RESULT("- %s #%d:" % (_error_type.capitalize(), _error_index + 1))
-                _json_path_error = "%s[%d]" % (json_path, _error_index)  # type: str
+                self.RESULT(f"- {_errors_txt.singular.capitalize()} #{_error_index + 1}:")
+                _jsonpath_error = f"{jsonpath}[{_error_index}]"  # type: str
                 scenario.logging.pushindentation()
 
                 # Note: `_error_expectations.cls` cannot be checked from JSON data.
@@ -209,27 +220,27 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                     # The error type is checked right after.
                     assert _error_expectations.error_type == "known-issue"
                 if _error_expectations.error_type is not None:
-                    if self.RESULT("Error type is %s." % repr(_error_expectations.error_type)):
+                    if self.RESULT(f"Error type is {_error_expectations.error_type!r}."):
                         self.assertjson(
-                            json_scenario, _json_path_error + ".type", value=_error_expectations.error_type,
+                            json_scenario, f"{_jsonpath_error}.type", value=_error_expectations.error_type,
                             evidence="Error type",
                         )
                 if _error_expectations.issue_id is not None:
-                    if self.RESULT("Issue id is %s." % repr(_error_expectations.issue_id)):
+                    if self.RESULT(f"Issue id is {_error_expectations.issue_id!r}."):
                         self.assertjson(
-                            json_scenario, _json_path_error + ".id", value=_error_expectations.issue_id,
+                            json_scenario, f"{_jsonpath_error}.id", value=_error_expectations.issue_id,
                             evidence="Issue id",
                         )
-                if self.RESULT("%s message is %s." % (_error_type.capitalize(), repr(_error_expectations.message))):
+                if self.RESULT(f"{_errors_txt.singular.capitalize()} message is {_error_expectations.message!r}."):
                     self.assertjson(
-                        json_scenario, _json_path_error + ".message", value=_error_expectations.message,
-                        evidence="%s message" % _error_type.capitalize(),
+                        json_scenario, f"{_jsonpath_error}.message", value=_error_expectations.message,
+                        evidence=f"{_errors_txt.singular.capitalize()} message",
                     )
                 if _error_expectations.location is not None:
-                    if self.RESULT("%s location is %s." % (_error_type.capitalize(), repr(_error_expectations.location))):
+                    if self.RESULT(f"{_errors_txt.singular.capitalize()} location is {_error_expectations.location!r}."):
                         self.assertjson(
-                            json_scenario, _json_path_error + ".location", value=_error_expectations.location,
-                            evidence="%s location" % _error_type.capitalize(),
+                            json_scenario, f"{_jsonpath_error}.location", value=_error_expectations.location,
+                            evidence=f"{_errors_txt.singular.capitalize()} location",
                         )
 
                 scenario.logging.popindentation()
@@ -240,17 +251,18 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
         if self.doexecute():
-            self.debuglongtext("_checkstepdefinition(): json_step_definition = %s" % json.dumps(json_step_definition, indent=2), max_lines=20)
+            self.debug("_checkstepdefinition(): json_step_definition = %s", scenario.debug.jsondump(json_step_definition, indent=2),
+                       extra=self.longtext(max_lines=20))
 
         if step_expectations.name:
-            if self.RESULT("The step location corresponds to '%s'." % step_expectations.name):
+            if self.RESULT(f"The step location corresponds to '{step_expectations.name}'."):
                 self.assertendswith(
                     self.assertjson(json_step_definition, "location", type=str), step_expectations.name,
                     evidence="Step location",
                 )
 
         if step_expectations.description:
-            if self.RESULT("The step description is '%s'." % step_expectations.description):
+            if self.RESULT(f"The step description is {step_expectations.description!r}."):
                 self.assertjson(
                     json_step_definition, "description", type=str, value=step_expectations.description,
                     evidence="Step description",
@@ -264,22 +276,27 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                         _json_searched_step_execution = _json_step_execution
                         break
                 if not _json_searched_step_execution:
-                    self.error("No step execution left in %s" % json.dumps(json_step_definition, indent=2))
-                    self.fail("Could not check %s execution" % str(step_expectations))
+                    self.error("No step execution left in %s", scenario.debug.jsondump(json_step_definition, indent=2),
+                               extra=self.longtext(max_lines=10))
+                    self.fail(f"Could not check {step_expectations} execution")
             self._checkstepexecution(
                 json_step_execution=_json_searched_step_execution,
                 step_expectations=step_expectations,
             )
 
         if step_expectations.action_result_expectations is not None:
+            _actions_results_txt = scenario.text.Countable("action/result", step_expectations.action_result_expectations)  # type: scenario.text.Countable
+            _executions_txt = scenario.text.Countable("execution", step_expectations.action_result_expectations)  # type: scenario.text.Countable
+
             if self.getexecstep(ExecScenario).doc_only:
-                if self.RESULT("%d actions/results are defined:" % len(step_expectations.action_result_expectations)):
+                if self.RESULT(f"{len(_actions_results_txt)} {_actions_results_txt} {_actions_results_txt.are} defined{_actions_results_txt.ifany(':', '.')}"):
                     self.assertjson(
                         json_step_definition, "actions-results", type=list, len=len(step_expectations.action_result_expectations),
                         evidence="Number of actions/results",
                     )
             else:
-                if self.RESULT("%d actions/results executions are described in the report:" % len(step_expectations.action_result_expectations)):
+                if self.RESULT(f"{len(_executions_txt)} action/result {_executions_txt} "
+                               f"{_executions_txt.are} described in the report{_executions_txt.ifany(':', '.')}"):
                     _all_action_result_executions = []  # type: typing.List[JSONDict]
                     for _json_action_result_definition in self.assertjson(json_step_definition, "actions-results", type=list):  # type: JSONDict
                         _all_action_result_executions.extend(self.assertjson(_json_action_result_definition, "executions", type=list))
@@ -289,20 +306,17 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                     )
 
             for _action_result_definition_index in range(len(step_expectations.action_result_expectations)):
-                self.RESULT("- %s #%d:" % (
-                    step_expectations.action_result_expectations[_action_result_definition_index].type,
-                    _action_result_definition_index + 1,
-                ))
+                self.RESULT(f"- {step_expectations.action_result_expectations[_action_result_definition_index].type} #{_action_result_definition_index + 1}:")
                 scenario.logging.pushindentation()
                 self._checkactionresultdefinition(
                     json_action_result_definition=self.testdatafromjson(
-                        json_step_definition, "actions-results[%d]" % _action_result_definition_index, type=dict,
+                        json_step_definition, f"actions-results[{_action_result_definition_index}]", type=dict,
                     ),
                     action_result_expectations=step_expectations.action_result_expectations[_action_result_definition_index],
                 )
                 scenario.logging.popindentation()
             if not self.getexecstep(ExecScenario).doc_only:
-                if self.RESULT("%d action/result executions have been processed." % len(step_expectations.action_result_expectations)):
+                if self.RESULT(f"{len(_executions_txt)} action/result {_executions_txt} {_executions_txt.have} been processed."):
                     self.assertlen(
                         self._scenario_tested_items[-1].action_result_executions, len(step_expectations.action_result_expectations),
                         evidence="Action/result executions processed",
@@ -317,18 +331,19 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
         if self.doexecute():
-            self.debuglongtext("_checkstepexecution(): json_step_execution = %s" % json.dumps(json_step_execution, indent=2), max_lines=20)
+            self.debug("_checkstepexecution(): json_step_execution = %s", scenario.debug.jsondump(json_step_execution, indent=2),
+                       extra=self.longtext(max_lines=20))
         self._scenario_tested_items[-1].step_executions.append(json_step_execution)
 
         if step_expectations.number is not None:
-            if self.RESULT("The %s execution number is %d." % (str(step_expectations), step_expectations.number)):
+            if self.RESULT(f"The {step_expectations} execution number is {step_expectations.number}."):
                 self.assertjson(
                     json_step_execution, "number", type=int, value=step_expectations.number,
                     evidence="Step execution number",
                 )
 
         if len(self._scenario_tested_items[-1].step_executions) > 1:
-            if self.RESULT("The %s execution takes place after the previous one." % str(step_expectations)):
+            if self.RESULT(f"The {step_expectations} execution takes place after the previous one."):
                 _previous_step_execution = self._scenario_tested_items[-1].step_executions[-2]  # type: JSONDict
                 _previous_end = self.assertjson(
                     _previous_step_execution, "time.end", type=str,
@@ -349,21 +364,21 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
         if self.doexecute():
-            self.debuglongtext("_checkactionresultdefinition(): json_action_result_definition = %s"
-                               % json.dumps(json_action_result_definition, indent=2), max_lines=20)
+            self.debug("_checkactionresultdefinition(): json_action_result_definition = %s", scenario.debug.jsondump(json_action_result_definition, indent=2),
+                       extra=self.longtext(max_lines=20))
 
         _type_desc = "action" if action_result_expectations.type == scenario.ActionResult.Type.ACTION else "expected result"  # type: str
 
-        if self.RESULT("The action/result type is %s." % action_result_expectations.type):
+        if self.RESULT(f"The action/result type is {action_result_expectations.type}."):
             self.assertjson(
                 json_action_result_definition, "type", type=str, value=str(action_result_expectations.type),
                 evidence="Action/result type",
             )
 
-        if self.RESULT("The %s description is '%s'." % (_type_desc, action_result_expectations.description)):
+        if self.RESULT(f"The {_type_desc} description is {action_result_expectations.description!r}."):
             self.assertjson(
                 json_action_result_definition, "description", type=str, value=action_result_expectations.description,
-                evidence="%s description" % _type_desc.capitalize(),
+                evidence=f"{_type_desc.capitalize()} description",
             )
 
         if not self.getexecstep(ExecScenario).doc_only:
@@ -374,8 +389,9 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                         _json_searched_action_result_execution = _json_action_resut_execution
                         break
                 if not _json_searched_action_result_execution:
-                    self.error("No %s execution in %s" % (_type_desc, json.dumps(json_action_result_definition, indent=2)))
-                    self.fail("Could not check %s execution" % _type_desc)
+                    self.error("No %s execution in %s", _type_desc, scenario.debug.jsondump(json_action_result_definition, indent=2),
+                               extra=self.longtext(max_lines=10))
+                    self.fail(f"Could not check {_type_desc} execution")
             self._checkactionresultexecution(
                 json_action_result_execution=_json_searched_action_result_execution,
                 action_result_expectations=action_result_expectations,
@@ -398,14 +414,14 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
         if self.doexecute():
-            self.debuglongtext("_checkactionresultexecution(): json_action_result_execution = %s"
-                               % json.dumps(json_action_result_execution, indent=2), max_lines=20)
+            self.debug("_checkactionresultexecution(): json_action_result_execution = %s", scenario.debug.jsondump(json_action_result_execution, indent=2),
+                       extra=self.longtext(max_lines=20))
         self._scenario_tested_items[-1].action_result_executions.append(json_action_result_execution)
 
         _type_desc = "action" if action_result_expectations.type == scenario.ActionResult.Type.ACTION else "expected result"  # type: str
         _type_math_desc = str(action_result_expectations.type).capitalize()  # type: str
 
-        if self.RESULT("The %s execution times are bound in the current step execution time." % _type_desc):
+        if self.RESULT(f"The {_type_desc} execution times are bound in the current step execution time."):
             assert self._scenario_tested_items[-1].step_executions
             _step_execution = self._scenario_tested_items[-1].step_executions[-1]  # type: JSONDict
             _step_execution_start = self.assertjson(
@@ -418,37 +434,38 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             )  # type: str
             _action_result_execution_start = self.assertjson(
                 json_action_result_execution, "time.start", type=str,
-                evidence="%s start" % _type_math_desc,
+                evidence=f"{_type_math_desc} start",
             )  # type: str
             _action_result_execution_end = self.assertjson(
                 json_action_result_execution, "time.end", type=str,
-                evidence="%s end" % _type_math_desc,
+                evidence=f"{_type_math_desc} end",
             )  # type: str
             self.assertlessequal(
                 _step_execution_start, _action_result_execution_start,
-                evidence="Step.start <= %s.start" % _type_math_desc,
+                evidence=f"Step.start <= {_type_math_desc}.start",
             )
             self.assertlessequal(
                 _action_result_execution_start, _action_result_execution_end,
-                evidence="%s.start <= %s.end" % (_type_math_desc, _type_math_desc),
+                evidence=f"{_type_math_desc}.start <= {_type_math_desc}.end",
             )
             self.assertlessequal(
                 _action_result_execution_end, _step_execution_end,
-                evidence="%s.end <= Step.end" % _type_math_desc,
+                evidence=f"{_type_math_desc}.end <= Step.end",
             )
 
         if action_result_expectations.subscenario_expectations is not None:
-            if self.RESULT("%d sub-scenario(s) has(have) been executed:" % len(action_result_expectations.subscenario_expectations)):
+            _subscenarios_txt = scenario.text.Countable("sub-scenario", action_result_expectations.subscenario_expectations)  # type: scenario.text.Countable
+            if self.RESULT(f"{len(_subscenarios_txt)} {_subscenarios_txt} {_subscenarios_txt.have} been executed{_subscenarios_txt.ifany(':', '.')}"):
                 self.assertjson(
                     json_action_result_execution, "subscenarios", type=list, len=len(action_result_expectations.subscenario_expectations),
                     evidence="Number of sub-scenarios",
                 )
             for _subscenario_expectation_index in range(len(action_result_expectations.subscenario_expectations)):  # type: int
-                self.RESULT("- Sub-scenario #%d:" % (_subscenario_expectation_index + 1))
+                self.RESULT(f"- Sub-scenario #{_subscenario_expectation_index + 1}:")
                 scenario.logging.pushindentation()
                 self._scenario_tested_items.append(CheckJsonReportExpectations.ScenarioTestedItems())
                 self._checkscenario(
-                    json_scenario=self.testdatafromjson(json_action_result_execution, "subscenarios[%d]" % _subscenario_expectation_index, type=dict),
+                    json_scenario=self.testdatafromjson(json_action_result_execution, f"subscenarios[{_subscenario_expectation_index}]", type=dict),
                     scenario_expectations=action_result_expectations.subscenario_expectations[_subscenario_expectation_index],
                 )
                 self._scenario_tested_items.pop()

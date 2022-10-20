@@ -68,6 +68,8 @@ class TextFile:
     def _guessencoding(self):  # type: (...) -> None
         """
         Tries to guess the file encoding from a dedicated comment in the first lines of it.
+
+        Stores the result in the :attr:`encoding` attribute.
         """
         # Read up to 2 lines at the beginning of the file, and check for a coding specification.
         _lines = 2
@@ -122,3 +124,17 @@ class TextFile:
         Closes the file.
         """
         self._file.close()
+
+
+def guessencoding(
+        path,  # type: AnyPathType
+):  # type: (...) -> str
+    """
+    Return the encoding guessed from a text file.
+
+    :param path: Path of the file to guess encoding for.
+    :return: Encoding guessed from the file. UTF-8 by default.
+
+    .. seealso:: :meth:`TextFile._guessencoding()` and :attr:`TextFile.encoding`.
+    """
+    return TextFile(path, "r").encoding

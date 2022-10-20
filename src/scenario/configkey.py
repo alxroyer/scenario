@@ -41,5 +41,5 @@ class ConfigKey:
         if not b:
             return a
         if b.startswith("["):
-            return "%s%s" % (a, b)
-        return "%s.%s" % (a, b)
+            return f"{a}{b}"
+        return f"{a}.{b}"

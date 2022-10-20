@@ -34,14 +34,14 @@ class TimeStats:
 
     def __init__(self):  # type: (...) -> None
         """
-        Initializes the time statistics with :const:`None` values.
+        Initializes the time statistics with ``None`` values.
         """
-        #: Start time.
-        self.start = None  # type: typing.Optional[float]
-        #: End time.
-        self.end = None  # type: typing.Optional[float]
-        #: Elapsed time.
-        self.elapsed = None  # type: typing.Optional[float]
+        #: Start time, if specified.
+        self._start = None  # type: typing.Optional[float]
+        #: Elapsed time, if specified.
+        self._elapsed = None  # type: typing.Optional[float]
+        #: End time, if specified.
+        self._end = None  # type: typing.Optional[float]
 
     def __str__(self):  # type: (...) -> str
         """
@@ -51,23 +51,109 @@ class TimeStats:
         """
         from .datetimeutils import f2strtime
 
-        return "[%s - %s]" % (f2strtime(self.start), f2strtime(self.end))
+        return f"[{f2strtime(self.start)} - {f2strtime(self.end)}]"
+
+    @property
+    def start(self):  # type: (...) -> typing.Optional[float]
+        """
+        *Start* time getter.
+        """
+        if self._start is None:
+            # Try to compute from *end* and *elapsed* times.
+            if (self._end is not None) and (self._elapsed is not None):
+                return self._end - self._elapsed
+
+        return self._start
+
+    @start.setter
+    def start(
+            self,
+            start,  # type: float
+    ):  # type: (...) -> None
+        """
+        *Start* time setter.
+
+        Invalidates the *elapsed* time if *elapsed* and *end* are already both set.
+        """
+        self._start = start
+
+        # Possibly invalidate the *elapsed* time.
+        if (self._elapsed is not None) and (self._end is not None):
+            self._elapsed = None
+
+    @property
+    def elapsed(self):  # type: (...) -> typing.Optional[float]
+        """
+        *Elapsed* time getter.
+        """
+        if self._elapsed is None:
+            # Try to compute from *start* and *end* times.
+            if (self.start is not None) and (self.end is not None):
+                return self.end - self.start
+
+        return self._elapsed
+
+    @elapsed.setter
+    def elapsed(
+            self,
+            elapsed,  # type: float
+    ):  # type: (...) -> None
+        """
+        *Elapsed* time setter.
+
+        Invalidates the *end* time if *start* and *end* are already both set.
+        """
+        self._elapsed = elapsed
+
+        # Possibly invalidate the *end* time.
+        if (self._start is not None) and (self._end is not None):
+            self._end = None
+
+    @property
+    def end(self):  # type: (...) -> typing.Optional[float]
+        """
+        *End* time getter.
+        """
+        if self._end is None:
+            # Try to compute from *start* and *elapsed* times.
+            if (self._start is not None) and (self._elapsed is not None):
+                return self._start + self._elapsed
+
+        return self._end
+
+    @end.setter
+    def end(
+            self,
+            end,  # type: float
+    ):  # type: (...) -> None
+        """
+        *End* time setter.
+
+        Invalidates the *elapsed* time if *start* and *elapsed* are already both set.
+        """
+        self._end = end
+
+        # Possibly invalidate the *elapsed* time.
+        if (self._elapsed is not None) and (self._end is not None):
+            self._elapsed = None
 
     def setstarttime(self):  # type: (...) -> None
         """
-        Starts the time statistics.
+        Starts the time statistics with the current time.
         """
-        self.start = time.time()
-        self.end = None
-        self.elapsed = None
+        # Don't use the :attr:`start` setter.
+        # Set all values as expected when this method is called.
+        self._start = time.time()
+        self._elapsed = None
+        self._end = None
 
     def setendtime(self):  # type: (...) -> None
         """
-        Ends the time statistics.
+        Ends the time statistics with the current time.
         """
+        # This method should follow a :meth:`setstarttime()` call.
+        # In any, let's use the :attr:`end` setter this time in order to ensure everything is consistent whatever.
         self.end = time.time()
-        if self.start is not None:
-            self.elapsed = self.end - self.start
 
     def tojson(self):  # type: (...) -> JSONDict
         """
@@ -82,8 +168,8 @@ class TimeStats:
             _json["start"] = toiso8601(self.start)
         if self.end is not None:
             _json["end"] = toiso8601(self.end)
-        if (self.start is not None) and (self.end is not None):
-            _json["elapsed"] = self.end - self.start
+        if self.elapsed is not None:
+            _json["elapsed"] = self.elapsed
         return _json
 
     @staticmethod
@@ -111,9 +197,7 @@ class TimeStats:
             except Exception as _err:
                 MAIN_LOGGER.warning(str(_err))
         # Do not rely on the input 'elapsed' field if given.
-        # Recompute from 'start' and 'end' values.
-        if (_stat.start is not None) and (_stat.end is not None):
-            _stat.elapsed = _stat.end - _stat.start
+        # Let it be recomputed from 'start' and 'end' values.
         return _stat
 
 
@@ -124,7 +208,7 @@ class ExecTotalStats:
 
     def __init__(self):  # type: (...) -> None
         """
-        Initializes the count statistics with :const:`0`.
+        Initializes the count statistics with ``0``.
         """
         #: Total count of executable items.
         self.total = 0  # type: int
@@ -142,11 +226,11 @@ class ExecTotalStats:
         from .campaignargs import CampaignArgs
 
         if ScenarioArgs.isset() and ScenarioArgs.getinstance().doc_only:
-            return "%d" % self.total
+            return f"{self.total}"
         elif CampaignArgs.isset() and CampaignArgs.getinstance().doc_only:
-            return "%d" % self.total
+            return f"{self.total}"
         else:
-            return "%d/%d" % (self.executed, self.total)
+            return f"{self.executed}/{self.total}"
 
     def add(
             self,

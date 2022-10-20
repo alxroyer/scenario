@@ -21,6 +21,8 @@ Step execution management.
 import time
 import typing
 
+# `ActionResultDefinition` used in method signatures.
+from .actionresultdefinition import ActionResultDefinition
 # `ExecTotalStats` used in method signatures.
 from .stats import ExecTotalStats
 # `StepDefinition` used in method signatures.
@@ -48,7 +50,6 @@ class StepExecution:
         :param definition: Step definition this instance describes an execution for.
         :param number: Execution number. See :attr:`number`.
         """
-        from .actionresultexecution import ActionResultDefinition
         from .stats import TimeStats
         from .testerrors import TestError
 
@@ -61,6 +62,9 @@ class StepExecution:
         self.number = number  # type: int
 
         #: Current action or expected result under execution.
+        #:
+        #: Differs from :attr:`__current_action_result_definition_index` in that this reference can be set to ``None``
+        #: when the action / expected result execution is done.
         self.current_action_result_definition = None  # type: typing.Optional[ActionResultDefinition]
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
@@ -68,6 +72,9 @@ class StepExecution:
         self.errors = []  # type: typing.List[TestError]
         #: Warnings.
         self.warnings = []  # type: typing.List[TestError]
+
+        #: Current action or expected result index under execution.
+        self.__current_action_result_definition_index = -1  # type: int
 
         self.time.setstarttime()
 
@@ -77,7 +84,23 @@ class StepExecution:
         """
         from .reflex import qualname
 
-        return "<%s#%d of %s>" % (qualname(type(self)), self.number, repr(self.definition))
+        return f"<{qualname(type(self))}#{self.number} of {self.definition!r}>"
+
+    def getnextactionresultdefinition(self):  # type: (...) -> ActionResultDefinition
+        """
+        Retrieves the next action/result definition to execute.
+
+        :return: Next :class:`.actionresultdefinition.ActionResultDefinition` instance to execute.
+
+        Sets the :attr:`current_action_result_definition` reference by the way.
+        """
+        # Increment the current action/result definition index.
+        self.__current_action_result_definition_index += 1
+
+        # Set the `current_action_result_definition` reference.
+        self.current_action_result_definition = self.definition.getactionresult(self.__current_action_result_definition_index)
+
+        return self.current_action_result_definition
 
     def getstarttime(self):  # type: (...) -> float
         """
@@ -85,7 +108,7 @@ class StepExecution:
 
         :return: Step execution start time.
         """
-        assert self.time.start is not None, "%s not started" % str(self.definition)
+        assert self.time.start is not None, f"{self.definition} not started"
         return self.time.start
 
     def getendtime(
@@ -95,14 +118,13 @@ class StepExecution:
         """
         Retrieves the ending time of the step execution.
 
-        :param expect: :const:`True` when this step execution is expected to be terminated.
-                       Otherwise, the current time is returned.
+        :param expect: ``True`` when this step execution is expected to be terminated. Otherwise, the current time is returned.
         :return: Step execution end time, or current time.
         """
         if self.time.end is not None:
             return self.time.end
         elif expect:
-            raise AssertionError("%s not terminated" % str(self.definition))
+            raise AssertionError(f"{self.definition} not terminated")
         else:
             return time.time()
 
@@ -116,8 +138,6 @@ class StepExecution:
         :param definition: Step definition to compute action statistics for.
         :return: Action statistics of the step.
         """
-        from .actionresultdefinition import ActionResultDefinition
-
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _action_result_definition in definition.actions_results:  # type: ActionResultDefinition
             if _action_result_definition.type == ActionResultDefinition.Type.ACTION:
@@ -135,8 +155,6 @@ class StepExecution:
         :param definition: Step definition to compute expected result statistics for.
         :return: Expected result statistics of the step.
         """
-        from .actionresultdefinition import ActionResultDefinition
-
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _action_result_definition in definition.actions_results:  # type: ActionResultDefinition
             if _action_result_definition.type == ActionResultDefinition.Type.RESULT:

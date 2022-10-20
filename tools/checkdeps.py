@@ -47,11 +47,11 @@ class CheckDeps:
         self.sortdeps()
 
     def lsdeps(self):  # type: (...) -> None
-        scenario.logging.debug("Walking through '%s'" % (scenario.tools.paths.SRC_PATH / "scenario"))
+        scenario.logging.debug("Walking through '%s'", scenario.tools.paths.SRC_PATH / "scenario")
         for _src_path in (scenario.tools.paths.SRC_PATH / "scenario").iterdir():  # type: scenario.Path
             if _src_path.is_file() and _src_path.name.endswith(".py"):
                 _current_module = ModuleDeps.get(_src_path.name)  # type: ModuleDeps
-                scenario.logging.debug("  Reading %s:" % _src_path)
+                scenario.logging.debug("  Reading %s:", _src_path)
                 for _line in _src_path.read_bytes().splitlines():  # type: bytes
                     if not _line.startswith(b'from .'):
                         continue
@@ -64,7 +64,7 @@ class CheckDeps:
                         # The 2nd word is the module name.
                         _module_name = _words[1][1:]  # type: bytes
 
-                        scenario.logging.debug("    %s => %s" % (_src_path.name, _module_name.decode("utf-8") + ".py"))
+                        scenario.logging.debug("    %s => %s", _src_path.name, _module_name.decode("utf-8") + ".py")
                         _current_module.adddep(ModuleDeps.get(_module_name.decode("utf-8") + ".py"))
                     else:
                         # ``from . import <module>`` pattern (usually in '__init__.py' files).
@@ -80,14 +80,14 @@ class CheckDeps:
                             # ``from . import <module> as <alias>``
                             _module_name = _module_name.split()[0]
 
-                            scenario.logging.debug("    %s => %s" % (_src_path.name, _module_name.decode("utf-8") + ".py"))
+                            scenario.logging.debug("    %s => %s", _src_path.name, _module_name.decode("utf-8") + ".py")
                             _current_module.adddep(ModuleDeps.get(_module_name.decode("utf-8") + ".py"))
 
     def computedeps(self):  # type: (...) -> None
         scenario.logging.debug("Computing deps")
         for _basename in ModuleDeps.all:  # type: str
             _module = ModuleDeps.get(_basename)  # type: ModuleDeps
-            scenario.logging.debug("%s: %d" % (_module.basename, _module.getscore()))
+            scenario.logging.debug("%s: %d", _module.basename, _module.getscore())
 
     def sortdeps(self):  # type: (...) -> None
         scenario.logging.debug("Sorting deps")
@@ -96,20 +96,20 @@ class CheckDeps:
             _deps.append(ModuleDeps.get(_basename))
         _deps = sorted(
             _deps,
-            # Use a combination of score + basename, so that ites are ordered by scores, then by basenames.
+            # Use a combination of score + basename, so that items are ordered by scores, then by basenames.
             # Artificially reverse the scores so that the higher scores get sorted first.
-            key=lambda deps: "%06d-%s" % (1000000 - deps.getscore(), deps.basename),
+            key=lambda deps: f"{1000000 - deps.getscore():06d}-{deps.basename}",
         )
 
         scenario.logging.debug("Displaying deps")
         _max_basename_len = max(len(_dep.basename) for _dep in _deps)  # type: int
         for _dep in _deps:  # type: ModuleDeps
-            _line = "<%02d> %s%s => [%s]" % (
-                _dep.getscore(),
-                " " * (_max_basename_len - len(_dep.basename)),
-                _dep.basename,
-                ", ".join(sorted(x.basename for x in _dep.deps))
-            )  # type: str
+            # Build the full line.
+            _line = f"<{_dep.getscore():02d}> "  # type: str
+            _line += f"{_dep.basename:>{_max_basename_len}} "  # Note: Use of the '>' format specifier on the basenames to have them right-aligned.
+            _line += f"=> [{', '.join(sorted(x.basename for x in _dep.deps))}]"
+
+            # Display it on several lines if it is more than 120 characters long.
             while _line:
                 _line_length = len(_line)  # type: int
                 if _line_length > 120:
@@ -117,7 +117,8 @@ class CheckDeps:
                 scenario.logging.info(_line[:_line_length])
                 _line = _line[_line_length:].lstrip()
                 if _line:
-                    _line = " " * len("<%02d> %s => [" % (0, " " * _max_basename_len)) + _line
+                    # Note: The use of the '>' format specifier ensures expected amount of space characters.
+                    _line = " " * len(f"<{0:02d}> {'':>{_max_basename_len}} => [") + _line
 
 
 class ModuleDeps:
@@ -127,6 +128,7 @@ class ModuleDeps:
         DONE = "done"
 
     all = {}  # type: typing.Dict[str, ModuleDeps]
+    #: TODO: Use :mod:`scenario` logging indentation facilities instead?
     indent_count = 0  # type: int
 
     @staticmethod
@@ -158,7 +160,7 @@ class ModuleDeps:
             return self.score
 
         assert self.status != ModuleDeps.ComputationStatus.COMPUTING, "Cyclic module dependency"
-        scenario.logging.debug("%s%s: Computing score..." % ("  " * ModuleDeps.indent_count, self.basename))
+        scenario.logging.debug("%s%s: Computing score...", "  " * ModuleDeps.indent_count, self.basename)
         ModuleDeps.indent_count += 1
         self.status = ModuleDeps.ComputationStatus.COMPUTING
         _max = 0  # type: int
@@ -168,7 +170,7 @@ class ModuleDeps:
         self.score = _max + 1
         self.status = ModuleDeps.ComputationStatus.DONE
         ModuleDeps.indent_count -= 1
-        scenario.logging.debug("%s%s: score=%d..." % ("  " * ModuleDeps.indent_count, self.basename, self.score))
+        scenario.logging.debug("%s%s: score=%d...", "  " * ModuleDeps.indent_count, self.basename, self.score)
         return self.score
 
 

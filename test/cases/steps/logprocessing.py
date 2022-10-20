@@ -62,5 +62,5 @@ class LogProcessor:
             # However, in as much as `string_type` is `bytes`, `_anystr`, of type `AnyStr`, should be understood to be of type `bytes` only, not `str`.
             _anystr = typing.cast(typing.Any, self.tobytes(string))
         else:
-            raise ValueError("Invalid type %s" % repr(string_type))
+            raise ValueError(f"Invalid type {string_type!r}")
         return _anystr

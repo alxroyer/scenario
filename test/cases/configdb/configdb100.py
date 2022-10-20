@@ -27,7 +27,7 @@ class ConfigDb100(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="INI configuration file",
+            title="Load INI configuration file",
             objective="Check that a INI configuration file can be loaded.",
             features=[scenario.test.features.CONFIG_DB],
         )

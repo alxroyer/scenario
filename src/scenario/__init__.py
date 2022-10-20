@@ -40,7 +40,7 @@
 # Define this package as a namespace, so that it can be extended later on (with tools, tests, ...).
 # In as much as this code is python 2/3 compatible, we use *pkgutil-style namespace packages*.
 from pkgutil import extend_path
-__path__ = extend_path(__path__, __name__)  # type: ignore  ## Cannot determine type of '__path__'
+__path__ = extend_path(__path__, __name__)
 
 # Make system imports after the namespace definition above.
 import typing
@@ -151,6 +151,15 @@ __doc__ += """
     Logging extra data management.
 """
 from .logextradata import LogExtraData  # noqa: E402  ## Module level import not at top of file
+
+__doc__ += """
+.. py:attribute:: debug
+
+    Alias of :mod:`.debugutils`.
+
+    Helper functions and types for debugging.
+"""
+from . import debugutils as debug  # noqa: E402  ## Module level import not at top of file
 
 
 __doc__ += """
@@ -473,6 +482,15 @@ __doc__ += """
     Date/time utils.
 """
 from . import datetimeutils as datetime  # noqa: E402  ## Module level import not at top of file
+
+__doc__ += """
+.. py:attribute:: tz
+
+    Alias of :mod:`.timezoneutils`.
+
+    Timezone utils.
+"""
+from . import timezoneutils as timezone  # noqa: E402  ## Module level import not at top of file
 
 __doc__ += """
 .. py:attribute:: enum

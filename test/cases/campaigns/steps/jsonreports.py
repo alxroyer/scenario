@@ -56,11 +56,12 @@ class CheckCampaignJsonReports(scenario.test.VerificationStep):
                 # Read the JSON report file.
                 _json = {}  # type: JSONDict
                 assert _test_case_expectations.script_path is not None
-                if self.ACTION("Read the JSON report file for '%s'." % _test_case_expectations.script_path):
+                if self.ACTION(f"Read the JSON report file for '{_test_case_expectations.script_path}'."):
                     _json_path = self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path  # type: typing.Optional[scenario.Path]
                     assert _json_path
                     _json = json.loads(_json_path.read_bytes())
-                    self.debuglongtext(json.dumps(_json, indent=2), max_lines=10)
+                    self.debug("%s", scenario.debug.jsondump(_json, indent=2),
+                               extra=self.longtext(max_lines=10))
 
                 self._json_report_checker.checkjsonreport(
                     json_scenario=_json,

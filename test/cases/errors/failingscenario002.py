@@ -66,19 +66,12 @@ class ExecFailingScenario(ExecScenario):
         self.continue_on_error = continue_on_error  # type: bool
 
     def step(self):  # type: (...) -> None
-        if self.continue_on_error:
-            self.STEP("*continue_on_error* execution")
-        else:
-            self.STEP("Regular execution")
+        self.STEP("*continue_on_error* execution" if self.continue_on_error
+                  else "Regular execution")
 
-        _action = "Execute the '%s' scenario" % scenario.test.paths.FAILING_SCENARIO  # type: str
-        if self.continue_on_error:
-            _action += ", with *continue_on_error* enabled"
-        else:
-            _action += ", with *continue_on_error* disabled"
-        _action += "."
-        _action += " Catch the output."
-        if self.ACTION(_action):
+        if self.ACTION(f"Execute the '{scenario.test.paths.FAILING_SCENARIO}' scenario, "
+                       f"with *continue_on_error* {'enabled' if self.continue_on_error else 'disabled'}. "
+                       f"Catch the output."):
             self.subprocess = scenario.test.ScenarioSubProcess(scenario.test.paths.FAILING_SCENARIO)
             self.subprocess.setconfigvalue(scenario.ConfigKey.CONTINUE_ON_ERROR, str(int(self.continue_on_error)))
             self.subprocess.expectsuccess(False)

@@ -43,8 +43,9 @@ class ScenarioExecution:
             definition,  # type: ScenarioDefinition
     ):  # type: (...) -> None
         """
-        :param definition: Related scenario definition under execution.
-                           May be :const:`None` when the :class:`ScenarioExecution` instance is created as a data container only.
+        :param definition:
+            Related scenario definition under execution.
+            May be ``None`` when the :class:`ScenarioExecution` instance is created as a data container only.
         """
         from .logger import Logger
         from .scenariorunner import SCENARIO_RUNNER
@@ -76,7 +77,7 @@ class ScenarioExecution:
         """
         from .reflex import qualname
 
-        return "<%s '%s'>" % (qualname(type(self)), self.definition.name)
+        return f"<{qualname(type(self))} {self.definition.name!r}>"
 
     # Execution methods.
 
@@ -85,7 +86,7 @@ class ScenarioExecution:
         Initializes the step iterator.
 
         Once the step iterator has been initialized, the :attr:`current_step_definition` attribute gives the current step.
-        If the scenario has no step of the kind, :attr:`current_step_definition` is :const:`None` as a result.
+        If the scenario has no step of the kind, :attr:`current_step_definition` is ``None`` as a result.
 
         The :meth:`nextstep()` method then moves the iterator forward.
         """
@@ -95,7 +96,7 @@ class ScenarioExecution:
             self.__current_step_definition = self.definition.steps[0]
 
         if self.__current_step_definition is not None:
-            self._logger.debug("Starting with %s" % repr(self.__current_step_definition))
+            self._logger.debug("Starting with %r", self.__current_step_definition)
         else:
             self._logger.debug("No step")
 
@@ -103,9 +104,9 @@ class ScenarioExecution:
         """
         Moves the step iterator forward.
 
-        :return: :const:`True` when a next step is ready, :const:`False` otherwise.
+        :return: ``True`` when a next step is ready, ``False`` otherwise.
 
-        When :meth:`nextstep()` returns :const:`False`, the :attr:`current_step_definition` is :const:`None` as a result.
+        When :meth:`nextstep()` returns ``False``, the :attr:`current_step_definition` is ``None`` as a result.
         """
         # Check the current step at first.
         if self.__current_step_definition is None:
@@ -115,7 +116,7 @@ class ScenarioExecution:
         # Next step reference possibly set from the outside.
         # If so, jump directly to this step reference.
         if self.__next_step_definition is not None:
-            self._logger.debug("Jumping to %s" % repr(self.__next_step_definition))
+            self._logger.debug("Jumping to %r", self.__next_step_definition)
             self.__current_step_definition = self.__next_step_definition
             self.__next_step_definition = None
             return True
@@ -133,7 +134,7 @@ class ScenarioExecution:
         self.__current_step_definition = self.definition.steps[_step_definition_index]
 
         # Next step found.
-        self._logger.debug("Moving from %s to %s`" % (repr(_previous_step_definition), repr(self.__current_step_definition)))
+        self._logger.debug("Moving from %r to %r`", _previous_step_definition, self.__current_step_definition)
         return True
 
     def setnextstep(

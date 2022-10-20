@@ -7,27 +7,27 @@ import scenario
 
 def _beforetest(event, data):
     assert isinstance(data, scenario.EventData.Scenario)
-    scenario.logging.debug("'%s' handler called with test '%s'" % (event, data.scenario.name))
+    scenario.logging.debug(f"{event!r} handler called with test {data.scenario!r}")
 
 
 def _beforestep(event, data):
     assert isinstance(data, scenario.EventData.Step)
-    scenario.logging.debug("'%s' handler called with %s" % (event, str(data.step)))
+    scenario.logging.debug(f"{event!r} handler called with step {data.step!r}")
 
 
 def _error(event, data):
     assert isinstance(data, scenario.EventData.Error)
-    scenario.logging.debug("'%s' handler called with %s" % (event, repr(data.error)))
+    scenario.logging.debug(f"{event!r} handler called with error {data.error!r}")
 
 
 def _afterstep(event, data):
     assert isinstance(data, scenario.EventData.Step)
-    scenario.logging.debug("'%s' handler called with %s" % (event, str(data.step)))
+    scenario.logging.debug(f"{event!r} handler called with step {data.step!r}")
 
 
 def _aftertest(event, data):
     assert isinstance(data, scenario.EventData.Scenario)
-    scenario.logging.debug("'%s' handler called with test '%s'" % (event, data.scenario.name))
+    scenario.logging.debug(f"{event!r} handler called with test {data.scenario!r}")
 
 
 class UserEvent(enum.Enum):
@@ -35,7 +35,7 @@ class UserEvent(enum.Enum):
 
 
 def _foo(event, data):
-    scenario.logging.debug("'%s' handler called with args: %s" % (event, repr(data)))
+    scenario.logging.debug(f"{event!r} handler called with {data!r}")
 
 
 class Handlers(scenario.Scenario):

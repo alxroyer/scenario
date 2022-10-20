@@ -27,10 +27,10 @@ class Feature:
         self.text = text  # type: str
 
     def __repr__(self):  # type: (...) -> str
-        return "<Feature id='%s' title='%s'>" % (self.id, self.title)
+        return f"<Feature id={self.id!r} title={self.title!r}>"
 
     def __str__(self):  # type: (...) -> str
-        return "%s - %s" % (self.id, self.title)
+        return f"{self.id} - {self.title}"
 
 
 SCENARIO_EXECUTION = Feature(
@@ -202,6 +202,8 @@ CONFIG_DB = Feature(
 
         When several configuration files are given,
         the configuration values from the latter overloads the ones from the formers.
+
+        Configuration files may also be saved from the configuration database eventually.
     """,
 )  # type: Feature
 

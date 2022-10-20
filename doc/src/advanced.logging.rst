@@ -319,6 +319,147 @@ it takes effect on every log lines:
     the main logger indentation applies after.
 
 
+.. _logging.debug:
+
+Debugging
+---------
+
+Depending on the :ref:`logger configuration <logging.class-loggers>`, debug lines may be discarded.
+By the way, formatting the whole logging message prior to discarding is a waste of time.
+Depending on the amount of debugging information generated along the code, this can slow down the tests in a sensible way.
+
+Such useless formatting processing can be saved by:
+
+1. passing :ref:`format arguments as positional arguments <logging.debug.format-args>`,
+2. :ref:`delaying string building <logging.debug.delayed-str>`.
+
+
+.. _logging.debug.format-args:
+
+Formatting & positional arguments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When logging a debug line, one can write:
+
+.. code-block:: python
+
+    self.debug("Hello I'm %s." % name)  # Option 1: `%` operator.
+    self.debug(f"Hello I'm {name}")     # Option 2: f-string.
+    self.debug("Hello I'm %s.", name)   # Option 3. positional arguments.
+
+The second option is preferrable to the first one in as much as as
+it is easier to maintain (main point for f-strings),
+and f-strings are around 10% more efficient.
+
+Still, with f-strings, the resulting string is computed before it is passed to the :py:meth:`scenario.logger.Logger.debug()` method,
+and possibly discarded after being computed.
+
+That's the reason why, the third option is even more efficient for debug logging:
+a useless message will be discarded before the formatting arguments are applied to it.
+
+
+.. _logging.debug.delayed-str:
+
+Delayed strings
+^^^^^^^^^^^^^^^
+
+Even when passing format arguments as positionals,
+some of them may take a while being computed by themselves.
+
+That's the reason why the :py:mod:`scenario.debug` package gathers a couple of functions and classes that enable delaying more string computations:
+
+.. list-table::
+    :widths: auto
+    :header-rows: 1
+    :stub-columns: 0
+
+    * - Function
+      - Class
+      - Description
+      - Example
+
+    * -
+      - :py:class:`scenario.debugutils.DelayedStr`
+      - Abstract class that defines a string which computation may be delayed.
+
+        You may inherit from this base class for specific needs.
+      -
+
+    * -
+      - :py:class:`scenario.debugutils.FmtAndArgs`
+      - Describes a delayed string that should be built with format and arguments.
+
+        The string can be prepared step by step, thanks to the :py:meth:`scenario.debugutils.FmtAndArgs.push()` method.
+
+        The application of the arguments is delayed on time when needed.
+      - .. code-block:: python
+
+            _str = scenario.debug.FmtAndArgs("Hello, I'm %s", name)
+            if profession:
+                _str.push(" and I'm a %s", profession)
+            _str.push(".")
+            self.debug(_str)
+
+    * - :py:func:`scenario.debugutils.saferepr()`
+      - :py:class:`scenario.debugutils.SafeRepr`
+      - Computes a *repr*-like string, but ensures a *not-too-long* string, possibly focused on certain parts,
+        such computation being delayed as for the others.
+      - .. code-block:: python
+
+            self.debug(
+                "%s in %s",
+                scenario.debug.saferepr(searched),
+                scenario.debug.saferepr(longtext, focus=searched),
+            )
+
+    * - :py:func:`scenario.debugutils.jsondump()`
+      - :py:class:`scenario.debugutils.JsonDump`
+      - Delays the dump computation for JSON data.
+      - .. code-block:: python
+
+            self.debug(
+                "JSON data: %s", scenario.debug.jsondump(data, indent=2),
+                extra=self.longtext(max_lines=10),
+            )
+
+        .. tip:: :py:func:`scenario.debugutils.jsondump()` may basically be displayed as :ref:`long texts <logging.long-text>`.
+
+    * - :py:func:`scenario.debugutils.callback()`
+      - :py:class:`scenario.debugutils.CallbackStr`
+      - Delays the execution of a string builder callback.
+
+        Possibly set with a lambda, this function makes it possible to delay quite everything.
+      - .. code-block:: python
+
+            self.debug(
+                "Very special data: %s",
+                scenario.debug.callback(lambda x, y, z: ..., arg1, arg2, arg3),
+            )
+
+
+.. _logging.long-text:
+
+Long texts
+^^^^^^^^^^
+
+The :py:mod:`scenario` logging feature provides a way to log long texts on several lines.
+
+To do so, set the ``extra`` parameter using the :py:meth:`scenario.logger.Logger.longtext()` method when logging some text:
+
+.. code-block:: python
+
+    self.debug(scenario.jsondump(_json_data, indent=2),
+               extra=self.longtext(max_lines=10))
+
+This feature has primarily been designed for debugging, but it works with the
+:py:meth:`scenario.logger.Logger.info()`,
+:py:meth:`scenario.logger.Logger.warning()` and
+:py:meth:`scenario.logger.Logger.error()`
+methods as well.
+
+The ``max_lines`` parameter may be set to ``None`` in order to display the full text.
+
+
 .. _logging.outfile:
 
 File logging

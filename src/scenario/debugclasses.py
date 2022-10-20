@@ -52,3 +52,6 @@ class DebugClass(StrEnum):
     SCENARIO_STACK = "scenario.ScenarioStack"
     #: Test suite file debugging.
     TEST_SUITE_FILE = "scenario.TestSuiteFile"
+
+    #: Issue#65 debugging: execution times.
+    EXECUTION_TIMES = "scenario.#65.exec-times"

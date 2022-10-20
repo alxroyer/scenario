@@ -74,11 +74,11 @@ class CheckLogOutputExceptionDisplay(LogVerificationStep):
                 evidence="Error type",
             )
         if self.RESULT("The error location is displayed twice by the way, as regular traceback lines."):
-            _error_location = "File \"%s\", line %d, in %s" % (
+            _error_location = (
                 # Use a `pathlib.Path` object in order to ensure a path display consistent with the current environment:
-                pathlib.Path(scenario.test.paths.FAILING_SCENARIO),
-                FailingScenario001.getinstance().error_location.line,
-                FailingScenario001.getinstance().error_location.qualname,
+                f"File \"{pathlib.Path(scenario.test.paths.FAILING_SCENARIO)}\", "
+                f"line {FailingScenario001.getinstance().error_location.line}, "
+                f"in {FailingScenario001.getinstance().error_location.qualname}"
             )  # type: str
             self.assertlinecount(
                 _error_location, 2,
@@ -97,36 +97,36 @@ class CheckJsonReportExceptionStorage(scenario.test.VerificationStep):
         self.STEP("JSON report error storage")
 
         if self.RESULT("The error is stored with the final status of the scenario."):
-            self._asserterror("Scenario", "")
+            self._asserterror("scenario", "")
 
         if self.RESULT("The error is stored with status of the step in error."):
-            self._asserterror("Step", "steps[0].executions[0].")
+            self._asserterror("step", "steps[0].executions[0].")
 
         if self.RESULT("The error is stored with status of the action in error."):
-            self._asserterror("Action/result", "steps[0].actions-results[1].executions[0].")
+            self._asserterror("action/result", "steps[0].actions-results[1].executions[0].")
 
     def _asserterror(
             self,
             obj_type,  # type: str
-            json_path_prefix,  # type: str
+            jsonpath_prefix,  # type: str
     ):  # type: (...) -> None
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, json_path_prefix + "errors",
+            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors",
             type=list, len=1,
-            evidence="%s number of errors" % obj_type,
+            evidence=f"{obj_type.capitalize()} number of errors",
         )
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, json_path_prefix + "errors[0].type",
+            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors[0].type",
             value="AssertionError",
-            evidence="%s error type" % obj_type,
+            evidence=f"{obj_type.capitalize()} error type",
         )
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, json_path_prefix + "errors[0].message",
+            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors[0].message",
             value="This is an exception.",
-            evidence="%s error message" % obj_type,
+            evidence=f"{obj_type.capitalize()} error message",
         )
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, json_path_prefix + "errors[0].location",
+            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors[0].location",
             value=FailingScenario001.getinstance().error_location.tolongstring(),
-            evidence="%s error location" % obj_type,
+            evidence=f"{obj_type.capitalize()} error location",
         )

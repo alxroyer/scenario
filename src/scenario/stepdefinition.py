@@ -54,6 +54,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
 
         Makes it possible to easily access the attributes and methods defined with a user step definition.
         """
+        from .reflex import qualname
         from .scenariostack import SCENARIO_STACK
 
         if SCENARIO_STACK.building.scenario_definition:
@@ -67,7 +68,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
             SCENARIO_STACK.raisecontexterror("No current scenario definition")
         else:
-            SCENARIO_STACK.raisecontexterror("No such step definition of type %s" % cls.__name__)
+            SCENARIO_STACK.raisecontexterror(f"No such step definition of type {qualname(cls)}")
 
     def __init__(
             self,
@@ -115,15 +116,15 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         from .reflex import qualname
 
         if type(self) is StepDefinition:
-            return "<%s '%s'>" % (qualname(type(self)), self.name)
+            return f"<{qualname(type(self))} {self.name!r}>"
         else:
-            return "<%s#%d>" % (qualname(type(self)), self.number)
+            return f"<{qualname(type(self))}#{self.number}>"
 
     def __str__(self):  # type: (...) -> str
         """
         Returns a human readable representation of the step definition.
         """
-        return self.name
+        return f"step#{self.number} ({self.name})"
 
     @property
     def name(self):  # type: (...) -> str
@@ -140,10 +141,16 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         Number of this step definition within the steps defining the related scenario.
         Starting from 1, as displayed to the user.
         """
+        from .stepsection import StepSection
+
         _step_number = 0  # type: int
         # Check the :attr:`scenario` attribute has been set with a real object.
         if hasattr(self.scenario, "name"):
             for _step_definition in self.scenario.steps:  # type: StepDefinition
+                # Skip section steps.
+                if isinstance(_step_definition, StepSection):
+                    continue
+
                 _step_number += 1
                 if _step_definition is self:
                     break
@@ -173,18 +180,15 @@ class StepDefinition(StepUserApi, Assertions, Logger):
 
     def getactionresult(
             self,
-            location,  # type: CodeLocation
-    ):  # type: (...) -> typing.Optional[ActionResultDefinition]
+            index,  # type: int
+    ):  # type: (...) -> ActionResultDefinition
         """
         Retrieves an :class:`.actionresultdefinition.ActionResultDefinition` instance from its location.
 
-        :param location: Location of the action or expected result.
-        :return: :class:`.actionresultdefinition.ActionResultDefinition` instance, if found.
+        :param index: Action/result definition index.
+        :return: Action/result definition instance.
         """
-        for _action_result_definition in self.__action_result_definitions:  # type: ActionResultDefinition
-            if _action_result_definition.location and (_action_result_definition.location.tolongstring() == location.tolongstring()):
-                return _action_result_definition
-        return None
+        return self.__action_result_definitions[index]
 
     def step(self):  # type: (...) -> None
         """
@@ -196,8 +200,8 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         """
         from .scenariorunner import SCENARIO_RUNNER
 
-        assert self.method is not None, "%s not implemented" % str(self).capitalize()
-        SCENARIO_RUNNER.debug("Invoking %s" % repr(self.method))
+        assert self.method is not None, f"{self} not implemented"
+        SCENARIO_RUNNER.debug("Invoking %r", self.method)
         self.method()
 
 
@@ -232,7 +236,7 @@ class StepDefinitionHelper:
         Determines whether the given step specification matches the related step definition.
 
         :param step_specification: Step specification to check.
-        :return: :const:`True` when the specification matches the related step definition.
+        :return: ``True`` when the specification matches the related step definition.
         """
         if isinstance(step_specification, StepDefinition):
             if step_specification is self.definition:
@@ -241,7 +245,7 @@ class StepDefinitionHelper:
             if self.definition.number == step_specification:
                 return True
         if isinstance(step_specification, str):
-            if str(self.definition).endswith(step_specification):
+            if self.definition.name.endswith(step_specification):
                 return True
         if isinstance(step_specification, type):
             if isinstance(self.definition, step_specification):
@@ -258,12 +262,14 @@ class StepDefinitionHelper:
         :param step_specification: Step specification to compute a string representation for.
         :return: String representation.
         """
+        from .reflex import qualname
+
         if isinstance(step_specification, StepDefinition):
-            return "[instance is %s]" % str(step_specification)
+            return f"[instance is {step_specification}]"
         if isinstance(step_specification, str):
-            return "[%s]" % repr(step_specification)
+            return f"[{step_specification!r}]"
         if isinstance(step_specification, type):
-            return "[class is %s]" % step_specification.__name__
+            return f"[class is {qualname(step_specification)}]"
         return repr(step_specification)
 
 
@@ -294,7 +300,7 @@ class StepMethods:
                 if _method_name == method.__name__:
                     _count += 1
 
-        logger.debug("StepMethods._hierarchycount(%s) -> %d" % (qualname(method), _count))
+        logger.debug("StepMethods._hierarchycount(%s) -> %d", qualname(method), _count)
         return _count
 
     @staticmethod
@@ -309,7 +315,7 @@ class StepMethods:
         """
         from .reflex import qualname
 
-        return "[%s]" % ", ".join(qualname(_method) for _method in methods)
+        return f"[{', '.join(qualname(_method) for _method in methods)}]"
 
     @staticmethod
     def sortbynames(
@@ -322,9 +328,9 @@ class StepMethods:
         :param logger: Logger to use for debugging.
         :param methods: Array of methods to sort.
         """
-        logger.debug("StepMethods.sortbynames(%s)" % StepMethods._dispmethodlist(methods))
+        logger.debug("StepMethods.sortbynames(%s)", StepMethods._dispmethodlist(methods))
         methods.sort(key=lambda method: method.__name__)
-        logger.debug("                     -> %s" % StepMethods._dispmethodlist(methods))
+        logger.debug("                     -> %s", StepMethods._dispmethodlist(methods))
 
     @staticmethod
     def sortbyhierarchythennames(
@@ -342,12 +348,12 @@ class StepMethods:
 
         Formerly used by *before-test* and *before-step* steps.
         """
-        logger.debug("StepMethods.sortbyhierarchythennames(%s)" % StepMethods._dispmethodlist(methods))
+        logger.debug("StepMethods.sortbyhierarchythennames(%s)", StepMethods._dispmethodlist(methods))
         # We want to execute the higher class methods at first.
         # When a method is defined in an upper class, its hierarchy count is high.
         # Let's negate the result of :meth:`StepMethods._hierarchycount()` in order to sort the higher class methods at the beginning of the list.
         methods.sort(key=lambda method: (- StepMethods._hierarchycount(logger, method), method.__name__))
-        logger.debug("                                  -> %s" % StepMethods._dispmethodlist(methods))
+        logger.debug("                                  -> %s", StepMethods._dispmethodlist(methods))
 
     @staticmethod
     def sortbyreversehierarchythennames(
@@ -365,12 +371,12 @@ class StepMethods:
 
         Formerly used by *after-test* and *after-step* steps.
         """
-        logger.debug("StepMethods.sortbyreversehierarchythennames(%s)" % StepMethods._dispmethodlist(methods))
+        logger.debug("StepMethods.sortbyreversehierarchythennames(%s)", StepMethods._dispmethodlist(methods))
         # We want to execute the lower class methods at first.
         # When a method is defined in a lower class, its hierarchy count is low.
         # Do not negate the result of :meth:`StepMethods._hierarchycount()` in order to sort the lower class methods at the beginning of the list.
         methods.sort(key=lambda method: (StepMethods._hierarchycount(logger, method), method.__name__))
-        logger.debug("                                         -> %s" % StepMethods._dispmethodlist(methods))
+        logger.debug("                                         -> %s", StepMethods._dispmethodlist(methods))
 
 
 if typing.TYPE_CHECKING:

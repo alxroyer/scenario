@@ -37,5 +37,5 @@ if __name__ == "__main__":
     if scenario.test.paths.UNIT_RESULTS_PATH.is_dir():
         for _subpath in scenario.test.paths.UNIT_RESULTS_PATH.iterdir():  # type: scenario.Path
             if _subpath.is_dir():
-                scenario.logging.info("Removing '%s'" % _subpath)
+                scenario.logging.info(f"Removing '{_subpath}'")
                 shutil.rmtree(_subpath)

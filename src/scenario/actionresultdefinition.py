@@ -37,19 +37,17 @@ class ActionResultDefinition:
         """
         #: Action type.
         ACTION = "ACTION"
-        #: Result type.
+        #: Expected result type.
         RESULT = "RESULT"
 
     def __init__(
             self,
             type,  # type: ActionResultDefinition.Type  # noqa  ## Shadows built-in name 'type'
             description,  # type: str
-            location,  # type: typing.Optional[CodeLocation]
     ):  # type: (...) -> None
         """
         :param type: Action/result type.
         :param description: User description for this action/result.
-        :param location: Action/result location.
 
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
@@ -65,8 +63,6 @@ class ActionResultDefinition:
         #: Initially set with a void reference.
         #: Fixed when :meth:`.stepdefinition.StepDefinition.addactionsresults()` is called.
         self.step = StepDefinition.__new__(StepDefinition)  # type: StepDefinition
-        #: Location of the action/result in the file.
-        self.location = location  # type: typing.Optional[CodeLocation]
         #: Executions.
         self.executions = []  # type: typing.List[ActionResultExecution]
 
@@ -74,13 +70,10 @@ class ActionResultDefinition:
         """
         Canonical string representation.
         """
-        return "<%s '%s'>" % (self.type, self.description)
+        return f"<{self.type} {self.description!r}>"
 
     def __str__(self):  # type: (...) -> str
         """
         Printable string representation.
         """
-        _str = "%s '%s'" % (self.type, self.description)
-        if self.location:
-            _str += " at %s" % self.location.tolongstring()
-        return _str
+        return f"{self.type} {self.description!r}"

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import enum
+import typing
 
 import scenario.test
 
@@ -39,6 +40,9 @@ class ConfigDb030(scenario.test.TestCase):
             objective="Check the way configuration values are converted at use.",
             features=[scenario.test.features.CONFIG_DB],
         )
+
+        # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.
+        self.continue_on_error = True
 
         _code_location_origin = scenario.Path(scenario.CodeLocation.fromclass(StoreConfigValue).file).prettypath  # type: str
 
@@ -124,3 +128,19 @@ class ConfigDb030(scenario.test.TestCase):
         self.addstep(CheckConfigValue("int-list", read_as=None, expected_type=list))
         self.addstep(CheckConfigValue("int-list[0]", read_as=None, expected_type=int, expected_value=ConfigDb030.SampleIntEnum.A.value))
         self.addstep(CheckConfigValue("int-list[1]", read_as=None, expected_type=int, expected_value=ConfigDb030.SampleIntEnum.B.value))
+
+        scenario.handlers.install(
+            scenario.Event.AFTER_TEST, self._finalize,
+            scenario=self, once=True,
+        )
+
+    def _finalize(
+            self,
+            event,  # type: str
+            data,  # type: typing.Any
+    ):  # type: (...) -> None
+        if self.doexecute():
+            self.info(f"Removing configuration values 'val', 'str-list' and 'int-list'")
+            scenario.conf.remove("val")
+            scenario.conf.remove("str-list")
+            scenario.conf.remove("int-list")

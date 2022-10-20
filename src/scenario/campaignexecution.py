@@ -163,7 +163,7 @@ class TestSuiteExecution:
         """
         from .reflex import qualname
 
-        return "<%s of '%s'>" % (qualname(type(self)), self.test_suite_file.path)
+        return f"<{qualname(type(self))} of '{self.test_suite_file.path}'>"
 
     @property
     def steps(self):  # type: (...) -> ExecTotalStats
@@ -251,7 +251,7 @@ class TestCaseExecution:
         """
         from .reflex import qualname
 
-        return "<%s of '%s'>" % (qualname(type(self)), self.script_path)
+        return f"<{qualname(type(self))} of '{self.script_path}'>"
 
     @property
     def scenario_execution(self):  # type: (...) -> typing.Optional[ScenarioExecution]
@@ -345,7 +345,7 @@ class CampaignStats:
 
     def __init__(self):  # type: (...) -> None
         """
-        Initializes all counters with :const:`0`.
+        Initializes all counters with ``0``.
         """
         #: Total number of test cases.
         self.total = 0  # type: int
@@ -370,7 +370,7 @@ class LogFileReader:
 
     def __init__(self):  # type: (...) -> None
         """
-        Initializes :attr:`path` and :attr:`content` attributes with :const:`None`.
+        Initializes :attr:`path` and :attr:`content` attributes with ``None``.
         """
         #: Test case log file path.
         self.path = None  # type: typing.Optional[Path]
@@ -381,7 +381,7 @@ class LogFileReader:
         """
         Read the log file.
 
-        :return: :const:`True` when the log file could be read successfully, :const:`False` otherwise.
+        :return: ``True`` when the log file could be read successfully, ``False`` otherwise.
         """
         from .loggermain import MAIN_LOGGER
 
@@ -392,7 +392,7 @@ class LogFileReader:
             else:
                 MAIN_LOGGER.error("No log path to read")
         except Exception as _err:
-            MAIN_LOGGER.error("Could not read log file '%s': %s" % (self.path, str(_err)))
+            MAIN_LOGGER.error(f"Could not read log file '{self.path}': {_err}")
         return False
 
 
@@ -403,7 +403,7 @@ class JsonReportReader:
 
     def __init__(self):  # type: (...) -> None
         """
-        Initializes :attr:`path` and :attr:`content` attributes with :const:`None`.
+        Initializes :attr:`path` and :attr:`content` attributes with ``None``.
         """
         from .scenariodefinition import ScenarioDefinition
         from .path import Path
@@ -417,7 +417,7 @@ class JsonReportReader:
         """
         Read the JSON report.
 
-        :return: :const:`True` when the JSON report file could be read and parsed successfully, :const:`False` otherwise.
+        :return: ``True`` when the JSON report file could be read and parsed successfully, ``False`` otherwise.
         """
         from .loggermain import MAIN_LOGGER
         from .scenarioreport import SCENARIO_REPORT

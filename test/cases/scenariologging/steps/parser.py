@@ -21,6 +21,7 @@ import scenario
 if typing.TYPE_CHECKING:
     from scenario.typing import JSONDict
 import scenario.test
+import scenario.text
 
 # Related steps:
 from steps.logparsing import LogParserStep
@@ -75,7 +76,7 @@ class ParseScenarioLog(LogParserStep):
 
     def _getscenario(
             self,
-            match,  # type: typing.Match[bytes]
+            match,  # type: ParseScenarioLog._Match
     ):  # type: (...) -> JSONDict
         """
         Retrieves the JSON data corresponding to the scenario with the given indentation.
@@ -83,56 +84,87 @@ class ParseScenarioLog(LogParserStep):
         :param match: Match instance, which first group gives the scenario stack indentation.
         :return: Scenario JSON data.
         """
-        from scenario.scenariologging import ScenarioLogging
-
         # Determine the stack index from the indentation.
-        _stack_index = 0  # type: int
-        _indentation = match.group(1)  # type: bytes
-        if _indentation:
-            _stack_index = _indentation.count(self.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN))
+        _stack_index = match.indentationlevel()  # type: int
 
         # Extend the scenario stack if needed.
         while len(self._json_scenario_stack) < _stack_index + 1:
             # Create new scenario data.
             self._newscenario()
+            match.debug("New scenario added")
 
         # Reduce the stack if needed.
         while len(self._json_scenario_stack) > _stack_index + 1:
+            match.debug("Removing last scenario from stack")
             self._json_scenario_stack.pop(-1)
 
         # Eventually return the scenario on top of the stack.
         assert self._json_scenario_stack, "No current scenario"
         return self._json_scenario_stack[-1]
 
+    class _Match:
+        def __init__(
+                self,
+                step,  # type: LogParserStep
+                match,  # type: typing.Match[bytes]
+        ):  # type: (...) -> None
+            self.step = step  # type: LogParserStep
+            self._match = match  # type: typing.Match[bytes]
+
+        def __repr__(self):  # type: (...) -> str
+            return repr(self._match)
+
+        def indentation(self):  # type: (...) -> bytes
+            return self._match.group(1)
+
+        def indentationlevel(self):  # type: (...) -> int
+            from scenario.scenariologging import ScenarioLogging
+
+            return self.indentation().count(self.step.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN))
+
+        def group(
+                self,
+                index,  # type: int
+        ):  # type: (...) -> bytes
+            if index <= 0:
+                return self._match.group(index)
+            else:
+                return self._match.group(index + 2)
+
+        def debug(
+                self,
+                message,  # type: str
+                *fmt_args,  # type: typing.Any
+        ):  # type: (...) -> None
+            if len(fmt_args) > 0:
+                self.step._debuglineinfo(  # noqa  ## Access to a protected member
+                    "scenario_stack[%d]: " + message, self.indentationlevel(), *fmt_args,
+                )
+            else:
+                # In case `message` contains bad format specifications...
+                self.step._debuglineinfo(  # noqa  ## Access to a protected member
+                    "scenario_stack[%d]: " + "%s", self.indentationlevel(), message,
+                )
+
     def _match(
             self,
             regex,  # type: bytes
             line,  # type: bytes
-    ):  # type: (...) -> typing.Optional[typing.Match[bytes]]
-        """
-        When the line matches, the first group gives the scenario stack identation.
-        Other groups start from 2.
-        """
+    ):  # type: (...) -> typing.Optional[ParseScenarioLog._Match]
         from scenario.scenariologging import ScenarioLogging
 
-        return re.match(
+        _match = re.search(
             rb''.join([
-                # Beginning of line.
-                rb'^',
                 # Scenario stack indentation
-                rb'(%s)*' % self.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN.replace("|", r"\|")),
+                rb'((%s)*)' % self.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN.replace("|", r"\|")),
                 # Following of the regex.
                 regex,
             ]),
             line,
-        )
-
-    def _debugdata(
-            self,
-            match,  # type: typing.Match[bytes]
-            message,  # type: str
-    ):  # type: (...) -> None
-        self._debuglineinfo("%s%s" % (self.tostr(match.group(1) or b''), message))
+        )  # type: typing.Optional[typing.Match[bytes]]
+        if _match:
+            return ParseScenarioLog._Match(self, _match)
+        return None
 
     def _parseline(
             self,
@@ -145,58 +177,59 @@ class ParseScenarioLog(LogParserStep):
         if line.endswith(self.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN.rstrip())):
             return True
 
-        _match = None  # type: typing.Optional[typing.Match[bytes]]
+        _match = None  # type: typing.Optional[ParseScenarioLog._Match]
 
         # Beginning of scenario.
         _match = self._match(rb'SCENARIO \'(.+)\'$', line)
         if _match:
-            self._getscenario(_match)["name"] = self.tostr(_match.group(2))
-            self._setparsestate(_match, "SCENARIO '%s'" % self._getscenario(_match)["name"])
-            self._debugdata(_match, "Scenario: name='%s'" % self._getscenario(_match)["name"])
+            self._getscenario(_match)["name"] = self.tostr(_match.group(1))
+            self._setparsestate(_match, f"SCENARIO '{self._getscenario(_match)['name']}'")
+            _match.debug("Scenario: name=%r", self._getscenario(_match)["name"])
             return True
 
         # Scenario attribute.
-        _match = self._match(rb'  ([^ :]+): (.+)$', line)
-        if _match:
+        # Note: Control the number of leading spaces in order to discriminate with ACTION and RESULT lines.
+        _match = self._match(rb'( *)([^ :]+): (.+)$', line)
+        if _match and (_match.group(1) == b'  '):
             if self._getparsestate(_match).startswith("SCENARIO "):
                 _attr_name = self.tostr(_match.group(2))  # type: str
                 _attr_value = self.tostr(_match.group(3))  # type: str
                 self._getscenario(_match)["attributes"][_attr_name] = _attr_value
-                self._debugdata(_match, "Scenario attribute: %s='%s'" % (_attr_name, _attr_value))
+                _match.debug("Scenario attribute: %s=%r", _attr_name, _attr_value)
                 return True
 
         # Beginning of step.
-        _match = self._match(rb'STEP#(\d+): (.+) \((.+):([0-9]+):(.+)\)$', line)
+        _match = self._match(rb'STEP#(\d+): (.+) \(([^:]+):(\d+):([^:]+)\)$', line)
         if _match:
             _json_step = {
-                "number": self.tostr(_match.group(2)),
-                "name": self.tostr(_match.group(6)),
-                "description": self.tostr(_match.group(3)),
+                "number": self.tostr(_match.group(1)),
+                "name": self.tostr(_match.group(5)),
+                "description": self.tostr(_match.group(2)),
                 "actions-results": [],
             }  # type: JSONDict
             self._getscenario(_match)["steps"].append(_json_step)
-            self._setparsestate(_match, "STEP '%s'" % _json_step["name"])
-            self._debugdata(_match, "Step: name='%s', description='%s'" % (_json_step["name"], _json_step["description"]))
+            self._setparsestate(_match, f"STEP '{_json_step['name']}'")
+            _match.debug("Step: name=%r, description=%r", _json_step["name"], _json_step["description"])
             return True
 
         # Action / expected result.
         _match = self._match(rb' +(ACTION|RESULT): *(.+)$', line)
         if _match:
             _json_action_result = {
-                "type": self.tostr(_match.group(2)),
-                "description": self.tostr(_match.group(3)),
+                "type": self.tostr(_match.group(1)),
+                "description": self.tostr(_match.group(2)),
                 "subscenarios": [],
             }  # type: JSONDict
             assert self._getscenario(_match)["steps"], "No current step, cannot add action/result"
             self._getscenario(_match)["steps"][-1]["actions-results"].append(_json_action_result)
-            self._setparsestate(_match, "%s '%s'" % (_json_action_result["type"].upper(), _json_action_result["description"]))
-            self._debugdata(_match, "%s: description='%s'" % (_json_action_result["type"].upper(), _json_action_result["description"]))
+            self._setparsestate(_match, f"{_json_action_result['type'].upper()} {_json_action_result['description']!r}")
+            _match.debug("%s: description=%r", _json_action_result["type"].upper(), _json_action_result["description"])
             return True
 
         # Errors
         _match = self._match(rb' +ERROR +File "(.+)", line (\d+), in (.+)$', line)
         if _match:
-            _traceback_path = scenario.Path(self.tostr(_match.group(2)))  # type: scenario.Path
+            _traceback_path = scenario.Path(self.tostr(_match.group(1)))  # type: scenario.Path
             if (
                 _traceback_path.is_relative_to(scenario.test.paths.MAIN_PATH)
                 and (not _traceback_path.is_relative_to(scenario.test.paths.MAIN_PATH / "src"))
@@ -204,107 +237,107 @@ class ParseScenarioLog(LogParserStep):
                 self._getscenario(_match)["errors"].append({
                     "type": None,
                     "message": None,
-                    "location": "%s:%s:%s" % (_traceback_path, self.tostr(_match.group(3)), self.tostr(_match.group(4))),
+                    "location": f"{_traceback_path}:{self.tostr(_match.group(2))}:{self.tostr(_match.group(3))}",
                 })
-                self._debugdata(_match, "Error location: %s" % self._getscenario(_match)["errors"][-1]["location"])
+                _match.debug("Error location: %s", self._getscenario(_match)["errors"][-1]["location"])
                 return True
             else:
-                self._debugdata(_match, "Error location: '%s' (skipped)" % _traceback_path)
+                _match.debug("Error location: '%s' (skipped)", _traceback_path)
                 return True
 
         _match = self._match(rb' +ERROR +([^:]+): (.+)$', line)
         if _match:
             if (
-                (not _match.group(2).endswith(b'  # location'))  # Avoid matching with '  # location: ' patterns.
+                (not _match.group(1).endswith(b'  # location'))  # Avoid matching with '  # location: ' patterns.
                 and self._getscenario(_match)["errors"]
                 and (not self._getscenario(_match)["errors"][-1]["type"])
                 and (not self._getscenario(_match)["errors"][-1]["message"])
             ):
-                self._getscenario(_match)["errors"][-1]["type"] = self.tostr(_match.group(2))
-                self._debugdata(_match, "Error type: %s" % self._getscenario(_match)["errors"][-1]["type"])
-                self._getscenario(_match)["errors"][-1]["message"] = self.tostr(_match.group(3))
-                self._debugdata(_match, "Error message: %s" % self._getscenario(_match)["errors"][-1]["message"])
+                self._getscenario(_match)["errors"][-1]["type"] = self.tostr(_match.group(1))
+                _match.debug("Error type: %s", self._getscenario(_match)["errors"][-1]["type"])
+                self._getscenario(_match)["errors"][-1]["message"] = self.tostr(_match.group(2))
+                _match.debug("Error message: %r", self._getscenario(_match)["errors"][-1]["message"])
 
                 # Automatically consider the scenario is FAIL.
                 self._getscenario(_match)["status"] = "FAIL"
-                self._debugdata(_match, "Scenario status: FAIL (automatically set)")
+                _match.debug("Scenario status: FAIL (automatically set)")
                 return True
 
         # Known issues.
-        _match = self._match(rb' *(WARNING|ERROR) +([^:]+):(\d+):([^:]+): Issue (.+)! (.+)$', line)
+        _match = self._match(rb' *(WARNING|ERROR) +Issue (.+)! (.+) \(([^:]+):(\d+):([^:]+)\)$', line)
         if _match:
             _json_known_issue = {
                 "type": "known-issue",
-                "id": self.tostr(_match.group(6)),
-                "message": self.tostr(_match.group(7)),
-                "location": self.tostr(b'%s:%s:%s' % (_match.group(3), _match.group(4), _match.group(5))),
+                "id": self.tostr(_match.group(2)),
+                "message": self.tostr(_match.group(3)),
+                "location": self.tostr(b'%s:%s:%s' % (_match.group(4), _match.group(5), _match.group(6))),
             }  # type: JSONDict
             if self._getparsestate(_match).startswith("END OF "):
-                _error_level = self.tostr(_match.group(2))  # type: str
+                _error_level = self.tostr(_match.group(1))  # type: str
                 self._getscenario(_match)[_error_level.lower() + "s"].append(_json_known_issue)
-                self._debugdata(_match, "Known issue: %s" % repr(_json_known_issue))
+                _match.debug("Known issue: %r", _json_known_issue)
             else:
-                self._debugdata(_match, "Known issue skipped: %s" % repr(_json_known_issue))
+                _match.debug("Known issue skipped: %r", _json_known_issue)
             return True
 
         # Evidence.
         _match = self._match(rb' +EVIDENCE: (.+)$', line)
         if _match:
-            self._debugdata(_match, "EVIDENCE: '%s'" % self.tostr(_match.group(2)))
+            _match.debug("EVIDENCE: %r", self.tostr(_match.group(1)))
             return True
 
         # Log lines.
         _match = self._match(rb' +(INFO {3}|WARNING {0}|ERROR {2}):(.*)$', line)
         if _match:
-            self._debugdata(_match, "%s: '%s'" % (self.tostr(_match.group(2).strip()), self.tostr(_match.group(3).strip())))
+            _match.debug("%s: %r", self.tostr(_match.group(1).strip()), self.tostr(_match.group(2).strip()))
             return True
 
         # End of scenario.
         _match = self._match(rb'END OF \'(.+)\'$', line)
         if _match:
-            self._setparsestate(_match, "END OF '%s'" % self.tostr(_match.group(2)))
-            self._debugdata(_match, "End of scenario: name='%s'" % self.tostr(_match.group(2)))
+            self._setparsestate(_match, f"END OF '{self.tostr(_match.group(1))}'")
+            _match.debug("End of scenario: name=%r", self.tostr(_match.group(1)))
             return True
 
         # Status.
         _match = self._match(rb' *Status: (.+)$', line)
         if _match:
-            self.json_main_scenario["status"] = self.tostr(_match.group(2))
-            self._debugdata(_match, "Status: '%s'" % self.json_main_scenario["status"])
+            self.json_main_scenario["status"] = self.tostr(_match.group(1))
+            _match.debug("Status: %r", self.json_main_scenario["status"])
             return True
 
         # Statistics.
         for _stats_type in ("step", "action", "result"):  # type: str
             _match = self._match(rb' *Number of %ss: (\d+)$' % self.tobytes(_stats_type.upper()), line)
             if _match:
-                _stats = {"executed": 0, "total": int(_match.group(2))}  # type: JSONDict
+                _stats = {"executed": 0, "total": int(_match.group(1))}  # type: JSONDict
                 self.json_main_scenario["stats"][_stats_type + "s"] = _stats
-                self._debugdata(_match, "Number of %ss: %d" % (_stats_type.upper(), _stats["total"]))
+                _match.debug("Number of %s: %d", scenario.text.pluralize(_stats_type.upper()), _stats["total"])
                 return True
             _match = self._match(rb' *Number of %ss: (\d+)/(\d+)$' % self.tobytes(_stats_type.upper()), line)
             if _match:
-                _stats = {"executed": int(_match.group(2)), "total": int(_match.group(3))}  # Type already declared above.
+                _stats = {"executed": int(_match.group(1)), "total": int(_match.group(2))}  # Type already declared above.
                 self.json_main_scenario["stats"][_stats_type + "s"] = _stats
-                self._debugdata(_match, "Number of %ss: %d/%d" % (_stats_type.upper(), _stats["executed"], _stats["total"]))
+                _match.debug("Number of %s: %d/%d", scenario.text.pluralize(_stats_type.upper()), _stats["executed"], _stats["total"])
                 return True
 
-        _match = self._match(rb' *Time: (\d+.\d+) s$', line)
+        _match = self._match(rb' *Time: (%s)$' % self.tobytes(scenario.datetime.DURATION_REGEX), line)
         if _match:
-            self.json_main_scenario["time"]["elapsed"] = float(_match.group(2))
-            self._debugdata(_match, "Time: %f s" % self.json_main_scenario["time"]["elapsed"])
+            self.json_main_scenario["time"]["elapsed"] = scenario.datetime.str2fduration(self.tostr(_match.group(1)))
+            _match.debug("Time: %f s", self.json_main_scenario["time"]["elapsed"])
             return True
 
         return super()._parseline(line)
 
     def _getparsestate(
             self,
-            match,  # type: typing.Match[bytes]
+            match,  # type: ParseScenarioLog._Match
     ):  # type: (...) -> str
         return str(self._getscenario(match)[ParseScenarioLog.PARSE_STATE])
 
     def _setparsestate(
             self,
-            match,  # type: typing.Match[bytes]
+            match,  # type: ParseScenarioLog._Match
             state,  # type: str
     ):  # type: (...) -> None
         self._getscenario(match)[ParseScenarioLog.PARSE_STATE] = state

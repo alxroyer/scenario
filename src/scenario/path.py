@@ -72,7 +72,7 @@ class Path:
             if not isinstance(path, Path):
                 path = Path(path)
             if (Path._main_path is None) or (not path.samefile(Path._main_path)):
-                MAIN_LOGGER.log(log_level, "Main path: '%s'" % path.abspath)
+                MAIN_LOGGER.log(log_level, f"Main path: '{path.abspath}'")
         Path._main_path = path
 
     @staticmethod
@@ -101,7 +101,7 @@ class Path:
         if sys.version_info >= (3, 5):
             return Path(pathlib.Path.home())
         else:
-            raise EnvironmentError("Python %s not supported" % sys.version)
+            raise EnvironmentError(f"Python {sys.version} not supported")
 
     @staticmethod
     def tmp():  # type: (...) -> Path
@@ -232,7 +232,7 @@ class Path:
         """
         from .reflex import qualname
 
-        return "<%s object for '%s'>" % (qualname(type(self)), self.prettypath)
+        return f"<{qualname(type(self))} object for '{self.prettypath}'>"
 
     def __str__(self):  # type: (...) -> str
         """
@@ -374,7 +374,11 @@ class Path:
         :return: ``True`` when the paths equal, ``False`` otherwise.
         """
         if isinstance(other, (str, os.PathLike)):
-            return self.samefile(other)
+            try:
+                return self.samefile(other)
+            except FileNotFoundError:
+                # May occur when `self` does not exist.
+                return self.abspath == Path(other).abspath
         return False
 
     def samefile(

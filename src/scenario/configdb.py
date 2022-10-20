@@ -64,17 +64,18 @@ class ConfigDatabase(Logger):
         """
         Initializes instance attributes and configures logging for the :class:`ConfigDatabase` class.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
 
         Logger.__init__(self, log_class=DebugClass.CONFIG_DATABASE)
 
         #: Configuration tree.
-        self._root = ConfigNode("")  # type: ConfigNode
+        self._root = ConfigNode(parent=None, key="")  # type: ConfigNode
 
     def loadfile(
             self,
             path,  # type: AnyPathType
             format=None,  # type: ConfigDatabase.FileFormat  # noqa  ## Shadows built-in name 'format'
+            root="",  # type: KeyType
     ):  # type: (...) -> None
         """
         Loads a configuration file.
@@ -85,6 +86,51 @@ class ConfigDatabase(Logger):
             File format.
 
             Determined automatically from the file extension when not specified.
+        :param root:
+            Root key to load the file from.
+        """
+        from .configini import ConfigIni
+        from .configjson import ConfigJson
+        from .configyaml import ConfigYaml
+        from .path import Path
+
+        if format is None:
+            _suffix = Path(path).suffix.lower()  # type: str
+            if _suffix in (".ini", ):
+                format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
+            elif _suffix in (".json", ):
+                format = ConfigDatabase.FileFormat.JSON  # noqa  ## Shadows built-in name 'format'
+            elif _suffix in (".yml", ".yaml", ):
+                format = ConfigDatabase.FileFormat.YAML  # noqa  ## Shadows built-in name 'format'
+            else:
+                raise ValueError(f"{path}: Unknown configuration file suffix")
+
+        if format == ConfigDatabase.FileFormat.INI:
+            ConfigIni.loadfile(path, root=root)
+        elif format == ConfigDatabase.FileFormat.JSON:
+            ConfigJson.loadfile(path, root=root)
+        elif format == ConfigDatabase.FileFormat.YAML:
+            ConfigYaml.loadfile(path, root=root)
+        else:
+            raise NotImplementedError(f"Unknown file format {format}")
+
+    def savefile(
+            self,
+            path,  # type: AnyPathType
+            format=None,  # type: ConfigDatabase.FileFormat  # noqa  ## Shadows built-in name 'format'
+            root="",  # type: KeyType
+    ):  # type: (...) -> None
+        """
+        Saves a configuration file.
+
+        :param path:
+            Path of the configuration file to save.
+        :param format:
+            File format.
+
+            Determined automatically from the file extension when not specified.
+        :param root:
+            Root key to save the file from.
         """
         from .configini import ConfigIni
         from .configjson import ConfigJson
@@ -103,13 +149,13 @@ class ConfigDatabase(Logger):
                 raise ValueError("%s: Unknown configuration file suffix" % path)
 
         if format == ConfigDatabase.FileFormat.INI:
-            ConfigIni.loadfile(path)
+            ConfigIni.savefile(path, root=root)
         elif format == ConfigDatabase.FileFormat.JSON:
-            ConfigJson.loadfile(path)
+            ConfigJson.savefile(path, root=root)
         elif format == ConfigDatabase.FileFormat.YAML:
-            ConfigYaml.loadfile(path)
+            ConfigYaml.savefile(path, root=root)
         else:
-            raise NotImplementedError("Unknown file format %s" % format)
+            raise NotImplementedError(f"Unknown file format {format}")
 
     def set(
             self,
@@ -128,13 +174,35 @@ class ConfigDatabase(Logger):
             Can be a single value, a dictionary or a list.
 
             When a :class:`os.PathLike` is given, it is automatically converted in its string form with :func:`os.fspath()`.
+
+            When ``None`` is given, it is equivalent to calling :meth:`remove()` for the given ``key``.
         :param origin:
             Origin of the configuration data: either a simple string, or the path of the configuration file it was defined in.
 
             Defaults to code location when not set.
         """
-        self.debug("ConfigDatabase.set(key=%s, data=%s, origin=%s)" % (repr(key), repr(data), repr(origin)))
+        self.debug("ConfigDatabase.set(key=%r, data=%r, origin=%r)", key, data, origin)
+
         self._root.set(subkey=key, data=data, origin=origin)
+
+        self.show(logging.DEBUG)
+
+    def remove(
+            self,
+            key,  # type: KeyType
+    ):  # type: (...) -> None
+        """
+        Removes a configuration key (if exists).
+
+        :param key: Configuration key to remove.
+        """
+        self.debug("ConfigDatabase.remove(key=%r)", key)
+
+        # Search for the configuration node from the key, and call `remove()` on it when found.
+        _node = self._root.get(subkey=key)  # type: typing.Optional[ConfigNode]
+        if _node is not None:
+            _node.remove()
+
         self.show(logging.DEBUG)
 
     def show(
@@ -211,10 +279,9 @@ class ConfigDatabase(Logger):
         # Search for the configuration node from the key, and return its data when found.
         _node = self._root.get(key)  # type: typing.Optional[ConfigNode]
         if _node is not None:
-            if type is not None:
+            if (type is not None) and (_node.data is not None):
                 return _node.cast(type=type)
-            else:
-                return _node.data
+            return _node.data
 
         # Return the default value when set.
         if default is not None:

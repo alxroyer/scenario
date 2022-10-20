@@ -38,8 +38,8 @@ class CheckConfigValueScenarioLog(LogVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Configuration value verification")
 
-        if self.RESULT("'%s' is read for the '%s' configuration value with '%s' for origin." % (self.value, self.key, self.origin)):
+        if self.RESULT(f"{self.value!r} is read for the '{self.key}' configuration value with '{self.origin}' for origin."):
             self.assertline(
-                "%s (%s): %s" % (self.key, self.origin, self.value),
+                f"{self.key} ({self.origin}): {self.value}",
                 evidence=True,
             )

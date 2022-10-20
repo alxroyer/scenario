@@ -86,7 +86,7 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
         self.STEP("Output directory content")
 
         if self.ACTION("Read the directory containing the campaign results."):
-            self.evidence("Reading '%s'" % self.getexecstep(ExecCampaign).final_outdir_path)
+            self.evidence(f"Reading '{self.getexecstep(ExecCampaign).final_outdir_path}'")
             self._outdir_content = list(self.getexecstep(ExecCampaign).final_outdir_path.iterdir())
         if self.RESULT("This directory contains 1 '.log' and 1 '.json' file for each scenario executed."):
             assert self.campaign_expectations.test_suite_expectations is not None
@@ -96,12 +96,12 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
                     assert _test_case_expectations.script_path is not None
                     self.assertisfile(
                         self._outfiles.getscenarioresults(_test_case_expectations.script_path).log.path,
-                        evidence="'%s' '.log' file" % _test_case_expectations.script_path,
+                        evidence=f"'{_test_case_expectations.script_path}' '.log' file",
                     )
                     self._expectedfilefound(self._outfiles.getscenarioresults(_test_case_expectations.script_path).log.path)
                     self.assertisfile(
                         self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path,
-                        evidence="'%s' '.json' file" % _test_case_expectations.script_path,
+                        evidence=f"'{_test_case_expectations.script_path}' '.json' file",
                     )
                     self._expectedfilefound(self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path)
         if self.RESULT("The directory also contains a '.xml' campaign report file."):

@@ -41,6 +41,8 @@ class ScenarioConfig:
         """
         :mod:`scenario` configuration keys.
         """
+        #: Should a specific timezone be used? String value. Default is the local timezone.
+        TIMEZONE = "scenario.timezone"
         #: Should the log lines include a timestamp? Boolean value.
         LOG_DATETIME = "scenario.log_date_time"
         #: Should the log lines be displayed in the console? Boolean value.
@@ -68,6 +70,36 @@ class ScenarioConfig:
         #: List of strings, or coma-separated string.
         RESULTS_EXTRA_INFO = "scenario.results_extra_info"
 
+    def __init__(self):  # type: (...) -> None
+        """
+        Initializes the timezone cache information.
+        """
+        #: Timezone cache information.
+        self.__timezone = None  # type: typing.Optional[str]
+
+    def timezone(self):  # type: (...) -> typing.Optional[str]
+        """
+        Gives the timezone configuration, if set.
+
+        :return:
+            Timezone configuration if set, ``None`` otherwise.
+
+            When not set, the local timezone is used.
+        """
+        from .configdb import CONFIG_DB
+
+        if self.__timezone is None:
+            # Set the cache member with an empty string if no configuration is set.
+            self.__timezone = (CONFIG_DB.get(self.Key.TIMEZONE, type=str) or "").strip()
+        # Convert empty string to `None`.
+        return self.__timezone or None
+
+    def invalidatetimezonecache(self):  # type: (...) -> None
+        """
+        Invalidates the timezone cache information.
+        """
+        self.__timezone = None
+
     def logdatetimeenabled(self):  # type: (...) -> bool
         """
         Determines whether the Log line should include a timestamp.
@@ -92,7 +124,7 @@ class ScenarioConfig:
         """
         Determines whether the log lines should be written in a log file.
 
-        :return: Output log file path if set, :const:`None` indicates no file logging.
+        :return: Output log file path if set, ``None`` indicates no file logging.
 
         Configurable through :const:`Key.LOG_FILE`.
         """
@@ -139,7 +171,7 @@ class ScenarioConfig:
                 try:
                     return Console.Color(_color_number)
                 except ValueError:
-                    MAIN_LOGGER.warning("%s (%s): Invalid color number %d" % (_key, _config_node.origin, _color_number))
+                    MAIN_LOGGER.warning(f"{_key} ({_config_node.origin}): Invalid color number {_color_number}")
         return default
 
     def debugclasses(self):  # type: (...) -> typing.List[str]
@@ -274,7 +306,7 @@ class ScenarioConfig:
                     if _part and (_part not in outlist):
                         outlist.append(_part)
             else:
-                CONFIG_DB.warning(_conf_node.errmsg("Invalid type %s" % type(_data)))
+                CONFIG_DB.warning(_conf_node.errmsg(f"Invalid type {type(_data)}"))
 
 
 __doc__ += """

@@ -39,10 +39,10 @@ class SuperScenario(scenario.Scenario):
 
         _t0 = 0.0  # type: float
         _tf = 0.0  # type: float
-        if self.ACTION("Execute the '%s' scenario." % self.subscenario_path):
+        if self.ACTION(f"Execute the '{self.subscenario_path}' scenario."):
             _t0 = time.time()
             scenario.runner.executepath(self.subscenario_path)
             _tf = time.time()
 
         if self.RESULT("No exception is thrown."):
-            self.evidence("Sub-scenario executed successfully in %.3f seconds" % (_tf - _t0))
+            self.evidence(f"Sub-scenario executed successfully in {_tf - _t0:.3f} seconds")

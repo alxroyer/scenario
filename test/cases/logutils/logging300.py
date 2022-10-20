@@ -102,16 +102,16 @@ class CheckLogColors(LogVerificationStep):
 
         if self.getexecstep(ExecScenario).getboolconfigvalue(scenario.ConfigKey.LOG_COLOR_ENABLED, default=True):
             if log_class is None:
-                if self.RESULT("The '%s' line is %s-colored." % (search, _log_level_color_name)):
+                if self.RESULT(f"The {search!r} line is {_log_level_color_name}-colored."):
                     _line = self.assertline(search)  # type: str
                     self.assertcolor(_line, _log_level_name, _log_level_color, evidence=True)
                     self.assertcolor(_line, search, _log_level_color, evidence=True)
             else:
-                if self.RESULT("The '%s' line log level is %s-colored, the message is blue-colored." % (search, _log_level_color_name)):
+                if self.RESULT(f"The {search!r} line log level is {_log_level_color_name}-colored, the message is blue-colored."):
                     _line = self.assertline(search)  # type already defined above
                     self.assertcolor(_line, _log_level_name, _log_level_color, evidence=True)
-                    self.assertcolor(_line, "[%s] %s" % (log_class, search), scenario.Console.Color.LIGHTBLUE36, evidence=True)
+                    self.assertcolor(_line, f"[{log_class}] {search}", scenario.Console.Color.LIGHTBLUE36, evidence=True)
         else:
-            if self.RESULT("The 'Main logger error line' line is not colored."):
+            if self.RESULT(f"The {search!r} line is not colored."):
                 _line = self.assertline(search)  # type already defined above
                 self.assertnocolor(_line, evidence=True)

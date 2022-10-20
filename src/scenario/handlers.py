@@ -70,7 +70,7 @@ class Handlers(Logger):
         """
         Initializes an empty handler list.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
 
         Logger.__init__(self, log_class=DebugClass.HANDLERS)
 
@@ -103,8 +103,7 @@ class Handlers(Logger):
 
         event = enum2str(event)
 
-        self.debug("Installing *%s* handler %s, scenario=%s, once=%s, first=%s"
-                   % (event, repr(handler), scenario.name if scenario else "None", repr(once), repr(first)))
+        self.debug("Installing *%s* handler %r, scenario=%r, once=%r, first=%r", event, handler, scenario, once, first)
 
         if event not in self._handlers:
             self._handlers[event] = []
@@ -129,14 +128,14 @@ class Handlers(Logger):
 
         event = enum2str(event)
 
-        self.debug("Removing *%s* handler %s" % (event, repr(handler)))
+        self.debug("Removing *%s* handler %r", event, handler)
 
         if event in self._handlers:
             for _handler in self._handlers[event]:  # type: Handler
                 if _handler.handler is handler:
                     self._handlers[event].remove(_handler)
                     return
-        self.debug("No *%s* handler %s removed" % (event, repr(handler)))
+        self.debug("No *%s* handler %r removed", event, handler)
 
     def callhandlers(
             self,
@@ -154,23 +153,22 @@ class Handlers(Logger):
 
         event = enum2str(event)
 
-        self.debug("Executing *%s* handlers" % event)
+        self.debug("Executing *%s* handlers", event)
         if event in self._handlers:
             for _handler in self._handlers[event].copy():  # type: Handler
                 if _handler.scenario_definition and (not SCENARIO_STACK.iscurrentscenario(_handler.scenario_definition)):
-                    self.debug("Handler %s skipped because the '%s' scenario is not being executed "
-                               "(or the current scenario is a sub-scenario)"
-                               % (repr(_handler.handler), _handler.scenario_definition.name))
+                    self.debug("Handler %r skipped because the '%s' scenario is not being executed (or the current scenario is a sub-scenario)",
+                               _handler.handler, _handler.scenario_definition.name)
                     continue
 
                 try:
-                    self.debug("Calling *%s* handler %s" % (event, repr(_handler.handler)))
+                    self.debug("Calling *%s* handler %r", event, _handler.handler)
                     _handler.handler(event, data)
                 except Exception as _err:
-                    self.warning("Handler exception: %s" % str(_err), exc_info=True)
+                    self.warning(f"Handler exception: {_err}", exc_info=True)
 
                 if _handler.once:
-                    self.debug("%s expected to be called once, removing handler" % repr(_handler.handler))
+                    self.debug("%r expected to be called once, removing handler", _handler.handler)
                     if _handler in self._handlers[event]:
                         self._handlers[event].remove(_handler)
 

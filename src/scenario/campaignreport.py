@@ -50,7 +50,7 @@ class CampaignReport(Logger):
         """
         Configures logging for the :class:`CampaignReport` class.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
 
         Logger.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
 
@@ -67,13 +67,13 @@ class CampaignReport(Logger):
 
         :param campaign_execution: Campaign execution to generate the report for.
         :param junit_path: Path to write the JUnit report into.
-        :return: :const:`True` for success, :const:`False` otherwise.
+        :return: ``True`` for success, ``False`` otherwise.
         """
         from .loggermain import MAIN_LOGGER
 
         try:
             self.resetindentation()
-            self.debug("Writing campaign results to JUnit report '%s'" % junit_path)
+            self.debug("Writing campaign results to JUnit report '%s'", junit_path)
 
             # Create an XML document.
             _xml_doc = Xml.Document()  # type: Xml.Document
@@ -86,7 +86,7 @@ class CampaignReport(Logger):
 
             return True
         except Exception as _err:
-            MAIN_LOGGER.error("Could not write JUnit report '%s': %s" % (junit_path, str(_err)))
+            MAIN_LOGGER.error(f"Could not write JUnit report '{junit_path}': {_err}")
             self.debug("Exception", exc_info=sys.exc_info())
             return False
         finally:
@@ -100,14 +100,15 @@ class CampaignReport(Logger):
         Reads the JUnit report.
 
         :param junit_path: Path of the JUnit file to read.
-        :return: Campaign execution data read from the JUnit file.
-                 :const:`None` when the file could not be read, or its content could not be parsed successfully.
+        :return:
+            Campaign execution data read from the JUnit file.
+            ``None`` when the file could not be read, or its content could not be parsed successfully.
         """
         from .loggermain import MAIN_LOGGER
 
         try:
             self.resetindentation()
-            self.debug("Reading campaign results from JUnit report '%s'" % junit_path)
+            self.debug("Reading campaign results from JUnit report '%s'", junit_path)
 
             # Read and parse the JUnit XML file.
             _xml_doc = Xml.Document.read(junit_path)  # type: Xml.Document
@@ -118,7 +119,7 @@ class CampaignReport(Logger):
 
             return _campaign_execution
         except Exception as _err:
-            MAIN_LOGGER.error("Could not read JUnit report '%s': %s" % (junit_path, str(_err)))
+            MAIN_LOGGER.error(f"Could not read JUnit report '{junit_path}': {_err}")
             self.debug("Exception", exc_info=sys.exc_info())
             return None
         finally:
@@ -201,19 +202,19 @@ class CampaignReport(Logger):
 
         if _xml_test_suites.hasattr("disabled"):
             _campaign_execution.counts.disabled = int(_xml_test_suites.getattr("disabled"))
-            self.debug("testsuites/@disabled = %d" % _campaign_execution.counts.disabled)
+            self.debug("testsuites/@disabled = %d", _campaign_execution.counts.disabled)
         if _xml_test_suites.hasattr("errors"):
             _campaign_execution.counts.errors = int(_xml_test_suites.getattr("errors"))
-            self.debug("testsuites/@errors = %d" % _campaign_execution.counts.errors)
+            self.debug("testsuites/@errors = %d", _campaign_execution.counts.errors)
         if _xml_test_suites.hasattr("failures"):
             _campaign_execution.counts.failures = int(_xml_test_suites.getattr("failures"))
-            self.debug("testsuites/@failures = %d" % _campaign_execution.counts.failures)
+            self.debug("testsuites/@failures = %d", _campaign_execution.counts.failures)
         if _xml_test_suites.hasattr("tests"):
             _campaign_execution.counts.total = int(_xml_test_suites.getattr("tests"))
-            self.debug("testsuites/@tests = %d" % _campaign_execution.counts.total)
+            self.debug("testsuites/@tests = %d", _campaign_execution.counts.total)
         if _xml_test_suites.hasattr("time"):
             _campaign_execution.time.elapsed = float(_xml_test_suites.getattr("time"))
-            self.debug("testsuites/@time = %f" % _campaign_execution.time.elapsed)
+            self.debug("testsuites/@time = %f", _campaign_execution.time.elapsed)
 
         for _xml_test_suite in _xml_test_suites.getchildren("testsuite"):  # type: Xml.Node
             self.debug("New testsuites/testsuite")
@@ -331,39 +332,40 @@ class CampaignReport(Logger):
         :param xml_test_suite: JUnit XML to read from.
         :return: Test suite execution data.
         """
-        from .datetimeutils import fromiso8601, toiso8601
+        from .datetimeutils import f2strtime, fromiso8601, toiso8601
+        from .debugutils import callback
 
         _test_suite_execution = TestSuiteExecution(campaign_execution, self._xmlattr2path(xml_test_suite, "name"))  # type: TestSuiteExecution
 
         if xml_test_suite.hasattr("tests"):
             _test_suite_execution.counts.total = int(xml_test_suite.getattr("tests"))
-            self.debug("testsuite/@tests = %d" % _test_suite_execution.counts.total)
+            self.debug("testsuite/@tests = %d", _test_suite_execution.counts.total)
         if xml_test_suite.hasattr("disabled"):
             _test_suite_execution.counts.disabled = int(xml_test_suite.getattr("disabled"))
-            self.debug("testsuite/@disabled = %d" % _test_suite_execution.counts.disabled)
+            self.debug("testsuite/@disabled = %d", _test_suite_execution.counts.disabled)
         if xml_test_suite.hasattr("errors"):
             _test_suite_execution.counts.errors = int(xml_test_suite.getattr("errors"))
-            self.debug("testsuite/@errors = %d" % _test_suite_execution.counts.errors)
+            self.debug("testsuite/@errors = %d", _test_suite_execution.counts.errors)
         if xml_test_suite.hasattr("failures"):
             _test_suite_execution.counts.failures = int(xml_test_suite.getattr("failures"))
-            self.debug("testsuite/@failures = %d" % _test_suite_execution.counts.failures)
+            self.debug("testsuite/@failures = %d", _test_suite_execution.counts.failures)
         if xml_test_suite.hasattr("id"):
             _id = int(xml_test_suite.getattr("id"))  # type: int
-            self.debug("testsuite/@id = %d" % _id)
+            self.debug("testsuite/@id = %d", _id)
             if _id != len(campaign_execution.test_suite_executions):
-                self.warning("Mismatching test suite id %d, should be %d" % (_id, len(campaign_execution.test_suite_executions)))
+                self.warning(f"Mismatching test suite id {_id}, should be {len(campaign_execution.test_suite_executions)}")
         if xml_test_suite.hasattr("skipped"):
             _test_suite_execution.counts.skipped = int(xml_test_suite.getattr("skipped"))
-            self.debug("testsuite/@skipped = %d" % _test_suite_execution.counts.skipped)
+            self.debug("testsuite/@skipped = %d", _test_suite_execution.counts.skipped)
         if xml_test_suite.hasattr("time"):
             _test_suite_execution.time.elapsed = float(xml_test_suite.getattr("time"))
-            self.debug("testsuite/@time = %f" % _test_suite_execution.time.elapsed)
+            self.debug("testsuite/@time = %f", _test_suite_execution.time.elapsed)
         if xml_test_suite.hasattr("timestamp"):
             _test_suite_execution.time.start = fromiso8601(xml_test_suite.getattr("timestamp"))
-            self.debug("testsuite/@timestamp = %s" % toiso8601(_test_suite_execution.time.start))
+            self.debug("testsuite/@timestamp = %s", callback(f2strtime, _test_suite_execution.time.start))
             if _test_suite_execution.time.elapsed is not None:
                 _test_suite_execution.time.end = _test_suite_execution.time.start + _test_suite_execution.time.elapsed
-                self.debug("testsuite/@timestamp + elapsed => end = %s" % toiso8601(_test_suite_execution.time.end))
+                self.debug("testsuite/@timestamp + elapsed => end = %s", callback(f2strtime, _test_suite_execution.time.end))
 
         for _xml_test_case in xml_test_suite.getchildren("testcase"):  # type: Xml.Node
             self.debug("New testsuite/testcase")
@@ -474,9 +476,9 @@ class CampaignReport(Logger):
                 _text = "".join(_error.exception.format())
                 _text += "\n"
             if _error.location:
-                _text += "%s: %s" % (_error.location.tolongstring(), str(_error))
+                _text += f"{_error.location.tolongstring()}: {_error}"
             else:
-                _text += str(_error)
+                _text += f"{_error}"
             _xml_failure.appendchild(xml_doc.createtextnode(_text))
 
         # testcase/system-out:
@@ -510,23 +512,23 @@ class CampaignReport(Logger):
         #       The testcase/@classname attribute gives the full path.
         # _name = xml_test_case.getattr("name")  # type: str
         _script_path = self._xmlattr2path(xml_test_case, "classname")  # type: Path
-        self.debug("testcase/@classname = '%s'" % _script_path)
+        self.debug("testcase/@classname = '%s'", _script_path)
 
         _test_case_execution = TestCaseExecution(test_suite_execution, _script_path)  # type: TestCaseExecution
 
         if xml_test_case.hasattr("time"):
             _test_case_execution.time.elapsed = float(xml_test_case.getattr("time"))
-            self.debug("testcase/@time = %f" % _test_case_execution.time.elapsed)
+            self.debug("testcase/@time = %f", _test_case_execution.time.elapsed)
 
         for _xml_link in xml_test_case.getchildren("link"):
             if _xml_link.getattr("rel") == "log":
                 _test_case_execution.log.path = self._xmlattr2path(_xml_link, "href")
-                self.debug("testcase/link[@rel='log']/@href = '%s'" % _test_case_execution.log.path)
+                self.debug("testcase/link[@rel='log']/@href = '%s'", _test_case_execution.log.path)
                 # Read the log file by the way.
                 _test_case_execution.log.read()
             if _xml_link.getattr("rel") == "report":
                 _test_case_execution.json.path = self._xmlattr2path(_xml_link, "href")
-                self.debug("testcase/link[@rel='report']/@href = '%s'" % _test_case_execution.json.path)
+                self.debug("testcase/link[@rel='report']/@href = '%s'", _test_case_execution.json.path)
                 # Read the JSON report by the way.
                 _test_case_execution.json.read()
 
@@ -538,7 +540,7 @@ class CampaignReport(Logger):
                 self.debug("New testcase/failure")
                 if _xml_failure.hasattr("message") and _test_case_execution.scenario_execution:
                     _error = TestError(_xml_failure.getattr("message"))  # type: TestError
-                    self.debug("testcase/failure/@message = '%s'" % _error.message)
+                    self.debug("testcase/failure/@message = %r", _error.message)
                     if _xml_failure.hasattr("type"):
                         if _xml_failure.getattr("type") == "known-issue":
                             self.debug("testcase/failure/@type = 'known-issue'")
@@ -547,24 +549,24 @@ class CampaignReport(Logger):
                                 issue_id=_issue_id,
                                 message=_error.message[len(_issue_id + ": "):],
                             )
-                            self.debug("testcase/failure/@message => issue_id'%s', message='%s'" % (_error.issue_id, _error.message))
+                            self.debug("testcase/failure/@message => issue_id=%r, message=%r", _error.issue_id, _error.message)
                         else:
                             _error = ExceptionError(exception=None)
                             _error.exception_type = _xml_failure.getattr("type")
-                            self.debug("testcase/failure/@type = '%s'" % _error.exception_type)
+                            self.debug("testcase/failure/@type = '%s'", _error.exception_type)
                             _error.message = _xml_failure.getattr("message")
                     for _xml_text in _xml_failure.gettextnodes():  # type: Xml.TextNode
                         _last_line = _xml_text.data.splitlines()[-1]  # type: str
                         if _last_line.count(":") >= 3:
                             _error.location = CodeLocation.fromlongstring(":".join(_last_line.split(":")[:3]))
-                            self.debug("testcase/failure/@location = '%s'" % _error.location.tolongstring())
+                            self.debug("testcase/failure/@location = '%s'", _error.location.tolongstring())
                     _test_case_execution.scenario_execution.errors.append(_error)
         if xml_test_case.hasattr("status"):
-            self.debug("testcase/@status = '%s'" % xml_test_case.getattr("status"))
+            self.debug("testcase/@status = %r", xml_test_case.getattr("status"))
             if _test_case_execution.errors and (xml_test_case.getattr("status") != str(ExecutionStatus.FAIL)):
-                self.warning("Mismatching status '%s' with %d errors" % (xml_test_case.getattr("status"), len(_test_case_execution.errors)))
+                self.warning(f"Mismatching status {xml_test_case.getattr('status')!r} with {len(_test_case_execution.errors)} error count")
             if (not _test_case_execution.errors) and (xml_test_case.getattr("status") == str(ExecutionStatus.FAIL)):
-                self.warning("Mismatching status '%s' while no error" % xml_test_case.getattr("status"))
+                self.warning(f"Mismatching status {xml_test_case.getattr('status')!r} while no error")
 
         if _test_case_execution.scenario_execution:
             # Check the :mod:`scenario` statistic, which are properties of :class:`.campaignexecution.TestCase`.
@@ -662,11 +664,7 @@ class CampaignReport(Logger):
                 elif isinstance(_object, (TestSuiteExecution, TestCaseExecution)):
                     _sum += getattr(getattr(_object, _stat_type), _exec_total)
             if _top_count != _sum:
-                self.warning("Mismatching @%s counts between <%s/>(%d) and %ssub-objects(%d)" % (
-                    attr_name,
-                    xml_node.tag_name, _top_count,
-                    _object_type, _sum,
-                ))
+                self.warning(f"Mismatching @{attr_name} counts between <{xml_node.tag_name}/> (count={_top_count}) and {_object_type}sub-objects (sum={_sum})")
 
 
 __doc__ += """

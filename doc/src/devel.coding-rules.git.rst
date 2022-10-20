@@ -25,7 +25,13 @@ Branching strategy
 
 .. todo:: Documentation needed: Describe the branching strategy.
 
-    Possibly *git-flow* once we have tested it.
+    - Possibly *git-flow* once we have tested it? Not sure...
+    - branch names:
+        - feature/#xxx/detailed-description
+        - bugfix/#xxx/detailed-description
+        - hotfix/#xxx/detailed-description
+        - enhancement/#xxx/detail-description
+        - int/vX.Y.Z+
 
 
 .. _coding-rules.git.commit-messages:

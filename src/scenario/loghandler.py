@@ -30,7 +30,7 @@ class LogHandler:
     #: Console handler instance.
     #:
     #: Created with the main logger.
-    console_handler = None  # type: typing.Optional[logging.StreamHandler]
+    console_handler = None  # type: typing.Optional[logging.StreamHandler[typing.TextIO]]
 
     #: File handler instance, when started.
     #:

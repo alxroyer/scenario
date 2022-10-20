@@ -28,7 +28,7 @@ class ConfigDb300(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="YAML configuration file",
+            title="Load YAML configuration file",
             objective="Check that a YAML configuration file can be loaded (when 'pyyaml' is installed).",
             features=[scenario.test.features.CONFIG_DB],
         )

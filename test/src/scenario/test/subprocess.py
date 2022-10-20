@@ -136,7 +136,7 @@ class SubProcess(scenario.SubProcess):
         elif self.launcher_path.samefile(CAMPAIGN_LAUNCHER):
             scenario.Assertions.fail("Campaign reports not handled yet")
         else:
-            scenario.Assertions.fail("Unknown launcher '%s'" % self.launcher_path)
+            scenario.Assertions.fail(f"Unknown launcher '{self.launcher_path}'")
         return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
 
     def expectsuccess(
@@ -146,9 +146,10 @@ class SubProcess(scenario.SubProcess):
         """
         Sets whether a success is expected or not.
 
-        :param expect_success: :const:`True` if success is expected for this scenario (default),
-                               :const:`False` if failure is expected,
-                               :const:`None` if nothing should be checked.
+        :param expect_success:
+            ``True`` if success is expected for this scenario (default),
+            ``False`` if failure is expected,
+            ``None`` if nothing should be checked.
         :return: ``self``
         """
         assert isinstance(self, SubProcess)
@@ -168,9 +169,9 @@ class SubProcess(scenario.SubProcess):
         self.exitonerror(False)
         super().run(timeout=timeout)
         if self._expect_success:
-            scenario.Assertions.assertequal(self.returncode, 0, "%s failed" % repr(self._cmd_line))
+            scenario.Assertions.assertequal(self.returncode, 0, f"{self._cmd_line!r} failed")
         else:
-            scenario.Assertions.assertnotequal(self.returncode, 0, "%s succeeded unexpectedly" % repr(self._cmd_line))
+            scenario.Assertions.assertnotequal(self.returncode, 0, f"{self._cmd_line!r} succeeded unexpectedly")
         return self
 
 

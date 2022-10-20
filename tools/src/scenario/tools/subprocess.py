@@ -43,6 +43,8 @@ class SubProcess(scenario.SubProcess):
         # Log stdout and stderr with the main logger.
         self.onstdoutline(self._onstdoutline)
         self.onstderrline(self._onstderrline)
+        # Use the main logger for logging.
+        self.setlogger(scenario.logging)
         # Exit on error by default.
         self.exitonerror(True)
 

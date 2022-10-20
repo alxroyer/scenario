@@ -61,21 +61,21 @@ class ParseFinalResultsLog(LogParserStep):
             self,
             parse_state,  # type: ParseFinalResultsLog.ParseState
     ):  # type: (...) -> None
-        self._debuglineinfo("%s -> %s" % (repr(self._parse_state), repr(parse_state)))
+        self._debuglineinfo("%r -> %r", self._parse_state, parse_state)
         self._parse_state = parse_state
 
     def _parseline(
             self,
             line,  # type: bytes
     ):  # type: (...) -> bool
-        if re.match(rb' *---+$', line):
+        if re.search(rb' *---+$', line):
             # Skip the separation lines.
             return True
 
         _match = None  # type: typing.Optional[typing.Match[bytes]]
 
         if self._parse_state == ParseFinalResultsLog.ParseState.END_NOT_REACHED_YET:
-            if re.match(rb'(INFO) +TOTAL +Status +Steps +Actions +Results +Time$', line):
+            if re.search(rb'(INFO) +TOTAL +Status +Steps +Actions +Results +Time$', line):
                 self._debuglineinfo("Header line found")
                 self._setparsestate(ParseFinalResultsLog.ParseState.TOTAL_STATS_LINE)
                 return True
@@ -127,7 +127,7 @@ class ParseFinalResultsLog(LogParserStep):
                     self.json_total_stats["actions"]["total"] = int(_match.group(8))
                     self.json_total_stats["results"]["executed"] = int(_match.group(9))
                     self.json_total_stats["results"]["total"] = int(_match.group(10))
-                self._debuglineinfo("Total statistics: %s" % json.dumps(self.json_total_stats))
+                self._debuglineinfo("Total statistics: %s", scenario.debug.jsondump(self.json_total_stats))
 
                 self._setparsestate(ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES)
 
@@ -135,7 +135,7 @@ class ParseFinalResultsLog(LogParserStep):
 
         if self._parse_state == ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES:
             # New test case line.
-            _match = re.match(
+            _match = re.search(
                 rb''.join([
                     # Log level (1).
                     rb'(INFO|WARNING|ERROR) +',
@@ -182,25 +182,28 @@ class ParseFinalResultsLog(LogParserStep):
                     _json_scenario_stats["results"]["executed"] = int(_match.group(8))
                     _json_scenario_stats["results"]["total"] = int(_match.group(9))
                 self.json_scenario_stats.append(_json_scenario_stats)
-                self._debuglineinfo("Scenario statistics: %s" % json.dumps(_json_scenario_stats))
+                self._debuglineinfo("Scenario statistics: %s", scenario.debug.jsondump(_json_scenario_stats))
 
                 return True
 
             # Known issue details.
-            _match = re.match(
+            _match = re.search(
                 rb''.join([
                     # Log level (1).
                     rb'(WARNING) +',
-                    # Script path (2).
-                    rb'([^ :]+):',
-                    # Line (3).
-                    rb'(\d+):',
-                    # Qualified name (4).
-                    rb'([^ :]+): ',
-                    # Issue id (5)
+                    # Issue id (2).
                     rb'Issue (.+)! ',
-                    # Error message (6)
-                    rb'(.+)',
+                    # Error message (3).
+                    rb'(.+) ',
+                    # Location:
+                    rb'\(%s\)' % rb':'.join([
+                        # Script path (4).
+                        rb'([^ :]+)',
+                        # Line (5).
+                        rb'(\d+)',
+                        # Qualified name (6).
+                        rb'([^ :]+)',
+                    ]),
                     # End of line.
                     rb'$',
                 ]),
@@ -209,31 +212,34 @@ class ParseFinalResultsLog(LogParserStep):
             if _match:
                 _warning_error = {
                     "type": "known-issue",
-                    "id": self.tostr(_match.group(5)),
-                    "message": self.tostr(_match.group(6)),
-                    "location": self.tostr(b'%s:%s:%s' % (_match.group(2), _match.group(3), _match.group(4))),
+                    "id": self.tostr(_match.group(2)),
+                    "message": self.tostr(_match.group(3)),
+                    "location": self.tostr(b'%s:%s:%s' % (_match.group(4), _match.group(5), _match.group(6))),
                 }  # type: JSONDict
                 assert self.json_scenario_stats, "No current scenario"
                 self.json_scenario_stats[-1]["warnings"].append(_warning_error)
-                self._debuglineinfo("Warning: %s" % json.dumps(_warning_error))
+                self._debuglineinfo("Warning: %s", scenario.debug.jsondump(_warning_error))
 
                 return True
 
             # Error details.
-            _match = re.match(
+            _match = re.search(
                 rb''.join([
                     # Log level (1).
                     rb'(ERROR) +',
-                    # Script path (2).
-                    rb'([^ :]+):',
-                    # Line (3).
-                    rb'(\d+):',
-                    # Qualified name (4).
+                    # Error type (2).
                     rb'([^ :]+): ',
-                    # Error type (5)
-                    rb'([^ :]+): ',
-                    # Error message (6)
-                    rb'(.+)',
+                    # Error message (3).
+                    rb'(.+) ',
+                    # Location:
+                    rb'\(%s\)' % rb':'.join([
+                        # Script path (4).
+                        rb'([^ :]+)',
+                        # Line (5).
+                        rb'(\d+)',
+                        # Qualified name (6).
+                        rb'([^ :]+)',
+                    ]),
                     # End of line.
                     rb'$',
                 ]),
@@ -241,13 +247,13 @@ class ParseFinalResultsLog(LogParserStep):
             )
             if _match:
                 _json_error = {
-                    "type": self.tostr(_match.group(5)),
-                    "message": self.tostr(_match.group(6)),
-                    "location": self.tostr(b'%s:%s:%s' % (_match.group(2), _match.group(3), _match.group(4))),
+                    "type": self.tostr(_match.group(2)),
+                    "message": self.tostr(_match.group(3)),
+                    "location": self.tostr(b'%s:%s:%s' % (_match.group(4), _match.group(5), _match.group(6))),
                 }  # type: JSONDict
                 assert self.json_scenario_stats, "No current scenario"
                 self.json_scenario_stats[-1]["errors"].append(_json_error)
-                self._debuglineinfo("Error: %s" % json.dumps(_json_error))
+                self._debuglineinfo("Error: %s", scenario.debug.jsondump(_json_error))
 
                 return True
 

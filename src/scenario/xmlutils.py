@@ -205,17 +205,19 @@ class Xml:
                 self,
                 name,  # type: str
                 value,  # type: str
-        ):  # type: (...) -> None
+        ):  # type: (...) -> Xml.Node
             """
             Set an attribute.
 
             :param name: Attribute name.
             :param value: Attribute value.
+            :return: ``self``
             """
             self._xml_element.setAttribute(  # type?: ignore  ## Call to untyped function "setAttribute" in typed context
                 name,
                 value,
             )
+            return self
 
         def getchildren(
                 self,

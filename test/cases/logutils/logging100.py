@@ -55,7 +55,7 @@ class CheckLoggingDateTime(LogVerificationStep):
             for _line in self.subprocess.stdout.splitlines():  # type: bytes
                 self.assertregex(rb'^%s ' % self.tobytes(scenario.datetime.ISO8601_REGEX), _line, evidence=False)
                 _lines += 1
-            self.assertgreater(_lines, 0, evidence="Number of lines starting with %s" % repr(scenario.datetime.ISO8601_REGEX))
+            self.assertgreater(_lines, 0, evidence=f"Number of lines starting with {scenario.datetime.ISO8601_REGEX!r}")
 
 
 class CheckNoLoggingDateTime(LogVerificationStep):
@@ -68,4 +68,4 @@ class CheckNoLoggingDateTime(LogVerificationStep):
             for _line in self.subprocess.stdout.splitlines():  # type: bytes
                 self.assertnotregex(rb'^%s ' % self.tobytes(scenario.datetime.ISO8601_REGEX), _line, evidence=False)
                 _lines += 1
-            self.assertgreater(_lines, 0, evidence="Number of lines not starting with %s" % repr(scenario.datetime.ISO8601_REGEX))
+            self.assertgreater(_lines, 0, evidence=f"Number of lines not starting with {scenario.datetime.ISO8601_REGEX!r}")

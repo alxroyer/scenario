@@ -72,26 +72,27 @@ class CheckClassLoggerLogLevels(LogVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Class logger log levels")
 
-        if self.RESULT("The ''%s' logger error line' line is marked with the 'ERROR' log level and the '%s' log class."
-                       % (LoggerScenario.LOGGER_DEBUG_CLASS, LoggerScenario.LOGGER_DEBUG_CLASS)):
-            _error_line = self.assertline("'%s' logger error line" % LoggerScenario.LOGGER_DEBUG_CLASS)  # type: str
+        _error_line = f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger error line"  # type: str
+        if self.RESULT(f"The {_error_line!r} line is marked with the 'ERROR' log level and the '{LoggerScenario.LOGGER_DEBUG_CLASS}' log class."):
+            _error_line = self.assertline(_error_line)
             self.assertregex(r"^ *ERROR +\[%s\] " % LoggerScenario.LOGGER_DEBUG_CLASS, _error_line, evidence=True)
 
-        if self.RESULT("The ''%s' logger warning line' line is marked with the 'WARNING' log level and the '%s' log class."
-                       % (LoggerScenario.LOGGER_DEBUG_CLASS, LoggerScenario.LOGGER_DEBUG_CLASS)):
-            _warning_line = self.assertline("'%s' logger warning line" % LoggerScenario.LOGGER_DEBUG_CLASS)  # type: str
+        _warning_line = f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger warning line"  # type: str
+        if self.RESULT(f"The {_warning_line!r} line is marked with the 'WARNING' log level and the '{LoggerScenario.LOGGER_DEBUG_CLASS}' log class."):
+            _warning_line = self.assertline(_warning_line)
             self.assertregex(r"^ *WARNING +\[%s\] " % LoggerScenario.LOGGER_DEBUG_CLASS, _warning_line, evidence=True)
 
-        if self.RESULT("The ''%s' logger info line' line is marked with the 'INFO' log level and the '%s' log class."
-                       % (LoggerScenario.LOGGER_DEBUG_CLASS, LoggerScenario.LOGGER_DEBUG_CLASS)):
-            _info_line = self.assertline("'%s' logger info line" % LoggerScenario.LOGGER_DEBUG_CLASS)  # type: str
+        _info_line = f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger info line"  # type: str
+        if self.RESULT(f"The {_info_line!r} line is marked with the 'INFO' log level and the '{LoggerScenario.LOGGER_DEBUG_CLASS}' log class."):
+            _info_line = self.assertline(_info_line)
             self.assertregex(r"^ *INFO +\[%s\] " % LoggerScenario.LOGGER_DEBUG_CLASS, _info_line, evidence=True)
 
+        _debug_line = f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger debug line"
         if LoggerScenario.LOGGER_DEBUG_CLASS in (self.getexecstep(ExecScenario).debug_classes or []):
-            if self.RESULT("The ''%s' logger debug line' line is displayed, and marked with the 'DEBUG' log level and the '%s' log class."
-                           % (LoggerScenario.LOGGER_DEBUG_CLASS, LoggerScenario.LOGGER_DEBUG_CLASS)):
-                _debug_line = self.assertline("'%s' logger debug line" % LoggerScenario.LOGGER_DEBUG_CLASS)  # type: str
+            if self.RESULT(f"The {_debug_line!r} line is displayed, "
+                           f"and marked with the 'DEBUG' log level and the '{LoggerScenario.LOGGER_DEBUG_CLASS}' log class."):
+                _debug_line = self.assertline(_debug_line)
                 self.assertregex(r"^ *DEBUG +\[%s\] " % LoggerScenario.LOGGER_DEBUG_CLASS, _debug_line, evidence=True)
         else:
-            if self.RESULT("The ''%s' logger debug line' line is not displayed." % LoggerScenario.LOGGER_DEBUG_CLASS):
-                self.assertnoline("'%s' logger debug line" % LoggerScenario.LOGGER_DEBUG_CLASS, evidence=True)
+            if self.RESULT(f"The {_debug_line!r} line is not displayed."):
+                self.assertnoline(f"'{LoggerScenario.LOGGER_DEBUG_CLASS}' logger debug line", evidence=True)

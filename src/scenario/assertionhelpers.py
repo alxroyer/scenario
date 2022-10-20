@@ -24,15 +24,20 @@ import typing
 import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
-    # Same as `StepExecution` in 'assertions.py'.
-    from .stepdefinition import StepDefinition, StepSpecificationType
-    # Same as `StepExecution` in 'assertions.py'.
+    # `DelayedStr` used in type definitions.
+    # Avoid risks of cylic dependencies.
+    from .debugutils import DelayedStr
+    # `StepSpecificationType` used in type definitions.
+    # Avoid risks of cylic dependencies.
+    from .stepdefinition import StepSpecificationType
+    # `StepExecution` used in type definitions.
+    # Avoid risks of cylic dependencies.
     from .stepexecution import StepExecution
 
 
 if typing.TYPE_CHECKING:
     #: Optional error parameter type.
-    ErrParamType = typing.Optional[str]
+    ErrParamType = typing.Optional[typing.Union[str, DelayedStr]]
 
     #: Evidence parameter type.
     EvidenceParamType = typing.Optional[typing.Union[bool, str]]
@@ -97,86 +102,58 @@ def safecontainer(
         return list(obj)
 
 
-def saferepr(
-        obj,  # type: typing.Any
-        max_length=256,  # type: int
-        focus=None,  # type: typing.Any
-):  # type: (...) -> str
-    """
-    Safe representation of an object.
-
-    :param obj: Object to represent.
-    :param max_length: Representation maximum length.
-    :param focus: Data to focus on.
-    :return: Object representation.
-
-    .. note:: Inspired from :mod:`unittest`.
-    """
-    # ``focus`` parameter is set.
-    if (focus is (str, bytes)) and isinstance(obj, type(focus)):
-        _start = 0  # type: int
-        _end = len(obj)  # type: int
-        if len(obj) > max_length:
-            _start = obj.find(focus)
-            _start -= 10
-            if _start < 0:
-                _start = 0
-            _end = _start + max_length
-            if _end > len(obj):
-                _start -= (_end - len(obj))
-                _end = len(obj)
-        _anystr = type(obj)()  # type: typing.Union[str, bytes]
-        if _start > 0:
-            if isinstance(_anystr, str):
-                _anystr += "...[truncated] "
-            if isinstance(_anystr, bytes):
-                _anystr += b'...[truncated] '
-        _anystr += obj[_start:_end]
-        if _end < len(obj):
-            if isinstance(_anystr, str):
-                _anystr += " [truncated]..."
-            if isinstance(_anystr, bytes):
-                _anystr += b' [truncated]...'
-        return repr(_anystr)
-
-    # ``focus`` parameter not set.
-    # noinspection PyBroadException
-    try:
-        _repr = repr(obj)
-    except Exception:
-        _repr = object.__repr__(obj)
-    if len(_repr) <= max_length:
-        return _repr
-    return _repr[:max_length] + " [truncated]..." + _repr[-1:]
-
-
 def errmsg(
         optional,  # type: ErrParamType
-        standard,  # type: str
+        standard,  # type: typing.Union[str, DelayedStr]
+        *args  # type: typing.Any
 ):  # type: (...) -> str
     """
     Formats an error message: the optional and/or the regular one.
 
     :param optional: Optional assertion message, if set.
     :param standard: Standard assertion message.
+    :param args: Standard assertion message arguments.
     :return: Error message.
     """
+    from .debugutils import FmtAndArgs
+
+    # Ensure `optional` is of type `str`.
+    if not isinstance(optional, str):
+        optional = str(optional)
+    # Ensure `standard` is of type `str`.
+    if not isinstance(standard, str):
+        standard = str(standard)
+    # Format `standard` with `args` if not empty.
+    if args:
+        standard = str(FmtAndArgs(standard, *args))
+
     # noinspection PyProtectedMember
     return unittest._formatMessage(optional, standard)
 
 
 def ctxmsg(
         context,  # type: str
-        err,  # type: str
+        err,  # type: typing.Union[str, DelayedStr]
+        *args  # type: typing.Any
 ):  # type: (...) -> str
     """
     Builds an contextual assertion message.
 
-    :param context: Context pattern, basically the methods name (e.g.: :const:`'assertisinstance()'`).
+    :param context: Context pattern, basically the methods name (e.g.: ``"assertisinstance()"``).
     :param err: Detailed assertion message.
+    :param args: Detailed assertion message arguments
     :return: Assertion message.
     """
-    return "%s: %s" % (context, err)
+    from .debugutils import FmtAndArgs
+
+    # Ensure `err` is of type `str`.
+    if not isinstance(err, str):
+        err = str(err)
+    # Format `err` with `args` if not empty.
+    if args:
+        err = str(FmtAndArgs(err, *args))
+
+    return f"{context}: {err}"
 
 
 def isnonemsg(
@@ -184,35 +161,45 @@ def isnonemsg(
         what,  # type: str
 ):  # type: (...) -> str
     """
-    Builds an assertion message indicating that an element in unexpectedly :const:`None`.
+    Builds an assertion message indicating that an element in unexpectedly ``None``.
 
-    :param context: Context pattern, basically the methods name (e.g.: :const:`'assertisinstance()'`).
-    :param what: Name of the parameter, or element, unexpectedly :const:`None` (e.g.: ``"obj"`` for a ``obj`` parameter).
+    :param context: Context pattern, basically the methods name (e.g.: ``"assertisinstance()"``).
+    :param what: Name of the parameter, or element, unexpectedly ``None`` (e.g.: ``"obj"`` for a ``obj`` parameter).
     :return: Assertion message.
     """
-    return ctxmsg(context, "%s unexpectedly None" % what)
+    return ctxmsg(context, "%s unexpectedly None", what)
 
 
 def evidence(
         evidence_enabled,  # type: EvidenceParamType
-        regular,  # type: str
+        regular,  # type: typing.Union[str, DelayedStr]
+        *args,  # type: typing.Any
 ):  # type: (...) -> None
     """
     Tracks assertion data, depending on the current scenario configuration
 
     :param evidence_enabled: Proof message activation and/or specialization (see the :ref:`dedicated note <assertions.evidence-param>`).
     :param regular: Regular proof message.
+    :param args: Proof message arguments.
     """
+    from .debugutils import FmtAndArgs
     from .scenariorunner import SCENARIO_RUNNER
     from .scenariostack import SCENARIO_STACK
 
     if evidence_enabled and SCENARIO_RUNNER.doexecute():
         if SCENARIO_STACK.current_scenario_definition and SCENARIO_STACK.current_action_result_execution:
+            # Ensure `regular` is of type `str`.
+            if not isinstance(regular, str):
+                regular = str(regular)
+
+            # Build the evidence message.
+            _evidence_message = FmtAndArgs()  # type: FmtAndArgs
             if isinstance(evidence_enabled, str):
-                _evidence = "%s: %s" % (evidence_enabled, regular)  # type: str
-            else:
-                _evidence = regular
-            SCENARIO_STACK.current_scenario_definition.evidence(_evidence)
+                _evidence_message.push("%s: ", evidence_enabled)
+            _evidence_message.push(regular, *args)
+
+            # Save it.
+            SCENARIO_STACK.current_scenario_definition.evidence(str(_evidence_message))
 
 
 def getstepexecution(
@@ -226,6 +213,7 @@ def getstepexecution(
     :raise: Exception when the step execution could not be found.
     """
     from .scenariostack import SCENARIO_STACK
+    from .stepdefinition import StepDefinition
     from .stepexecution import StepExecution
 
     if isinstance(step_execution_specification, StepExecution):
@@ -233,5 +221,5 @@ def getstepexecution(
 
     assert SCENARIO_STACK.current_scenario_definition, "No current scenario"
     _step_definition = SCENARIO_STACK.current_scenario_definition.expectstep(step_execution_specification)  # type: StepDefinition
-    assert _step_definition.executions, "No execution for %s" % str(_step_definition)
+    assert _step_definition.executions, f"No execution for {_step_definition}"
     return _step_definition.executions[-1]

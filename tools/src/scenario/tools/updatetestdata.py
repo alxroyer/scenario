@@ -37,7 +37,7 @@ class TestData:
         self.__const_name = ""  # type: str
 
         scenario.logging.info("")
-        scenario.logging.info("Processing '%s':" % path)
+        scenario.logging.info(f"Processing '{path}':")
 
         self._findlocations(expected_locations)
 
@@ -53,7 +53,7 @@ class TestData:
                         scenario.logging.debug("'%s' => '%s'", self.path, _var_name)
                         self.__const_name = _var_name
                         break
-        assert self.__const_name, "Could not retrieve path constant name for '%s" % self.path
+        assert self.__const_name, f"Could not retrieve path constant name for '{self.path}'"
         return self.__const_name
 
     def _findlocations(
@@ -75,12 +75,12 @@ class TestData:
             _match = re.match(rb'^.* {2}# location: (.*)$', _line)  # type: typing.Optional[typing.Match[bytes]]
             if _match:
                 _key = _match.group(1).decode("utf-8")  # type: str
-                assert _key in expected_locations, "%s: Unknown key '%s' in line %d" % (self.path, _key, _line_number)
+                assert _key in expected_locations, f"{self.path}: Unknown key '{_key}' in line {_line_number}"
                 _function = expected_locations.pop(_key)  # type: str
                 self.locations[_key] = scenario.CodeLocation(self.path, _line_number, _function)
 
         # Check all expected locations have been found.
-        assert not expected_locations, "%s: Location keys not found: %s" % (self.path, ", ".join(expected_locations.keys()))
+        assert not expected_locations, f"{self.path}: Location keys not found: {', '.join(expected_locations.keys())}"
 
 
 class FileUpdater:
@@ -114,10 +114,10 @@ class FileUpdater:
 
             # Log and store the (un)modified line.
             if (_new_line is not None) and (_new_line != _line):
-                scenario.logging.warning("  %s:%d: << %r" % (self.path, self._current_line, _line.strip()))
-                scenario.logging.warning("  %s:%d: >> %r" % (self.path, self._current_line, _new_line.strip()))
+                scenario.logging.warning(f"  {self.path}:{self._current_line}: << {_line.strip()!r}")
+                scenario.logging.warning(f"  {self.path}:{self._current_line}: >> {_new_line.strip()!r}")
             elif _new_line is not None:
-                scenario.logging.info("  %s:%d: (unchanged) %r" % (self.path, self._current_line, _new_line.strip()))
+                scenario.logging.info(f"  {self.path}:{self._current_line}: (unchanged) {_new_line.strip()!r}")
             else:
                 # Keep the line as is by default.
                 _new_line = _line
@@ -146,17 +146,17 @@ class FileUpdater:
             # Apply match filtering.
             if filter_match is not None:
                 if not filter_match(_match):
-                    scenario.logging.debug("Match with %r filtered out" % regex)
+                    scenario.logging.debug("Match with %r filtered out", regex)
                     return None
 
             # Determine the location key.
             _key = location_key(_match)  # type: str
-            assert _key in self.test_data.locations, "%s:%d: No such location key '%s' in '%s'" % (self.path, self._current_line, _key, self.test_data.path)
+            assert _key in self.test_data.locations, f"{self.path}:{self._current_line}: No such location key '{_key}' in '{self.test_data.path}'"
 
             # Compute and return the modified line.
             return new_line(_match, self.test_data.locations[_key])
         elif self.test_data.path.prettypath.encode("utf-8") in line:
-            scenario.logging.debug("Regex %r did not match" % regex)
+            scenario.logging.debug("Regex %r did not match", regex)
 
         return None
 
@@ -255,12 +255,12 @@ class KeyListFileUpdater(FileUpdater):
         self._ordered_location_keys = ordered_location_keys.copy()  # type: typing.List[str]
 
     def _nextlocationkey(self):  # type: (...) -> str
-        assert self._ordered_location_keys, "%s: Not enough location keys" % self.path
+        assert self._ordered_location_keys, f"{self.path}: Not enough location keys"
         return self._ordered_location_keys.pop(0)
 
     def _writefile(self):  # type: (...) -> None
         # Check all expected JSON lines have been processed prior to writing the file.
-        assert not self._ordered_location_keys, "%s: Unprocessed keys: %s" % (self.path, ", ".join(self._ordered_location_keys))
+        assert not self._ordered_location_keys, f"{self.path}: Unprocessed keys: {', '.join(self._ordered_location_keys)}"
         # Call the method of the parent class when the assertion succeeded.
         super()._writefile()
 

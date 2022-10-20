@@ -18,6 +18,7 @@ import typing
 
 import scenario
 import scenario.test
+import scenario.text
 
 # Related steps:
 from .commonargs import ExecCommonArgs
@@ -62,13 +63,15 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
         _lines = self._findlines(searched, output, find_all=False)  # type: typing.List[typing.AnyStr]
         self.assertisnotempty(
             _lines,
-            "No such line %s in %s execution output"
-            % (scenario.assertionhelpers.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths()),
+            err=scenario.debug.FmtAndArgs(
+                "No such line %s in %s execution output",
+                scenario.debug.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths(),
+            ),
         )
         scenario.assertionhelpers.evidence(
             evidence,
-            "%s found in %s execution output"
-            % (scenario.assertionhelpers.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths()),
+            "%s found in %s execution output",
+            scenario.debug.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths(),
         )
         return _lines[0]
 
@@ -81,13 +84,15 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
         _lines = self._findlines(searched, output)  # type: typing.List[typing.AnyStr]
         self.assertisnotempty(
             _lines,
-            "No such line %s in %s execution output"
-            % (scenario.assertionhelpers.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths()),
+            err=scenario.debug.FmtAndArgs(
+                "No such line %s in %s execution output",
+                scenario.debug.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths(),
+            ),
         )
         scenario.assertionhelpers.evidence(
             evidence,
-            "%s found %d time(s) in %s execution output"
-            % (scenario.assertionhelpers.saferepr(searched), len(_lines), self.getexecstep(ExecCommonArgs).listpaths()),
+            "%s found %s in %s execution output",
+            scenario.debug.saferepr(searched), scenario.text.adverbial(len(_lines)), self.getexecstep(ExecCommonArgs).listpaths(),
         )
         return _lines
 
@@ -104,8 +109,8 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
             self.assertnotin(searched, _line)
         scenario.assertionhelpers.evidence(
             evidence,
-            "No such line %s in %s execution output"
-            % (scenario.assertionhelpers.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths()),
+            "No such line %s in %s execution output",
+            scenario.debug.saferepr(searched), self.getexecstep(ExecCommonArgs).listpaths(),
         )
 
     def assertlinecount(
@@ -118,13 +123,16 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
         _lines = self._findlines(searched, output)  # type: typing.List[typing.AnyStr]
         self.assertlen(
             _lines, count,
-            "%s found %d time(s) in %s execution output (%d expected)"
-            % (scenario.assertionhelpers.saferepr(searched), len(_lines), self.getexecstep(ExecCommonArgs).listpaths(), count),
+            err=scenario.debug.FmtAndArgs(
+                "%s found %s in %s execution output (%s expected)",
+                scenario.debug.saferepr(searched), scenario.text.adverbial(len(_lines)), self.getexecstep(ExecCommonArgs).listpaths(),
+                scenario.text.adverbial(count),
+            ),
         )
         scenario.assertionhelpers.evidence(
             evidence,
-            "%s found %d time(s) in %s execution output"
-            % (scenario.assertionhelpers.saferepr(searched), len(_lines), self.getexecstep(ExecCommonArgs).listpaths()),
+            "%s found %s in %s execution output",
+            scenario.debug.saferepr(searched), scenario.text.adverbial(len(_lines)), self.getexecstep(ExecCommonArgs).listpaths(),
         )
         return _lines
 
@@ -137,9 +145,9 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
     ):  # type: (...) -> None
         _type = type(line)  # type: typing.Type[typing.AnyStr]
         _colored_text = self.toanystr("", _type).join([
-            self.toanystr("\033[%dm" % int(color), _type),
+            self.toanystr(f"\033[{int(color)}m", _type),
             text,
-            self.toanystr("\033[%dm" % int(scenario.Console.Color.RESET), _type),
+            self.toanystr(f"\033[{int(scenario.Console.Color.RESET)}m", _type),
         ])  # type: typing.AnyStr
         self.assertin(_colored_text, line, evidence=evidence)
 

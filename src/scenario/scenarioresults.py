@@ -92,18 +92,18 @@ class ScenarioResults:
                 _warnings.append(_scenario_execution)
             else:
                 _successes.append(_scenario_execution)
-        _total_name_field = "%d tests, %d failed, %d with warnings" % (len(self._results), len(_errors), len(_warnings))  # type: str
+        _total_name_field = f"{len(self._results)} tests, {len(_errors)} failed, {len(_warnings)} with warnings"  # type: str
         _name_field_len = max(_name_field_len, len(_total_name_field))
         _stat_field_len = max(_stat_field_len, len(str(_total_step_stats)), len(str(_total_action_stats)), len(str(_total_result_stats)))
 
         _fmt = ""
-        _fmt += "%-" + str(_name_field_len) + "s "
-        _fmt += "%+" + str(_status_field_len) + "s "
-        _fmt += "%+" + str(_stat_field_len) + "s "
-        _fmt += "%+" + str(_stat_field_len) + "s "
-        _fmt += "%+" + str(_stat_field_len) + "s "
+        _fmt += f"%-{_name_field_len}s "
+        _fmt += f"%+{_status_field_len}s "
+        _fmt += f"%+{_stat_field_len}s "
+        _fmt += f"%+{_stat_field_len}s "
+        _fmt += f"%+{_stat_field_len}s "
         _fmt += " " * (_stat_field_len - len("Actions"))  # Ensure regular spacing between columns.
-        _fmt += "%-" + str(_time_field_len) + "s "
+        _fmt += f"%-{_time_field_len}s "
         _fmt += " " * (_stat_field_len - len("Actions"))  # Ensure regular spacing between columns.
         _fmt += "%s"  # Note: No width for the *extra info* column.
 
@@ -115,7 +115,7 @@ class ScenarioResults:
         ))
         MAIN_LOGGER.info(_fmt % (
             _total_name_field, "",
-            str(_total_step_stats), str(_total_action_stats), str(_total_result_stats),
+            _total_step_stats, _total_action_stats, _total_result_stats,
             f2strduration(_total_time), "",
         ))
         MAIN_LOGGER.rawoutput("------------------------------------------------")
@@ -141,6 +141,7 @@ class ScenarioResults:
         :param scenario_execution: Scenario to display.
         """
         from .datetimeutils import f2strduration
+        from .debugutils import callback
         from .loggermain import MAIN_LOGGER
         from .scenarioconfig import SCENARIO_CONFIG
         from .testerrors import TestError
@@ -154,21 +155,21 @@ class ScenarioResults:
         # Log the scenario line.
         MAIN_LOGGER.log(log_level, fmt % (
             scenario_execution.definition.name, scenario_execution.status,
-            str(scenario_execution.step_stats), str(scenario_execution.action_stats), str(scenario_execution.result_stats),
-            f2strduration(scenario_execution.time.elapsed), ", ".join(_extra_info),
+            scenario_execution.step_stats, scenario_execution.action_stats, scenario_execution.result_stats,
+            callback(f2strduration, scenario_execution.time.elapsed), callback(lambda: ", ".join(_extra_info)),
         ))
 
         # Display warnings, then errors.
         for _warning in scenario_execution.warnings:  # type: TestError
             if _warning.location:
-                MAIN_LOGGER.warning("  %s: %s" % (_warning.location.tolongstring(), str(_warning)))
+                MAIN_LOGGER.warning(f"  {_warning} ({_warning.location.tolongstring()})")
             else:
-                MAIN_LOGGER.warning("  %s" % str(_warning))
+                MAIN_LOGGER.warning(f"  {_warning}")
         for _error in scenario_execution.errors:  # type: TestError
             if _error.location:
-                MAIN_LOGGER.error("  %s: %s" % (_error.location.tolongstring(), str(_error)))
+                MAIN_LOGGER.error(f"  {_error} ({_error.location.tolongstring()})")
             else:
-                MAIN_LOGGER.error("  %s" % str(_error))
+                MAIN_LOGGER.error(f"  {_error}")
 
 
 __doc__ += """

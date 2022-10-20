@@ -64,7 +64,7 @@ class CheckStepIndentation(LogVerificationStep):
                 evidence="Step line",
             )  # type: str
             self.step_indentation = _step_line.find("STEP")
-            self.evidence("Step indentation: %d" % self.step_indentation)
+            self.evidence(f"Step indentation: {self.step_indentation}")
 
 
 class CheckLoggingOutOfActionResult(LogVerificationStep):
@@ -156,9 +156,9 @@ class CheckActionResult(LogVerificationStep):
         if self.RESULT("'ACTION:' and 'RESULT:' patterns are right-aligned, "
                        "i.e. action and expected result texts have the same indentation."):
             self.action_text_indentation = _action.find("ACTION: ") + len("ACTION: ")
-            self.evidence("Action text indentation: %d" % self.action_text_indentation)
+            self.evidence(f"Action text indentation: {self.action_text_indentation}")
             self.result_text_indentation = _result.find("RESULT: ") + len("RESULT: ")
-            self.evidence("Expected result text indentation: %d" % self.result_text_indentation)
+            self.evidence(f"Expected result text indentation: {self.result_text_indentation}")
             self.assertequal(
                 self.action_text_indentation, self.result_text_indentation,
                 evidence="Action text v/s expected result text indentation",

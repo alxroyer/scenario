@@ -44,9 +44,9 @@ class LogParserStep(scenario.test.VerificationStep, LogProcessor, metaclass=abc.
             for _line in self.subprocess.stdout.splitlines():  # type: bytes
                 if not _line:
                     continue
-                self.debug("line: %s" % repr(_line))
+                self.debug("line: %r", _line)
                 if not self._parseline(_line):
-                    self.warning("Line not parsed: %s" % repr(_line))
+                    self.warning(f"Line not parsed: {_line!r}")
 
     def _parseline(
             self,
@@ -63,10 +63,17 @@ class LogParserStep(scenario.test.VerificationStep, LogProcessor, metaclass=abc.
     def _debuglineinfo(
             self,
             data,  # type: typing.Any
+            *args,  # type: typing.Any
     ):  # type: (...) -> None
         """
         Displays useful information from what has been parsed in a line.
 
-        :param data: Data to display.
+        :param data: Data to display, or string format.
+        :param args: ``data`` arguments.
         """
-        self.debug("  => %s" % data)
+        if args:
+            assert isinstance(data, str)
+            self.debug("  => " + data, *args)
+        else:
+            # Display `data` in its `repr()` form.
+            self.debug("  => %r", data)

@@ -42,12 +42,12 @@ class DemoArgs(scenario.ScenarioArgs):
             return False
 
         if not self.welcome_message:
-            scenario.logging.error("Wrong name '%s'" % self.welcome_message)
+            scenario.logging.error(f"Wrong name {self.welcome_message!r}")
             return False
         if not self.welcome_message.startswith("Hello"):
             _name = self.welcome_message
-            self.welcome_message = "Hello %s!" % _name
-            self.bye_message = "Bye %s!" % _name
+            self.welcome_message = f"Hello {_name}!"
+            self.bye_message = f"Bye {_name}!"
 
         return True
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # File logging: use the first scenario file name to determine the output log file name.
     _outpath = DemoArgs.getinstance().scenario_paths[0].with_suffix(".log")
     scenario.conf.set("scenario.log_file", _outpath)
-    scenario.logging.info("Test log saved in '%s'" % _outpath)
+    scenario.logging.info(f"Test log saved in '{_outpath}'")
 
     # Scenario execution.
     _res = scenario.runner.main()

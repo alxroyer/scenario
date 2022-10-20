@@ -181,13 +181,14 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
         Makes it possible to easily access the attributes and methods defined with a user scenario definition.
         """
+        from .reflex import qualname
         from .scenariostack import SCENARIO_STACK
 
         if isinstance(SCENARIO_STACK.building.scenario_definition, cls):
             return SCENARIO_STACK.building.scenario_definition
         if isinstance(SCENARIO_STACK.current_scenario_definition, cls):
             return SCENARIO_STACK.current_scenario_definition
-        SCENARIO_STACK.raisecontexterror("Current scenario definition not of type %s" % cls.__name__)
+        SCENARIO_STACK.raisecontexterror(f"Current scenario definition not of type {qualname(cls)}")
 
     def __init__(self):  # type: (...) -> None
         """
@@ -215,6 +216,16 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         # Activate debugging by default for scenario definitions.
         self.enabledebug(True)
 
+        #: Continue on error option.
+        #:
+        #: Local configuration for the current scenario.
+        #:
+        #: Prevails on :attr:`.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
+        #: (see :meth:`.scenariorunner.ScenarioRunner._shouldstop()`).
+        #:
+        #: Not set by default.
+        self.continue_on_error = None  # type: typing.Optional[bool]
+
         #: Scenario attributes (see :meth:`.scenarioconfig.ScenarioConfig.expectedscenarioattributes()`).
         self.__attributes = {}  # type: typing.Dict[str, typing.Any]
 
@@ -232,7 +243,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
         # Sometimes, `__repr__()` may be called on an object being built.
         if hasattr(self, "name"):
-            return "<%s '%s'>" % (qualname(type(self)), self.name)
+            return f"<{qualname(type(self))} {self.name!r}>"
         else:
             return super().__repr__()
 
@@ -319,7 +330,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         Finds a step definition.
 
-        :param step_specification: Step specification (see :attr:`.stepdefinition.StepSpecificationType`), or :const:`None`.
+        :param step_specification: Step specification (see :attr:`.stepdefinition.StepSpecificationType`), or ``None``.
         :param index: Step index in the matching list. Last item when not specified.
         :return: Step definition found, if any.
         """
@@ -350,7 +361,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
         When the step cannot be found, an exception is raised.
 
-        :param step_specification: Step specification (see :attr:`.stepdefinition.StepSpecificationType`), or :const:`None`.
+        :param step_specification: Step specification (see :attr:`.stepdefinition.StepSpecificationType`), or ``None``.
         :param index: Step index in the matching list. Last item when not specified.
         :return: Expected step.
         :raise KeyError: When the step definition could not be found.
@@ -359,7 +370,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
         _step_definition = self.getstep(step_specification, index)  # type: typing.Optional[StepDefinition]
         if _step_definition is None:
-            raise KeyError("No such step %s (index: %s)" % (StepDefinitionHelper.specificationdescription(step_specification), repr(index)))
+            raise KeyError(f"No such step {StepDefinitionHelper.specificationdescription(step_specification)} (index: {index!r})")
         return _step_definition
 
     @property
@@ -408,7 +419,7 @@ class ScenarioDefinitionHelper:
                     _scenario_definition_class = _member
 
         if _scenario_definition_class is None:
-            raise LookupError("Could not find scenario class in '%s'" % script_path)
+            raise LookupError(f"Could not find scenario class in '{script_path}'")
         return _scenario_definition_class
 
     def __init__(
@@ -438,7 +449,7 @@ class ScenarioDefinitionHelper:
 
         # Scan methods.
         _methods = []  # type: typing.List[types.MethodType]
-        self._logger.debug("Searching for steps in %s:" % qualname(type(self.definition)))
+        self._logger.debug("Searching for steps in %s:", qualname(type(self.definition)))
         for _method_name, _method in inspect.getmembers(self.definition, predicate=inspect.ismethod):  # type: str, types.MethodType
             if _method_name.startswith("step"):
                 # According to https://stackoverflow.com/questions/41900639/python-unable-to-compare-bound-method-to-itself#41900748,
@@ -447,9 +458,9 @@ class ScenarioDefinitionHelper:
                 # Ignore typings due to following error:
                 # > Non-overlapping equality check (left operand type: "UnboundMethodType", right operand type: "Callable[[str], StepSection]")
                 if _method == self.definition.section:  # type: ignore
-                    self._logger.debug("Skipping %s" % repr(_method))
+                    self._logger.debug("Skipping %r", _method)
                     continue
-                self._logger.debug("  Method: %s()" % _method_name)
+                self._logger.debug("  Method: %s()", _method_name)
                 _methods.append(_method)
 
         # Sort methods.

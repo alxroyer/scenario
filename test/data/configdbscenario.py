@@ -40,7 +40,7 @@ class ConfigDbScenario(scenario.Scenario):
             for _key in scenario.conf.getkeys():  # type: str
                 _conf_node = scenario.conf.getnode(_key)  # type: typing.Optional[scenario.ConfigNode]
                 if _conf_node:
-                    self.evidence("%s (%s): %s" % (_conf_node.key, _conf_node.origin, repr(_conf_node.data)))
+                    self.evidence(f"{_conf_node.key} ({_conf_node.origin}): {_conf_node.data!r}")
 
     def step020(self):  # type: (...) -> None
         self.STEP("Show configuration database")

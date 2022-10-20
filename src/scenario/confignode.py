@@ -42,11 +42,18 @@ class ConfigNode:
 
     def __init__(
             self,
+            parent,  # type: typing.Optional[ConfigNode]
             key,  # type: str
     ):  # (...) -> None
         """
+        :param parent: Parent node. ``None`` for the root node.
         :param key: Key of the configuration node.
         """
+        #: Parent node.
+        #:
+        #: ``None`` for the root node, as well as for removed nodes.
+        self.parent = parent
+
         #: Configuration key.
         self.key = key  # type: str
 
@@ -70,14 +77,14 @@ class ConfigNode:
         """
         from .reflex import qualname
 
-        _repr = "<%s" % qualname(type(self))  # type: str
-        _repr += " key='%s'" % self.key
+        _repr = f"<{qualname(type(self))}"  # type: str
+        _repr += f" key='{self.key}'"
         if isinstance(self._data, dict):
             _repr += " data={...}"
         elif isinstance(self._data, list):
             _repr += " data=[...]"
         elif self._data is not None:
-            _repr += " data=%s" % repr(self._data)
+            _repr += f" data={self._data!r}"
         _repr += ">"
         return _repr
 
@@ -92,18 +99,24 @@ class ConfigNode:
 
         :param data:
             Configuration data: dictionary, list or single value.
+
+            When ``None`` is given and no ``subkey`` is provided, it is equivalent to calling :meth:`remove()` on the current node.
         :param subkey:
             Relative key from this node to store the data in.
         :param origin:
             Origin of the configuration data: either a simple string, or the path of the configuration file it was defined in.
             Defaults to code location when not set.
         """
-        from .assertionhelpers import saferepr
         from .configdb import CONFIG_DB
+        from .debugutils import saferepr
         from .locations import EXECUTION_LOCATIONS
 
+        # Redirect to `remove()` when `None` is set.
+        if (not subkey) and (data is None):
+            return self.remove()
+
         CONFIG_DB.pushindentation()
-        CONFIG_DB.debug("%s: set(data=%s, subkey=%s, origin=%s)" % (repr(self), repr(data), repr(subkey), repr(origin)))
+        CONFIG_DB.debug("%r: set(data=%r, subkey=%r, origin=%r)", self, data, subkey, origin)
 
         # Default ``origin`` to code location.
         if origin is None:
@@ -113,7 +126,7 @@ class ConfigNode:
         if subkey:
             # Retrieve or create the target sub-node.
             _target_node = self._getsubnode(subkey, create_missing=True, origin=origin)  # type: typing.Optional[ConfigNode]
-            CONFIG_DB.debug("%s: _target_node = %s" % (repr(self), repr(_target_node)))
+            CONFIG_DB.debug("%r: _target_node = %r", self, _target_node)
             assert _target_node, "Sub-node should have been created"
             # Set the data on it.
             _target_node.set(data=data, origin=origin)
@@ -126,7 +139,7 @@ class ConfigNode:
                 if self._data is None:
                     self._setdata({})
                 if not isinstance(self._data, dict):
-                    raise ValueError(self.errmsg("Bad dict data %s for a non-dict configuration node" % saferepr(data), origin=origin))
+                    raise ValueError(self.errmsg(f"Bad dict data {saferepr(data)} for a non-dict configuration node", origin=origin))
                 # Use recursive calls with the ``subkey`` parameter set for each field of the input dictionary.
                 for _field_name in data:  # type: str
                     self.set(subkey=_field_name, data=data[_field_name], origin=origin)
@@ -137,10 +150,10 @@ class ConfigNode:
                 if self._data is None:
                     self._setdata([])
                 if not isinstance(self._data, list):
-                    raise ValueError(self.errmsg("Bad list data %s for a non-list configuration node" % saferepr(data), origin=origin))
+                    raise ValueError(self.errmsg(f"Bad list data {saferepr(data)} for a non-list configuration node", origin=origin))
                 # Add sub-nodes for each item of the input list.
                 for _index in range(len(data)):  # type: int
-                    self._data.append(ConfigNode("%s[%d]" % (self.key, len(self._data))))
+                    self._data.append(ConfigNode(parent=self, key=f"{self.key}[{len(self._data)}]"))
                     # Apply `list()` on `data` so that enumerate definitions can be indexed.
                     self._data[-1].set(list(data)[_index], origin=origin)
 
@@ -148,9 +161,9 @@ class ConfigNode:
             else:
                 # Check this node does not already handle sub-nodes.
                 if isinstance(self._data, dict):
-                    raise ValueError(self.errmsg("Bad final data %s for a dictionary node" % repr(data), origin=origin))
+                    raise ValueError(self.errmsg(f"Bad final data {data!r} for a dictionary node", origin=origin))
                 if isinstance(self._data, list):
-                    raise ValueError(self.errmsg("Bad final data %s for a list node" % repr(data), origin=origin))
+                    raise ValueError(self.errmsg(f"Bad final data {data!r} for a list node", origin=origin))
                 # Store the data.
                 self._setdata(data)
 
@@ -172,6 +185,7 @@ class ConfigNode:
         :param data: Node's data being set.
         """
         from .configdb import CONFIG_DB
+        from .scenarioconfig import ScenarioConfigKey, SCENARIO_CONFIG
 
         # Apply automatic conversions:
         # - path-likes to strings,
@@ -188,7 +202,39 @@ class ConfigNode:
             self._data = data
 
         # Debug the new data being stored.
-        CONFIG_DB.debug("%s: data = %s" % (repr(self), repr(data)))
+        CONFIG_DB.debug("%r: data = %r", self, data)
+
+        # When the `scenario` TIMEZONE configuration is modified, invalidate the related cache value.
+        if self.key == ScenarioConfigKey.TIMEZONE:
+            SCENARIO_CONFIG.invalidatetimezonecache()
+
+    def remove(self):  # type: (...) -> None
+        """
+        Removes the node from its parent.
+
+        Note: Does nothing on the root node (no parent for the root node, by definition).
+        """
+        from .configdb import CONFIG_DB
+
+        if self.parent:
+            # Remove the node from its parent.
+            _parent_data = getattr(self.parent, "_data")  # type: typing.Any
+            if isinstance(_parent_data, dict):
+                for _field_name in list(_parent_data.keys()):  # type: str
+                    if _parent_data[_field_name] == self:
+                        del _parent_data[_field_name]
+            if isinstance(_parent_data, list):
+                _parent_data.remove(self)
+
+            # Debug the configuration key removal.
+            CONFIG_DB.debug("%r: removed", self)
+
+            # Check whether the parent node should be removed as a consequence.
+            if _parent_data in ([], {}):
+                self.parent.remove()
+
+            # Eventuelly clear the parent node reference.
+            self.parent = None
 
     def show(
             self,
@@ -203,7 +249,7 @@ class ConfigNode:
 
         if isinstance(self._data, dict):
             if self.key:
-                CONFIG_DB.log(log_level, "%s:" % self.key)
+                CONFIG_DB.log(log_level, f"{self.key}:")
             for _direct_subkey in sorted(self._data.keys()):  # type: str
                 CONFIG_DB.pushindentation("  ")
                 self._data[_direct_subkey].show(log_level)
@@ -212,7 +258,7 @@ class ConfigNode:
             for _index in range(len(self._data)):  # type: int
                 self._data[_index].show(log_level)
         else:
-            CONFIG_DB.log(log_level, "%s: %s  # from %s" % (self.key, repr(self._data), ", ".join(str(_origin) for _origin in self.origins)))
+            CONFIG_DB.log(log_level, f"{self.key}: {self._data!r}  # from {', '.join(str(_origin) for _origin in self.origins)}")
 
     def getkeys(self):  # type: (...) -> typing.List[str]
         """
@@ -242,7 +288,7 @@ class ConfigNode:
             for _index in range(len(self._data)):  # type: int
                 _subnode = self._data[_index]  # Type already declared above.
                 for _subsubkey in _subnode.getsubkeys():  # Type already declared above.
-                    _subkeys.append(ConfigKey.join("[%d]" % _index, _subsubkey))
+                    _subkeys.append(ConfigKey.join(f"[{_index}]", _subsubkey))
         else:
             _subkeys.append("")
         return _subkeys
@@ -273,13 +319,13 @@ class ConfigNode:
         :param origin: Origin info to set for each sub-node walked through or created, starting from this one.
         :return: Sub-node if found, ``None`` otherwise.
         """
-        from .assertionhelpers import saferepr
         from .configdb import CONFIG_DB
         from .configkey import ConfigKey
+        from .debugutils import saferepr
         from .enumutils import enum2str
 
         if create_missing:
-            CONFIG_DB.debug("%s: _getsubnode(subkey=%s, create_missing=%s, origin=%s)" % (repr(self), repr(subkey), repr(create_missing), repr(origin)))
+            CONFIG_DB.debug("%r: _getsubnode(subkey=%r, create_missing=%r, origin=%r)", self, subkey, create_missing, origin)
 
         # Set origin info on the current node.
         if origin and (origin not in self.origins):
@@ -308,22 +354,22 @@ class ConfigNode:
 
         # Depending on the sub-key, let's search for a sub-node.
         _subnode = None  # type: typing.Optional[ConfigNode]
-        _errmsg_start = self.errmsg("Bad sub-key '%s': " % subkey, origin)  # type: str
+        _errmsg_start = self.errmsg(f"Bad sub-key {subkey!r}: ", origin)  # type: str
 
         # List index selector.
         if re.match(r"-?[0-9]+", _first):
             if self._data is None:
                 self._setdata([])
             if not isinstance(self._data, list):
-                raise IndexError(_errmsg_start + "Cannot index a non-list node with '%s'" % _first)
-            _index = int(_first)
+                raise IndexError(_errmsg_start + f"Cannot index a non-list node with {_first!r}")
+            _index = int(_first)  # type: int
             if create_missing and (_index == len(self._data)):
-                self._data.append(ConfigNode(ConfigKey.join(self.key, "[%d]" % _index)))
+                self._data.append(ConfigNode(parent=self, key=ConfigKey.join(self.key, f"[{_index}]")))
             try:
                 _subnode = self._data[_index]
             except IndexError:
                 if create_missing:
-                    raise IndexError(_errmsg_start + "Cannot create list item from index '%s'" % _first)
+                    raise IndexError(_errmsg_start + f"Cannot create list item from index {_first!r}")
 
         # Dictionary field name selector.
         else:
@@ -334,14 +380,13 @@ class ConfigNode:
                 # Find the direct sub-node in the member dictionary.
                 if not isinstance(self._data, dict):
                     raise IndexError(
-                        _errmsg_start + "Cannot index a non-dictionary node with '%s', data is %s (origin: %s)"
-                        % (_first, saferepr(self._data), self.origin),
+                        _errmsg_start + f"Cannot index a non-dictionary node with {_first!r}, data is {saferepr(self._data)} (origin: {self.origin})"
                     )
                 if _first in self._data:
                     _subnode = self._data[_first]
                 # Create it when missing and applicable.
                 elif create_missing:
-                    _subnode = self._data[_first] = ConfigNode(ConfigKey.join(self.key, _first))
+                    _subnode = self._data[_first] = ConfigNode(parent=self, key=ConfigKey.join(self.key, _first))
 
         # Walk through the sub-node.
         if _subnode:
@@ -397,14 +442,14 @@ class ConfigNode:
         # Dictionary.
         if type is dict:
             if not isinstance(self._data, dict):
-                raise ValueError(self.errmsg("%s not a valid dictionary" % repr(self._data)))
+                raise ValueError(self.errmsg(f"{self._data!r} not a valid dictionary"))
             # Call the property above that will build a JSON dictionary.
             return self.data  # type: ignore  ## Returning Any from function declared to return "T"
 
         # Dictionary.
         if type is list:
             if not isinstance(self._data, list):
-                raise ValueError(self.errmsg("%s not a valid list" % repr(self._data)))
+                raise ValueError(self.errmsg(f"{self._data!r} not a valid list"))
             # Call the property above that will build a JSON list.
             return self.data  # type: ignore  ## Returning Any from function declared to return "T"
 
@@ -428,14 +473,14 @@ class ConfigNode:
                     return True if _int else False  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
                 except ValueError:
                     pass
-            raise ValueError(self.errmsg("%s not a valid boolean value" % repr(self._data)))
+            raise ValueError(self.errmsg(f"{self._data!r} not a valid boolean value"))
 
         # Other expected type.
         try:
             # Convert the configuration value in the ``type`` type.
             return type(self._data)  # type: ignore  ## Too many arguments for "object"
         except ValueError:
-            raise ValueError(self.errmsg("%s not a valid %s value" % (repr(self._data), qualname(type))))
+            raise ValueError(self.errmsg(f"{self._data!r} not a valid {qualname(type)} value"))
 
     @property
     def origin(self):  # type: (...) -> OriginType
@@ -462,7 +507,7 @@ class ConfigNode:
         if (origin is None) and self.origins:
             origin = self.origins[-1]
         if origin:
-            _err_msg += "%s:" % origin
-        _err_msg += "'%s': " % self.key
+            _err_msg += f"{origin}:"
+        _err_msg += f"'{self.key}': "
         _err_msg += msg
         return _err_msg

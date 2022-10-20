@@ -67,18 +67,14 @@ class StepUserApi(abc.ABC):
         Describes a test action.
 
         :param action: Action description.
-        :return: :const:`True` when the test script shall be executed, :const:`False` otherwise (documentation generation).
+        :return: ``True`` when the test script shall be executed, ``False`` otherwise (documentation generation).
 
         .. note:: We deliberately deviate from PEP8 namings in order to highlight :meth:`ACTION` calls in the final test code.
         """
         from .actionresultdefinition import ActionResultDefinition
-        from .locations import EXECUTION_LOCATIONS
         from .scenariorunner import SCENARIO_RUNNER
 
-        SCENARIO_RUNNER.onactionresult(
-            ActionResultDefinition.Type.ACTION, action,
-            EXECUTION_LOCATIONS.fromcurrentstack(limit=1)[-1],
-        )
+        SCENARIO_RUNNER.onactionresult(ActionResultDefinition.Type.ACTION, action)
 
         return self.doexecute()
 
@@ -91,18 +87,14 @@ class StepUserApi(abc.ABC):
         Describes an expected result.
 
         :param result: Expected result description.
-        :return: :const:`True` when the test script shall be executed, :const:`False` otherwise (documentation generation).
+        :return: ``True`` when the test script shall be executed, ``False`` otherwise (documentation generation).
 
         .. note:: We deliberately deviate from PEP8 namings in order to highlight :meth:`RESULT` calls in the final test code.
         """
         from .actionresultdefinition import ActionResultDefinition
-        from .locations import EXECUTION_LOCATIONS
         from .scenariorunner import SCENARIO_RUNNER
 
-        SCENARIO_RUNNER.onactionresult(
-            ActionResultDefinition.Type.RESULT, result,
-            EXECUTION_LOCATIONS.fromcurrentstack(limit=1)[-1],
-        )
+        SCENARIO_RUNNER.onactionresult(ActionResultDefinition.Type.RESULT, result)
 
         return self.doexecute()
 
@@ -110,9 +102,10 @@ class StepUserApi(abc.ABC):
         """
         Tells whether test script should be executed.
 
-        :return: :const:`True` for test execution, :const:`False` for documentation generation only,
-                 exactly the same as the :meth:`ACTION()` and :meth:`RESULT()` methods do,
-                 but without generating any texts.
+        :return:
+            ``True`` for test execution, ``False`` for documentation generation only,
+            exactly the same as the :meth:`ACTION()` and :meth:`RESULT()` methods do,
+            but without generating any texts.
         """
         from .scenariorunner import SCENARIO_RUNNER
 

@@ -59,11 +59,11 @@ class UnitCampaignArgs(scenario.CampaignArgs):
     ):  # type: (...) -> bool
         if not self.test_suite_paths:
             for _test_suite_path in scenario.test.paths.UNIT_TESTS_PATH.glob("*/*.suite"):  # type: scenario.Path
-                self.debug("Using default test suite file '%s'" % _test_suite_path)
+                self.debug("Using default test suite file '%s'", _test_suite_path)
                 self.test_suite_paths.append(_test_suite_path)
 
         if self._outdir is None:
-            self.debug("Using output directory '%s' with --dt-subdir option" % scenario.test.paths.UNIT_RESULTS_PATH)
+            self.debug("Using output directory '%s' with --dt-subdir option", scenario.test.paths.UNIT_RESULTS_PATH)
             self._outdir = scenario.test.paths.UNIT_RESULTS_PATH
             self.create_dt_subdir = True
 

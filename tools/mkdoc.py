@@ -124,14 +124,14 @@ class MkDoc:
             if _path.is_file() and _path.name.endswith(".uml") and (not _path.samefile(_cfg_path)):
                 _png_outpath = _path.parent / _path.name.replace(".uml", ".png")  # type: scenario.Path
                 if scenario.tools.shouldupdate(_png_outpath, [_path, _cfg_path]):
-                    scenario.logging.info("Generating %s from %s" % (_png_outpath, _path))
+                    scenario.logging.info(f"Generating {_png_outpath} from {_path}")
                     _subprocess = scenario.tools.SubProcess("java", "-jar", self.PLANTUML_PATH)  # type: scenario.tools.SubProcess
                     _subprocess.addargs("-config", _cfg_path)
                     _subprocess.addargs(_path)
                     _subprocess.setcwd(scenario.tools.paths.MAIN_PATH)
                     _subprocess.run()
                 else:
-                    scenario.logging.info("No need to update %s from %s" % (_png_outpath, _path))
+                    scenario.logging.info(f"No need to update {_png_outpath} from {_path}")
 
     def sphinxapidoc(self):  # type: (...) -> None
         """
@@ -157,7 +157,7 @@ class MkDoc:
         if (scenario.tools.paths.DOC_SRC_PATH / "py").is_dir():
             for _py_src_file in (scenario.tools.paths.DOC_SRC_PATH / "py").iterdir():  # type: scenario.Path
                 if _py_src_file.name.endswith(".rst"):
-                    scenario.logging.info("Removing file %s" % _py_src_file)
+                    scenario.logging.info(f"Removing file {_py_src_file}")
                     _py_src_file.unlink()
 
         scenario.logging.info("Executing sphinx-apidoc...")
@@ -189,22 +189,38 @@ class MkDoc:
         for _dir in (scenario.tools.paths.DOC_SRC_PATH, scenario.tools.paths.DOC_SRC_PATH / "py"):  # type: scenario.Path
             for _path in _dir.iterdir():  # type: scenario.Path
                 if _path.is_file() and _path.name.endswith(".rst"):
-                    scenario.logging.debug("%r.touch()" % _path)
+                    scenario.logging.debug("%r.touch()", _path)
                     _path.touch()
 
+        # Prepare the $(sphinx-build) process.
         _subprocess = scenario.tools.SubProcess("sphinx-build")  # type: scenario.tools.SubProcess
+        # Debug & display:
         if scenario.Args.getinstance().debug_main:
             _subprocess.addargs("-vv")
         _subprocess.addargs("--color")
+        # Builder:
         _subprocess.addargs("-b", "html")
-        _subprocess.addargs("-a", scenario.tools.paths.DOC_SRC_PATH)
+        # Write all files:
+        _subprocess.addargs("-a")
+        # Configuration file:
+        _subprocess.addargs("-c", scenario.tools.paths.TOOLS_CONF_PATH / "sphinx")
+        # Source directory:
+        _subprocess.addargs(scenario.tools.paths.DOC_SRC_PATH)
+        # Output directory:
         _subprocess.addargs(scenario.tools.paths.DOC_OUT_PATH)
+
+        # $(sphinx-build) execution.
+        def _onstderrline(line):  # type: (bytes) -> None
+            _level = logging.ERROR  # type: int
+            if b'TODO entry found:' in line:
+                # Just warn on todos.
+                _level = logging.WARNING
+            elif b'WARNING: duplicate object description' in line:
+                # Just debug dublicate object warnings.
+                _level = logging.DEBUG
+            scenario.logging.log(_level, line.decode("utf-8"))
+        _subprocess.onstderrline(_onstderrline)
         _subprocess.setcwd(scenario.tools.paths.MAIN_PATH)
-        # Just warn on todos.
-        _subprocess.onstderrline(lambda line: scenario.logging.log(
-            logging.WARNING if (b'TODO entry found:' in line) else logging.ERROR,
-            line.decode("utf-8"),
-        ))
         _subprocess.run()
 
 

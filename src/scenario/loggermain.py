@@ -71,7 +71,7 @@ class MainLogger(Logger):
 
         self.info(
             message,
-            extra=LogExtraData.extraflags({
+            extra=LogExtraData.extradata({
                 LogExtraData.LOG_LEVEL: False,
                 LogExtraData.COLOR: False,
                 LogExtraData.MAIN_LOGGER_INDENTATION: False,

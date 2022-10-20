@@ -15,7 +15,7 @@ class HtmlControl(scenario.Assertions, scenario.Logger):
             self,
             text,  # type: str
     ):  # type: (...) -> None
-        self.info("Typing text %s" % repr(text))
+        self.info(f"Typing text {text!r}")
 
     def click(self):  # type: (...) -> None
         self.info("Clicking on the button")
@@ -31,10 +31,10 @@ def body():  # type: (...) -> HtmlControl
 def getedit(
         id,  # type: str
 ):  # type: (...) -> HtmlControl
-    return HtmlControl("edit[@id='%s']" % id)
+    return HtmlControl(f"edit[@id={id!r}]")
 
 
 def getbutton(
         id,  # type: str
 ):  # type: (...) -> HtmlControl
-    return HtmlControl("edit[@id='%s']" % id)
+    return HtmlControl(f"edit[@id={id!r}]")

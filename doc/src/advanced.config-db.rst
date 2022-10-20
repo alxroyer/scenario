@@ -216,6 +216,26 @@ The following table describes the :py:mod:`scenario` configurable keys & values.
       - Type
       - Description
       - Default
+    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.TIMEZONE`
+      - "scenario.timezone"
+      - String
+      - Timezone specification.
+
+        Possible values:
+        'UTC', 'Z',
+        or numerical forms like '+01:00', '-05:00'.
+
+        More options :ref:`when pytz is installed <install>`:
+        'CET', 'US/Pacific', 'Japan', ...
+
+        Execute the following Python code for the complete list:
+
+        .. code-block:: python
+
+            import pytz
+            print("\n".join(pytz.all_timezones))
+
+      - Not set, i.e. use of the local timezone
     * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME`
       - "scenario.log_date_time"
       - Boolean
@@ -259,7 +279,10 @@ The following table describes the :py:mod:`scenario` configurable keys & values.
     * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
       - "scenario.continue_on_error"
       - Boolean
-      - Should the scenario continue on error?
+      - Should the scenarios continue on error?
+        If set to ``True``, an error ends the current step, but following steps are still executed.
+        The same behaviour may also be activated scenario by scenario
+        by setting the :py:attr:`scenario.scenariodefinition.ScenarioDefinition.continue_on_error` attribute.
       - Disabled
     * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.DELAY_BETWEEN_STEPS`
       - "scenario.delay_between_steps"

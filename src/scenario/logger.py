@@ -108,30 +108,29 @@ class Logger:
         return self._logger
 
     def enabledebug(
-            self,
+            self,  # type: VarLoggerType
             enable_debug,  # type: bool
-    ):  # type: (...) -> None
+    ):  # type: (...) -> VarLoggerType
         """
         Debug log enabling / disabling.
 
-        :param enable_debug: :const:`True` for debug log enabling, :const:`False` otherwise.
+        :param enable_debug: ``True`` for debug log enabling, ``False`` otherwise.
+        :return: ``self``
 
         See the :ref:`main logger <logging.main-logger>` and :ref:`class loggers <logging.class-loggers>` sections
         to learn more about debugging with :class:`Logger` instances.
         """
         self._debug_enabled = enable_debug
+        return self
 
     def isdebugenabled(self):  # type: (...) -> bool
         """
         Tells whether debug logging is currently enabled for this :class:`Logger` instance.
 
-        :return: :const:`True` when debug logging is enabled, :const:`False` otherwise.
+        :return: ``True`` when debug logging is enabled, ``False`` otherwise.
         """
         from .args import Args
-        from .logstats import LOG_STATS
         from .scenarioconfig import SCENARIO_CONFIG
-
-        LOG_STATS.call(self.log_class, LOG_STATS.CallType.IS_DEBUG_ENABLED)
 
         # Try to update :attr:`self._debug_enabled` if not already set.
         if (self._debug_enabled is None) and Args.getinstance().parsed:
@@ -158,7 +157,7 @@ class Logger:
         """
         Returns the specialized log line color for this logger, if any.
 
-        :return: Log line color. :const:`None` when not set.
+        :return: Log line color. ``None`` when not set.
         """
         return self._log_color
 
@@ -191,7 +190,7 @@ class Logger:
         if self._indentation.endswith(indentation):
             self._indentation = self._indentation[:-len(indentation)]
         else:
-            self.warning("Current indentation '%s' does not end with '%s', cannot pop indentation" % (self._indentation, indentation))
+            self.warning(f"Current indentation {self._indentation!r} does not end with {indentation!r}, cannot pop indentation")
 
     def resetindentation(self):  # type: (...) -> None
         """
@@ -284,29 +283,6 @@ class Logger:
         """
         self._logger.debug(msg, *args, **kwargs)
 
-    def debuglongtext(
-            self,
-            text,  # type: str
-            max_lines,  # type: typing.Optional[int]
-    ):  # type: (...) -> None
-        """
-        Debugs the beginning of a long text on multiple lines.
-
-        :param text: Long text to debug.
-        :param max_lines: Maximum number of lines to debug.
-        """
-        if self.isdebugenabled():
-            _lines_displayed = 0  # type: int
-            _lines = text.splitlines()  # type: typing.List[str]
-            for _line in _lines:  # type: str
-                _lines_displayed += 1
-                if (max_lines is not None) and (_lines_displayed > max_lines):
-                    _lines_displayed -= 1
-                    break
-                self.debug(_line)
-            if _lines_displayed < len(_lines):
-                self.debug("...")
-
     def log(
             self,
             level,  # type: int
@@ -340,13 +316,8 @@ class Logger:
 
         Handles appropriately the optional ``exc_info`` parameter.
         """
-        from .logstats import LOG_STATS
-
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
         assert isinstance(self, Logger)
-
-        if level <= logging.DEBUG:
-            LOG_STATS.call(self.log_class, LOG_STATS.CallType.DEBUG)
 
         # Remove the exception info from the named arguments if any.
         _exc_info = None  # type: typing.Any
@@ -354,9 +325,16 @@ class Logger:
             _exc_info = kwargs["exc_info"]
             del kwargs["exc_info"]
 
-        # Propagate the call to the :class:`logging.Logger` member instance.
-        # noinspection PyProtectedMember
-        logging.Logger._log(self._logger, level, msg, args, **kwargs)
+        if ("extra" in kwargs) and (str(LogExtraData.LONG_TEXT_MAX_LINES) in kwargs["extra"]):
+            _long_text_max_lines = kwargs["extra"][str(LogExtraData.LONG_TEXT_MAX_LINES)]  # type: typing.Any
+            assert isinstance(_long_text_max_lines, (int, type(None))), (
+                f"Invalid extra data '{LogExtraData.LONG_TEXT_MAX_LINES}' {_long_text_max_lines!r}, "
+                f"should be an int or None"
+            )
+            del kwargs["extra"][str(LogExtraData.LONG_TEXT_MAX_LINES)]
+            self._loglongtext(level, msg, args, _long_text_max_lines, **kwargs)
+        else:
+            self._torecord(level, msg, args, **kwargs)
 
         # Display the exception info afterwards.
         if _exc_info:
@@ -365,3 +343,73 @@ class Logger:
                 for _line in _traceback.splitlines():  # type: str
                     if _line:
                         self.log(level, _line)
+
+    def _torecord(
+            self,
+            level,  # type: int
+            msg,  # type: str
+            args,  # type: typing.Tuple[typing.Any, ...]
+            **kwargs  # type: typing.Any
+    ):  # type: (...) -> None
+        """
+        After the :meth:`_log()` indirection, eventually sends the log data to the base :mod:`logging` module to create a log record.
+
+        :param level: Log level.
+        :param msg: Log message.
+        :param args: Other positional arguments as a tuple.
+        :param kwargs: Named parameter arguments.
+        """
+        # Propagate the call to the :class:`logging.Logger` member instance.
+        # noinspection PyProtectedMember
+        logging.Logger._log(self._logger, level, msg, args, **kwargs)
+
+    def longtext(
+            self,
+            max_lines,  # type: typing.Optional[int]
+    ):  # type: (...) -> typing.Dict[str, int]
+        """
+        Builds the *long text* `extra` option in order to display the log message as several lines.
+
+        :param max_lines: Maximum number of lines.
+        :return: *long text* `extra` option.
+
+        See the :ref:`long text logging <logging.long-text>` section for more details.
+        """
+        return LogExtraData.extradata({
+            LogExtraData.LONG_TEXT_MAX_LINES: max_lines,
+        })
+
+    def _loglongtext(
+            self,
+            level,  # type: int
+            msg,  # type: str
+            args,  # type: typing.Tuple[typing.Any, ...]
+            max_lines,  # type: typing.Optional[int]
+            **kwargs  # type: typing.Any
+    ):  # type: (...) -> None
+        """
+        Logs the beginning of a long text on multiple lines.
+
+        :param level: Log level.
+        :param msg: Log message.
+        :param args: Other positional arguments as a tuple.
+        :param max_lines: Maximum number of lines to display. All lines when set to ``None``.
+        :param kwargs: Named parameter arguments.
+        """
+        _long_text = msg % args  # type: str
+
+        _lines_displayed = 0  # type: int
+        _lines = _long_text.splitlines()  # type: typing.List[str]
+        for _line in _lines:  # type: str
+            _lines_displayed += 1
+            if (max_lines is not None) and (_lines_displayed > max_lines):
+                _lines_displayed -= 1
+                break
+            self._torecord(level, _line, tuple([]), **kwargs)
+        if _lines_displayed < len(_lines):
+            self._torecord(level, "...", tuple([]), **kwargs)
+
+
+if typing.TYPE_CHECKING:
+    #: Variable logger type.
+    VarLoggerType = typing.TypeVar("VarLoggerType", bound=Logger)

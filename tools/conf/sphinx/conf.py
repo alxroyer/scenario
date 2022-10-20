@@ -24,7 +24,7 @@
 # Imports
 # =======
 
-import docutils.nodes
+import docutils.nodes  # type: ignore  ## Library stubs not installed for "docutils.nodes"
 import enum
 import inspect
 import logging
@@ -163,16 +163,17 @@ def sphinxlogger():  # type: (...) -> logging.Logger
 
 
 def sphinxdebug(
-        msg,  # type: str
+        fmt,  # type: str
+        *args  # type: typing.Any
 ):  # type: (...) -> None
-    sphinxlogger().debug("[conf] %s" % msg)
+    sphinxlogger().debug(f"[conf] {fmt}", *args)
 
 
 def sphinxwarning(
         msg,  # type: str
 ):  # type: (...) -> None
-    sphinxlogger().debug("[conf] WARNING: %s" % msg)
-    sphinxlogger().warning("WARNING: %s" % msg)
+    sphinxlogger().debug("[conf] WARNING: %s", msg)
+    sphinxlogger().warning(f"WARNING: {msg}")
 
 
 # Python documentation
@@ -185,7 +186,7 @@ def sphinxwarning(
 extensions.append("sphinx.ext.autodoc")
 
 # Autodoc needs the path to be set appropriately so that the Python modules can be loaded and inspected.
-MAIN_PATH = pathlib.Path(__file__).parents[2]  # type: pathlib.Path
+MAIN_PATH = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
 sys.path.insert(0, str(MAIN_PATH / "src"))
 
 # [SPHINX_AUTODOC]: "This value selects what content will be inserted into the main body of an autoclass directive. (...)
@@ -290,15 +291,15 @@ class PyDoc:
         # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#skipping-members
         app.connect("autodoc-skip-member", self.autodoc_skipmember)
         # Hack *autodoc* so that it does not display attribute values (see [sphinx#904](https://github.com/sphinx-doc/sphinx/issues/904)).
-        sphinx.ext.autodoc.object_description = self.autodoc_objectdescription
+        sphinx.ext.autodoc.object_description = self.autodoc_objectdescription  # type: ignore  ## Incompatible types in assignment
         app.connect("autodoc-process-signature", self.autodoc_processsignature)
         app.connect("autodoc-process-docstring", self.autodoc_processdocstring)
 
     def sphinx_envupdated(
             self,
             app,  # type: sphinx.application.Sphinx
-            env,
-    ):
+            env,  # type: typing.Any
+    ):  # type: (...) -> None
         """
         See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-env-updated
 
@@ -310,7 +311,7 @@ class PyDoc:
             You can return an iterable of docnames from the handler. These documents will then be considered updated,
             and will be (re-)written during the writing phase.
         """
-        sphinxdebug("PyDoc.sphinx_envupdated(env=%s)" % repr(env))
+        sphinxdebug("PyDoc.sphinx_envupdated(env=%r)", env)
         self._warnundocitems()
 
     def sphinx_doctreeresolved(
@@ -318,7 +319,7 @@ class PyDoc:
             app,  # type: sphinx.application.Sphinx
             doctree,  # type: docutils.nodes.document
             docname,  # type: str
-    ):
+    ):  # type: (...) -> None
         """
         See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-doctree-resolved
 
@@ -332,7 +333,7 @@ class PyDoc:
             Here is the place to replace custom nodes that don’t have visitor methods in the writers,
             so that they don’t cause errors when the writers encounter them.
         """
-        sphinxdebug("PyDoc.sphinx_doctreeresolved(doctree=%s, docname=%s)" % (repr(doctree), repr(docname)))
+        sphinxdebug("PyDoc.sphinx_doctreeresolved(doctree=%r, docname=%r)", doctree, docname)
         self._simplifyreferences(docname, doctree)
 
     def autodoc_skipmember(
@@ -342,7 +343,7 @@ class PyDoc:
             nfq_name,  # type: str
             obj,  # type: typing.Optional[object]
             would_skip,  # type: bool
-            options,
+            options,  # type: typing.Any
     ):  # type: (...) -> typing.Optional[bool]
         """
         See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#event-autodoc-skip-member
@@ -399,40 +400,40 @@ class PyDoc:
 
         Prevents ``__init__()``, ``__repr__()`` and ``__str__()`` methods from being skipped.
         """
-        sphinxdebug("PyDoc.autodoc_skipmember(owner_type=%s, nfq_name=%s, obj=%s, would_skip=%s, options=%s)"
-                    % (repr(owner_type), repr(nfq_name), repr(obj), repr(would_skip), repr(options)))
+        sphinxdebug("PyDoc.autodoc_skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",
+                    owner_type, nfq_name, obj, would_skip, options)
 
         if would_skip:
             # When overriding `enum.Enum`, an undocumented function warning is displayed for '_generate_next_value_'.
             # noinspection PyProtectedMember
             if obj == enum.Enum._generate_next_value_:
-                sphinxdebug("PyDoc.autodoc_skipmember(): `%s` should be skipped!" % self._fqname(obj))
+                sphinxdebug("PyDoc.autodoc_skipmember(): `%s` should be skipped!", self._fqname(obj))
                 return True
 
             if inspect.isclass(obj) and (nfq_name != "__metaclass__"):
-                sphinxdebug("PyDoc.autodoc_skipmember(): class `%s` not skipped!" % self._fqname(obj))
+                sphinxdebug("PyDoc.autodoc_skipmember(): class `%s` not skipped!", self._fqname(obj))
                 return False
             if inspect.isfunction(obj):
-                sphinxdebug("PyDoc.autodoc_skipmember(): function `%s` not skipped!" % self._fqname(obj))
+                sphinxdebug("PyDoc.autodoc_skipmember(): function `%s` not skipped!", self._fqname(obj))
                 return False
             if inspect.ismethod(obj):
-                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!" % self._fqname(obj))
+                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!", self._fqname(obj))
                 return False
             # Inspired from https://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
             if (owner_type == "class") and (obj is not None) and self._isspecialfunction(obj, "__init__"):
-                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!" % self._fqname(obj))
+                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!", self._fqname(obj))
                 return False
             if (owner_type == "class") and (obj is not None) and self._isspecialfunction(obj, "__repr__"):
-                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!" % self._fqname(obj))
+                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!", self._fqname(obj))
                 return False
             if (owner_type == "class") and (obj is not None) and self._isspecialfunction(obj, "__str__"):
-                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!" % self._fqname(obj))
+                sphinxdebug("PyDoc.autodoc_skipmember(): method `%s` not skipped!", self._fqname(obj))
                 return False
             if (owner_type == "class") and (obj is sphinx.ext.autodoc.INSTANCEATTR):
-                sphinxdebug("PyDoc.autodoc_skipmember(): instance attribute `%s` not skipped!" % nfq_name)
+                sphinxdebug("PyDoc.autodoc_skipmember(): instance attribute `%s` not skipped!", nfq_name)
                 return False
             if (owner_type == "class") and (not nfq_name.startswith("__")):
-                sphinxdebug("PyDoc.autodoc_skipmember(): class attribute `%s` not skipped!" % nfq_name)
+                sphinxdebug("PyDoc.autodoc_skipmember(): class attribute `%s` not skipped!", nfq_name)
                 return False
 
         return None
@@ -443,7 +444,7 @@ class PyDoc:
             what,  # type: str
             fq_name,  # type: str
             obj,  # type: typing.Optional[object]
-            options,
+            options,  # type: typing.Any
             signature,  # type: typing.Optional[str]
             return_annotation,  # type: typing.Optional[str]
     ):  # type: (...) -> typing.Optional[typing.Tuple[typing.Optional[str], typing.Optional[str]]]
@@ -494,30 +495,31 @@ class PyDoc:
                 The event handler can return a new tuple (signature, return_annotation)
                 to change what Sphinx puts into the output.
         """
-        sphinxdebug("PyDoc.autodocprocesssignature(what=%s, fq_name=%s, obj=%s, options=%s, signature=%s, return_annotation=%s)"
-                    % (repr(what), repr(fq_name), repr(obj), repr(options), repr(signature), repr(return_annotation)))
+        sphinxdebug("PyDoc.autodocprocesssignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
+                    what, fq_name, obj, options, signature, return_annotation)
 
         if what == "class":
             # Do not show `__init__()` arguments in the class signature.
             # `__init__()` documentation is generated separately.
-            sphinxdebug("autodoc-process-signature(): Class %s signature set from %s to None!" % (fq_name, repr(signature)))
+            sphinxdebug("autodoc-process-signature(): Class %s signature set from %r to None!", fq_name, signature)
             return None, None
 
         return None
 
     def autodoc_objectdescription(
             self,
-            obj,  # typing.Optional[object]
+            obj,  # type: typing.Optional[typing.Any]
     ):  # type: (...) -> str
         """
         Replacement hack for :function:`sphinx.ext.autodoc.object_description()`.
 
-        Raises a :exc:`ValueError` when ``obj`` is :const:`None`,
+        Raises a :exc:`ValueError` when ``obj`` is ``None``,
         so that *autodoc* does not print out erroneous attribute values,
         especially for instance attribute.
 
-        .. warning:: Unfortunately, it seems we have no way to differenciate class and instance attributes when the value is :const:`None`
-                     (see `sphinx#904 <https://github.com/sphinx-doc/sphinx/issues/904>`_).
+        .. warning::
+            Unfortunately, it seems we have no way to differenciate class and instance attributes when the value is ``None``
+            (see `sphinx#904 <https://github.com/sphinx-doc/sphinx/issues/904>`_).
         """
         if obj is None:
             raise ValueError("No value for data/attributes")
@@ -529,8 +531,8 @@ class PyDoc:
             app,  # type: sphinx.application.Sphinx
             what,  # type: str
             fq_name,  # type: str
-            obj,  # type: typing.Optional[object]
-            options,
+            obj,  # type: typing.Optional[typing.Any]
+            options,  # type: typing.Any
             lines,  # type: typing.List[str]
     ):  # type: (...) -> None
         """
@@ -575,8 +577,8 @@ class PyDoc:
         Ensures Python items are documented.
         If not, prints a warning in the console and generates a warning in the output documentation.
         """
-        sphinxdebug("PyDoc.autodocprocessdocstring(what=%s, fq_name=%s, obj=%s, options=%s, lines=%s)"
-                    % (repr(what), repr(fq_name), repr(obj), repr(options), repr(lines)))
+        sphinxdebug("PyDoc.autodocprocessdocstring(what=%r, fq_name=%r, obj=%r, options=%r, lines=%r)",
+                    what, fq_name, obj, options, lines)
 
         # Check whether the item is documented.
         # Inspired from: https://stackoverflow.com/questions/14141170/how-can-i-just-list-undocumented-members-with-sphinx-autodoc
@@ -597,10 +599,10 @@ class PyDoc:
         if not _is_documented:
             # If not:
             # - Display a warning in the console during the build.
-            sphinxwarning("Undocumented %s `%s`" % (what, fq_name))
+            sphinxwarning(f"Undocumented {what} `{fq_name}`")
             # - Display a warning in the output documentation.
             if PyDoc.WARN_IN_DOC:
-                lines.append(".. warning:: Undocumented %s ``%s``." % (what, fq_name))
+                lines.append(f".. warning:: Undocumented {what} ``{fq_name}``.")
 
         # Identify the items to track when applicable.
         if inspect.ismodule(obj):
@@ -608,21 +610,21 @@ class PyDoc:
 
         # Remove this item from the tracked item list.
         if fq_name in self._tracked_items:
-            sphinxdebug("Tracked %s `%s` found." % (what, fq_name))
+            sphinxdebug("Tracked %s `%s` found", what, fq_name)
             _item_type = self._tracked_items.pop(fq_name)  # type: str
             if _item_type != what:
-                sphinxwarning("Unexpected type %s for %s `%s`." % (what, _item_type, fq_name))
+                sphinxwarning(f"Unexpected type {what} for {_item_type} `{fq_name}`")
 
         # Memorize the documented item.
         self._documented_items[fq_name] = PyDoc.DocumentedItem(what, obj, lines)
 
     def _fqname(
             self,
-            obj,  # type: object
+            obj,  # type: typing.Any
     ):  # type: (...) -> str
         if inspect.ismodule(obj):
-            return obj.__name__
-        return "%s.%s" % (inspect.getmodule(obj), obj.__name__)
+            return str(obj.__name__)
+        return f"{inspect.getmodule(obj)}.{obj.__name__}"
 
     def _trackmoduleitems(
             self,
@@ -637,9 +639,9 @@ class PyDoc:
         """
         import sphinx.pycode
 
-        sphinxdebug("PyDoc._trackmoduleitems(module=%s)" % repr(module))
+        sphinxdebug("PyDoc._trackmoduleitems(module=%r)", module)
 
-        assert inspect.ismodule(module), "Not a module %s" % repr(module)
+        assert inspect.ismodule(module), f"Not a module {module!r}"
         _parser = sphinx.pycode.Parser(inspect.getsource(module))  # type: sphinx.pycode.Parser
         _parser.parse()
         for _class_name, _attr_name in _parser.annotations:  # type: str, str
@@ -649,28 +651,27 @@ class PyDoc:
             if _attr_name.startswith("__"):
                 continue
             if _class_name:
-                _fq_name = "%s.%s.%s" % (module.__name__, _class_name, _attr_name)  # type: str
+                _fq_name = f"{module.__name__}.{_class_name}.{_attr_name}"  # type: str
                 _item_type = "attribute"  # type: str
             else:
-                _fq_name = "%s.%s" % (module.__name__, _attr_name)
+                _fq_name = f"{module.__name__}.{_attr_name}"
                 _item_type = "data"
                 if module.__doc__:
                     for _line in module.__doc__.splitlines():  # type: str
                         if re.match(r"\.\. py:attribute:: %s" % _attr_name, _line):
-                            sphinxdebug("Attribute '%s' already described in the '%s' module docstring. No need to track it."
-                                        % (_attr_name, module.__name__))
+                            sphinxdebug("Attribute '%s' already described in the '%s' module docstring. No need to track it.", _attr_name, module.__name__)
                             _track_item = False
                             break
                 if _track_item:
-                    sphinxwarning("Missing `.. py:attribute::` directive for attribute '%s' in module '%s'" % (_attr_name, module.__name__))
+                    sphinxwarning(f"Missing `.. py:attribute::` directive for attribute '{_attr_name}' in module '{module.__name__}'")
 
             if _track_item:
-                sphinxdebug("Tracking %s `%s`." % (_item_type, _fq_name))
+                sphinxdebug("Tracking %s `%s`", _item_type, _fq_name)
                 self._tracked_items[_fq_name] = _item_type
 
     def _isspecialfunction(
             self,
-            obj,  # type: object
+            obj,  # type: typing.Any
             method_name,  # type: str
     ):  # type: (...) -> bool
         """
@@ -683,9 +684,10 @@ class PyDoc:
     def _warnundocitems(self):  # type: (...) -> None
         # Print out console warnings for non documented tracked items.
         for _undoc_fq_name in self._tracked_items:  # type: str
-            sphinxwarning("Undocumented %s `%s`" % (self._tracked_items[_undoc_fq_name], _undoc_fq_name))
+            sphinxwarning(f"Undocumented {self._tracked_items[_undoc_fq_name]} `{_undoc_fq_name}`")
             if PyDoc.WARN_IN_DOC:
-                sphinxwarning("Undocumented %s `%s` could not be mentioned directly in the output documentation.")
+                sphinxwarning(f"Undocumented {self._tracked_items[_undoc_fq_name]} `{_undoc_fq_name}` "
+                              "could not be mentioned directly in the output documentation.")
 
         # Reset the documented and tracked item lists.
         self._documented_items.clear()
@@ -698,8 +700,8 @@ class PyDoc:
             debug_indentation="",  # type: str
             short_ref=None,  # type: str
     ):  # type: (...) -> None
-        sphinxdebug("%sPyDoc._simplifyreferences(docname=%s, element=%s, short_ref=%s): element.attributes=%s"
-                    % (debug_indentation, repr(docname), repr(element), repr(short_ref), repr(element.attributes)))
+        sphinxdebug("%sPyDoc._simplifyreferences(docname=%r, element=%r, short_ref=%r): element.attributes=%r",
+                    debug_indentation, docname, element, short_ref, element.attributes)
 
         # :class:`docutils.nodes.reference` node: determine the short reference when applicable.
         if isinstance(element, docutils.nodes.reference):
@@ -709,28 +711,28 @@ class PyDoc:
             if _match:
                 short_ref = _match.group(2)
             else:
-                sphinxdebug("%sPyDoc._simplifyreferences(docname=%s): 'reftitle' '%s' does not match pattern"
-                            % (debug_indentation, repr(docname), _reftitle))
+                sphinxdebug("%sPyDoc._simplifyreferences(docname=%r): 'reftitle' %r does not match pattern",
+                            debug_indentation, docname, _reftitle)
 
         for _child_index in range(len(element.children)):  # type: int
             _child = element.children[_child_index]  # type: docutils.nodes.Node
             if isinstance(_child, docutils.nodes.Text):
-                # Text children: simplify the text when ``short_ref`` is set.
+                # Text children: simplify the text when `short_ref` is set.
                 if short_ref is not None:
                     _short_ref = short_ref  # type: str
                     if _child.endswith("()"):
                         _short_ref += "()"
                     if _short_ref.endswith(_child):
-                        sphinxdebug("%sPyDoc._simplifyreferences(docname=%s): Text '%s' is even shorter than '%s', don't change it"
-                                    % (debug_indentation, repr(docname), _child, short_ref))
+                        sphinxdebug("%sPyDoc._simplifyreferences(docname=%r): Text %r is even shorter than %r, don't change it",
+                                    debug_indentation, docname, _child, short_ref)
                     elif _child.endswith(_short_ref):
-                        sphinxdebug("%sPyDoc._simplifyreferences(docname=%s): Simplifying '%s' >> '%s'"
-                                    % (debug_indentation, repr(docname), _child, _short_ref))
+                        sphinxdebug("%sPyDoc._simplifyreferences(docname=%r): Simplifying %r >> %r",
+                                    debug_indentation, docname, _child, _short_ref)
                         element.children[_child_index] = docutils.nodes.Text(_short_ref)
                     else:
-                        sphinxwarning("%s: Mismatching text '%s' with expected short reference '%s'" % (docname, _child, short_ref))
+                        sphinxwarning(f"{docname}: Mismatching text {_child!r} with expected short reference {short_ref!r}")
             elif isinstance(_child, docutils.nodes.Element):
                 # Element children: make recursive calls.
-                self._simplifyreferences(docname, _child, debug_indentation=debug_indentation + " ", short_ref=short_ref)
+                self._simplifyreferences(docname, _child, debug_indentation=f"{debug_indentation} ", short_ref=short_ref)
             else:
-                sphinxwarning("%s: Unexpected kind of node %s" % (docname, repr(_child)))
+                sphinxwarning(f"{docname}: Unexpected kind of node {_child!r}")

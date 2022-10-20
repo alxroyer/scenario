@@ -31,6 +31,7 @@ UNIT_TEST_LAUNCHER = MAIN_PATH / "test" / "run-unit-test.py"  # type: scenario.P
 UNIT_CAMPAIGN_LAUNCHER = MAIN_PATH / "test" / "run-unit-campaign.py"  # type: scenario.Path
 
 # Data scenarios.
+ACTION_RESULT_LOOP_SCENARIO = DATA_PATH / "actionresultloopscenario.py"  # type: scenario.Path
 CONFIG_DB_SCENARIO = DATA_PATH / "configdbscenario.py"  # type: scenario.Path
 FAILING_SCENARIO = DATA_PATH / "failingscenario.py"  # type: scenario.Path
 GOTO_SCENARIO = DATA_PATH / "gotoscenario.py"  # type: scenario.Path
@@ -45,6 +46,7 @@ SCENARIO_LOGGING_SCENARIO = DATA_PATH / "scenariologgingscenario.py"  # type: sc
 SIMPLE_SCENARIO = DATA_PATH / "simplescenario.py"  # type: scenario.Path
 SUPERSCENARIO_SCENARIO = DATA_PATH / "superscenario.py"  # type: scenario.Path
 SYNTAX_ERROR_SCENARIO = DATA_PATH / "errors" / "syntaxerrorscenario.py"  # type: scenario.Path
+WAITING_SCENARIO = DATA_PATH / "waitingscenario.py"  # type: scenario.Path
 
 DEMO_TEST_SUITE = DEMO_PATH / "demo.suite"  # type: scenario.Path
 TEST_DATA_TEST_SUITE = DATA_PATH / "test-data.suite"  # type: scenario.Path

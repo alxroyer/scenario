@@ -62,7 +62,7 @@ class UpdateTestData:
             lambda file_updater, line: file_updater.matchmodifyline(
                 rb'^(.* )\d+(,.* {2}# location: CONFIG_DB_SCENARIO/set)$', line,
                 filter_match=None, location_key=lambda match: "set",
-                new_line=lambda match, location: b'%s%d%s' % (match.group(1), location.line, match.group(2))
+                new_line=lambda match, location: b'%s%d%s' % (match.group(1), location.line, match.group(2)),
             ),
         )
 

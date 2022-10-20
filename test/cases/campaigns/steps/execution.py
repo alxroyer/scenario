@@ -20,6 +20,7 @@ import typing
 
 import scenario
 import scenario.test
+import scenario.text
 
 # Related steps:
 from steps.commonargs import ExecCommonArgs
@@ -89,11 +90,9 @@ class ExecCampaign(ExecCommonArgs):
 
         assert self.test_suite_files
         if len(self.test_suite_files) == 1:
-            _action_description += " the '%s' test suite file" % self.test_suite_files[0]
+            _action_description += f" the '{self.test_suite_files[0]}' test suite file"
         if len(self.test_suite_files) > 1:
-            _action_description += " "
-            _action_description += ", ".join(['%s' % x for x in self.test_suite_files[:-1]])
-            _action_description += " and '%s' test suite files" % self.test_suite_files[-1]
+            _action_description += f" {scenario.text.comalist(self.test_suite_files, quotes=True)} test suite files"
 
         if self.dt_subdir is True:
             _action_description += ", with the --dt-subdir option set"
@@ -119,7 +118,7 @@ class ExecCampaign(ExecCommonArgs):
     def _mkoutdir(self):  # type: (...) -> None
         assert isinstance(self.scenario, scenario.test.TestCase)
         self._cmdline_outdir_path = self.scenario.mktmppath()
-        self.debug("Creating directory '%s'" % self._cmdline_outdir_path)
+        self.debug(f"Creating directory '{self._cmdline_outdir_path}'")
         self._cmdline_outdir_path.mkdir(parents=True, exist_ok=True)
 
         scenario.handlers.install(
@@ -145,8 +144,9 @@ class ExecCampaign(ExecCommonArgs):
     ):  # type: (...) -> None
         if self._final_outdir_path:
             if scenario.stack.current_scenario_execution and scenario.stack.current_scenario_execution.errors:
-                self.warning("%d errors while executing the test" % len(scenario.stack.current_scenario_execution.errors))
-                self.warning("Leaving the output files in place in '%s' for investigation purpose" % self._final_outdir_path)
+                _errors_txt = scenario.text.Countable("error", scenario.stack.current_scenario_execution.errors)  # type: scenario.text.Countable
+                self.warning(f"{len(_errors_txt)} {_errors_txt} while executing the test")
+                self.warning(f"Leaving the output files in place in '{self._final_outdir_path}' for investigation purpose")
             else:
-                self.debug("Removing final output directory '%s'" % self._final_outdir_path)
+                self.debug("Removing final output directory '%s'", self._final_outdir_path)
                 shutil.rmtree(self._final_outdir_path, ignore_errors=True)

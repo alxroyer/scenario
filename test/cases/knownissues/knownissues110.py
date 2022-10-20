@@ -66,8 +66,8 @@ class CheckKnownIssuesLogOutput(LogVerificationStep):
             ("#001", "Known issue in KnownIssuesStep.step() before ACTION/RESULT"),
             ("#002", "Known issue in KnownIssuesStep.step() under ACTION"),
         ):  # type: str, str
-            _expected_line = "Issue %s! %s" % (_issue_id, _message)  # type: str
-            if self.RESULT("- %s:" % _expected_line):
+            _expected_line = f"Issue {_issue_id}! {_message}"  # type: str
+            if self.RESULT(f"- {_expected_line}:"):
                 self.assertlen(
                     self.assertlines(_expected_line), 2,
                     evidence="Known issue before exception",
@@ -79,8 +79,8 @@ class CheckKnownIssuesLogOutput(LogVerificationStep):
             ("#011", "Known issue in KnownIssuesScenario.step010() before ACTION/RESULT"),
             ("#014", "Known issue in KnownIssuesScenario.step010() after ACTION/RESULT"),
         ):  # Type already declared above.
-            _expected_line = "Issue %s! %s" % (_issue_id, _message)  # Type already declared above.
-            if self.RESULT("- %s:" % _expected_line):
+            _expected_line = f"Issue {_issue_id}! {_message}"  # Type already declared above.
+            if self.RESULT(f"- {_expected_line}:"):
                 self.assertlen(
                     self.assertlines(_expected_line), 1,
                     evidence="Known issue at definition level after exception",
@@ -92,8 +92,8 @@ class CheckKnownIssuesLogOutput(LogVerificationStep):
             ("#012", "Known issue in KnownIssuesScenario.step010() under ACTION"),
             ("#013", "Known issue in KnownIssuesScenario.step010() under ACTION"),
         ):  # Type already declared above.
-            _expected_line = "Issue %s! %s" % (_issue_id, _message)  # Type already declared above.
-            if self.RESULT("- %s:" % _expected_line):
+            _expected_line = f"Issue {_issue_id}! {_message}"  # Type already declared above.
+            if self.RESULT(f"- {_expected_line}:"):
                 self.assertnoline(
                     _expected_line,
                     evidence="Known issue under ACTION/RESULT after exception",

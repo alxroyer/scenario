@@ -24,7 +24,7 @@ def ordinal(
         return "2nd"
     if index == 2:
         return "3rd"
-    return "%dth" % (index + 1)
+    return f"{index + 1}th"
 
 
 def adverbial(
@@ -36,4 +36,4 @@ def adverbial(
         return "once"
     if count == 2:
         return "twice"
-    return "%d times" % count
+    return f"{count} times"

@@ -69,7 +69,7 @@ class TestError(Exception):
         """
         Programmatic representation of the error.
         """
-        return "<%s '%s'>" % (type(self).__name__, str(self))
+        return f"<{type(self).__name__} {str(self)!r}>"
 
     def __eq__(
             self,
@@ -106,9 +106,9 @@ class TestError(Exception):
         :param level: Log level.
         """
         if self.location:
-            logger.log(level, "%s: %s" % (self.location.tolongstring(), str(self)))
+            logger.log(level, "%s (%s)", str(self), self.location.tolongstring())
         else:
-            logger.log(level, str(self))
+            logger.log(level, "%s", str(self))
 
     def tojson(self):  # type: (...) -> JSONDict
         """
@@ -195,7 +195,7 @@ class ExceptionError(TestError):
 
         Exception type + message.
         """
-        return "%s: %s" % (self.exception_type, self.message)
+        return f"{self.exception_type}: {self.message}"
 
     def logerror(
             self,
@@ -215,7 +215,7 @@ class ExceptionError(TestError):
                 if _line:
                     logger.log(level, "  " + _line)
         else:
-            TestError.logerror(self, logger, level=level)
+            super().logerror(logger, level=level)
 
     def tojson(self):  # type: (...) -> JSONDict
         _json = {
@@ -281,7 +281,7 @@ class KnownIssue(TestError):
 
         Issue id + message.
         """
-        return "Issue %s! %s" % (self.issue_id, self.message)
+        return f"Issue {self.issue_id}! {self.message}"
 
     def iswarning(self):  # type: (...) -> bool
         return True

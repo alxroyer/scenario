@@ -48,7 +48,7 @@ class CheckFullScenarioLogOutput(scenario.test.VerificationStep):
         scenario.logging.resetindentation()
 
         _lines = []  # type: typing.List[bytes]
-        if self.ACTION("Check the log output v/s the expected output '%s'." % self._stdout_path_ref):
+        if self.ACTION(f"Check the log output v/s the expected output '{self._stdout_path_ref}'."):
             _lines = self.subprocess.stdout.splitlines()
             # Remove last empty lines.
             while _lines and (not _lines[-1]):
@@ -62,16 +62,16 @@ class CheckFullScenarioLogOutput(scenario.test.VerificationStep):
         for _line_index in range(len(_lines_ref)):  # type: int
             _line_ref = _lines_ref[_line_index]  # type: bytes
             if _line_ref.endswith(b'Time: 0.0 s'):
-                if self.RESULT("Line %d matches pattern 'Time: HH:MM:SS.uuuuuu'." % (_line_index + 1)):
-                    self.assertgreater(len(_lines), _line_index, "No such line %d: %s" % (_line_index, repr(_line_ref)))
+                if self.RESULT(f"Line {_line_index + 1} matches pattern 'Time: HH:MM:SS.uuuuuu'."):
+                    self.assertgreater(len(_lines), _line_index, f"No such line {_line_index + 1}: {_line_ref!r}")
                     self.assertregex(
                         rb'^ *Time: \d{2}:\d{2}:\d{2}\.\d+$', _lines[_line_index],
-                        evidence="Line %d" % (_line_index + 1),
+                        evidence=f"Line {_line_index + 1}",
                     )
             else:
-                if self.RESULT("Line %d is %s." % (_line_index + 1, repr(_line_ref))):
-                    self.assertgreater(len(_lines), _line_index, "No such line %d: %s" % (_line_index, repr(_line_ref)))
+                if self.RESULT(f"Line {_line_index + 1} is {_line_ref!r}."):
+                    self.assertgreater(len(_lines), _line_index, f"No such line {_line_index + 1}: {_line_ref!r}")
                     self.assertequal(
                         _lines[_line_index], _line_ref,
-                        evidence="Line %d" % (_line_index + 1),
+                        evidence=f"Line {_line_index + 1}",
                     )

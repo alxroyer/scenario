@@ -25,7 +25,7 @@ Create your first test scenario
 
 .. todo:: Documentation needed for steps as objects.
 
-    This section describes in details how to write steps using `step...()` methods,
+    This section describes in details how to write steps using ``step...()`` methods,
     but it may be worth showing how to write steps with classes right away in the quickstart.
 
 The example below shows how to describe a test scenario.
@@ -115,10 +115,10 @@ to call the step methods for different purposes:
 1. to peak all the action and expected result descriptions, without executing the test script:
     in that case, the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()`
     and :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` methods
-    return :py:const:`False`,
+    return ``False``,
     which prevents the test script from being executed.
 2. to execute the test script:
-    in that case, these methods return :py:const:`True`,
+    in that case, these methods return ``True``,
     which lets the test script being executed.
 
 The expected result test script sections may usually use assertion methods

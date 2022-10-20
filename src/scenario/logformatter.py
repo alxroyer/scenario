@@ -127,12 +127,12 @@ class LogFormatter(logging.Formatter):
             _level_color = self._levelcolor(record.levelno)
         if self._with(record, LogExtraData.LOG_LEVEL):
             if _level_color:
-                _log_line += "\033[%dm" % _level_color
+                _log_line += f"\033[{_level_color}m"
             _log_line += record.levelname
             if _level_color:
-                _log_line += "\033[%dm" % Console.Color.RESET
+                _log_line += f"\033[{Console.Color.RESET}m"
             _max_level_len = max(len(logging.getLevelName(x)) for x in range(0, logging.CRITICAL + 1))  # type: int
-            _log_line += (" " * (_max_level_len - len(record.levelname)))
+            _log_line += f"{' ':>{_max_level_len - len(record.levelname)}}"
             _log_line += " "
 
         # Log message color (begin).
@@ -143,19 +143,19 @@ class LogFormatter(logging.Formatter):
             if _message_color is None:
                 _message_color = _level_color
         if _message_color is not None:
-            _log_line += "\033[%dm" % _message_color
+            _log_line += f"\033[{_message_color}m"
 
         # Log class, with indentation.
         if self._with(record, LogExtraData.CLASS_LOGGER_INDENTATION):
             if isinstance(_logger, Logger) and _logger.log_class:
-                _log_line += "[%s] %s" % (_logger.log_class, _logger.getindentation())
+                _log_line += f"[{_logger.log_class}] {_logger.getindentation()}"
 
         # Log message.
         _log_line += record.getMessage()
 
         # Log message color (end).
         if _message_color:
-            _log_line += "\033[%dm" % Console.Color.RESET
+            _log_line += f"\033[{Console.Color.RESET}m"
 
         # Exception.
         _exception = ""  # type: str

@@ -65,7 +65,7 @@ class CheckMultipleScenariosIncompatibleOption(LogVerificationStep):
         self.option = option  # type: str
 
     def step(self):  # type: (...) -> None
-        self.STEP("No %s option" % self.option)
+        self.STEP(f"No {self.option} option")
 
         if self.RESULT("The log output is less than 10 lines."):
             self.assertlessequal(
@@ -73,8 +73,8 @@ class CheckMultipleScenariosIncompatibleOption(LogVerificationStep):
                 evidence="Number of lines",
             )
 
-        if self.RESULT("The scenario launcher displayed an error message regarding the %s option." % self.option):
+        if self.RESULT(f"The scenario launcher displayed an error message regarding the {self.option} option."):
             self.assertline(
-                "Cannot use the %s option with multiple scenario files" % self.option,
+                f"Cannot use the {self.option} option with multiple scenario files",
                 evidence="Error message",
             )

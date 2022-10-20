@@ -28,11 +28,11 @@ class PackageScenario(scenario.Scenario):
         self.STEP("`__package__` variable")
 
         if self.ACTION("Display the `__package__` variable."):
-            self.evidence("__package__ = %s" % repr(__package__))
+            self.evidence(f"__package__ = {__package__!r}")
 
     def step020(self):  # type: (...) -> None
         self.STEP("Local import")
 
         if self.ACTION("Import the `DATA` variable from the local '.packagescenariodata.py'."):
             from .packagescenariodata import DATA
-            self.evidence("DATA = %s" % repr(DATA))
+            self.evidence(f"DATA = {DATA!r}")

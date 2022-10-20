@@ -20,7 +20,6 @@ Execution location management.
 Execution locations may be used:
 
 - to locate a class / function / method definition (see :class:`.scenariodefinition.ScenarioDefinition` and :class:`.stepdefinition.StepDefinition`),
-- to locate an action / expected result definition (see :class:`.actionresultdefinition.ActionResultDefinition`),
 - to locate the place of the current execution, or where an exception occurred.
 """
 
@@ -155,9 +154,9 @@ class CodeLocation:
         from .path import Path
 
         if isinstance(self.file, Path):
-            return "%s:%d:%s" % (self.file.prettypath, self.line, self.qualname)
+            return f"{self.file.prettypath}:{self.line}:{self.qualname}"
         else:
-            return "%s:%d:%s" % (self.file.as_posix(), self.line, self.qualname)
+            return f"{self.file.as_posix()}:{self.line}:{self.qualname}"
 
     @staticmethod
     def fromlongstring(
@@ -170,7 +169,7 @@ class CodeLocation:
         :return: :class:`CodeLocation` instance.
         """
         _match = re.match(r"^(.*):([0-9]+):(.*)$", long_string)
-        assert _match, "Not a valid location: '%s'" % long_string
+        assert _match, f"Not a valid location: {long_string!r}"
 
         return CodeLocation(
             file=pathlib.Path(_match.group(1)),
@@ -188,7 +187,7 @@ class ExecutionLocations(Logger):
         """
         Sets up logging for the :class:`ExecutionLocations` class.
         """
-        from .debug import DebugClass
+        from .debugclasses import DebugClass
 
         Logger.__init__(self, log_class=DebugClass.EXECUTION_LOCATIONS)
 
@@ -241,7 +240,7 @@ class ExecutionLocations(Logger):
 
         _locations = []  # type: typing.List[CodeLocation]
 
-        self.debug("len(tb_items) = %d" % len(tb_items))
+        self.debug("len(tb_items) = %d", len(tb_items))
         self.pushindentation()
 
         # For each stack trace element which class is just above :class:`.scenariodefinition.ScenarioDefinition`.
@@ -255,7 +254,7 @@ class ExecutionLocations(Logger):
                 _location = CodeLocation.fromtbitem(_tb_item)  # type: CodeLocation
             except Exception as _err:
                 # The creation of the `CodeLocation` instance may file for core Python traceback items.
-                self.debug("Could not create `CodeLocation` from %s: %s" % (repr(_tb_item), str(_err)))
+                self.debug("Could not create `CodeLocation` from %r: %s", _tb_item, _err)
                 self.debug("=> skipping traceback item")
                 continue
 
@@ -275,7 +274,7 @@ class ExecutionLocations(Logger):
                     _keep = False
 
             if _keep:
-                self.debug("Location stack trace - %s:%d: %s." % (_location.file, _location.line, _location.qualname))
+                self.debug("Location stack trace - %s:%d: %s", _location.file, _location.line, _location.qualname)
                 if fqn:
                     # Ensure the location function name is fully qualified.
                     _location.qualname = checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
@@ -283,14 +282,14 @@ class ExecutionLocations(Logger):
                     _tb_item.name = _location.qualname
                 _locations.insert(0, _location)
             else:
-                self.debug("Skipped stack trace - %s:%s: %s." % (_location.file, _location.line, _location.qualname))
+                self.debug("Skipped stack trace - %s:%s: %s", _location.file, _location.line, _location.qualname)
                 _scenario_runner_path = pathlib.Path("scenario") / "src" / "scenario" / "scenariorunner.py"  # type: pathlib.Path
                 if _location.file.as_posix().endswith(_scenario_runner_path.as_posix()) and (_location.qualname == "main"):
                     self.debug("End of test location computation")
                     break
 
         self.popindentation()
-        self.debug("%d locations returned" % len(_locations))
+        self.debug("%d locations returned", len(_locations))
         return _locations
 
 
