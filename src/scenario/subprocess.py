@@ -56,11 +56,12 @@ class SubProcess:
         #: Sub-process command line arguments.
         #:
         #: See :meth:`addargs()`.
-        self._cmd_line = list(args)  # type: typing.List[typing.Union[str, AnyPathType]]
+        self.cmd_line = list(args)  # type: typing.List[typing.Union[str, AnyPathType]]
         #: See :meth:`setenv()`.
-        self._env = {}  # type: typing.Dict[str, typing.Union[str, AnyPathType]]
+        self.env = {}  # type: typing.Dict[str, typing.Union[str, AnyPathType]]
         #: See :meth:`setcwd()`.
-        self._cwd = None  # type: typing.Optional[Path]
+        self.cwd = None  # type: typing.Optional[Path]
+
         #: See :meth:`setlogger()`.
         self._logger = None  # type: typing.Optional[Logger]
         #: Handler to call on each stdout line.
@@ -94,7 +95,7 @@ class SubProcess:
         """
         from .reflex import qualname
 
-        return f"{qualname(type(self))}({self._cmd_line!r}, cwd={self._cwd!r}, env={self._env!r})"
+        return f"{qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
 
     def __str__(self):  # type: (...) -> str
         """
@@ -109,7 +110,7 @@ class SubProcess:
         """
         Human readable full string representation.
         """
-        _args = [str(_arg) for _arg in self._cmd_line]  # type: typing.List[str]
+        _args = [str(_arg) for _arg in self.cmd_line]  # type: typing.List[str]
 
         # When the first term of the command line is the python executable,
         # ensure a short display for it.
@@ -128,7 +129,7 @@ class SubProcess:
         :param args: Extra arguments.
         :return: ``self``
         """
-        self._cmd_line.extend(args)
+        self.cmd_line.extend(args)
         return self
 
     def hasargs(
@@ -142,12 +143,12 @@ class SubProcess:
         :return: ``True`` when the arguments have been found, ``False`` otherwise.
         """
         _arg_index1 = 0  # type: int
-        while _arg_index1 + len(args) - 1 < len(self._cmd_line):
+        while _arg_index1 + len(args) - 1 < len(self.cmd_line):
             _arg_index2 = 0  # type: int
             while True:
                 if _arg_index2 >= len(args):
                     return True
-                if self._cmd_line[_arg_index1 + _arg_index2] != args[_arg_index2]:
+                if self.cmd_line[_arg_index1 + _arg_index2] != args[_arg_index2]:
                     _arg_index1 += 1
                     break
                 else:
@@ -164,7 +165,7 @@ class SubProcess:
         :param kwargs: Extra environment variables.
         :return: ``self``
         """
-        self._env.update(**kwargs)
+        self.env.update(**kwargs)
         return self
 
     def setcwd(
@@ -179,7 +180,7 @@ class SubProcess:
         """
         from .path import Path
 
-        self._cwd = Path(cwd)
+        self.cwd = Path(cwd)
         return self
 
     def setlogger(
@@ -262,13 +263,13 @@ class SubProcess:
 
         # Prepare the current working directory.
         _cwd = pathlib.Path.cwd()  # type: AnyPathType
-        if self._cwd:
-            self._log(logging.DEBUG, "  cwd: '%s'", self._cwd)
-            _cwd = self._cwd
+        if self.cwd:
+            self._log(logging.DEBUG, "  cwd: '%s'", self.cwd)
+            _cwd = self.cwd
 
         # Prepare the command line arguments.
         _cmd_line = []  # type: typing.List[str]
-        for _arg in self._cmd_line:  # type: typing.Union[str, AnyPathType]
+        for _arg in self.cmd_line:  # type: typing.Union[str, AnyPathType]
             if isinstance(_arg, os.PathLike):
                 # Use relative paths to ``_cwd`` when applicable.
                 _path = pathlib.Path(_arg)  # type: pathlib.Path
@@ -283,13 +284,13 @@ class SubProcess:
 
         # Prepare environment variables.
         _env = os.environ.copy()  # type: typing.Dict[str, str]
-        if self._env:
-            self._log(logging.DEBUG, "  additional env: %r", self._env)
-            for _var in self._env:  # type: str
-                if isinstance(self._env[_var], os.PathLike):
-                    _env[_var] = os.fspath(self._env[_var])
+        if self.env:
+            self._log(logging.DEBUG, "  additional env: %r", self.env)
+            for _var in self.env:  # type: str
+                if isinstance(self.env[_var], os.PathLike):
+                    _env[_var] = os.fspath(self.env[_var])
                 else:
-                    _env[_var] = str(self._env[_var])
+                    _env[_var] = str(self.env[_var])
 
         # Launch the subprocess.
         self.time.setstarttime()
