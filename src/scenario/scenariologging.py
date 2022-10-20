@@ -1,0 +1,299 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Scenario logging.
+"""
+
+import logging
+import typing
+
+# `ActionResultDefinition` used in method signatures.
+from .actionresultdefinition import ActionResultDefinition
+# `ScenarioDefinition` used in method signatures.
+from .scenariodefinition import ScenarioDefinition
+# `ScenarioExecution` used in method signatures.
+from .scenarioexecution import ScenarioExecution
+# `StepDefinition` used in method signatures.
+from .stepdefinition import StepDefinition
+# `StepSection` used in method signatures.
+from .stepsection import StepSection
+# `TestError` used in method signatures.
+from .testerrors import TestError
+
+
+class ScenarioLogging:
+    """
+    Scenario logging management.
+    """
+
+    #: Actions, expected results and evidence lines are right-aligned with the longest 'EVIDENCE: ' pattern.
+    ACTION_RESULT_MARGIN = len("  EVIDENCE: ")  # type: int
+    #: The scenario stack indentation pattern ensures that the '|' lines are presented the 'ACTION: ' or 'RESULT: ' pattern they relate to.
+    SCENARIO_STACK_INDENTATION_PATTERN = "      | "  # type: str
+
+    def __init__(self):  # type: (...) -> None
+        """
+        Initializes the last call history.
+        """
+        from .testerrors import KnownIssue
+
+        #: Last call history.
+        #:
+        #: Fed with the name of this class's methods.
+        self._calls = []  # type: typing.List[str]
+
+        #: Known isues already displayed.
+        self._known_issues = []  # type: typing.List[KnownIssue]
+
+    def beginscenario(
+            self,
+            scenario_definition,  # type: ScenarioDefinition
+    ):  # type: (...) -> None
+        """
+        Displays the beginning of a scenario execution.
+
+        :param scenario_definition: Scenario being executed.
+        """
+        from .loggermain import MAIN_LOGGER
+
+        MAIN_LOGGER.rawoutput("SCENARIO '%s'" % scenario_definition.name)
+        MAIN_LOGGER.rawoutput("------------------------------------------------")
+
+        self._calls.append("beginscenario")
+
+    def beginattributes(self):  # type: (...) -> None
+        """
+        Marks the beginning of scenario attributes.
+        """
+        self._calls.append("beginattributes")
+
+    def attribute(
+            self,
+            name,  # type: str
+            value,  # type: str
+    ):  # type: (...) -> None
+        """
+        Display the value of a scenario attribute.
+
+        :param name: Scenario attribute name.
+        :param value: Scenario attribute value.
+
+        .. seealso:: :meth:`.scenarioconfig.ScenarioConfig.expectedscenarioattributes()`
+        """
+        from .loggermain import MAIN_LOGGER
+
+        MAIN_LOGGER.rawoutput("  %s: %s" % (name, value))
+
+        self._calls.append("attribute")
+
+    def endattributes(self):  # type: (...) -> None
+        """
+        Marks the end of scenario attributes,
+        and the beginning of the test steps by the way.
+        """
+        from .loggermain import MAIN_LOGGER
+
+        MAIN_LOGGER.rawoutput("")
+
+        self._calls.append("endattributes")
+
+    def stepsection(
+            self,
+            step_section,  # type: StepSection
+    ):  # type: (...) -> None
+        """
+        Displays a step section.
+
+        :param step_section:
+        :return:
+        """
+        from .loggermain import MAIN_LOGGER
+
+        # Add space between step sections.
+        MAIN_LOGGER.rawoutput("")
+        MAIN_LOGGER.rawoutput("")
+
+        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        assert step_section.description is not None
+        MAIN_LOGGER.rawoutput("  " + step_section.description)
+        MAIN_LOGGER.rawoutput("------------------------------------------------")
+
+    def stepdescription(
+            self,
+            step_definition,  # type: StepDefinition
+    ):  # type: (...) -> None
+        """
+        Displays a step being executed.
+
+        :param step_definition: Step definition being executed.
+        """
+        from .loggermain import MAIN_LOGGER
+        from .scenarioargs import ScenarioArgs
+
+        # Add space between two steps.
+        MAIN_LOGGER.rawoutput("")
+
+        if ScenarioArgs.getinstance().doc_only:
+            _step_number = step_definition.number  # type: int
+        else:
+            assert step_definition.executions, "No executions yet for %s" % str(step_definition)
+            _step_number = step_definition.executions[-1].number  # Type already declared above.
+        _step_description = "STEP#%d" % _step_number  # type: str
+        if step_definition.description is not None:
+            _step_description += ": %s" % step_definition.description
+        _step_description += " (%s)" % step_definition.location.tolongstring()
+        MAIN_LOGGER.rawoutput(_step_description)
+        MAIN_LOGGER.rawoutput("------------------------------------------------")
+
+        self._calls.append("stepdescription")
+
+    def actionresult(
+            self,
+            actionresult,  # type: ActionResultDefinition
+            description,  # type: str
+    ):  # type: (...) -> None
+        """
+        Displays an action or an expected result being executed.
+
+        :param actionresult: Action or expected result being executed.
+        :param description: Action/result description.
+        """
+        from .loggermain import MAIN_LOGGER
+
+        if (actionresult.type == ActionResultDefinition.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
+            # Add space before an action only after results.
+            MAIN_LOGGER.rawoutput("")
+
+        _line = ("  %+" + str(self.ACTION_RESULT_MARGIN - 4) + "s: ") % str(actionresult.type).upper()  # type: str
+        _line += MAIN_LOGGER.getindentation()
+        _line += description
+        MAIN_LOGGER.rawoutput(_line)
+
+        self._calls.append(str(actionresult.type).lower())
+
+    def error(
+            self,
+            error,  # type: TestError
+    ):  # type: (...) -> None
+        """
+        Displays the test exception.
+
+        :param error: Error to display.
+        """
+        from .loggermain import MAIN_LOGGER
+        from .testerrors import ExceptionError, KnownIssue
+
+        # Display known issues once only.
+        if isinstance(error, KnownIssue):
+            for _known_issue in self._known_issues:  # type: KnownIssue
+                if _known_issue == error:
+                    # Known issue already displayed.
+                    return
+            # Ok, this known issue has not been displayed yet.
+            self._known_issues.append(error)
+
+        # Display the error.
+        _log_level = logging.WARNING if error.iswarning() else logging.ERROR  # type: int
+        if isinstance(error, ExceptionError):
+            MAIN_LOGGER.log(_log_level, "")
+            MAIN_LOGGER.log(_log_level, "!!! EXCEPTION !!!")
+        error.logerror(MAIN_LOGGER, level=_log_level)
+        if isinstance(error, ExceptionError):
+            MAIN_LOGGER.log(_log_level, "!!! EXCEPTION !!!")
+            MAIN_LOGGER.log(_log_level, "")
+
+    def evidence(
+            self,
+            evidence,  # type: str
+    ):  # type: (...) -> None
+        """
+        Displays an evidence.
+
+        Evidence being saved with the test results shall also be printed out in the console.
+
+        :param evidence: Evidence text.
+        """
+        from .loggermain import MAIN_LOGGER
+
+        _line = ("  %+" + str(self.ACTION_RESULT_MARGIN - 4) + "s: ") % "EVIDENCE"  # type: str
+        _line += MAIN_LOGGER.getindentation()
+        _line += "  -> "
+        _line += evidence
+        MAIN_LOGGER.rawoutput(_line)
+        # Do not append 'evidence' to :attr:`_calls` in order not to break the 'action'/'result' sequences.
+
+    def endscenario(
+            self,
+            scenario_definition,  # type: ScenarioDefinition
+    ):  # type: (...) -> None
+        """
+        Displays the end of a scenario execution.
+
+        :param scenario_definition: Scenario which execution has just finished.
+
+        Resets the :attr:`_known_issues` history for the main scenario.
+        """
+        from .loggermain import MAIN_LOGGER
+        from .scenariostack import SCENARIO_STACK
+
+        MAIN_LOGGER.rawoutput("")
+        MAIN_LOGGER.rawoutput("END OF '%s'" % scenario_definition.name)
+
+        # Reset the `_known_issues` history when this is the main scenario.
+        if SCENARIO_STACK.ismainscenario(scenario_definition):
+            self._known_issues = []
+
+        self._calls.append("endscenario")
+
+    def displaystatistics(
+            self,
+            scenario_execution,  # type: ScenarioExecution
+    ):  # type: (...) -> None
+        """
+        Displays the scenario statistics.
+
+        :param scenario_execution: Scenario which execution has just finished.
+        """
+        from .datetimeutils import f2strduration
+        from .loggermain import MAIN_LOGGER
+
+        MAIN_LOGGER.rawoutput("------------------------------------------------")
+
+        # Display warnings and errors (if any).
+        for _warning in scenario_execution.warnings:  # type: TestError
+            self.error(_warning)
+        for _error in scenario_execution.errors:  # type: TestError
+            self.error(_error)
+
+        # Terminate and display statistics.
+        MAIN_LOGGER.rawoutput("             Status: %s" % scenario_execution.status)
+        MAIN_LOGGER.rawoutput("    Number of STEPs: %s" % str(scenario_execution.step_stats))
+        MAIN_LOGGER.rawoutput("  Number of ACTIONs: %s" % str(scenario_execution.action_stats))
+        MAIN_LOGGER.rawoutput("  Number of RESULTs: %s" % str(scenario_execution.result_stats))
+        _elapsed = "None"  # type: str
+        if scenario_execution.time.elapsed is not None:
+            _elapsed = f2strduration(scenario_execution.time.elapsed)
+        MAIN_LOGGER.rawoutput("               Time: %s" % _elapsed)
+        MAIN_LOGGER.rawoutput("")
+
+
+__doc__ += """
+.. py:attribute:: SCENARIO_LOGGING
+
+    Main instance of :class:`ScenarioLogging`.
+"""
+SCENARIO_LOGGING = ScenarioLogging()  # type: ScenarioLogging

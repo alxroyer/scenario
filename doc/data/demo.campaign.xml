@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites actions-executed="39" actions-total="39" disabled="0" errors="0" failures="0" results-executed="2" results-total="2" steps-executed="15" steps-total="15" tests="5" time="SSS.mmmmmm">
+	<testsuite actions-executed="39" actions-total="39" disabled="0" errors="0" failures="0" id="0" name="demo/demo.suite" results-executed="2" results-total="2" skipped="0" steps-executed="15" steps-total="15" tests="5" time="SSS.mmmmmm" timestamp="YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM">
+		<testcase actions-executed="4" actions-total="4" classname="demo/commutativeaddition.py" name="demo/commutativeaddition.py" results-executed="1" results-total="1" status="SUCCESS" steps-executed="4" steps-total="4" time="SSS.mmmmmm">
+			<link href="out/commutativeaddition.log" rel="log" type="text/plain"/>
+			<link href="out/commutativeaddition.json" rel="report" type="application/json"/>
+			<system-out>SCENARIO 'demo/commutativeaddition.py'
+------------------------------------------------
+
+
+STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+------------------------------------------------
+    ACTION: Let a = 1, and b = 3
+  EVIDENCE:   -&gt; a = 1
+  EVIDENCE:   -&gt; b = 3
+
+STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+------------------------------------------------
+    ACTION: Compute (a + b) and store the result as result1.
+  EVIDENCE:   -&gt; result1 = 4
+
+STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+------------------------------------------------
+    ACTION: Compute (b + a) and store the result as result2.
+  EVIDENCE:   -&gt; result2 = 4
+
+STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+------------------------------------------------
+    ACTION: Compare result1 and result2.
+    RESULT: result1 and result2 are the same.
+  EVIDENCE:   -&gt; 4 == 4
+
+END OF 'demo/commutativeaddition.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 4/4
+  Number of ACTIONs: 4/4
+  Number of RESULTs: 1/1
+               Time: HH:MM:SS.mmmmmm
+
+</system-out>
+		</testcase>
+		<testcase actions-executed="3" actions-total="3" classname="demo/commutativeadditions.py" name="demo/commutativeadditions.py" results-executed="0" results-total="0" status="SUCCESS" steps-executed="3" steps-total="3" time="SSS.mmmmmm">
+			<link href="out/commutativeadditions.log" rel="log" type="text/plain"/>
+			<link href="out/commutativeadditions.json" rel="report" type="application/json"/>
+			<system-out>SCENARIO 'demo/commutativeadditions.py'
+------------------------------------------------
+
+
+STEP#1: Both positive members (demo/commutativeadditions.py:16:CommutativeAdditions.step010)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with 4 and 5 for inputs.
+      | SCENARIO 'demo/commutativeaddition.py'
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = 4, and b = 5
+      |   EVIDENCE:   -&gt; a = 4
+      |   EVIDENCE:   -&gt; b = 5
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -&gt; result1 = 9
+      |
+      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | ------------------------------------------------
+      |     ACTION: Compute (b + a) and store the result as result2.
+      |   EVIDENCE:   -&gt; result2 = 9
+      |
+      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | ------------------------------------------------
+      |     ACTION: Compare result1 and result2.
+      |     RESULT: result1 and result2 are the same.
+      |   EVIDENCE:   -&gt; 9 == 9
+      |
+      | END OF 'demo/commutativeaddition.py'
+
+STEP#2: Positive and negative members (demo/commutativeadditions.py:23:CommutativeAdditions.step020)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with -1 and 3 for inputs.
+      | SCENARIO 'demo/commutativeaddition.py'
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = -1, and b = 3
+      |   EVIDENCE:   -&gt; a = -1
+      |   EVIDENCE:   -&gt; b = 3
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -&gt; result1 = 2
+      |
+      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | ------------------------------------------------
+      |     ACTION: Compute (b + a) and store the result as result2.
+      |   EVIDENCE:   -&gt; result2 = 2
+      |
+      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | ------------------------------------------------
+      |     ACTION: Compare result1 and result2.
+      |     RESULT: result1 and result2 are the same.
+      |   EVIDENCE:   -&gt; 2 == 2
+      |
+      | END OF 'demo/commutativeaddition.py'
+
+STEP#3: Both negative members (demo/commutativeadditions.py:30:CommutativeAdditions.step030)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with -1 and -7 for inputs.
+      | SCENARIO 'demo/commutativeaddition.py'
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = -1, and b = -7
+      |   EVIDENCE:   -&gt; a = -1
+      |   EVIDENCE:   -&gt; b = -7
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -&gt; result1 = -8
+      |
+      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | ------------------------------------------------
+      |     ACTION: Compute (b + a) and store the result as result2.
+      |   EVIDENCE:   -&gt; result2 = -8
+      |
+      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | ------------------------------------------------
+      |     ACTION: Compare result1 and result2.
+      |     RESULT: result1 and result2 are the same.
+      |   EVIDENCE:   -&gt; -8 == -8
+      |
+      | END OF 'demo/commutativeaddition.py'
+
+END OF 'demo/commutativeadditions.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 3/3
+  Number of ACTIONs: 3/3
+  Number of RESULTs: 0/0
+               Time: HH:MM:SS.mmmmmm
+
+</system-out>
+		</testcase>
+		<testcase actions-executed="2" actions-total="2" classname="demo/handlers.py" name="demo/handlers.py" results-executed="0" results-total="0" status="SUCCESS" steps-executed="2" steps-total="2" time="SSS.mmmmmm">
+			<link href="out/handlers.log" rel="log" type="text/plain"/>
+			<link href="out/handlers.json" rel="report" type="application/json"/>
+			<system-out>SCENARIO 'demo/handlers.py'
+------------------------------------------------
+
+DEBUG    'scenario.before-test' handler called with test 'demo/handlers.py'
+DEBUG    'scenario.before-step' handler called with Handlers.step010
+
+STEP#1: `UserEvent.FOO` event triggering (demo/handlers.py:55:Handlers.step010)
+------------------------------------------------
+    ACTION: Trigger the `UserEvent.FOO` event, with the following parameters: a=1 and b='bar'.
+              DEBUG    'foo' handler called with args: {'a': 1, 'b': 'bar'}
+DEBUG    'scenario.after-step' handler called with Handlers.step010
+DEBUG    'scenario.before-step' handler called with Handlers.step020
+
+STEP#2: `UserEvent.FOO` event triggering (demo/handlers.py:61:Handlers.step020)
+------------------------------------------------
+    ACTION: Trigger the `UserEvent.FOO` event, with the following parameters: a=2 and b='baz'.
+              DEBUG    'foo' handler called with args: {'a': 2, 'b': 'baz'}
+DEBUG    'scenario.after-step' handler called with Handlers.step020
+DEBUG    'scenario.after-test' handler called with test 'demo/handlers.py'
+
+END OF 'demo/handlers.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 2/2
+  Number of ACTIONs: 2/2
+  Number of RESULTs: 0/0
+               Time: HH:MM:SS.mmmmmm
+
+</system-out>
+		</testcase>
+		<testcase actions-executed="3" actions-total="3" classname="demo/htmllogin.py" name="demo/htmllogin.py" results-executed="1" results-total="1" status="SUCCESS" steps-executed="1" steps-total="1" time="SSS.mmmmmm">
+			<link href="out/htmllogin.log" rel="log" type="text/plain"/>
+			<link href="out/htmllogin.json" rel="report" type="application/json"/>
+			<system-out>SCENARIO 'demo/htmllogin.py'
+------------------------------------------------
+
+
+STEP#1: Login screen (demo/htmllogin.py:13:TestLoginPage.step010_loginscreen)
+------------------------------------------------
+    ACTION: Type the login.
+              INFO     [edit[@id='login']] Typing text 'john'
+    ACTION: Type the password.
+              INFO     [edit[@id='password']] Typing text '0000'
+    ACTION: Click on the OK button.
+              INFO     [edit[@id='submit']] Clicking on the button
+    RESULT: The login page says hello to the user.
+
+END OF 'demo/htmllogin.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 1/1
+  Number of ACTIONs: 3/3
+  Number of RESULTs: 1/1
+               Time: HH:MM:SS.mmmmmm
+
+</system-out>
+		</testcase>
+		<testcase actions-executed="27" actions-total="27" classname="demo/loggingdemo.py" name="demo/loggingdemo.py" results-executed="0" results-total="0" status="SUCCESS" steps-executed="5" steps-total="5" time="SSS.mmmmmm">
+			<link href="out/loggingdemo.log" rel="log" type="text/plain"/>
+			<link href="out/loggingdemo.json" rel="report" type="application/json"/>
+			<system-out>SCENARIO 'demo/loggingdemo.py'
+------------------------------------------------
+
+
+STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.step010)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the main logger.
+              ERROR    This is an error!!!
+              WARNING  This is a warning!
+              INFO     This is information.
+              DEBUG    This is debug.
+
+STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenario.step020)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the scenario itself.
+              ERROR    [demo/loggingdemo.py] This is an error!!!
+              WARNING  [demo/loggingdemo.py] This is a warning!
+              INFO     [demo/loggingdemo.py] This is information.
+              DEBUG    [demo/loggingdemo.py] This is debug.
+
+STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step030)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the class logger instance.
+              ERROR    [My logger] This is an error!!!
+              WARNING  [My logger] This is a warning!
+              INFO     [My logger] This is information.
+    ACTION: Activate debugging for the class logger instance.
+    ACTION: Log a debug message again with the class logger instance.
+              DEBUG    [My logger] This is debug again.
+
+STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110)
+------------------------------------------------
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]     Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]             Hello
+    ACTION: Pop indentation from the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Reset the class logger indentation.
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+
+STEP#5: Main logger indentation (demo/loggingdemo.py:76:LoggingScenario.step120)
+------------------------------------------------
+    ACTION: Log something with the main logger.
+              INFO     Hello
+    ACTION: Push indentation to the main logger.
+    ACTION:     Log something with the main logger.
+                  INFO     Hello
+    ACTION:     Push indentation to the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Push indentation to the main logger.
+    ACTION:             Log something with the main logger.
+                          INFO     Hello
+    ACTION:             Pop indentation from the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Reset the main logger indentation.
+    ACTION: Log something with the main logger.
+              INFO     Hello
+
+END OF 'demo/loggingdemo.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 5/5
+  Number of ACTIONs: 27/27
+  Number of RESULTs: 0/0
+               Time: HH:MM:SS.mmmmmm
+
+</system-out>
+		</testcase>
+	</testsuite>
+</testsuites>

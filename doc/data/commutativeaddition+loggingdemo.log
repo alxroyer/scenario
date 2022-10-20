@@ -1,0 +1,118 @@
+SCENARIO 'demo/commutativeaddition.py'
+------------------------------------------------
+
+
+STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+------------------------------------------------
+    ACTION: Let a = 1, and b = 3
+  EVIDENCE:   -> a = 1
+  EVIDENCE:   -> b = 3
+
+STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+------------------------------------------------
+    ACTION: Compute (a + b) and store the result as result1.
+  EVIDENCE:   -> result1 = 4
+
+STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+------------------------------------------------
+    ACTION: Compute (b + a) and store the result as result2.
+  EVIDENCE:   -> result2 = 4
+
+STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+------------------------------------------------
+    ACTION: Compare result1 and result2.
+    RESULT: result1 and result2 are the same.
+  EVIDENCE:   -> 4 == 4
+
+END OF 'demo/commutativeaddition.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 4/4
+  Number of ACTIONs: 4/4
+  Number of RESULTs: 1/1
+               Time: HH:MM:SS.mmmmmm
+
+SCENARIO 'demo/loggingdemo.py'
+------------------------------------------------
+
+
+STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.step010)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the main logger.
+              ERROR    This is an error!!!
+              WARNING  This is a warning!
+              INFO     This is information.
+              DEBUG    This is debug.
+
+STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenario.step020)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the scenario itself.
+              ERROR    [demo/loggingdemo.py] This is an error!!!
+              WARNING  [demo/loggingdemo.py] This is a warning!
+              INFO     [demo/loggingdemo.py] This is information.
+              DEBUG    [demo/loggingdemo.py] This is debug.
+
+STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step030)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the class logger instance.
+              ERROR    [My logger] This is an error!!!
+              WARNING  [My logger] This is a warning!
+              INFO     [My logger] This is information.
+    ACTION: Activate debugging for the class logger instance.
+    ACTION: Log a debug message again with the class logger instance.
+              DEBUG    [My logger] This is debug again.
+
+STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110)
+------------------------------------------------
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]     Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]             Hello
+    ACTION: Pop indentation from the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Reset the class logger indentation.
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+
+STEP#5: Main logger indentation (demo/loggingdemo.py:76:LoggingScenario.step120)
+------------------------------------------------
+    ACTION: Log something with the main logger.
+              INFO     Hello
+    ACTION: Push indentation to the main logger.
+    ACTION:     Log something with the main logger.
+                  INFO     Hello
+    ACTION:     Push indentation to the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Push indentation to the main logger.
+    ACTION:             Log something with the main logger.
+                          INFO     Hello
+    ACTION:             Pop indentation from the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Reset the main logger indentation.
+    ACTION: Log something with the main logger.
+              INFO     Hello
+
+END OF 'demo/loggingdemo.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 5/5
+  Number of ACTIONs: 27/27
+  Number of RESULTs: 0/0
+               Time: HH:MM:SS.mmmmmm
+
+------------------------------------------------
+INFO     TOTAL                                  Status      Steps    Actions    Results    Time
+INFO     2 tests, 0 failed, 0 with warnings                   9/9      31/31        1/1    HH:MM:SS.mmmmmm
+------------------------------------------------
+INFO     demo/commutativeaddition.py           SUCCESS        4/4        4/4        1/1    HH:MM:SS.mmmmmm
+INFO     demo/loggingdemo.py                   SUCCESS        5/5      27/27        0/0    HH:MM:SS.mmmmmm

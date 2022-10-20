@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import enum
+import shutil
+import typing
+
+import scenario
+import scenario.test
+
+# Related steps:
+from steps.commonargs import ExecCommonArgs
+
+
+class ExecCampaign(ExecCommonArgs):
+
+    def __init__(
+            self,
+            test_suite_files,  # type: typing.List[scenario.Path]
+            description=None,  # type: str
+            config_values=None,  # type: typing.Dict[typing.Union[enum.Enum, str], typing.Optional[str]]
+            config_files=None,  # type: typing.List[scenario.Path]
+            debug_classes=None,  # type: typing.Optional[typing.List[str]]
+            log_outfile=None,  # type: bool
+            dt_subdir=None,  # type: bool
+            doc_only=None,  # type: bool
+    ):  # type: (...) -> None
+        ExecCommonArgs.__init__(
+            self,
+            config_values=config_values,
+            config_files=config_files,
+            debug_classes=debug_classes,
+            log_outfile=log_outfile,
+            doc_only=doc_only,
+        )
+
+        self.test_suite_files = test_suite_files  # type: typing.List[scenario.Path]
+        self._cmdline_outdir_path = None  # type: typing.Optional[scenario.Path]
+        self._final_outdir_path = None  # type: typing.Optional[scenario.Path]
+        self.dt_subdir = dt_subdir  # type: typing.Optional[bool]
+
+        # Eventually propose a default step description.
+        self.description = description
+        if not self.description:
+            self.description = "Campaign execution"
+
+    @property
+    def cmdline_outdir_path(self):  # type: (...) -> scenario.Path
+        assert self._cmdline_outdir_path is not None
+        return self._cmdline_outdir_path
+
+    @property
+    def final_outdir_path(self):  # type: (...) -> scenario.Path
+        assert self._final_outdir_path is not None
+        return self._final_outdir_path
+
+    @property
+    def junit_report_path(self):  # type: (...) -> scenario.Path
+        return self.final_outdir_path / "campaign.xml"
+
+    def step(self):  # type: (...) -> None
+        # Description already set programmatically.
+        # self.STEP()
+
+        # Prepare the campaign subprocess.
+        _action_description = "Launch a campaign based on"  # type: str
+        if self.doexecute():
+            # Create the output directory.
+            self._mkoutdir()
+
+            assert self._cmdline_outdir_path
+            self.subprocess = scenario.test.CampaignSubProcess(
+                self._cmdline_outdir_path,
+                *self.test_suite_files
+            )
+
+        assert self.test_suite_files
+        if len(self.test_suite_files) == 1:
+            _action_description += " the '%s' test suite file" % self.test_suite_files[0]
+        if len(self.test_suite_files) > 1:
+            _action_description += " "
+            _action_description += ", ".join(['%s' % x for x in self.test_suite_files[:-1]])
+            _action_description += " and '%s' test suite files" % self.test_suite_files[-1]
+
+        if self.dt_subdir is True:
+            _action_description += ", with the --dt-subdir option set"
+            if self.doexecute():
+                self.subprocess.addargs("--dt-subdir")
+        if self.dt_subdir is False:
+            _action_description += ", without the --dt-subdir option set"
+
+        _action_description1, _action_description2 = self._preparecommonargs()  # type: str, str
+        _action_description += _action_description1
+
+        _action_description += ". Catch the output"
+        _action_description += _action_description2
+
+        # Display the action description, and execute the campaign.
+        _action_description += "."
+        if self.ACTION(_action_description):
+            self.subprocess.setlogger(self).run()
+
+            # Ensure the final output directory reference is known.
+            self._checkfinaloutdir()
+
+    def _mkoutdir(self):  # type: (...) -> None
+        assert isinstance(self.scenario, scenario.test.TestCase)
+        self._cmdline_outdir_path = self.scenario.mktmppath()
+        self.debug("Creating directory '%s'" % self._cmdline_outdir_path)
+        self._cmdline_outdir_path.mkdir(parents=True, exist_ok=True)
+
+        scenario.handlers.install(
+            scenario.Event.AFTER_TEST, self._rmfinaloutdir, scenario=self.scenario, once=True,
+            # Ensure this handler is called before the ones already installed by :class:`scenario.test.TestScenario`,
+            # especially :meth:`scenario.test.TestScenario.rmtmpfiles()` that cannot remove non empty directories.
+            first=True,
+        )
+
+    def _checkfinaloutdir(self):  # type: (...) -> None
+        if (self._final_outdir_path is None) and (self._cmdline_outdir_path is not None):
+            if self.dt_subdir:
+                for _subpath in self._cmdline_outdir_path.iterdir():  # type: scenario.Path
+                    if _subpath.is_dir():
+                        self._final_outdir_path = _subpath
+            else:
+                self._final_outdir_path = self._cmdline_outdir_path
+
+    def _rmfinaloutdir(
+            self,
+            event,  # type: str
+            data,  # type: typing.Any
+    ):  # type: (...) -> None
+        if self._final_outdir_path:
+            if scenario.stack.current_scenario_execution and scenario.stack.current_scenario_execution.errors:
+                self.warning("%d errors while executing the test" % len(scenario.stack.current_scenario_execution.errors))
+                self.warning("Leaving the output files in place in '%s' for investigation purpose" % self._final_outdir_path)
+            else:
+                self.debug("Removing final output directory '%s'" % self._final_outdir_path)
+                shutil.rmtree(self._final_outdir_path, ignore_errors=True)

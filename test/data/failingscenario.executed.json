@@ -1,0 +1,120 @@
+{
+  "$license": [
+    "Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+
+  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+
+  "name": "test/data/failingscenario.py",
+  "attributes": {
+    "TITLE": "Failing scenario sample"
+  },
+  "steps": [
+    {
+      "location": "test/data/failingscenario.py:31:FailingScenario.step010",
+      "description": "Step in failure",
+      "executions": [
+        {
+          "number": 1,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [
+            {
+              "type": "AssertionError",
+              "message": "This is an exception.",
+              "location": "test/data/failingscenario.py:39:FailingScenario.step010"
+            }
+          ],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Memorize 'step010-1' as the last checkpoint.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Last checkpoint: 'step010-1'"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION", "description": "Generate an exception without catching it.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [
+                {
+                  "type": "AssertionError",
+                  "message": "This is an exception.",
+                  "location": "test/data/failingscenario.py:39:FailingScenario.step010"
+                }
+              ],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "RESULT", "description": "The exception is thrown.",
+          "executions": []
+        },
+        {
+          "type": "ACTION", "description": "Memorize 'step010-2' as the last checkpoint.",
+          "executions": []
+        }
+      ]
+    },
+    {
+      "location": "test/data/failingscenario.py:47:FailingScenario.step020",
+      "description": "Successful step",
+      "executions": [],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Check the last checkpoint.",
+          "executions": []
+        },
+        {
+          "type": "RESULT", "description": "The last checkpoint is... whatever.",
+          "executions": []
+        },
+        {
+          "type": "ACTION", "description": "Memorize 'step020-1' as the last checkpoint.",
+          "executions": []
+        }
+      ]
+    }
+  ],
+  "status": "FAIL",
+  "errors": [
+    {
+      "type": "AssertionError",
+      "message": "This is an exception.",
+      "location": "test/data/failingscenario.py:39:FailingScenario.step010"
+    }
+  ],
+  "warnings": [],
+  "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+  "stats": {
+    "steps": {"executed": 1, "total": 2},
+    "actions": {"executed": 2, "total": 5},
+    "results": {"executed": 0, "total": 2}
+  }
+}

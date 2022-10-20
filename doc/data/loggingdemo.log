@@ -1,0 +1,77 @@
+SCENARIO 'demo/loggingdemo.py'
+------------------------------------------------
+
+
+STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.step010)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the main logger.
+              ERROR    This is an error!!!
+              WARNING  This is a warning!
+              INFO     This is information.
+              DEBUG    This is debug.
+
+STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenario.step020)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the scenario itself.
+              ERROR    [demo/loggingdemo.py] This is an error!!!
+              WARNING  [demo/loggingdemo.py] This is a warning!
+              INFO     [demo/loggingdemo.py] This is information.
+              DEBUG    [demo/loggingdemo.py] This is debug.
+
+STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step030)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the class logger instance.
+              ERROR    [My logger] This is an error!!!
+              WARNING  [My logger] This is a warning!
+              INFO     [My logger] This is information.
+    ACTION: Activate debugging for the class logger instance.
+    ACTION: Log a debug message again with the class logger instance.
+              DEBUG    [My logger] This is debug again.
+
+STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110)
+------------------------------------------------
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]     Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]             Hello
+    ACTION: Pop indentation from the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Reset the class logger indentation.
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+
+STEP#5: Main logger indentation (demo/loggingdemo.py:76:LoggingScenario.step120)
+------------------------------------------------
+    ACTION: Log something with the main logger.
+              INFO     Hello
+    ACTION: Push indentation to the main logger.
+    ACTION:     Log something with the main logger.
+                  INFO     Hello
+    ACTION:     Push indentation to the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Push indentation to the main logger.
+    ACTION:             Log something with the main logger.
+                          INFO     Hello
+    ACTION:             Pop indentation from the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Reset the main logger indentation.
+    ACTION: Log something with the main logger.
+              INFO     Hello
+
+END OF 'demo/loggingdemo.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 5/5
+  Number of ACTIONs: 27/27
+  Number of RESULTs: 0/0
+               Time: HH:MM:SS.mmmmmm

@@ -1,0 +1,101 @@
+SCENARIO 'demo/commutativeadditions.py'
+------------------------------------------------
+
+
+STEP#1: Both positive members (demo/commutativeadditions.py:16:CommutativeAdditions.step010)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with 4 and 5 for inputs.
+      | SCENARIO 'demo/commutativeaddition.py'
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = 4, and b = 5
+      |   EVIDENCE:   -> a = 4
+      |   EVIDENCE:   -> b = 5
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -> result1 = 9
+      |
+      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | ------------------------------------------------
+      |     ACTION: Compute (b + a) and store the result as result2.
+      |   EVIDENCE:   -> result2 = 9
+      |
+      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | ------------------------------------------------
+      |     ACTION: Compare result1 and result2.
+      |     RESULT: result1 and result2 are the same.
+      |   EVIDENCE:   -> 9 == 9
+      |
+      | END OF 'demo/commutativeaddition.py'
+
+STEP#2: Positive and negative members (demo/commutativeadditions.py:23:CommutativeAdditions.step020)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with -1 and 3 for inputs.
+      | SCENARIO 'demo/commutativeaddition.py'
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = -1, and b = 3
+      |   EVIDENCE:   -> a = -1
+      |   EVIDENCE:   -> b = 3
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -> result1 = 2
+      |
+      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | ------------------------------------------------
+      |     ACTION: Compute (b + a) and store the result as result2.
+      |   EVIDENCE:   -> result2 = 2
+      |
+      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | ------------------------------------------------
+      |     ACTION: Compare result1 and result2.
+      |     RESULT: result1 and result2 are the same.
+      |   EVIDENCE:   -> 2 == 2
+      |
+      | END OF 'demo/commutativeaddition.py'
+
+STEP#3: Both negative members (demo/commutativeadditions.py:30:CommutativeAdditions.step030)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with -1 and -7 for inputs.
+      | SCENARIO 'demo/commutativeaddition.py'
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = -1, and b = -7
+      |   EVIDENCE:   -> a = -1
+      |   EVIDENCE:   -> b = -7
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -> result1 = -8
+      |
+      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | ------------------------------------------------
+      |     ACTION: Compute (b + a) and store the result as result2.
+      |   EVIDENCE:   -> result2 = -8
+      |
+      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | ------------------------------------------------
+      |     ACTION: Compare result1 and result2.
+      |     RESULT: result1 and result2 are the same.
+      |   EVIDENCE:   -> -8 == -8
+      |
+      | END OF 'demo/commutativeaddition.py'
+
+END OF 'demo/commutativeadditions.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 3/3
+  Number of ACTIONs: 3/3
+  Number of RESULTs: 0/0
+               Time: HH:MM:SS.mmmmmm

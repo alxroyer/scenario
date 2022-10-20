@@ -1,0 +1,310 @@
+{
+  "$license": [
+    "Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+
+  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+
+  "name": "test/data/knownissuesscenario.py",
+  "attributes": {
+    "TITLE": "Known issue scenario sample"
+  },
+  "steps": [
+    {
+      "location": "test/data/knownissuesscenario.py:35:KnownIssuesScenario.KnownIssuesStep",
+      "description": "Object step with known issues",
+      "executions": [
+        {
+          "number": 1,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": [
+            {
+              "type": "known-issue",
+              "id": "#000",
+              "message": "Known issue in KnownIssuesStep.__init__()",
+              "location": "test/data/knownissuesscenario.py:40:KnownIssuesScenario.KnownIssuesStep.__init__"
+            },
+            {
+              "type": "known-issue",
+              "id": "#001",
+              "message": "Known issue in KnownIssuesStep.step() before ACTION/RESULT",
+              "location": "test/data/knownissuesscenario.py:45:KnownIssuesScenario.KnownIssuesStep.step"
+            },
+            {
+              "type": "known-issue",
+              "id": "#002",
+              "message": "Known issue in KnownIssuesStep.step() under ACTION",
+              "location": "test/data/knownissuesscenario.py:48:KnownIssuesScenario.KnownIssuesStep.step"
+            },
+            {
+              "type": "known-issue",
+              "id": "#003",
+              "message": "Known issue in KnownIssuesStep.step() under ACTION",
+              "location": "test/data/knownissuesscenario.py:57:KnownIssuesScenario.KnownIssuesStep.step"
+            },
+            {
+              "type": "known-issue",
+              "id": "#004",
+              "message": "Known issue in KnownIssuesStep.step() after ACTION/RESULT",
+              "location": "test/data/knownissuesscenario.py:59:KnownIssuesScenario.KnownIssuesStep.step"
+            }
+          ]
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Track a known issue.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [
+                {
+                  "type": "known-issue",
+                  "id": "#002",
+                  "message": "Known issue in KnownIssuesStep.step() under ACTION",
+                  "location": "test/data/knownissuesscenario.py:48:KnownIssuesScenario.KnownIssuesStep.step"
+                }
+              ],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION", "description": "Raise an exception.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Exception not raised."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION", "description": "Track another known issue.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [
+                {
+                  "type": "known-issue",
+                  "id": "#003",
+                  "message": "Known issue in KnownIssuesStep.step() under ACTION",
+                  "location": "test/data/knownissuesscenario.py:57:KnownIssuesScenario.KnownIssuesStep.step"
+                }
+              ],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "test/data/knownissuesscenario.py:61:KnownIssuesScenario.step010",
+      "description": "Method step with known issues",
+      "executions": [
+        {
+          "number": 2,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": [
+            {
+              "type": "known-issue",
+              "id": "#011",
+              "message": "Known issue in KnownIssuesScenario.step010() before ACTION/RESULT",
+              "location": "test/data/knownissuesscenario.py:64:KnownIssuesScenario.step010"
+            },
+            {
+              "type": "known-issue",
+              "id": "#012",
+              "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
+              "location": "test/data/knownissuesscenario.py:67:KnownIssuesScenario.step010"
+            },
+            {
+              "type": "known-issue",
+              "id": "#013",
+              "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
+              "location": "test/data/knownissuesscenario.py:76:KnownIssuesScenario.step010"
+            },
+            {
+              "type": "known-issue",
+              "id": "#014",
+              "message": "Known issue in KnownIssuesScenario.step010() after ACTION/RESULT",
+              "location": "test/data/knownissuesscenario.py:78:KnownIssuesScenario.step010"
+            }
+          ]
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Track a known issue.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [
+                {
+                  "type": "known-issue",
+                  "id": "#012",
+                  "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
+                  "location": "test/data/knownissuesscenario.py:67:KnownIssuesScenario.step010"
+                }
+              ],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION", "description": "Raise an exception.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Exception not raised."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION", "description": "Track another known issue.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [
+                {
+                  "type": "known-issue",
+                  "id": "#013",
+                  "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
+                  "location": "test/data/knownissuesscenario.py:76:KnownIssuesScenario.step010"
+                }
+              ],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "test/data/knownissuesscenario.py:80:KnownIssuesScenario.step020",
+      "description": "Method step without known issues",
+      "executions": [
+        {
+          "number": 3,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Do nothing.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "WARNINGS",
+  "errors": [],
+  "warnings": [
+    {
+      "type": "known-issue",
+      "id": "#---",
+      "message": "Known issue in KnownIssuesScenario.__init__()",
+      "location": "test/data/knownissuesscenario.py:32:KnownIssuesScenario.__init__"
+    },
+    {
+      "type": "known-issue",
+      "id": "#000",
+      "message": "Known issue in KnownIssuesStep.__init__()",
+      "location": "test/data/knownissuesscenario.py:40:KnownIssuesScenario.KnownIssuesStep.__init__"
+    },
+    {
+      "type": "known-issue",
+      "id": "#001",
+      "message": "Known issue in KnownIssuesStep.step() before ACTION/RESULT",
+      "location": "test/data/knownissuesscenario.py:45:KnownIssuesScenario.KnownIssuesStep.step"
+    },
+    {
+      "type": "known-issue",
+      "id": "#002",
+      "message": "Known issue in KnownIssuesStep.step() under ACTION",
+      "location": "test/data/knownissuesscenario.py:48:KnownIssuesScenario.KnownIssuesStep.step"
+    },
+    {
+      "type": "known-issue",
+      "id": "#003",
+      "message": "Known issue in KnownIssuesStep.step() under ACTION",
+      "location": "test/data/knownissuesscenario.py:57:KnownIssuesScenario.KnownIssuesStep.step"
+    },
+    {
+      "type": "known-issue",
+      "id": "#004",
+      "message": "Known issue in KnownIssuesStep.step() after ACTION/RESULT",
+      "location": "test/data/knownissuesscenario.py:59:KnownIssuesScenario.KnownIssuesStep.step"
+    },
+    {
+      "type": "known-issue",
+      "id": "#011",
+      "message": "Known issue in KnownIssuesScenario.step010() before ACTION/RESULT",
+      "location": "test/data/knownissuesscenario.py:64:KnownIssuesScenario.step010"
+    },
+    {
+      "type": "known-issue",
+      "id": "#012",
+      "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
+      "location": "test/data/knownissuesscenario.py:67:KnownIssuesScenario.step010"
+    },
+    {
+      "type": "known-issue",
+      "id": "#013",
+      "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
+      "location": "test/data/knownissuesscenario.py:76:KnownIssuesScenario.step010"
+    },
+    {
+      "type": "known-issue",
+      "id": "#014",
+      "message": "Known issue in KnownIssuesScenario.step010() after ACTION/RESULT",
+      "location": "test/data/knownissuesscenario.py:78:KnownIssuesScenario.step010"
+    }
+  ],
+  "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+  "stats": {
+    "steps": {"executed": 3, "total": 3},
+    "actions": {"executed": 7, "total": 7},
+    "results": {"executed": 0, "total": 0}
+  }
+}

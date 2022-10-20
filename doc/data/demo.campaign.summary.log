@@ -1,0 +1,9 @@
+------------------------------------------------
+INFO     TOTAL                                  Status      Steps    Actions    Results    Time
+INFO     5 tests, 0 failed, 0 with warnings                 15/15      39/39        2/2    HH:MM:SS.mmmmmm
+------------------------------------------------
+INFO     demo/commutativeaddition.py           SUCCESS        4/4        4/4        1/1    HH:MM:SS.mmmmmm
+INFO     demo/commutativeadditions.py          SUCCESS        3/3        3/3        0/0    HH:MM:SS.mmmmmm
+INFO     demo/handlers.py                      SUCCESS        2/2        2/2        0/0    HH:MM:SS.mmmmmm
+INFO     demo/htmllogin.py                     SUCCESS        1/1        3/3        1/1    HH:MM:SS.mmmmmm
+INFO     demo/loggingdemo.py                   SUCCESS        5/5      27/27        0/0    HH:MM:SS.mmmmmm

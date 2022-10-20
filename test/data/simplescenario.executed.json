@@ -1,0 +1,167 @@
+{
+  "$license": [
+    "Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+
+  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+
+  "name": "test/data/simplescenario.py",
+  "attributes": {
+    "TITLE": "Simple scenario sample"
+  },
+  "steps": [
+    {
+      "location": "test/data/simplescenario.py:27:SimpleScenario.step010",
+      "description": "step#10",
+      "executions": [
+        {
+          "number": 1,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Lorem ipsum..."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "RESULT",
+          "description": "Et leo duis ut diam.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Et leo..."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "test/data/simplescenario.py:35:SimpleScenario.step020",
+      "description": "step#20",
+      "executions": [
+        {
+          "number": 2,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Vitae turpis massa sed elementum.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Vitae turpis..."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "RESULT",
+          "description": "Faucibus a pellentesque sit amet.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Faucibus a pellentesque..."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "test/data/simplescenario.py:43:SimpleScenario.step030",
+      "description": "step#30",
+      "executions": [
+        {
+          "number": 3,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Quam id leo in vitae turpis massa sed elementum.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "Quam id leo..."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "RESULT",
+          "description": "In aliquam sem fringilla ut morbi tincidunt augue interdum velit.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "In aliquam sem..."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "SUCCESS",
+  "errors": [],
+  "warnings": [],
+  "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+  "stats": {
+    "steps": {"executed": 3, "total": 3},
+    "actions": {"executed": 3, "total": 3},
+    "results": {"executed": 3, "total": 3}
+  }
+}

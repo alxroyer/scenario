@@ -1,0 +1,8 @@
+# This is a sample campaign description file.
+
+# White-list:
++ *.py
+
+# Black-list:
+- htmltestlib.py
+- run-demo.py

@@ -1,0 +1,34 @@
+usage: run-demo.py [-h] [--config-file CONFIG_PATH] [--config-value KEY VALUE]
+                   [--debug-class DEBUG_CLASS] [--doc-only]
+                   [--json-report JSON_REPORT_PATH]
+                   [--extra-info ATTRIBUTE_NAME] [--welcome NAME]
+                   [--show-configs]
+                   SCENARIO_PATH [SCENARIO_PATH ...]
+
+Demo test launcher.
+
+positional arguments:
+  SCENARIO_PATH         Scenario script(s) to execute.
+
+optional arguments:
+  -h, --help            Show this help message and exit.
+  --config-file CONFIG_PATH
+                        Input configuration file path. This option may be
+                        called several times.
+  --config-value KEY VALUE
+                        Configuration value in the 'key=value' form. This
+                        option may be called several times.
+  --debug-class DEBUG_CLASS
+                        Activate debugging for the given class.
+  --doc-only            Generate documentation without executing the test.
+  --json-report JSON_REPORT_PATH
+                        Save the report in the given JSON output file path.
+                        Single scenario only.
+  --extra-info ATTRIBUTE_NAME
+                        Scenario attribute to display for extra info when
+                        displaying results. Applicable when executing several
+                        tests. This option may be called several times to
+                        display more info.
+  --welcome NAME        User name.
+  --show-configs        Show the configuration values with their origin, then
+                        stop.

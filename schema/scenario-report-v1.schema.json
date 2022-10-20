@@ -1,0 +1,184 @@
+{
+  "$license": [
+    "Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "scenario/schema/scenario-report-v1.schema.json",
+
+  "title": "Scenario execution report",
+  "description": "Schema that describes the JSON report of a scenario execution, executed with --doc-only or not",
+
+  "definitions": {
+    "scenario-report": {
+      "description": "Scenario execution report",
+      "type": "object",
+      "required": ["name", "href", "steps", "status", "exception", "time"],
+      "properties": {
+        "name": {
+          "description": "Name of the scenario",
+          "type": "string"
+        },
+        "href": {
+          "description": "Reference to the scenario script path",
+          "type": "string"
+        },
+        "steps": {
+          "description": "List of steps executed (or just described)",
+          "type": "array",
+          "items": {"$ref": "#/definitions/step-report"}
+        },
+        "status": {
+          "description": "Status of the scenario execution",
+          "enum": ["SUCCESS", "FAIL"]
+        },
+        "exception": {
+          "oneOf": [{"type": "string" }, { "type": "null" }]
+        },
+        "time": {"$ref": "#/definitions/execution-times"}
+      }
+    },
+
+    "main-scenario-report": {
+      "description": "Main scenario execution report",
+      "allOf": [
+        {"$ref": "#/definitions/scenario-report"},
+        {
+          "type": "object",
+          "required": ["stats"],
+          "properties": {
+            "stats": {
+              "description": "Scenario execution statistics",
+              "type": "object",
+              "required": ["steps", "actions", "results"],
+              "properties": {
+                "steps": {"$ref": "#/definitions/stat-counters"},
+                "actions": {"$ref": "#/definitions/stat-counters"},
+                "results": {"$ref": "#/definitions/stat-counters"}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "stat-counters": {
+      "description": "Statistic counters",
+      "type": "object",
+      "required": ["executed", "total"],
+      "properties": {
+        "executed": {
+          "description": "Number of items executed",
+          "type": "number"
+        },
+        "total": {
+          "description": "Total number of items",
+          "type": "number"
+        }
+      }
+    },
+
+    "step-report": {
+      "description": "Step executed (or just described)",
+      "type": "object",
+      "required": ["name", "time", "events"],
+      "properties": {
+        "name": {
+          "description": "Name of the step",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description of the step",
+          "type": "string"
+        },
+        "time": {"$ref": "#/definitions/execution-times"},
+        "events": {
+          "description": "List of events",
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {"$ref": "#/definitions/action-event"},
+              {"$ref": "#/definitions/result-event"},
+              {"$ref": "#/definitions/exception-event"},
+              {"$ref": "#/definitions/subscenario-event"}
+            ]
+          }
+        }
+      }
+    },
+    "action-event": {
+      "description": "ACTION event",
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {"const": "ACTION"},
+        "content": {"type": "string"}
+      }
+    },
+    "result-event": {
+      "description": "RESULT event",
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {"const": "RESULT"},
+        "content": {"type": "string"}
+      }
+    },
+    "exception-event": {
+      "description": "EXCEPTION event",
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {"const": "EXCEPTION"},
+        "content": {"type": "string"}
+      }
+    },
+    "subscenario-event": {
+      "description": "SUB-SCENARIO event",
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {"const": "SUB-SCENARIO"},
+        "content": {"$ref": "#/definitions/scenario-report"}
+      }
+    },
+
+    "execution-times": {
+      "description": "Execution times",
+      "type": "object",
+      "required": ["start", "end", "elapsed"],
+      "properties": {
+        "start": {
+          "description": "Starting time",
+          "oneOf": [{"$ref": "#/definitions/iso8601"}, {"type": "null"}]
+        },
+        "end": {
+          "description": "Ending time",
+          "oneOf": [{"$ref": "#/definitions/iso8601"}, {"type": "null"}]
+        },
+        "elapsed": {
+          "description": "Elapsed time in seconds",
+          "oneOf": [{"type": "number"}, {"type": "null"}]
+        }
+      }
+    },
+    "iso8601": {
+      "description": "ISO8601 date/time format",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
+    }
+  },
+
+  "$ref": "#/definitions/main-scenario-report"
+}

@@ -1,0 +1,33 @@
+SCENARIO 'test/data/simplescenario.py'
+------------------------------------------------
+  TITLE: Simple scenario sample
+
+
+STEP#1: step#10 (test/data/simplescenario.py:27:SimpleScenario.step010)
+------------------------------------------------
+    ACTION: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+  EVIDENCE:   -> Lorem ipsum...
+    RESULT: Et leo duis ut diam.
+  EVIDENCE:   -> Et leo...
+
+STEP#2: step#20 (test/data/simplescenario.py:35:SimpleScenario.step020)
+------------------------------------------------
+    ACTION: Vitae turpis massa sed elementum.
+  EVIDENCE:   -> Vitae turpis...
+    RESULT: Faucibus a pellentesque sit amet.
+  EVIDENCE:   -> Faucibus a pellentesque...
+
+STEP#3: step#30 (test/data/simplescenario.py:43:SimpleScenario.step030)
+------------------------------------------------
+    ACTION: Quam id leo in vitae turpis massa sed elementum.
+  EVIDENCE:   -> Quam id leo...
+    RESULT: In aliquam sem fringilla ut morbi tincidunt augue interdum velit.
+  EVIDENCE:   -> In aliquam sem...
+
+END OF 'test/data/simplescenario.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 3/3
+  Number of ACTIONs: 3/3
+  Number of RESULTs: 3/3
+               Time: 0.0 s

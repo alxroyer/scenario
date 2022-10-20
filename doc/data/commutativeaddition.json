@@ -1,0 +1,196 @@
+{
+  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+  "name": "demo/commutativeaddition.py",
+  "href": "demo/commutativeaddition.py",
+  "attributes": {},
+  "steps": [
+    {
+      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+      "description": "Initial conditions",
+      "executions": [
+        {
+          "number": 1,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Let a = 1, and b = 3",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [
+                "a = 1",
+                "b = 3"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+      "description": "a + b",
+      "executions": [
+        {
+          "number": 2,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Compute (a + b) and store the result as result1.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [
+                "result1 = 4"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+      "description": "b + a",
+      "executions": [
+        {
+          "number": 3,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Compute (b + a) and store the result as result2.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [
+                "result2 = 4"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+      "description": "Check",
+      "executions": [
+        {
+          "number": 4,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Compare result1 and result2.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "RESULT",
+          "description": "result1 and result2 are the same.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [
+                "4 == 4"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "SUCCESS",
+  "errors": [],
+  "warnings": [],
+  "time": {
+    "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+    "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+    "elapsed": SSS.mmmmmm
+  },
+  "stats": {
+    "steps": {
+      "executed": 4,
+      "total": 4
+    },
+    "actions": {
+      "executed": 4,
+      "total": 4
+    },
+    "results": {
+      "executed": 1,
+      "total": 1
+    }
+  }
+}

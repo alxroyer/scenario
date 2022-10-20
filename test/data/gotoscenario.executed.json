@@ -1,0 +1,220 @@
+{
+  "$license": [
+    "Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+
+  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+
+  "name": "test/data/gotoscenario.py",
+  "attributes": {
+    "TITLE": "Goto scenario sample"
+  },
+  "steps": [
+    {
+      "location": "test/data/gotoscenario.py:30:GotoScenario.step000",
+      "description": "Initializations",
+      "executions": [
+        {
+          "number": 1,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Initialize counter A with 0.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "A = 0"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION", "description": "Initialize counter B with 0.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "B = 0"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "test/data/gotoscenario.py:40:GotoScenario.step010",
+      "description": "A++",
+      "executions": [
+        {
+          "number": 2,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        },
+        {
+          "number": 4,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Increment counter A.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "A = 1"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "A = 2"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "test/data/gotoscenario.py:47:GotoScenario.step020",
+      "description": "A?",
+      "executions": [
+        {
+          "number": 3,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        },
+        {
+          "number": 5,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "While A is lower than 2, go back to step<010>, otherwise jump over step<030> and go to step<050>.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "A = 1"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "A = 2"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION", "description": "Increment counter A.",
+          "executions": []
+        }
+      ]
+    },
+    {
+      "location": "test/data/gotoscenario.py:60:GotoScenario.step030",
+      "description": "B++",
+      "executions": [],
+      "actions-results": [
+        {
+          "type": "ACTION", "description": "Increment counter B.",
+          "executions": []
+        }
+      ]
+    },
+    {
+      "location": "test/data/gotoscenario.py:67:GotoScenario.step040",
+      "description": "Check A and B",
+      "executions": [
+        {
+          "number": 6,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "RESULT", "description": "Check counter A equals 2.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "A = 2"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "RESULT", "description": "Check counter B equals 0.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "B = 0"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "SUCCESS",
+  "errors": [],
+  "warnings": [],
+  "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+  "stats": {
+    "steps": {"executed": 6, "total": 5},
+    "actions": {"executed": 6, "total": 6},
+    "results": {"executed": 2, "total": 2}
+  }
+}

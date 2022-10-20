@@ -1,0 +1,571 @@
+{
+  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+  "name": "demo/loggingdemo.py",
+  "href": "demo/loggingdemo.py",
+  "attributes": {},
+  "steps": [
+    {
+      "location": "demo/loggingdemo.py:22:LoggingScenario.step010",
+      "description": "Logging with the main logger",
+      "executions": [
+        {
+          "number": 1,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Log messages of different log levels with the main logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:31:LoggingScenario.step020",
+      "description": "Logging with the scenario instance",
+      "executions": [
+        {
+          "number": 2,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Log messages of different log levels with the scenario itself.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:40:LoggingScenario.step030",
+      "description": "Logging with a class logger",
+      "executions": [
+        {
+          "number": 3,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Log messages of different log levels with the class logger instance.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Activate debugging for the class logger instance.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log a debug message again with the class logger instance.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:55:LoggingScenario.step110",
+      "description": "Class logger indentation",
+      "executions": [
+        {
+          "number": 4,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Log something with the class logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the class logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the class logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the class logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the class logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the class logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the class logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Pop indentation from the class logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the class logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Reset the class logger indentation.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the class logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:76:LoggingScenario.step120",
+      "description": "Main logger indentation",
+      "executions": [
+        {
+          "number": 5,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Log something with the main logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the main logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the main logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            },
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the main logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the main logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Push indentation to the main logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the main logger.",
+          "executions": []
+        },
+        {
+          "type": "ACTION",
+          "description": "Pop indentation from the main logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the main logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Reset the main logger indentation.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "Log something with the main logger.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "SUCCESS",
+  "errors": [],
+  "warnings": [],
+  "time": {
+    "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+    "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+    "elapsed": SSS.mmmmmm
+  },
+  "stats": {
+    "steps": {
+      "executed": 5,
+      "total": 5
+    },
+    "actions": {
+      "executed": 27,
+      "total": 27
+    },
+    "results": {
+      "executed": 0,
+      "total": 0
+    }
+  }
+}

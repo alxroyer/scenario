@@ -1,0 +1,681 @@
+{
+  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+  "name": "demo/commutativeadditions.py",
+  "href": "demo/commutativeadditions.py",
+  "attributes": {},
+  "steps": [
+    {
+      "location": "demo/commutativeadditions.py:16:CommutativeAdditions.step010",
+      "description": "Both positive members",
+      "executions": [
+        {
+          "number": 1,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Launch the CommutativeAddition scenario with 4 and 5 for inputs.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": [
+                {
+                  "name": "demo/commutativeaddition.py",
+                  "href": "demo/commutativeaddition.py",
+                  "attributes": {},
+                  "steps": [
+                    {
+                      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+                      "description": "Initial conditions",
+                      "executions": [
+                        {
+                          "number": 1,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Let a = 4, and b = 5",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "a = 4",
+                                "b = 5"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+                      "description": "a + b",
+                      "executions": [
+                        {
+                          "number": 2,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compute (a + b) and store the result as result1.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "result1 = 9"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+                      "description": "b + a",
+                      "executions": [
+                        {
+                          "number": 3,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compute (b + a) and store the result as result2.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "result2 = 9"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+                      "description": "Check",
+                      "executions": [
+                        {
+                          "number": 4,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compare result1 and result2.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "RESULT",
+                          "description": "result1 and result2 are the same.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "9 == 9"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "SUCCESS",
+                  "errors": [],
+                  "warnings": [],
+                  "time": {
+                    "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                    "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                    "elapsed": SSS.mmmmmm
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/commutativeadditions.py:23:CommutativeAdditions.step020",
+      "description": "Positive and negative members",
+      "executions": [
+        {
+          "number": 2,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Launch the CommutativeAddition scenario with -1 and 3 for inputs.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": [
+                {
+                  "name": "demo/commutativeaddition.py",
+                  "href": "demo/commutativeaddition.py",
+                  "attributes": {},
+                  "steps": [
+                    {
+                      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+                      "description": "Initial conditions",
+                      "executions": [
+                        {
+                          "number": 1,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Let a = -1, and b = 3",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "a = -1",
+                                "b = 3"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+                      "description": "a + b",
+                      "executions": [
+                        {
+                          "number": 2,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compute (a + b) and store the result as result1.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "result1 = 2"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+                      "description": "b + a",
+                      "executions": [
+                        {
+                          "number": 3,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compute (b + a) and store the result as result2.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "result2 = 2"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+                      "description": "Check",
+                      "executions": [
+                        {
+                          "number": 4,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compare result1 and result2.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "RESULT",
+                          "description": "result1 and result2 are the same.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "2 == 2"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "SUCCESS",
+                  "errors": [],
+                  "warnings": [],
+                  "time": {
+                    "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                    "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                    "elapsed": SSS.mmmmmm
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "location": "demo/commutativeadditions.py:30:CommutativeAdditions.step030",
+      "description": "Both negative members",
+      "executions": [
+        {
+          "number": 3,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "Launch the CommutativeAddition scenario with -1 and -7 for inputs.",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": [
+                {
+                  "name": "demo/commutativeaddition.py",
+                  "href": "demo/commutativeaddition.py",
+                  "attributes": {},
+                  "steps": [
+                    {
+                      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+                      "description": "Initial conditions",
+                      "executions": [
+                        {
+                          "number": 1,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Let a = -1, and b = -7",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "a = -1",
+                                "b = -7"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+                      "description": "a + b",
+                      "executions": [
+                        {
+                          "number": 2,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compute (a + b) and store the result as result1.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "result1 = -8"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+                      "description": "b + a",
+                      "executions": [
+                        {
+                          "number": 3,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compute (b + a) and store the result as result2.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "result2 = -8"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+                      "description": "Check",
+                      "executions": [
+                        {
+                          "number": 4,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
+                      ],
+                      "actions-results": [
+                        {
+                          "type": "ACTION",
+                          "description": "Compare result1 and result2.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "RESULT",
+                          "description": "result1 and result2 are the same.",
+                          "executions": [
+                            {
+                              "time": {
+                                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                                "elapsed": SSS.mmmmmm
+                              },
+                              "evidence": [
+                                "-8 == -8"
+                              ],
+                              "errors": [],
+                              "warnings": [],
+                              "subscenarios": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "SUCCESS",
+                  "errors": [],
+                  "warnings": [],
+                  "time": {
+                    "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                    "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                    "elapsed": SSS.mmmmmm
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "SUCCESS",
+  "errors": [],
+  "warnings": [],
+  "time": {
+    "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+    "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+    "elapsed": SSS.mmmmmm
+  },
+  "stats": {
+    "steps": {
+      "executed": 3,
+      "total": 3
+    },
+    "actions": {
+      "executed": 3,
+      "total": 3
+    },
+    "results": {
+      "executed": 0,
+      "total": 0
+    }
+  }
+}

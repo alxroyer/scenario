@@ -1,0 +1,18 @@
+INFO     Main path: '/path/to/scenario'
+INFO     [scenario.ConfigDatabase]   a:
+INFO     [scenario.ConfigDatabase]     a.b:
+INFO     [scenario.ConfigDatabase]       a.b.c: 55  # from demo/conf.json
+INFO     [scenario.ConfigDatabase]   scenario:
+INFO     [scenario.ConfigDatabase]     scenario.log_color: '0'  # from <args>
+INFO     [scenario.ConfigDatabase]     scenario.log_date_time: '0'  # from <args>
+INFO     [scenario.ConfigDatabase]   x:
+INFO     [scenario.ConfigDatabase]     x.y[0]:
+INFO     [scenario.ConfigDatabase]       x.y[0].z: '0'  # from <args>
+INFO     [scenario.ConfigDatabase]     x.y[1]:
+INFO     [scenario.ConfigDatabase]       x.y[1].z: 100  # from demo/conf.json
+INFO     [scenario.ConfigDatabase]     x.y[2]:
+INFO     [scenario.ConfigDatabase]       x.y[2].z: 101  # from demo/conf.json
+INFO     [scenario.ConfigDatabase]     x.y[3]:
+INFO     [scenario.ConfigDatabase]       x.y[3].z: 102  # from demo/conf.json
+INFO     [scenario.ConfigDatabase]     x.y[4]:
+INFO     [scenario.ConfigDatabase]       x.y[4].z: 103  # from demo/conf.json
