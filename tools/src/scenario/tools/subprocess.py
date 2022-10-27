@@ -68,12 +68,24 @@ class SubProcess(scenario.SubProcess):
             self,
             line,  # type: bytes
     ):  # type: (...) -> None
+        from scenario.logformatter import LogFormatter
+        from scenario.scenarioconfig import SCENARIO_CONFIG
+
         if self._show_stdout:
-            scenario.logging.info(line.decode("utf-8"))
+            _line = line.decode("utf-8")  # type: str
+            if not SCENARIO_CONFIG.logcolorenabled():
+                _line = LogFormatter.nocolor(_line)
+            scenario.logging.info(_line)
 
     def _onstderrline(
             self,
             line,  # type: bytes
     ):  # type: (...) -> None
+        from scenario.logformatter import LogFormatter
+        from scenario.scenarioconfig import SCENARIO_CONFIG
+
         if self._show_stderr:
-            scenario.logging.error(line.decode("utf-8"))
+            _line = line.decode("utf-8")  # type: str
+            if not SCENARIO_CONFIG.logcolorenabled():
+                _line = LogFormatter.nocolor(_line)
+            scenario.logging.error(_line)

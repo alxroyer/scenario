@@ -347,8 +347,9 @@ class SubProcess:
             self.stdout += _line
             _line = _line.rstrip(b'\r\n')
 
-            # Debug the line.
-            self._log(logging.DEBUG, "  stdout: %r", _line)
+            # Debug the line (only if no stdout handler is set).
+            if not self._stdout_line_handler:
+                self._log(logging.DEBUG, "  stdout: %r", _line)
 
             # Call the user handler.
             if self._stdout_line_handler:
@@ -372,8 +373,9 @@ class SubProcess:
             self.stderr += _line
             _line = _line.rstrip(b'\r\n')
 
-            # Debug the line.
-            self._log(logging.DEBUG, "  stderr: %r", _line)
+            # Debug the line (only if no stderr handler is set).
+            if not self._stderr_line_handler:
+                self._log(logging.DEBUG, "  stderr: %r", _line)
 
             # Call the user handler.
             if self._stderr_line_handler:
