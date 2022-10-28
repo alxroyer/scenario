@@ -15,10 +15,15 @@
 
 # TODO
 
+- Issue #66: Avoid redefining `argparse` API.
+    - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
+    - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
+      and properties for typing and conversions.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
 
 LATER:
+- Issue #67: Make typing infer a variable can't be `None` when `assertisnotnone()` has passed.
 - Issue #60: Clarify typings for collections:
     - Use `typing.Sequence`, `typing.Collection` instead of `typing.List` or `typing.Iterable`.
     - Check deprecations since version 3.9 due to [PEP 585](https://peps.python.org/pep-0585/)
