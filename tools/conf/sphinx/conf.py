@@ -498,11 +498,60 @@ class PyDoc:
         sphinxdebug("PyDoc.autodocprocesssignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
                     what, fq_name, obj, options, signature, return_annotation)
 
+        # Useful local functions.
+        def _debug(fmt, *args):  # type: (str, typing.Any) -> None
+            sphinxdebug("PyDoc.autodoc-process-signature(): " + fmt, *args)
+
+        def _errmsg(message):  # type: (str) -> str
+            return f"autodoc-process-signature(fq_name={fq_name!r}): {message}"
+
         if what == "class":
             # Do not show `__init__()` arguments in the class signature.
             # `__init__()` documentation is generated separately.
-            sphinxdebug("autodoc-process-signature(): Class %s signature set from %r to None!", fq_name, signature)
+            _debug("Class %s signature set from %r to None", fq_name, signature)
             return None, None
+
+        if signature and ("#" in signature):
+            # As of sphinx@4.4.0, additional trailing comments after `# type: ...` comments are not automatically removed.
+            # Let's remove them below.
+            _debug("Removing comments from signature %r", signature)
+
+            # Split the comma-separated argument list.
+            assert signature.startswith("(") and signature.endswith(")")
+            _args = signature[1:-1].split(", ")  # type: typing.List[str]
+
+            # Restore commas which were not to seperate arguments.
+            _index = 0  # type: int
+            while _index < len(_args):
+                # Check whether the argument line actually starts with a typed argument name.
+                if re.search(r"^\w+: ", _args[_index]):
+                    _debug("  => arg#%d %r", _index + 1, _args[_index])
+                    _index += 1
+                else:
+                    assert _index > 0, _errmsg(f"Unexpected {_args[_index]!r} at the beginning of signature {signature!r}")
+                    _debug("     Merging %r + %r", _args[_index - 1], _args[_index])
+                    _args[_index - 1] += f", {_args[_index]}"  # Don't forget to restore the comma.
+                    del _args[_index]
+
+            # Remove comments.
+            for _index in range(len(_args)):  # Type already declared above.
+                if "#" in _args[_index]:
+                    _debug("  => Removing comment from arg#%d %r", _index + 1, _args[_index])
+                    _match = (
+                        # First try to match with a default value pattern at the end of the line.
+                        re.match(r"^([^#]+)( *#.*)( = \w+)$", _args[_index])
+                        # Otherwise match with no default value.
+                        # The empty group in the end is left intentionally for grouping compatibility between the two regex.
+                        or re.match(r"^([^#]+)( *#.*)()$", _args[_index])
+                    )  # type: typing.Optional[typing.Match[str]]
+                    assert _match, _errmsg(f"Could not parse comment from {_args[_index]!r}")
+                    _args[_index] = _match.group(1).rstrip() + _match.group(3)
+                    _debug("     %r", _args[_index])
+
+            # Rebuild and return the signature.
+            signature = f"({', '.join(_args)})"
+            _debug("Final signature: %r", signature)
+            return signature, return_annotation
 
         return None
 
