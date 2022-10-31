@@ -21,6 +21,7 @@
       and properties for typing and conversions.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
+        - Use in knownissues110.
 
 LATER:
 - Issue #67: Make typing infer a variable can't be `None` when `assertisnotnone()` has passed.
@@ -47,10 +48,6 @@ LATER:
 - Issue #40:
     - Avoid mixing step objects and steps from method inspection.
     - Get rid of attribute definition with class members?
-- Issue #23: Complete known issue handling.
-    - Add known-issue severities.
-    - *strict mode* / known-issue severity: Make known issues behave as errors as required.
-    - Add a URL prefix.
 - Issue #32: Fix scenario report JSON schema.
 - Issue #41: Several test cases in a single script?
     - Could be a possibility to define several small test cases in a single file.

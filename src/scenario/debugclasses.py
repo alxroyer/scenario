@@ -46,6 +46,8 @@ class DebugClass(StrEnum):
     REFLEX = "scenario.reflex"
     #: Scenario report debugging.
     SCENARIO_REPORT = "scenario.ScenarioReport"
+    #: Scenario results debugging.
+    SCENARIO_RESULTS = "scenario.ScenarioResults"
     #: Scenario runner debugging.
     SCENARIO_RUNNER = "scenario.ScenarioRunner"
     #: Scenario stack debugging.

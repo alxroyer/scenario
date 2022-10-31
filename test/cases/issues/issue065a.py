@@ -35,7 +35,7 @@ class Issue65a(scenario.test.TestCase):
         self.addstep(ExecScenario(
             scenario.test.paths.WAITING_SCENARIO,
             # Activate log datetimes in order to be able to track what actually takes time.
-            config_values={scenario.ConfigKey.LOG_DATETIME: "1"},
+            config_values={scenario.ConfigKey.LOG_DATETIME: True},
             # Activate issue#65 special debugging.
             debug_classes=["scenario.#65.exec-times"],
         ))

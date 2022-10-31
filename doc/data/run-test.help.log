@@ -1,5 +1,7 @@
 usage: run-test.py [-h] [--config-file CONFIG_PATH] [--config-value KEY VALUE]
                    [--debug-class DEBUG_CLASS] [--doc-only]
+                   [--issue-level-error ISSUE_LEVEL]
+                   [--issue-level-ignored ISSUE_LEVEL]
                    [--json-report JSON_REPORT_PATH]
                    [--extra-info ATTRIBUTE_NAME]
                    SCENARIO_PATH [SCENARIO_PATH ...]
@@ -15,11 +17,20 @@ optional arguments:
                         Input configuration file path. This option may be
                         called several times.
   --config-value KEY VALUE
-                        Configuration value in the 'key=value' form. This
-                        option may be called several times.
+                        Single configuration value. This option may be called
+                        several times.
   --debug-class DEBUG_CLASS
                         Activate debugging for the given class.
-  --doc-only            Generate documentation without executing the test.
+  --doc-only            Generate documentation without executing the test(s).
+  --issue-level-error ISSUE_LEVEL
+                        Define the issue level from and above which known
+                        issues should be considered as errors. None by
+                        default, i.e. all known issues are considered as
+                        warnings.
+  --issue-level-ignored ISSUE_LEVEL
+                        Define the issue level from and under which known
+                        issues should be ignored. None by default, i.e. no
+                        known issue ignored by default.
   --json-report JSON_REPORT_PATH
                         Save the report in the given JSON output file path.
                         Single scenario only.

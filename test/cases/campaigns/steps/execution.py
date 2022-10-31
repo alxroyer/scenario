@@ -30,9 +30,9 @@ class ExecCampaign(ExecCommonArgs):
 
     def __init__(
             self,
-            test_suite_files,  # type: typing.List[scenario.Path]
+            test_suite_paths,  # type: typing.Sequence[scenario.Path]
             description=None,  # type: str
-            config_values=None,  # type: typing.Dict[typing.Union[enum.Enum, str], typing.Optional[str]]
+            config_values=None,  # type: scenario.test.configvalues.ConfigValuesType
             config_files=None,  # type: typing.List[scenario.Path]
             debug_classes=None,  # type: typing.Optional[typing.List[str]]
             log_outfile=None,  # type: bool
@@ -48,7 +48,7 @@ class ExecCampaign(ExecCommonArgs):
             doc_only=doc_only,
         )
 
-        self.test_suite_files = test_suite_files  # type: typing.List[scenario.Path]
+        self.test_suite_paths = test_suite_paths  # type: typing.Sequence[scenario.Path]
         self._cmdline_outdir_path = None  # type: typing.Optional[scenario.Path]
         self._final_outdir_path = None  # type: typing.Optional[scenario.Path]
         self.dt_subdir = dt_subdir  # type: typing.Optional[bool]
@@ -85,14 +85,16 @@ class ExecCampaign(ExecCommonArgs):
             assert self._cmdline_outdir_path
             self.subprocess = scenario.test.CampaignSubProcess(
                 self._cmdline_outdir_path,
-                *self.test_suite_files
+                *self.test_suite_paths
             )
 
-        assert self.test_suite_files
-        if len(self.test_suite_files) == 1:
-            _action_description += f" the '{self.test_suite_files[0]}' test suite file"
-        if len(self.test_suite_files) > 1:
-            _action_description += f" {scenario.text.comalist(self.test_suite_files, quotes=True)} test suite files"
+        assert self.test_suite_paths
+        if len(self.test_suite_paths) == 1:
+            _action_description += f" the {self.test_case.getpathdesc(self.test_suite_paths[0])} test suite file"
+        if len(self.test_suite_paths) > 1:
+            _action_description += (" " + scenario.text.commalist(
+                [self.test_case.getpathdesc(_test_suite_path) for _test_suite_path in self.test_suite_paths]
+            ) + " test suite files")
 
         if self.dt_subdir is True:
             _action_description += ", with the --dt-subdir option set"

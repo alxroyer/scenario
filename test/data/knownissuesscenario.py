@@ -29,7 +29,7 @@ class KnownIssuesScenario(scenario.Scenario):
 
         self.raise_exceptions = scenario.conf.get(KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS, type=bool, default=False)  # type: bool
 
-        self.knownissue("#---", "Known issue in KnownIssuesScenario.__init__()")  # location: #---
+        self.knownissue(id="#---", message="Known issue in KnownIssuesScenario.__init__()")  # location: #---
         self.addstep(KnownIssuesScenario.KnownIssuesStep())
 
     class KnownIssuesStep(scenario.Step):  # location: KnownIssuesStep
@@ -37,15 +37,15 @@ class KnownIssuesScenario(scenario.Scenario):
         def __init__(self):  # type: (...) -> None
             scenario.Step.__init__(self)
 
-            self.knownissue("#000", "Known issue in KnownIssuesStep.__init__()")  # location: #000
+            self.knownissue(id="#000", message="Known issue in KnownIssuesStep.__init__()")  # location: #000
 
         def step(self):  # type: (...) -> None
             self.STEP("Object step with known issues")
 
-            self.knownissue("#001", "Known issue in KnownIssuesStep.step() before ACTION/RESULT")  # location: #001
+            self.knownissue(id="#001", message="Known issue in KnownIssuesStep.step() before ACTION/RESULT")  # location: #001
 
             if self.ACTION("Track a known issue."):
-                self.knownissue("#002", "Known issue in KnownIssuesStep.step() under ACTION")  # location: #002
+                self.knownissue(id="#002", message="Known issue in KnownIssuesStep.step() under ACTION")  # location: #002
 
             if self.ACTION("Raise an exception."):
                 if KnownIssuesScenario.getinstance().raise_exceptions:
@@ -54,17 +54,17 @@ class KnownIssuesScenario(scenario.Scenario):
                     self.evidence("Exception not raised.")
 
             if self.ACTION("Track another known issue."):
-                self.knownissue("#003", "Known issue in KnownIssuesStep.step() under ACTION")  # location: #003
+                self.knownissue(id="#003", message="Known issue in KnownIssuesStep.step() under ACTION")  # location: #003
 
-            self.knownissue("#004", "Known issue in KnownIssuesStep.step() after ACTION/RESULT")  # location: #004
+            self.knownissue(id="#004", message="Known issue in KnownIssuesStep.step() after ACTION/RESULT")  # location: #004
 
     def step010(self):  # type: (...) -> None  # location: step010
         self.STEP("Method step with known issues")
 
-        self.knownissue("#011", "Known issue in KnownIssuesScenario.step010() before ACTION/RESULT")  # location: #011
+        self.knownissue(id="#011", message="Known issue in KnownIssuesScenario.step010() before ACTION/RESULT")  # location: #011
 
         if self.ACTION("Track a known issue."):
-            self.knownissue("#012", "Known issue in KnownIssuesScenario.step010() under ACTION")  # location: #012
+            self.knownissue(id="#012", message="Known issue in KnownIssuesScenario.step010() under ACTION")  # location: #012
 
         if self.ACTION("Raise an exception."):
             if self.raise_exceptions:
@@ -73,9 +73,9 @@ class KnownIssuesScenario(scenario.Scenario):
                 self.evidence("Exception not raised.")
 
         if self.ACTION("Track another known issue."):
-            self.knownissue("#013", "Known issue in KnownIssuesScenario.step010() under ACTION")  # location: #013
+            self.knownissue(id="#013", message="Known issue in KnownIssuesScenario.step010() under ACTION")  # location: #013
 
-        self.knownissue("#014", "Known issue in KnownIssuesScenario.step010() after ACTION/RESULT")  # location: #014
+        self.knownissue(id="#014", message="Known issue in KnownIssuesScenario.step010() after ACTION/RESULT")  # location: #014
 
     def step020(self):  # type: (...) -> None  # location: step020
         self.STEP("Method step without known issues")

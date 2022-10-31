@@ -43,7 +43,7 @@ class MultipleScenarios003(scenario.test.TestCase):
         self.addstep(ParseFinalResultsLog(ExecScenario.getinstance(0)))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(0), scenario_expectations=[
             scenario.test.data.scenarioexpectations(
-                scenario.test.paths.KNOWN_ISSUES_SCENARIO, configs={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "0"},
+                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: False},
                 error_details=True, stats=True,
             ),
             scenario.test.data.scenarioexpectations(scenario.test.paths.SIMPLE_SCENARIO),
@@ -58,7 +58,7 @@ class MultipleScenarios003(scenario.test.TestCase):
         self.addstep(ParseFinalResultsLog(ExecScenario.getinstance(1)))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(1), scenario_expectations=[
             scenario.test.data.scenarioexpectations(
-                scenario.test.paths.KNOWN_ISSUES_SCENARIO, configs={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "1"},
+                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: True},
                 error_details=True, stats=True,
             ),
             scenario.test.data.scenarioexpectations(scenario.test.paths.SIMPLE_SCENARIO),

@@ -154,7 +154,7 @@ class Assertions:
         """
         Checks a given value is not ``None``.
 
-        :param obj: Value expected to be ``None``.
+        :param obj: Value expected to be not ``None``.
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: The value ``obj``, ensured not to be ``None``.
@@ -1154,8 +1154,14 @@ class Assertions:
         from .debugutils import FmtAndArgs, saferepr
         from .reflex import qualname
 
+        _json_safe_repr_max_length = 32  # type: int
+
         def _errormsg(fmt, *args):  # type: (str, typing.Any) -> str
-            return assertionhelpers.errmsg(err, f"JSON %s: '%s' -> {fmt}", saferepr(json_data), jsonpath, *args)
+            return assertionhelpers.errmsg(
+                err,
+                f"JSON %s | %s => {fmt}",
+                saferepr(json_data, max_length=_json_safe_repr_max_length), saferepr(jsonpath), *args,
+            )
 
         # Check input parameters.
         assert json_data is not None, assertionhelpers.isnonemsg("assertjson()", "json_data")
@@ -1217,8 +1223,8 @@ class Assertions:
         if len is not None:
             assert count == 1, "Cannot specify `len` when expecting several items"
             assert builtins.len(_items[0]) == len, _errormsg(
-                "Bad length len(%s) = %d, %d expected",
-                saferepr(_items[0], max_length=64),
+                "Bad length, len(%s) = %d, %d expected",
+                saferepr(_items[0], max_length=_json_safe_repr_max_length),
                 builtins.len(_items[0]),
                 len,
             )
@@ -1228,7 +1234,7 @@ class Assertions:
         _evidence_message = FmtAndArgs()  # type: FmtAndArgs
         if len is not None:
             _evidence_message.push("len(")
-        _evidence_message.push("%s | %s", saferepr(json_data, max_length=64), saferepr(jsonpath))
+        _evidence_message.push("%s | %s", saferepr(json_data, max_length=_json_safe_repr_max_length), saferepr(jsonpath))
         if len is None:
             _evidence_message.push(" => ")
         else:

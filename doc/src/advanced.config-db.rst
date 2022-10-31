@@ -216,8 +216,11 @@ The following table describes the :py:mod:`scenario` configurable keys & values.
       - Type
       - Description
       - Default
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.TIMEZONE`
-      - "scenario.timezone"
+
+    * - .. _config-db.scenario.timezone:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.TIMEZONE`
+      - ``scenario.timezone``
       - String
       - Timezone specification.
 
@@ -236,24 +239,36 @@ The following table describes the :py:mod:`scenario` configurable keys & values.
             print("\n".join(pytz.all_timezones))
 
       - Not set, i.e. use of the local timezone
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME`
-      - "scenario.log_date_time"
+
+    * - .. _config-db.scenario.log_date_time:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME`
+      - ``scenario.log_date_time``
       - Boolean
       - Should the log lines include a timestamp?
       - Enabled
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE`
-      - "scenario.log_console"
+
+    * - .. _config-db.scenario.log_console:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE`
+      - ``scenario.log_console``
       - Boolean
       - Should the log lines be displayed in the console?
       - Enabled
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR_ENABLED`
-      - "scenario.log_color"
+
+    * - .. _config-db.scenario.log_color:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR_ENABLED`
+      - ``scenario.log_color``
       - Boolean
       - Should the log lines be colored?
       - Enabled
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR`
-      - "scenario.log_%s_color"
-        "%s" being one of ("error", "warning", "info", "debug")
+
+    * - .. _config-db.scenario.log_level_color:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR`
+      - ``scenario.log_%(level)_color``,
+        ``%(level)`` being one of (``error``, ``warning``, ``info``, ``debug``)
       - Integer
       - Console color code per log level.
         See :py:class:`scenario.console.Console.Color` for a list useful color codes.
@@ -261,48 +276,111 @@ The following table describes the :py:mod:`scenario` configurable keys & values.
         scenario.log_warning_color: yellow(33),
         scenario.log_info_color: white(1),
         scenario.log_debug_color: dark grey(2)
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE`
-      - "scenario.log_file"
+
+    * - .. _config-db.scenario.log_file:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE`
+      - ``scenario.log_file``
       - File path string
       - Should the log lines be written in a log file?
       - Not set, i.e. no file logging
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.DEBUG_CLASSES`
-      - "scenario.debug_classes"
-      - List of strings (or coma-separated string)
+
+    * - .. _config-db.scenario.debug_classes:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.DEBUG_CLASSES`
+      - ``scenario.debug_classes``
+      - List of strings (or comma-separated string)
       - Which debug classes to display?
       - Not set
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.EXPECTED_ATTRIBUTES`
-      - "scenario.expected_attributes"
-      - List of strings (or coma-separated string)
+
+    * - .. _config-db.scenario.expected_attributes:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.EXPECTED_ATTRIBUTES`
+      - ``scenario.expected_attributes``
+      - List of strings (or comma-separated string)
       - Expected scenario attributes.
       - Not set
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
-      - "scenario.continue_on_error"
+
+    * - .. _config-db.scenario.continue_on_error:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
+      - ``scenario.continue_on_error``
       - Boolean
       - Should the scenarios continue on error?
         If set to ``True``, an error ends the current step, but following steps are still executed.
         The same behaviour may also be activated scenario by scenario
         by setting the :py:attr:`scenario.scenariodefinition.ScenarioDefinition.continue_on_error` attribute.
       - Disabled
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.DELAY_BETWEEN_STEPS`
-      - "scenario.delay_between_steps"
+
+    * - .. _config-db.scenario.delay_between_steps:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.DELAY_BETWEEN_STEPS`
+      - ``scenario.delay_between_steps``
       - Float (in seconds)
       - Should we wait between two step executions?
       - 0.001 seconds
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.RUNNER_SCRIPT_PATH`
-      - "scenario.runner_script_path"
+
+    * - .. _config-db.scenario.runner_script_path:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.RUNNER_SCRIPT_PATH`
+      - ``scenario.runner_script_path``
       - File path string
       - Path of the scenario runner script.
         Useful when executing campaigns: may be used to make your own :ref:`launcher script path <launcher>` be called.
       - 'bin/run-test.py' provided with the :py:mod:`scenario` framework
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.SCENARIO_TIMEOUT`
-      - "scenario.scenario_timeout"
+
+    * - .. _config-db.scenario.scenario_timeout:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.SCENARIO_TIMEOUT`
+      - ``scenario.scenario_timeout``
       - Float (in seconds)
       - Maximum time for a scenario execution. Useful when executing campaigns.
       - 600.0 seconds, i.e. 10 minutes
-    * - :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.RESULTS_EXTRA_INFO`
-      - "scenario.results_extra_info"
-      - List of strings (or coma-separated string)
+
+    * - .. _config-db.scenario.results_extra_info:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.RESULTS_EXTRA_INFO`
+      - ``scenario.results_extra_info``
+      - List of strings (or comma-separated string)
       - Scenario attributes to display for extra info when displaying scenario results,
         after a campaign execution, or when executing several tests in a single command line.
+      - Not set
+
+    * - .. _config-db.scenario.issue_levels:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_NAMES`
+      - ``scenario.issue_levels``
+      - ``{str: int}`` dictionary
+      - Dictionary of names associated with issue level integer values.
+
+        Example:
+
+        .. code-block:: YAML
+
+            scenario:
+              issue_levels:
+                SUT: 40
+                TEST: 30
+                CONTEXT: 20
+                PLANNED: 10
+      - Not set
+
+    * - .. _config-db.scenario.issue_level_error:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_ERROR`
+      - ``scenario.issue_level_error``
+      - String or integer.
+      - Issue level from and above which known issues should be considered as errors.
+
+        May be set directly as an integer value, or an issue level name if defined (see :ref:`scenario.issue_levels <config-db.scenario.issue_levels>`).
+      - Not set
+
+    * - .. _config-db.scenario.issue_level_ignored:
+
+        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_IGNORED`
+      - ``scenario.issue_level_ignored``
+      - String or integer.
+      - Issue level from and under which known issues should be ignored.
+
+        May be set directly as an integer value, or an issue level name if defined (see :ref:`scenario.issue_levels <config-db.scenario.issue_levels>`).
       - Not set

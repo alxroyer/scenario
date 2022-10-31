@@ -375,11 +375,22 @@ from .testerrors import ExceptionError  # noqa: E402  ## Module level import not
 __doc__ += """
 .. py:attribute:: KnownIssue
 
-    Alias of :class:`.testerrors.KnownIssue`.
+    Alias of :class:`.knownissues.KnownIssue`.
 
     Describes an error due to an exception that occurred during the tests.
 """
-from .testerrors import KnownIssue  # noqa: E402  ## Module level import not at top of file
+from .knownissues import KnownIssue  # noqa: E402  ## Module level import not at top of file
+
+__doc__ += """
+.. py:attribute:: IssueLevel
+
+    Alias of :class:`.issuelevels.IssueLevel`.
+
+    Provides methods to define named issue levels.
+"""
+from .issuelevels import IssueLevel  # noqa: E402  ## Module level import not at top of file
+if typing.TYPE_CHECKING:
+    from .issuelevels import AnyIssueLevelType
 
 __doc__ += """
 .. py:attribute:: TimeStats

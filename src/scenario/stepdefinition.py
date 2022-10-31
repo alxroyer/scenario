@@ -26,6 +26,8 @@ import typing
 from .actionresultdefinition import ActionResultDefinition
 # `Assertions` used for inheritance.
 from .assertions import Assertions
+# `KnownIssue` used in method signatures.
+from .knownissues import KnownIssue
 # `CodeLocation` used in method signatures.
 from .locations import CodeLocation
 # `Logger` used for inheritance.
@@ -271,6 +273,29 @@ class StepDefinitionHelper:
         if isinstance(step_specification, type):
             return f"[class is {qualname(step_specification)}]"
         return repr(step_specification)
+
+    def saveinitknownissues(self):  # type: (...) -> None
+        """
+        Saves *init* known issues for the related step definition.
+
+        I.e. the known issues declared at the definition level, before the :meth:StepDefinition.step()` method has been called.
+
+        The appropriate call to this method is made in :meth:`.scenariorunner.ScenarioRunner._buildscenario()`.
+        """
+        # Save a copy of the curent `ScenarioDefinition.known_issues` list in a hidden field.
+        setattr(self.definition, "__init_known_issues", list(self.definition.known_issues))
+
+    def getinitknownissues(self):  # type: (...) -> typing.Sequence[KnownIssue]
+        """
+        Retrieves the known issue list saved by :meth:`stashinitknownissues()` for the related step definition.
+
+        :return: *Init* known issue list.
+        """
+        if hasattr(self.definition, "__init_known_issues"):
+            _init_known_issues = getattr(self.definition, "__init_known_issues")  # type: typing.Any
+            if isinstance(_init_known_issues, list):
+                return _init_known_issues
+        return []
 
 
 class StepMethods:

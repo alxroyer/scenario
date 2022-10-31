@@ -30,6 +30,7 @@ Advanced usage
     advanced.assertions
     advanced.logging
     advanced.evidence
+    advanced.error-management
     advanced.known-issues
     advanced.test-libs
     advanced.handlers

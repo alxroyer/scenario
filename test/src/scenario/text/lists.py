@@ -17,7 +17,7 @@
 import typing
 
 
-def comalist(
+def commalist(
         iterable,  # type: typing.Iterable[typing.Any]
         final_and=True,  # type: bool
         quotes=False,  # type: bool
@@ -36,7 +36,7 @@ def comalist(
     else:
         return "".join([
             # Join first items with ', '.
-            ", ".join([f"'{_item}'" for _item in iterable[:-1]]),
+            ", ".join([f"{_item}" for _item in iterable[:-1]]),
             # Final 'and'.
             " and " if final_and else ", ",
             # Last term.

@@ -39,7 +39,7 @@ class Logging200(scenario.test.TestCase):
             # Activate `LOGGER_DEBUG_CLASS` debugging.
             debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
             # Explicitely disable log date/time for verification purposes in `CheckMainLoggerLogLevels` and `CheckClassLoggerLogLevels`.
-            config_values={scenario.ConfigKey.LOG_DATETIME: "0"},
+            config_values={scenario.ConfigKey.LOG_DATETIME: False},
         ))
         self.addstep(CheckMainLoggerLogLevels(ExecScenario.getinstance()))
         self.addstep(CheckClassLoggerLogLevels(ExecScenario.getinstance()))

@@ -29,8 +29,8 @@ from .actionresultdefinition import ActionResultDefinition
 from .enumutils import StrEnum
 # `ErrorCode` used in method signatures.
 from .errcodes import ErrorCode
-# `CodeLocation` used in method signatures.
-from .locations import CodeLocation
+# `KnownIssue` used in method signatures.
+from .knownissues import KnownIssue
 # `Logger` used for inheritance.
 from .logger import Logger
 # `ScenarioDefinition` used in method signatures.
@@ -335,7 +335,7 @@ class ScenarioRunner(Logger):
         from .scenariodefinition import ScenarioDefinitionHelper
         from .scenarioexecution import ScenarioExecution
         from .scenariostack import SCENARIO_STACK
-        from .testerrors import KnownIssue
+        from .stepdefinition import StepDefinitionHelper
 
         self.debug("_buildscenario(scenario_definition=%r)", scenario_definition)
         self.pushindentation()
@@ -356,11 +356,9 @@ class ScenarioRunner(Logger):
         while scenario_definition.execution.current_step_definition:
             self.pushindentation()
 
-            # Mark the step definition known issues already known before executing the step and collecting other known issues.
-            # These known issues shall be notified before the actual step execution later on,
-            # otherwise they would be notified at the end of the step execution only.
-            for _known_issue in scenario_definition.execution.current_step_definition.known_issues:  # type: KnownIssue
-                _known_issue.init_only = True
+            # Save *init* known issues for this step definition before executing the step and collecting other known issues registered at the definition level.
+            # These known issues shall be notified before the step is actually executed.
+            StepDefinitionHelper(scenario_definition.execution.current_step_definition).saveinitknownissues()
 
             # Execute the step method in the `BUILD_OBJECTS` exection mode.
             self._execstep(scenario_definition.execution.current_step_definition)
@@ -508,6 +506,7 @@ class ScenarioRunner(Logger):
         from .scenarioevents import ScenarioEvent, ScenarioEventData
         from .scenariologging import SCENARIO_LOGGING
         from .scenariostack import SCENARIO_STACK
+        from .stepdefinition import StepDefinitionHelper
         from .stepexecution import StepExecution
         from .stepsection import StepSection
         from .testerrors import ExceptionError
@@ -543,8 +542,8 @@ class ScenarioRunner(Logger):
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
                 SCENARIO_LOGGING.stepdescription(step_definition)
 
-            # Notify every known issues registered out of the step execution method.
-            self._notifyknownissuedefinitions(step_definition, init_only=True)
+            # Notify *init* known issues saved for this step before executing it.
+            self._notifyknownissuedefinitions(step_definition, StepDefinitionHelper(step_definition).getinitknownissues())
 
             # Method execution.
             try:
@@ -615,23 +614,22 @@ class ScenarioRunner(Logger):
     def _notifyknownissuedefinitions(
             self,
             step_user_api,  # type: StepUserApi
-            init_only=False,  # type: bool
+            known_issues=None,  # type: typing.Sequence[KnownIssue]
     ):  # type: (...) -> None
         """
         Notifies the known issues declared at the definition level for the given scenario or step definition.
 
         :param step_user_api: Scenario or step definition to process known issues for.
-        :param init_only: ``True`` to process only *init-only* known issues.
+        :param known_issues:
+            Specific known issue list to process.
+            Defaults to :attr:`.stepuserapi.StepUserApi.known_issues` when not set.
         """
-        from .testerrors import KnownIssue
-
         if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-            for _known_issue in step_user_api.known_issues:  # type: KnownIssue
-                if init_only and not _known_issue.init_only:
-                    continue
+            if known_issues is None:
+                known_issues = step_user_api.known_issues
 
+            for _known_issue in known_issues:  # type: KnownIssue
                 self.debug("Notifying known issue from %r", step_user_api)
-                _known_issue.logerror(logger=self, level=logging.DEBUG)
                 self.onerror(_known_issue)
 
     def onactionresult(
@@ -748,9 +746,13 @@ class ScenarioRunner(Logger):
         from .scenariologging import SCENARIO_LOGGING
         from .scenariostack import SCENARIO_STACK
         from .stepexecution import StepExecution
-        from .testerrors import KnownIssue
 
         self.debug("onerror(error=%r, originator=%r)", error, originator)
+
+        # Return right away if the error is ignored.
+        if error.isignored():
+            self.debug(f"Error %r ignored", error)
+            return
 
         if self._execution_mode == ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
             # Build objects.
@@ -764,6 +766,22 @@ class ScenarioRunner(Logger):
                 # Just raise the error.
                 raise error
         else:
+            # Discard duplicate `KnownIssue` instances created on consecutive `StepDefinition.step()` calls.
+            # Stick with the first instance registered at definition level.
+            if isinstance(error, KnownIssue) and isinstance(originator, StepDefinition):
+                for _known_issue in originator.known_issues:  # type: KnownIssue
+                    if _known_issue == error:
+                        self.debug(f"%r: discarding %r in favor of %r", originator, error, _known_issue)
+                        error = _known_issue
+                        break
+
+            # Do not process errors twice.
+            # Note: This filtering particularly applies to known issues possibly reprocessed from `_notifyknownissuedefinitions()`.
+            if SCENARIO_STACK.current_scenario_execution:
+                if (error in SCENARIO_STACK.current_scenario_execution.errors) or (error in SCENARIO_STACK.current_scenario_execution.warnings):
+                    self.debug(f"Error %r already processed", error)
+                    return
+
             # Display the error.
             if not self._shouldstop():
                 SCENARIO_LOGGING.error(error)
@@ -777,29 +795,24 @@ class ScenarioRunner(Logger):
                     return False
                 # Determine the candidate list to store the error into.
                 _list = obj.warnings if error.iswarning() else obj.errors  # type: typing.List[TestError]
-                # Do not store the warnings twice.
-                if error.iswarning():
-                    for _error in _list:
-                        if (_error.location == error.location) and (str(_error) == str(error)):
-                            return False
+                # Do not store known issues twice (in the owner execution contexts among others).
+                if isinstance(error, KnownIssue) and (error in _list):
+                    return False
                 # Store the error in the candidate list.
                 _list.append(error)
+                self.debug(f"%r saved with %r => %d items", error, obj, len(_list))
                 return True
             _store_error(SCENARIO_STACK.current_scenario_execution)
             _store_error(SCENARIO_STACK.current_step_execution)
-            _store_current_action_result = True  # type: bool
-            if isinstance(error, KnownIssue) and SCENARIO_STACK.current_step_definition and SCENARIO_STACK.current_action_result_execution:
-                for _known_issue in SCENARIO_STACK.current_step_definition.known_issues:  # type: KnownIssue
-                    if error == _known_issue:
-                        # When the known issue had already been declared at the definition level,
-                        # do not push it to the action/expected result instance.
-                        _store_current_action_result = False
-                        break
-            if _store_current_action_result:
+            # When the known issue has been registered at the definition level,
+            # do not push it to a current action/expected result execution.
+            if SCENARIO_STACK.current_step_definition and (error in SCENARIO_STACK.current_step_definition.known_issues):
+                self.debug(f"%r registered at definition level => not saved with %r", error, SCENARIO_STACK.current_action_result_execution)
+            else:
                 _store_error(SCENARIO_STACK.current_action_result_execution)
 
-            # Notify the error.
-            if not error.iswarning():
+            # Call error handlers (if `error` is actually an error).
+            if error.iserror():
                 HANDLERS.callhandlers(ScenarioEvent.ERROR, ScenarioEventData.Error(error=error))
 
     def _shouldstop(self):  # type: (...) -> bool
@@ -813,6 +826,16 @@ class ScenarioRunner(Logger):
 
         if SCENARIO_STACK.current_scenario_execution and SCENARIO_STACK.current_scenario_execution.errors:
             # Errors occurred.
+            # Check whether these errors are real errors, or just known issues considered as errors.
+            _real_errors = 0  # type: int
+            for _error in SCENARIO_STACK.current_scenario_execution.errors:  # type: TestError
+                if not isinstance(_error, KnownIssue):
+                    _real_errors += 1
+            if not _real_errors:
+                # No real error, keep going.
+                return False
+
+            # Real errors occurred.
             # Let's stop by default, unless a configuration says not to.
 
             # First check whether a local configuration is set for the scenario.

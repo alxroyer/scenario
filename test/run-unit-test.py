@@ -48,6 +48,15 @@ class UnitTestArgs(scenario.ScenarioArgs):
 
 
 if __name__ == "__main__":
+    # Configure issue level names and URL builder.
+    scenario.IssueLevel.definenames(scenario.test.IssueLevel)
+    scenario.KnownIssue.seturlbuilder(lambda issue_id: (
+        f"https://gitea.haeritage.org:3000/devel/scenario/issues/{issue_id.lstrip('#')}"
+        if isinstance(issue_id, str) and issue_id.startswith("#")
+        else None
+    ))
+
+    # Parse arguments.
     scenario.Args.setinstance(UnitTestArgs())
     if not UnitTestArgs.getinstance().parse(sys.argv[1:]):
         sys.exit(int(UnitTestArgs.getinstance().error_code))

@@ -36,7 +36,10 @@ class ConfigDb120(scenario.test.TestCase):
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.
         self.continue_on_error = True
 
-        self.knownissue("#44", "Implicit INI sections don't inherit from default values")
+        self.knownissue(
+            level=scenario.test.IssueLevel.SUT, id="#44",
+            message="Implicit INI sections don't inherit from default values",
+        )
 
         self.section("Load INI file")
         self.tmp_root_key = scenario.Path(__file__).stem  # type: str

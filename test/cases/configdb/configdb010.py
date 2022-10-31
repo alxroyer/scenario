@@ -32,7 +32,7 @@ class ConfigDb010(scenario.test.TestCase):
             features=[scenario.test.features.CONFIG_DB],
         )
 
-        self.addstep(ExecScenario(scenario.test.paths.CONFIG_DB_SCENARIO, config_values={"test_value": "100"}))
+        self.addstep(ExecScenario(scenario.test.paths.CONFIG_DB_SCENARIO, config_values={"test_value": 100}))
         self.addstep(CheckConfigValueScenarioLog(
             ExecScenario.getinstance(),
             key="test_value",

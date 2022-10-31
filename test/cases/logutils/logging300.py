@@ -51,14 +51,14 @@ class Logging300(scenario.test.TestCase):
         self.section("Log colors explicitely enabled")
         self.addstep(ExecScenario(
             scenario.test.paths.LOGGER_SCENARIO, debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
-            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: "1"},
+            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: True},
         ))
         self.addstep(CheckLogColors(ExecScenario.getinstance(1)))
 
         self.section("Log colors disabled")
         self.addstep(ExecScenario(
             scenario.test.paths.LOGGER_SCENARIO, debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
-            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: "0"},
+            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: False},
         ))
         self.addstep(CheckLogColors(ExecScenario.getinstance(2)))
 

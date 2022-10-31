@@ -14,14 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import typing
+
+import scenario
 import scenario.test
 
 # Steps:
 from steps.common import ExecScenario
 from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
+from steps.common import CheckJsonReportExpectations
 from steps.common import LogVerificationStep
 # Related scenarios:
-from knownissuesscenario import KnownIssuesScenario
+from knownissuedetailsscenario import KnownIssueDetailsScenario
 
 
 class KnownIssues110(scenario.test.TestCase):
@@ -29,72 +33,190 @@ class KnownIssues110(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="Known issues - relax mode, with exception",
-            objective=(
-                "Check that known issues declared at the definition level persist when an error occurs. "
-                "Check the way the things are displayed in the console."
-            ),
-            features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.ERROR_HANDLING, scenario.test.features.SCENARIO_LOGGING],
+            title="Known issue levels & ignored and error issue levels",
+            objective="Check that known issues can be declared with an issue level making them behave as errors or be ignored "
+                      "depending on the --issue-level-error and --issue-level-ignored options. "
+                      "Check the way things are logged in the console and saved in scenario reports.",
+            features=[
+                scenario.test.features.KNOWN_ISSUES, scenario.test.features.ERROR_HANDLING,
+                scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT,
+            ],
         )
 
-        self.addstep(ExecScenario(
-            scenario.test.paths.KNOWN_ISSUES_SCENARIO,
-            # Make the KNOWN_ISSUES_SCENARIO generate an exception.
-            config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "1"},
-            expected_return_code=scenario.ErrorCode.TEST_ERROR,
+        # Default mode
+        # ------------
+
+        # When no error nor ignored issue level thresholds are set, known issues are considered as warnings...
+        # ...whether their issue level is not set,
+        self._addsteps(
+            ignored_issue_level=None, error_issue_level=None,
+            known_issue_level=None,
+            expected_test_status=scenario.ExecutionStatus.WARNINGS,
+        )
+        # ...or whether it is set.
+        self._addsteps(
+            ignored_issue_level=None, error_issue_level=None,
+            known_issue_level=scenario.test.IssueLevel.TEST,
+            expected_test_status=scenario.ExecutionStatus.WARNINGS,
+        )
+
+        # Error issue level
+        # -----------------
+
+        # When the error issue level threshold is set, known issues with issue level below this threshold are considered as warnings.
+        self._addsteps(
+            ignored_issue_level=None, error_issue_level=scenario.test.IssueLevel.TEST,
+            known_issue_level=scenario.test.IssueLevel.CONTEXT,
+            expected_test_status=scenario.ExecutionStatus.WARNINGS,
+        )
+        # When the known issue level is above this threshold, the known issue is considered as an error.
+        self._addsteps(
+            ignored_issue_level=None, error_issue_level=scenario.test.IssueLevel.TEST,
+            known_issue_level=scenario.test.IssueLevel.SUT,
+            expected_test_status=scenario.ExecutionStatus.FAIL,
+        )
+        # When the known issue level equals this threshold, the known issue is considered as an error.
+        self._addsteps(
+            ignored_issue_level=None, error_issue_level=scenario.test.IssueLevel.TEST,
+            known_issue_level=scenario.test.IssueLevel.TEST,
+            expected_test_status=scenario.ExecutionStatus.FAIL,
+        )
+        # When the known issue level is not set, the known issue is considered as an error by default.
+        self._addsteps(
+            ignored_issue_level=None, error_issue_level=scenario.test.IssueLevel.TEST,
+            known_issue_level=None,
+            expected_test_status=scenario.ExecutionStatus.FAIL,
+        )
+
+        # Ignored issue level
+        # -------------------
+
+        # When the ignored issue level threshold is set, known issues with issue level below this threshold are ignored.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.TEST, error_issue_level=None,
+            known_issue_level=scenario.test.IssueLevel.CONTEXT,
+            expected_test_status=scenario.ExecutionStatus.SUCCESS,
+        )
+        # When the known issue level is above this threshold, the known issue is considered as a warning by default.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.TEST, error_issue_level=None,
+            known_issue_level=scenario.test.IssueLevel.SUT,
+            expected_test_status=scenario.ExecutionStatus.WARNINGS,
+        )
+        # When the known issue level equals this threshold, the known issue is ignored.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.TEST, error_issue_level=None,
+            known_issue_level=scenario.test.IssueLevel.TEST,
+            expected_test_status=scenario.ExecutionStatus.SUCCESS,
+        )
+        # When the known issue level is not set, it is considered as a warning by default.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.TEST, error_issue_level=None,
+            known_issue_level=None,
+            expected_test_status=scenario.ExecutionStatus.WARNINGS,
+        )
+
+        # Both thresholds
+        # ---------------
+
+        # The ignored threshold should normally be set below the error threshold.
+        # If so, known issues with issue level above the error threshold are considered as errors.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.CONTEXT, error_issue_level=scenario.test.IssueLevel.TEST,
+            known_issue_level=scenario.test.IssueLevel.SUT,
+            expected_test_status=scenario.ExecutionStatus.FAIL,
+        )
+        # Known issues with issue level between the ignored and error thresholds are considered as warnings.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.CONTEXT, error_issue_level=scenario.test.IssueLevel.SUT,
+            known_issue_level=scenario.test.IssueLevel.TEST,
+            expected_test_status=scenario.ExecutionStatus.WARNINGS,
+        )
+        # Known issues with issue level below the ignored threshold are ignored.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.TEST, error_issue_level=scenario.test.IssueLevel.SUT,
+            known_issue_level=scenario.test.IssueLevel.CONTEXT,
+            expected_test_status=scenario.ExecutionStatus.SUCCESS,
+        )
+        # When the ignored threshold is not below the error threshold, the error threshold is prioritized.
+        self._addsteps(
+            ignored_issue_level=scenario.test.IssueLevel.TEST, error_issue_level=scenario.test.IssueLevel.TEST,
+            known_issue_level=scenario.test.IssueLevel.TEST,
+            expected_test_status=scenario.ExecutionStatus.FAIL,
+        )
+
+    def _addsteps(
+            self,
+            ignored_issue_level,  # type: typing.Optional[scenario.AnyIssueLevelType]
+            error_issue_level,  # type: typing.Optional[scenario.AnyIssueLevelType]
+            known_issue_level,  # type: typing.Optional[scenario.AnyIssueLevelType]
+            expected_test_status,  # type: scenario.ExecutionStatus
+    ):  # type: (...) -> None
+        self.section(
+            f"Ignored / error issue level: [{scenario.IssueLevel.getdesc(ignored_issue_level)} - {scenario.IssueLevel.getdesc(error_issue_level)}], "
+            f"known issue level: {scenario.IssueLevel.getdesc(known_issue_level)}, "
+            f"expected test status: {expected_test_status}"
+        )
+
+        # Execution step.
+        _1 = self.addstep(ExecScenario(
+            scenario.test.paths.KNOWN_ISSUE_DETAILS_SCENARIO,
+            config_values={
+                scenario.ConfigKey.ISSUE_LEVEL_IGNORED: ignored_issue_level,
+                scenario.ConfigKey.ISSUE_LEVEL_ERROR: error_issue_level,
+                KnownIssueDetailsScenario.ConfigKey.LEVEL: known_issue_level,
+            },
+            generate_report=True,
+            expected_return_code=(
+                scenario.ErrorCode.TEST_ERROR if expected_test_status == scenario.ExecutionStatus.FAIL
+                else scenario.ErrorCode.SUCCESS
+            ),
         ))
-        self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
-        self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), scenario.test.data.scenarioexpectations(
-            scenario.test.paths.KNOWN_ISSUES_SCENARIO, configs={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "1"},
-            # Checks the first step is being executed, but not the ones after.
-            steps=True, stats=True,
-            # Error details makes the step check both the exception raised, and the warnings, i.e. known issues.
+
+        # Expectations: check consistency with `expected_test_status`.
+        _scenario_expectations = scenario.test.data.scenarioexpectations(
+            scenario.test.paths.KNOWN_ISSUE_DETAILS_SCENARIO, config_values=_1.config_values,
             error_details=True,
-        )))
-        self.addstep(CheckKnownIssuesLogOutput(ExecScenario.getinstance()))
+        )  # type: scenario.test.ScenarioExpectations
+        self.assertequal(_scenario_expectations.status, expected_test_status)
+        if expected_test_status == scenario.ExecutionStatus.WARNINGS:
+            self.assertisnotempty(_scenario_expectations.warnings)
+        else:
+            self.assertisempty(_scenario_expectations.warnings)
+        if expected_test_status == scenario.ExecutionStatus.FAIL:
+            self.assertisnotempty(_scenario_expectations.errors)
+        else:
+            self.assertisempty(_scenario_expectations.errors)
+
+        # Verification steps.
+        _2 = self.addstep(ParseScenarioLog(_1))
+        self.addstep(CheckScenarioLogExpectations(_2, _scenario_expectations))
+        self.addstep(CheckLogDetails(
+            exec_step=_2,
+            count=(
+                0 if expected_test_status == scenario.ExecutionStatus.SUCCESS
+                else 2
+            ),
+        ))
+        self.addstep(CheckJsonReportExpectations(_1, _scenario_expectations))
 
 
-class CheckKnownIssuesLogOutput(LogVerificationStep):
+class CheckLogDetails(LogVerificationStep):
+    def __init__(
+            self,
+            exec_step,  # type: scenario.test.AnyExecutionStepType
+            count,  # type: int
+    ):  # type: (...) -> None
+        LogVerificationStep.__init__(self, exec_step)
+
+        self.count = count  # type: int
 
     def step(self):  # type: (...) -> None
-        self.STEP("Known issues logging output")
+        self.STEP("Check log")
 
-        self.RESULT("Before the exception, all known issues are displayed twice:")
-        for _issue_id, _message in (
-            ("#---", "Known issue in KnownIssuesScenario.__init__()"),
-            ("#000", "Known issue in KnownIssuesStep.__init__()"),
-            ("#001", "Known issue in KnownIssuesStep.step() before ACTION/RESULT"),
-            ("#002", "Known issue in KnownIssuesStep.step() under ACTION"),
-        ):  # type: str, str
-            _expected_line = f"Issue {_issue_id}! {_message}"  # type: str
-            if self.RESULT(f"- {_expected_line}:"):
-                self.assertlen(
-                    self.assertlines(_expected_line), 2,
-                    evidence="Known issue before exception",
-                )
-
-        self.RESULT("After the exception, known issues declared at the definition level are displayed once only:")
-        for _issue_id, _message in (
-            ("#004", "Known issue in KnownIssuesStep.step() after ACTION/RESULT"),
-            ("#011", "Known issue in KnownIssuesScenario.step010() before ACTION/RESULT"),
-            ("#014", "Known issue in KnownIssuesScenario.step010() after ACTION/RESULT"),
-        ):  # Type already declared above.
-            _expected_line = f"Issue {_issue_id}! {_message}"  # Type already declared above.
-            if self.RESULT(f"- {_expected_line}:"):
-                self.assertlen(
-                    self.assertlines(_expected_line), 1,
-                    evidence="Known issue at definition level after exception",
-                )
-
-        self.RESULT("After the exception, known issues declared under action or expected result execution are not displayed:")
-        for _issue_id, _message in (
-            ("#003", "Known issue in KnownIssuesStep.step() under ACTION"),
-            ("#012", "Known issue in KnownIssuesScenario.step010() under ACTION"),
-            ("#013", "Known issue in KnownIssuesScenario.step010() under ACTION"),
-        ):  # Type already declared above.
-            _expected_line = f"Issue {_issue_id}! {_message}"  # Type already declared above.
-            if self.RESULT(f"- {_expected_line}:"):
-                self.assertnoline(
-                    _expected_line,
-                    evidence="Known issue under ACTION/RESULT after exception",
-                )
+        _searched = "Known issue with level"  # type: str
+        if self.RESULT(f"The log output gives {self.count} {_searched!r} lines."):
+            self.assertlinecount(
+                _searched, self.count,
+                evidence=True,
+            )

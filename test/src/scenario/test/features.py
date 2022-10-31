@@ -61,7 +61,11 @@ ERROR_HANDLING = Feature(
     text="""
         When an exception is thrown, the step ends in error immediately.
         The consecutive steps are not executed by default.
-        The error information is eventually stored and displayed to help investigate on it.
+        The error information is eventually stored and displayed to help investigating on it.
+        The test status falls to FAIL (see SCENARIO_EXECUTION).
+
+        Error known issues (see KNOWN_ISSUES) also make the test status fall to FAIL,
+        but they don't break the test execution.
     """,
 )  # type: Feature
 
@@ -78,13 +82,22 @@ KNOWN_ISSUES = Feature(
     id="KNOWN_ISSUES",
     title="Known issues",
     text="""
-        Known issues may be registered.
-        By default, known issues just generate execution warnings, unless:
+        Known issues may be registered at the scenario definition level,
+        or during test execution.
 
-        - the test is executed in strict mode,
-        - or the --doc-only mode is set.
+        By default, known issues generate execution warnings.
+        These warnings are stored in reports,
+        and make the test status fall to WARNINGS (see SCENARIO_EXECUTION)
+        unless the test is executed in --doc-only mode.
 
-        In that case, known issues are reported as errors.
+        Known issues may be registered with an optional issue level,
+        an ``int`` value possibly linked with a meaningful name.
+        When an error issue level threshold is set, issue levels from and above are considered as errors (see ERROR_HANDLING).
+        When an ignored issue level threshold is set, issue levels from and under are ignored.
+
+        Known issues may also be registered with an optional issue id,
+        referencing a ticket in a tier bugtracking system.
+        A URL builder handler may be configured in order to facilitate the navigation to from test reports.
     """,
 )  # type: Feature
 
@@ -123,7 +136,9 @@ SCENARIO_LOGGING = Feature(
         - The name of the scenario being executed,
         - The scenario attributes declared with it (see ATTRIBUTES),
         - The steps, actions and expected results being executed,
+        - The errors that occurred (see ERROR_HANDLING),
         - The evidence collected (see EVIDENCE),
+        - The known issues registered (see KNOWN_ISSUES),
         - The final status of the test execution.
     """,
 )
@@ -133,6 +148,9 @@ SCENARIO_REPORT = Feature(
     title="Scenario reports",
     text="""
         A scenario execution shall output a JSON report file.
+
+        This report saves a structured information for a test execution.
+        See SCENARIO_LOGGING for the list of items that scenario report contains.
     """,
 )  # type: Feature
 
@@ -213,7 +231,7 @@ MULTIPLE_SCENARIO_EXECUTION = Feature(
     text="""
         Several scenarios may be executed with a single command line.
         Whether the tests succeed or fail, the command line executes every scenario given.
-        The log output, in the end, gives a summary of the scenario execution status, and highlights the errors.
+        The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings.
     """,
 )  # type: Feature
 
@@ -223,8 +241,11 @@ CAMPAIGNS = Feature(
     text="""
         A campaign is the execution of a set of test suites, each being a set of test cases, i.e. scenarios.
         Whether the tests succeed or fail, the campaign keeps going on.
-        Test results are stored in the output directory.
-        The log output, in the end, gives a summary of the scenario execution status, and highlights the errors.
+
+        Test results (see SCENARIO_REPORT) are stored in the output directory.
+        A JUnit XML campaign report is also saved in the output directory.
+
+        The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).
     """,
 )  # type: Feature
 

@@ -35,7 +35,7 @@ class SubScenario003(scenario.test.TestCase):
         )
 
         _scenario_expectations = scenario.test.data.scenarioexpectations(
-            scenario.test.paths.SUPERSCENARIO_SCENARIO, configs={SuperScenario.ConfigKey.SUBSCENARIO_PATH: scenario.test.paths.FAILING_SCENARIO.abspath},
+            scenario.test.paths.SUPERSCENARIO_SCENARIO, config_values={SuperScenario.ConfigKey.SUBSCENARIO_PATH: scenario.test.paths.FAILING_SCENARIO},
             error_details=True, steps=True, actions_results=True,
         )  # type: scenario.test.ScenarioExpectations
 

@@ -24,6 +24,10 @@ import typing
 from .actionresultdefinition import ActionResultDefinition
 # `ActionResultExecution` used in method signatures.
 from .actionresultexecution import ActionResultExecution
+if typing.TYPE_CHECKING:
+    # `AnyIssueLevelType` used in method signatures.
+    # Type declared for type checking only.
+    from .issuelevels import AnyIssueLevelType
 # `Logger` used for inheritance.
 from .logger import Logger
 # `ScenarioDefinition` used in method signatures.
@@ -409,16 +413,36 @@ class ScenarioStack(Logger):
             return self.current_action_result_definition.executions[-1]
         return None
 
+    @typing.overload
     def knownissue(
             self,
-            issue_id,  # type: str
+            __id,  # type: str
+            __message,  # type: str
+    ):  # type: (...) -> None
+        """
+        Deprecated.
+
+        See :meth:`.stepuserapi.StepUserApi.knownissue()`.
+        """
+
+    @typing.overload
+    def knownissue(
+            self,
             message,  # type: str
+            level=None,  # type: AnyIssueLevelType
+            id=None,  # type: str  # noqa  ## Shadows built-in name 'id'
+    ):  # type: (...) -> None
+        """
+        See :meth:`.stepuserapi.StepUserApi.knownissue()`.
+        """
+
+    def knownissue(
+            self,
+            *args,  # type: str
+            **kwargs,  # type: typing.Any
     ):  # type: (...) -> None
         """
         Registers a known issue in the current context.
-
-        :param issue_id: Issue identifier.
-        :param message: Error message to display / store with.
         """
         _step_user_api = (
                 self.current_step_definition
@@ -427,7 +451,7 @@ class ScenarioStack(Logger):
                 or self.building.scenario_definition
         )  # type: typing.Optional[typing.Union[ScenarioDefinition, StepDefinition]]
         assert _step_user_api
-        _step_user_api.knownissue(issue_id, message)
+        _step_user_api.knownissue(*args, **kwargs)
 
     def raisecontexterror(
             self,

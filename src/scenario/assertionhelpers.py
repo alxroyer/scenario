@@ -117,8 +117,8 @@ def errmsg(
     """
     from .debugutils import FmtAndArgs
 
-    # Ensure `optional` is of type `str`.
-    if not isinstance(optional, str):
+    # Ensure `optional` is of type `str` (if not `None`).
+    if (optional is not None) and (not isinstance(optional, str)):
         optional = str(optional)
     # Ensure `standard` is of type `str`.
     if not isinstance(standard, str):

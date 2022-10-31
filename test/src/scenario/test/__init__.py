@@ -16,12 +16,18 @@
 
 import typing
 
+
+from . import configvalues
 from . import data
 from . import features
 from . import paths
 from .attributes import ScenarioAttribute
+from .expectations import NOT_SET
+if typing.TYPE_CHECKING:
+    from .expectations import NotSetType
 from .expectations import ActionResultExpectations, ErrorExpectations, ScenarioExpectations, StatExpectations, StepExpectations
 from .expectations import CampaignExpectations, TestSuiteExpectations
+from .knownissues import IssueLevel
 from .steps import Step
 from .steps import ExecutionStep, VerificationStep
 if typing.TYPE_CHECKING:

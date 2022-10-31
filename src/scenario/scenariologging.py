@@ -64,7 +64,7 @@ class ScenarioLogging:
         """
         Initializes the last call history.
         """
-        from .testerrors import KnownIssue
+        from .knownissues import KnownIssue
 
         #: History of this class's method calls.
         #:
@@ -207,8 +207,9 @@ class ScenarioLogging:
 
         :param error: Error to display.
         """
+        from .knownissues import KnownIssue
         from .loggermain import MAIN_LOGGER
-        from .testerrors import ExceptionError, KnownIssue
+        from .testerrors import ExceptionError
 
         # Display known issues once only.
         if isinstance(error, KnownIssue):
@@ -220,7 +221,7 @@ class ScenarioLogging:
             self._known_issues.append(error)
 
         # Display the error.
-        _log_level = logging.WARNING if error.iswarning() else logging.ERROR  # type: int
+        _log_level = logging.ERROR if error.iserror() else logging.WARNING  # type: int
         if isinstance(error, ExceptionError):
             MAIN_LOGGER.log(_log_level, "")
             MAIN_LOGGER.log(_log_level, "!!! EXCEPTION !!!")

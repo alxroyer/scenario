@@ -39,7 +39,7 @@ class Logging510(scenario.test.TestCase):
             config_values={
                 scenario.ConfigKey.LOG_CONSOLE: None,
                 # Disable log colors, so that `CheckSameOutputs` can compare the console output and the log outfile.
-                scenario.ConfigKey.LOG_COLOR_ENABLED: "0",
+                scenario.ConfigKey.LOG_COLOR_ENABLED: False,
             },
         ))
         self.addstep(CheckFileLogging(ExecScenario.getinstance(0)))
@@ -50,9 +50,9 @@ class Logging510(scenario.test.TestCase):
             scenario.test.paths.LOGGER_SCENARIO,
             log_outfile=True,
             config_values={
-                scenario.ConfigKey.LOG_CONSOLE: "0",
+                scenario.ConfigKey.LOG_CONSOLE: False,
                 # Enable log colors, so that `CheckFileLogging` can check no colors are set in the log outfile.
-                scenario.ConfigKey.LOG_COLOR_ENABLED: "1",
+                scenario.ConfigKey.LOG_COLOR_ENABLED: True,
             },
         ))
         self.addstep(CheckNoConsoleLogging(ExecScenario.getinstance(1)))

@@ -37,11 +37,11 @@ class Logging100(scenario.test.TestCase):
         self.addstep(CheckLoggingDateTime(ExecScenario.getinstance(0)))
 
         self.section("Logging date/time explicitely enabled")
-        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_DATETIME: "1"}))
+        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_DATETIME: True}))
         self.addstep(CheckLoggingDateTime(ExecScenario.getinstance(1)))
 
         self.section("Logging date/time disabled")
-        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_DATETIME: "0"}))
+        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_DATETIME: False}))
         self.addstep(CheckNoLoggingDateTime(ExecScenario.getinstance(2)))
 
 

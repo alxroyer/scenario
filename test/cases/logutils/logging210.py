@@ -39,7 +39,7 @@ class Logging210(scenario.test.TestCase):
             # 'sample-log' debugging by default.
             debug_classes=[],
             # Explicitely disable log date/time for verification purposes in `CheckClassLoggerLogLevels`.
-            config_values={scenario.ConfigKey.LOG_DATETIME: "0"},
+            config_values={scenario.ConfigKey.LOG_DATETIME: False},
         ))
         self.addstep(CheckClassLoggerLogLevels(ExecScenario.getinstance(0)))
 
@@ -49,6 +49,6 @@ class Logging210(scenario.test.TestCase):
             # 'sample-log' explicitely not activated.
             debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
             # Explicitely disable log date/time for verification purposes in `CheckClassLoggerLogLevels`.
-            config_values={scenario.ConfigKey.LOG_DATETIME: "0"},
+            config_values={scenario.ConfigKey.LOG_DATETIME: False},
         ))
         self.addstep(CheckClassLoggerLogLevels(ExecScenario.getinstance(1)))

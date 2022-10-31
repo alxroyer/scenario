@@ -35,7 +35,7 @@ class Logging410(scenario.test.TestCase):
 
         self.addstep(ExecScenario(
             scenario.test.paths.SUPERSCENARIO_SCENARIO, subscenario=scenario.test.paths.SCENARIO_LOGGING_SCENARIO,
-            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: "0"},
+            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: False},
         ))
         self.addstep(CheckMainScenario(ExecScenario.getinstance()))
         self.addstep(CheckSubScenario(CheckMainScenario.getinstance()))

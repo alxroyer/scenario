@@ -42,7 +42,10 @@ class Timezone001(scenario.test.TestCase):
         if not EnsureInternetConnection.isup(self):
             # Avoid going through 'pytz' uninstallation when Internet is not available,
             # otherwise we may not be able to reinstall it afterwards.
-            self.knownissue("(tmp)", "No internet connection: behaviour when 'pytz' missing not checked")
+            self.knownissue(
+                level=scenario.test.IssueLevel.CONTEXT,
+                message="No internet connection: behaviour when 'pytz' missing not checked",
+            )
         else:
             self.addstep(EnsurePipPackage("pytz", "pytz", False))
             self.addstep(CheckTimezoneNames(pytz_installed=False))

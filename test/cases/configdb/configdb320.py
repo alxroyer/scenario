@@ -37,7 +37,10 @@ class ConfigDb320(scenario.test.TestCase):
         if not EnsureInternetConnection.isup(self):
             # Avoid going through 'pyyaml' uninstallation when Internet is not available,
             # otherwise we may not be able to reinstall it afterwards.
-            self.knownissue("(tmp)", "No internet connection: behaviour when 'pyyaml' missing not checked")
+            self.knownissue(
+                level=scenario.test.IssueLevel.CONTEXT,
+                message="No internet connection: behaviour when 'pyyaml' missing not checked",
+            )
         else:
             self.addstep(EnsurePipPackage("pyyaml", "yaml", False))
             self.addstep(ExecScenario(
