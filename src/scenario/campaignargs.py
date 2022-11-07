@@ -112,7 +112,7 @@ class CampaignArgs(Args, CommonExecArgs):
         """
         from .loggermain import MAIN_LOGGER
 
-        if not super()._checkargs(args):
+        if not Args._checkargs(self, args):
             return False
         if not CommonExecArgs._checkargs(self, args):
             return False

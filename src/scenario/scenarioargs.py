@@ -181,7 +181,7 @@ class ScenarioArgs(Args, CommonExecArgs):
         from .loggermain import MAIN_LOGGER
         from .path import Path
 
-        if not super()._checkargs(args):
+        if not Args._checkargs(self, args):
             return False
         if not CommonExecArgs._checkargs(self, args):
             return False
