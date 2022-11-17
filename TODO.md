@@ -19,6 +19,10 @@
     - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
     - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
       and properties for typing and conversions.
+- Issue #69: Add stability tracking options
+    - `--repeat` or `--loop` option: loops over a test execution, in order to evaluate a failure/succes ratio.
+    - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
+    - `--stop-success` option: makes a campaign / test loop stop as soon as a test succeeds.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
         - Use in knownissues110.
