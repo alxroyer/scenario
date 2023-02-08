@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -149,7 +149,7 @@ class ScenarioReport(Logger):
 
         # JSON schema.
         if is_main:
-            _json_scenario["$schema"] = "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json"
+            _json_scenario["$schema"] = "https://github.com/alxroyer/scenario/blob/master/schema/scenario-report-v1.schema.json"
 
         # Scenario name.
         _json_scenario["name"] = scenario_definition.name

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://gitea.haeritage.org:3000/devel/scenario/src/branch/master/schema/scenario-report-v1.schema.json",
+  "$schema": "https://github.com/alxroyer/scenario/blob/master/schema/scenario-report-v1.schema.json",
   "name": "demo/commutativeadditions.py",
   "href": "demo/commutativeadditions.py",
   "attributes": {},

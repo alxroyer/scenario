@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     # Configure issue level names and URL builder.
     scenario.IssueLevel.definenames(scenario.test.IssueLevel)
     scenario.KnownIssue.seturlbuilder(lambda issue_id: (
-        f"https://gitea.haeritage.org:3000/devel/scenario/issues/{issue_id.lstrip('#')}"
+        f"https://github.com/alxroyer/scenario/issues/{issue_id.lstrip('#')}"
         if isinstance(issue_id, str) and issue_id.startswith("#")
         else None
     ))
