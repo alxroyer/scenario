@@ -17,6 +17,10 @@
 
 ## Roadmap to v0.3.0
 
+- Improve README.md:
+    - Improve 'Purpose' section.
+    - Remove license header at the top of the file, set it in the 'License' section.
+    - Bad reference to "BSD license" at the bottom.
 - Issue #66: Avoid redefining `argparse` API.
     - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
     - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
