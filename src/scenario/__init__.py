@@ -47,6 +47,22 @@ import typing
 
 
 __doc__ += """
+Package information
+===================
+"""
+
+__doc__ += """
+.. py:attribute:: info
+
+    Alias of :attr:`.pkginfo.PKG_INFO`.
+
+    Gives the package information: version, ...
+"""
+# noinspection PyPep8Naming
+from .pkginfo import PKG_INFO as info  # noqa: E402  ## Module level import not at top of file
+
+
+__doc__ += """
 Base classes
 ============
 

@@ -3,10 +3,10 @@ INFO                                        assertions.py, campaignargs.py, camp
 INFO                                        campaignrunner.py, configdb.py, confignode.py, console.py, datetimeutils.py,
 INFO                                        debugutils.py, enumutils.py, errcodes.py, executionstatus.py, handlers.py,
 INFO                                        issuelevels.py, knownissues.py, locations.py, logextradata.py, logger.py,
-INFO                                        loggermain.py, path.py, scenarioargs.py, scenarioconfig.py, scenariodefinition.py,
-INFO                                        scenarioevents.py, scenarioexecution.py, scenarioreport.py, scenariorunner.py,
-INFO                                        scenariostack.py, stats.py, stepdefinition.py, stepexecution.py, subprocess.py,
-INFO                                        testerrors.py, timezoneutils.py]
+INFO                                        loggermain.py, path.py, pkginfo.py, scenarioargs.py, scenarioconfig.py,
+INFO                                        scenariodefinition.py, scenarioevents.py, scenarioexecution.py, scenarioreport.py,
+INFO                                        scenariorunner.py, scenariostack.py, stats.py, stepdefinition.py, stepexecution.py,
+INFO                                        subprocess.py, testerrors.py, timezoneutils.py]
 INFO     <12>        campaignlogging.py => [campaignexecution.py, enumutils.py]
 INFO     <12>         campaignreport.py => [campaignexecution.py, logger.py, path.py, xmlutils.py]
 INFO     <12>         campaignrunner.py => [campaignexecution.py, errcodes.py, logger.py]
@@ -69,6 +69,7 @@ INFO     <01>            loggingargs.py => []
 INFO     <01>         loggingservice.py => []
 INFO     <01>             loghandler.py => []
 INFO     <01>                   path.py => []
+INFO     <01>                pkginfo.py => []
 INFO     <01>                  stats.py => []
 INFO     <01>            stepuserapi.py => []
 INFO     <01>               textfile.py => []

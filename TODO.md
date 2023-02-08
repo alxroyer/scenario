@@ -27,8 +27,6 @@
     - Then default `scenario` options could be presented in a first dedicated section.
     - Then user defined launchers may set their own options in a dedicated section as well.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
-- Issue #9: Add a `VERSION` constant.
-    - Update 'devel.guidelines.rst'.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
         - Use in knownissues110.
