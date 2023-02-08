@@ -36,8 +36,19 @@ class EnsureInternetConnection(scenario.test.Step):
     def _launchsubprocess(
             logger,  # type: scenario.Logger
     ):  # type: (...) -> scenario.SubProcess
-        _subprocess = scenario.SubProcess("ping", "-n", "1", "github.com")  # type: scenario.SubProcess
-        return _subprocess.setlogger(logger).run()
+        # Find out the *ping count* option name depending on the platform.
+        _count_opt = "-c"  # type: str
+        # '-h' may be a wrong option (under Windows among others).
+        # Whatever, that will make the command display its help on stderr.
+        _ping_help = scenario.SubProcess("ping", "-h").run()  # type: scenario.SubProcess
+        if b'-c count' in _ping_help.stdout + _ping_help.stderr:
+            _count_opt = "-c"
+        elif b'-n count' in _ping_help.stdout + _ping_help.stderr:
+            _count_opt = "-n"
+
+        # Ping github.com.
+        _ping_github = scenario.SubProcess("ping", _count_opt, "1", "github.com")  # type: scenario.SubProcess
+        return _ping_github.setlogger(logger).run()
 
     @staticmethod
     def isup(
