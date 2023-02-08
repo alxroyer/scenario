@@ -111,7 +111,7 @@ Deliver a new version
 
 1. Check the scenario version stored in the code:
 
-   TODO: Give the location here when implemented (not implemented as of 0.2.0)
+   TODO: Give the location here when implemented (issue #9)
 
    If files have been modified, commit them (probably with the ``--amend`` option).
 
