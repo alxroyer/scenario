@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -397,7 +397,8 @@ class CampaignReport(Logger):
         :param test_case_execution: Test case execution to generate the JUnit XML for.
         :return: Test case JUnit XML.
         """
-        from .testerrors import ExceptionError, KnownIssue, TestError
+        from .knownissues import KnownIssue
+        from .testerrors import ExceptionError, TestError
 
         _xml_test_case = xml_doc.createnode("testcase")  # type: Xml.Node
 
@@ -505,8 +506,9 @@ class CampaignReport(Logger):
         :return: Test case execution data.
         """
         from .executionstatus import ExecutionStatus
+        from .knownissues import KnownIssue
         from .locations import CodeLocation
-        from .testerrors import ExceptionError, KnownIssue, TestError
+        from .testerrors import ExceptionError, TestError
 
         # Note: The testcase/@name attribute is filled with the pretty path.
         #       The testcase/@classname attribute gives the full path.
@@ -544,12 +546,8 @@ class CampaignReport(Logger):
                     if _xml_failure.hasattr("type"):
                         if _xml_failure.getattr("type") == "known-issue":
                             self.debug("testcase/failure/@type = 'known-issue'")
-                            _issue_id = _error.message[:_error.message.find(":")]  # type: str
-                            _error = KnownIssue(
-                                issue_id=_issue_id,
-                                message=_error.message[len(_issue_id + ": "):],
-                            )
-                            self.debug("testcase/failure/@message => issue_id=%r, message=%r", _error.issue_id, _error.message)
+                            _error = KnownIssue.fromstr(_error.message)
+                            self.debug("testcase/failure/@message => %r", _error)
                         else:
                             _error = ExceptionError(exception=None)
                             _error.exception_type = _xml_failure.getattr("type")

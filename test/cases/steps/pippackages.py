@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -84,7 +84,10 @@ class EnsurePipPackage(scenario.test.Step):
                     # but the package be uninstalled whatever...
                     #
                     # This may be the case especially when executing several tests with a single *run-test* launcher command.
-                    self.knownissue("(bypassed-error)", f"{_uninstall} returned {_uninstall.returncode}, {_err}")
+                    self.knownissue(
+                        level=scenario.test.IssueLevel.TEST,
+                        message=f"{_uninstall} returned {_uninstall.returncode}, {_err}",
+                    )
 
                 # Store the package name in the *uninstalled* cache.
                 if self.pip_name not in UNINSTALLED:

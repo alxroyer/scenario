@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import enum
 import typing
 
 import scenario
@@ -40,19 +41,20 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
     def __init__(
             self,
             exec_step,  # type: ParseFinalResultsLog
-            scenario_expectations,  # type: typing.List[scenario.test.ScenarioExpectations]
+            scenario_expectations,  # type: typing.Sequence[scenario.test.ScenarioExpectations]
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
 
-        self.scenario_expectations = scenario_expectations  # type: typing.List[scenario.test.ScenarioExpectations]
+        self.scenario_expectations = scenario_expectations  # type: typing.Sequence[scenario.test.ScenarioExpectations]
 
-        # Analyze expectations.
+        # Expectations analysis.
         self._success_ref = {}  # type: typing.Dict[str, CheckFinalResultsLogExpectations.ScenarioData]
         self._warnings_ref = {}  # type: typing.Dict[str, CheckFinalResultsLogExpectations.ScenarioData]
         self._errors_ref = {}  # type: typing.Dict[str, CheckFinalResultsLogExpectations.ScenarioData]
         for _scenario_expectations in self.scenario_expectations:  # type: scenario.test.ScenarioExpectations
+            assert _scenario_expectations.script_path is not None, "Please give a path for the scenario expectations"
+            _name = self._mkname(_scenario_expectations.script_path)
             assert _scenario_expectations.status is not None, "Please tell whether the scenarios are expected to succeed or not"
-            _name = str(_scenario_expectations.name)  # type: str
             if _scenario_expectations.status == scenario.ExecutionStatus.SUCCESS:
                 self._success_ref[_name] = CheckFinalResultsLogExpectations.ScenarioData(_scenario_expectations)
             elif _scenario_expectations.status == scenario.ExecutionStatus.WARNINGS:
@@ -60,6 +62,14 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             else:
                 self._errors_ref[_name] = CheckFinalResultsLogExpectations.ScenarioData(_scenario_expectations)
         self._total_test_count = len(self._success_ref) + len(self._warnings_ref) + len(self._errors_ref)  # type: int
+
+    def _mkname(
+            self,
+            path,  # type: typing.Union[str, scenario.Path]
+    ):  # type: (...) -> str
+        if isinstance(path, str):
+            path = scenario.Path(path, relative_to=scenario.test.paths.MAIN_PATH)
+        return self.test_case.getpathdesc(path)
 
     @property
     def parsed_data(self):  # type: (...) -> ParseFinalResultsLog
@@ -76,7 +86,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         return self.getexecstep(ExecCommonArgs).doc_only
 
     def step(self):  # type: (...) -> None
-        self.STEP("Scenario results log output expectations")
+        self.STEP("Final results log output expectations")
 
         # Useful typed variables.
         _name = ""  # type: str
@@ -89,11 +99,17 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
 
         # Warning and error details.
         for _name in self._warnings_ref:
+            self.RESULT(f"Scenario {_name}:")
+            scenario.logging.pushindentation()
             self._checkerrordetails(_name, self._warnings_ref[_name], jsonpath="warnings")
             self._checkerrordetails(_name, self._warnings_ref[_name], jsonpath="errors")
+            scenario.logging.popindentation()
         for _name in self._errors_ref:
+            self.RESULT(f"Scenario {_name}:")
+            scenario.logging.pushindentation()
             self._checkerrordetails(_name, self._errors_ref[_name], jsonpath="warnings")
             self._checkerrordetails(_name, self._errors_ref[_name], jsonpath="errors")
+            scenario.logging.popindentation()
 
         # Extra info.
         for _name in self._success_ref:
@@ -131,18 +147,19 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             )
 
         _index = 0
-        if self.RESULT(f"The {len(self._success_ref)} first line(s) correspond to the successful tests: "
-                       f"{scenario.text.comalist(self._success_ref, quotes=True, when_empty='(no successful test)')}."):
+        if self.RESULT(f"The {len(self._success_ref)} first line(s) correspond to the successful tests"
+                       f"{f', i.e {scenario.text.commalist(self._success_ref)}:' if self._success_ref else '.'}"):
             while _index < len(self._success_ref):
+                self.evidence(f"Line #{_index + 1}:")
                 self.assertjson(
                     self.parsed_data.json_scenario_stats[_index], "status", value=str(scenario.ExecutionStatus.SUCCESS),
-                    evidence=f"Scenario #{_index + 1}: success expected",
+                    evidence="- Status",
                 )
-                _name = self.parsed_data.json_scenario_stats[_index]["name"]
+                _name = self._mkname(self.parsed_data.json_scenario_stats[_index]["name"])
                 self.assertin(
                     _name, self._success_ref,
                     err=f"Unexpected status {scenario.ExecutionStatus.SUCCESS} for test '{_name}'",
-                    evidence=f"Scenario #{_index + 1}: '{_name}'",
+                    evidence="- Name v/s status",
                 )
                 # Store the JSON data with the corresponding expectations.
                 self._success_ref[_name].json = self.parsed_data.json_scenario_stats[_index]
@@ -151,18 +168,19 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             for _name in self._success_ref:
                 self.assertisnotnone(self._success_ref[_name].json, evidence=False)
 
-        if self.RESULT(f"The {len(self._warnings_ref)} next line(s) correspond to the tests with warnings: "
-                       f"{scenario.text.comalist(self._warnings_ref, quotes=True, when_empty='(no test with warnings)')}."):
+        if self.RESULT(f"The {len(self._warnings_ref)} next line(s) correspond to the tests with warnings"
+                       f"{f', i.e. {scenario.text.commalist(self._warnings_ref)}:' if self._warnings_ref else '.'}"):
             while _index < len(self._success_ref) + len(self._warnings_ref):
+                self.evidence(f"Line #{_index + 1}:")
                 self.assertjson(
                     self.parsed_data.json_scenario_stats[_index], "status", value=str(scenario.ExecutionStatus.WARNINGS),
-                    evidence=f"Scenario #{_index + 1}: warnings expected",
+                    evidence="- Status",
                 )
-                _name = self.parsed_data.json_scenario_stats[_index]["name"]
+                _name = self._mkname(self.parsed_data.json_scenario_stats[_index]["name"])
                 self.assertin(
                     _name, self._warnings_ref,
                     err=f"Unexpected status {scenario.ExecutionStatus.WARNINGS} for test '{_name}'",
-                    evidence=f"Scenario #{_index + 1}: '{_name}'",
+                    evidence="- Name v/s status",
                 )
                 # Store the JSON data with the corresponding expectations.
                 self._warnings_ref[_name].json = self.parsed_data.json_scenario_stats[_index]
@@ -171,18 +189,19 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             for _name in self._warnings_ref:
                 self.assertisnotnone(self._warnings_ref[_name].json, evidence=False)
 
-        if self.RESULT(f"The {len(self._errors_ref)} last line(s) correspond to the tests in error: "
-                       f"{scenario.text.comalist(self._errors_ref, quotes=True, when_empty='(no test in error)')}."):
+        if self.RESULT(f"The {len(self._errors_ref)} last line(s) correspond to the tests in error"
+                       f"{f', i.e. {scenario.text.commalist(self._errors_ref)}:' if self._errors_ref else '.'}"):
             while _index < len(self._success_ref) + len(self._warnings_ref) + len(self._errors_ref):
+                self.evidence(f"Line #{_index + 1}:")
                 self.assertjson(
                     self.parsed_data.json_scenario_stats[_index], "status", value=str(scenario.ExecutionStatus.FAIL),
-                    evidence=f"Scenario #{_index + 1}: failure expected",
+                    evidence="- Status",
                 )
-                _name = self.parsed_data.json_scenario_stats[_index]["name"]
+                _name = self._mkname(self.parsed_data.json_scenario_stats[_index]["name"])
                 self.assertin(
                     _name, self._errors_ref,
                     err=f"Unexpected status {scenario.ExecutionStatus.FAIL} for test '{_name}'",
-                    evidence=f"Scenario #{_index + 1}: '{_name}'",
+                    evidence="- Name v/s status",
                 )
                 # Store the JSON data with the corresponding expectations.
                 self._errors_ref[_name].json = self.parsed_data.json_scenario_stats[_index]
@@ -268,14 +287,14 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             if self.RESULT("The sum of the scenario times corresponds to the total time."):
                 _total_time = 0.0  # type: float
                 for _index in range(self._total_test_count):
-                    _name = self.assertjson(self.parsed_data.json_scenario_stats[_index], "name", type=str)
+                    _name = self._mkname(self.assertjson(self.parsed_data.json_scenario_stats[_index], "name", type=str))
                     _scenario_time = self.assertjson(self.parsed_data.json_scenario_stats[_index], "time", type=float)  # type: float
                     self.assertgreaterequal(
                         _scenario_time, 0.0,
-                        evidence=f"Scenario time '{_name}'",
+                        evidence=f"Scenario time {_name}",
                     )
                     _total_time += _scenario_time
-                    self.evidence(f"{scenario.datetime.f2strduration(_total_time)} <= '{_name}'")
+                    self.evidence(f"{scenario.datetime.f2strduration(_total_time)} <= {_name}")
                 self.assertnear(
                     self.assertjson(self.parsed_data.json_total_stats, "time", type=float), _total_time, 0.100,
                     evidence="Total time",
@@ -299,7 +318,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         if _error_expectations_list is not None:
             assert jsonpath.endswith("s")
             _errors_txt = scenario.text.Countable(jsonpath[:-1], _error_expectations_list)  # type: scenario.text.Countable
-            if self.RESULT(f"{len(_errors_txt)} {_errors_txt} {_errors_txt.are} notified for '{test_name}'{_errors_txt.ifany(':', '.')}"):
+            if self.RESULT(f"{len(_errors_txt)} {_errors_txt} {_errors_txt.are} notified{_errors_txt.ifany(':', '.')}"):
                 self.assertjson(
                     _json_scenario_stats, jsonpath, type=list, len=len(_error_expectations_list),
                     evidence=f"Number of {_errors_txt.plural}",
@@ -307,10 +326,11 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             for _index in range(len(_error_expectations_list)):  # type: int
                 _error_expectations = _error_expectations_list[_index]  # type: scenario.test.ErrorExpectations
 
-                self.RESULT(f"- {_errors_txt.singular.capitalize()} #{_index + 1}")
+                self.RESULT(f"- {_errors_txt.singular.capitalize()} #{_index + 1}:")
                 _jsonpath_error = f"{jsonpath}[{_index}]"  # type: str
                 scenario.logging.pushindentation()
 
+                # Type.
                 # Note: `_error_expectations.cls` cannot be checked from JSON data.
                 # Only the 'type' field can be checked for known issues.
                 if _error_expectations.cls is scenario.KnownIssue:
@@ -323,17 +343,57 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                             _json_scenario_stats, f"{_jsonpath_error}.type", value=_error_expectations.error_type,
                             evidence="Error type",
                         )
-                if _error_expectations.issue_id is not None:
-                    if self.RESULT(f"Issue id is {_error_expectations.issue_id!r}."):
+
+                # Level.
+                if _error_expectations.level is scenario.test.NOT_SET:
+                    if self.RESULT("Issue level is not set."):
                         self.assertjson(
-                            _json_scenario_stats, f"{_jsonpath_error}.id", value=_error_expectations.issue_id,
+                            _json_scenario_stats, f"{_jsonpath_error}.level", count=0,
+                            evidence="Issue level",
+                        )
+                elif isinstance(_error_expectations.level, (int, enum.IntEnum)):
+                    if self.RESULT(f"Issue level is {scenario.IssueLevel.getdesc(_error_expectations.level)}."):
+                        self.assertjson(
+                            _json_scenario_stats, f"{_jsonpath_error}.level", value=_error_expectations.level,
+                            evidence="Issue level",
+                        )
+
+                # Id.
+                if _error_expectations.id is scenario.test.NOT_SET:
+                    if self.RESULT("Issue id is not set."):
+                        self.assertjson(
+                            _json_scenario_stats, f"{_jsonpath_error}.id", count=0,
                             evidence="Issue id",
                         )
+                elif isinstance(_error_expectations.id, str):
+                    if self.RESULT(f"Issue id is {_error_expectations.id!r}."):
+                        self.assertjson(
+                            _json_scenario_stats, f"{_jsonpath_error}.id", value=_error_expectations.id,
+                            evidence="Issue id",
+                        )
+
+                # URL.
+                if _error_expectations.url is scenario.test.NOT_SET:
+                    if self.RESULT("URL is not set."):
+                        self.assertjson(
+                            _json_scenario_stats, f"{_jsonpath_error}.url", count=0,
+                            evidence="URL",
+                        )
+                elif isinstance(_error_expectations.url, str):
+                    if self.RESULT(f"URL is {_error_expectations.url!r}."):
+                        self.assertjson(
+                            _json_scenario_stats, f"{_jsonpath_error}.url", value=_error_expectations.url,
+                            evidence="URL",
+                        )
+
+                # Message.
                 if self.RESULT(f"{_errors_txt.singular.capitalize()} message is {_error_expectations.message!r}."):
                     self.assertjson(
                         _json_scenario_stats, f"{_jsonpath_error}.message", value=_error_expectations.message,
                         evidence=f"{_errors_txt.singular.capitalize()} message",
                     )
+
+                # Location.
                 if _error_expectations.location is not None:
                     if self.RESULT(f"{_errors_txt.singular.capitalize()} location is {_error_expectations.location!r}."):
                         self.assertjson(
@@ -350,7 +410,10 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         _scenario_expectations = scenario_data.expectations  # type: scenario.test.ScenarioExpectations
         if _scenario_expectations.attributes is not None:
             assert scenario.ConfigKey.RESULTS_EXTRA_INFO in self.getexecstep(ExecCommonArgs).config_values
-            _extra_info_option = self.getexecstep(ExecCommonArgs).config_values[scenario.ConfigKey.RESULTS_EXTRA_INFO] or ""  # type: str
+            _extra_info_option = scenario.test.configvalues.getstr(
+                self.getexecstep(ExecCommonArgs).config_values, scenario.ConfigKey.RESULTS_EXTRA_INFO,
+                default="",
+            )  # type: str
             if not _extra_info_option:
                 if self.RESULT(f"No extra info is displayed with the '{_scenario_expectations.name}' scenario."):
                     assert scenario_data.json

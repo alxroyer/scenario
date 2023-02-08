@@ -1,4 +1,4 @@
-.. Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+.. Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ Deliver a new version
 
 1. Check the scenario version stored in the code:
 
-   TODO: Give the location here when implemented (not implemented as of 0.2.0)
+   Check the version tuple defined in 'src/pkginfo.py'.
 
    If files have been modified, commit them (probably with the ``--amend`` option).
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,9 +24,11 @@ import typing
 from .args import Args
 # `Path` used in method signatures.
 from .path import Path
+# `CommonExecArgs` used for inheritance.
+from .scenarioargs import CommonExecArgs
 
 
-class CampaignArgs(Args):
+class CampaignArgs(Args, CommonExecArgs):
     """
     Campaign runner program arguments.
     """
@@ -47,14 +49,7 @@ class CampaignArgs(Args):
 
         self.setdescription("Scenario campaign execution.")
 
-        #: ``True`` when the test is executed for documentation generation only,
-        #: i.e. the test script should not be executed.
-        self.doc_only = False  # type: bool
-        self.addarg("Doc only", "doc_only", bool).define(
-            "--doc-only",
-            action="store_true", default=False,
-            help="Generate documentation without executing the test.",
-        )
+        CommonExecArgs.__init__(self)
 
         #: Current directory as the default output directory flag.
         self._default_outdir_cwd = default_outdir_cwd
@@ -111,13 +106,15 @@ class CampaignArgs(Args):
             args,  # type: typing.Any
     ):  # type: (...) -> bool
         """
-        Check campaign arguments.
+        Check campaign arguments once parsed.
 
         :return: True for success, False otherwise.
         """
         from .loggermain import MAIN_LOGGER
 
-        if not super()._checkargs(args):
+        if not Args._checkargs(self, args):
+            return False
+        if not CommonExecArgs._checkargs(self, args):
             return False
 
         if self._outdir is None:

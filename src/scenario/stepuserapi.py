@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,9 @@ import abc
 import typing
 
 if typing.TYPE_CHECKING:
+    # `AnyIssueLevelType` used in method signatures.
+    # Type declared for type checking only.
+    from .issuelevels import AnyIssueLevelType
     # `StepSpecificationType` used in method signatures.
     # Type declared for type checking only.
     from .stepdefinition import StepSpecificationType
@@ -37,7 +40,7 @@ class StepUserApi(abc.ABC):
         """
         Initializes an empty known issue list.
         """
-        from .testerrors import KnownIssue
+        from .knownissues import KnownIssue
 
         #: Known issues at the definition level.
         self.known_issues = []  # type: typing.List[KnownIssue]
@@ -140,18 +143,65 @@ class StepUserApi(abc.ABC):
 
         SCENARIO_RUNNER.goto(to_step_specification)
 
+    @typing.overload
     def knownissue(
             self,
-            issue_id,  # type: str
+            __id,  # type: str
+            __message,  # type: str
+    ):  # type: (...) -> None
+        """
+        Deprecated.
+
+        :param __id: Issue identifier.
+        :param __message: Error message to display / store with.
+
+        .. note::
+            The double leading underscores indicates positional-only arguments
+            (see https://mypy.readthedocs.io/en/latest/cheat_sheet_py3.html#functions,
+            inspired from https://stackoverflow.com/questions/56350385/overload-typings-with-python-args-in-super-class#56352650).
+        """
+
+    @typing.overload
+    def knownissue(
+            self,
             message,  # type: str
+            level=None,  # type: AnyIssueLevelType
+            id=None,  # type: str  # noqa  ## Shadows built-in name 'id'
     ):  # type: (...) -> None
         """
         Registers a known issue.
 
-        :param issue_id: Issue identifier.
         :param message: Error message to display / store with.
+        :param level: Issue level.
+        :param id: Issue identifier.
         """
-        from .scenariorunner import SCENARIO_RUNNER
-        from .testerrors import KnownIssue
 
-        SCENARIO_RUNNER.onerror(KnownIssue(issue_id=issue_id, message=message), originator=self)
+    def knownissue(
+            self,
+            *args,  # type: str
+            **kwargs,  # type: typing.Any
+    ):  # type: (...) -> None
+        """
+        General implementation for related overloads.
+        """
+        from .knownissues import KnownIssue
+        from .logger import Logger
+        from .scenariorunner import SCENARIO_RUNNER
+
+        # Positional parameters (deprecated).
+        if (len(args) == 2) and (not kwargs):
+            if isinstance(self, Logger):
+                self.warning(f"knownissue(): Positional parameters deprecated, please use named parameters")
+            SCENARIO_RUNNER.onerror(KnownIssue(id=args[0], message=args[1]), originator=self)
+            return
+
+        # Ensure ``message`` as a named argument.
+        if (len(args) == 1) and ("message" not in kwargs):
+            kwargs["message"] = args[0]
+        else:
+            assert not args, "knownissue(): One positional argument at most for 'message'"
+
+        # Build the `KnownIssue` objects with named arguments.
+        for _arg_name in kwargs:
+            assert _arg_name in ("level", "id", "message"), f"knownissue(): Wrong argument {_arg_name!r}"
+        SCENARIO_RUNNER.onerror(KnownIssue(**kwargs), originator=self)

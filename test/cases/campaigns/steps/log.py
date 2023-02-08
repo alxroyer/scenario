@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,15 +39,16 @@ class CheckCampaignLogExpectations(LogVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Campaign log output")
 
-        self.RESULT("The campaign has executed every test described by the test suite file(s).")
+        self.RESULT("The campaign has executed every test described by the test suite file(s):")
         _expected_test_cases_in_error = []  # type: typing.List[scenario.test.ScenarioExpectations]
         _expected_test_cases_with_warnings = []  # type: typing.List[scenario.test.ScenarioExpectations]
         assert self.campaign_expectations.all_test_case_expectations
         for _test_case_expectations in self.campaign_expectations.all_test_case_expectations:  # type: scenario.test.ScenarioExpectations
-            if self.RESULT(f"- '{_test_case_expectations.script_path}'"):
+            assert _test_case_expectations.script_path
+            if self.RESULT(f"- {self.test_case.getpathdesc(_test_case_expectations.script_path)}"):
                 self.assertline(
                     f"Executing '{_test_case_expectations.script_path}'",
-                    evidence=f"'{_test_case_expectations.script_path}' execution",
+                    evidence=f"{self.test_case.getpathdesc(_test_case_expectations.script_path)} execution",
                 )
             if _test_case_expectations.status == scenario.ExecutionStatus.WARNINGS:
                 _expected_test_cases_with_warnings.append(_test_case_expectations)
@@ -65,13 +66,16 @@ class CheckCampaignLogExpectations(LogVerificationStep):
                 evidence="Number of test cases in error",
             )
         for _expected_test_case_in_error in _expected_test_cases_in_error:  # type: scenario.test.ScenarioExpectations
-            if self.RESULT(f"- '{_expected_test_case_in_error.script_path}'"):
+            assert _expected_test_case_in_error.script_path
+            if self.RESULT(f"- {self.test_case.getpathdesc(_expected_test_case_in_error.script_path)}"):
                 # This assertion checks error notifications at the end of the log output.
                 self.assertline(
                     f"ERROR    {_expected_test_case_in_error.name}",
                     evidence="Test case in error",
                 )
+            scenario.logging.pushindentation()
             self._checktestcaseerrors(_expected_test_case_in_error)
+            scenario.logging.popindentation()
 
         _test_cases_txt = scenario.text.Countable("test case", _expected_test_cases_with_warnings)  # Type already declared above.
         if self.RESULT(f"The campaign output displays {len(_test_cases_txt)} {_test_cases_txt} with warnings{_test_cases_txt.ifany(':', '.')}"):
@@ -84,39 +88,40 @@ class CheckCampaignLogExpectations(LogVerificationStep):
                 evidence="Number of test cases with warnings",
             )
         for _expected_test_case_with_warnings in _expected_test_cases_with_warnings:  # type: scenario.test.ScenarioExpectations
-            if self.RESULT(f"- '{_expected_test_case_with_warnings.script_path}'"):
+            assert _expected_test_case_with_warnings.script_path
+            if self.RESULT(f"- {self.test_case.getpathdesc(_expected_test_case_with_warnings.script_path)}"):
                 # This assertion checks warning notifications at the end of the log output.
                 self.assertline(
                     f"WARNING  {_expected_test_case_with_warnings.name}",
                     evidence="Test case with warnings",
                 )
+            scenario.logging.pushindentation()
             self._checktestcaseerrors(_expected_test_case_with_warnings)
+            scenario.logging.popindentation()
 
     def _checktestcaseerrors(
             self,
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
-        if scenario_expectations.errors is not None:
+        if scenario_expectations.errors:  # Not `None` AND not empty.
             _errors_txt = scenario.text.Countable("error", scenario_expectations.errors)  # type: scenario.text.Countable
-            self.RESULT(f"  with {len(_errors_txt)} {_errors_txt}{_errors_txt.ifany(':', '')}")
+            self.RESULT(f"{len(_errors_txt)} {_errors_txt} {_errors_txt.are} expected{_errors_txt.ifany(':', '.')}")
             for _error_expectations in scenario_expectations.errors:  # type: scenario.test.ErrorExpectations
-                _error_pattern = f"{_error_expectations.error_type}: {_error_expectations.message} ({_error_expectations.location})"  # type: str
-                if self.RESULT(f"  - error {_error_pattern!r} (notified twice)"):
+                if self.RESULT(f"- error {_error_expectations.loggingtext()!r} (notified twice)"):
                     # Notified twice: a first time while the tests are being executed, and a second with the final results display.
                     self.assertlinecount(
-                        _error_pattern, 2,
+                        _error_expectations.loggingtext(), 2,
                         evidence="Test error details",
                     )
 
-        if scenario_expectations.warnings is not None:
+        if scenario_expectations.warnings:  # Not `None` AND not empty.
             _warnings_txt = scenario.text.Countable("warning", scenario_expectations.warnings)  # type: scenario.text.Countable
-            self.RESULT(f"  with {len(_warnings_txt)} {_warnings_txt}{_warnings_txt.ifany(':', '')}")
+            self.RESULT(f"{len(_warnings_txt)} {_warnings_txt} {_warnings_txt.are} expected{_warnings_txt.ifany(':', '.')}")
             for _warning_expectations in scenario_expectations.warnings:  # type: scenario.test.ErrorExpectations
                 assert _warning_expectations.error_type == "known-issue", "Only known issues"
-                _warning_pattern = f"Issue {_warning_expectations.issue_id}! {_warning_expectations.message} ({_warning_expectations.location})"  # type: str
-                if self.RESULT(f"  - warning {_warning_pattern!r} (notified twice)"):
+                if self.RESULT(f"- warning {_warning_expectations.loggingtext()!r} (notified twice)"):
                     # Notified twice: a first time while the tests are being executed, and a second with the final results display.
                     self.assertlinecount(
-                        _warning_pattern, 2,
+                        _warning_expectations.loggingtext(), 2,
                         evidence="Test warning details",
                     )

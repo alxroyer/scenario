@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,7 +52,12 @@ class TestCase(scenario.Scenario):
         # Main path configuration.
         scenario.Path.setmainpath(MAIN_PATH)
 
-        scenario.handlers.install(scenario.Event.AFTER_TEST, self.rmtmpfiles, scenario=self, once=True)
+        scenario.handlers.install(
+            scenario.Event.AFTER_TEST,
+            lambda event, data: self.rmtmpfiles(),
+            scenario=self,
+            once=True,
+        )
 
     def mktmppath(
             self,
@@ -83,34 +88,80 @@ class TestCase(scenario.Scenario):
         _tmp_path = tempfile.mktemp(dir=_day_tmp_dir, prefix=_prefix, suffix=_suffix)  # type: str
 
         self._tmp_paths.append(scenario.Path(_tmp_path))
-        self.debug("New tmp path: '%s'", self._tmp_paths[-1])
+        self.debug("New tmp path %s ('%s')", self.getpathdesc(self._tmp_paths[-1]), self._tmp_paths[-1])
         return self._tmp_paths[-1]
 
-    def rmtmpfiles(
-            self,
-            event,  # type: str
-            data,  # type: typing.Any
-    ):  # type: (...) -> None
+    def rmtmpfiles(self):  # type: (...) -> None
         """
         Removes temporary files whose names have been computed with :meth:`mktmppath()`.
-
-        :param event: Unused.
-        :param data: Unused.
         """
-        while self._tmp_paths:
-            _tmp_path = self._tmp_paths.pop(0)  # type: scenario.Path
+        # Local constants.
+        _NON_RELEVANT_SUFFIXES = (
+            ".pyc",
+        )  # type: typing.Tuple[str, ...]
+
+        # Inner functions.
+        def _rmdir(tmp_dir_path):  # type: (scenario.Path) -> bool
+            """
+            Recursively tries to remove non relevant sub-files and directories,
+            then the directory itself.
+
+            :param tmp_dir_path: Directory path to process.
+            :return: ``True`` if the directory has been removed, ``False`` if not.
+            """
+            # List `tmp_path` and remove non relevant sub-files and sub-directories.
+            for _subpath in tmp_dir_path.iterdir():  # type: scenario.Path
+                if _subpath.is_file() and (_subpath.suffix in _NON_RELEVANT_SUFFIXES):
+                    self.debug("Removing '%s'", _subpath)
+                    _subpath.unlink()
+                elif _subpath.is_dir():
+                    # Recursive call.
+                    if not _rmdir(_subpath):
+                        return False
+
+            # List `tmp_path` again.
+            if not list(tmp_dir_path.iterdir()):
+                self.debug("Removing '%s'", tmp_dir_path)
+                tmp_dir_path.rmdir()
+                return True
+            else:
+                self.debug("Non-empty directory '%s'", tmp_dir_path)
+                return False
+
+        # Note:
+        # Do not pop the temporary paths from the cache yet, in order not to change their 'tmp#%d' representation
+        # until all temporary paths have been removed.
+        for _tmp_path in self._tmp_paths:  # type: scenario.Path
+            # Remove the file when it exists.
             if _tmp_path.is_file():
-                # Remove the file when it exists.
-                self.debug("Removing '%s'", _tmp_path)
+                self.debug("Removing %s ('%s')", self.getpathdesc(_tmp_path), _tmp_path)
                 _tmp_path.unlink()
-            # Remove empty directories.
+
+            # Ensure `_tmp_path` is a directory.
             while not _tmp_path.is_dir():
                 _tmp_path = _tmp_path.parent
+
+            # Remove empty directories upward, up to the main *tmp* directory.
             while _tmp_path.is_dir() and (not _tmp_path.samefile(scenario.Path.tmp())):
-                if not _tmp_path.iterdir():
-                    self.debug("Removing '%s'", _tmp_path)
-                    _tmp_path.rmdir()
-                    _tmp_path = _tmp_path.parent
-                else:
-                    self.debug("Non-empty directory '%s'", _tmp_path)
+                if not _rmdir(_tmp_path):
                     break
+                _tmp_path = _tmp_path.parent
+
+        # Eventually reset the temporary path cache.
+        self._tmp_paths.clear()
+
+    def getpathdesc(
+            self,
+            path,  # type: scenario.Path
+    ):  # type: (...) -> str
+        """
+        Retrieves a description for a path.
+
+        :param path: Either a temporary or regular file path.
+        :return: File path description.
+        """
+        if path.is_relative_to(scenario.Path.tmp()):
+            for _index in range(len(self._tmp_paths)):  # type: int
+                if self._tmp_paths[_index] == path:
+                    return f"tmp#{_index + 1}"
+        return f"'{path}'"

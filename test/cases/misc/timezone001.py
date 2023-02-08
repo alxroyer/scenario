@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,10 @@ class Timezone001(scenario.test.TestCase):
         if not EnsureInternetConnection.isup(self):
             # Avoid going through 'pytz' uninstallation when Internet is not available,
             # otherwise we may not be able to reinstall it afterwards.
-            self.knownissue("(tmp)", "No internet connection: behaviour when 'pytz' missing not checked")
+            self.knownissue(
+                level=scenario.test.IssueLevel.CONTEXT,
+                message="No internet connection: behaviour when 'pytz' missing not checked",
+            )
         else:
             self.addstep(EnsurePipPackage("pytz", "pytz", False))
             self.addstep(CheckTimezoneNames(pytz_installed=False))

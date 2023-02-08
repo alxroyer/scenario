@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import enum
-import json
 import re
 import typing
 
@@ -43,7 +42,7 @@ class ParseFinalResultsLog(LogParserStep):
             exec_step,  # type: scenario.test.AnyExecutionStepType
     ):  # type: (...) -> None
         LogParserStep.__init__(self, exec_step)
-        self.description = "Scenario results log output parsing"
+        self.description = "Final results log output parsing"
 
         self._parse_state = ParseFinalResultsLog.ParseState.END_NOT_REACHED_YET  # type: ParseFinalResultsLog.ParseState
 
@@ -68,11 +67,13 @@ class ParseFinalResultsLog(LogParserStep):
             self,
             line,  # type: bytes
     ):  # type: (...) -> bool
+        # Useful typed variables.
+        _error_level = ""  # type: str
+        _match = None  # type: typing.Optional[typing.Match[bytes]]
+
         if re.search(rb' *---+$', line):
             # Skip the separation lines.
             return True
-
-        _match = None  # type: typing.Optional[typing.Match[bytes]]
 
         if self._parse_state == ParseFinalResultsLog.ParseState.END_NOT_REACHED_YET:
             if re.search(rb'(INFO) +TOTAL +Status +Steps +Actions +Results +Time$', line):
@@ -190,18 +191,27 @@ class ParseFinalResultsLog(LogParserStep):
             _match = re.search(
                 rb''.join([
                     # Log level (1).
-                    rb'(WARNING) +',
-                    # Issue id (2).
-                    rb'Issue (.+)! ',
-                    # Error message (3).
-                    rb'(.+) ',
-                    # Location:
-                    rb'\(%s\)' % rb':'.join([
-                        # Script path (4).
-                        rb'([^ :]+)',
-                        # Line (5).
+                    rb'(WARNING|ERROR) +',
+                    # Beginning of issue line.
+                    rb'Issue',
+                    # Issue level:
+                    rb'(\(%s\))?' % rb''.join([
+                        # Name (4).
+                        rb'((.+)=)?',
+                        # `int` value (5).
                         rb'(\d+)',
-                        # Qualified name (6).
+                    ]),
+                    # Issue id (6).
+                    rb' *(.+)?',
+                    # Error message (7).
+                    rb'! (.+)',
+                    # Location:
+                    rb' \(%s\)' % rb':'.join([
+                        # Script path (8).
+                        rb'(.+)',
+                        # Line (9).
+                        rb'(\d+)',
+                        # Qualified name (10).
                         rb'([^ :]+)',
                     ]),
                     # End of line.
@@ -210,15 +220,20 @@ class ParseFinalResultsLog(LogParserStep):
                 line,
             )
             if _match:
-                _warning_error = {
+                _known_issue = {
                     "type": "known-issue",
-                    "id": self.tostr(_match.group(2)),
-                    "message": self.tostr(_match.group(3)),
-                    "location": self.tostr(b'%s:%s:%s' % (_match.group(4), _match.group(5), _match.group(6))),
+                    "message": self.tostr(_match.group(7)),
+                    "location": self.tostr(b'%s:%s:%s' % (_match.group(8), _match.group(9), _match.group(10))),
                 }  # type: JSONDict
+                if _match.group(5):
+                    _known_issue["level"] = int(_match.group(5))
+                if _match.group(6):
+                    _known_issue["id"] = self.tostr(_match.group(6))
                 assert self.json_scenario_stats, "No current scenario"
-                self.json_scenario_stats[-1]["warnings"].append(_warning_error)
-                self._debuglineinfo("Warning: %s", scenario.debug.jsondump(_warning_error))
+                _error_level = self.tostr(_match.group(1))  # Type already declared above.
+                self.json_scenario_stats[-1][_error_level.lower() + "s"].append(_known_issue)
+                self._debuglineinfo("Known issue: %s", scenario.debug.jsondump(_known_issue))
+                self._debuglineinfo(f"Number of {_error_level.lower()}s: {len(self.json_scenario_stats[-1][_error_level.lower() + 's'])}")
 
                 return True
 
@@ -234,7 +249,7 @@ class ParseFinalResultsLog(LogParserStep):
                     # Location:
                     rb'\(%s\)' % rb':'.join([
                         # Script path (4).
-                        rb'([^ :]+)',
+                        rb'(.+)',
                         # Line (5).
                         rb'(\d+)',
                         # Qualified name (6).
@@ -256,5 +271,18 @@ class ParseFinalResultsLog(LogParserStep):
                 self._debuglineinfo("Error: %s", scenario.debug.jsondump(_json_error))
 
                 return True
+
+        # Error / known issue URL.
+        _match = re.search(rb'(WARNING|ERROR) +(http(s)?://.*)$', line)
+        if _match:
+            if self._parse_state == ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES:
+                _error_level = self.tostr(_match.group(1))  # Type already declared above.
+                assert self.json_scenario_stats[-1][_error_level.lower() + "s"], f"No current {_error_level.lower()}"
+                self.json_scenario_stats[-1][_error_level.lower() + "s"][-1]["url"] = self.tostr(_match.group(2))
+                self._debuglineinfo(f"{_error_level.capitalize()} URL: {self.tostr(_match.group(2))}")
+            else:
+                self._debuglineinfo("Error / known issue URL skipped")
+
+            return True
 
         return super()._parseline(line)

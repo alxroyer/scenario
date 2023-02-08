@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class Logging410(scenario.test.TestCase):
 
         self.addstep(ExecScenario(
             scenario.test.paths.SUPERSCENARIO_SCENARIO, subscenario=scenario.test.paths.SCENARIO_LOGGING_SCENARIO,
-            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: "0"},
+            config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: False},
         ))
         self.addstep(CheckMainScenario(ExecScenario.getinstance()))
         self.addstep(CheckSubScenario(CheckMainScenario.getinstance()))

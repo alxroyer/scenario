@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ class Logging500(scenario.test.TestCase):
         self.addstep(CheckConsoleLogging(ExecScenario.getinstance(0)))
 
         self.section("Console output explicitely enabled")
-        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_CONSOLE: "1"}))
+        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_CONSOLE: True}))
         self.addstep(CheckConsoleLogging(ExecScenario.getinstance(1)))
 
         self.section("Console output disabled")
-        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_CONSOLE: "0"}))
+        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_CONSOLE: False}))
         self.addstep(CheckNoConsoleLogging(ExecScenario.getinstance(2)))
 
 

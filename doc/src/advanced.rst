@@ -1,4 +1,4 @@
-.. Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+.. Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ Advanced usage
     advanced.assertions
     advanced.logging
     advanced.evidence
+    advanced.error-management
     advanced.known-issues
     advanced.test-libs
     advanced.handlers

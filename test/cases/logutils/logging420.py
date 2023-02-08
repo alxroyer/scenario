@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class ExecUserIndentation(ExecScenario):
             subscenario=None,  # type: scenario.Path
             scenario_stack_indentation="",  # type: str
     ):  # type: (...) -> None
-        ExecScenario.__init__(self, scenario_path, subscenario=subscenario, config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: "0"})
+        ExecScenario.__init__(self, scenario_path, subscenario=subscenario, config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: False})
 
         self.scenario_stack_indentation = scenario_stack_indentation  # type: str
 

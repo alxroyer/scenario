@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
+import enum
 import typing
 
 import scenario
@@ -150,6 +150,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
                 _jsonpath_error = f"{jsonpath}[{_error_index}]"  # type: str
                 scenario.logging.pushindentation()
 
+                # Type.
                 # Note: `_error_expectations.cls` cannot be checked from JSON data.
                 # Only the 'type' field can be checked for known issues.
                 if _error_expectations.cls is scenario.KnownIssue:
@@ -162,17 +163,57 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
                             json_scenario, f"{_jsonpath_error}.type", value=_error_expectations.error_type,
                             evidence=f"Error type",
                         )
-                if _error_expectations.issue_id is not None:
-                    if self.RESULT(f"Issue id is {_error_expectations.issue_id!r}."):
+
+                # Level.
+                if _error_expectations.level is scenario.test.NOT_SET:
+                    if self.RESULT("Issue level is not set."):
                         self.assertjson(
-                            json_scenario, f"{_jsonpath_error}.id", value=_error_expectations.issue_id,
+                            json_scenario, f"{_jsonpath_error}.level", count=0,
+                            evidence="Issue level",
+                        )
+                elif isinstance(_error_expectations.level, (int, enum.IntEnum)):
+                    if self.RESULT(f"Issue level is {scenario.IssueLevel.getdesc(_error_expectations.level)}."):
+                        self.assertjson(
+                            json_scenario, f"{_jsonpath_error}.level", value=_error_expectations.level,
+                            evidence="Issue level",
+                        )
+
+                # Id.
+                if _error_expectations.id is scenario.test.NOT_SET:
+                    if self.RESULT("Issue id is not set."):
+                        self.assertjson(
+                            json_scenario, f"{_jsonpath_error}.id", count=0,
                             evidence="Issue id",
                         )
+                elif isinstance(_error_expectations.id, str):
+                    if self.RESULT(f"Issue id is {_error_expectations.id!r}."):
+                        self.assertjson(
+                            json_scenario, f"{_jsonpath_error}.id", value=_error_expectations.id,
+                            evidence="Issue id",
+                        )
+
+                # URL.
+                if _error_expectations.url is scenario.test.NOT_SET:
+                    if self.RESULT("URL is not set."):
+                        self.assertjson(
+                            json_scenario, f"{_jsonpath_error}.url", count=0,
+                            evidence="URL",
+                        )
+                elif isinstance(_error_expectations.url, str):
+                    if self.RESULT(f"URL is {_error_expectations.url!r}."):
+                        self.assertjson(
+                            json_scenario, f"{_jsonpath_error}.url", value=_error_expectations.url,
+                            evidence="URL",
+                        )
+
+                # Message.
                 if self.RESULT(f"{_errors_txt.singular.capitalize()} message is {_error_expectations.message!r}."):
                     self.assertjson(
                         json_scenario, f"{_jsonpath_error}.message", value=_error_expectations.message,
                         evidence=f"{_errors_txt.singular.capitalize()} message",
                     )
+
+                # Location.
                 if _error_expectations.location is not None:
                     if self.RESULT(f"{_errors_txt.singular.capitalize()} location is {_error_expectations.location!r}."):
                         self.assertjson(

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -81,16 +81,16 @@ class SubProcess(scenario.SubProcess):
         config_key = scenario.enum.enum2str(config_key)
 
         _arg_index = 0  # type: int
-        while _arg_index < len(self._cmd_line):
+        while _arg_index < len(self.cmd_line):
             if (
-                (_arg_index < len(self._cmd_line) - 2)
-                and (self._cmd_line[_arg_index + 0] == "--config-value")
-                and (self._cmd_line[_arg_index + 1] == config_key)
+                (_arg_index < len(self.cmd_line) - 2)
+                and (self.cmd_line[_arg_index + 0] == "--config-value")
+                and (self.cmd_line[_arg_index + 1] == config_key)
             ):
                 # Remove the 3 next words in the command line.
-                del self._cmd_line[_arg_index]
-                del self._cmd_line[_arg_index]
-                del self._cmd_line[_arg_index]
+                del self.cmd_line[_arg_index]
+                del self.cmd_line[_arg_index]
+                del self.cmd_line[_arg_index]
             else:
                 _arg_index += 1
         return self
@@ -169,9 +169,9 @@ class SubProcess(scenario.SubProcess):
         self.exitonerror(False)
         super().run(timeout=timeout)
         if self._expect_success:
-            scenario.Assertions.assertequal(self.returncode, 0, f"{self._cmd_line!r} failed")
+            scenario.Assertions.assertequal(self.returncode, 0, f"{self.cmd_line!r} failed")
         else:
-            scenario.Assertions.assertnotequal(self.returncode, 0, f"{self._cmd_line!r} succeeded unexpectedly")
+            scenario.Assertions.assertnotequal(self.returncode, 0, f"{self.cmd_line!r} succeeded unexpectedly")
         return self
 
 

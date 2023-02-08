@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -233,12 +233,13 @@ class CampaignRunner(Logger):
 
         # Prepare the command line.
         _subprocess = SubProcess(sys.executable, SCENARIO_CONFIG.runnerscriptpath())  # type: SubProcess
-        # Report configuration files from campaign to scenario execution.
+        # Report configuration files and single configuration values from campaign to scenario execution.
         for _config_path in CampaignArgs.getinstance().config_paths:  # type: Path
             _subprocess.addargs("--config-file", _config_path)
-        # Report --doc-only option from campaign to scenario execution.
-        if CampaignArgs.getinstance().doc_only:
-            _subprocess.addargs("--doc-only")
+        for _config_name in CampaignArgs.getinstance().config_values:  # type: str
+            _subprocess.addargs("--config-value", _config_name, CampaignArgs.getinstance().config_values[_config_name])
+        # Report common execution options from campaign to scenario execution.
+        CampaignArgs.reportexecargs(CampaignArgs.getinstance(), _subprocess)
         # --json-report option.
         _subprocess.addargs("--json-report", test_case_execution.json.path)
         # Log outfile specification.

@@ -1,4 +1,4 @@
-.. Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+.. Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ When analyzing test logs, the timing question is usually essential.
 Log date/time is displayed by default at the beginning of the log lines,
 with a ISO8601 pattern: ``YYYY-MM-DDTHH:MM:SS.mmmuuu+HH:MM``.
 
-It may disabled through the :ref:`scenario.log_date_time <config-db.scenario>` configuration value.
+It may disabled through the :ref:`scenario.log_date_time <config-db.scenario.log_date_time>` configuration value.
 
 
 .. _logging.main-logger:
@@ -160,7 +160,7 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
 
     $ ./bin/run-test.py --debug-class "My logger" ./demo/loggingdemo.py
 
-... or 3) through the :ref:`scenario.debug_classes <config-db.scenario>` configuration value.
+... or 3) through the :ref:`scenario.debug_classes <config-db.scenario.debug_classes>` configuration value.
 
 ---
 
@@ -181,7 +181,7 @@ Colors
 
 The :py:mod:`scenario` framework manages colorization in the console, which facilitates hot analyses of the log flow.
 
-Log colors may be disabled through the :ref:`scenario.log_color <config-db.scenario>` configuration value.
+Log colors may be disabled through the :ref:`scenario.log_color <config-db.scenario.log_color>` configuration value.
 
 
 .. _logging.colors.log-levels:
@@ -196,7 +196,7 @@ The basic usage of log colorization is to highlight log levels:
 - *INFO*: colored in white,
 - *DEBUG*: colored in grey.
 
-These default colors may be overriden with the :ref:`scenario.log_\<level\>_color <config-db.scenario>` configuration values.
+These default colors may be overriden with the :ref:`scenario.log_%(level)_color <config-db.scenario.log_level_color>` configuration values.
 
 The log message also takes the color of its log level by default.
 
@@ -467,7 +467,7 @@ File logging
 
 The :py:mod:`scenario` logging feature provides the ability to save the test log output into a file.
 
-To do so, set the :ref:`scenario.log_file <config-db.scenario>` configuration value,
+To do so, set the :ref:`scenario.log_file <config-db.scenario.log_file>` configuration value,
 either with the ``–-config-value`` command line option, or within a configuration file.
 
 The command line example below
@@ -489,7 +489,7 @@ but saves it into the 'doc/data/commutativeaddition.log' file
 
 .. tip::
 
-    The :ref:`scenario.log_file <config-db.scenario>` configuration value may also be set programmatically
+    The :ref:`scenario.log_file <config-db.scenario.log_file>` configuration value may also be set programmatically
     through the :py:meth:`scenario.configdb.ConfigDatabase.set()` method,
     as illustrated in the :ref:`launcher script extension <launcher.pre-post>` section.
 

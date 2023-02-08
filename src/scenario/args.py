@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,13 +22,18 @@ May actually be a :class:`.scenarioargs.ExecArgs` or a :class:`.campaignargs.Cam
 """
 
 import argparse
+import inspect
 import typing
 
+# `CommonConfigArgs` used for inheritance.
+from .configargs import CommonConfigArgs
 # `Logger` used for inheritance.
 from .logger import Logger
+# `CommonLoggingArgs` used for inheritance.
+from .loggingargs import CommonLoggingArgs
 
 
-class Args(Logger):
+class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
     """
     Common program arguments management.
 
@@ -99,13 +104,10 @@ class Args(Logger):
         """
         Defines common program arguments.
 
-        :param class_debugging: ``True`` to enable per-class debugging, ``False`` for unclassed debugging only.
-
-        When per-class debugging is enabled, the main logger debugging is enabled by default.
+        :param class_debugging: See :class:`.loggingargs.CommonLoggingArgs`.
         """
         from .debugclasses import DebugClass
         from .errcodes import ErrorCode
-        from .path import Path
 
         Logger.__init__(self, log_class=DebugClass.ARGS)
 
@@ -121,7 +123,7 @@ class Args(Logger):
         #: Tells whether arguments have been successfully parsed yet or not.
         self.parsed = False
 
-        #: Error code.
+        #: Argument parsing error code.
         self.error_code = ErrorCode.ARGUMENTS_ERROR  # type: ErrorCode
 
         # Common command line arguments.
@@ -130,42 +132,8 @@ class Args(Logger):
             action="help",
             help="Show this help message and exit.",
         )
-
-        #: Configuration files.
-        self.config_paths = []  # type: typing.List[Path]
-        self.addarg("Configuration files", "config_paths", Path).define(
-            "--config-file", metavar="CONFIG_PATH",
-            action="append", type=str, default=[],
-            help="Input configuration file path. "
-                 "This option may be called several times.",
-        )
-        #: Additional configuration values.
-        self.config_values = {}  # type: typing.Dict[str, str]
-        self.addarg("Configuration values", "config_values", (str, str)).define(
-            "--config-value", metavar=("KEY", "VALUE"), nargs=2,
-            action="append", type=str, default=[],
-            help="Configuration value in the 'key=value' form. "
-                 "This option may be called several times.",
-        )
-
-        #: Main logger debugging.
-        self.debug_main = False  # type: bool
-        if class_debugging:
-            self.debug_main = True
-        else:
-            self.addarg("Debug main", "debug_main", bool).define(
-                "--debug",
-                action="store_true", default=False,
-                help="Enable debugging.",
-            )
-        #: Debug classes activated.
-        self.debug_classes = []  # type: typing.List[str]
-        if class_debugging:
-            self.addarg("Debug classes", "debug_classes", str).define(
-                "--debug-class", metavar="DEBUG_CLASS",
-                action="append", type=str, default=[],
-                help="Activate debugging for the given class.",
-            )
+        CommonConfigArgs.__init__(self)
+        CommonLoggingArgs.__init__(self, class_debugging=class_debugging)
 
     def setprog(
             self,
@@ -193,7 +161,7 @@ class Args(Logger):
             self,
             member_desc,  # type: str
             member_name,  # type: str
-            member_type,  # type: typing.Union[type, typing.Tuple[typing.Type[str], type]]
+            member_type,  # type: typing.Union[type, typing.Tuple[typing.Type[str], type], typing.Callable[[str], typing.Any]]
     ):  # type: (...) -> ArgInfo
         """
         Adds a program argument.
@@ -201,7 +169,7 @@ class Args(Logger):
         :param member_desc: Textual description of the program argument(s).
         :param member_name: Corresponding member name in the owner :class:`Args` instance.
         :param member_type:
-            Type of the program argument, or base type of the program arguments list.
+            Type of the program argument, or base type of the program arguments list, or conversion handler.
             When defined as a 2 items tuple, the argument feeds a dictionary:
             the first item of the tuple shall be ``str`` (for the dictionary keys),
             and the second item gives the type of the dictionary values.
@@ -311,14 +279,15 @@ class ArgInfo:
             arg_parser,  # type: argparse.ArgumentParser
             member_desc,  # type: str
             member_name,  # type: str
-            member_type,  # type: typing.Union[type, typing.Tuple[typing.Type[str], type]]
+            member_type,  # type: typing.Union[type, typing.Tuple[typing.Type[str], type], typing.Callable[[str], typing.Any]]
     ):  # type: (...) -> None
         """
         :param arg_parser: Related :class:`argparse.ArgumentParser` instance.
         :param member_desc: Textual description of the program argument(s).
         :param member_name: Corresponding member name in the owner :class:`Args` instance.
-        :param member_type: Base type of the program argument(s).
-                            See :meth:`Args.addarg()` for a detailed description of this parameter.
+        :param member_type:
+            Base type of the program argument(s).
+            See :meth:`Args.addarg()` for a detailed description of this parameter.
 
         :meth:`Args.ArgInfo.define()` should be called onto each :class:`Args.ArgInfo` instance newly created.
 
@@ -336,7 +305,7 @@ class ArgInfo:
             assert len(member_type) == 2
             self.key_type = member_type[0]
         #: Base type of the program argument(s).
-        self.value_type = str  # type: type
+        self.value_type = str  # type: typing.Union[type, typing.Callable[[str], typing.Any]]
         if isinstance(member_type, tuple):
             assert len(member_type) == 2
             self.value_type = member_type[1]
@@ -422,9 +391,12 @@ class ArgInfo:
             # Check and convert parsed item values.
             if (self.value_type is Path) and isinstance(_parsed_value, str):
                 _parsed_value = Path(_parsed_value)
-            if (_parsed_value is not None) and (not isinstance(_parsed_value, self.value_type)):
-                MAIN_LOGGER.error(f"Wrong type {_parsed_value!r}, {qualname(self.value_type)} expected")
-                return False
+            elif inspect.isfunction(self.value_type) and isinstance(_parsed_value, str):
+                _parsed_value = self.value_type(_parsed_value)
+            if _parsed_value is not None:
+                if (not inspect.isfunction(self.value_type)) and (not isinstance(_parsed_value, typing.cast(type, self.value_type))):
+                    MAIN_LOGGER.error(f"Wrong type {_parsed_value!r}, {qualname(self.value_type)} expected")
+                    return False
 
             # Save the value in the :class:`Args` instance.
             if self.key_type is not None:

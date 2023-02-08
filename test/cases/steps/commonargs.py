@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
 
     def __init__(
             self,
-            config_values=None,  # type: typing.Dict[typing.Union[enum.Enum, str], typing.Optional[str]]
+            config_values=None,  # type: scenario.test.configvalues.ConfigValuesType
             config_files=None,  # type: typing.List[scenario.Path]
             debug_classes=None,  # type: typing.Optional[typing.List[str]]
             log_outfile=None,  # type: bool
@@ -37,7 +37,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
     ):  # type: (...) -> None
         scenario.test.ExecutionStep.__init__(self)
 
-        self.config_values = config_values or {}  # type: typing.Dict[typing.Union[enum.Enum, str], typing.Optional[str]]
+        self.config_values = config_values or {}  # type: scenario.test.configvalues.ConfigValuesType
         self.config_file_paths = config_files or []  # type: typing.List[scenario.Path]
         self.debug_classes = debug_classes  # type: typing.Optional[typing.List[str]]
         self.log_outfile = log_outfile  # type: typing.Optional[bool]
@@ -57,7 +57,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
 
         # Configuration values.
         for _config_key in self.config_values:  # type: typing.Union[enum.Enum, str]
-            _config_value = self.config_values[_config_key]  # type: typing.Optional[str]
+            _config_value = self.config_values[_config_key]  # type: typing.Optional[scenario.test.configvalues.AnyConfigValueType]
             if _config_key == scenario.ConfigKey.LOG_DATETIME:
                 if _config_value is None:
                     _action_description1 += ", with date/time logging by default"
@@ -85,7 +85,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
             if self.doexecute():
                 self.subprocess.unsetconfigvalue(_config_key)
                 if _config_value is not None:
-                    self.subprocess.setconfigvalue(_config_key, _config_value)
+                    self.subprocess.setconfigvalue(_config_key, scenario.test.configvalues.tostr(_config_value))
 
         # Configuration files.
         _config_files_mentionned = 0  # type: int
@@ -102,7 +102,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
         # Debug classes.
         if self.debug_classes is not None:
             if self.debug_classes:
-                _action_description1 += f", with {scenario.text.comalist(self.debug_classes, quotes=True)} "
+                _action_description1 += f", with {scenario.text.commalist(self.debug_classes, quotes=True)} "
                 _action_description1 += f"{scenario.text.pluralize('debug class', len(self.debug_classes))} enabled"
 
                 if self.doexecute():
@@ -167,4 +167,4 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
         if isinstance(self.subprocess, scenario.test.CampaignSubProcess):
             _paths = self.subprocess.unit_paths
 
-        return scenario.text.comalist(_paths, quotes=True)
+        return scenario.text.commalist([self.test_case.getpathdesc(_path) for _path in _paths])

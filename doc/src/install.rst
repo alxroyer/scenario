@@ -1,4 +1,4 @@
-.. Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+.. Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 ..
 .. Licensed under the Apache License, Version 2.0 (the "License");
 .. you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ Clone the project sources:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/Alexis-ROYER/scenario.git
+    $ git clone https://github.com/alxroyer/scenario
 
 Use the 'bin/run-test.py' or 'bin/run-campaign.py' launchers directly.
 Let's say you had cloned the project in '/path/to/scenario':

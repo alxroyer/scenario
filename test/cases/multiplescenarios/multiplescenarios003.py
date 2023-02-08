@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ class MultipleScenarios003(scenario.test.TestCase):
         self.addstep(ParseFinalResultsLog(ExecScenario.getinstance(0)))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(0), scenario_expectations=[
             scenario.test.data.scenarioexpectations(
-                scenario.test.paths.KNOWN_ISSUES_SCENARIO, configs={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "0"},
+                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: False},
                 error_details=True, stats=True,
             ),
             scenario.test.data.scenarioexpectations(scenario.test.paths.SIMPLE_SCENARIO),
@@ -58,7 +58,7 @@ class MultipleScenarios003(scenario.test.TestCase):
         self.addstep(ParseFinalResultsLog(ExecScenario.getinstance(1)))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(1), scenario_expectations=[
             scenario.test.data.scenarioexpectations(
-                scenario.test.paths.KNOWN_ISSUES_SCENARIO, configs={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "1"},
+                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: True},
                 error_details=True, stats=True,
             ),
             scenario.test.data.scenarioexpectations(scenario.test.paths.SIMPLE_SCENARIO),

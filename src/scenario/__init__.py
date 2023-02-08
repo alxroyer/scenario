@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,6 +44,22 @@ __path__ = extend_path(__path__, __name__)
 
 # Make system imports after the namespace definition above.
 import typing
+
+
+__doc__ += """
+Package information
+===================
+"""
+
+__doc__ += """
+.. py:attribute:: info
+
+    Alias of :attr:`.pkginfo.PKG_INFO`.
+
+    Gives the package information: version, ...
+"""
+# noinspection PyPep8Naming
+from .pkginfo import PKG_INFO as info  # noqa: E402  ## Module level import not at top of file
 
 
 __doc__ += """
@@ -375,11 +391,22 @@ from .testerrors import ExceptionError  # noqa: E402  ## Module level import not
 __doc__ += """
 .. py:attribute:: KnownIssue
 
-    Alias of :class:`.testerrors.KnownIssue`.
+    Alias of :class:`.knownissues.KnownIssue`.
 
     Describes an error due to an exception that occurred during the tests.
 """
-from .testerrors import KnownIssue  # noqa: E402  ## Module level import not at top of file
+from .knownissues import KnownIssue  # noqa: E402  ## Module level import not at top of file
+
+__doc__ += """
+.. py:attribute:: IssueLevel
+
+    Alias of :class:`.issuelevels.IssueLevel`.
+
+    Provides methods to define named issue levels.
+"""
+from .issuelevels import IssueLevel  # noqa: E402  ## Module level import not at top of file
+if typing.TYPE_CHECKING:
+    from .issuelevels import AnyIssueLevelType
 
 __doc__ += """
 .. py:attribute:: TimeStats

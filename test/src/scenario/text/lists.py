@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import typing
 
 
-def comalist(
+def commalist(
         iterable,  # type: typing.Iterable[typing.Any]
         final_and=True,  # type: bool
         quotes=False,  # type: bool
@@ -36,7 +36,7 @@ def comalist(
     else:
         return "".join([
             # Join first items with ', '.
-            ", ".join([f"'{_item}'" for _item in iterable[:-1]]),
+            ", ".join([f"{_item}" for _item in iterable[:-1]]),
             # Final 'and'.
             " and " if final_and else ", ",
             # Last term.

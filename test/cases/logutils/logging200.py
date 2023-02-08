@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ class Logging200(scenario.test.TestCase):
             # Activate `LOGGER_DEBUG_CLASS` debugging.
             debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
             # Explicitely disable log date/time for verification purposes in `CheckMainLoggerLogLevels` and `CheckClassLoggerLogLevels`.
-            config_values={scenario.ConfigKey.LOG_DATETIME: "0"},
+            config_values={scenario.ConfigKey.LOG_DATETIME: False},
         ))
         self.addstep(CheckMainLoggerLogLevels(ExecScenario.getinstance()))
         self.addstep(CheckClassLoggerLogLevels(ExecScenario.getinstance()))

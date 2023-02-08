@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ CONFIG_DB_SCENARIO = DATA_PATH / "configdbscenario.py"  # type: scenario.Path
 FAILING_SCENARIO = DATA_PATH / "failingscenario.py"  # type: scenario.Path
 GOTO_SCENARIO = DATA_PATH / "gotoscenario.py"  # type: scenario.Path
 INHERITING_SCENARIO = DATA_PATH / "inheritingscenario.py"  # type: scenario.Path
+KNOWN_ISSUE_DETAILS_SCENARIO = DATA_PATH / "knownissuedetailsscenario.py"  # type: scenario.Path
 KNOWN_ISSUES_SCENARIO = DATA_PATH / "knownissuesscenario.py"  # type: scenario.Path
 LOGGER_SCENARIO = DATA_PATH / "loggerscenario.py"  # type: scenario.Path
 LOGGING_INDENTATION_SCENARIO = DATA_PATH / "loggingindentationscenario.py"  # type: scenario.Path

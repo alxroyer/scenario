@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,10 @@ import scenario
 if typing.TYPE_CHECKING:
     from scenario.typing import JSONDict
 
+# `SubProcess` used in method signatures.
 from .subprocess import SubProcess
+# `TestCase` used in method signatures.
+from .testcase import TestCase
 
 
 if typing.TYPE_CHECKING:
@@ -34,6 +37,17 @@ class Step(scenario.Step):
 
     def __init__(self):  # type: (...) -> None
         scenario.Step.__init__(self)
+
+    @property
+    def test_case(self):  # type: (...) -> TestCase
+        _scenario = scenario.stack.building.scenario_definition  # type: typing.Optional[scenario.Scenario]
+        # Avoid failing when the `self.scenario` attribute does not exist yet.
+        if hasattr(self, "scenario"):
+            # Memo: `self.scenario` is allocated but not initialized with a void instance in `ScenarioDefinition.__init__()`.
+            if hasattr(self.scenario, "name"):
+                _scenario = self.scenario
+        assert isinstance(_scenario, TestCase), f"{_scenario!r} not a {TestCase!r}"
+        return _scenario
 
     def testdatafromlist(
             self,

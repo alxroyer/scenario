@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class Issue65a(scenario.test.TestCase):
         self.addstep(ExecScenario(
             scenario.test.paths.WAITING_SCENARIO,
             # Activate log datetimes in order to be able to track what actually takes time.
-            config_values={scenario.ConfigKey.LOG_DATETIME: "1"},
+            config_values={scenario.ConfigKey.LOG_DATETIME: True},
             # Activate issue#65 special debugging.
             debug_classes=["scenario.#65.exec-times"],
         ))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ class KnownIssues010(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="Known issues - relax mode",
-            objective="Check known issues generate warnings in relax mode, and that the status of the test is WARNINGS.",
+            title="Known issues",
+            objective="Check known issues generate warnings by default, and that the status of the test is WARNINGS.",
             features=[scenario.test.features.KNOWN_ISSUES],
         )
 

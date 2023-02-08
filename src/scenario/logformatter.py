@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -261,4 +261,10 @@ class LogFormatter(logging.Formatter):
         :param string: String to remove color control characters from.
         :return: String without color control characters.
         """
-        return re.sub("\033" + r"\[\d+m", "", string)
+        # See https://docs.python.org/3/library/re.html#re.sub.
+        return re.sub(
+            pattern="\033" + r"\[\d+(;\d+)*m",
+            repl="",
+            string=string,
+            count=0,  # "If omitted or zero, all occurrences will be replaced."
+        )

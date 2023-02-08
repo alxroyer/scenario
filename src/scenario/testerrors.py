@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -69,28 +69,40 @@ class TestError(Exception):
         """
         Programmatic representation of the error.
         """
-        return f"<{type(self).__name__} {str(self)!r}>"
+        _severity = (
+            "ERROR" if self.iserror() else
+            "WARNING" if self.iswarning() else
+            "IGNORED"
+        )  # type: str
+        return f"<{type(self).__name__} {_severity!r} {str(self)!r}>"
 
-    def __eq__(
-            self,
-            other,  # type: typing.Any
-    ):  # type: (...) -> bool
+    def iserror(self):  # type: (...) -> bool
         """
-        Test error equality operator.
+        Tells whether this error object is actually an error.
 
-        :param other: Candidate object.
-        :return: ``True`` when code locations and short representations match, ``False`` otherwise.
+        :return:
+            ``True`` for a real error,
+            ``False`` for a simple warning (see :meth:`iswarning()`) or when the error should be ignored (see :meth:`isignored()`).
         """
-        if isinstance(other, TestError):
-            if (self.location == other.location) and (str(self) == str(other)):
-                return True
-        return False
+        return True
 
     def iswarning(self):  # type: (...) -> bool
         """
-        Tells whether the error a just a warning.
+        Tells whether this error object is just a warning.
 
-        :return: ``True`` for a simple warning, ``False`` for a real error.
+        :return:
+            ``True`` for a simple warning,
+            ``False`` for a real error (see :meth:`iserror()`) or when the error should be ignored (see :meth:`isignored()`).
+        """
+        return False
+
+    def isignored(self):  # type: (...) -> bool
+        """
+        Tells whether this error object should be ignored.
+
+        :return:
+            ``True`` when the error should be ignored,
+            ``False`` for a real error (see :meth:`iserror()`) or a warning (see :meth:`iswarning()`).
         """
         return False
 
@@ -98,17 +110,19 @@ class TestError(Exception):
             self,
             logger,  # type: Logger
             level=logging.ERROR,  # type: int
+            indent="",  # type: str
     ):  # type: (...) -> None
         """
         Logs the error info.
 
         :param logger: Logger to use for logging.
         :param level: Log level.
+        :param indent: Indentation to use.
         """
         if self.location:
-            logger.log(level, "%s (%s)", str(self), self.location.tolongstring())
+            logger.log(level, "%s%s (%s)", indent, str(self), self.location.tolongstring())
         else:
-            logger.log(level, "%s", str(self))
+            logger.log(level, "%s%s", indent, str(self))
 
     def tojson(self):  # type: (...) -> JSONDict
         """
@@ -133,6 +147,8 @@ class TestError(Exception):
         :param json_data: JSON dictionary.
         :return: New :class:`TestError` instance.
         """
+        from .knownissues import KnownIssue
+
         if "type" in json_data:
             if json_data["type"] == "known-issue":
                 return KnownIssue.fromjson(json_data)
@@ -201,21 +217,20 @@ class ExceptionError(TestError):
             self,
             logger,  # type: Logger
             level=logging.ERROR,  # type: int
+            indent="",  # type: str
     ):  # type: (...) -> None
         """
-        Logs the exception traceback, if an exception is stored,
-        or the available error info otherwise.
+        :meth:`TestError.logerror()` override in order to log the exception traceback, if an exception is stored.
 
-        :param logger: Logger to use for logging.
-        :param level: Log level.
+        Defaults to :meth:`TestError.logerror()` if no exception.
         """
         if self.exception:
             _traceback = "".join(self.exception.format())  # str
             for _line in _traceback.splitlines():  # type: str
                 if _line:
-                    logger.log(level, "  " + _line)
+                    logger.log(level, "%s  %s", indent, _line)
         else:
-            super().logerror(logger, level=level)
+            super().logerror(logger, level=level, indent=indent)
 
     def tojson(self):  # type: (...) -> JSONDict
         _json = {
@@ -240,81 +255,3 @@ class ExceptionError(TestError):
         _error.message = json_data["message"]
         _error.location = CodeLocation.fromlongstring(json_data["location"])
         return _error
-
-
-class KnownIssue(TestError):
-    """
-    Known issue object.
-    """
-
-    def __init__(
-            self,
-            issue_id,  # type: str
-            message,  # type: str
-    ):  # type: (...) -> None
-        """
-        Creates a known issue instance from the info given and the current execution stack.
-
-        :param issue_id: Issue identifier.
-        :param message: Error or warning message to display with.
-        """
-        from .locations import EXECUTION_LOCATIONS
-
-        TestError.__init__(
-            self,
-            message=message,
-            location=EXECUTION_LOCATIONS.fromcurrentstack(limit=1, fqn=True)[-1],
-        )
-
-        #: Issue identifier.
-        self.issue_id = issue_id  # type: str
-
-        #: Marker for known issues defined during initializers only.
-        self.init_only = False
-
-        # Redefine the type of :attr:`TestError.location` in order to explicitize it cannot be ``None`` for :class:`KnownIssue` instances.
-        self.location = self.location  # type: CodeLocation
-
-    def __str__(self):  # type: (...) -> str
-        """
-        Short representation of the known issue.
-
-        Issue id + message.
-        """
-        return f"Issue {self.issue_id}! {self.message}"
-
-    def iswarning(self):  # type: (...) -> bool
-        return True
-
-    def tojson(self):  # type: (...) -> JSONDict
-        """
-        Converts the :class:`TestError` instance into a JSON dictionary.
-
-        :return: JSON dictionary.
-        """
-        _json = {
-            "type": "known-issue",
-            "id": self.issue_id,
-            "message": self.message,
-            "location": self.location.tolongstring(),
-        }  # type: JSONDict
-        return _json
-
-    @staticmethod
-    def fromjson(
-            json_data,  # type: JSONDict
-    ):  # type: (...) -> TestError
-        """
-        Builds a :class:`KnownIssue` instance from its JSON representation.
-
-        :param json_data: JSON dictionary.
-        :return: New :class:`KnownIssue` instance.
-        """
-        from .locations import CodeLocation
-
-        _known_issue = KnownIssue(
-            issue_id=json_data["id"],
-            message=json_data["message"],
-        )  # type: KnownIssue
-        _known_issue.location = CodeLocation.fromlongstring(json_data["location"])
-        return _known_issue

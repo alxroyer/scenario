@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,11 +21,15 @@ Scenario results management.
 import logging
 import typing
 
+# `Logger` used for inheritance.
+from .logger import Logger
 # `ScenarioExecution` used in method signatures.
 from .scenarioexecution import ScenarioExecution
+# `TestError` used in method signatures.
+from .testerrors import TestError
 
 
-class ScenarioResults:
+class ScenarioResults(Logger):
     """
     List of scenario execution results.
     """
@@ -34,6 +38,10 @@ class ScenarioResults:
         """
         Initializes an empty list.
         """
+        from .debugclasses import DebugClass
+
+        Logger.__init__(self, DebugClass.SCENARIO_RESULTS)
+
         #: List of :class:`ScenarioResult` instances.
         self._results = []  # type: typing.List[ScenarioExecution]
 
@@ -46,6 +54,9 @@ class ScenarioResults:
 
         :param scenario_execution: Scenario execution instance.
         """
+        self.debug(f"add({scenario_execution!r})")
+        self.debug(f"- Number of warnings: {len(scenario_execution.warnings)}")
+        self.debug(f"- Number of errors: {len(scenario_execution.errors)}")
         self._results.append(scenario_execution)
 
     @property
@@ -92,6 +103,8 @@ class ScenarioResults:
                 _warnings.append(_scenario_execution)
             else:
                 _successes.append(_scenario_execution)
+        _warnings.sort()
+        _errors.sort()
         _total_name_field = f"{len(self._results)} tests, {len(_errors)} failed, {len(_warnings)} with warnings"  # type: str
         _name_field_len = max(_name_field_len, len(_total_name_field))
         _stat_field_len = max(_stat_field_len, len(str(_total_step_stats)), len(str(_total_action_stats)), len(str(_total_result_stats)))
@@ -127,8 +140,9 @@ class ScenarioResults:
         for _scenario_execution in _errors:
             self._displayscenarioline(logging.ERROR, _fmt, _scenario_execution)
 
-    @staticmethod
+    @classmethod
     def _displayscenarioline(
+            cls,
             log_level,  # type: int
             fmt,  # type: str
             scenario_execution,  # type: ScenarioExecution
@@ -136,7 +150,7 @@ class ScenarioResults:
         """
         Displays a scenario line.
 
-        :param log_level: Log level to use for.
+        :param log_level: Log level to use.
         :param fmt: Format to use.
         :param scenario_execution: Scenario to display.
         """
@@ -144,7 +158,6 @@ class ScenarioResults:
         from .debugutils import callback
         from .loggermain import MAIN_LOGGER
         from .scenarioconfig import SCENARIO_CONFIG
-        from .testerrors import TestError
 
         # Build extra info.
         _extra_info = []  # type: typing.List[str]
@@ -161,15 +174,31 @@ class ScenarioResults:
 
         # Display warnings, then errors.
         for _warning in scenario_execution.warnings:  # type: TestError
-            if _warning.location:
-                MAIN_LOGGER.warning(f"  {_warning} ({_warning.location.tolongstring()})")
-            else:
-                MAIN_LOGGER.warning(f"  {_warning}")
+            cls._displayerror(logging.WARNING, _warning)
         for _error in scenario_execution.errors:  # type: TestError
-            if _error.location:
-                MAIN_LOGGER.error(f"  {_error} ({_error.location.tolongstring()})")
-            else:
-                MAIN_LOGGER.error(f"  {_error}")
+            cls._displayerror(logging.ERROR, _error)
+
+    @classmethod
+    def _displayerror(
+            cls,
+            log_level,  # type: int
+            error,  # type: TestError
+    ):  # type: (...) -> None
+        """
+        Displays a test error.
+
+        :param log_level: Log level to use.
+        :param error: Test error to display.
+        """
+        from .testerrors import ExceptionError
+        from .loggermain import MAIN_LOGGER
+
+        if isinstance(error, ExceptionError):
+            # `ExceptionError.logerror()` prints out the exception traceback.
+            # Call the base `TestError.logerror()` instead.
+            TestError.logerror(error, logger=MAIN_LOGGER, level=log_level, indent="  ")
+        else:
+            error.logerror(logger=MAIN_LOGGER, level=log_level, indent="  ")
 
 
 __doc__ += """

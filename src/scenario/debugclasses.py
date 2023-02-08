@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ class DebugClass(StrEnum):
     REFLEX = "scenario.reflex"
     #: Scenario report debugging.
     SCENARIO_REPORT = "scenario.ScenarioReport"
+    #: Scenario results debugging.
+    SCENARIO_RESULTS = "scenario.ScenarioResults"
     #: Scenario runner debugging.
     SCENARIO_RUNNER = "scenario.ScenarioRunner"
     #: Scenario stack debugging.

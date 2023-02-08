@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -217,11 +217,11 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
                             _error.exception_type, _error_expectations.error_type,
                             evidence="Error type",
                         )
-                if _error_expectations.issue_id is not None:
-                    if self.RESULT(f"Issue id is {_error_expectations.issue_id!r}."):
+                if _error_expectations.id is not None:
+                    if self.RESULT(f"Issue id is {_error_expectations.id!r}."):
                         assert isinstance(_error, scenario.KnownIssue)
                         self.assertequal(
-                            _error.issue_id, _error_expectations.issue_id,
+                            _error.id, _error_expectations.id,
                             evidence="Issue id",
                         )
                 if self.RESULT(f"Error message is {_error_expectations.message!r}."):

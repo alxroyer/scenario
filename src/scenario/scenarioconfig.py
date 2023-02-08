@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,15 @@
 
 import typing
 
+# `ConfigNode` used in method signatures.
+from .confignode import ConfigNode
 # `Console` used in method signatures.
 from .console import Console
 # `StrEnum` used for inheritance.
 from .enumutils import StrEnum
+if typing.TYPE_CHECKING:
+    # `AnyIssueLevelType` used in method signatures.
+    from .issuelevels import AnyIssueLevelType
 # `Path` used in method signatures.
 from .path import Path
 
@@ -41,6 +46,9 @@ class ScenarioConfig:
         """
         :mod:`scenario` configuration keys.
         """
+
+        # Time & logging.
+
         #: Should a specific timezone be used? String value. Default is the local timezone.
         TIMEZONE = "scenario.timezone"
         #: Should the log lines include a timestamp? Boolean value.
@@ -53,9 +61,12 @@ class ScenarioConfig:
         LOG_COLOR = "scenario.log_%s_color"
         #: Should the log lines be written in a log file? File path string.
         LOG_FILE = "scenario.log_file"
-        #: Which debug classes to display? List of strings, or coma-separated string.
+        #: Which debug classes to display? List of strings, or comma-separated string.
         DEBUG_CLASSES = "scenario.debug_classes"
-        #: Expected scenario attributes. List of strings, or coma-separated string.
+
+        # Test execution & results.
+
+        #: Expected scenario attributes. List of strings, or comma-separated string.
         EXPECTED_ATTRIBUTES = "scenario.expected_attributes"
         #: Should the scenario continue on error? Boolean value.
         CONTINUE_ON_ERROR = "scenario.continue_on_error"
@@ -67,8 +78,17 @@ class ScenarioConfig:
         SCENARIO_TIMEOUT = "scenario.scenario_timeout"
         #: Scenario attributes to display for extra info when displaying scenario results,
         #: after a campaign execution, or when executing several tests in a single command line.
-        #: List of strings, or coma-separated string.
+        #: List of strings, or comma-separated string.
         RESULTS_EXTRA_INFO = "scenario.results_extra_info"
+
+        # Known issues and issue levels.
+
+        #: Issue level names. Dictionary of names (``str``) => ``int`` values.
+        ISSUE_LEVEL_NAMES = "scenario.issue_levels"
+        #: Issue level from and above which known issues should be considered as errors.
+        ISSUE_LEVEL_ERROR = "scenario.issue_level_error"
+        #: Issue level from and under which known issues should be ignored.
+        ISSUE_LEVEL_IGNORED = "scenario.issue_level_ignored"
 
     def __init__(self):  # type: (...) -> None
         """
@@ -161,7 +181,6 @@ class ScenarioConfig:
         Configurable through :attr:`Key.LOG_COLOR`.
         """
         from .configdb import CONFIG_DB, ConfigNode
-        from .loggermain import MAIN_LOGGER
 
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
         _config_node = CONFIG_DB.getnode(_key)  # type: typing.Optional[ConfigNode]
@@ -171,7 +190,7 @@ class ScenarioConfig:
                 try:
                     return Console.Color(_color_number)
                 except ValueError:
-                    MAIN_LOGGER.warning(f"{_key} ({_config_node.origin}): Invalid color number {_color_number}")
+                    self._warning(_config_node, f"Invalid color number {_color_number!r}")
         return default
 
     def debugclasses(self):  # type: (...) -> typing.List[str]
@@ -273,6 +292,74 @@ class ScenarioConfig:
         self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO, _attribute_names)
         return _attribute_names
 
+    def loadissuelevelnames(self):  # type: (...) -> None
+        """
+        Loads the issue level names configured through configuration files.
+        """
+        from .configdb import CONFIG_DB
+        from .issuelevels import IssueLevel
+
+        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[ConfigNode]
+        if _root_node:
+            for _name in _root_node.getsubkeys():  # type: str
+                # Retrieve the `int` value configured with the issue level name.
+                _subnode = _root_node.get(_name)  # type: typing.Optional[ConfigNode]
+                assert _subnode, "Internal error"
+                try:
+                    _value = _subnode.cast(int)  # type: int
+                except ValueError as _err:
+                    self._warning(_subnode, f"Not an integer value {_subnode.data!r}, issue level name ignored")
+                    continue
+
+                # Check value consistency when the issue level name is already known.
+                if _name in IssueLevel.getnamed():
+                    if _value != IssueLevel.parse(_name):
+                        self._warning(_subnode, f"Name already set {IssueLevel.getdesc(IssueLevel.parse(_name))}, issue level name {_name}={_value!r} ignored")
+                    continue
+
+                # Save the association between the new issue level name and value.
+                IssueLevel.addname(_name, _value)
+
+    def issuelevelerror(self):  # type: (...) -> typing.Optional[AnyIssueLevelType]
+        """
+        Retrieves the issue level from and above which known issues should be considered as errors.
+
+        :return: Error issue level if set, ``None`` otherwise.
+        """
+        from .args import Args
+        from .configdb import CONFIG_DB
+        from .issuelevels import IssueLevel
+        if typing.TYPE_CHECKING:
+            from .issuelevels import AnyIssueLevelType
+        from .scenarioargs import CommonExecArgs
+
+        _args = Args.getinstance()  # type: Args
+        if isinstance(_args, CommonExecArgs):
+            if _args.issue_level_error is not None:
+                return _args.issue_level_error
+
+        return IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_ERROR, type=int))
+
+    def issuelevelignored(self):  # type: (...) -> typing.Optional[AnyIssueLevelType]
+        """
+        Retrieves the issue level from and under which known issues should be ignored.
+
+        :return: Ignored issue level if set, ``None`` otherwise.
+        """
+        from .args import Args
+        from .configdb import CONFIG_DB
+        from .issuelevels import IssueLevel
+        if typing.TYPE_CHECKING:
+            from .issuelevels import AnyIssueLevelType
+        from .scenarioargs import CommonExecArgs
+
+        _args = Args.getinstance()  # type: Args
+        if isinstance(_args, CommonExecArgs):
+            if _args.issue_level_ignored is not None:
+                return _args.issue_level_ignored
+
+        return IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_IGNORED, type=int))
+
     def _readstringlistfromconf(
             self,
             config_key,  # type: ScenarioConfig.Key
@@ -284,14 +371,13 @@ class ScenarioConfig:
         :param config_key:
             Configuration key for the string list.
 
-            The configuration node pointed by ``config_key`` may be either a list of strings, or a coma-separated string.
+            The configuration node pointed by ``config_key`` may be either a list of strings, or a comma-separated string.
         :param outlist:
             Output string list to feed.
 
             Values are prevented in case of duplicates.
         """
         from .configdb import CONFIG_DB
-        from .confignode import ConfigNode
 
         _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[ConfigNode]
         if _conf_node:
@@ -306,7 +392,22 @@ class ScenarioConfig:
                     if _part and (_part not in outlist):
                         outlist.append(_part)
             else:
-                CONFIG_DB.warning(_conf_node.errmsg(f"Invalid type {type(_data)}"))
+                self._warning(_conf_node, f"Invalid type {type(_data)}")
+
+    def _warning(
+            self,
+            node,  # type: ConfigNode
+            msg,  # type: str
+    ):  # type: (...) -> None
+        """
+        Logs a warning message for the given configuration node.
+
+        :param node: Configuration node related to the warning.
+        :param msg: Warning message.
+        """
+        from .configdb import CONFIG_DB
+
+        CONFIG_DB.warning(node.errmsg(msg))
 
 
 __doc__ += """

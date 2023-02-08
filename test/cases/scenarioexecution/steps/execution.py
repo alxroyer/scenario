@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ class ExecScenario(ExecCommonArgs):
 
     def __init__(
             self,
-            scenario_paths,  # type: typing.Union[scenario.Path, typing.List[scenario.Path]]
+            scenario_paths,  # type: typing.Union[scenario.Path, typing.Sequence[scenario.Path]]
             description=None,  # type: str
             subscenario=None,  # type: scenario.Path
-            config_values=None,  # type: typing.Dict[typing.Union[enum.Enum, str], typing.Optional[str]]
+            config_values=None,  # type: scenario.test.configvalues.ConfigValuesType
             config_files=None,  # type: typing.List[scenario.Path]
             debug_classes=None,  # type: typing.Optional[typing.List[str]]
             log_outfile=None,  # type: bool
@@ -51,7 +51,7 @@ class ExecScenario(ExecCommonArgs):
         )
 
         if isinstance(scenario_paths, scenario.Path):
-            self.scenario_paths = [scenario_paths]  # type: typing.List[scenario.Path]
+            self.scenario_paths = [scenario_paths]  # type: typing.Sequence[scenario.Path]
         else:
             self.scenario_paths = scenario_paths
         assert self.scenario_paths, "No scenario to execute"
@@ -115,4 +115,7 @@ class ExecScenario(ExecCommonArgs):
         """
         :return: "'%s', '%s', (...) and '%s'"-like string computed from :attr:`scenario_paths`.
         """
-        return scenario.text.comalist(self.scenario_paths, quotes=True)
+        _scenario_paths = []  # type: typing.List[typing.Union[scenario.Path, str]]
+        for _path in self.scenario_paths:  # type: scenario.Path
+            _scenario_paths.append(self.test_case.getpathdesc(_path))
+        return scenario.text.commalist(_scenario_paths)

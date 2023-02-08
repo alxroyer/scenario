@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -172,12 +172,14 @@ class ParseScenarioLog(LogParserStep):
     ):  # type: (...) -> bool
         from scenario.scenariologging import ScenarioLogging
 
+        # Useful typed variables.
+        _match = None  # type: typing.Optional[ParseScenarioLog._Match]
+        _error_level = ""  # type: str
+
         if self._match(rb'---+$', line):
             return True
         if line.endswith(self.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN.rstrip())):
             return True
-
-        _match = None  # type: typing.Optional[ParseScenarioLog._Match]
 
         # Beginning of scenario.
         _match = self._match(rb'SCENARIO \'(.+)\'$', line)
@@ -226,7 +228,7 @@ class ParseScenarioLog(LogParserStep):
             _match.debug("%s: description=%r", _json_action_result["type"].upper(), _json_action_result["description"])
             return True
 
-        # Errors
+        # Errors.
         _match = self._match(rb' +ERROR +File "(.+)", line (\d+), in (.+)$', line)
         if _match:
             _traceback_path = scenario.Path(self.tostr(_match.group(1)))  # type: scenario.Path
@@ -264,20 +266,66 @@ class ParseScenarioLog(LogParserStep):
                 return True
 
         # Known issues.
-        _match = self._match(rb' *(WARNING|ERROR) +Issue (.+)! (.+) \(([^:]+):(\d+):([^:]+)\)$', line)
+        _match = self._match(
+            rb''.join([
+                # Log level (1).
+                rb' *(WARNING|ERROR) +',
+                # Beginning of issue line.
+                rb'Issue',
+                # Issue level:
+                rb'(\(%s\))?' % rb''.join([
+                    # Name (4).
+                    rb'((.+)=)?'
+                    # `int` value (5).
+                    rb'(\d+)',
+                ]),
+                # Issue id (6).
+                rb' *(.+)?',
+                # Error message (7).
+                rb'! (.+)',
+                # Location:
+                rb' \(%s\)' % rb':'.join([
+                    # Script path (8).
+                    rb'(.+)',
+                    # Line (9).
+                    rb'(\d+)',
+                    # Qualified name (10).
+                    rb'([^ :]+)',
+                ]),
+                # End of line.
+                rb'$',
+            ]),
+            line,
+        )
         if _match:
-            _json_known_issue = {
+            _known_issue = {
                 "type": "known-issue",
-                "id": self.tostr(_match.group(2)),
-                "message": self.tostr(_match.group(3)),
-                "location": self.tostr(b'%s:%s:%s' % (_match.group(4), _match.group(5), _match.group(6))),
+                "message": self.tostr(_match.group(7)),
+                "location": self.tostr(b'%s:%s:%s' % (_match.group(8), _match.group(9), _match.group(10))),
             }  # type: JSONDict
+            if _match.group(5):
+                _known_issue["level"] = int(_match.group(5))
+            if _match.group(6):
+                _known_issue["id"] = self.tostr(_match.group(6))
             if self._getparsestate(_match).startswith("END OF "):
-                _error_level = self.tostr(_match.group(1))  # type: str
-                self._getscenario(_match)[_error_level.lower() + "s"].append(_json_known_issue)
-                _match.debug("Known issue: %r", _json_known_issue)
+                _error_level = self.tostr(_match.group(1))  # Type already declared above.
+                self._getscenario(_match)[_error_level.lower() + "s"].append(_known_issue)
+                _match.debug("Known issue: %r", _known_issue)
             else:
-                _match.debug("Known issue skipped: %r", _json_known_issue)
+                _match.debug("Known issue skipped: %r", _known_issue)
+            return True
+
+        # Error / known issue URL.
+        _match = self._match(rb' *(WARNING|ERROR) +(http(s)?://.*)$', line)
+        if _match:
+            if self._getparsestate(_match).startswith("END OF "):
+                _error_level = self.tostr(_match.group(1))  # Type already declared above.
+                assert self._getscenario(_match)[_error_level.lower() + "s"], f"No current {_error_level.lower()}"
+                self._getscenario(_match)[_error_level.lower() + "s"][-1]["url"] = self.tostr(_match.group(2))
+                self._debuglineinfo(f"{_error_level.capitalize()} URL: {self.tostr(_match.group(2))}")
+            else:
+                self._debuglineinfo("Error / known issue URL skipped")
+
             return True
 
         # Evidence.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,10 @@ class ConfigDb120(scenario.test.TestCase):
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.
         self.continue_on_error = True
 
-        self.knownissue("#44", "Implicit INI sections don't inherit from default values")
+        self.knownissue(
+            level=scenario.test.IssueLevel.SUT, id="#44",
+            message="Implicit INI sections don't inherit from default values",
+        )
 
         self.section("Load INI file")
         self.tmp_root_key = scenario.Path(__file__).stem  # type: str

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020-2022 Alexis Royer <https://github.com/Alexis-ROYER/scenario>
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -117,8 +117,8 @@ def errmsg(
     """
     from .debugutils import FmtAndArgs
 
-    # Ensure `optional` is of type `str`.
-    if not isinstance(optional, str):
+    # Ensure `optional` is of type `str` (if not `None`).
+    if (optional is not None) and (not isinstance(optional, str)):
         optional = str(optional)
     # Ensure `standard` is of type `str`.
     if not isinstance(standard, str):
