@@ -39,24 +39,54 @@ class CommonLoggingArgs:
         """
         from .args import Args
 
-        assert isinstance(self, Args)
+        # Let typings know this class is actually a subclass of the base `Args` class.
+        assert isinstance(self, CommonLoggingArgs) and isinstance(self, Args)
 
-        #: Main logger debugging.
-        self.debug_main = False  # type: bool
-        if class_debugging:
-            self.debug_main = True
-        else:
-            self.addarg("Debug main", "debug_main", bool).define(
+        #: Logging argument group.
+        self._logging_group = self._arg_parser.add_argument_group("Logging")  # Type `argparse._ArgumentGroup` not available, let default typing.
+
+        if not class_debugging:
+            self._logging_group.add_argument(
                 "--debug",
-                action="store_true", default=False,
+                dest="debug_main", action="store_true", default=False,
                 help="Enable debugging.",
             )
 
-        #: Debug classes.
-        self.debug_classes = []  # type: typing.List[str]
         if class_debugging:
-            self.addarg("Debug classes", "debug_classes", str).define(
+            self._logging_group.add_argument(
                 "--debug-class", metavar="DEBUG_CLASS",
-                action="append", type=str, default=[],
+                dest="debug_classes", action="append", type=str, default=[],
                 help="Activate debugging for the given class.",
             )
+
+    @property
+    def debug_main(self):  # type: (...) -> bool
+        """
+        Main logger debugging.
+        """
+        from .args import Args
+
+        # Let typings know this class is actually a subclass of the base `Args` class.
+        assert isinstance(self, CommonLoggingArgs) and isinstance(self, Args)
+
+        if hasattr(self._args, "debug_main"):
+            return bool(self._args.debug_main)
+        else:
+            # When the `--debug` option was not defined,
+            # i.e. class-debugging is enabled,
+            # main debugging is automatically enabled.
+            return True
+
+    @property
+    def debug_classes(self):  # type: (...) -> typing.Sequence[str]
+        """
+        Debug classes.
+        """
+        from .args import Args
+
+        # Let typings know this class is actually a subclass of the base `Args` class.
+        assert isinstance(self, CommonLoggingArgs) and isinstance(self, Args)
+
+        if hasattr(self._args, "debug_classes"):
+            return list(self._args.debug_classes)
+        return []

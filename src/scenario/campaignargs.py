@@ -35,15 +35,18 @@ class CampaignArgs(Args, CommonExecArgs):
 
     def __init__(
             self,
-            positional_args=True,  # type: bool
+            def_test_suite_paths_arg=True,  # type: bool
             default_outdir_cwd=True,  # type: bool
     ):  # type: (...) -> None
         """
         Defines program arguments for :class:`.campaignrunner.CampaignRunner`.
 
-        :param positional_args: ``False`` to disable the scenario path positional arguments definition.
-                                Useful for user programs that wish to redefine it.
-        :param default_outdir_cwd: ``False`` to disable the use of the current directory by default.
+        :param def_test_suite_paths_arg:
+            ``False`` to disable the test suite paths positional arguments definition.
+            Useful for user programs that wish to redefine it.
+            Use :meth:`_deftestsuitepathsarg()` in that case.
+        :param default_outdir_cwd:
+            ``False`` to disable the use of the current working directory by default.
         """
         Args.__init__(self, class_debugging=True)
 
@@ -53,58 +56,62 @@ class CampaignArgs(Args, CommonExecArgs):
 
         #: Current directory as the default output directory flag.
         self._default_outdir_cwd = default_outdir_cwd
-        #: Output directory path.
-        #:
-        #: Inner attribute.
-        #: ``None`` until actually set, either with the --outdir option, or programmatically in sub-classes.
-        self._outdir = None  # type: typing.Optional[Path]
-        self.addarg("Output directory", "_outdir", Path).define(
+
+        #: Campaign argument group.
+        self._campaign_group = self._arg_parser.add_argument_group("Campaign execution")  # Type `argparse._ArgumentGroup` not available, let default typing.
+
+        self._campaign_group.add_argument(
             "--outdir", metavar="OUTDIR_PATH",
-            action="store", type=str,
-            help=f"Output directory to store test results into.{' Defaults to the current directory.' if self._default_outdir_cwd else ''}",
+            dest="outdir", action="store", type=str, default=None,
+            help=(
+                "Output directory to store test results into."
+                f"{' Defaults to the current directory.' if self._default_outdir_cwd else ''}"
+            ),
         )
 
-        #: ``True`` when an output subdirectory in :attr:`CampaignArgs.outdir` named with the campaign execution date and time should be created.
-        self.create_dt_subdir = True  # type: bool
-        self.addarg("Create date-time subdirectory", "create_dt_subdir", bool).define(
+        self._campaign_group.add_argument(
             "--dt-subdir",
-            action="store_true", default=False,
-            help="Do not store the test results directly in OUTDIR_PATH, "
-                 "but within a subdirectory named with the current date and time.",
+            dest="create_dt_subdir", action="store_true", default=False,
+            help=(
+                "Do not store the test results directly in OUTDIR_PATH, "
+                "but within a subdirectory named with the current date and time."
+            ),
         )
 
-        #: Attribute names to display for extra info.
-        #: Applicable when executing several tests.
-        self.extra_info = []  # type: typing.List[str]
-        self.addarg("Results extra info", "extra_info", str).define(
+        self._campaign_group.add_argument(
             "--extra-info", metavar="ATTRIBUTE_NAME",
-            action="append", type=str, default=[],
-            help="Scenario attribute to display for extra info when displaying results. "
-                 "This option may be called several times to display more info.",
+            dest="extra_info", action="append", type=str, default=[],
+            help=(
+                "Scenario attribute to display for extra info when displaying results. "
+                "This option may be called several times to display more info."
+            ),
         )
 
-        #: Campaign file path.
-        self.test_suite_paths = []  # type: typing.List[Path]
-        if positional_args:
-            self.addarg("Test suite files", "test_suite_paths", Path).define(
-                metavar="TEST_SUITE_PATH", nargs="+",
-                action="store", type=str, default=[],
-                help="Test suite file(s) to execute.",
-            )
+        if def_test_suite_paths_arg:
+            self._deftestsuitepathsarg()
 
-    @property
-    def outdir(self):  # type: (...) -> Path
-        """
-        Output directory path as a public property.
-        """
-        if not self._outdir:
-            raise ValueError("Output directory not set")
-        return self._outdir
-
-    def _checkargs(
+    def _deftestsuitepathsarg(
             self,
-            args,  # type: typing.Any
-    ):  # type: (...) -> bool
+            nargs=None,  # type: str
+            help=None,  # type: str  # noqa  ## Shadows built-in name 'help'.
+    ):  # type: (...) -> None
+        """
+        Defines test suite paths positional arguments.
+
+        :param nargs:
+            ``argparse`` ``add_argument()`` ``nargs`` parameter.
+            ``"+"`` if not set.
+        :param help:
+            ``argparse`` ``add_argument()`` ``help`` parameter.
+            Default help message if not set.
+        """
+        self._campaign_group.add_argument(
+            metavar="TEST_SUITE_PATH", nargs=nargs or "+",
+            dest="test_suite_paths", action="store", type=str, default=[],
+            help=help or "Test suite file(s) to execute.",
+        )
+
+    def _checkargs(self):  # type: (...) -> bool
         """
         Check campaign arguments once parsed.
 
@@ -112,23 +119,78 @@ class CampaignArgs(Args, CommonExecArgs):
         """
         from .loggermain import MAIN_LOGGER
 
-        if not Args._checkargs(self, args):
+        if not Args._checkargs(self):
             return False
-        if not CommonExecArgs._checkargs(self, args):
+        if not CommonExecArgs._checkargs(self):
             return False
 
-        if self._outdir is None:
+        # Output directory.
+        if self._args.outdir is None:
             if self._default_outdir_cwd:
                 self.debug("Using current working directory for output directory by default")
-                self._outdir = Path.cwd()
+                self._args.outdir = Path.cwd()
             else:
                 MAIN_LOGGER.error("Output directory missing")
                 return False
-        self._outdir.mkdir(parents=True, exist_ok=True)
+        # Ensure a `Path` instance for `self._args.outdir`, more robust to current working directory changes.
+        if not isinstance(self._args.outdir, Path):
+            self._args.outdir = Path(self._args.outdir)
+        # Create the directory if needed.
+        self.outdir.mkdir(parents=True, exist_ok=True)
 
+        # Test suite paths.
         for _test_suite_path in self.test_suite_paths:  # type: Path
             if not _test_suite_path.is_file():
                 MAIN_LOGGER.error(f"No such file '{_test_suite_path}'")
                 return False
 
         return True
+
+    @property
+    def outdir(self):  # type: (...) -> Path
+        """
+        Output directory path.
+
+        Expected to be set:
+
+        - either with the --outdir option
+        - or programmatically in subclasses through the :meth:`outdir()` setter.
+
+        :raise ValueError: If the output directory has not been defined.
+        """
+        if not self._args.outdir:
+            raise ValueError("Output directory not set")
+        # `self._args.outdir` should normally be a `Path` instance already, whatever.
+        if not isinstance(self._args.outdir, Path):
+            self._args.outdir = Path(self._args.outdir)
+        assert isinstance(self._args.outdir, Path)  # Help type checking.
+        return self._args.outdir
+
+    @outdir.setter
+    def outdir(self, outdir):  # type: (Path) -> None
+        """
+        Output directory programmatic setter.
+        """
+        self._args.outdir = outdir
+
+    @property
+    def create_dt_subdir(self):  # type: (...) -> bool
+        """
+        ``True`` when an output subdirectory in :attr:`CampaignArgs.outdir` named with the campaign execution date and time should be created.
+        """
+        return bool(self._args.create_dt_subdir)
+
+    @property
+    def extra_info(self):  # type: (...) -> typing.Sequence[str]
+        """
+        Attribute names to display for extra info.
+        Applicable when executing several tests.
+        """
+        return list(self._args.extra_info)
+
+    @property
+    def test_suite_paths(self):  # type: (...) -> typing.Sequence[Path]
+        """
+        Campaign file path.
+        """
+        return [Path(_test_suite_path) for _test_suite_path in self._args.test_suite_paths]

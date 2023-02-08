@@ -20,6 +20,9 @@ Common configuration program arguments.
 
 import typing
 
+# `Path` used in method signatures.
+from .path import Path
+
 
 class CommonConfigArgs:
     """
@@ -31,24 +34,50 @@ class CommonConfigArgs:
         Installs common configuration program arguments.
         """
         from .args import Args
-        from .path import Path
 
-        assert isinstance(self, Args)
+        # Let typings know this class is actually a subclass of the base `Args` class.
+        assert isinstance(self, CommonConfigArgs) and isinstance(self, Args)
 
-        #: Configuration files.
-        self.config_paths = []  # type: typing.List[Path]
-        self.addarg("Configuration files", "config_paths", Path).define(
+        #: Configuration argument group.
+        self._config_group = self._arg_parser.add_argument_group("Configuration")  # Type `argparse._ArgumentGroup` not available, let default typing.
+
+        self._config_group.add_argument(
             "--config-file", metavar="CONFIG_PATH",
-            action="append", type=str, default=[],
+            dest="config_paths", action="append", type=str, default=[],
             help="Input configuration file path. "
                  "This option may be called several times.",
         )
 
-        #: Additional configuration values.
-        self.config_values = {}  # type: typing.Dict[str, str]
-        self.addarg("Configuration values", "config_values", (str, str)).define(
+        self._config_group.add_argument(
             "--config-value", metavar=("KEY", "VALUE"), nargs=2,
-            action="append", type=str, default=[],
+            dest="config_values", action="append", type=str, default=[],
             help="Single configuration value. "
                  "This option may be called several times.",
         )
+
+    @property
+    def config_paths(self):  # type: (...) -> typing.Sequence[Path]
+        """
+        Configuration files.
+        """
+        from .args import Args
+
+        # Let typings know this class is actually a subclass of the base `Args` class.
+        assert isinstance(self, CommonConfigArgs) and isinstance(self, Args)
+
+        return [Path(_config_path) for _config_path in self._args.config_paths]
+
+    @property
+    def config_values(self):  # type: (...) -> typing.Mapping[str, str]
+        """
+        Additional configuration values.
+        """
+        from .args import Args
+
+        # Let typings know this class is actually a subclass of the base `Args` class.
+        assert isinstance(self, CommonConfigArgs) and isinstance(self, Args)
+
+        _config_values = {}  # type: typing.Dict[str, str]
+        for _config_value in self._args.config_values:  # type: typing.Tuple[str, str]
+            _config_values[_config_value[0]] = _config_value[1]
+        return _config_values

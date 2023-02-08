@@ -210,7 +210,7 @@ def getstepexecution(
 
     :param step_execution_specification: Step execution specification (see :attr:`.assertionhelpers.StepExecutionSpecType`).
     :return: Step execution corresponding to the given specification.
-    :raise: Exception when the step execution could not be found.
+    :raise Exception: When the step execution could not be found.
     """
     from .scenariostack import SCENARIO_STACK
     from .stepdefinition import StepDefinition

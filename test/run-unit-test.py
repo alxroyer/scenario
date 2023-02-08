@@ -35,16 +35,22 @@ import scenario.test  # noqa: E402  ## Module level import not at top of file
 class UnitTestArgs(scenario.ScenarioArgs):
 
     def __init__(self):  # type: (...) -> None
-        scenario.ScenarioArgs.__init__(self)
+        scenario.ScenarioArgs.__init__(self, def_scenario_paths_arg=False)
 
         self.setdescription("Unit test scenario launcher.")
 
-        self.check_expected_attributes = True
-        self.addarg("Check expected attributes", "check_expected_attributes", bool).define(
+        self._test_exec_group.add_argument(
             "--skip-attributes",
-            action="store_false",
+            dest="check_expected_attributes", action="store_false", default=True,
             help="Do not check expected attributes",
         )
+
+        # Redefine positional arguments after the option added above.
+        self._defscenariopathsarg()
+
+    @property
+    def check_expected_attributes(self):  # type: (...) -> bool
+        return bool(self._args.check_expected_attributes)
 
 
 if __name__ == "__main__":

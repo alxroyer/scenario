@@ -109,7 +109,7 @@ __doc__ += """
 
     Library of static assertion methods.
 
-    Can be sub-classes.
+    Can be subclassed.
     :class:`Scenario` and :class:`Step` inherit from this class.
 """
 from .assertions import Assertions  # noqa: E402  ## Module level import not at top of file

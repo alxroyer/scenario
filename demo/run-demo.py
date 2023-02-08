@@ -18,38 +18,69 @@ import scenario  # noqa: E402
 
 class DemoArgs(scenario.ScenarioArgs):
     def __init__(self):
-        scenario.ScenarioArgs.__init__(self)
+        scenario.ScenarioArgs.__init__(
+            self,
+            # Define scenario paths as optional.
+            def_scenario_paths_arg=False,
+        )
 
         self.setdescription("Demo test launcher.")
 
-        self.welcome_message = "Hello you!"
-        self.bye_message = "Bye!"
-        self.addarg("Name", "welcome_message", str).define(
+        # Add a demo argument group.
+        self._demo_group = self._arg_parser.add_argument_group("Demo options")
+
+        self._demo_group.add_argument(
             "--welcome", metavar="NAME",
-            action="store", type=str,
+            dest="welcome_name", action="store", type=str, default=None,
             help="User name.",
         )
 
-        self.show_config_db = False
-        self.addarg("Show configuration database", "show_config_db", bool).define(
+        # Extend configuration options with a `--show-configs` option.
+        self._config_group.add_argument(
             "--show-configs",
-            action="store_true",
+            dest="show_config_db", action="store_true", default=False,
             help="Show the configuration values with their origin, then stop.",
         )
 
-    def _checkargs(self, args):
-        if not super()._checkargs(args):
+        # Define scenario paths as optional.
+        self._defscenariopathsarg(
+            nargs="*",
+            help="Scenario script(s) to execute. Mandatory unless the --show-configs option is used",
+        )
+
+    def _checkargs(self):
+        if not super()._checkargs():
             return False
 
-        if not self.welcome_message:
-            scenario.logging.error(f"Wrong name {self.welcome_message!r}")
+        if self._args.welcome_name is not None:
+            self._args.welcome_name = self._args.welcome_name.strip()
+            if not self._args.welcome_name:
+                scenario.logging.error(f"Wrong name {self._args.welcome_name!r}")
+                return False
+
+        if (not self.scenario_paths) and (not self.show_config_db):
+            scenario.logging.error("Use either the --show-configs option, or give scenario paths")
             return False
-        if not self.welcome_message.startswith("Hello"):
-            _name = self.welcome_message
-            self.welcome_message = f"Hello {_name}!"
-            self.bye_message = f"Bye {_name}!"
 
         return True
+
+    @property
+    def welcome_message(self):  # type: (...) -> str
+        if self._args.welcome_name:
+            return f"Hello {self._args.welcome_name}!"
+        else:
+            return "Hello you!"
+
+    @property
+    def bye_message(self):  # type: (...) -> str
+        if self._args.welcome_name:
+            return f"Bye {self._args.welcome_name}!"
+        else:
+            return "Bye!"
+
+    @property
+    def show_config_db(self):  # type: (...) -> bool
+        return self._args.show_config_db
 
 
 if __name__ == "__main__":

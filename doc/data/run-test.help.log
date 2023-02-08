@@ -1,6 +1,6 @@
-usage: run-test.py [-h] [--config-file CONFIG_PATH] [--config-value KEY VALUE]
-                   [--debug-class DEBUG_CLASS] [--doc-only]
-                   [--issue-level-error ISSUE_LEVEL]
+usage: run-test.py [-h] [--debug-class DEBUG_CLASS]
+                   [--config-file CONFIG_PATH] [--config-value KEY VALUE]
+                   [--doc-only] [--issue-level-error ISSUE_LEVEL]
                    [--issue-level-ignored ISSUE_LEVEL]
                    [--json-report JSON_REPORT_PATH]
                    [--extra-info ATTRIBUTE_NAME]
@@ -8,19 +8,22 @@ usage: run-test.py [-h] [--config-file CONFIG_PATH] [--config-value KEY VALUE]
 
 Scenario test execution.
 
-positional arguments:
-  SCENARIO_PATH         Scenario script(s) to execute.
-
-optional arguments:
+Help:
   -h, --help            Show this help message and exit.
+
+Logging:
+  --debug-class DEBUG_CLASS
+                        Activate debugging for the given class.
+
+Configuration:
   --config-file CONFIG_PATH
                         Input configuration file path. This option may be
                         called several times.
   --config-value KEY VALUE
                         Single configuration value. This option may be called
                         several times.
-  --debug-class DEBUG_CLASS
-                        Activate debugging for the given class.
+
+Test execution:
   --doc-only            Generate documentation without executing the test(s).
   --issue-level-error ISSUE_LEVEL
                         Define the issue level from and above which known
@@ -39,3 +42,4 @@ optional arguments:
                         displaying results. Applicable when executing several
                         tests. This option may be called several times to
                         display more info.
+  SCENARIO_PATH         Scenario script(s) to execute.

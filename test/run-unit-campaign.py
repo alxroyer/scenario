@@ -39,35 +39,36 @@ class UnitCampaignArgs(scenario.CampaignArgs):
 
         scenario.CampaignArgs.__init__(
             self,
-            positional_args=False,  # So that we can set our own positional arguments below.
+            def_test_suite_paths_arg=False,  # So that we can set our own positional arguments below.
             default_outdir_cwd=False,  # Do not use the current directory as the default output directory.
         )
 
         self.setdescription("Unit test campaign launcher.")
 
-        # Redefine the :attr:`test_suite_paths` positional arguments, so that it is optional.
-        self.addarg("Test suite paths", "test_suite_paths", scenario.Path).define(
-            metavar="TEST_SUITE_PATH", nargs="*",
-            action="store", type=str, default=[],
-            help="Test suite file(s) to execute. "
-                 "Optional: when not set, the default test suite file is used.",
+        # Redefine positional arguments, so that they are optional.
+        self._deftestsuitepathsarg(
+            nargs="*",
+            help=(
+                "Test suite file(s) to execute. "
+                "Optional: when not set, the default test suite file is used."
+            ),
         )
 
-    def _checkargs(
-            self,
-            args,  # type: typing.Any
-    ):  # type: (...) -> bool
-        if not self.test_suite_paths:
+    def _checkargs(self):  # type: (...) -> bool
+        # Pre-check test suite paths.
+        if not self._args.test_suite_paths:
             for _test_suite_path in scenario.test.paths.UNIT_TESTS_PATH.glob("*/*.suite"):  # type: scenario.Path
                 self.debug("Using default test suite file '%s'", _test_suite_path)
-                self.test_suite_paths.append(_test_suite_path)
+                self._args.test_suite_paths.append(_test_suite_path.abspath)
 
-        if self._outdir is None:
+        # Pre-check output directory.
+        if self._args.outdir is None:
             self.debug("Using output directory '%s' with --dt-subdir option", scenario.test.paths.UNIT_RESULTS_PATH)
-            self._outdir = scenario.test.paths.UNIT_RESULTS_PATH
-            self.create_dt_subdir = True
+            self.outdir = scenario.test.paths.UNIT_RESULTS_PATH
+            self._args.create_dt_subdir = True
 
-        if not super()._checkargs(args):
+        # Call base campaign argument checking.
+        if not super()._checkargs():
             return False
 
         return True

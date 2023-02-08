@@ -33,12 +33,17 @@ class CheckTypes:
 
             self.setdescription("Typehints checker.")
 
-            self.all = False  # type: bool
-            self.addarg("All", "all", bool).define(
+            self._typing_group = self._arg_parser.add_argument_group("Type checking")  # Type `argparse._ArgumentGroup` not available, let default typing.
+
+            self._typing_group.add_argument(
                 "--all",
-                action="store_true", default=False,
+                dest="all", action="store_true", default=False,
                 help=f"Show all errors. Only the {check_types.max_errors} first errors otherwise.",
             )
+
+        @property
+        def all(self):  # type: (...) -> bool
+            return bool(self._args.all)
 
     def __init__(
             self,

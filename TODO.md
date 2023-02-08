@@ -18,10 +18,12 @@
 ## Roadmap to v0.3.0
 
 - Issue #66: Avoid redefining `argparse` API.
-    - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
-    - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
-      and properties for typing and conversions.
+    - Execute campaign.
     - Check 'advanced.launcher.rst'.
+    - Improve config-db display when empty (retex from 'demo/run-demo.py' update):
+      ```
+      [scenario.ConfigDatabase] : None  # from
+      ```
 - Issue #58: Add sections for program arguments
     - `--help` show be presented alone at first
     - Then default `scenario` options could be presented in a first dedicated section.

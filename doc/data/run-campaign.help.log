@@ -1,5 +1,5 @@
-usage: run-campaign.py [-h] [--config-file CONFIG_PATH]
-                       [--config-value KEY VALUE] [--debug-class DEBUG_CLASS]
+usage: run-campaign.py [-h] [--debug-class DEBUG_CLASS]
+                       [--config-file CONFIG_PATH] [--config-value KEY VALUE]
                        [--doc-only] [--issue-level-error ISSUE_LEVEL]
                        [--issue-level-ignored ISSUE_LEVEL]
                        [--outdir OUTDIR_PATH] [--dt-subdir]
@@ -8,19 +8,22 @@ usage: run-campaign.py [-h] [--config-file CONFIG_PATH]
 
 Scenario campaign execution.
 
-positional arguments:
-  TEST_SUITE_PATH       Test suite file(s) to execute.
-
-optional arguments:
+Help:
   -h, --help            Show this help message and exit.
+
+Logging:
+  --debug-class DEBUG_CLASS
+                        Activate debugging for the given class.
+
+Configuration:
   --config-file CONFIG_PATH
                         Input configuration file path. This option may be
                         called several times.
   --config-value KEY VALUE
                         Single configuration value. This option may be called
                         several times.
-  --debug-class DEBUG_CLASS
-                        Activate debugging for the given class.
+
+Test execution:
   --doc-only            Generate documentation without executing the test(s).
   --issue-level-error ISSUE_LEVEL
                         Define the issue level from and above which known
@@ -31,6 +34,8 @@ optional arguments:
                         Define the issue level from and under which known
                         issues should be ignored. None by default, i.e. no
                         known issue ignored by default.
+
+Campaign execution:
   --outdir OUTDIR_PATH  Output directory to store test results into. Defaults
                         to the current directory.
   --dt-subdir           Do not store the test results directly in OUTDIR_PATH,
@@ -40,3 +45,4 @@ optional arguments:
                         Scenario attribute to display for extra info when
                         displaying results. This option may be called several
                         times to display more info.
+  TEST_SUITE_PATH       Test suite file(s) to execute.

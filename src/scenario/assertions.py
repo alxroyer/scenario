@@ -46,7 +46,7 @@ class Assertions:
     """
     The :class:`Assertions` class gathers static assertion methods.
 
-    It can be subclasses by classes that onboard these assertion methods,
+    It can be subclassed by classes that onboard these assertion methods,
     like the base :class:`.scenariodefinition.ScenarioDefinition` and :class:`.stepdefinition.StepDefinition` classes.
 
     See the :ref:`assertion documentation <assertions>` for details.
