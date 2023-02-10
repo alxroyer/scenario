@@ -30,6 +30,7 @@
     - `--help` show be presented alone at first
     - Then default `scenario` options could be presented in a first dedicated section.
     - Then user defined launchers may set their own options in a dedicated section as well.
+- Issue #71: Avoid using `(...)` for getters, setters, Python special method overrides, ...
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
@@ -45,7 +46,7 @@
 
 ## Roadmap to v1.0.0
 
-- Issue #32: Fix scenario report JSON schema.
+- Issue #32: Finalize scenario report JSON schema v1.
 - Documentation:
     - Update the *Quickstart* section: tell about step objects.
 - Issue #15: Documentation: Set the final deliverable version: 1.0.0.
