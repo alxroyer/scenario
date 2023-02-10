@@ -157,7 +157,7 @@ class Handlers(Logger):
         if event in self._handlers:
             for _handler in self._handlers[event].copy():  # type: Handler
                 if _handler.scenario_definition and (not SCENARIO_STACK.iscurrentscenario(_handler.scenario_definition)):
-                    self.debug("Handler %r skipped because the '%s' scenario is not being executed (or the current scenario is a sub-scenario)",
+                    self.debug("Handler %r skipped because the '%s' scenario is not being executed (or the current scenario is a subscenario)",
                                _handler.handler, _handler.scenario_definition.name)
                     continue
 

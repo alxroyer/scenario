@@ -26,8 +26,8 @@ class JsonReport040(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="JSON report sub-scenario",
-            objective="Check the JSON report is generated as expected for a super scenario executing a sub-scenario.",
+            title="JSON report subscenario",
+            objective="Check the JSON report is generated as expected for a super scenario executing a subscenario.",
             features=[scenario.test.features.SCENARIO_REPORT, scenario.test.features.SUBSCENARIOS],
         )
 

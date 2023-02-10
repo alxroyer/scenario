@@ -46,7 +46,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         self.scenario_expectations = scenario_expectations  # type: scenario.test.ScenarioExpectations
         #: JSON data read from the report file.
         self.json = {}  # type: JSONDict
-        #: For each scenario / sub-scenario executed, memorizes which steps, actions and expected results have already been processed.
+        #: For each scenario / subscenario executed, memorizes which steps, actions and expected results have already been processed.
         self._scenario_tested_items = []  # type: typing.List[CheckJsonReportExpectations.ScenarioTestedItems]
 
     def step(self):  # type: (...) -> None
@@ -441,11 +441,11 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         else:
             if action_result_expectations.subscenario_expectations is not None:
                 self.assertisempty(action_result_expectations.subscenario_expectations, "Unexpected list of subscenarios for a --doc-only execution")
-                if self.RESULT("No sub-scenario has been executed."):
+                if self.RESULT("No subscenario has been executed."):
                     self.assertisempty(
                         self.assertjson(
                             json_action_result_definition, "executions", type=list,
-                            evidence="Sub-scenario executions",
+                            evidence="Subscenario executions",
                         ),
                         evidence=False,
                     )
@@ -496,14 +496,14 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             )
 
         if action_result_expectations.subscenario_expectations is not None:
-            _subscenarios_txt = scenario.text.Countable("sub-scenario", action_result_expectations.subscenario_expectations)  # type: scenario.text.Countable
+            _subscenarios_txt = scenario.text.Countable("subscenario", action_result_expectations.subscenario_expectations)  # type: scenario.text.Countable
             if self.RESULT(f"{len(_subscenarios_txt)} {_subscenarios_txt} {_subscenarios_txt.have} been executed{_subscenarios_txt.ifany(':', '.')}"):
                 self.assertjson(
                     json_action_result_execution, "subscenarios", type=list, len=len(action_result_expectations.subscenario_expectations),
-                    evidence="Number of sub-scenarios",
+                    evidence="Number of subscenarios",
                 )
             for _subscenario_expectation_index in range(len(action_result_expectations.subscenario_expectations)):  # type: int
-                self.RESULT(f"- Sub-scenario #{_subscenario_expectation_index + 1}:")
+                self.RESULT(f"- Subscenario #{_subscenario_expectation_index + 1}:")
                 scenario.logging.pushindentation()
                 self._scenario_tested_items.append(CheckJsonReportExpectations.ScenarioTestedItems())
                 self._checkscenario(

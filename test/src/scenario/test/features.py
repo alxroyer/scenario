@@ -171,7 +171,7 @@ ALTERNATIVE_SCENARIOS = Feature(
         which can be done through different means:
 
         - Step picking,
-        - Partial sub-scenarios execution,
+        - Partial subscenarios execution,
         - Inheritance.
     """,
 )  # type: Feature
@@ -186,9 +186,9 @@ STEP_PICKING = Feature(
 
 SUBSCENARIOS = Feature(
     id="SUBSCENARIOS",
-    title="Sub-scenarios",
+    title="Subscenarios",
     text="""
-        A scenario shall execute all or part of other scenarios as sub-scenarios.
+        A scenario shall execute all or part of other scenarios as subscenarios.
     """,
 )  # type: Feature
 

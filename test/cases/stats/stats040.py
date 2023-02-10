@@ -27,8 +27,8 @@ class Stats040(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="Statistics sub-scenario",
-            objective="Check scenario execution statistics for a super scenario executing a sub-scenario.",
+            title="Statistics subscenario",
+            objective="Check scenario execution statistics for a super scenario executing a subscenario.",
             features=[scenario.test.features.STATISTICS, scenario.test.features.SUBSCENARIOS],
         )
 

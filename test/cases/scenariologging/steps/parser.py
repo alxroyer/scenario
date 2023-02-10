@@ -60,14 +60,14 @@ class ParseScenarioLog(LogParserStep):
             ParseScenarioLog.PARSE_STATE: "",
         }  # type: JSONDict
 
-        # Check the current stack in order to determine whether it is a sub-scenario.
+        # Check the current stack in order to determine whether it is a subscenario.
         if self._json_scenario_stack:
-            # Sub-scenario do not give explicitely their status.
+            # Subscenario do not give explicitely their status.
             # Consider it is SUCCESS by default.
             _json_new_scenario["status"] = "SUCCESS"
             # Register the scenario in the current action/result.
-            assert self._json_scenario_stack[-1]["steps"], "No current step, cannot add sub-scenario"
-            assert self._json_scenario_stack[-1]["steps"][-1]["actions-results"], "No current action/result, cannot add sub-scenario"
+            assert self._json_scenario_stack[-1]["steps"], "No current step, cannot add subscenario"
+            assert self._json_scenario_stack[-1]["steps"][-1]["actions-results"], "No current action/result, cannot add subscenario"
             self._json_scenario_stack[-1]["steps"][-1]["actions-results"][-1]["subscenarios"].append(_json_new_scenario)
         # Put the new scenario data on top of the scenario stack.
         self._json_scenario_stack.append(_json_new_scenario)

@@ -378,7 +378,7 @@ class ScenarioRunner(Logger):
             scenario_definition,  # type: ScenarioDefinition
     ):  # type: (...) -> ErrorCode
         """
-        Begins a scenario or sub-scenario execution.
+        Begins a scenario or subscenario execution.
 
         :param scenario_definition: Scenario or subscenario which execution to start.
         :return: Error code from the :class:`.errcodes.ErrorCode` enumerate.
@@ -396,7 +396,7 @@ class ScenarioRunner(Logger):
         # Scenario execution stack management:
         # - Note: The scenario execution instance has already been created in `_buildscenario()`.
         assert scenario_definition.execution
-        # - Before pushing the scenario execution to the stack, store the sub-scenario reference in the current action / expected result when applicable.
+        # - Before pushing the scenario execution to the stack, store the subscenario reference in the current action / expected result when applicable.
         if SCENARIO_STACK.current_action_result_execution:
             SCENARIO_STACK.current_action_result_execution.subscenarios.append(scenario_definition.execution)
         # - Eventually push the scenario execution to the execution stack.

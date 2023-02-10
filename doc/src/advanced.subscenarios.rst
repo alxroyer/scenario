@@ -15,12 +15,12 @@
 
 .. _subscenarios:
 
-Sub-scenarios: reuse of scenarios in other scenarios
-====================================================
+Subscenarios: reuse of scenarios in other scenarios
+===================================================
 
 Scenarios can be reused as subscenarios in other ones.
 
-Executing existing scenarios as sub-scenarios are particularly useful
+Executing existing scenarios as subscenarios are particularly useful
 for the following purposes:
 
 - define alternative scenarios (error scenarios) from a nominal one,

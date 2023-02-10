@@ -279,14 +279,14 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
             )
 
         if action_result_expectations.subscenario_expectations is not None:
-            _subscenarios_txt = scenario.text.Countable("sub-scenario", action_result_expectations.subscenario_expectations)  # type: scenario.text.Countable
+            _subscenarios_txt = scenario.text.Countable("subscenario", action_result_expectations.subscenario_expectations)  # type: scenario.text.Countable
             if self.RESULT(f"{len(_subscenarios_txt)} {_subscenarios_txt} {_subscenarios_txt.have} been executed{_subscenarios_txt.ifany(':', '.')}"):
                 self.assertjson(
                     json_action_result, "subscenarios", type=list, len=len(action_result_expectations.subscenario_expectations),
-                    evidence="Number of sub-scenarios",
+                    evidence="Number of subscenarios",
                 )
             for _subscenario_index in range(len(action_result_expectations.subscenario_expectations)):  # type: int
-                self.RESULT(f"- Sub-scenario #{_subscenario_index + 1}:")
+                self.RESULT(f"- Subscenario #{_subscenario_index + 1}:")
                 scenario.logging.pushindentation()
                 self._checkscenario(
                     json_scenario=self.testdatafromjson(json_action_result, f"subscenarios[{_subscenario_index}]", type=dict),

@@ -27,8 +27,8 @@ class SubScenario002(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="Sub-scenario --doc-only",
-            objective="Check that a super scenario does not execute its sub-scenarios when the --doc-only option is set.",
+            title="Subscenario --doc-only",
+            objective="Check that a super scenario does not execute its subscenarios when the --doc-only option is set.",
             features=[scenario.test.features.SUBSCENARIOS, scenario.test.features.DOC_ONLY],
         )
 

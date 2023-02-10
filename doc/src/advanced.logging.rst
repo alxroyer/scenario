@@ -230,18 +230,18 @@ The :py:mod:`scenario` provides several indentation mechanisms.
 Scenario stack indentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When :ref:`sub-scenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
+When :ref:`subscenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
 
 Example of output from the `commutativeadditions.py <../../demo/commutativeadditions.py>`_ sample test.
 
-.. Sub-scenario output log example: 'commutativeadditions.py'.
+.. Subscenario output log example: 'commutativeadditions.py'.
 .. literalinclude:: ../data/commutativeadditions.log
     :language: none
     :lines: 1-51
 
 *(Output truncated...)*
 
-If a sub-scenario executes another sub-scenario, the '|' indentation is doubled, and so on.
+If a subscenario executes another subscenario, the '|' indentation is doubled, and so on.
 
 
 .. _logging.indentation.class-logger:
