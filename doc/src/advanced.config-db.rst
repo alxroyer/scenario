@@ -187,7 +187,7 @@ also display the configuration tree with origins.
 
 .. code-block:: bash
 
-    $ ./demo/run-demo.py --config-file demo/conf.json --config-value x.y[0].z 0 --show-configs demo/htmllogin.py
+    $ ./demo/run-demo.py --config-file demo/conf.json --config-value x.y[0].z 0 --show-configs
 
 .. Skip the 'scenario' section.
 .. literalinclude:: ../data/run-demo.show-configs.log

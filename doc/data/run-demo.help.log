@@ -48,5 +48,5 @@ Test execution:
   SCENARIO_PATH         Scenario script(s) to execute. Mandatory unless the
                         --show-configs option is used
 
-Demo options:
+Demo arguments:
   --welcome NAME        User name.

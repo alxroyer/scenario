@@ -27,7 +27,7 @@ class DemoArgs(scenario.ScenarioArgs):
         self.setdescription("Demo test launcher.")
 
         # Add a demo argument group.
-        self._demo_group = self._arg_parser.add_argument_group("Demo options")
+        self._demo_group = self._arg_parser.add_argument_group("Demo arguments")
 
         self._demo_group.add_argument(
             "--welcome", metavar="NAME",

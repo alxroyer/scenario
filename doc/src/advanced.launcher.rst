@@ -25,7 +25,7 @@ It is common that a user test environment needs to do a couple of things like:
 - offer configurable features.
 
 To do so, the user test environment may define its own launcher script,
-as illustrated by the `demo/run-demo.py <../../demo/run-demo.py>`_ file.
+as illustrated by the `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run-demo.py>`_ file.
 
 
 .. _launcher.extend-args:
@@ -37,16 +37,54 @@ About configurable features, :ref:`configuration files <config-db>` come as a st
 Nevertheless, it is sometimes faster in use to provide command line options to the test launcher script also.
 To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario.scenarioargs.ScenarioArgs` class:
 
-- The final program description is set with the :py:meth:`scenario.args.Args.setdescription()` method.
-- Extra arguments may be defined thanks to the :py:meth:`scenario.args.Args.addarg()` then :py:meth:`scenario.args.ArgInfo.define()` methods.
-
-.. Class declaration with constructor.
+.. Class declaration with beginning of constructor, up to the call of the base class constructor.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 19-38
+    :lines: 19-25
+
+The final program description is set with the :py:meth:`scenario.args.Args.setdescription()` method.
+
+.. Args.setdescription() call.
+.. literalinclude:: ../../demo/run-demo.py
+    :language: python
+    :lines: 27
+
+Extra arguments may be defined thanks to the protected :py:attr:`scenario.args.Args._arg_parser` member of type ``argparse.ArgumentParser``.
+
+In as much as base :py:mod:`scenario` arguments are organized in groups,
+it is a good practice in :class:`scenario.args.Args` subclasses to use argument groups as well.
+
+.. Demo argument group with --welcome option.
+.. literalinclude:: ../../demo/run-demo.py
+    :language: python
+    :lines: 29-36
+
+Base :py:mod:`scenario` argument groups are also available to you through protected members:
+
+- :py:attr:`scenario.args.Args._help_group`: Help arguments.
+- :py:attr:`scenario.loggingargs.CommonLoggingArgs._logging_group`: Logging arguments.
+- :py:attr:`scenario.configargs.CommonConfigArgs._config_group`: Configuration arguments.
+- :py:attr:`scenario.scenarioargs.CommonExecArgs._test_exec_group`: Test (scenario) execution arguments.
+- :py:attr:`scenario.campaignargs.CampaignArgs._campaign_group`: Campaign arguments.
+
+.. Configuration arguments extension.
+.. literalinclude:: ../../demo/run-demo.py
+    :language: python
+    :lines: 38-43
+
+When ``def_scenario_paths_arg`` (resp. ``def_test_suite_paths_arg``) is set to ``False``
+when calling the base :py:class:`scenario.scenarioargs.ScenarioArgs` (resp. :py:class:`scenario.campaignargs.CampaignArgs`) constructor,
+the :py:meth:`scenario.scenarioargs.ScenarioArgs._defscenariopathsarg()` (resp. :py:meth:`scenario.campaignargs.CampaignArgs._deftestsuitepathsarg()`)
+provide a way to change cardinality and help for the positional arguments.
+
+.. Positional arguments redefinition.
+.. literalinclude:: ../../demo/run-demo.py
+    :language: python
+    :lines: 45-49
 
 The :py:meth:`scenario.args.Args._checkargs()` method may be overloaded in order to check additional constraints,
-after the arguments have been parsed, and the :py:class:`scenario.args.Args` attributes have been updated:
+after the arguments have been parsed,
+the ``argparse`` result being saved as the :py:attr:`scenario.args.Args._args` opaque member:
 
 - Start or finish with calling the mother class's :py:meth:`scenario.scenarioargs.ScenarioArgs._checkargs()` method.
 - This method is expected to return ``True`` or ``False`` whether an error has been detected or not.
@@ -54,7 +92,17 @@ after the arguments have been parsed, and the :py:class:`scenario.args.Args` att
 .. Overload of the `_checkargs()` method.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 40-52
+    :lines: 51-65
+
+Eventually, properties are defined in order to:
+
+- Ease access to the ``argparse`` resulting data from the opaque :py:attr:`scenario.args.Args._args` member.
+- Provide type hints for the argument data.
+
+.. Argument data properties.
+.. literalinclude:: ../../demo/run-demo.py
+    :language: python
+    :lines: 67-83
 
 Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method:
 
@@ -64,7 +112,7 @@ Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner
 .. Argument parsing.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 56-59
+    :lines: 87-90
 
 At this point, the user test environment can use the extra arguments added with the :py:class:`DemoArgs` class,
 but regular arguments as well.
@@ -72,7 +120,7 @@ but regular arguments as well.
 .. Use of arguments.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 64-75
+    :lines: 95-106
 
 Using the ``--help`` option displays both:
 
@@ -103,28 +151,28 @@ Our `demo/run-demo.py <../../demo/run-demo.py>`_ script gives examples of pre & 
 .. Welcome message.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 69-70
+    :lines: 100-101
 
 - a bye message displayed just before the command line ends:
 
 .. Bye message.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 80-81
+    :lines: 111-112
 
 - optional display of the configuration database:
 
 .. Configuration database display.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 64-67
+    :lines: 95-98
 
 - :ref:`configuration value settings <config-db.scenario>` that enable :ref:`file logging <logging.outfile>`:
 
-.. File logging
+.. File logging.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 72-75
+    :lines: 103-106
 
 
 .. _launcher.execution:
@@ -138,7 +186,7 @@ and use the values given by our :py:class:`DemoArgs` instance already set.
 .. Scenario execution.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 77-78
+    :lines: 108-109
 
 
 .. _launcher.ret-code:
@@ -152,7 +200,7 @@ so that the error can be handled in the shell that launched the command line.
 .. Error code.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 83-84
+    :lines: 114-115
 
 
 .. _launcher.campaigns:
@@ -182,7 +230,7 @@ whatever the current working directory
 .. Setting the main path.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 61-62
+    :lines: 92-93
 
 .. tip::
     For display purpose, it is advised to set the *main path* after the program arguments have been analyzed.

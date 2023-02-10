@@ -102,7 +102,6 @@ class MkDoc:
                 "--config-file", scenario.tools.paths.DEMO_PATH / "conf.json",
                 "--config-value", "x.y[0].z", "0",
                 "--show-configs",
-                scenario.tools.paths.DEMO_PATH / "htmllogin.py",
             ],
             suffix=".show-configs",
         )
