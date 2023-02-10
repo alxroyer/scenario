@@ -4,11 +4,11 @@
 
 `scenario` is a test framework with the following key features:
 - Test code reuse:
-    - Quickly write tests by instanciating step objects, sequencing them as scenarios.
+    - Quickly write tests by instanciating steps just as *legos*, sequencing them as scenarios.
     - Reuse existing scenarios as subscenario utils (initial conditions, transitions, ...)
 - Powerful logging system.
 - Handful configuration facilities.
-- Test documentation within test code.
+- Test documentation definition along the test code.
 - Rich assertion API, with evidence collection.
 - Flexible known issue tracking.
 - Campaign executions.
