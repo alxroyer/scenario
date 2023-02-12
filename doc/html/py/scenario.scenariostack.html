@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.scenariostack module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.stats module" href="scenario.stats.html" />
+    <link rel="prev" title="scenario.scenariorunner module" href="scenario.scenariorunner.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.stats.html" title="scenario.stats module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenariorunner.html" title="scenario.scenariorunner module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenariostack module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.scenariostack">
+<span id="scenario-scenariostack-module"></span><h1>scenario.scenariostack module<a class="headerlink" href="#module-scenario.scenariostack" title="Permalink to this headline">¶</a></h1>
+<p>Scenario execution stack.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.SCENARIO_STACK">
+<span class="sig-name descname"><span class="pre">SCENARIO_STACK</span></span><a class="headerlink" href="#scenario.scenariostack.SCENARIO_STACK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main instance of <a class="reference internal" href="#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BuildingContext</span></span><a class="headerlink" href="#scenario.scenariostack.BuildingContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Storage of instances under construction.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariostack.BuildingContext.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declares references of objects under construction.</p>
+<p>Objects under construction:</p>
+<ul>
+<li><p>scenario definition,</p></li>
+<li><p>but no step definition!</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>We do not store a step definition reference here, fed from <a class="reference internal" href="scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition.__init__" title="scenario.stepdefinition.StepDefinition.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StepDefinition.__init__()</span></code></a> especially,
+for the reason that we cannot guarantee that the reference of a volatile step definition
+would not take the place of a real step definition being built.</p>
+<p>See <a class="reference internal" href="#scenario.scenariostack.BuildingContext.step_definition" title="scenario.scenariostack.BuildingContext.step_definition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">step_definition</span></code></a> and <a class="reference internal" href="#scenario.scenariostack.BuildingContext.fromoriginator" title="scenario.scenariostack.BuildingContext.fromoriginator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fromoriginator()</span></code></a> for further details on the step definition reference management.</p>
+</div>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext.__scenario_definitions">
+<span class="sig-name descname"><span class="pre">__scenario_definitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariostack.BuildingContext.__scenario_definitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario definitions being built.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext.pushscenariodefinition">
+<span class="sig-name descname"><span class="pre">pushscenariodefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariostack.BuildingContext.pushscenariodefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pushes the reference of the scenario definition being built to the building context of the scenario stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scenario_definition</strong> – Scenario definition being built.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext.popscenariodefinition">
+<span class="sig-name descname"><span class="pre">popscenariodefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariostack.BuildingContext.popscenariodefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pops the reference of the scenario definition being built from the building context of the scenario stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scenario_definition</strong> – Scenario definition being built.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext.scenario_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scenario_definition</span></span><a class="headerlink" href="#scenario.scenariostack.BuildingContext.scenario_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main scenario definition being built (i.e. the first), if any.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext.step_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">step_definition</span></span><a class="headerlink" href="#scenario.scenariostack.BuildingContext.step_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step definition being built, if any.</p>
+<p>The step definition being built is the one currently executed
+in <code class="xref py py-const docutils literal notranslate"><span class="pre">scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS</span></code> execution mode
+by <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._buildscenario" title="scenario.scenariorunner.ScenarioRunner._buildscenario"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner._buildscenario()</span></code></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This does not cover the case of method calls directly made in a step object initializer,
+and especially for:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi.knownissue" title="scenario.stepuserapi.StepUserApi.knownissue"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StepUserApi.knownissue()</span></code></a></p></li>
+</ul>
+<p>In order to cover such cases, theses methods shall set an <code class="docutils literal notranslate"><span class="pre">originator</span></code> parameter when calling <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> methods,
+to let the latter identify the appropriate instance being built with the help of the <a class="reference internal" href="#scenario.scenariostack.BuildingContext.fromoriginator" title="scenario.scenariostack.BuildingContext.fromoriginator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fromoriginator()</span></code></a> method.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.BuildingContext.fromoriginator">
+<span class="sig-name descname"><span class="pre">fromoriginator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">originator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi" title="scenario.stepuserapi.StepUserApi"><span class="pre">StepUserApi</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi" title="scenario.stepuserapi.StepUserApi"><span class="pre">StepUserApi</span></a></span></span><a class="headerlink" href="#scenario.scenariostack.BuildingContext.fromoriginator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines the actual object being built.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>originator</strong> – <a class="reference internal" href="scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi" title="scenario.stepuserapi.StepUserApi"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepUserApi</span></code></a> instance that made a call.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi" title="scenario.stepuserapi.StepUserApi"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepUserApi</span></code></a> actually being built.</p>
+</dd>
+</dl>
+<p>Fixes the <code class="docutils literal notranslate"><span class="pre">originator</span></code> reference from the current scenario definition being built
+to the current step definition being built if any.</p>
+<p>Lets the <code class="docutils literal notranslate"><span class="pre">originator</span></code> reference as is otherwise:</p>
+<ul class="simple">
+<li><p>either a <a class="reference internal" href="scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepDefinition</span></code></a> reference directly,</p></li>
+<li><p>or <a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> reference.</p></li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScenarioStack</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Scenario execution stack management.</p>
+<p>This class acts as a helper for the <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> class.</p>
+<p>It also determines the <a class="reference internal" href="../advanced.logging.html#logging-indentation-scenario-stack"><span class="std std-ref">scenario stack logging indentation</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The fact that the <a class="reference internal" href="#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a> class is a helper for the <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> one
+explains the definition of the additional methods and properties:</p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">checkcurrentscenario()</span></code>,</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">current_step</span></code>,</p></li>
+<li><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">current_action_result</span></code>.</p></li>
+</ul>
+<p>By the way, this makes this class being a bit more than just a <em>scenario stack manager</em>,
+but rather a <em>scenario execution context manager</em>.</p>
+<p>Whatever, the name of this class is convenient as is,
+even though it is labelled as a “stack” only.</p>
+</div>
+<dl class="py exception">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.ContextError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ContextError</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.ContextError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Notifies a scenario stack error.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.ContextError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.ContextError.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the error message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes an empty scenario execution stack.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.building">
+<span class="sig-name descname"><span class="pre">building</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#scenario.scenariostack.BuildingContext" title="scenario.scenariostack.BuildingContext"><span class="pre">BuildingContext</span></a></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.building" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instances under construction.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.__scenario_executions">
+<span class="sig-name descname"><span class="pre">__scenario_executions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><span class="pre">ScenarioExecution</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.__scenario_executions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario execution stack.</p>
+<p>The first item defines the <code class="xref py py-attr docutils literal notranslate"><span class="pre">main_scenario</span></code>.
+The subscenarios (if any) then follow.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.history">
+<span class="sig-name descname"><span class="pre">history</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><span class="pre">ScenarioExecution</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.history" title="Permalink to this definition">¶</a></dt>
+<dd><p>History of scenario executions.</p>
+<p>Main scenario executions only.
+In the chronological order.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.pushscenarioexecution">
+<span class="sig-name descname"><span class="pre">pushscenarioexecution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><span class="pre">ScenarioExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.pushscenarioexecution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a scenario execution instance in the scenario execution stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scenario_execution</strong> – Scenario execution to set on top of the scenario execution stack.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.popscenarioexecution">
+<span class="sig-name descname"><span class="pre">popscenarioexecution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><span class="pre">ScenarioExecution</span></a></span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.popscenarioexecution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the last scenario execution from the scenario execution stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Scenario execution removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size of the scenario execution stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of scenario executions currently stacked.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.main_scenario_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">main_scenario_definition</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.main_scenario_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main scenario definition under execution.</p>
+<p>Returns the reference of the top scenario definition under execution,
+whether subscenarios are being executed or not.</p>
+<p>Almost equivalent to <a class="reference internal" href="#scenario.scenariostack.ScenarioStack.main_scenario_execution" title="scenario.scenariostack.ScenarioStack.main_scenario_execution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">main_scenario_execution</span></code></a>, but retrieves the scenario definition instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.main_scenario_execution">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">main_scenario_execution</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.main_scenario_execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main scenario execution instance.</p>
+<p>Returns the reference of the top scenario execution instance,
+whether subscenarios are being executed or not.</p>
+<p>Almost equivalent to <a class="reference internal" href="#scenario.scenariostack.ScenarioStack.main_scenario_definition" title="scenario.scenariostack.ScenarioStack.main_scenario_definition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">main_scenario_definition</span></code></a>, but retrieves the scenario execution instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.ismainscenario">
+<span class="sig-name descname"><span class="pre">ismainscenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><span class="pre">ScenarioExecution</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.ismainscenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether the given scenario corresponds to the main one under execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scenario</strong> – Scenario definition or scenario execution to check.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the scenario corresponds to the main scenario, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.current_scenario_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_scenario_definition</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.current_scenario_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current scenario definition under execution.</p>
+<p>The latest unterminated subscenario if any,
+i.e. the main scenario if no current sub-scenario.</p>
+<p>Almost equivalent to <a class="reference internal" href="#scenario.scenariostack.ScenarioStack.current_scenario_execution" title="scenario.scenariostack.ScenarioStack.current_scenario_execution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">current_scenario_execution</span></code></a>, but retrieves the scenario definition instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.current_scenario_execution">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_scenario_execution</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.current_scenario_execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current scenario execution instance.</p>
+<p>The latest unterminated subscenario if any,
+i.e. the main scenario if no current sub-scenario.</p>
+<p>Almost equivalent to <a class="reference internal" href="#scenario.scenariostack.ScenarioStack.current_scenario_definition" title="scenario.scenariostack.ScenarioStack.current_scenario_definition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">current_scenario_definition</span></code></a>, but retrieves the scenario execution instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.iscurrentscenario">
+<span class="sig-name descname"><span class="pre">iscurrentscenario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><span class="pre">ScenarioExecution</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.iscurrentscenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether the given scenario corresponds to the one on top of the scenario stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scenario</strong> – Scenario definition or scenario execution to check.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the scenario corresponds to the main scenario, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.current_step_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_step_definition</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.current_step_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current step definition under execution.</p>
+<p>Out of the current scenario.</p>
+<p>Compared with <a class="reference internal" href="#scenario.scenariostack.ScenarioStack.current_step_execution" title="scenario.scenariostack.ScenarioStack.current_step_execution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">current_step_execution</span></code></a>,
+this method returns the step definition whatever the execution mode of the <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> if no current step definition under execution.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.current_step_execution">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_step_execution</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.current_step_execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current step execution instance.</p>
+<p>Out of the <code class="xref py py-attr docutils literal notranslate"><span class="pre">current_step</span></code>.</p>
+<p>Compared with <a class="reference internal" href="#scenario.scenariostack.ScenarioStack.current_step_definition" title="scenario.scenariostack.ScenarioStack.current_step_definition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">current_step_definition</span></code></a>,
+this method may not return a step execution instance when the <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> is building objects.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> if no current step execution instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.current_action_result_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_action_result_definition</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.current_action_result_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current action or expected result definition under execution.</p>
+<p>Out of the current step definition or step execution.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> current action / expected result definition.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.current_action_result_execution">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_action_result_execution</span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.current_action_result_execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current action or expected result execution instance.</p>
+<p>Out of the current step execution.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> if no current action / expected result execution instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.knownissue">
+<span class="sig-name descname"><span class="pre">knownissue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">__id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.knownissue" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">knownissue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Registers a known issue in the current context.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.raisecontexterror">
+<span class="sig-name descname"><span class="pre">raisecontexterror</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">NoReturn</span></span></span><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.raisecontexterror" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises an error about the scenario stack execution.</p>
+<p>Displays error information about the current status of the stack for investigation purpose.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>error_message</strong> – Error message.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#scenario.scenariostack.ScenarioStack.ContextError" title="scenario.scenariostack.ScenarioStack.ContextError"><strong>ScenarioStack.ContextError</strong></a> – Systematically.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack.log_class">
+<span class="sig-name descname"><span class="pre">log_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack.log_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack._logger">
+<span class="sig-name descname"><span class="pre">_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">logging.Logger</span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack._logger" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code> instance as a member variable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack._debug_enabled">
+<span class="sig-name descname"><span class="pre">_debug_enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack._debug_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> to enable log debugging.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> lets the configuration tells whether debug log lines should be displayed for this logger.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack._log_color">
+<span class="sig-name descname"><span class="pre">_log_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.console.html#scenario.console.Console.Color" title="scenario.console.Console.Color"><span class="pre">Console.Color</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack._log_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional log color configuration.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack._indentation">
+<span class="sig-name descname"><span class="pre">_indentation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack._indentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logger indentation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariostack.ScenarioStack._extra_flags">
+<span class="sig-name descname"><span class="pre">_extra_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.logextradata.html#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><span class="pre">LogExtraData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariostack.ScenarioStack._extra_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flags configurations.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.scenariorunner.html"
+                          title="previous chapter">scenario.scenariorunner module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.stats.html"
+                          title="next chapter">scenario.stats module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.stats.html" title="scenario.stats module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenariorunner.html" title="scenario.scenariorunner module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenariostack module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

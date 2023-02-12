@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.debugclasses module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.debugloggers module" href="scenario.debugloggers.html" />
+    <link rel="prev" title="scenario.datetimeutils module" href="scenario.datetimeutils.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.debugloggers.html" title="scenario.debugloggers module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.datetimeutils.html" title="scenario.datetimeutils module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.debugclasses module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.debugclasses">
+<span id="scenario-debugclasses-module"></span><h1>scenario.debugclasses module<a class="headerlink" href="#module-scenario.debugclasses" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> debugging.</p>
+<p>The <a class="reference internal" href="#scenario.debugclasses.DebugClass" title="scenario.debugclasses.DebugClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">DebugClass</span></code></a> enumerate defines the <a class="reference internal" href="scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> debug classes (see: <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a>).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DebugClass</span></span><a class="headerlink" href="#scenario.debugclasses.DebugClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.enumutils.html#scenario.enumutils.StrEnum" title="scenario.enumutils.StrEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrEnum</span></code></a></p>
+<p><a class="reference internal" href="scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> debug classes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.ARGS">
+<span class="sig-name descname"><span class="pre">ARGS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.Args'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.ARGS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Program arguments debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.CAMPAIGN_REPORT">
+<span class="sig-name descname"><span class="pre">CAMPAIGN_REPORT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.CampaignReport'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.CAMPAIGN_REPORT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign report debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.CAMPAIGN_RUNNER">
+<span class="sig-name descname"><span class="pre">CAMPAIGN_RUNNER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.CampaignRunner'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.CAMPAIGN_RUNNER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign runner debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.CONFIG_DATABASE">
+<span class="sig-name descname"><span class="pre">CONFIG_DATABASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.ConfigDatabase'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.CONFIG_DATABASE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration database debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.EXECUTION_LOCATIONS">
+<span class="sig-name descname"><span class="pre">EXECUTION_LOCATIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.ExecutionLocations'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.EXECUTION_LOCATIONS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execution location debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.HANDLERS">
+<span class="sig-name descname"><span class="pre">HANDLERS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.Handlers'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.HANDLERS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handlers.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.LOG_STATS">
+<span class="sig-name descname"><span class="pre">LOG_STATS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.LogStats'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.LOG_STATS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logging statistics.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.REFLEX">
+<span class="sig-name descname"><span class="pre">REFLEX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.reflex'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.REFLEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflexive programmation debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.SCENARIO_REPORT">
+<span class="sig-name descname"><span class="pre">SCENARIO_REPORT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.ScenarioReport'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.SCENARIO_REPORT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario report debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.SCENARIO_RESULTS">
+<span class="sig-name descname"><span class="pre">SCENARIO_RESULTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.ScenarioResults'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.SCENARIO_RESULTS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario results debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.SCENARIO_RUNNER">
+<span class="sig-name descname"><span class="pre">SCENARIO_RUNNER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.ScenarioRunner'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.SCENARIO_RUNNER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario runner debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.SCENARIO_STACK">
+<span class="sig-name descname"><span class="pre">SCENARIO_STACK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.ScenarioStack'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.SCENARIO_STACK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario stack debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.TEST_SUITE_FILE">
+<span class="sig-name descname"><span class="pre">TEST_SUITE_FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.TestSuiteFile'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.TEST_SUITE_FILE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test suite file debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.debugclasses.DebugClass.EXECUTION_TIMES">
+<span class="sig-name descname"><span class="pre">EXECUTION_TIMES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.#65.exec-times'</span></em><a class="headerlink" href="#scenario.debugclasses.DebugClass.EXECUTION_TIMES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Issue#65 debugging: execution times.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.datetimeutils.html"
+                          title="previous chapter">scenario.datetimeutils module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.debugloggers.html"
+                          title="next chapter">scenario.debugloggers module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.debugloggers.html" title="scenario.debugloggers module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.datetimeutils.html" title="scenario.datetimeutils module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.debugclasses module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

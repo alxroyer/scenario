@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.testsuitefile module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.textfile module" href="scenario.textfile.html" />
+    <link rel="prev" title="scenario.testerrors module" href="scenario.testerrors.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.textfile.html" title="scenario.textfile module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.testerrors.html" title="scenario.testerrors module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.testsuitefile module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.testsuitefile">
+<span id="scenario-testsuitefile-module"></span><h1>scenario.testsuitefile module<a class="headerlink" href="#module-scenario.testsuitefile" title="Permalink to this headline">¶</a></h1>
+<p>Test suite file management.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TestSuiteFile</span></span><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Test suite file reader.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a test suite file reader from its path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – Test suite file path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test suite file path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile.script_paths">
+<span class="sig-name descname"><span class="pre">script_paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile.script_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Script paths describes by the test suite file.</p>
+<p>Filled once the test suite file has been successfully read.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#scenario.testsuitefile.TestSuiteFile.read" title="scenario.testsuitefile.TestSuiteFile.read"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonical string representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads and parses the test suite file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for success, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile.log_class">
+<span class="sig-name descname"><span class="pre">log_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile.log_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile._logger">
+<span class="sig-name descname"><span class="pre">_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">logging.Logger</span></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile._logger" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code> instance as a member variable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile._debug_enabled">
+<span class="sig-name descname"><span class="pre">_debug_enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile._debug_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> to enable log debugging.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> lets the configuration tells whether debug log lines should be displayed for this logger.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile._log_color">
+<span class="sig-name descname"><span class="pre">_log_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.console.html#scenario.console.Console.Color" title="scenario.console.Console.Color"><span class="pre">Console.Color</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile._log_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional log color configuration.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile._indentation">
+<span class="sig-name descname"><span class="pre">_indentation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile._indentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logger indentation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.testsuitefile.TestSuiteFile._extra_flags">
+<span class="sig-name descname"><span class="pre">_extra_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.logextradata.html#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><span class="pre">LogExtraData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.testsuitefile.TestSuiteFile._extra_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flags configurations.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.testerrors.html"
+                          title="previous chapter">scenario.testerrors module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.textfile.html"
+                          title="next chapter">scenario.textfile module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.textfile.html" title="scenario.textfile module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.testerrors.html" title="scenario.testerrors module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.testsuitefile module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

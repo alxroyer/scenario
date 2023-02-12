@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.scenarioevents module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.scenarioexecution module" href="scenario.scenarioexecution.html" />
+    <link rel="prev" title="scenario.scenariodefinition module" href="scenario.scenariodefinition.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioexecution.html" title="scenario.scenarioexecution module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenariodefinition.html" title="scenario.scenariodefinition module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenarioevents module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.scenarioevents">
+<span id="scenario-scenarioevents-module"></span><h1>scenario.scenarioevents module<a class="headerlink" href="#module-scenario.scenarioevents" title="Permalink to this headline">¶</a></h1>
+<p>Scenario events.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScenarioEvent</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.enumutils.html#scenario.enumutils.StrEnum" title="scenario.enumutils.StrEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrEnum</span></code></a></p>
+<p>Events described by the <a class="reference internal" href="scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> framework.</p>
+<p><a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE" title="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE"><code class="xref py py-const docutils literal notranslate"><span class="pre">BEFORE_TEST_CASE</span></code></a> differs from <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST" title="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST"><code class="xref py py-const docutils literal notranslate"><span class="pre">BEFORE_TEST</span></code></a> in that
+<a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE" title="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE"><code class="xref py py-const docutils literal notranslate"><span class="pre">BEFORE_TEST_CASE</span></code></a> is triggered within the context of a campaign execution
+while <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST" title="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST"><code class="xref py py-const docutils literal notranslate"><span class="pre">BEFORE_TEST</span></code></a> is triggered within the context of a scenario execution.</p>
+<p>The same for <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST_CASE" title="scenario.scenarioevents.ScenarioEvent.AFTER_TEST_CASE"><code class="xref py py-const docutils literal notranslate"><span class="pre">AFTER_TEST_CASE</span></code></a> compared with <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST" title="scenario.scenarioevents.ScenarioEvent.AFTER_TEST"><code class="xref py py-const docutils literal notranslate"><span class="pre">AFTER_TEST</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.BEFORE_CAMPAIGN">
+<span class="sig-name descname"><span class="pre">BEFORE_CAMPAIGN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.before-campaign'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_CAMPAIGN" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Before campaign</em> event: triggers handlers at the beginning of the campaign.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_SUITE">
+<span class="sig-name descname"><span class="pre">BEFORE_TEST_SUITE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.before-test-suite'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_SUITE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Before test suite</em> event: triggers handlers at the beginning of each test suite.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE">
+<span class="sig-name descname"><span class="pre">BEFORE_TEST_CASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.before-test-case'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Before test case</em> event: triggers handlers at the beginning of each test case.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST">
+<span class="sig-name descname"><span class="pre">BEFORE_TEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.before-test'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Before test</em> event: triggers handlers at the beginning of the scenario.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.BEFORE_STEP">
+<span class="sig-name descname"><span class="pre">BEFORE_STEP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.before-step'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_STEP" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Before step</em> event: triggers handlers before each regular step.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.error'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.ERROR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error event: triggers handlers on test errors.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.AFTER_STEP">
+<span class="sig-name descname"><span class="pre">AFTER_STEP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.after-step'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.AFTER_STEP" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>After step</em> event: triggers handlers after each regular step.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.AFTER_TEST">
+<span class="sig-name descname"><span class="pre">AFTER_TEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.after-test'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>After test</em> event: triggers handlers at the end of the scenario.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.AFTER_TEST_CASE">
+<span class="sig-name descname"><span class="pre">AFTER_TEST_CASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.after-test-case'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST_CASE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>After test case</em> event: triggers handlers after each test case.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.AFTER_TEST_SUITE">
+<span class="sig-name descname"><span class="pre">AFTER_TEST_SUITE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.after-test-suite'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST_SUITE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>After test suite</em> event: triggers handlers after each test suite.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEvent.AFTER_CAMPAIGN">
+<span class="sig-name descname"><span class="pre">AFTER_CAMPAIGN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scenario.after-campaign'</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEvent.AFTER_CAMPAIGN" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>After campaign</em> event: triggers handlers after the campaign.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScenarioEventData</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Container classes associated with <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent" title="scenario.scenarioevents.ScenarioEvent"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioEvent</span></code></a> events.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Campaign">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Campaign</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Campaign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_CAMPAIGN" title="scenario.scenarioevents.ScenarioEvent.BEFORE_CAMPAIGN"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.BEFORE_CAMPAIGN</span></code></a> and <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.AFTER_CAMPAIGN" title="scenario.scenarioevents.ScenarioEvent.AFTER_CAMPAIGN"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.AFTER_CAMPAIGN</span></code></a> data container.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Campaign.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">campaign_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Campaign.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>campaign_execution</strong> – Campaign notified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Campaign.campaign">
+<span class="sig-name descname"><span class="pre">campaign</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Campaign.campaign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign notified.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.TestSuite">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TestSuite</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.TestSuite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_SUITE" title="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_SUITE"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.BEFORE_TEST_SUITE</span></code></a> and <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST_SUITE" title="scenario.scenarioevents.ScenarioEvent.AFTER_TEST_SUITE"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.AFTER_TEST_SUITE</span></code></a> data container.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.TestSuite.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_suite_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.TestSuite.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>test_suite_execution</strong> – Test suite notified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.TestSuite.test_suite">
+<span class="sig-name descname"><span class="pre">test_suite</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.TestSuite.test_suite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test suite notified.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.TestCase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TestCase</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.TestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE" title="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.BEFORE_TEST_CASE</span></code></a> and <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST_CASE" title="scenario.scenarioevents.ScenarioEvent.AFTER_TEST_CASE"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.AFTER_TEST_CASE</span></code></a> data container.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.TestCase.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_case_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestCaseExecution" title="scenario.campaignexecution.TestCaseExecution"><span class="pre">TestCaseExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.TestCase.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>test_case_execution</strong> – Test case notified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.TestCase.test_case">
+<span class="sig-name descname"><span class="pre">test_case</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestCaseExecution" title="scenario.campaignexecution.TestCaseExecution"><span class="pre">TestCaseExecution</span></a></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.TestCase.test_case" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case notified.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Scenario">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Scenario</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Scenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_TEST" title="scenario.scenarioevents.ScenarioEvent.BEFORE_TEST"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.BEFORE_TEST</span></code></a> and <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.AFTER_TEST" title="scenario.scenarioevents.ScenarioEvent.AFTER_TEST"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.AFTER_TEST</span></code></a> data container.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Scenario.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scenario_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Scenario.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scenario_definition</strong> – Scenario notified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Scenario.scenario">
+<span class="sig-name descname"><span class="pre">scenario</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Scenario.scenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario notified.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Step">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Step</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.BEFORE_STEP" title="scenario.scenarioevents.ScenarioEvent.BEFORE_STEP"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.BEFORE_STEP</span></code></a> and <a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.AFTER_STEP" title="scenario.scenarioevents.ScenarioEvent.AFTER_STEP"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.AFTER_STEP</span></code></a> data container.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Step.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><span class="pre">StepDefinition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Step.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>step_definition</strong> – Step notified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Step.step">
+<span class="sig-name descname"><span class="pre">step</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><span class="pre">StepDefinition</span></a></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Step.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step notified.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Error">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Error</span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><a class="reference internal" href="#scenario.scenarioevents.ScenarioEvent.ERROR" title="scenario.scenarioevents.ScenarioEvent.ERROR"><code class="xref py py-const docutils literal notranslate"><span class="pre">ScenarioEvent.ERROR</span></code></a> data container.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Error.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.testerrors.html#scenario.testerrors.TestError" title="scenario.testerrors.TestError"><span class="pre">TestError</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Error.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>error</strong> – Error notified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData.Error.error">
+<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.testerrors.html#scenario.testerrors.TestError" title="scenario.testerrors.TestError"><span class="pre">TestError</span></a></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData.Error.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error notified.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData._abc_cache">
+<span class="sig-name descname"><span class="pre">_abc_cache</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_weakrefset.WeakSet</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData._abc_negative_cache">
+<span class="sig-name descname"><span class="pre">_abc_negative_cache</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_weakrefset.WeakSet</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData._abc_negative_cache_version">
+<span class="sig-name descname"><span class="pre">_abc_negative_cache_version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">42</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioevents.ScenarioEventData._abc_registry">
+<span class="sig-name descname"><span class="pre">_abc_registry</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_weakrefset.WeakSet</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#scenario.scenarioevents.ScenarioEventData._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.scenariodefinition.html"
+                          title="previous chapter">scenario.scenariodefinition module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.scenarioexecution.html"
+                          title="next chapter">scenario.scenarioexecution module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioexecution.html" title="scenario.scenarioexecution module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenariodefinition.html" title="scenario.scenariodefinition module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenarioevents module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,729 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.path module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.pkginfo module" href="scenario.pkginfo.html" />
+    <link rel="prev" title="scenario.loghandler module" href="scenario.loghandler.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.pkginfo.html" title="scenario.pkginfo module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.loghandler.html" title="scenario.loghandler module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.path module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.path">
+<span id="scenario-path-module"></span><h1>scenario.path module<a class="headerlink" href="#module-scenario.path" title="Permalink to this headline">¶</a></h1>
+<p>Path management.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.AnyPathType">
+<span class="sig-name descname"><span class="pre">AnyPathType</span></span><a class="headerlink" href="#scenario.path.AnyPathType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type for path-like data: either a simple string or a <code class="xref py py-class docutils literal notranslate"><span class="pre">os.PathLike</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.path.Path">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Path</span></span><a class="headerlink" href="#scenario.path.Path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Helper class for path management.</p>
+<p>This class really looks like <code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code>,
+but differs from it in that:</p>
+<ol class="arabic simple">
+<li><p>it ensures persistent paths, even though initialized from a relative path and the current directory changes afterwards,</p></li>
+<li><p>it provides a <a class="reference internal" href="#scenario.path.Path.prettypath" title="scenario.path.Path.prettypath"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prettypath</span></code></a> display from a main directory set for the current project (see <a class="reference internal" href="#scenario.path.Path.setmainpath" title="scenario.path.Path.setmainpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setmainpath()</span></code></a>),</p></li>
+<li><p>it does not describe the current working implicitely when initialized from nothing, but a <em>void</em> path.</p></li>
+</ol>
+<p>The <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> class supports the <code class="xref py py-class docutils literal notranslate"><span class="pre">os.PathLike</span></code> interface.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path._main_path">
+<span class="sig-name descname"><span class="pre">_main_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.path.Path._main_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main path, used to compute the relative <a class="reference internal" href="#scenario.path.Path.prettypath" title="scenario.path.Path.prettypath"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prettypath</span></code></a>.
+Unset by default.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.setmainpath">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setmainpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.path.Path.setmainpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the main path, used to compute the relative <a class="reference internal" href="#scenario.path.Path.prettypath" title="scenario.path.Path.prettypath"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prettypath</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – New main path.</p></li>
+<li><p><strong>log_level</strong> – Log level (as defined by the standard <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> package) to use for the related log line.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.getmainpath">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getmainpath</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.path.Path.getmainpath" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Main path, i.e. base path for <a class="reference internal" href="#scenario.path.Path.prettypath" title="scenario.path.Path.prettypath"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prettypath</span></code></a> computations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.cwd">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cwd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.cwd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance representing the current working directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Current working directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.home">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">home</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance representing the current user’s home directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Current user’s home directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.tmp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tmp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.tmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance representing the temporary directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Temporary directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.path.Path.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures the management of an absolute path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – <p>File or directory path as a path-like.</p>
+<p>Makes the <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance <em>void</em> when not set.</p>
+</p></li>
+<li><p><strong>relative_to</strong> – <p>Base directory or file to consider as the root, when the path given is a relative path.</p>
+<p>Giving a file path as <code class="docutils literal notranslate"><span class="pre">relative_to</span></code> is equivalent to giving its owner directory.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p>If the path given is relative, it is transformed in its absolute form from the current working directory.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path._abspath">
+<span class="sig-name descname"><span class="pre">_abspath</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></em><a class="headerlink" href="#scenario.path.Path._abspath" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code> instance used to store the absolute path described by this <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.as_posix">
+<span class="sig-name descname"><span class="pre">as_posix</span></span><a class="headerlink" href="#scenario.path.Path.as_posix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.PurePath.as_posix()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.as_uri">
+<span class="sig-name descname"><span class="pre">as_uri</span></span><a class="headerlink" href="#scenario.path.Path.as_uri" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.PurePath.as_uri()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_absolute">
+<span class="sig-name descname"><span class="pre">is_absolute</span></span><a class="headerlink" href="#scenario.path.Path.is_absolute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.PurePath.is_absolute()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_reserved">
+<span class="sig-name descname"><span class="pre">is_reserved</span></span><a class="headerlink" href="#scenario.path.Path.is_reserved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.PurePath.is_reserved()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.match">
+<span class="sig-name descname"><span class="pre">match</span></span><a class="headerlink" href="#scenario.path.Path.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.PurePath.match()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.stat">
+<span class="sig-name descname"><span class="pre">stat</span></span><a class="headerlink" href="#scenario.path.Path.stat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.stat()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.chmod">
+<span class="sig-name descname"><span class="pre">chmod</span></span><a class="headerlink" href="#scenario.path.Path.chmod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.chmod()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.exists">
+<span class="sig-name descname"><span class="pre">exists</span></span><a class="headerlink" href="#scenario.path.Path.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.exists()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.expanduser">
+<span class="sig-name descname"><span class="pre">expanduser</span></span><a class="headerlink" href="#scenario.path.Path.expanduser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.expanduser()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.group">
+<span class="sig-name descname"><span class="pre">group</span></span><a class="headerlink" href="#scenario.path.Path.group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.group()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_dir">
+<span class="sig-name descname"><span class="pre">is_dir</span></span><a class="headerlink" href="#scenario.path.Path.is_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_dir()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_file">
+<span class="sig-name descname"><span class="pre">is_file</span></span><a class="headerlink" href="#scenario.path.Path.is_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_file()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_mount">
+<span class="sig-name descname"><span class="pre">is_mount</span></span><a class="headerlink" href="#scenario.path.Path.is_mount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_mount()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_symlink">
+<span class="sig-name descname"><span class="pre">is_symlink</span></span><a class="headerlink" href="#scenario.path.Path.is_symlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_symlink()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_socket">
+<span class="sig-name descname"><span class="pre">is_socket</span></span><a class="headerlink" href="#scenario.path.Path.is_socket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_socket()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_fifo">
+<span class="sig-name descname"><span class="pre">is_fifo</span></span><a class="headerlink" href="#scenario.path.Path.is_fifo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_fifo()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_block_device">
+<span class="sig-name descname"><span class="pre">is_block_device</span></span><a class="headerlink" href="#scenario.path.Path.is_block_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_block_device()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.is_char_device">
+<span class="sig-name descname"><span class="pre">is_char_device</span></span><a class="headerlink" href="#scenario.path.Path.is_char_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.is_char_device()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.lchmod">
+<span class="sig-name descname"><span class="pre">lchmod</span></span><a class="headerlink" href="#scenario.path.Path.lchmod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.lchmod()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.lstat">
+<span class="sig-name descname"><span class="pre">lstat</span></span><a class="headerlink" href="#scenario.path.Path.lstat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.lstat()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.mkdir">
+<span class="sig-name descname"><span class="pre">mkdir</span></span><a class="headerlink" href="#scenario.path.Path.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut for <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.mkdir()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.open">
+<span class="sig-name descname"><span class="pre">open</span></span><a class="headerlink" href="#scenario.path.Path.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.open()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.owner">
+<span class="sig-name descname"><span class="pre">owner</span></span><a class="headerlink" href="#scenario.path.Path.owner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.owner()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.read_bytes">
+<span class="sig-name descname"><span class="pre">read_bytes</span></span><a class="headerlink" href="#scenario.path.Path.read_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.read_bytes()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.read_text">
+<span class="sig-name descname"><span class="pre">read_text</span></span><a class="headerlink" href="#scenario.path.Path.read_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.read_text()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.readlink">
+<span class="sig-name descname"><span class="pre">readlink</span></span><a class="headerlink" href="#scenario.path.Path.readlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.readlink()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.rmdir">
+<span class="sig-name descname"><span class="pre">rmdir</span></span><a class="headerlink" href="#scenario.path.Path.rmdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.rmdir()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.symlink_to">
+<span class="sig-name descname"><span class="pre">symlink_to</span></span><a class="headerlink" href="#scenario.path.Path.symlink_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.symlink_to()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.hardlink_to">
+<span class="sig-name descname"><span class="pre">hardlink_to</span></span><a class="headerlink" href="#scenario.path.Path.hardlink_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.hardlink_to()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.link_to">
+<span class="sig-name descname"><span class="pre">link_to</span></span><a class="headerlink" href="#scenario.path.Path.link_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.link_to()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.touch">
+<span class="sig-name descname"><span class="pre">touch</span></span><a class="headerlink" href="#scenario.path.Path.touch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.touch()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.unlink">
+<span class="sig-name descname"><span class="pre">unlink</span></span><a class="headerlink" href="#scenario.path.Path.unlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.unlink()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.write_bytes">
+<span class="sig-name descname"><span class="pre">write_bytes</span></span><a class="headerlink" href="#scenario.path.Path.write_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.write_bytes()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.path.Path.write_text">
+<span class="sig-name descname"><span class="pre">write_text</span></span><a class="headerlink" href="#scenario.path.Path.write_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.Path.write_text()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.__fspath__">
+<span class="sig-name descname"><span class="pre">__fspath__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.path.Path.__fspath__" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">os.PathLike</span></code> interface implementation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.path.Path.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonical string representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.path.Path.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human readable string representation (same as <a class="reference internal" href="#scenario.path.Path.prettypath" title="scenario.path.Path.prettypath"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prettypath</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.__hash__">
+<span class="sig-name descname"><span class="pre">__hash__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#scenario.path.Path.__hash__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hash computation.</p>
+<p>Makes it possible to use <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> objects as dictionary keys.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.parts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parts</span></span><a class="headerlink" href="#scenario.path.Path.parts" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parts">pathlib.PurePath.parts</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.drive">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">drive</span></span><a class="headerlink" href="#scenario.path.Path.drive" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.drive">pathlib.PurePath.drive</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.root">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root</span></span><a class="headerlink" href="#scenario.path.Path.root" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.root">pathlib.PurePath.root</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.anchor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">anchor</span></span><a class="headerlink" href="#scenario.path.Path.anchor" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.anchor">pathlib.PurePath.anchor</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.parents">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parents</span></span><a class="headerlink" href="#scenario.path.Path.parents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the list of parent directories as <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> objects.</p>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parents">pathlib.PurePath.parents</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.parent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent</span></span><a class="headerlink" href="#scenario.path.Path.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the parent directory as a <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> object.</p>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parent">pathlib.PurePath.parent</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#scenario.path.Path.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base name of the path.</p>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.name">pathlib.PurePath.name</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.suffix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">suffix</span></span><a class="headerlink" href="#scenario.path.Path.suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the extension of the file (or directory name), with its leading dot, if any,
+or an empty string if no extension.</p>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.suffix">pathlib.PurePath.suffix</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.suffixes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">suffixes</span></span><a class="headerlink" href="#scenario.path.Path.suffixes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the list of consecutive extensions, with their leading dot character.</p>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.suffixes">pathlib.PurePath.suffixes</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.stem">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stem</span></span><a class="headerlink" href="#scenario.path.Path.stem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the basename of the path, without the final extension if any.</p>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.stem">pathlib.PurePath.stem</a>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.abspath">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abspath</span></span><a class="headerlink" href="#scenario.path.Path.abspath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Absolute form of the path in the POSIX style.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.path.Path.prettypath">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prettypath</span></span><a class="headerlink" href="#scenario.path.Path.prettypath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the pretty path.</p>
+<p>The pretty path is actually a relative path from the main path if set (see <a class="reference internal" href="#scenario.path.Path.setmainpath" title="scenario.path.Path.setmainpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setmainpath()</span></code></a>),
+or the current working directory otherwise,
+and presented in the POSIX style.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.resolve">
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves another <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance similar to this one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>New <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.path.Path.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether <code class="docutils literal notranslate"><span class="pre">other</span></code> equals to this path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – Path to checks against.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the paths equal, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.samefile">
+<span class="sig-name descname"><span class="pre">samefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.path.Path.samefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> when <code class="docutils literal notranslate"><span class="pre">other</span></code> describes the same path as this one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – Other path (or anything that is not a path at all).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when <code class="docutils literal notranslate"><span class="pre">other</span></code> is the same path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.__truediv__">
+<span class="sig-name descname"><span class="pre">__truediv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.__truediv__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Joins this directory path with a sub-path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – Sub-path to apply from this directory path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>New <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.joinpath">
+<span class="sig-name descname"><span class="pre">joinpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.joinpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Joins this directory path with a list of sub-paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – Sub-paths to apply from this directory path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>New <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.with_name">
+<span class="sig-name descname"><span class="pre">with_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.with_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.with_name">pathlib.PurePath.with_name()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.with_stem">
+<span class="sig-name descname"><span class="pre">with_stem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.with_stem" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.with_stem">pathlib.PurePath.with_stem()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.with_suffix">
+<span class="sig-name descname"><span class="pre">with_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.with_suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.with_suffix">pathlib.PurePath.with_suffix()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.is_void">
+<span class="sig-name descname"><span class="pre">is_void</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.path.Path.is_void" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether this path is void.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the path is void, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.is_relative_to">
+<span class="sig-name descname"><span class="pre">is_relative_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.path.Path.is_relative_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether this path is a sub-path of the candidate parent directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – Candidate parent directory.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when this path is a sub-path of <code class="docutils literal notranslate"><span class="pre">other</span></code>.</p>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.is_relative_to">pathlib.PurePath.is_relative_to()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.relative_to">
+<span class="sig-name descname"><span class="pre">relative_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.path.Path.relative_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a relative path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – Reference path to compute the relative path from.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Relative path from <code class="docutils literal notranslate"><span class="pre">other</span></code> in the POSIX style.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The behaviour of this method differs from the one of <code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.PurePath.relative_to()</span></code>.</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">pathlib.PurePath.relative_to()</span></code> raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> as soon as this path is not a sub-path of <code class="docutils literal notranslate"><span class="pre">other</span></code>.
+In order te be able compute relative paths beginning with “../”, we use <code class="xref py py-func docutils literal notranslate"><span class="pre">os.path.relpath()</span></code> instead.</p>
+</div>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.relative_to">pathlib.PurePath.relative_to()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.iterdir">
+<span class="sig-name descname"><span class="pre">iterdir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.path.Path.iterdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists this directory path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Paths iterator.</p>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.iterdir">pathlib.Path.iterdir()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.glob">
+<span class="sig-name descname"><span class="pre">glob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.path.Path.glob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of files that match the given pattern.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pattern</strong> – Path pattern (see <code class="xref py py-func docutils literal notranslate"><span class="pre">glob.glob()</span></code>).
+May be either a relative or an absolute path specification.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of paths that match the pattern.</p>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob">pathlib.Path.glob()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.rglob">
+<span class="sig-name descname"><span class="pre">rglob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.path.Path.rglob" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.rglob">pathlib.Path.rglob()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.rename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves this file or directory as <code class="docutils literal notranslate"><span class="pre">target</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>target</strong> – Target path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>New target <a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> instance.</p>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.rename">pathlib.Path.rename()</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.path.Path.replace">
+<span class="sig-name descname"><span class="pre">replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.path.Path.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.replace">pathlib.Path.replace()</a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.loghandler.html"
+                          title="previous chapter">scenario.loghandler module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.pkginfo.html"
+                          title="next chapter">scenario.pkginfo module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.pkginfo.html" title="scenario.pkginfo module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.loghandler.html" title="scenario.loghandler module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.path module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

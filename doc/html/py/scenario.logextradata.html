@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.logextradata module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.logfilters module" href="scenario.logfilters.html" />
+    <link rel="prev" title="scenario.locations module" href="scenario.locations.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.logfilters.html" title="scenario.logfilters module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.locations.html" title="scenario.locations module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.logextradata module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.logextradata">
+<span id="scenario-logextradata-module"></span><h1>scenario.logextradata module<a class="headerlink" href="#module-scenario.logextradata" title="Permalink to this headline">¶</a></h1>
+<p>Logging extra data handling.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LogExtraData</span></span><a class="headerlink" href="#scenario.logextradata.LogExtraData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.enumutils.html#scenario.enumutils.StrEnum" title="scenario.enumutils.StrEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrEnum</span></code></a></p>
+<p>Keys to can be used in the dictionary passed on in the <code class="docutils literal notranslate"><span class="pre">extra</span></code> parameter of the standard <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> functions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.CURRENT_LOGGER">
+<span class="sig-name descname"><span class="pre">CURRENT_LOGGER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_logger_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.CURRENT_LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current logger reference.</p>
+<p>Stores a class:<cite>.logger.Logger</cite> instance reference.</p>
+<p>Automatically set by <a class="reference internal" href="scenario.logfilters.html#scenario.logfilters.LoggerLogFilter" title="scenario.logfilters.LoggerLogFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerLogFilter</span></code></a>
+so that <a class="reference internal" href="scenario.logformatter.html#scenario.logformatter.LogFormatter" title="scenario.logformatter.LogFormatter"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogFormatter</span></code></a>
+knows about the current <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a> instance
+when processing the log event.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.LONG_TEXT_MAX_LINES">
+<span class="sig-name descname"><span class="pre">LONG_TEXT_MAX_LINES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_long_text_max_lines_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.LONG_TEXT_MAX_LINES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Long text mode option.</p>
+<p>When set, activates the <em>long text mode</em>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">int</span></code> that gives the maximum number of lines to display.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.DATE_TIME">
+<span class="sig-name descname"><span class="pre">DATE_TIME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_date_time_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.DATE_TIME" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flag: Should date/time be displayed?</p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+<p>Still depends on usual <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> configurations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.COLOR">
+<span class="sig-name descname"><span class="pre">COLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_color_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.COLOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flag: May color be used? (console only)</p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+<p>Still depends on usual <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> configurations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.LOG_LEVEL">
+<span class="sig-name descname"><span class="pre">LOG_LEVEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_log_level_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.LOG_LEVEL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flag: Should the log level be displayed?</p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.SCENARIO_STACK_INDENTATION">
+<span class="sig-name descname"><span class="pre">SCENARIO_STACK_INDENTATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_scenario_stack_indentation_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.SCENARIO_STACK_INDENTATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flag: Should the scenario stack indentation be displayed?</p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.MAIN_LOGGER_INDENTATION">
+<span class="sig-name descname"><span class="pre">MAIN_LOGGER_INDENTATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_main_logger_indentation_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.MAIN_LOGGER_INDENTATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flag: Should the main logger indentation be displayed?</p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.CLASS_LOGGER_INDENTATION">
+<span class="sig-name descname"><span class="pre">CLASS_LOGGER_INDENTATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_class_logger_indentation_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.CLASS_LOGGER_INDENTATION" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flag: Should the main logger indentation be displayed?</p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.ACTION_RESULT_MARGIN">
+<span class="sig-name descname"><span class="pre">ACTION_RESULT_MARGIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_action_result_margin_'</span></em><a class="headerlink" href="#scenario.logextradata.LogExtraData.ACTION_RESULT_MARGIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flag: Should the log be applied a margin that makes it indented within the action/result block it belongs to?</p>
+<p><code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.extradata">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extradata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extra</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><span class="pre">LogExtraData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.logextradata.LogExtraData.extradata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates a {ExtraFlag: Any} dictionary into a <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> compatible dictionary.</p>
+<p>The resulting dictionary basically deserves the <code class="docutils literal notranslate"><span class="pre">extra</span></code> parameter of <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>extra</strong> – Enumerate dictionary to translate.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> compatible dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.get">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">logging.LogRecord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><span class="pre">LogExtraData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.logextradata.LogExtraData.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves extra data from a record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>record</strong> – Record to look for extra data in.</p></li>
+<li><p><strong>key</strong> – Extra data name to look for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Extra data value if set, or <code class="docutils literal notranslate"><span class="pre">None</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.logextradata.LogExtraData.set">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">logging.LogRecord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><span class="pre">LogExtraData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#scenario.logextradata.LogExtraData.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets extra data with a record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>record</strong> – Record to store extra data in.</p></li>
+<li><p><strong>key</strong> – Extra data name to set.</p></li>
+<li><p><strong>value</strong> – Extra data value.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.locations.html"
+                          title="previous chapter">scenario.locations module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.logfilters.html"
+                          title="next chapter">scenario.logfilters module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.logfilters.html" title="scenario.logfilters module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.locations.html" title="scenario.locations module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.logextradata module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

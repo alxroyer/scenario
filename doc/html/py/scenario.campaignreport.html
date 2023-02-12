@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.campaignreport module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.campaignrunner module" href="scenario.campaignrunner.html" />
+    <link rel="prev" title="scenario.campaignlogging module" href="scenario.campaignlogging.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignrunner.html" title="scenario.campaignrunner module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignlogging.html" title="scenario.campaignlogging module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.campaignreport module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.campaignreport">
+<span id="scenario-campaignreport-module"></span><h1>scenario.campaignreport module<a class="headerlink" href="#module-scenario.campaignreport" title="Permalink to this headline">¶</a></h1>
+<p>Campaign reports.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignreport.CAMPAIGN_REPORT">
+<span class="sig-name descname"><span class="pre">CAMPAIGN_REPORT</span></span><a class="headerlink" href="#scenario.campaignreport.CAMPAIGN_REPORT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main instance of <a class="reference internal" href="#scenario.campaignreport.CampaignReport" title="scenario.campaignreport.CampaignReport"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignReport</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CampaignReport</span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Campaign report management.</p>
+<p>JUnit XML reporting file format:</p>
+<ul class="simple">
+<li><p>Refer to: <a class="reference external" href="https://llg.cubic.org/docs/junit/">https://llg.cubic.org/docs/junit/</a> [CUBIC]</p></li>
+<li><p>Other useful resource: <a class="reference external" href="https://stackoverflow.com/questions/442556/spec-for-junit-xml-output">https://stackoverflow.com/questions/442556/spec-for-junit-xml-output</a></p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configures logging for the <a class="reference internal" href="#scenario.campaignreport.CampaignReport" title="scenario.campaignreport.CampaignReport"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignReport</span></code></a> class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._junit_path">
+<span class="sig-name descname"><span class="pre">_junit_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></em><a class="headerlink" href="#scenario.campaignreport.CampaignReport._junit_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>JUnit report path being written or read.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport.writejunitreport">
+<span class="sig-name descname"><span class="pre">writejunitreport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">campaign_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">junit_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport.writejunitreport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a JUnit XML report output file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>campaign_execution</strong> – Campaign execution to generate the report for.</p></li>
+<li><p><strong>junit_path</strong> – Path to write the JUnit report into.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for success, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport.readjunitreport">
+<span class="sig-name descname"><span class="pre">readjunitreport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">junit_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport.readjunitreport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the JUnit report.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>junit_path</strong> – Path of the JUnit file to read.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Campaign execution data read from the JUnit file.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> when the file could not be read, or its content could not be parsed successfully.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._campaign2xml">
+<span class="sig-name descname"><span class="pre">_campaign2xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Document" title="scenario.xmlutils.Xml.Document"><span class="pre">Xml.Document</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">campaign_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._campaign2xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign JUnit XML generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_doc</strong> – XML document.</p></li>
+<li><p><strong>campaign_execution</strong> – Campaign execution to generate the JUnit XML for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Campaign JUnit XML.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._xml2campaign">
+<span class="sig-name descname"><span class="pre">_xml2campaign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Document" title="scenario.xmlutils.Xml.Document"><span class="pre">Xml.Document</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._xml2campaign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign execution reading from JUnit report.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>xml_doc</strong> – JUnit XML document to read from.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Campaign execution data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._testsuite2xml">
+<span class="sig-name descname"><span class="pre">_testsuite2xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Document" title="scenario.xmlutils.Xml.Document"><span class="pre">Xml.Document</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_suite_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_suite_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._testsuite2xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test suite JUnit XML generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_doc</strong> – XML document.</p></li>
+<li><p><strong>test_suite_execution</strong> – Test suite execution to generate the JUnit XML for.</p></li>
+<li><p><strong>test_suite_id</strong> – Test suite identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Test suite JUnit XML.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._xml2testsuite">
+<span class="sig-name descname"><span class="pre">_xml2testsuite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">campaign_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_test_suite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._xml2testsuite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test suite reading from JUnit report.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>campaign_execution</strong> – Owner campaign execution instance.</p></li>
+<li><p><strong>xml_test_suite</strong> – JUnit XML to read from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Test suite execution data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._testcase2xml">
+<span class="sig-name descname"><span class="pre">_testcase2xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Document" title="scenario.xmlutils.Xml.Document"><span class="pre">Xml.Document</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_case_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestCaseExecution" title="scenario.campaignexecution.TestCaseExecution"><span class="pre">TestCaseExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._testcase2xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case JUnit XML generation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_doc</strong> – XML document.</p></li>
+<li><p><strong>test_case_execution</strong> – Test case execution to generate the JUnit XML for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Test case JUnit XML.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._xml2testcase">
+<span class="sig-name descname"><span class="pre">_xml2testcase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_suite_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">xml_test_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestCaseExecution" title="scenario.campaignexecution.TestCaseExecution"><span class="pre">TestCaseExecution</span></a></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._xml2testcase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case reading from JUnit XML.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_suite_execution</strong> – Owner test suite execution instance.</p></li>
+<li><p><strong>xml_test_case</strong> – JUnit XML to read from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Test case execution data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._safestr2xml">
+<span class="sig-name descname"><span class="pre">_safestr2xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._safestr2xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safe string conversion before it is used in the JUnit report.</p>
+<p>Removal of colors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> – String to convert.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String safely converted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._path2xmlattr">
+<span class="sig-name descname"><span class="pre">_path2xmlattr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._path2xmlattr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a path XML attribute.</p>
+<p>Sets either a relative or absolute path
+depending on the given file location compared with this JUnit file location.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_node</strong> – XML node to set the attribute for.</p></li>
+<li><p><strong>attr_name</strong> – Attribute name.</p></li>
+<li><p><strong>path</strong> – Path object to use to set the attribute value.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._xmlattr2path">
+<span class="sig-name descname"><span class="pre">_xmlattr2path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._xmlattr2path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path computation from an XML attribute.</p>
+<p>When the attribute describes a relative path, the path is computed from the JUnit file.
+When it describes an absolute path, the path is taken as is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_node</strong> – XML node which attribute to read from.</p></li>
+<li><p><strong>attr_name</strong> – Attribute name to read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Path computed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignreport.CampaignReport._xmlcheckstats">
+<span class="sig-name descname"><span class="pre">_xmlcheckstats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.xmlutils.html#scenario.xmlutils.Xml.Node" title="scenario.xmlutils.Xml.Node"><span class="pre">Xml.Node</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignreport.CampaignReport._xmlcheckstats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Statistics consistency checking between an upper level and its children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_node</strong> – Upper XML node which statistics to check.</p></li>
+<li><p><strong>attr_name</strong> – Statistics attribute to check.</p></li>
+<li><p><strong>objects</strong> – Execution objects to check statistics with.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Displays warnings when the statistics mismatch.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.campaignlogging.html"
+                          title="previous chapter">scenario.campaignlogging module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.campaignrunner.html"
+                          title="next chapter">scenario.campaignrunner module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignrunner.html" title="scenario.campaignrunner module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignlogging.html" title="scenario.campaignlogging module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.campaignreport module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

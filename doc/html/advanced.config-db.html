@@ -1,0 +1,521 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Configuration database &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sub-scenarios: reuse of scenarios in other scenarios" href="advanced.subscenarios.html" />
+    <link rel="prev" title="Handlers" href="advanced.handlers.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="advanced.subscenarios.html" title="Sub-scenarios: reuse of scenarios in other scenarios"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="advanced.handlers.html" title="Handlers"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="advanced.html" accesskey="U">Advanced usage</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Configuration database</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="configuration-database">
+<span id="config-db"></span><h1>Configuration database<a class="headerlink" href="#configuration-database" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> framework provides a general configuration database.</p>
+<p>It is available through the <a class="reference internal" href="py/scenario.html#scenario.conf" title="scenario.conf"><code class="xref py py-attr docutils literal notranslate"><span class="pre">scenario.conf</span></code></a> attribute.</p>
+<section id="configuration-nodes">
+<h2>Configuration nodes<a class="headerlink" href="#configuration-nodes" title="Permalink to this headline">¶</a></h2>
+<p>The database configuration is a tree of sections, sub-sections, sub-sub-sections, … ending with final values.</p>
+<p>The <a class="reference internal" href="py/scenario.confignode.html#scenario.confignode.ConfigNode" title="scenario.confignode.ConfigNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigNode</span></code></a> class describes a node in the resulting configuration tree,
+either a section or a final value.</p>
+</section>
+<section id="configuration-tree-keys">
+<h2>Configuration tree &amp; keys<a class="headerlink" href="#configuration-tree-keys" title="Permalink to this headline">¶</a></h2>
+<p>Configuration keys are a simplified form of <a class="reference external" href="https://tools.ietf.org/id/draft-goessner-dispatch-jsonpath-00.html">JSONPath</a>:
+they are dot-separated strings, with the ability to index a single list item with a number between square brackets.</p>
+<p>With the following sample data:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">a</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">b</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">55</span><span class="w"></span>
+<span class="nt">x</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">y</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">101</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">102</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">104</span><span class="w"></span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><cite>“a.b.c”</cite> points to the 55 value,</p></li>
+<li><p><cite>“x.y[2].z”</cite> points to the 102 value,</p></li>
+<li><p><cite>“a.b”</cite> points to the so-named sub-section (the corresponding data being a <code class="docutils literal notranslate"><span class="pre">dict</span></code>),</p></li>
+<li><p><cite>“x.y”</cite> points to the so-named list (the corresponding data being a <code class="docutils literal notranslate"><span class="pre">list</span></code>),</p></li>
+<li><p><cite>“”</cite> (empty string) points to root node.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Configuration keys may be passed as strings or string enumerates.</p>
+</div>
+</section>
+<section id="loading-and-setting-configurations-through-the-command-line">
+<h2>Loading and setting configurations through the command line<a class="headerlink" href="#loading-and-setting-configurations-through-the-command-line" title="Permalink to this headline">¶</a></h2>
+<p>Configuration values are basically set through the command line,
+with the <code class="docutils literal notranslate"><span class="pre">--config-file</span></code> and/or <code class="docutils literal notranslate"><span class="pre">--config-value</span></code> options of test and campaign launchers.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: run-test.py [-h] [--config-file CONFIG_PATH] [--config-value KEY VALUE]
+                   [--debug-class DEBUG_CLASS] [--doc-only]
+                   [--issue-level-error ISSUE_LEVEL]
+                   [--issue-level-ignored ISSUE_LEVEL]
+                   [--json-report JSON_REPORT_PATH]
+                   [--extra-info ATTRIBUTE_NAME]
+                   SCENARIO_PATH [SCENARIO_PATH ...]
+
+Scenario test execution.
+
+positional arguments:
+  SCENARIO_PATH         Scenario script(s) to execute.
+
+optional arguments:
+  -h, --help            Show this help message and exit.
+  --config-file CONFIG_PATH
+                        Input configuration file path. This option may be
+                        called several times.
+  --config-value KEY VALUE
+                        Single configuration value. This option may be called
+                        several times.
+  --debug-class DEBUG_CLASS
+                        Activate debugging for the given class.
+  --doc-only            Generate documentation without executing the test(s).
+  --issue-level-error ISSUE_LEVEL
+                        Define the issue level from and above which known
+                        issues should be considered as errors. None by
+                        default, i.e. all known issues are considered as
+                        warnings.
+  --issue-level-ignored ISSUE_LEVEL
+                        Define the issue level from and under which known
+                        issues should be ignored. None by default, i.e. no
+                        known issue ignored by default.
+  --json-report JSON_REPORT_PATH
+                        Save the report in the given JSON output file path.
+                        Single scenario only.
+  --extra-info ATTRIBUTE_NAME
+                        Scenario attribute to display for extra info when
+                        displaying results. Applicable when executing several
+                        tests. This option may be called several times to
+                        display more info.
+</pre></div>
+</div>
+<p>Configuration files can be in one of the following formats:</p>
+<table class="colwidths-auto docutils align-default" id="id1">
+<caption><span class="caption-text">Configuration file formats</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Format</p></th>
+<th class="head"><p>File extensions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>INI (as handled by <a class="reference external" href="https://docs.python.org/3/library/configparser.html">configparser</a>)</p></td>
+<td><p><em>.ini</em>, <em>.INI</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>JSON</p></td>
+<td><p><em>.json</em>, <em>.JSON</em></p></td>
+</tr>
+<tr class="row-even"><td><p>YAML (requires <a class="reference external" href="https://pypi.org/project/PyYAML/">PyYAML</a> to be installed)</p></td>
+<td><p><em>.yaml</em>, <em>.yml</em>,
+<em>.YAML</em>, <em>.YML</em></p></td>
+</tr>
+</tbody>
+</table>
+<p>Several files may be loaded consecutively by repeating the <code class="docutils literal notranslate"><span class="pre">--config-file</span></code> option.</p>
+<p>This makes it possible to split configuration files on various purposes:</p>
+<ul class="simple">
+<li><p>the kind of software / system under test,</p></li>
+<li><p>the environment used to execute the tests,</p></li>
+<li><p>the identity of the person who launches the tests,</p></li>
+<li><p>…</p></li>
+</ul>
+<p>The configuration data from the different files is merged all together in the resulting tree,
+the values set from the latter files overloading the ones already set by the formers files.</p>
+<p>Then, the single values set by the <code class="docutils literal notranslate"><span class="pre">--config-value</span></code> options finally update the configuration tree.</p>
+<div class="tip admonition">
+<p class="admonition-title">Boolean value conversions</p>
+<p>When configuration values are boolean values,
+they may be passed as strings in one of the usual forms recognized:</p>
+<dl class="field-list simple">
+<dt class="field-odd"><em>True</em> values</dt>
+<dd class="field-odd"><p>any non-zero integer or integer string, strings like “True”, “TRUE”, “true”, “Yes, “YES”, “yes”, “Y”, “y”</p>
+</dd>
+<dt class="field-even"><em>False</em> values</dt>
+<dd class="field-even"><p>0 (zero) or “0”, strings like “False”, “FALSE”, “false”, “No”, “NO”, “no”, “N”, “n”</p>
+</dd>
+</dl>
+</div>
+</section>
+<section id="manipulating-configurations-from-the-code">
+<h2>Manipulating configurations from the code<a class="headerlink" href="#manipulating-configurations-from-the-code" title="Permalink to this headline">¶</a></h2>
+<p>The code can then access configuration values (resp. <a class="reference internal" href="py/scenario.confignode.html#scenario.confignode.ConfigNode" title="scenario.confignode.ConfigNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigNode</span></code></a> instances)
+through the <a class="reference internal" href="py/scenario.configdb.html#scenario.configdb.ConfigDatabase.get" title="scenario.configdb.ConfigDatabase.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigDatabase.get()</span></code></a> method (resp. <a class="reference internal" href="py/scenario.configdb.html#scenario.configdb.ConfigDatabase.getnode" title="scenario.configdb.ConfigDatabase.getnode"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigDatabase.getnode()</span></code></a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access a final value (`None` if the value does not exist).</span>
+<span class="n">_any</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a.b.c&quot;</span><span class="p">)</span>  <span class="c1"># type: typing.Optional[typing.Any]</span>
+<span class="c1"># Access a final value of the given type (`None` if the value does not exist).</span>
+<span class="n">_int1</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a.b.c&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># type: typing.Optional[int]</span>
+<span class="c1"># Access a final value, or fallback to a default value.</span>
+<span class="n">_int2</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a.b.c&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># type: int</span>
+<span class="c1"># Access a whole section as a JSON dictionary (`None` if the section does not exist).</span>
+<span class="n">_section</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># type: typing.Optional[typing.Dict[str, typing.Any]]</span>
+<span class="c1"># Access a whole list as a JSON list (`None` if the list does not exist).</span>
+<span class="n">_list</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x.y&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># type: typing.Optional[typing.List[typing.Any]]</span>
+</pre></div>
+</div>
+<p>The configuration keys available can be listed with the <a class="reference internal" href="py/scenario.configdb.html#scenario.configdb.ConfigDatabase.getkeys" title="scenario.configdb.ConfigDatabase.getkeys"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigDatabase.getkeys()</span></code></a> method.</p>
+<p>Configuration files can be loaded from the code (see <a class="reference internal" href="py/scenario.configdb.html#scenario.configdb.ConfigDatabase.loadfile" title="scenario.configdb.ConfigDatabase.loadfile"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigDatabase.loadfile()</span></code></a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load a configuration file.</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">loadfile</span><span class="p">(</span><span class="s2">&quot;demo/conf.yml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Configuration data can also be set (either sections or lists or single values, see <a class="reference internal" href="py/scenario.configdb.html#scenario.configdb.ConfigDatabase.set" title="scenario.configdb.ConfigDatabase.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigDatabase.set()</span></code></a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set a single value.</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;a.b.c&quot;</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+<span class="c1"># Update a whole section (possibly with sub-sections).</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;a.b&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">})</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">}})</span>
+</pre></div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Automatic configuration data conversions</p>
+<p>When setting data from the code, the configuration database applies the following conversions:</p>
+<table class="colwidths-auto docutils align-default" id="id2">
+<caption><span class="caption-text">Automatic configuration data conversions</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input data type</p></th>
+<th class="head"><p>Storage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Path-likes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code> form of the path, using <code class="docutils literal notranslate"><span class="pre">os.fspath()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enum.EnumMeta</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code> form of the enumerate value</p></td>
+</tr>
+<tr class="row-odd"><td><p>Other <code class="docutils literal notranslate"><span class="pre">enum.Enum</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code> form of the enumerate value</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Configuration nodes can be accessed directly from the code, and provide an API that can be used from the user code
+(see <a class="reference internal" href="py/scenario.confignode.html#scenario.confignode.ConfigNode" title="scenario.confignode.ConfigNode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigNode</span></code></a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access a configuration node (`None` if the node does not exist).</span>
+<span class="n">_node</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">getnode</span><span class="p">(</span><span class="s2">&quot;a.b.c&quot;</span><span class="p">)</span>  <span class="c1"># type: typing.Optional[scenario.ConfigNode]</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration-origins">
+<h2>Configuration origins<a class="headerlink" href="#configuration-origins" title="Permalink to this headline">¶</a></h2>
+<p>In case configurations lead to some erroneous situation,
+the configuration database keeps memory of <em>configuration origins</em>
+(see <a class="reference internal" href="py/scenario.confignode.html#scenario.confignode.ConfigNode.origins" title="scenario.confignode.ConfigNode.origins"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ConfigNode.origins</span></code></a> and <a class="reference internal" href="py/scenario.confignode.html#scenario.confignode.ConfigNode.origin" title="scenario.confignode.ConfigNode.origin"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ConfigNode.origin</span></code></a>).</p>
+<p>This information can help a user fix his/her configuration files when something goes wrong.</p>
+<p>For the purpose, the <a class="reference internal" href="py/scenario.confignode.html#scenario.confignode.ConfigNode.errmsg" title="scenario.confignode.ConfigNode.errmsg"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigNode.errmsg()</span></code></a> method
+builds error messages giving the representative origin of the given configuration node.</p>
+<p>The <a class="reference internal" href="py/scenario.configdb.html#scenario.configdb.ConfigDatabase.show" title="scenario.configdb.ConfigDatabase.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigDatabase.show()</span></code></a> and <a class="reference internal" href="py/scenario.confignode.html#scenario.confignode.ConfigNode.show" title="scenario.confignode.ConfigNode.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigNode.show()</span></code></a> methods
+also display the configuration tree with origins.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./demo/run-demo.py --config-file demo/conf.json --config-value x.y<span class="o">[</span><span class="m">0</span><span class="o">]</span>.z <span class="m">0</span> --show-configs demo/htmllogin.py
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span>     <span class="n">Main</span> <span class="n">path</span><span class="p">:</span> <span class="s1">&#39;/path/to/scenario&#39;</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>   <span class="n">a</span><span class="p">:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>     <span class="n">a</span><span class="o">.</span><span class="n">b</span><span class="p">:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>       <span class="n">a</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">c</span><span class="p">:</span> <span class="mi">55</span>  <span class="c1"># from demo/conf.json</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>   <span class="n">x</span><span class="p">:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>     <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>       <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">:</span> <span class="s1">&#39;0&#39;</span>  <span class="c1"># from &lt;args&gt;</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>     <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>       <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">:</span> <span class="mi">100</span>  <span class="c1"># from demo/conf.json</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>     <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>       <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">:</span> <span class="mi">101</span>  <span class="c1"># from demo/conf.json</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>     <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>       <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">:</span> <span class="mi">102</span>  <span class="c1"># from demo/conf.json</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>     <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">4</span><span class="p">]:</span>
+<span class="n">INFO</span>     <span class="p">[</span><span class="n">scenario</span><span class="o">.</span><span class="n">ConfigDatabase</span><span class="p">]</span>       <span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">z</span><span class="p">:</span> <span class="mi">103</span>  <span class="c1"># from demo/conf.json</span>
+</pre></div>
+</div>
+</section>
+<section id="scenario-configurable-keys-and-values">
+<span id="config-db-scenario"></span><h2><a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> configurable keys and values<a class="headerlink" href="#scenario-configurable-keys-and-values" title="Permalink to this headline">¶</a></h2>
+<p>The following table describes the <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> configurable keys &amp; values.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Use the <a class="reference internal" href="py/scenario.html#scenario.ConfigKey" title="scenario.ConfigKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.ConfigKey</span></code></a> shortcut to the internal <a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key" title="scenario.scenarioconfig.ScenarioConfig.Key"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioConfig.Key</span></code></a> enumerate
+from <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> user code.</p>
+</div>
+<table class="colwidths-auto docutils align-default" id="id3">
+<caption><span class="caption-text">Scenario configurable keys and values</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p id="config-db-scenario-timezone"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.TIMEZONE" title="scenario.scenarioconfig.ScenarioConfig.Key.TIMEZONE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.TIMEZONE</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.timezone</span></code></p></td>
+<td><p>String</p></td>
+<td><p>Timezone specification.</p>
+<p>Possible values:
+‘UTC’, ‘Z’,
+or numerical forms like ‘+01:00’, ‘-05:00’.</p>
+<p>More options <a class="reference internal" href="install.html#install"><span class="std std-ref">when pytz is installed</span></a>:
+‘CET’, ‘US/Pacific’, ‘Japan’, …</p>
+<p>Execute the following Python code for the complete list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pytz</span><span class="o">.</span><span class="n">all_timezones</span><span class="p">))</span>
+</pre></div>
+</div>
+</td>
+<td><p>Not set, i.e. use of the local timezone</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-log-date-time"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_DATETIME</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.log_date_time</span></code></p></td>
+<td><p>Boolean</p></td>
+<td><p>Should the log lines include a timestamp?</p></td>
+<td><p>Enabled</p></td>
+</tr>
+<tr class="row-even"><td><p id="config-db-scenario-log-console"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_CONSOLE</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.log_console</span></code></p></td>
+<td><p>Boolean</p></td>
+<td><p>Should the log lines be displayed in the console?</p></td>
+<td><p>Enabled</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-log-color"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR_ENABLED" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR_ENABLED"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_COLOR_ENABLED</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.log_color</span></code></p></td>
+<td><p>Boolean</p></td>
+<td><p>Should the log lines be colored?</p></td>
+<td><p>Enabled</p></td>
+</tr>
+<tr class="row-even"><td><p id="config-db-scenario-log-level-color"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_COLOR</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.log_%(level)_color</span></code>,
+<code class="docutils literal notranslate"><span class="pre">%(level)</span></code> being one of (<code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">warning</span></code>, <code class="docutils literal notranslate"><span class="pre">info</span></code>, <code class="docutils literal notranslate"><span class="pre">debug</span></code>)</p></td>
+<td><p>Integer</p></td>
+<td><p>Console color code per log level.
+See <a class="reference internal" href="py/scenario.console.html#scenario.console.Console.Color" title="scenario.console.Console.Color"><code class="xref py py-class docutils literal notranslate"><span class="pre">Console.Color</span></code></a> for a list useful color codes.</p></td>
+<td><p>scenario.log_error_color: red(91),
+scenario.log_warning_color: yellow(33),
+scenario.log_info_color: white(1),
+scenario.log_debug_color: dark grey(2)</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-log-file"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_FILE</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.log_file</span></code></p></td>
+<td><p>File path string</p></td>
+<td><p>Should the log lines be written in a log file?</p></td>
+<td><p>Not set, i.e. no file logging</p></td>
+</tr>
+<tr class="row-even"><td><p id="config-db-scenario-debug-classes"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.DEBUG_CLASSES" title="scenario.scenarioconfig.ScenarioConfig.Key.DEBUG_CLASSES"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.DEBUG_CLASSES</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.debug_classes</span></code></p></td>
+<td><p>List of strings (or comma-separated string)</p></td>
+<td><p>Which debug classes to display?</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-expected-attributes"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.EXPECTED_ATTRIBUTES" title="scenario.scenarioconfig.ScenarioConfig.Key.EXPECTED_ATTRIBUTES"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.EXPECTED_ATTRIBUTES</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.expected_attributes</span></code></p></td>
+<td><p>List of strings (or comma-separated string)</p></td>
+<td><p>Expected scenario attributes.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-even"><td><p id="config-db-scenario-continue-on-error"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR" title="scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.CONTINUE_ON_ERROR</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.continue_on_error</span></code></p></td>
+<td><p>Boolean</p></td>
+<td><p>Should the scenarios continue on error?
+If set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, an error ends the current step, but following steps are still executed.
+The same behaviour may also be activated scenario by scenario
+by setting the <a class="reference internal" href="py/scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition.continue_on_error" title="scenario.scenariodefinition.ScenarioDefinition.continue_on_error"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioDefinition.continue_on_error</span></code></a> attribute.</p></td>
+<td><p>Disabled</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-delay-between-steps"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.DELAY_BETWEEN_STEPS" title="scenario.scenarioconfig.ScenarioConfig.Key.DELAY_BETWEEN_STEPS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.DELAY_BETWEEN_STEPS</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.delay_between_steps</span></code></p></td>
+<td><p>Float (in seconds)</p></td>
+<td><p>Should we wait between two step executions?</p></td>
+<td><p>0.001 seconds</p></td>
+</tr>
+<tr class="row-even"><td><p id="config-db-scenario-runner-script-path"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.RUNNER_SCRIPT_PATH" title="scenario.scenarioconfig.ScenarioConfig.Key.RUNNER_SCRIPT_PATH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.RUNNER_SCRIPT_PATH</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.runner_script_path</span></code></p></td>
+<td><p>File path string</p></td>
+<td><p>Path of the scenario runner script.
+Useful when executing campaigns: may be used to make your own <a class="reference internal" href="advanced.launcher.html#launcher"><span class="std std-ref">launcher script path</span></a> be called.</p></td>
+<td><p>‘bin/run-test.py’ provided with the <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> framework</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-scenario-timeout"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.SCENARIO_TIMEOUT" title="scenario.scenarioconfig.ScenarioConfig.Key.SCENARIO_TIMEOUT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.SCENARIO_TIMEOUT</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.scenario_timeout</span></code></p></td>
+<td><p>Float (in seconds)</p></td>
+<td><p>Maximum time for a scenario execution. Useful when executing campaigns.</p></td>
+<td><p>600.0 seconds, i.e. 10 minutes</p></td>
+</tr>
+<tr class="row-even"><td><p id="config-db-scenario-results-extra-info"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.RESULTS_EXTRA_INFO" title="scenario.scenarioconfig.ScenarioConfig.Key.RESULTS_EXTRA_INFO"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.RESULTS_EXTRA_INFO</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.results_extra_info</span></code></p></td>
+<td><p>List of strings (or comma-separated string)</p></td>
+<td><p>Scenario attributes to display for extra info when displaying scenario results,
+after a campaign execution, or when executing several tests in a single command line.</p></td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-issue-levels"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_NAMES" title="scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_NAMES"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.ISSUE_LEVEL_NAMES</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.issue_levels</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{str:</span> <span class="pre">int}</span></code> dictionary</p></td>
+<td><p>Dictionary of names associated with issue level integer values.</p>
+<p>Example:</p>
+<div class="highlight-YAML notranslate"><div class="highlight"><pre><span></span><span class="nt">scenario</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">issue_levels</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">SUT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span><span class="w"></span>
+<span class="w">    </span><span class="nt">TEST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"></span>
+<span class="w">    </span><span class="nt">CONTEXT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w"></span>
+<span class="w">    </span><span class="nt">PLANNED</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
+</pre></div>
+</div>
+</td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-even"><td><p id="config-db-scenario-issue-level-error"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_ERROR" title="scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_ERROR"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.ISSUE_LEVEL_ERROR</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.issue_level_error</span></code></p></td>
+<td><p>String or integer.</p></td>
+<td><p>Issue level from and above which known issues should be considered as errors.</p>
+<p>May be set directly as an integer value, or an issue level name if defined (see <a class="reference internal" href="#config-db-scenario-issue-levels"><span class="std std-ref">scenario.issue_levels</span></a>).</p>
+</td>
+<td><p>Not set</p></td>
+</tr>
+<tr class="row-odd"><td><p id="config-db-scenario-issue-level-ignored"><a class="reference internal" href="py/scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_IGNORED" title="scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_IGNORED"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.ISSUE_LEVEL_IGNORED</span></code></a></p>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">scenario.issue_level_ignored</span></code></p></td>
+<td><p>String or integer.</p></td>
+<td><p>Issue level from and under which known issues should be ignored.</p>
+<p>May be set directly as an integer value, or an issue level name if defined (see <a class="reference internal" href="#config-db-scenario-issue-levels"><span class="std std-ref">scenario.issue_levels</span></a>).</p>
+</td>
+<td><p>Not set</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Configuration database</a><ul>
+<li><a class="reference internal" href="#configuration-nodes">Configuration nodes</a></li>
+<li><a class="reference internal" href="#configuration-tree-keys">Configuration tree &amp; keys</a></li>
+<li><a class="reference internal" href="#loading-and-setting-configurations-through-the-command-line">Loading and setting configurations through the command line</a></li>
+<li><a class="reference internal" href="#manipulating-configurations-from-the-code">Manipulating configurations from the code</a></li>
+<li><a class="reference internal" href="#configuration-origins">Configuration origins</a></li>
+<li><a class="reference internal" href="#scenario-configurable-keys-and-values"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code> configurable keys and values</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="advanced.handlers.html"
+                          title="previous chapter">Handlers</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="advanced.subscenarios.html"
+                          title="next chapter">Sub-scenarios: reuse of scenarios in other scenarios</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="advanced.subscenarios.html" title="Sub-scenarios: reuse of scenarios in other scenarios"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="advanced.handlers.html" title="Handlers"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="advanced.html" >Advanced usage</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Configuration database</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

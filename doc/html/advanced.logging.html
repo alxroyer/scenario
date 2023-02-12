@@ -1,0 +1,725 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Logging &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Test evidence" href="advanced.evidence.html" />
+    <link rel="prev" title="Assertions" href="advanced.assertions.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="advanced.evidence.html" title="Test evidence"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="advanced.assertions.html" title="Assertions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="advanced.html" accesskey="U">Advanced usage</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Logging</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="logging">
+<span id="id1"></span><h1>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h1>
+<p>Logging is one of the first useful means that help investigating on test executions.
+That’s the reason why a particular attention is paid to providing efficient logging facilities.</p>
+<p>For the purpose, the <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> framework makes use and extends the standard <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> library.</p>
+<section id="log-levels">
+<span id="logging-log-levels"></span><h2>Log levels<a class="headerlink" href="#log-levels" title="Permalink to this headline">¶</a></h2>
+<p>As <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> proposes it, log levels are defined by <code class="docutils literal notranslate"><span class="pre">int</span></code> values.
+The <em>ERROR</em>, <em>WARNING</em>, <em>INFO</em> and <em>DEBUG</em> log levels are mostly to be considered.</p>
+<p><em>ERROR</em>, <em>WARNING</em> and <em>INFO</em> log records are always displayed.
+<em>DEBUG</em> log records may be displayed or not, depending on the context
+(see <a class="reference internal" href="#logging-main-logger"><span class="std std-ref">main logger</span></a> and <a class="reference internal" href="#logging-class-loggers"><span class="std std-ref">class loggers</span></a> below).</p>
+<p>Log levels are displayed within the log lines (usually after the <a class="reference internal" href="#logging-date-time"><span class="std std-ref">date/time</span></a>).
+They are also commonly emphased with <a class="reference internal" href="#logging-colors-log-levels"><span class="std std-ref">colors</span></a> in the console, in order to facilitate hot analyses.</p>
+</section>
+<section id="date-time">
+<span id="logging-date-time"></span><h2>Date / time<a class="headerlink" href="#date-time" title="Permalink to this headline">¶</a></h2>
+<p>When analyzing test logs, the timing question is usually essential.</p>
+<p>Log date/time is displayed by default at the beginning of the log lines,
+with a ISO8601 pattern: <code class="docutils literal notranslate"><span class="pre">YYYY-MM-DDTHH:MM:SS.mmmuuu+HH:MM</span></code>.</p>
+<p>It may disabled through the <a class="reference internal" href="advanced.config-db.html#config-db-scenario-log-date-time"><span class="std std-ref">scenario.log_date_time</span></a> configuration value.</p>
+</section>
+<section id="main-logger">
+<span id="logging-main-logger"></span><h2>Main logger<a class="headerlink" href="#main-logger" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> framework defines a main logger.
+It uses a regular <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code> instance with ‘scenario’ for name <a class="footnote-reference brackets" href="#logging-instance-attribute" id="id2">1</a>.</p>
+<p>It is accessible through the <a class="reference internal" href="py/scenario.html#scenario.logging" title="scenario.logging"><code class="xref py py-attr docutils literal notranslate"><span class="pre">scenario.logging</span></code></a> variable.</p>
+<p>Debugging is enabled by default with this main logger.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">step010</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">STEP</span><span class="p">(</span><span class="s2">&quot;Logging with the main logger&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log messages of different log levels with the main logger.&quot;</span><span class="p">):</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is an error!!!&quot;</span><span class="p">)</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning!&quot;</span><span class="p">)</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This is information.&quot;</span><span class="p">)</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is debug.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.step010)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the main logger.
+              ERROR    This is an error!!!
+              WARNING  This is a warning!
+              INFO     This is information.
+              DEBUG    This is debug.
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Implementation details</p>
+<p>The main logger carries the <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code> instances.
+It ownes up to two handlers:</p>
+<ol class="arabic simple">
+<li><p>A first one for the console output, always set.</p></li>
+<li><p>A second one, optional, for file logging when applicable (see <a class="reference internal" href="#logging-outfile"><span class="std std-ref">file logging</span></a>).</p></li>
+</ol>
+</div>
+</section>
+<section id="class-loggers">
+<span id="logging-class-loggers"></span><h2>Class loggers<a class="headerlink" href="#class-loggers" title="Permalink to this headline">¶</a></h2>
+<p>Class loggers make it possible to classify sets of log lines with a given subject: the <em>log class</em>.
+The <em>log class</em> is displayed within the log lines, between square brackets,
+and furthermore makes it possible to enable or disable debug log lines for it.</p>
+<p>A <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a> instance may be created directly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_logger</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span><span class="s2">&quot;My logger&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>But a common pattern is to inherit from <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a>,
+either directly (see <a class="reference internal" href="advanced.test-libs.html#test-libs"><span class="std std-ref">test libraries</span></a>) or through an intermediate class.
+A couple of <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> classes inherit from the <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a> class,
+among others:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="py/scenario.html#scenario.Scenario" title="scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.Scenario</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="py/scenario.html#scenario.Step" title="scenario.Step"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.Step</span></code></a>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LoggingScenario</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">Scenario</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">Scenario</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Example needed for inheriting <a class="reference internal" href="py/scenario.html#scenario.Step" title="scenario.Step"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.Step</span></code></a>.</p>
+</div>
+<p>A <a class="reference internal" href="py/scenario.html#scenario.Scenario" title="scenario.Scenario"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.Scenario</span></code></a> instance is a class logger with the path of the Python script defining it as its <em>log class</em>.</p>
+<p>A <a class="reference internal" href="py/scenario.html#scenario.Step" title="scenario.Step"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.Step</span></code></a> instance takes the fully qualified name of the class or method defining it for <em>log class</em>.</p>
+<p>Debugging is enabled by default for such user-defined scenario and step instances:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LoggingScenario</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">Scenario</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">step020</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">STEP</span><span class="p">(</span><span class="s2">&quot;Logging with the scenario instance&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log messages of different log levels with the scenario itself.&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is an error!!!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This is information.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is debug.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenario.step020)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the scenario itself.
+              ERROR    [demo/loggingdemo.py] This is an error!!!
+              WARNING  [demo/loggingdemo.py] This is a warning!
+              INFO     [demo/loggingdemo.py] This is information.
+              DEBUG    [demo/loggingdemo.py] This is debug.
+</pre></div>
+</div>
+<p>Otherwise, debugging is disabled by default for class loggers.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LoggingScenario</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">Scenario</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">Scenario</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span> <span class="o">=</span> <span class="n">MyLogger</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step030</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">STEP</span><span class="p">(</span><span class="s2">&quot;Logging with a class logger&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log messages of different log levels with the class logger instance.&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;This is an error!!!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This is information.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is debug.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step030)
+------------------------------------------------
+    ACTION: Log messages of different log levels with the class logger instance.
+              ERROR    [My logger] This is an error!!!
+              WARNING  [My logger] This is a warning!
+              INFO     [My logger] This is information.
+</pre></div>
+</div>
+<p>Class logger debugging can be activated on-demand, either 1) programmatically, …:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Activate debugging for the class logger instance.&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">enabledebug</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log a debug message again with the class logger instance.&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is debug again.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    ACTION: Activate debugging for the class logger instance.
+    ACTION: Log a debug message again with the class logger instance.
+              DEBUG    [My logger] This is debug again.
+</pre></div>
+</div>
+<p>… 2) through the <code class="docutils literal notranslate"><span class="pre">--debug-class</span></code> command line option, …:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./bin/run-test.py --debug-class <span class="s2">&quot;My logger&quot;</span> ./demo/loggingdemo.py
+</pre></div>
+</div>
+<p>… or 3) through the <a class="reference internal" href="advanced.config-db.html#config-db-scenario-debug-classes"><span class="std std-ref">scenario.debug_classes</span></a> configuration value.</p>
+<p>—</p>
+<div class="tip admonition">
+<p class="admonition-title">Acces to <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code> instances</p>
+<dl class="footnote brackets">
+<dt class="label" id="logging-instance-attribute"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>In case you need to manipulate <code class="xref py py-mod docutils literal notranslate"><span class="pre">logging</span></code> instance directly,
+the <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code> instances are available through the <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.logging_instance" title="scenario.logger.Logger.logging_instance"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Logger.logging_instance</span></code></a> property.</p>
+<p>The <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.logging_instance" title="scenario.logger.Logger.logging_instance"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Logger.logging_instance</span></code></a> property is available to both main logger and class loggers.</p>
+</dd>
+</dl>
+</div>
+</section>
+<section id="colors">
+<span id="logging-colors"></span><h2>Colors<a class="headerlink" href="#colors" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> framework manages colorization in the console, which facilitates hot analyses of the log flow.</p>
+<p>Log colors may be disabled through the <a class="reference internal" href="advanced.config-db.html#config-db-scenario-log-color"><span class="std std-ref">scenario.log_color</span></a> configuration value.</p>
+<section id="log-level-colorization">
+<span id="logging-colors-log-levels"></span><h3>Log level colorization<a class="headerlink" href="#log-level-colorization" title="Permalink to this headline">¶</a></h3>
+<p>The basic usage of log colorization is to highlight log levels:</p>
+<ul class="simple">
+<li><p><em>ERROR</em>: colored in red,</p></li>
+<li><p><em>WARNING</em>: colored in yellow,</p></li>
+<li><p><em>INFO</em>: colored in white,</p></li>
+<li><p><em>DEBUG</em>: colored in grey.</p></li>
+</ul>
+<p>These default colors may be overriden with the <a class="reference internal" href="advanced.config-db.html#config-db-scenario-log-level-color"><span class="std std-ref">scenario.log_%(level)_color</span></a> configuration values.</p>
+<p>The log message also takes the color of its log level by default.</p>
+</section>
+<section id="class-logger-colorization">
+<span id="logging-colors-log-class"></span><h3>Class logger colorization<a class="headerlink" href="#class-logger-colorization" title="Permalink to this headline">¶</a></h3>
+<p>Log colors may also be applied for every log line of a given <em>log class</em>,
+which is particularly useful when different class loggers generate interleaved log lines:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">setlogcolor</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">Color</span><span class="o">.</span><span class="n">LIGHTBLUE36</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="indentation">
+<span id="logging-indentation"></span><h2>Indentation<a class="headerlink" href="#indentation" title="Permalink to this headline">¶</a></h2>
+<p>Log indentation also contributes in facilitating log analyses.</p>
+<p>The <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> provides several indentation mechanisms.</p>
+<section id="scenario-stack-indentation">
+<span id="logging-indentation-scenario-stack"></span><h3>Scenario stack indentation<a class="headerlink" href="#scenario-stack-indentation" title="Permalink to this headline">¶</a></h3>
+<p>When <a class="reference internal" href="advanced.subscenarios.html#subscenarios"><span class="std std-ref">sub-scenarios</span></a> are executed, lines of ‘|’ characters highlight the nestings of scenario executions.</p>
+<p>Example of output from the <a class="reference external" href="../../demo/commutativeadditions.py">commutativeadditions.py</a> sample test.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>SCENARIO &#39;demo/commutativeadditions.py&#39;
+------------------------------------------------
+
+
+STEP#1: Both positive members (demo/commutativeadditions.py:16:CommutativeAdditions.step010)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with 4 and 5 for inputs.
+      | SCENARIO &#39;demo/commutativeaddition.py&#39;
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = 4, and b = 5
+      |   EVIDENCE:   -&gt; a = 4
+      |   EVIDENCE:   -&gt; b = 5
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -&gt; result1 = 9
+      |
+      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | ------------------------------------------------
+      |     ACTION: Compute (b + a) and store the result as result2.
+      |   EVIDENCE:   -&gt; result2 = 9
+      |
+      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | ------------------------------------------------
+      |     ACTION: Compare result1 and result2.
+      |     RESULT: result1 and result2 are the same.
+      |   EVIDENCE:   -&gt; 9 == 9
+      |
+      | END OF &#39;demo/commutativeaddition.py&#39;
+
+STEP#2: Positive and negative members (demo/commutativeadditions.py:23:CommutativeAdditions.step020)
+------------------------------------------------
+    ACTION: Launch the CommutativeAddition scenario with -1 and 3 for inputs.
+      | SCENARIO &#39;demo/commutativeaddition.py&#39;
+      | ------------------------------------------------
+      |
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | ------------------------------------------------
+      |     ACTION: Let a = -1, and b = 3
+      |   EVIDENCE:   -&gt; a = -1
+      |   EVIDENCE:   -&gt; b = 3
+      |
+      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | ------------------------------------------------
+      |     ACTION: Compute (a + b) and store the result as result1.
+      |   EVIDENCE:   -&gt; result1 = 2
+      |
+</pre></div>
+</div>
+<p><em>(Output truncated…)</em></p>
+<p>If a sub-scenario executes another sub-scenario, the ‘|’ indentation is doubled, and so on.</p>
+</section>
+<section id="class-logger-indentation">
+<span id="logging-indentation-class-logger"></span><h3>Class logger indentation<a class="headerlink" href="#class-logger-indentation" title="Permalink to this headline">¶</a></h3>
+<p>Additional indentation may be useful when the test makes verifications in a recursive way.</p>
+<p>It may be set using the following methods:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.pushindentation" title="scenario.logger.Logger.pushindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.pushindentation()</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.popindentation" title="scenario.logger.Logger.popindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.popindentation()</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.resetindentation" title="scenario.logger.Logger.resetindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.resetindentation()</span></code></a>.</p></li>
+</ul>
+<p>When these calls are made on a class logger,
+the logging lines of this class logger are indented the way below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">step110</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">STEP</span><span class="p">(</span><span class="s2">&quot;Class logger indentation&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the class logger.&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Push indentation to the class logger.&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">pushindentation</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the class logger.&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Pop indentation from the class logger.&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">popindentation</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the class logger.&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Reset the class logger indentation.&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">resetindentation</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the class logger.&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110)
+------------------------------------------------
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]     Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Push indentation to the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]             Hello
+    ACTION: Pop indentation from the class logger.
+    ACTION: Log something with the class logger.
+              INFO     [My logger]         Hello
+    ACTION: Reset the class logger indentation.
+    ACTION: Log something with the class logger.
+              INFO     [My logger] Hello
+</pre></div>
+</div>
+<div class="tip admonition">
+<p class="admonition-title">Additional indentation pattern</p>
+<p>The <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.pushindentation" title="scenario.logger.Logger.pushindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.pushindentation()</span></code></a> and <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.popindentation" title="scenario.logger.Logger.popindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.popindentation()</span></code></a> methods
+have a <code class="docutils literal notranslate"><span class="pre">indentation</span></code> parameter that lets you change the 4-space default pattern by what you need.</p>
+<p>When removing indentation, the indentation pattern passed on must be the same as the one added in regards.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">pushindentation</span><span class="p">(</span><span class="s2">&quot;1&gt; &quot;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">pushindentation</span><span class="p">(</span><span class="s2">&quot;2&gt; &quot;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">pushindentation</span><span class="p">(</span><span class="s2">&quot;3&gt; &quot;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">popindentation</span><span class="p">(</span><span class="s2">&quot;3&gt; &quot;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">popindentation</span><span class="p">(</span><span class="s2">&quot;2&gt; &quot;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">class_logger</span><span class="o">.</span><span class="n">popindentation</span><span class="p">(</span><span class="s2">&quot;1&gt; &quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="main-logger-indentation">
+<span id="logging-indentation-main-logger"></span><h3>Main logger indentation<a class="headerlink" href="#main-logger-indentation" title="Permalink to this headline">¶</a></h3>
+<p>When <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.pushindentation" title="scenario.logger.Logger.pushindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.pushindentation()</span></code></a>, <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.popindentation" title="scenario.logger.Logger.popindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.popindentation()</span></code></a>
+and <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.resetindentation" title="scenario.logger.Logger.resetindentation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.resetindentation()</span></code></a> calls are made on the main logger,
+it takes effect on every log lines:</p>
+<ul class="simple">
+<li><p>main logger and class logger loggings (from <em>DEBUG</em> to <em>ERROR</em> log levels),</p></li>
+<li><p>but also actions, expected results and evidence texts.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">step120</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">STEP</span><span class="p">(</span><span class="s2">&quot;Main logger indentation&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the main logger.&quot;</span><span class="p">):</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Push indentation to the main logger.&quot;</span><span class="p">):</span>
+                    <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">pushindentation</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the main logger.&quot;</span><span class="p">):</span>
+                    <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Pop indentation from the main logger.&quot;</span><span class="p">):</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">popindentation</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the main logger.&quot;</span><span class="p">):</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Reset the main logger indentation.&quot;</span><span class="p">):</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">resetindentation</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTION</span><span class="p">(</span><span class="s2">&quot;Log something with the main logger.&quot;</span><span class="p">):</span>
+                <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>STEP#5: Main logger indentation (demo/loggingdemo.py:76:LoggingScenario.step120)
+------------------------------------------------
+    ACTION: Log something with the main logger.
+              INFO     Hello
+    ACTION: Push indentation to the main logger.
+    ACTION:     Log something with the main logger.
+                  INFO     Hello
+    ACTION:     Push indentation to the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Push indentation to the main logger.
+    ACTION:             Log something with the main logger.
+                          INFO     Hello
+    ACTION:             Pop indentation from the main logger.
+    ACTION:         Log something with the main logger.
+                      INFO     Hello
+    ACTION:         Reset the main logger indentation.
+    ACTION: Log something with the main logger.
+              INFO     Hello
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Scenario stack v/s user identation</p>
+<p>Even though main logger indentation applies to every log lines,
+it does not break the <a class="reference internal" href="#logging-indentation-scenario-stack"><span class="std std-ref">scenario stack indentation</span></a> presentation:
+the ‘|’ characters remain aligned,
+the main logger indentation applies after.</p>
+</div>
+</section>
+</section>
+<section id="debugging">
+<span id="logging-debug"></span><h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h2>
+<p>Depending on the <a class="reference internal" href="#logging-class-loggers"><span class="std std-ref">logger configuration</span></a>, debug lines may be discarded.
+By the way, formatting the whole logging message prior to discarding is a waste of time.
+Depending on the amount of debugging information generated along the code, this can slow down the tests in a sensible way.</p>
+<p>Such useless formatting processing can be saved by:</p>
+<ol class="arabic simple">
+<li><p>passing <a class="reference internal" href="#logging-debug-format-args"><span class="std std-ref">format arguments as positional arguments</span></a>,</p></li>
+<li><p><a class="reference internal" href="#logging-debug-delayed-str"><span class="std std-ref">delaying string building</span></a>.</p></li>
+</ol>
+<section id="formatting-positional-arguments">
+<span id="logging-debug-format-args"></span><h3>Formatting &amp; positional arguments<a class="headerlink" href="#formatting-positional-arguments" title="Permalink to this headline">¶</a></h3>
+<p>When logging a debug line, one can write:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Hello I&#39;m </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>  <span class="c1"># Option 1: `%` operator.</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hello I&#39;m </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>     <span class="c1"># Option 2: f-string.</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Hello I&#39;m </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>   <span class="c1"># Option 3. positional arguments.</span>
+</pre></div>
+</div>
+<p>The second option is preferrable to the first one in as much as as
+it is easier to maintain (main point for f-strings),
+and f-strings are around 10% more efficient.</p>
+<p>Still, with f-strings, the resulting string is computed before it is passed to the <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.debug" title="scenario.logger.Logger.debug"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.debug()</span></code></a> method,
+and possibly discarded after being computed.</p>
+<p>That’s the reason why, the third option is even more efficient for debug logging:
+a useless message will be discarded before the formatting arguments are applied to it.</p>
+</section>
+<section id="delayed-strings">
+<span id="logging-debug-delayed-str"></span><h3>Delayed strings<a class="headerlink" href="#delayed-strings" title="Permalink to this headline">¶</a></h3>
+<p>Even when passing format arguments as positionals,
+some of them may take a while being computed by themselves.</p>
+<p>That’s the reason why the <a class="reference internal" href="py/scenario.html#scenario.debug" title="scenario.debug"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario.debug</span></code></a> package gathers a couple of functions and classes that enable delaying more string computations:</p>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Class</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td></td>
+<td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.DelayedStr" title="scenario.debugutils.DelayedStr"><code class="xref py py-class docutils literal notranslate"><span class="pre">DelayedStr</span></code></a></p></td>
+<td><p>Abstract class that defines a string which computation may be delayed.</p>
+<p>You may inherit from this base class for specific needs.</p>
+</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.FmtAndArgs" title="scenario.debugutils.FmtAndArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FmtAndArgs</span></code></a></p></td>
+<td><p>Describes a delayed string that should be built with format and arguments.</p>
+<p>The string can be prepared step by step, thanks to the <a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.FmtAndArgs.push" title="scenario.debugutils.FmtAndArgs.push"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FmtAndArgs.push()</span></code></a> method.</p>
+<p>The application of the arguments is delayed on time when needed.</p>
+</td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_str</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">FmtAndArgs</span><span class="p">(</span><span class="s2">&quot;Hello, I&#39;m </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">profession</span><span class="p">:</span>
+    <span class="n">_str</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot; and I&#39;m a </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">profession</span><span class="p">)</span>
+<span class="n">_str</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">_str</span><span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.saferepr" title="scenario.debugutils.saferepr"><code class="xref py py-func docutils literal notranslate"><span class="pre">saferepr()</span></code></a></p></td>
+<td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.SafeRepr" title="scenario.debugutils.SafeRepr"><code class="xref py py-class docutils literal notranslate"><span class="pre">SafeRepr</span></code></a></p></td>
+<td><p>Computes a <em>repr</em>-like string, but ensures a <em>not-too-long</em> string, possibly focused on certain parts,
+such computation being delayed as for the others.</p></td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+    <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> in </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">saferepr</span><span class="p">(</span><span class="n">searched</span><span class="p">),</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">saferepr</span><span class="p">(</span><span class="n">longtext</span><span class="p">,</span> <span class="n">focus</span><span class="o">=</span><span class="n">searched</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.jsondump" title="scenario.debugutils.jsondump"><code class="xref py py-func docutils literal notranslate"><span class="pre">jsondump()</span></code></a></p></td>
+<td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.JsonDump" title="scenario.debugutils.JsonDump"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonDump</span></code></a></p></td>
+<td><p>Delays the dump computation for JSON data.</p></td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+    <span class="s2">&quot;JSON data: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scenario</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">jsondump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+    <span class="n">extra</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">longtext</span><span class="p">(</span><span class="n">max_lines</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.jsondump" title="scenario.debugutils.jsondump"><code class="xref py py-func docutils literal notranslate"><span class="pre">jsondump()</span></code></a> may basically be displayed as <a class="reference internal" href="#logging-long-text"><span class="std std-ref">long texts</span></a>.</p>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.callback" title="scenario.debugutils.callback"><code class="xref py py-func docutils literal notranslate"><span class="pre">callback()</span></code></a></p></td>
+<td><p><a class="reference internal" href="py/scenario.debugutils.html#scenario.debugutils.CallbackStr" title="scenario.debugutils.CallbackStr"><code class="xref py py-class docutils literal notranslate"><span class="pre">CallbackStr</span></code></a></p></td>
+<td><p>Delays the execution of a string builder callback.</p>
+<p>Possibly set with a lambda, this function makes it possible to delay quite everything.</p>
+</td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+    <span class="s2">&quot;Very special data: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">debug</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="long-texts">
+<span id="logging-long-text"></span><h3>Long texts<a class="headerlink" href="#long-texts" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> logging feature provides a way to log long texts on several lines.</p>
+<p>To do so, set the <code class="docutils literal notranslate"><span class="pre">extra</span></code> parameter using the <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.longtext" title="scenario.logger.Logger.longtext"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.longtext()</span></code></a> method when logging some text:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">jsondump</span><span class="p">(</span><span class="n">_json_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+           <span class="n">extra</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">longtext</span><span class="p">(</span><span class="n">max_lines</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This feature has primarily been designed for debugging, but it works with the
+<a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.info" title="scenario.logger.Logger.info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.info()</span></code></a>,
+<a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.warning" title="scenario.logger.Logger.warning"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.warning()</span></code></a> and
+<a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.error" title="scenario.logger.Logger.error"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.error()</span></code></a>
+methods as well.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">max_lines</span></code> parameter may be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> in order to display the full text.</p>
+</section>
+</section>
+<section id="file-logging">
+<span id="logging-outfile"></span><h2>File logging<a class="headerlink" href="#file-logging" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> logging feature provides the ability to save the test log output into a file.</p>
+<p>To do so, set the <a class="reference internal" href="advanced.config-db.html#config-db-scenario-log-file"><span class="std std-ref">scenario.log_file</span></a> configuration value,
+either with the <code class="docutils literal notranslate"><span class="pre">–-config-value</span></code> command line option, or within a configuration file.</p>
+<p>The command line example below
+disables the output in the console,
+but saves it into the ‘doc/data/commutativeaddition.log’ file
+(from the main directory of the <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> library):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mkdir -p ./doc/data
+$ ./bin/run-test.py <span class="se">\</span>
+    --config-value <span class="s2">&quot;scenario.log_console&quot;</span> <span class="s2">&quot;0&quot;</span> <span class="se">\</span>
+    --config-value <span class="s2">&quot;scenario.log_file&quot;</span> <span class="s2">&quot;./doc/data/commutativeaddition.log&quot;</span> <span class="se">\</span>
+    ./demo/commutativeaddition.py
+$ cat ./doc/data/commutativeaddition.log
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>SCENARIO &#39;demo/commutativeaddition.py&#39;
+------------------------------------------------
+
+
+STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+------------------------------------------------
+    ACTION: Let a = 1, and b = 3
+  EVIDENCE:   -&gt; a = 1
+  EVIDENCE:   -&gt; b = 3
+
+STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+------------------------------------------------
+    ACTION: Compute (a + b) and store the result as result1.
+  EVIDENCE:   -&gt; result1 = 4
+
+STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+------------------------------------------------
+    ACTION: Compute (b + a) and store the result as result2.
+  EVIDENCE:   -&gt; result2 = 4
+
+STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+------------------------------------------------
+    ACTION: Compare result1 and result2.
+    RESULT: result1 and result2 are the same.
+  EVIDENCE:   -&gt; 4 == 4
+
+END OF &#39;demo/commutativeaddition.py&#39;
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 4/4
+  Number of ACTIONs: 4/4
+  Number of RESULTs: 1/1
+               Time: HH:MM:SS.mmmmmm
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <a class="reference internal" href="advanced.config-db.html#config-db-scenario-log-file"><span class="std std-ref">scenario.log_file</span></a> configuration value may also be set programmatically
+through the <a class="reference internal" href="py/scenario.configdb.html#scenario.configdb.ConfigDatabase.set" title="scenario.configdb.ConfigDatabase.set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ConfigDatabase.set()</span></code></a> method,
+as illustrated in the <a class="reference internal" href="advanced.launcher.html#launcher-pre-post"><span class="std std-ref">launcher script extension</span></a> section.</p>
+</div>
+</section>
+<section id="extra-flags">
+<span id="logging-extra-flags"></span><h2>Extra flags<a class="headerlink" href="#extra-flags" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="py/scenario.logextradata.html#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogExtraData</span></code></a> define a set of flags that can be set to specialize the behaviour of each <a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a>.</p>
+<p>For instance, the <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> and <a class="reference internal" href="py/scenario.scenariostack.html#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a> classes
+disable the <a class="reference internal" href="py/scenario.logextradata.html#scenario.logextradata.LogExtraData.ACTION_RESULT_MARGIN" title="scenario.logextradata.LogExtraData.ACTION_RESULT_MARGIN"><code class="xref py py-const docutils literal notranslate"><span class="pre">LogExtraData.ACTION_RESULT_MARGIN</span></code></a> flag,
+so that their related log lines remain aligned on the left whatever the current action / expected result context is.</p>
+<p>Please, refer the following links for details on extra flags:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="py/scenario.logextradata.html#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogExtraData</span></code></a></p></li>
+<li><p><a class="reference internal" href="py/scenario.logger.html#scenario.logger.Logger.setextraflag" title="scenario.logger.Logger.setextraflag"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Logger.setextraflag()</span></code></a></p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Setting extra flags on class loggers, or even worse on the main logger, may lead to unpredictable behaviours.</p>
+<p>Nevertheless, this advanced feature is provided as is.
+To be used with parsimony.</p>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Logging</a><ul>
+<li><a class="reference internal" href="#log-levels">Log levels</a></li>
+<li><a class="reference internal" href="#date-time">Date / time</a></li>
+<li><a class="reference internal" href="#main-logger">Main logger</a></li>
+<li><a class="reference internal" href="#class-loggers">Class loggers</a></li>
+<li><a class="reference internal" href="#colors">Colors</a><ul>
+<li><a class="reference internal" href="#log-level-colorization">Log level colorization</a></li>
+<li><a class="reference internal" href="#class-logger-colorization">Class logger colorization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indentation">Indentation</a><ul>
+<li><a class="reference internal" href="#scenario-stack-indentation">Scenario stack indentation</a></li>
+<li><a class="reference internal" href="#class-logger-indentation">Class logger indentation</a></li>
+<li><a class="reference internal" href="#main-logger-indentation">Main logger indentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#debugging">Debugging</a><ul>
+<li><a class="reference internal" href="#formatting-positional-arguments">Formatting &amp; positional arguments</a></li>
+<li><a class="reference internal" href="#delayed-strings">Delayed strings</a></li>
+<li><a class="reference internal" href="#long-texts">Long texts</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#file-logging">File logging</a></li>
+<li><a class="reference internal" href="#extra-flags">Extra flags</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="advanced.assertions.html"
+                          title="previous chapter">Assertions</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="advanced.evidence.html"
+                          title="next chapter">Test evidence</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="advanced.evidence.html" title="Test evidence"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="advanced.assertions.html" title="Assertions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="advanced.html" >Advanced usage</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Logging</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

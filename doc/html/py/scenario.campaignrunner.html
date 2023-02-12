@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.campaignrunner module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.configargs module" href="scenario.configargs.html" />
+    <link rel="prev" title="scenario.campaignreport module" href="scenario.campaignreport.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.configargs.html" title="scenario.configargs module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignreport.html" title="scenario.campaignreport module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.campaignrunner module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.campaignrunner">
+<span id="scenario-campaignrunner-module"></span><h1>scenario.campaignrunner module<a class="headerlink" href="#module-scenario.campaignrunner" title="Permalink to this headline">¶</a></h1>
+<p>Campaign execution management.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignrunner.CAMPAIGN_RUNNER">
+<span class="sig-name descname"><span class="pre">CAMPAIGN_RUNNER</span></span><a class="headerlink" href="#scenario.campaignrunner.CAMPAIGN_RUNNER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main instance of <a class="reference internal" href="#scenario.campaignrunner.CampaignRunner" title="scenario.campaignrunner.CampaignRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignRunner</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignrunner.CampaignRunner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CampaignRunner</span></span><a class="headerlink" href="#scenario.campaignrunner.CampaignRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Campaign execution engine: runs test scenarios from input files.</p>
+<p>Only one instance, accessible through the <a class="reference internal" href="#scenario.campaignrunner.CAMPAIGN_RUNNER" title="scenario.campaignrunner.CAMPAIGN_RUNNER"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CAMPAIGN_RUNNER</span></code></a> singleton.</p>
+<p>This class works with the following helper classes, with their respected purpose:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="scenario.campaignargs.html#scenario.campaignargs.CampaignArgs" title="scenario.campaignargs.CampaignArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignArgs</span></code></a>: command line arguments,</p></li>
+<li><p><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignExecution</span></code></a>: object that describes a campaign execution,</p></li>
+<li><p><a class="reference internal" href="scenario.campaignlogging.html#scenario.campaignlogging.CampaignLogging" title="scenario.campaignlogging.CampaignLogging"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignLogging</span></code></a>: campaign execution logging,</p></li>
+<li><p><a class="reference internal" href="scenario.campaignreport.html#scenario.campaignreport.CampaignReport" title="scenario.campaignreport.CampaignReport"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignReport</span></code></a>: campaign report generation.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignrunner.CampaignRunner.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignrunner.CampaignRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configures logging for the <a class="reference internal" href="#scenario.campaignrunner.CampaignRunner" title="scenario.campaignrunner.CampaignRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignRunner</span></code></a> class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignrunner.CampaignRunner.main">
+<span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a></span></span><a class="headerlink" href="#scenario.campaignrunner.CampaignRunner.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign runner main function, as a member method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Error code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignrunner.CampaignRunner._exectestsuitefile">
+<span class="sig-name descname"><span class="pre">_exectestsuitefile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">campaign_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_suite_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a></span></span><a class="headerlink" href="#scenario.campaignrunner.CampaignRunner._exectestsuitefile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a test suite file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>campaign_execution</strong> – <code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignExecution</span></code> object to store results into.</p></li>
+<li><p><strong>test_suite_path</strong> – Test suite file to execute.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignrunner.CampaignRunner._exectestsuite">
+<span class="sig-name descname"><span class="pre">_exectestsuite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_suite_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a></span></span><a class="headerlink" href="#scenario.campaignrunner.CampaignRunner._exectestsuite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a test suite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>test_suite_execution</strong> – Test suite to execute.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignrunner.CampaignRunner._exectestcase">
+<span class="sig-name descname"><span class="pre">_exectestcase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_case_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.campaignexecution.html#scenario.campaignexecution.TestCaseExecution" title="scenario.campaignexecution.TestCaseExecution"><span class="pre">TestCaseExecution</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a></span></span><a class="headerlink" href="#scenario.campaignrunner.CampaignRunner._exectestcase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a test case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>test_case_execution</strong> – Test case to execute.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.campaignreport.html"
+                          title="previous chapter">scenario.campaignreport module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.configargs.html"
+                          title="next chapter">scenario.configargs module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.configargs.html" title="scenario.configargs module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignreport.html" title="scenario.campaignreport module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.campaignrunner module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

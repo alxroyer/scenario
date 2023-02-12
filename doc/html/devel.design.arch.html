@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Architecture &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Source documentation" href="devel.design.pydoc.html" />
+    <link rel="prev" title="Design" href="devel.design.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="devel.design.pydoc.html" title="Source documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="devel.design.html" title="Design"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="devel.design.html" accesskey="U">Design</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Architecture</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="architecture">
+<span id="arch"></span><h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<section id="scenario-execution">
+<span id="arch-execution"></span><h2>Scenario execution<a class="headerlink" href="#scenario-execution" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="py/scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a>, <a class="reference internal" href="py/scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepDefinition</span></code></a>
+and <a class="reference internal" href="py/scenario.actionresultdefinition.html#scenario.actionresultdefinition.ActionResultDefinition" title="scenario.actionresultdefinition.ActionResultDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultDefinition</span></code></a> classes
+are the base classes for the definition of scenarios, steps, actions and expected results respectively.</p>
+<p>The <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> instance handles the execution of them.</p>
+<p>Its <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.main" title="scenario.scenariorunner.ScenarioRunner.main"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.main()</span></code></a> method is the entry point
+that a <a class="reference internal" href="advanced.launcher.html#launcher"><span class="std std-ref">launcher script</span></a> should call.
+This method:</p>
+<ol class="arabic simple">
+<li><p>analyzes the command line arguments and loads the configuration files (see the <a class="reference internal" href="#arch-configuration"><span class="std std-ref">related design section</span></a>),</p></li>
+<li><p>builds a scenario instance from the given scenario script, with reflexive programming,</p></li>
+<li><p>proceeds with the scenario execution.</p></li>
+</ol>
+<p>The <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> class works with a couple of helper classes.</p>
+<p>The <a class="reference internal" href="py/scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioExecution</span></code></a>, <a class="reference internal" href="py/scenario.stepexecution.html#scenario.stepexecution.StepExecution" title="scenario.stepexecution.StepExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepExecution</span></code></a>
+and <a class="reference internal" href="py/scenario.actionresultexecution.html#scenario.actionresultexecution.ActionResultExecution" title="scenario.actionresultexecution.ActionResultExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultExecution</span></code></a> classes
+store the execution information related to definition classes cited above.</p>
+<table class="colwidths-auto docutils align-default" id="id32">
+<caption><span class="caption-text">Definition v/s execution classes</span><a class="headerlink" href="#id32" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head stub"></th>
+<th class="head"><p>Definition</p></th>
+<th class="head"><p>Execution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><th class="stub"><p>Scenario level</p></th>
+<td><p><a class="reference internal" href="py/scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a></p>
+<ul class="simple">
+<li><p>Describes the list of <a class="reference internal" href="py/scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepDefinition</span></code></a> that define the scenario.</p></li>
+<li><p>Gives the related <a class="reference internal" href="py/scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioExecution</span></code></a> instance when executed.</p></li>
+</ul>
+</td>
+<td><p><a class="reference internal" href="py/scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioExecution</span></code></a></p>
+<ul class="simple">
+<li><p>Tells which step is currently being executed.</p></li>
+<li><p>Stores the execution error, if any.</p></li>
+<li><p>Stores execution statistics.</p></li>
+<li><p>Gives access to the related <a class="reference internal" href="py/scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> instance.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><th class="stub"><p>Step level</p></th>
+<td><p><a class="reference internal" href="py/scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepDefinition</span></code></a></p>
+<ul class="simple">
+<li><p>Describes the list of <a class="reference internal" href="py/scenario.actionresultdefinition.html#scenario.actionresultdefinition.ActionResultDefinition" title="scenario.actionresultdefinition.ActionResultDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultDefinition</span></code></a> that define the step.</p></li>
+<li><p>Gives the related <a class="reference internal" href="py/scenario.stepexecution.html#scenario.stepexecution.StepExecution" title="scenario.stepexecution.StepExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepExecution</span></code></a> instances when executed.</p></li>
+</ul>
+</td>
+<td><p><a class="reference internal" href="py/scenario.stepexecution.html#scenario.stepexecution.StepExecution" title="scenario.stepexecution.StepExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepExecution</span></code></a></p>
+<ul class="simple">
+<li><p>Tells wich action or expected result is currently being executed.</p></li>
+<li><p>Stores the execution error, if any.</p></li>
+<li><p>Stores execution statistics.</p></li>
+<li><p>Gives access to the related <a class="reference internal" href="py/scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepDefinition</span></code></a> instance.</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><th class="stub"><p>Action and expected result level</p></th>
+<td><p><a class="reference internal" href="py/scenario.actionresultdefinition.html#scenario.actionresultdefinition.ActionResultDefinition" title="scenario.actionresultdefinition.ActionResultDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultDefinition</span></code></a></p>
+<ul class="simple">
+<li><p>Describes an action or an expected result, with its text.</p></li>
+<li><p>Gives the related <a class="reference internal" href="py/scenario.actionresultexecution.html#scenario.actionresultexecution.ActionResultExecution" title="scenario.actionresultexecution.ActionResultExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultExecution</span></code></a> instances when executed.</p></li>
+</ul>
+</td>
+<td><p><a class="reference internal" href="py/scenario.actionresultexecution.html#scenario.actionresultexecution.ActionResultExecution" title="scenario.actionresultexecution.ActionResultExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultExecution</span></code></a></p>
+<ul class="simple">
+<li><p>Stores <a class="reference internal" href="advanced.evidence.html#evidence"><span class="std std-ref">evidence</span></a>.</p></li>
+<li><p>Stores the execution error, if any.</p></li>
+<li><p>Stores execution statistics.</p></li>
+<li><p>Gives access to the related <a class="reference internal" href="py/scenario.actionresultdefinition.html#scenario.actionresultdefinition.ActionResultDefinition" title="scenario.actionresultdefinition.ActionResultDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultDefinition</span></code></a> instance.</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Due to the <a class="reference internal" href="advanced.goto.html#goto"><span class="std std-ref">goto</span></a> feature, steps, actions and expected results may be executed several times
+within a single scenario execution.</p>
+</div>
+<p>The <a class="reference internal" href="py/scenario.scenariostack.html#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a> also is a helper class for <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a>:</p>
+<ul class="simple">
+<li><p>It stores the current stack of scenarios being executed (see <a class="reference internal" href="#arch-subscenario-execution"><span class="std std-ref">sub-scenarios</span></a>.</p></li>
+<li><p>It also provides a couple of accessors to the current step, action or expected result being executed.</p></li>
+</ul>
+<p>The <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> class remains the conductor of all:</p>
+<ol class="arabic simple">
+<li><p>The <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.main" title="scenario.scenariorunner.ScenarioRunner.main"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.main()</span></code></a> method is called.</p></li>
+<li><p>For each script path given in the command line:</p>
+<ol class="arabic simple">
+<li><p>A main <a class="reference internal" href="py/scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> instance is created <a class="footnote-reference brackets" href="#meth-executepath" id="id1">2</a>
+from the scenario class in the script <a class="footnote-reference brackets" href="#class-scenariodefinitionhelper" id="id2">8</a>.
+A <a class="reference internal" href="py/scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioExecution</span></code></a> instance is created as well,
+and pushed to the <a class="reference internal" href="py/scenario.scenariostack.html#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a> instance <a class="footnote-reference brackets" href="#meth-beginscenario" id="id3">4</a>.</p></li>
+<li><p><a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._execution_mode" title="scenario.scenariorunner.ScenarioRunner._execution_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioRunner._execution_mode</span></code></a>
+is set to <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS" title="scenario.scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioRunner.ExecutionMode.BUILD_OBJECTS</span></code></a>:</p>
+<ol class="arabic simple">
+<li><p>In case the steps are defined with <code class="docutils literal notranslate"><span class="pre">step...()</span></code> methods,
+the <a class="reference internal" href="py/scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> is fed using reflexive programmation
+(the same for scenario attributes defined with class members)
+<a class="footnote-reference brackets" href="#meth-beginscenario" id="id4">4</a> <a class="footnote-reference brackets" href="#class-scenariodefinitionhelper" id="id5">8</a>.</p></li>
+<li><p>Each step is executed a first time <a class="footnote-reference brackets" href="#meth-beginscenario" id="id6">4</a> <a class="footnote-reference brackets" href="#meth-execstep" id="id7">5</a> in order to build
+its <a class="reference internal" href="py/scenario.actionresultdefinition.html#scenario.actionresultdefinition.ActionResultDefinition" title="scenario.actionresultdefinition.ActionResultDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultDefinition</span></code></a> instances
+for each <a class="reference internal" href="py/scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi.ACTION" title="scenario.stepuserapi.StepUserApi.ACTION"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StepUserApi.ACTION()</span></code></a> and <a class="reference internal" href="py/scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi.RESULT" title="scenario.stepuserapi.StepUserApi.RESULT"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StepUserApi.RESULT()</span></code></a> call <a class="footnote-reference brackets" href="#meth-onactionresult" id="id8">6</a>.
+During this first execution of the step, the two latter methods return <code class="docutils literal notranslate"><span class="pre">False</span></code> <a class="footnote-reference brackets" href="#attr-execution-mode" id="id9">1</a>,
+which prevents the test from being executed at this point.</p></li>
+</ol>
+</li>
+<li><p><a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._execution_mode" title="scenario.scenariorunner.ScenarioRunner._execution_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioRunner._execution_mode</span></code></a>
+is set to <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.ExecutionMode.EXECUTE" title="scenario.scenariorunner.ScenarioRunner.ExecutionMode.EXECUTE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioRunner.ExecutionMode.EXECUTE</span></code></a>
+or <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.ExecutionMode.DOC_ONLY" title="scenario.scenariorunner.ScenarioRunner.ExecutionMode.DOC_ONLY"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioRunner.ExecutionMode.DOC_ONLY</span></code></a> <a class="footnote-reference brackets" href="#meth-executescenario" id="id10">3</a>.
+For each step <a class="footnote-reference brackets" href="#meth-executescenario" id="id11">3</a> <a class="footnote-reference brackets" href="#meth-execstep" id="id12">5</a>:</p>
+<ol class="arabic simple">
+<li><p>A <a class="reference internal" href="py/scenario.stepexecution.html#scenario.stepexecution.StepExecution" title="scenario.stepexecution.StepExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepExecution</span></code></a> instance is created <a class="footnote-reference brackets" href="#meth-execstep" id="id13">5</a>.</p></li>
+<li><p>The user test code is called <a class="footnote-reference brackets" href="#meth-execstep" id="id14">5</a>.</p></li>
+<li><p>For each <a class="reference internal" href="py/scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi.ACTION" title="scenario.stepuserapi.StepUserApi.ACTION"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StepUserApi.ACTION()</span></code></a>
+and <a class="reference internal" href="py/scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi.RESULT" title="scenario.stepuserapi.StepUserApi.RESULT"><code class="xref py py-meth docutils literal notranslate"><span class="pre">StepUserApi.RESULT()</span></code></a> call <a class="footnote-reference brackets" href="#meth-onactionresult" id="id15">6</a>:</p>
+<ol class="arabic simple">
+<li><p>A <a class="reference internal" href="py/scenario.actionresultexecution.html#scenario.actionresultexecution.ActionResultExecution" title="scenario.actionresultexecution.ActionResultExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActionResultExecution</span></code></a> instance is created <a class="footnote-reference brackets" href="#meth-onactionresult" id="id16">6</a>.</p></li>
+<li><p>If a sub-scenario is executed, then it is pushed to the <a class="reference internal" href="py/scenario.scenariostack.html#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a> instance <a class="footnote-reference brackets" href="#meth-beginscenario" id="id17">4</a>,
+built <a class="footnote-reference brackets" href="#meth-beginscenario" id="id18">4</a> <a class="footnote-reference brackets" href="#class-scenariodefinitionhelper" id="id19">8</a> <a class="footnote-reference brackets" href="#meth-execstep" id="id20">5</a>,
+executed <a class="footnote-reference brackets" href="#meth-executescenario" id="id21">3</a> <a class="footnote-reference brackets" href="#meth-execstep" id="id22">5</a>,
+and eventually popped from the <a class="reference internal" href="py/scenario.scenariostack.html#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a> instance <a class="footnote-reference brackets" href="#meth-endscenario" id="id23">7</a>.</p></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>The main scenario is eventually popped from the <a class="reference internal" href="py/scenario.scenariostack.html#scenario.scenariostack.ScenarioStack" title="scenario.scenariostack.ScenarioStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioStack</span></code></a> instance <a class="footnote-reference brackets" href="#meth-endscenario" id="id24">7</a>.</p></li>
+</ol>
+</li>
+<li><p>If there were several scenarios executed, the final results are displayed <a class="footnote-reference brackets" href="#class-scenarioresults" id="id25">9</a>.</p></li>
+</ol>
+<p>—</p>
+<dl class="footnote brackets">
+<dt class="label" id="attr-execution-mode"><span class="brackets"><a class="fn-backref" href="#id9">1</a></span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._execution_mode" title="scenario.scenariorunner.ScenarioRunner._execution_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioRunner._execution_mode</span></code></a>.</p>
+</dd>
+<dt class="label" id="meth-executepath"><span class="brackets"><a class="fn-backref" href="#id1">2</a></span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.executepath" title="scenario.scenariorunner.ScenarioRunner.executepath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.executepath()</span></code></a>.</p>
+</dd>
+<dt class="label" id="meth-executescenario"><span class="brackets">3</span><span class="fn-backref">(<a href="#id10">1</a>,<a href="#id11">2</a>,<a href="#id21">3</a>)</span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.executescenario" title="scenario.scenariorunner.ScenarioRunner.executescenario"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.executescenario()</span></code></a>.</p>
+</dd>
+<dt class="label" id="meth-beginscenario"><span class="brackets">4</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id4">2</a>,<a href="#id6">3</a>,<a href="#id17">4</a>,<a href="#id18">5</a>)</span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._beginscenario" title="scenario.scenariorunner.ScenarioRunner._beginscenario"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner._beginscenario()</span></code></a>.</p>
+</dd>
+<dt class="label" id="meth-execstep"><span class="brackets">5</span><span class="fn-backref">(<a href="#id7">1</a>,<a href="#id12">2</a>,<a href="#id13">3</a>,<a href="#id14">4</a>,<a href="#id20">5</a>,<a href="#id22">6</a>)</span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._execstep" title="scenario.scenariorunner.ScenarioRunner._execstep"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner._execstep()</span></code></a>.</p>
+</dd>
+<dt class="label" id="meth-onactionresult"><span class="brackets">6</span><span class="fn-backref">(<a href="#id8">1</a>,<a href="#id15">2</a>,<a href="#id16">3</a>)</span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.onactionresult" title="scenario.scenariorunner.ScenarioRunner.onactionresult"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.onactionresult()</span></code></a>.</p>
+</dd>
+<dt class="label" id="meth-endscenario"><span class="brackets">7</span><span class="fn-backref">(<a href="#id23">1</a>,<a href="#id24">2</a>)</span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._endscenario" title="scenario.scenariorunner.ScenarioRunner._endscenario"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner._endscenario()</span></code></a>.</p>
+</dd>
+<dt class="label" id="class-scenariodefinitionhelper"><span class="brackets">8</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id5">2</a>,<a href="#id19">3</a>)</span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinitionHelper" title="scenario.scenariodefinition.ScenarioDefinitionHelper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinitionHelper</span></code></a>.</p>
+</dd>
+<dt class="label" id="class-scenarioresults"><span class="brackets"><a class="fn-backref" href="#id25">9</a></span></dt>
+<dd><p>See <a class="reference internal" href="py/scenario.scenarioresults.html#scenario.scenarioresults.ScenarioResults" title="scenario.scenarioresults.ScenarioResults"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioResults</span></code></a>.</p>
+</dd>
+</dl>
+</section>
+<section id="subscenarios">
+<span id="arch-subscenario-execution"></span><h2>Subscenarios<a class="headerlink" href="#subscenarios" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id26">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed: Architecture - Subscenarios</p>
+</div>
+</section>
+<section id="assertions-error-management-execution-locations">
+<span id="arch-error-management"></span><h2>Assertions, error management &amp; execution locations<a class="headerlink" href="#assertions-error-management-execution-locations" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id27">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed: Architecture - Error management</p>
+</div>
+</section>
+<section id="campaign-execution">
+<span id="arch-campaign-execution"></span><h2>Campaign execution<a class="headerlink" href="#campaign-execution" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id28">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed: Architecture - Campaign execution</p>
+<ul class="simple">
+<li><p><cite>CampaignRunner</cite></p></li>
+<li><p><cite>CampaignExecution</cite>, <cite>TestSuiteExecution</cite>, <cite>TestCaseExecution</cite> classes.</p></li>
+<li><p>Test suite files.</p></li>
+<li><p>Test cases executed in separate processes.</p></li>
+</ul>
+</div>
+</section>
+<section id="logging">
+<span id="arch-logging"></span><h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id29">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed: Architecture - Logging</p>
+</div>
+</section>
+<section id="configuration">
+<span id="arch-configuration"></span><h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id30">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed: Architecture - Configuration</p>
+</div>
+</section>
+<section id="path-management">
+<span id="arch-paths"></span><h2>Path management<a class="headerlink" href="#path-management" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id31">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed: Architecture - Path</p>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Architecture</a><ul>
+<li><a class="reference internal" href="#scenario-execution">Scenario execution</a></li>
+<li><a class="reference internal" href="#subscenarios">Subscenarios</a></li>
+<li><a class="reference internal" href="#assertions-error-management-execution-locations">Assertions, error management &amp; execution locations</a></li>
+<li><a class="reference internal" href="#campaign-execution">Campaign execution</a></li>
+<li><a class="reference internal" href="#logging">Logging</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#path-management">Path management</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="devel.design.html"
+                          title="previous chapter">Design</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="devel.design.pydoc.html"
+                          title="next chapter">Source documentation</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="devel.design.pydoc.html" title="Source documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="devel.design.html" title="Design"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="devel.design.html" >Design</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Architecture</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

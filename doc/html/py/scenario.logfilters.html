@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.logfilters module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.logformatter module" href="scenario.logformatter.html" />
+    <link rel="prev" title="scenario.logextradata module" href="scenario.logextradata.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.logformatter.html" title="scenario.logformatter module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.logextradata.html" title="scenario.logextradata module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.logfilters module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.logfilters">
+<span id="scenario-logfilters-module"></span><h1>scenario.logfilters module<a class="headerlink" href="#module-scenario.logfilters" title="Permalink to this headline">¶</a></h1>
+<p>Log filtering.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.logfilters.LoggerLogFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LoggerLogFilter</span></span><a class="headerlink" href="#scenario.logfilters.LoggerLogFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Filter</span></code></p>
+<p>Log filter attached to a <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a> instance.</p>
+<p>Filters log records depending on the log level and the associated logger configuration.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.logfilters.LoggerLogFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.logfilters.LoggerLogFilter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>logger</strong> – Attached <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a> instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logfilters.LoggerLogFilter._logger">
+<span class="sig-name descname"><span class="pre">_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><span class="pre">Logger</span></a></em><a class="headerlink" href="#scenario.logfilters.LoggerLogFilter._logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attached <a class="reference internal" href="scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a> instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.logfilters.LoggerLogFilter.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">logging.LogRecord</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.logfilters.LoggerLogFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filtering hook implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>record</strong> – Log record to check for filtering.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Filter.filter()</span></code>: “Is the specified record to be logged? Returns 0 for no, nonzero for yes.”</p>
+<p>Nevertheless, we can see from the code that booleans are actually returned.</p>
+</p>
+</dd>
+</dl>
+<p>Checks whether the log record should be filtered out due to the attached <code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code> configuration.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.logfilters.HandlerLogFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HandlerLogFilter</span></span><a class="headerlink" href="#scenario.logfilters.HandlerLogFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Filter</span></code></p>
+<p>Log filter attached to a <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code> instance.</p>
+<p>Filters log records depending on <a class="reference internal" href="scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> configurations:
+<a class="reference internal" href="scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_CONSOLE</span></code></a> and <a class="reference internal" href="scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_FILE</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.logfilters.HandlerLogFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">logging.Handler</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.logfilters.HandlerLogFilter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>handler</strong> – Attached <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.logfilters.HandlerLogFilter._handler">
+<span class="sig-name descname"><span class="pre">_handler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">logging.Handler</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.logfilters.HandlerLogFilter._handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attached <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.logfilters.HandlerLogFilter.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">logging.LogRecord</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.logfilters.HandlerLogFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filtering hook implementation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>record</strong> – Log record to check for filtering.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">logging.Filter.filter()</span></code>: “Is the specified record to be logged? Returns 0 for no, nonzero for yes.”</p>
+<p>Nevertheless, we can see from the code that booleans are actually returned.</p>
+</p>
+</dd>
+</dl>
+<p>Checks the <a class="reference internal" href="scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_CONSOLE</span></code></a> or <a class="reference internal" href="scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE" title="scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.LOG_FILE</span></code></a> configurations,
+depending on the handler attached.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.logextradata.html"
+                          title="previous chapter">scenario.logextradata module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.logformatter.html"
+                          title="next chapter">scenario.logformatter module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.logformatter.html" title="scenario.logformatter module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.logextradata.html" title="scenario.logextradata module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.logfilters module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Python coding &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Documentation" href="devel.coding-rules.doc.html" />
+    <link rel="prev" title="Git" href="devel.coding-rules.git.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="devel.coding-rules.doc.html" title="Documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="devel.coding-rules.git.html" title="Git"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="devel.coding-rules.html" accesskey="U">Coding rules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Python coding</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="python-coding">
+<span id="coding-rules-py"></span><h1>Python coding<a class="headerlink" href="#python-coding" title="Permalink to this headline">¶</a></h1>
+<section id="strings">
+<span id="coding-rules-py-strings"></span><h2>Strings<a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed for string coding rules:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Differenciate strings and byte-strings:</dt><dd><ul>
+<li><dl class="simple">
+<dt>Use of <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">r&quot;&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">f&quot;&quot;</span></code> (double quote) to enclose <code class="docutils literal notranslate"><span class="pre">str</span></code> strings</dt><dd><ul>
+<li><p>Except for strings in f-string {}-blocks.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Use of <code class="docutils literal notranslate"><span class="pre">b''</span></code> / <code class="docutils literal notranslate"><span class="pre">rb''</span></code> (simple quotes) to enclose <code class="docutils literal notranslate"><span class="pre">bytes</span></code> strings</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Use f-strings</dt><dd><ul>
+<li><p>Except for debugging (for optimization concerns)</p></li>
+<li><p>Except for assertion errors and evidence (for optimization concerns)</p></li>
+<li><p>Except for regex (because of ‘{}’ escaping)</p></li>
+<li><p>Except for bytes (f-strings not available)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Use <em>repr</em> specification (<code class="docutils literal notranslate"><span class="pre">f&quot;{...!r}&quot;</span></code> / <code class="docutils literal notranslate"><span class="pre">&quot;%r&quot;</span></code>) instead of calling <code class="docutils literal notranslate"><span class="pre">repr()</span></code> (for optimization concerns)</p></li>
+</ul>
+</div>
+</section>
+<section id="namings">
+<span id="coding-rules-py-namings"></span><h2>Namings<a class="headerlink" href="#namings" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed for namings:</p>
+<ul class="simple">
+<li><p>PEP8 compatible</p></li>
+<li><p>Packages</p></li>
+<li><p>Modules</p></li>
+<li><p>Classes</p></li>
+<li><p>Attributes</p></li>
+<li><p>Methods &amp; functions</p></li>
+<li><p>Getters (properties) and setters, same as attributes</p></li>
+<li><p>Constants</p></li>
+</ul>
+</div>
+</section>
+<section id="presentation">
+<span id="coding-rules-py-presentation"></span><h2>Presentation<a class="headerlink" href="#presentation" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed for code presentation</p>
+<ul class="simple">
+<li><p>Indentation:</p>
+<ul>
+<li><p>Avoid right-aligned comments (hard to maintain when the names change)</p></li>
+<li><p>Functions and methods (same purpose):</p>
+<ul>
+<li><p>New line for the first parameter</p></li>
+<li><p>Parameters indented with 2 tabs (as proposed by PyCharm by default).
+Makes it more readable by differenciating the parameters from the function / body.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Trailing commas (refer to PEP8 <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#when-to-use-trailing-commas">https://www.python.org/dev/peps/pep-0008/#when-to-use-trailing-commas</a>)</p></li>
+<li><p>New line after the opening parenthesis of the function declarations</p></li>
+</ul>
+</div>
+</section>
+<section id="packages">
+<span id="coding-rules-py-packages"></span><h2>Packages<a class="headerlink" href="#packages" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="id4">
+<p class="admonition-title">Todo</p>
+<p>Documentation needed for packages, file names:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> package</p></li>
+<li><p>‘__init__.py’ that exports symbols from the given package</p></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario.test</span></code>, <code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario.tools</span></code> subpackages at different locations</p>
+</div>
+</section>
+<section id="static-class-methods">
+<span id="coding-rules-py-static"></span><h2>Static &amp; class methods<a class="headerlink" href="#static-class-methods" title="Permalink to this headline">¶</a></h2>
+<p>Do not use the <code class="docutils literal notranslate"><span class="pre">&#64;staticmethod</span></code> or <code class="docutils literal notranslate"><span class="pre">&#64;classmethod</span></code> whenever a method could be converted so.
+It is preferrable to rely on the meaning at first, in order to make the code more stable along the time.</p>
+<p>By default, PyCharm “detects any methods which may safely be made static”.
+This coding rule goes against these suggestions.
+By the way, we do not want to set <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">noinspection</span> <span class="pre">PyMethodMayBeStatic</span></code> pragmas everywhere a method could “be made static” in the code.
+Thus, please disable the “Method may be static” inspection rule in your PyCharm settings.</p>
+</section>
+<section id="typings">
+<span id="coding-rules-py-typings"></span><h2>Typings<a class="headerlink" href="#typings" title="Permalink to this headline">¶</a></h2>
+<p>The code uses <a class="reference external" href="https://mypy.readthedocs.io/en/stable/python2.html">Python 2 typings</a>.</p>
+<p>Even though Python 2 compatibility is not expected,
+it has proved that comment type hints did not suffer a couple of limitations compared with Python 3 type hints:</p>
+<ul>
+<li><p>impossible for a method to return an instance of the current class,
+without a prior <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">__future__</span> <span class="pre">import</span> <span class="pre">annotations</span></code> statement,
+which is available from Python 3.8 only,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Python 3 type hints</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>  <span class="c1"># &lt;&lt; Python 3.8 only</span>
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">meth</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">A</span><span class="p">:</span>  <span class="c1"># &lt;&lt; NameError: name &#39;A&#39; is not defined, if `__future__.annotations` not imported</span>
+        <span class="k">return</span> <span class="n">A</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Python 2 type hints</span>
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">meth</span><span class="p">():</span>  <span class="c1"># type: (...) -&gt; A</span>
+        <span class="k">return</span> <span class="n">A</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>impossible to define the type of the iterating variable in a <cite>for</cite> loop statement,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Python 3 type hints</span>
+
+<span class="k">for</span> <span class="n">_i</span><span class="p">:</span> <span class="nb">int</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>  <span class="c1"># &lt;&lt; SyntaxError: invalid syntax</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Python 2 type hints</span>
+
+<span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>  <span class="c1"># type: int</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</li>
+<li><p>impossible to define the type of a couple of variables initialized from a function returning a tuple.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Python 3 type hints</span>
+
+<span class="n">_a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">_b</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>  <span class="c1"># &lt;&lt; SyntaxError: invalid syntax</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Python 2 type hints</span>
+
+<span class="n">_a</span><span class="p">,</span> <span class="n">_b</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>  <span class="c1"># type: int, str</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Furthermore, we use the <a class="reference external" href="https://mypy.readthedocs.io/en/stable/python2.html#multi-line-python-2-function-annotations">multi-line style</a>,
+that makes the code diffs shorter, and the maintainance simpler by the way.</p>
+</section>
+<section id="imports">
+<span id="coding-rules-py-imports"></span><h2>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h2>
+<section id="order-of-imports">
+<span id="coding-rules-py-imports-order"></span><h3>Order of Imports<a class="headerlink" href="#order-of-imports" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Place system imports at first:</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>One system import per <code class="docutils literal notranslate"><span class="pre">import</span></code> line.</p></li>
+<li><p>Sort imports in the alphabetical order.</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Then <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> imports:</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>Use the relative form <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">.modulename</span> <span class="pre">import</span> <span class="pre">ClassName</span></code>.</p></li>
+<li><p>Sort <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a> imports in the alphabetical order of module names.</p></li>
+<li><p>For a given module import statement, sort the symbols imported
+in their alphabetical order as well.</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Then test imports (for test modules only).</p></li>
+</ol>
+<div class="note admonition">
+<p class="admonition-title">Justification for ordering imports</p>
+<p>Giving an order for imports is a matter of code stability.</p>
+<p>The alphabetical order works in almost any situation (except on vary rare occasion).
+It’s simple, and easy to read through.
+That’s the reason why it is chosen as the main order for imports.</p>
+</div>
+</section>
+<section id="the-fewer-project-imports-at-the-top-level">
+<span id="coding-rules-py-imports-fewer-top"></span><h3>The fewer project imports at the top level<a class="headerlink" href="#the-fewer-project-imports-at-the-top-level" title="Permalink to this headline">¶</a></h3>
+<p>We call project imports imports from modules located in the same package.
+As a consequence, these imports are usually the relative ones.</p>
+<p>In order to avoid cyclic module dependencies in the package,
+the fewer project imports shall be placed at the top level of modules.
+Postpone as much as possible the imports with local imports
+in function or methods where the symbol is actually used.</p>
+<p>Nevertheless, this does not mean that local imports should be repeated
+every time that a basic object is used in each function of method
+(like <a class="reference internal" href="py/scenario.path.html#scenario.path.Path" title="scenario.path.Path"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> for instance).</p>
+<p>In order to ensure that a top level project import is legitimate,
+it shall be justified with a comment at the end of the <code class="docutils literal notranslate"><span class="pre">import</span></code> line.
+<code class="docutils literal notranslate"><span class="pre">typing.TYPE_CHECKING</span></code> import statements shall be justified as well
+(see the <a class="reference internal" href="#coding-rules-py-imports-type-checking"><span class="std std-ref">typing.TYPE_CHECKING</span></a> section below).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">tools/checkdeps.py</span></code> scripts may help visualizing the <a class="reference internal" href="py/scenario.html#module-scenario" title="scenario"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scenario</span></code></a>
+module dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./tools/checkdeps.py
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>INFO     &lt;13&gt;               __init__.py =&gt; [actionresultdefinition.py, actionresultexecution.py, args.py, assertionhelpers.py,
+INFO                                        assertions.py, campaignargs.py, campaignexecution.py, campaignreport.py,
+INFO                                        campaignrunner.py, configdb.py, confignode.py, console.py, datetimeutils.py,
+INFO                                        debugutils.py, enumutils.py, errcodes.py, executionstatus.py, handlers.py,
+INFO                                        issuelevels.py, knownissues.py, locations.py, logextradata.py, logger.py,
+INFO                                        loggermain.py, path.py, pkginfo.py, scenarioargs.py, scenarioconfig.py,
+INFO                                        scenariodefinition.py, scenarioevents.py, scenarioexecution.py, scenarioreport.py,
+INFO                                        scenariorunner.py, scenariostack.py, stats.py, stepdefinition.py, stepexecution.py,
+INFO                                        subprocess.py, testerrors.py, timezoneutils.py]
+INFO     &lt;12&gt;        campaignlogging.py =&gt; [campaignexecution.py, enumutils.py]
+INFO     &lt;12&gt;         campaignreport.py =&gt; [campaignexecution.py, logger.py, path.py, xmlutils.py]
+INFO     &lt;12&gt;         campaignrunner.py =&gt; [campaignexecution.py, errcodes.py, logger.py]
+INFO     &lt;12&gt;         scenarioevents.py =&gt; [campaignexecution.py, enumutils.py, scenariodefinition.py, stepdefinition.py,
+INFO                                        testerrors.py]
+INFO     &lt;11&gt;      campaignexecution.py =&gt; [executionstatus.py, path.py, scenarioexecution.py, stats.py, testerrors.py]
+INFO     &lt;11&gt;        scenariologging.py =&gt; [actionresultdefinition.py, enumutils.py, scenariodefinition.py,
+INFO                                        scenarioexecution.py, stepdefinition.py, stepsection.py, testerrors.py]
+INFO     &lt;11&gt;         scenarioreport.py =&gt; [actionresultdefinition.py, logger.py, scenarioexecution.py, stepdefinition.py]
+INFO     &lt;11&gt;        scenarioresults.py =&gt; [logger.py, scenarioexecution.py, testerrors.py]
+INFO     &lt;11&gt;          scenariostack.py =&gt; [actionresultdefinition.py, actionresultexecution.py, logger.py,
+INFO                                        scenariodefinition.py, scenarioexecution.py, stepdefinition.py, stepexecution.py,
+INFO                                        stepuserapi.py]
+INFO     &lt;10&gt;               handlers.py =&gt; [logger.py, scenariodefinition.py]
+INFO     &lt;10&gt;      scenarioexecution.py =&gt; [executionstatus.py, scenariodefinition.py, stats.py, stepdefinition.py]
+INFO     &lt;10&gt;         scenariorunner.py =&gt; [actionresultdefinition.py, enumutils.py, errcodes.py, knownissues.py, logger.py,
+INFO                                        scenariodefinition.py, stepdefinition.py, stepuserapi.py, testerrors.py]
+INFO     &lt;09&gt;     scenariodefinition.py =&gt; [assertions.py, logger.py, stepdefinition.py, stepsection.py, stepuserapi.py]
+INFO     &lt;08&gt;          stepexecution.py =&gt; [actionresultdefinition.py, stats.py, stepdefinition.py]
+INFO     &lt;08&gt;            stepsection.py =&gt; [stepdefinition.py]
+INFO     &lt;07&gt;         stepdefinition.py =&gt; [actionresultdefinition.py, assertions.py, knownissues.py, locations.py, logger.py,
+INFO                                        stepuserapi.py]
+INFO     &lt;06&gt;  actionresultexecution.py =&gt; [actionresultdefinition.py]
+INFO     &lt;06&gt;           campaignargs.py =&gt; [args.py, path.py, scenarioargs.py]
+INFO     &lt;06&gt;            knownissues.py =&gt; [logger.py, testerrors.py]
+INFO     &lt;05&gt; actionresultdefinition.py =&gt; [enumutils.py, locations.py]
+INFO     &lt;05&gt;           scenarioargs.py =&gt; [args.py, subprocess.py]
+INFO     &lt;05&gt;             testerrors.py =&gt; [locations.py, logger.py]
+INFO     &lt;04&gt;                   args.py =&gt; [configargs.py, logger.py, loggingargs.py]
+INFO     &lt;04&gt;               configdb.py =&gt; [confignode.py, enumutils.py, logger.py]
+INFO     &lt;04&gt;           debugloggers.py =&gt; [debugutils.py, logger.py]
+INFO     &lt;04&gt;              locations.py =&gt; [logger.py]
+INFO     &lt;04&gt;             logfilters.py =&gt; [logger.py]
+INFO     &lt;04&gt;             loggermain.py =&gt; [logger.py]
+INFO     &lt;04&gt;                 reflex.py =&gt; [debugclasses.py, logger.py]
+INFO     &lt;04&gt;             subprocess.py =&gt; [errcodes.py, logger.py]
+INFO     &lt;04&gt;          testsuitefile.py =&gt; [logger.py]
+INFO     &lt;03&gt;           logformatter.py =&gt; [console.py, logextradata.py]
+INFO     &lt;03&gt;                 logger.py =&gt; [console.py, logextradata.py]
+INFO     &lt;02&gt;             assertions.py =&gt; [assertionhelpers.py]
+INFO     &lt;02&gt;           debugclasses.py =&gt; [enumutils.py]
+INFO     &lt;02&gt;        executionstatus.py =&gt; [enumutils.py]
+INFO     &lt;02&gt;           logextradata.py =&gt; [enumutils.py]
+INFO     &lt;02&gt;         scenarioconfig.py =&gt; [confignode.py, console.py, enumutils.py, path.py]
+INFO     &lt;01&gt;       assertionhelpers.py =&gt; []
+INFO     &lt;01&gt;             configargs.py =&gt; []
+INFO     &lt;01&gt;              configini.py =&gt; []
+INFO     &lt;01&gt;             configjson.py =&gt; []
+INFO     &lt;01&gt;              configkey.py =&gt; []
+INFO     &lt;01&gt;             confignode.py =&gt; []
+INFO     &lt;01&gt;            configtypes.py =&gt; []
+INFO     &lt;01&gt;             configyaml.py =&gt; []
+INFO     &lt;01&gt;                console.py =&gt; []
+INFO     &lt;01&gt;          datetimeutils.py =&gt; []
+INFO     &lt;01&gt;             debugutils.py =&gt; []
+INFO     &lt;01&gt;              enumutils.py =&gt; []
+INFO     &lt;01&gt;               errcodes.py =&gt; []
+INFO     &lt;01&gt;            issuelevels.py =&gt; []
+INFO     &lt;01&gt;            loggingargs.py =&gt; []
+INFO     &lt;01&gt;         loggingservice.py =&gt; []
+INFO     &lt;01&gt;             loghandler.py =&gt; []
+INFO     &lt;01&gt;                   path.py =&gt; []
+INFO     &lt;01&gt;                pkginfo.py =&gt; []
+INFO     &lt;01&gt;                  stats.py =&gt; []
+INFO     &lt;01&gt;            stepuserapi.py =&gt; []
+INFO     &lt;01&gt;               textfile.py =&gt; []
+INFO     &lt;01&gt;          timezoneutils.py =&gt; []
+INFO     &lt;01&gt;                 typing.py =&gt; []
+INFO     &lt;01&gt;               xmlutils.py =&gt; []
+</pre></div>
+</div>
+</section>
+<section id="typing-type-checking-pattern">
+<span id="coding-rules-py-imports-type-checking"></span><h3><code class="docutils literal notranslate"><span class="pre">typing.TYPE_CHECKING</span></code> pattern<a class="headerlink" href="#typing-type-checking-pattern" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports">https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports</a>
+for some information on this so-called pattern in this section.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">typing.TYPE_CHECKING</span></code> pattern for two reasons only:</p>
+<ol class="arabic simple">
+<li><p>for types declared only when <code class="docutils literal notranslate"><span class="pre">typing.TYPE_CHECKING</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> of course (otherwise the code execution will fail),</p></li>
+<li><p>but then, <strong>for cyclic type hint dependencies only</strong>.</p></li>
+</ol>
+<div class="note admonition">
+<p class="admonition-title">Risks with the <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">typing.TYPE_CHECKING:</span></code> pattern</p>
+<p>Sometimes, a class <code class="docutils literal notranslate"><span class="pre">A</span></code> requires another class <code class="docutils literal notranslate"><span class="pre">B</span></code>
+(in one of its method signatures, or possibly because it inherits from <code class="docutils literal notranslate"><span class="pre">B</span></code>),
+and so does the other class <code class="docutils literal notranslate"><span class="pre">B</span></code> with class <code class="docutils literal notranslate"><span class="pre">A</span></code> as well.</p>
+<p>From the execution point of view, this situation can usually be handled with local imports
+in some of the methods involved.</p>
+<p>Still, from the type hint point of view, a cyclic dependency remains between the two modules.
+The <code class="docutils literal notranslate"><span class="pre">typing.TYPE_CHECKING</span></code> pattern
+makes it possible to handle such cyclic dependencies.</p>
+<p>But caution! the use of this pattern generates a risk on the execution side.
+Making an import under an <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">typing.TYPE_CHECKING:</span></code> condition at the top of a module
+makes the type checking pass.
+Nevertheless, the same import should not be forgotten in the method(s)
+where the cyclic dependency is actually used,
+otherwise it fails when executed,
+which is somewhat counterproductive regarding the type checking goals!</p>
+<p>Let’s illustrate that point with an example.</p>
+<p>Let the <code class="docutils literal notranslate"><span class="pre">a.py</span></code> module define a super class <code class="xref py py-class docutils literal notranslate"><span class="pre">A</span></code>
+with a <code class="xref py py-meth docutils literal notranslate"><span class="pre">getb()</span></code> method returning a <code class="xref py py-class docutils literal notranslate"><span class="pre">B</span></code> instance or <code class="docutils literal notranslate"><span class="pre">None</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.b</span> <span class="kn">import</span> <span class="n">B</span>
+
+<span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">getb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>  <span class="c1"># type: (str) -&gt; typing.Optional[B]</span>
+        <span class="k">for</span> <span class="n">_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_item</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">_item</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>Let the <code class="docutils literal notranslate"><span class="pre">b.py</span></code> module define <code class="xref py py-class docutils literal notranslate"><span class="pre">B</span></code>, a subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">A</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.a</span> <span class="kn">import</span> <span class="n">A</span>
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">A</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">B</span></code> class depends on the <code class="xref py py-class docutils literal notranslate"><span class="pre">A</span></code> class for type hints <em>and</em> execution.
+So the <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">.a</span> <span class="pre">import</span> <span class="pre">A</span></code> import statement must be set at the top of the <code class="docutils literal notranslate"><span class="pre">b.py</span></code> module.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">A</span></code> class needs the <code class="xref py py-class docutils literal notranslate"><span class="pre">B</span></code> class
+for the signature of its <code class="xref py py-meth docutils literal notranslate"><span class="pre">A.getb()</span></code> method only.
+Thus, the <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">.b</span> <span class="pre">import</span> <span class="pre">B</span></code> import statement is set at the top of the <code class="docutils literal notranslate"><span class="pre">a.py</span></code> module,
+but under a <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">typing.TYPE_CHECKING:</span></code> condition.</p>
+<p>This makes type checking pass, but fails when the <code class="xref py py-meth docutils literal notranslate"><span class="pre">A.getb()</span></code> method is executed.
+Indeed, in <code class="docutils literal notranslate"><span class="pre">a.py</span></code>, as the <code class="xref py py-class docutils literal notranslate"><span class="pre">B</span></code> class is imported for type checking only,
+the class is not defined when the <code class="docutils literal notranslate"><span class="pre">isinstance()</span></code> call is made.
+By the way, the import statement must be repeated as a local import
+when the <code class="xref py py-class docutils literal notranslate"><span class="pre">B</span></code> class is actually used in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">A.getb()</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">getb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>  <span class="c1"># type: (str) -&gt; typing.Optional[B]</span>
+        <span class="c1"># Do not forget the local import!</span>
+        <span class="kn">from</span> <span class="nn">.b</span> <span class="kn">import</span> <span class="n">B</span>
+
+        <span class="k">for</span> <span class="n">_item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_item</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">_item</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>That’s the reason why the <code class="docutils literal notranslate"><span class="pre">typing.TYPE_CHECKING</span></code> pattern
+shall be used as less as possible,
+i.e. when cyclic dependencies occur because type hints impose it.</p>
+</div>
+</section>
+</section>
+<section id="python-compatibility">
+<span id="coding-rules-py-compat"></span><h2>Python compatibility<a class="headerlink" href="#python-compatibility" title="Permalink to this headline">¶</a></h2>
+<p>The code supports Python versions from 3.6.</p>
+<p>The ‘tools/checktypes.py’ scripts checks code amongst Python 3.6.</p>
+<div class="note admonition">
+<p class="admonition-title">Python versions</p>
+<p>No need to handle Python 2 anymore, as long as its end-of-line was set on 2020-01-01
+(see <a class="reference external" href="https://www.python.org/dev/peps/pep-0373/">PEP 373</a>).</p>
+<p>As of 2021/09, Python 3.6’s end-of-life has not been declared yet (see <a class="reference external" href="https://devguide.python.org/devcycle/#end-of-life-branches">https://devguide.python.org/devcycle/#end-of-life-branches</a>),
+while Python 3.5’s end-of-life was set on 2020-09-30 (see <a class="reference external" href="https://www.python.org/dev/peps/pep-0478/">PEP 478</a>).</p>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Python coding</a><ul>
+<li><a class="reference internal" href="#strings">Strings</a></li>
+<li><a class="reference internal" href="#namings">Namings</a></li>
+<li><a class="reference internal" href="#presentation">Presentation</a></li>
+<li><a class="reference internal" href="#packages">Packages</a></li>
+<li><a class="reference internal" href="#static-class-methods">Static &amp; class methods</a></li>
+<li><a class="reference internal" href="#typings">Typings</a></li>
+<li><a class="reference internal" href="#imports">Imports</a><ul>
+<li><a class="reference internal" href="#order-of-imports">Order of Imports</a></li>
+<li><a class="reference internal" href="#the-fewer-project-imports-at-the-top-level">The fewer project imports at the top level</a></li>
+<li><a class="reference internal" href="#typing-type-checking-pattern"><code class="docutils literal notranslate"><span class="pre">typing.TYPE_CHECKING</span></code> pattern</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-compatibility">Python compatibility</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="devel.coding-rules.git.html"
+                          title="previous chapter">Git</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="devel.coding-rules.doc.html"
+                          title="next chapter">Documentation</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="devel.coding-rules.doc.html" title="Documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="devel.coding-rules.git.html" title="Git"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="devel.coding-rules.html" >Coding rules</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Python coding</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.subprocess module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.testerrors module" href="scenario.testerrors.html" />
+    <link rel="prev" title="scenario.stepuserapi module" href="scenario.stepuserapi.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.testerrors.html" title="scenario.testerrors module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.stepuserapi.html" title="scenario.stepuserapi module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.subprocess module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.subprocess">
+<span id="scenario-subprocess-module"></span><h1>scenario.subprocess module<a class="headerlink" href="#module-scenario.subprocess" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="#scenario.subprocess.SubProcess" title="scenario.subprocess.SubProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubProcess</span></code></a> class definition.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SubProcess</span></span><a class="headerlink" href="#scenario.subprocess.SubProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Sub-process execution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> – Command line arguments.
+May be the first arguments only, then rely on the <a class="reference internal" href="#scenario.subprocess.SubProcess.addargs" title="scenario.subprocess.SubProcess.addargs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addargs()</span></code></a> method to add others.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.cmd_line">
+<span class="sig-name descname"><span class="pre">cmd_line</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess.cmd_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sub-process command line arguments.</p>
+<p>See <a class="reference internal" href="#scenario.subprocess.SubProcess.addargs" title="scenario.subprocess.SubProcess.addargs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addargs()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.env">
+<span class="sig-name descname"><span class="pre">env</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess.env" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#scenario.subprocess.SubProcess.setenv" title="scenario.subprocess.SubProcess.setenv"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setenv()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.cwd">
+<span class="sig-name descname"><span class="pre">cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess.cwd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#scenario.subprocess.SubProcess.setcwd" title="scenario.subprocess.SubProcess.setcwd"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setcwd()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._logger">
+<span class="sig-name descname"><span class="pre">_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><span class="pre">Logger</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#scenario.subprocess.SubProcess.setlogger" title="scenario.subprocess.SubProcess.setlogger"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setlogger()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._stdout_line_handler">
+<span class="sig-name descname"><span class="pre">_stdout_line_handler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._stdout_line_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler to call on each stdout line.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._stderr_line_handler">
+<span class="sig-name descname"><span class="pre">_stderr_line_handler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._stderr_line_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler to call on each stderr line.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._exit_on_error_code">
+<span class="sig-name descname"><span class="pre">_exit_on_error_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._exit_on_error_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#scenario.subprocess.SubProcess.exitonerror" title="scenario.subprocess.SubProcess.exitonerror"><code class="xref py py-meth docutils literal notranslate"><span class="pre">exitonerror()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.returncode">
+<span class="sig-name descname"><span class="pre">returncode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess.returncode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sub-process return code.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.stdout">
+<span class="sig-name descname"><span class="pre">stdout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><a class="headerlink" href="#scenario.subprocess.SubProcess.stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard output as a string.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.stderr">
+<span class="sig-name descname"><span class="pre">stderr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytes</span></em><a class="headerlink" href="#scenario.subprocess.SubProcess.stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard error as a string.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.time">
+<span class="sig-name descname"><span class="pre">time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.stats.html#scenario.stats.TimeStats" title="scenario.stats.TimeStats"><span class="pre">TimeStats</span></a></em><a class="headerlink" href="#scenario.subprocess.SubProcess.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time statistics.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._popen">
+<span class="sig-name descname"><span class="pre">_popen</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">subprocess.Popen</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._popen" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">subprocess.Popen</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._async">
+<span class="sig-name descname"><span class="pre">_async</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._async" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether the <a class="reference internal" href="#scenario.subprocess.SubProcess.run" title="scenario.subprocess.SubProcess.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method should wait for the end of the sub-process.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._stdout_reader">
+<span class="sig-name descname"><span class="pre">_stdout_reader</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">threading.Thread</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._stdout_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stdout reader thread routine.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._stderr_reader">
+<span class="sig-name descname"><span class="pre">_stderr_reader</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">threading.Thread</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.subprocess.SubProcess._stderr_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stderr reader thread routine.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonical string representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human readable string representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.tostring">
+<span class="sig-name descname"><span class="pre">tostring</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.tostring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human readable full string representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.addargs">
+<span class="sig-name descname"><span class="pre">addargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.addargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra arguments addition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> – Extra arguments.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.hasargs">
+<span class="sig-name descname"><span class="pre">hasargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.hasargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the command line contains the given sequence of consecutive arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> – Sequence of arguments being searched.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the arguments have been found, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.setenv">
+<span class="sig-name descname"><span class="pre">setenv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.setenv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets extra environment variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – Extra environment variables.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.setcwd">
+<span class="sig-name descname"><span class="pre">setcwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.setcwd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the current working directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cwd</strong> – Current working directory.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.setlogger">
+<span class="sig-name descname"><span class="pre">setlogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.setlogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directs log lines to the given logger instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>logger</strong> – Logger instance to use.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>`` self``</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.onstdoutline">
+<span class="sig-name descname"><span class="pre">onstdoutline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.onstdoutline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Installs a handler to be called on each stdout line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>handler</strong> – Handler to call on each stdout line.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.onstderrline">
+<span class="sig-name descname"><span class="pre">onstderrline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.onstderrline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Installs a handler to be called on each stderr line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>handler</strong> – Handler to call on each stderr line.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.exitonerror">
+<span class="sig-name descname"><span class="pre">exitonerror</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exit_on_error_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.exitonerror" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether the main program should stop (<code class="docutils literal notranslate"><span class="pre">sys.exit()</span></code>) in case of an error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>exit_on_error_code</strong> – Set to <code class="docutils literal notranslate"><span class="pre">None</span></code> to keep executing in case of an error (default behaviour).
+Set to a <a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErrorCode</span></code></a> value to make the main program stop with the given error code.
+<code class="docutils literal notranslate"><span class="pre">True</span></code> is an equivalent for <code class="xref py py-const docutils literal notranslate"><span class="pre">errcodes.ErrorCode.INTERNAL_ERROR</span></code>,
+<code class="docutils literal notranslate"><span class="pre">False</span></code> is an equivalent for <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+<p>The return code is available through the <a class="reference internal" href="#scenario.subprocess.SubProcess.returncode" title="scenario.subprocess.SubProcess.returncode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">returncode</span></code></a> attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sub-process execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timeout</strong> – Waiting timeout, in seconds.``None`` to wait infinitely.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+<p>The sub-process return code is available through the <a class="reference internal" href="#scenario.subprocess.SubProcess.returncode" title="scenario.subprocess.SubProcess.returncode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">returncode</span></code></a> attribute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.runasync">
+<span class="sig-name descname"><span class="pre">runasync</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.runasync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launches the sub-process asynchronously.</p>
+<p>Contrary to <a class="reference internal" href="#scenario.subprocess.SubProcess.run" title="scenario.subprocess.SubProcess.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a>,
+this method launches the sub-process, then returns without waiting for the end of it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._readstdoutthread">
+<span class="sig-name descname"><span class="pre">_readstdoutthread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess._readstdoutthread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stdout reader thread routine.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._readstderrthread">
+<span class="sig-name descname"><span class="pre">_readstderrthread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess._readstderrthread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stderr reader thread routine.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.isrunning">
+<span class="sig-name descname"><span class="pre">isrunning</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.isrunning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether the sub-process is currently running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the sub-process is still running. <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.wait">
+<span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits for the sub-process to terminate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timeout</strong> – Waiting timeout, in seconds. <code class="docutils literal notranslate"><span class="pre">None</span></code> to wait infinitely.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>TimeoutError</strong> – When the sub-process did not terminate within <code class="docutils literal notranslate"><span class="pre">timeout</span></code> seconds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarSubProcessType</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kills the sub-process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._onerror">
+<span class="sig-name descname"><span class="pre">_onerror</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess._onerror" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error management.</p>
+<p>Optionally logs the error and terminates the main process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>error_message</strong> – Error message.</p></li>
+<li><p><strong>args</strong> – Error message arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.subprocess.SubProcess._log">
+<span class="sig-name descname"><span class="pre">_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.subprocess.SubProcess._log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pushes a log line to the attached logger, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> – Log level.</p></li>
+<li><p><strong>message</strong> – Log message.</p></li>
+<li><p><strong>args</strong> – Format arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.stepuserapi.html"
+                          title="previous chapter">scenario.stepuserapi module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.testerrors.html"
+                          title="next chapter">scenario.testerrors module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.testerrors.html" title="scenario.testerrors module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.stepuserapi.html" title="scenario.stepuserapi module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.subprocess module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,512 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.campaignexecution module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.campaignlogging module" href="scenario.campaignlogging.html" />
+    <link rel="prev" title="scenario.campaignargs module" href="scenario.campaignargs.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignlogging.html" title="scenario.campaignlogging module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignargs.html" title="scenario.campaignargs module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.campaignexecution module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.campaignexecution">
+<span id="scenario-campaignexecution-module"></span><h1>scenario.campaignexecution module<a class="headerlink" href="#module-scenario.campaignexecution" title="Permalink to this headline">¶</a></h1>
+<p>Campaign execution results.</p>
+<p>The <a class="reference internal" href="#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignExecution</span></code></a> class stores the execution results of a campaign.
+It owns a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">TestSuite</span></code> instances (actually one, called ‘All’),
+which owns a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code> instances (one test case per scenario).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CampaignExecution</span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Main campaign result object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>outdir</strong> – <p>Output directory path.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> initializes the output directory path with the current working directory.</p>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.outdir">
+<span class="sig-name descname"><span class="pre">outdir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></em><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.outdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output directory path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.test_suite_executions">
+<span class="sig-name descname"><span class="pre">test_suite_executions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.test_suite_executions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test suite results.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.time">
+<span class="sig-name descname"><span class="pre">time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.stats.html#scenario.stats.TimeStats" title="scenario.stats.TimeStats"><span class="pre">TimeStats</span></a></em><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time statistics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonical string representation.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.junit_path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">junit_path</span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.junit_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>JUnit path.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.steps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.actions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">actions</span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.results">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results</span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expected result statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignExecution.counts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counts</span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignExecution.counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign statistics.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TestSuiteExecution</span></span><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test suite execution object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">campaign_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_suite_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>campaign_execution</strong> – Owner <a class="reference internal" href="#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignExecution</span></code></a> object.</p></li>
+<li><p><strong>test_suite_path</strong> – <p>Test suite file path.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> initializes the <a class="reference internal" href="#scenario.campaignexecution.TestSuiteExecution.test_suite_file" title="scenario.campaignexecution.TestSuiteExecution.test_suite_file"><code class="xref py py-attr docutils literal notranslate"><span class="pre">test_suite_file</span></code></a> member with a <em>void</em> file path,
+which makes the <a class="reference internal" href="#scenario.campaignexecution.TestSuiteExecution.test_suite_file" title="scenario.campaignexecution.TestSuiteExecution.test_suite_file"><code class="xref py py-attr docutils literal notranslate"><span class="pre">test_suite_file</span></code></a> instance <em>void</em> as well.
+This path can be fixed programmatically later on.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.campaign_execution">
+<span class="sig-name descname"><span class="pre">campaign_execution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#scenario.campaignexecution.CampaignExecution" title="scenario.campaignexecution.CampaignExecution"><span class="pre">CampaignExecution</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.campaign_execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Owner campaign execution.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.test_suite_file">
+<span class="sig-name descname"><span class="pre">test_suite_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.testsuitefile.html#scenario.testsuitefile.TestSuiteFile" title="scenario.testsuitefile.TestSuiteFile"><span class="pre">TestSuiteFile</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.test_suite_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign file.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.test_case_executions">
+<span class="sig-name descname"><span class="pre">test_case_executions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.campaignexecution.TestCaseExecution" title="scenario.campaignexecution.TestCaseExecution"><span class="pre">TestCaseExecution</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.test_case_executions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test cases.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.time">
+<span class="sig-name descname"><span class="pre">time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.stats.html#scenario.stats.TimeStats" title="scenario.stats.TimeStats"><span class="pre">TimeStats</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time statistics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonical string representation.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.steps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.actions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">actions</span></span><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.results">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results</span></span><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expected result statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestSuiteExecution.counts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counts</span></span><a class="headerlink" href="#scenario.campaignexecution.TestSuiteExecution.counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Campaign statistics.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TestCaseExecution</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Test case (i.e. test scenario) execution object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_suite_execution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">script_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">AnyPathType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_suite_execution</strong> – Owner <code class="xref py py-class docutils literal notranslate"><span class="pre">TestSuite</span></code> object.</p></li>
+<li><p><strong>script_path</strong> – <p>Scenario script path.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> initializes the <a class="reference internal" href="#scenario.campaignexecution.TestCaseExecution.script_path" title="scenario.campaignexecution.TestCaseExecution.script_path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">script_path</span></code></a> member with a <em>void</em> file path.
+This path can be fixed programmatically later on.</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.test_suite_execution">
+<span class="sig-name descname"><span class="pre">test_suite_execution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#scenario.campaignexecution.TestSuiteExecution" title="scenario.campaignexecution.TestSuiteExecution"><span class="pre">TestSuiteExecution</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.test_suite_execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Owner test suite execution.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.script_path">
+<span class="sig-name descname"><span class="pre">script_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.script_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario script path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.time">
+<span class="sig-name descname"><span class="pre">time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.stats.html#scenario.stats.TimeStats" title="scenario.stats.TimeStats"><span class="pre">TimeStats</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time statistics.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.log">
+<span class="sig-name descname"><span class="pre">log</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#scenario.campaignexecution.LogFileReader" title="scenario.campaignexecution.LogFileReader"><span class="pre">LogFileReader</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case log output.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.json">
+<span class="sig-name descname"><span class="pre">json</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#scenario.campaignexecution.JsonReportReader" title="scenario.campaignexecution.JsonReportReader"><span class="pre">JsonReportReader</span></a></em><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case JSON output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonical string representation.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.scenario_execution">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scenario_execution</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.scenario_execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario execution data.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case name.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.status">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario execution status.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.errors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test errors.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.warnings">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">warnings</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.warnings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Warnings.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.steps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.actions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">actions</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action statistics.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.campaignexecution.TestCaseExecution.results">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results</span></span><a class="headerlink" href="#scenario.campaignexecution.TestCaseExecution.results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expected result statistics.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CampaignStats</span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignStats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>JUnit compatible statistics.</p>
+<div class="note admonition">
+<p class="admonition-title">Failures v/s errors</p>
+<p>According to <a class="reference external" href="https://stackoverflow.com/questions/3425995/whats-the-difference-between-failure-and-error-in-junit">https://stackoverflow.com/questions/3425995/whats-the-difference-between-failure-and-error-in-junit</a>:</p>
+<ul class="simple">
+<li><p>tests are considered that they have “failed” because of an assertion,</p></li>
+<li><p>tests are said to be in “error” but of an unexpected error.</p></li>
+</ul>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignexecution.CampaignStats.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes all counters with <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats.total">
+<span class="sig-name descname"><span class="pre">total</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#scenario.campaignexecution.CampaignStats.total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total number of test cases.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats.disabled">
+<span class="sig-name descname"><span class="pre">disabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#scenario.campaignexecution.CampaignStats.disabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of test cases disabled.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats.skipped">
+<span class="sig-name descname"><span class="pre">skipped</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#scenario.campaignexecution.CampaignStats.skipped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of skipped test cases.</p>
+<p>For test suites.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats.warnings">
+<span class="sig-name descname"><span class="pre">warnings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#scenario.campaignexecution.CampaignStats.warnings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of tests that terminated with warnings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats.failures">
+<span class="sig-name descname"><span class="pre">failures</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#scenario.campaignexecution.CampaignStats.failures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of test cases that failed due to assertions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.CampaignStats.errors">
+<span class="sig-name descname"><span class="pre">errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#scenario.campaignexecution.CampaignStats.errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of test cases that failed unexpectedly.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignexecution.LogFileReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LogFileReader</span></span><a class="headerlink" href="#scenario.campaignexecution.LogFileReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Log file path and content.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.LogFileReader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignexecution.LogFileReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes <a class="reference internal" href="#scenario.campaignexecution.LogFileReader.path" title="scenario.campaignexecution.LogFileReader.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> and <a class="reference internal" href="#scenario.campaignexecution.LogFileReader.content" title="scenario.campaignexecution.LogFileReader.content"><code class="xref py py-attr docutils literal notranslate"><span class="pre">content</span></code></a> attributes with <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.LogFileReader.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.campaignexecution.LogFileReader.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case log file path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.LogFileReader.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.campaignexecution.LogFileReader.content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case log file content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.LogFileReader.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.campaignexecution.LogFileReader.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the log file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the log file could be read successfully, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.campaignexecution.JsonReportReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JsonReportReader</span></span><a class="headerlink" href="#scenario.campaignexecution.JsonReportReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>JSON file path and content.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.JsonReportReader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.campaignexecution.JsonReportReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes <a class="reference internal" href="#scenario.campaignexecution.JsonReportReader.path" title="scenario.campaignexecution.JsonReportReader.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> and <a class="reference internal" href="#scenario.campaignexecution.JsonReportReader.content" title="scenario.campaignexecution.JsonReportReader.content"><code class="xref py py-attr docutils literal notranslate"><span class="pre">content</span></code></a> attributes with <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.JsonReportReader.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.campaignexecution.JsonReportReader.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test case JSON file path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.campaignexecution.JsonReportReader.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.scenariodefinition.html#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.campaignexecution.JsonReportReader.content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario execution data read from the test case JSON file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.campaignexecution.JsonReportReader.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.campaignexecution.JsonReportReader.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the JSON report.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the JSON report file could be read and parsed successfully, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.campaignargs.html"
+                          title="previous chapter">scenario.campaignargs module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.campaignlogging.html"
+                          title="next chapter">scenario.campaignlogging module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignlogging.html" title="scenario.campaignlogging module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.campaignargs.html" title="scenario.campaignargs module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.campaignexecution module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

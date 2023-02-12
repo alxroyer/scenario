@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.args module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.assertionhelpers module" href="scenario.assertionhelpers.html" />
+    <link rel="prev" title="scenario.actionresultexecution module" href="scenario.actionresultexecution.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.assertionhelpers.html" title="scenario.assertionhelpers module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.actionresultexecution.html" title="scenario.actionresultexecution module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.args module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.args">
+<span id="scenario-args-module"></span><h1>scenario.args module<a class="headerlink" href="#module-scenario.args" title="Permalink to this headline">¶</a></h1>
+<p>Base module for program arguments management.</p>
+<p><a class="reference internal" href="#scenario.args.Args.getinstance" title="scenario.args.Args.getinstance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.getinstance()</span></code></a> gives the only only instance of program arguments,
+May actually be a <code class="xref py py-class docutils literal notranslate"><span class="pre">scenarioargs.ExecArgs</span></code> or a <a class="reference internal" href="scenario.campaignargs.html#scenario.campaignargs.CampaignArgs" title="scenario.campaignargs.CampaignArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignArgs</span></code></a> instance.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.args.Args">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Args</span></span><a class="headerlink" href="#scenario.args.Args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a>, <a class="reference internal" href="scenario.configargs.html#scenario.configargs.CommonConfigArgs" title="scenario.configargs.CommonConfigArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommonConfigArgs</span></code></a>, <a class="reference internal" href="scenario.loggingargs.html#scenario.loggingargs.CommonLoggingArgs" title="scenario.loggingargs.CommonLoggingArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommonLoggingArgs</span></code></a></p>
+<p>Common program arguments management.</p>
+<p>Handles:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--help</span></code> option,</p></li>
+<li><p>Configuration file options,</p></li>
+<li><p>Logging options.</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.Args._instance">
+<span class="sig-name descname"><span class="pre">_instance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><span class="pre">Args</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.args.Args._instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main instance of <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.setinstance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setinstance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><span class="pre">Args</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_reset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.args.Args.setinstance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the main instance of <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>instance</strong> – <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance.</p></li>
+<li><p><strong>warn_reset</strong> – Set to <code class="docutils literal notranslate"><span class="pre">False</span></code> in order to avoid the warning to be logged.</p></li>
+</ul>
+</dd>
+</dl>
+<p>When consecutive calls occur, the latest overwrites the previous,
+and a warning is displayed unless <code class="docutils literal notranslate"><span class="pre">warn_reset</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.getinstance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getinstance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarArgsType</span></span></span><a class="headerlink" href="#scenario.args.Args.getinstance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Singleton.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Main <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The main <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance is not created automatically by this method,
+and should be set with <a class="reference internal" href="#scenario.args.Args.setinstance" title="scenario.args.Args.setinstance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setinstance()</span></code></a> prior to any <a class="reference internal" href="#scenario.args.Args.getinstance" title="scenario.args.Args.getinstance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">getinstance()</span></code></a> call.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.isset">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.args.Args.isset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the single instance of <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> is set and of the <code class="docutils literal notranslate"><span class="pre">cls</span></code> type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cls</strong> – Expected type.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the single <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance is of the given type, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_debugging</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.args.Args.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines common program arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>class_debugging</strong> – See <a class="reference internal" href="scenario.loggingargs.html#scenario.loggingargs.CommonLoggingArgs" title="scenario.loggingargs.CommonLoggingArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommonLoggingArgs</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.Args.__arg_parser">
+<span class="sig-name descname"><span class="pre">__arg_parser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">argparse.ArgumentParser</span></em><a class="headerlink" href="#scenario.args.Args.__arg_parser" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">argparse</span></code> parser object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.Args.__arg_infos">
+<span class="sig-name descname"><span class="pre">__arg_infos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#scenario.args.ArgInfo" title="scenario.args.ArgInfo"><span class="pre">ArgInfo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.args.Args.__arg_infos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Arguments information.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.Args.parsed">
+<span class="sig-name descname"><span class="pre">parsed</span></span><a class="headerlink" href="#scenario.args.Args.parsed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parsed flag.
+Tells whether arguments have been successfully parsed yet or not.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.Args.error_code">
+<span class="sig-name descname"><span class="pre">error_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a></em><a class="headerlink" href="#scenario.args.Args.error_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Argument parsing error code.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.setprog">
+<span class="sig-name descname"><span class="pre">setprog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.args.Args.setprog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrites program name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – Program name to be displayed with usage info.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.setdescription">
+<span class="sig-name descname"><span class="pre">setdescription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.args.Args.setdescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrites program description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>description</strong> – Program description to be displayed with usage info.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.addarg">
+<span class="sig-name descname"><span class="pre">addarg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member_desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.args.ArgInfo" title="scenario.args.ArgInfo"><span class="pre">ArgInfo</span></a></span></span><a class="headerlink" href="#scenario.args.Args.addarg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a program argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>member_desc</strong> – Textual description of the program argument(s).</p></li>
+<li><p><strong>member_name</strong> – Corresponding member name in the owner <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance.</p></li>
+<li><p><strong>member_type</strong> – Type of the program argument, or base type of the program arguments list, or conversion handler.
+When defined as a 2 items tuple, the argument feeds a dictionary:
+the first item of the tuple shall be <code class="docutils literal notranslate"><span class="pre">str</span></code> (for the dictionary keys),
+and the second item gives the type of the dictionary values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Args.ArgInfo</span></code> instance whose <a class="reference internal" href="#scenario.args.ArgInfo.define" title="scenario.args.ArgInfo.define"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ArgInfo.define()</span></code></a> should be called onto.</p>
+</dd>
+</dl>
+<p><a class="reference internal" href="#scenario.args.ArgInfo.define" title="scenario.args.ArgInfo.define"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ArgInfo.define()</span></code></a> should be called on the <a class="reference internal" href="#scenario.args.ArgInfo" title="scenario.args.ArgInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgInfo</span></code></a> object returned:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">addarg</span><span class="p">(</span><span class="s2">&quot;Configuration files&quot;</span><span class="p">,</span> <span class="s2">&quot;config_paths&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span><span class="o">.</span><span class="n">define</span><span class="p">(</span>
+    <span class="s2">&quot;--config-file&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;CONFIG_PATH&quot;</span><span class="p">,</span>
+    <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input configuration file path. &quot;</span>
+         <span class="s2">&quot;This option may be called several times.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.args.Args.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses program arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> – Argument list, without the program name.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for success, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.Args._checkargs">
+<span class="sig-name descname"><span class="pre">_checkargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.args.Args._checkargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handler for special verifications on program arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> – The untyped object returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">argparse.ArgumentParser.parse_args()</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for success, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+<p>Shall be overridden in subclasses.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ArgInfo</span></span><a class="headerlink" href="#scenario.args.ArgInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that describes a single program argument (single value, list or dictionary).</p>
+<p>Whether the program argument is a single value, or a list of value, depends on the <code class="xref py py-mod docutils literal notranslate"><span class="pre">argparse</span></code> definition made
+through <a class="reference internal" href="#scenario.args.ArgInfo.define" title="scenario.args.ArgInfo.define"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ArgInfo.define()</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">argparse.ArgumentParser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member_desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.args.ArgInfo.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg_parser</strong> – Related <code class="xref py py-class docutils literal notranslate"><span class="pre">argparse.ArgumentParser</span></code> instance.</p></li>
+<li><p><strong>member_desc</strong> – Textual description of the program argument(s).</p></li>
+<li><p><strong>member_name</strong> – Corresponding member name in the owner <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance.</p></li>
+<li><p><strong>member_type</strong> – Base type of the program argument(s).
+See <a class="reference internal" href="#scenario.args.Args.addarg" title="scenario.args.Args.addarg"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.addarg()</span></code></a> for a detailed description of this parameter.</p></li>
+</ul>
+</dd>
+</dl>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.ArgInfo.define()</span></code> should be called onto each <code class="xref py py-class docutils literal notranslate"><span class="pre">Args.ArgInfo</span></code> instance newly created.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#scenario.args.Args.addarg" title="scenario.args.Args.addarg"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.addarg()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.ArgInfo.define()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.arg_parser">
+<span class="sig-name descname"><span class="pre">arg_parser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">argparse.ArgumentParser</span></em><a class="headerlink" href="#scenario.args.ArgInfo.arg_parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Related <code class="xref py py-class docutils literal notranslate"><span class="pre">argparse.ArgumentParser</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.member_desc">
+<span class="sig-name descname"><span class="pre">member_desc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.args.ArgInfo.member_desc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Textual description of the program argument(s).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.member_name">
+<span class="sig-name descname"><span class="pre">member_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.args.ArgInfo.member_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponding member name in the owner <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.key_type">
+<span class="sig-name descname"><span class="pre">key_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.actionresultdefinition.html#scenario.actionresultdefinition.ActionResultDefinition.Type" title="scenario.actionresultdefinition.ActionResultDefinition.Type"><span class="pre">Type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.args.ArgInfo.key_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Key type, when the argument feeds a dictionary.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.value_type">
+<span class="sig-name descname"><span class="pre">value_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.args.ArgInfo.value_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base type of the program argument(s).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.parser_arg">
+<span class="sig-name descname"><span class="pre">parser_arg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">argparse.Action</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.args.ArgInfo.parser_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">argparse.Action</span></code> instance defined by the <code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.ArgInfo.define()</span></code> method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.define">
+<span class="sig-name descname"><span class="pre">define</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.args.ArgInfo.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the <code class="xref py py-mod docutils literal notranslate"><span class="pre">argparse</span></code> command line argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – List of positional arguments.</p></li>
+<li><p><strong>kwargs</strong> – Dictionary of named arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Refer to the regular <code class="xref py py-mod docutils literal notranslate"><span class="pre">argparse</span></code> documentation, except for the <code class="xref py py-attr docutils literal notranslate"><span class="pre">dest</span></code> parameter which should not be set.
+The <code class="xref py py-attr docutils literal notranslate"><span class="pre">Args.ArgInfo.member_name</span></code> member will be used for the purpose.</p>
+<p>Should be called on the <code class="xref py py-class docutils literal notranslate"><span class="pre">Args.ArgInfo</span></code> returned the <a class="reference internal" href="#scenario.args.Args.addarg" title="scenario.args.Args.addarg"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.addarg()</span></code></a> method.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#scenario.args.Args.addarg" title="scenario.args.Args.addarg"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.addarg()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.args.ArgInfo.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><span class="pre">Args</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">parsed_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.args.ArgInfo.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the argument value once parsed by <code class="xref py py-mod docutils literal notranslate"><span class="pre">argparse</span></code> and feed the <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args_instance</strong> – <a class="reference internal" href="#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> instance to feed.</p></li>
+<li><p><strong>parsed_args</strong> – Opaque parsed object returned by the <code class="xref py py-mod docutils literal notranslate"><span class="pre">argparse</span></code> library.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the operation succeeded, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.actionresultexecution.html"
+                          title="previous chapter">scenario.actionresultexecution module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.assertionhelpers.html"
+                          title="next chapter">scenario.assertionhelpers module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.assertionhelpers.html" title="scenario.assertionhelpers module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.actionresultexecution.html" title="scenario.actionresultexecution module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.args module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

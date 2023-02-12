@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.scenarioargs module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.scenarioconfig module" href="scenario.scenarioconfig.html" />
+    <link rel="prev" title="scenario.reflex module" href="scenario.reflex.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioconfig.html" title="scenario.scenarioconfig module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.reflex.html" title="scenario.reflex module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenarioargs module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.scenarioargs">
+<span id="scenario-scenarioargs-module"></span><h1>scenario.scenarioargs module<a class="headerlink" href="#module-scenario.scenarioargs" title="Permalink to this headline">¶</a></h1>
+<p>Scenario runner program arguments.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioargs.CommonExecArgs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CommonExecArgs</span></span><a class="headerlink" href="#scenario.scenarioargs.CommonExecArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for argument parser classes that embed common test execution program arguments.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioargs.CommonExecArgs.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioargs.CommonExecArgs.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Installs common test execution program arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.CommonExecArgs.doc_only">
+<span class="sig-name descname"><span class="pre">doc_only</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#scenario.scenarioargs.CommonExecArgs.doc_only" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the test(s) is(are) executed for documentation generation only,
+i.e. the test script(s) for actions and verifications should not be executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.CommonExecArgs.issue_level_error">
+<span class="sig-name descname"><span class="pre">issue_level_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">AnyIssueLevelType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.CommonExecArgs.issue_level_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error issue level.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.CommonExecArgs.issue_level_ignored">
+<span class="sig-name descname"><span class="pre">issue_level_ignored</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">AnyIssueLevelType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.CommonExecArgs.issue_level_ignored" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignored issue level.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioargs.CommonExecArgs._checkargs">
+<span class="sig-name descname"><span class="pre">_checkargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.scenarioargs.CommonExecArgs._checkargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check common test execution program arguments once parsed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioargs.CommonExecArgs.reportexecargs">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reportexecargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.scenarioargs.CommonExecArgs" title="scenario.scenarioargs.CommonExecArgs"><span class="pre">CommonExecArgs</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subprocess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="scenario.subprocess.html#scenario.subprocess.SubProcess" title="scenario.subprocess.SubProcess"><span class="pre">SubProcess</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioargs.CommonExecArgs.reportexecargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report execution program arguments from an argument parser instance to the arguments of a sub-process being built.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – Argument parser instance to report program arguments from to.</p></li>
+<li><p><strong>subprocess</strong> – Sub-process being built to report program arguments to.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScenarioArgs</span></span><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.args.html#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a>, <a class="reference internal" href="#scenario.scenarioargs.CommonExecArgs" title="scenario.scenarioargs.CommonExecArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommonExecArgs</span></code></a></p>
+<p>Scenario runner program argument management.</p>
+<p>Provides arguments for the <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner" title="scenario.scenariorunner.ScenarioRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code></a> execution.</p>
+<p>Arguments given through the command line prevail on the configurations in the configuration files
+(see <a class="reference internal" href="scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig" title="scenario.scenarioconfig.ScenarioConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioConfig</span></code></a>).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positional_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declares the scenario runner program arguments,
+and binds them to the member fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>positional_args</strong> – <code class="docutils literal notranslate"><span class="pre">False</span></code> to disable the scenario path positional arguments definition.
+Useful for user programs that wish to redefine it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.json_report">
+<span class="sig-name descname"><span class="pre">json_report</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.json_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>JSON report output file path.
+No JSON report when <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.extra_info">
+<span class="sig-name descname"><span class="pre">extra_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.extra_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attribute names to display for extra info.
+Applicable when executing several tests.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.scenario_paths">
+<span class="sig-name descname"><span class="pre">scenario_paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.scenario_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path of the scenario Python script to execute.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs._checkargs">
+<span class="sig-name descname"><span class="pre">_checkargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs._checkargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks scenario runner arguments once parsed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for success, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.__arg_parser">
+<span class="sig-name descname"><span class="pre">__arg_parser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">argparse.ArgumentParser</span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.__arg_parser" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">argparse</span></code> parser object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.__arg_infos">
+<span class="sig-name descname"><span class="pre">__arg_infos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="scenario.args.html#scenario.args.ArgInfo" title="scenario.args.ArgInfo"><span class="pre">ArgInfo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.__arg_infos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Arguments information.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.error_code">
+<span class="sig-name descname"><span class="pre">error_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.errcodes.html#scenario.errcodes.ErrorCode" title="scenario.errcodes.ErrorCode"><span class="pre">ErrorCode</span></a></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.error_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Argument parsing error code.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.log_class">
+<span class="sig-name descname"><span class="pre">log_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.log_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs._logger">
+<span class="sig-name descname"><span class="pre">_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">logging.Logger</span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs._logger" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code> instance as a member variable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs._debug_enabled">
+<span class="sig-name descname"><span class="pre">_debug_enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs._debug_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> to enable log debugging.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> lets the configuration tells whether debug log lines should be displayed for this logger.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs._log_color">
+<span class="sig-name descname"><span class="pre">_log_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.console.html#scenario.console.Console.Color" title="scenario.console.Console.Color"><span class="pre">Console.Color</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs._log_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional log color configuration.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs._indentation">
+<span class="sig-name descname"><span class="pre">_indentation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs._indentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logger indentation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs._extra_flags">
+<span class="sig-name descname"><span class="pre">_extra_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.logextradata.html#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><span class="pre">LogExtraData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs._extra_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flags configurations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.config_paths">
+<span class="sig-name descname"><span class="pre">config_paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.config_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration files.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.config_values">
+<span class="sig-name descname"><span class="pre">config_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.config_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Additional configuration values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.debug_main">
+<span class="sig-name descname"><span class="pre">debug_main</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.debug_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main logger debugging.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenarioargs.ScenarioArgs.debug_classes">
+<span class="sig-name descname"><span class="pre">debug_classes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenarioargs.ScenarioArgs.debug_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Debug classes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.reflex.html"
+                          title="previous chapter">scenario.reflex module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.scenarioconfig.html"
+                          title="next chapter">scenario.scenarioconfig module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioconfig.html" title="scenario.scenarioconfig module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.reflex.html" title="scenario.reflex module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenarioargs module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

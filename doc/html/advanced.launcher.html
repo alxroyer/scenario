@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Launcher script extension &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Development" href="devel.html" />
+    <link rel="prev" title="Scenario attributes" href="advanced.scenario-attributes.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="devel.html" title="Development"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="advanced.scenario-attributes.html" title="Scenario attributes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="advanced.html" accesskey="U">Advanced usage</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Launcher script extension</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="launcher-script-extension">
+<span id="launcher"></span><h1>Launcher script extension<a class="headerlink" href="#launcher-script-extension" title="Permalink to this headline">¶</a></h1>
+<p>It is common that a user test environment needs to do a couple of things like:</p>
+<ul class="simple">
+<li><p>prepare the environment before the test execution,</p></li>
+<li><p>execute additional actions after the test execution,</p></li>
+<li><p>offer configurable features.</p></li>
+</ul>
+<p>To do so, the user test environment may define its own launcher script,
+as illustrated by the <a class="reference external" href="../../demo/run-demo.py">demo/run-demo.py</a> file.</p>
+<section id="command-line-argument-extension">
+<span id="launcher-extend-args"></span><h2>Command line argument extension<a class="headerlink" href="#command-line-argument-extension" title="Permalink to this headline">¶</a></h2>
+<p>About configurable features, <a class="reference internal" href="advanced.config-db.html#config-db"><span class="std std-ref">configuration files</span></a> come as a straight forward solution.
+Nevertheless, it is sometimes faster in use to provide command line options to the test launcher script also.
+To do so, our ‘demo/run-demo.py’ first overloads the <a class="reference internal" href="py/scenario.scenarioargs.html#scenario.scenarioargs.ScenarioArgs" title="scenario.scenarioargs.ScenarioArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioArgs</span></code></a> class:</p>
+<ul class="simple">
+<li><p>The final program description is set with the <a class="reference internal" href="py/scenario.args.html#scenario.args.Args.setdescription" title="scenario.args.Args.setdescription"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.setdescription()</span></code></a> method.</p></li>
+<li><p>Extra arguments may be defined thanks to the <a class="reference internal" href="py/scenario.args.html#scenario.args.Args.addarg" title="scenario.args.Args.addarg"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.addarg()</span></code></a> then <a class="reference internal" href="py/scenario.args.html#scenario.args.ArgInfo.define" title="scenario.args.ArgInfo.define"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ArgInfo.define()</span></code></a> methods.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DemoArgs</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">ScenarioArgs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">ScenarioArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setdescription</span><span class="p">(</span><span class="s2">&quot;Demo test launcher.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">welcome_message</span> <span class="o">=</span> <span class="s2">&quot;Hello you!&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bye_message</span> <span class="o">=</span> <span class="s2">&quot;Bye!&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addarg</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;welcome_message&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">define</span><span class="p">(</span>
+            <span class="s2">&quot;--welcome&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;NAME&quot;</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;User name.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_config_db</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addarg</span><span class="p">(</span><span class="s2">&quot;Show configuration database&quot;</span><span class="p">,</span> <span class="s2">&quot;show_config_db&quot;</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">define</span><span class="p">(</span>
+            <span class="s2">&quot;--show-configs&quot;</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show the configuration values with their origin, then stop.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="py/scenario.args.html#scenario.args.Args._checkargs" title="scenario.args.Args._checkargs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args._checkargs()</span></code></a> method may be overloaded in order to check additional constraints,
+after the arguments have been parsed, and the <a class="reference internal" href="py/scenario.args.html#scenario.args.Args" title="scenario.args.Args"><code class="xref py py-class docutils literal notranslate"><span class="pre">Args</span></code></a> attributes have been updated:</p>
+<ul class="simple">
+<li><p>Start or finish with calling the mother class’s <a class="reference internal" href="py/scenario.scenarioargs.html#scenario.scenarioargs.ScenarioArgs._checkargs" title="scenario.scenarioargs.ScenarioArgs._checkargs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioArgs._checkargs()</span></code></a> method.</p></li>
+<li><p>This method is expected to return <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> whether an error has been detected or not.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">_checkargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_checkargs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">welcome_message</span><span class="p">:</span>
+            <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrong name </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">welcome_message</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">welcome_message</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">):</span>
+            <span class="n">_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">welcome_message</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">welcome_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Hello </span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s2">!&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bye_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Bye </span><span class="si">{</span><span class="n">_name</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Then, in the <em>main</em> part, prior to calling the <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.main" title="scenario.scenariorunner.ScenarioRunner.main"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.main()</span></code></a> method:</p>
+<ul class="simple">
+<li><p>Set an instance of our <code class="xref py py-class docutils literal notranslate"><span class="pre">DemoArgs</span></code> class with the <a class="reference internal" href="py/scenario.args.html#scenario.args.Args.setinstance" title="scenario.args.Args.setinstance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.setinstance()</span></code></a> method.</p></li>
+<li><p>Call the <a class="reference internal" href="py/scenario.args.html#scenario.args.Args.parse" title="scenario.args.Args.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Args.parse()</span></code></a> method to parse the command line arguments.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Command line arguments.</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">Args</span><span class="o">.</span><span class="n">setinstance</span><span class="p">(</span><span class="n">DemoArgs</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">scenario</span><span class="o">.</span><span class="n">Args</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">Args</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">error_code</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>At this point, the user test environment can use the extra arguments added with the <code class="xref py py-class docutils literal notranslate"><span class="pre">DemoArgs</span></code> class,
+but regular arguments as well.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># --show-configs option.</span>
+    <span class="k">if</span> <span class="n">DemoArgs</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">show_config_db</span><span class="p">:</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">ErrorCode</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">))</span>
+
+    <span class="c1"># Welcome message.</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">DemoArgs</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">welcome_message</span><span class="p">)</span>
+
+    <span class="c1"># File logging: use the first scenario file name to determine the output log file name.</span>
+    <span class="n">_outpath</span> <span class="o">=</span> <span class="n">DemoArgs</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">scenario_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.log&quot;</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;scenario.log_file&quot;</span><span class="p">,</span> <span class="n">_outpath</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test log saved in &#39;</span><span class="si">{</span><span class="n">_outpath</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">--help</span></code> option displays both:</p>
+<ul class="simple">
+<li><p>the usual <a class="reference internal" href="py/scenario.scenarioargs.html#scenario.scenarioargs.ScenarioArgs" title="scenario.scenarioargs.ScenarioArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioArgs</span></code></a> options,</p></li>
+<li><p>and the extra options added by the <code class="xref py py-class docutils literal notranslate"><span class="pre">DemoArgs</span></code> class.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ ./demo/run-demo.py --help
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: run-demo.py [-h] [--config-file CONFIG_PATH] [--config-value KEY VALUE]
+                   [--debug-class DEBUG_CLASS] [--doc-only]
+                   [--issue-level-error ISSUE_LEVEL]
+                   [--issue-level-ignored ISSUE_LEVEL]
+                   [--json-report JSON_REPORT_PATH]
+                   [--extra-info ATTRIBUTE_NAME] [--welcome NAME]
+                   [--show-configs]
+                   SCENARIO_PATH [SCENARIO_PATH ...]
+
+Demo test launcher.
+
+positional arguments:
+  SCENARIO_PATH         Scenario script(s) to execute.
+
+optional arguments:
+  -h, --help            Show this help message and exit.
+  --config-file CONFIG_PATH
+                        Input configuration file path. This option may be
+                        called several times.
+  --config-value KEY VALUE
+                        Single configuration value. This option may be called
+                        several times.
+  --debug-class DEBUG_CLASS
+                        Activate debugging for the given class.
+  --doc-only            Generate documentation without executing the test(s).
+  --issue-level-error ISSUE_LEVEL
+                        Define the issue level from and above which known
+                        issues should be considered as errors. None by
+                        default, i.e. all known issues are considered as
+                        warnings.
+  --issue-level-ignored ISSUE_LEVEL
+                        Define the issue level from and under which known
+                        issues should be ignored. None by default, i.e. no
+                        known issue ignored by default.
+  --json-report JSON_REPORT_PATH
+                        Save the report in the given JSON output file path.
+                        Single scenario only.
+  --extra-info ATTRIBUTE_NAME
+                        Scenario attribute to display for extra info when
+                        displaying results. Applicable when executing several
+                        tests. This option may be called several times to
+                        display more info.
+  --welcome NAME        User name.
+  --show-configs        Show the configuration values with their origin, then
+                        stop.
+</pre></div>
+</div>
+</section>
+<section id="pre-post-operations">
+<span id="launcher-pre-post"></span><h2>Pre &amp; post-operations<a class="headerlink" href="#pre-post-operations" title="Permalink to this headline">¶</a></h2>
+<p>As introduced above, extending the launcher script gives you the opportunity to add
+pre-operations, as soon as the command line arguments have been parsed,
+and post-operations after the test execution.</p>
+<p>Our <a class="reference external" href="../../demo/run-demo.py">demo/run-demo.py</a> script gives examples of pre &amp; post-operations:</p>
+<ul class="simple">
+<li><p>a welcome message displayed before the test is executed:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Welcome message.</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">DemoArgs</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">welcome_message</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>a bye message displayed just before the command line ends:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Bye message.</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">DemoArgs</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">bye_message</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>optional display of the configuration database:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># --show-configs option.</span>
+    <span class="k">if</span> <span class="n">DemoArgs</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">show_config_db</span><span class="p">:</span>
+        <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">ErrorCode</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">))</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference internal" href="advanced.config-db.html#config-db-scenario"><span class="std std-ref">configuration value settings</span></a> that enable <a class="reference internal" href="advanced.logging.html#logging-outfile"><span class="std std-ref">file logging</span></a>:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># File logging: use the first scenario file name to determine the output log file name.</span>
+    <span class="n">_outpath</span> <span class="o">=</span> <span class="n">DemoArgs</span><span class="o">.</span><span class="n">getinstance</span><span class="p">()</span><span class="o">.</span><span class="n">scenario_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.log&quot;</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;scenario.log_file&quot;</span><span class="p">,</span> <span class="n">_outpath</span><span class="p">)</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test log saved in &#39;</span><span class="si">{</span><span class="n">_outpath</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="base-launcher-execution">
+<span id="launcher-execution"></span><h2>Base launcher execution<a class="headerlink" href="#base-launcher-execution" title="Permalink to this headline">¶</a></h2>
+<p>The call to the <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.main" title="scenario.scenariorunner.ScenarioRunner.main"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.main()</span></code></a> method will not analyze command line arguments twice,
+and use the values given by our <code class="xref py py-class docutils literal notranslate"><span class="pre">DemoArgs</span></code> instance already set.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Scenario execution.</span>
+    <span class="n">_res</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="return-code">
+<span id="launcher-ret-code"></span><h2>Return code<a class="headerlink" href="#return-code" title="Permalink to this headline">¶</a></h2>
+<p>Eventually, convert the enumerate value returned by <a class="reference internal" href="py/scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner.main" title="scenario.scenariorunner.ScenarioRunner.main"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner.main()</span></code></a> into a simple integer value,
+so that the error can be handled in the shell that launched the command line.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Error code.</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_res</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="campaign-launcher-script-extension">
+<span id="launcher-campaigns"></span><h2>Campaign launcher script extension<a class="headerlink" href="#campaign-launcher-script-extension" title="Permalink to this headline">¶</a></h2>
+<p>Extending the campaign launcher script works the same, except that:</p>
+<ul class="simple">
+<li><p>the <a class="reference internal" href="py/scenario.campaignargs.html#scenario.campaignargs.CampaignArgs" title="scenario.campaignargs.CampaignArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CampaignArgs</span></code></a> class may be overloaded to add extra command line arguments,</p></li>
+<li><p>the <a class="reference internal" href="py/scenario.campaignrunner.html#scenario.campaignrunner.CampaignRunner.main" title="scenario.campaignrunner.CampaignRunner.main"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CampaignRunner.main()</span></code></a> must be called in the end.</p></li>
+</ul>
+</section>
+<section id="setting-the-main-path-optional">
+<span id="launcher-main-path"></span><h2>Setting the main path (optional)<a class="headerlink" href="#setting-the-main-path-optional" title="Permalink to this headline">¶</a></h2>
+<p>Another thing that a launcher script may do is to set the <em>main path</em>
+(see <a class="reference internal" href="py/scenario.path.html#scenario.path.Path.setmainpath" title="scenario.path.Path.setmainpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Path.setmainpath()</span></code></a>).</p>
+<p>A <em>main path</em> shall be set for the current test projet.
+This way, all paths displayed during the tests may be nicely displayed as <em>pretty path</em> from this <em>main path</em>,
+whatever the current working directory
+(see <a class="reference internal" href="py/scenario.path.html#scenario.path.Path.prettypath" title="scenario.path.Path.prettypath"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Path.prettypath</span></code></a>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Main path.</span>
+    <span class="n">scenario</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">setmainpath</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For display purpose, it is advised to set the <em>main path</em> after the program arguments have been analyzed.</p>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Launcher script extension</a><ul>
+<li><a class="reference internal" href="#command-line-argument-extension">Command line argument extension</a></li>
+<li><a class="reference internal" href="#pre-post-operations">Pre &amp; post-operations</a></li>
+<li><a class="reference internal" href="#base-launcher-execution">Base launcher execution</a></li>
+<li><a class="reference internal" href="#return-code">Return code</a></li>
+<li><a class="reference internal" href="#campaign-launcher-script-extension">Campaign launcher script extension</a></li>
+<li><a class="reference internal" href="#setting-the-main-path-optional">Setting the main path (optional)</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="advanced.scenario-attributes.html"
+                          title="previous chapter">Scenario attributes</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="devel.html"
+                          title="next chapter">Development</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="devel.html" title="Development"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="advanced.scenario-attributes.html" title="Scenario attributes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="advanced.html" >Advanced usage</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Launcher script extension</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.reflex module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.scenarioargs module" href="scenario.scenarioargs.html" />
+    <link rel="prev" title="scenario.pkginfo module" href="scenario.pkginfo.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioargs.html" title="scenario.scenarioargs module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.pkginfo.html" title="scenario.pkginfo module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.reflex module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.reflex">
+<span id="scenario-reflex-module"></span><h1>scenario.reflex module<a class="headerlink" href="#module-scenario.reflex" title="Permalink to this headline">¶</a></h1>
+<p>Reflexive programmation tools and Python augmentations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.reflex.REFLEX_LOGGER">
+<span class="sig-name descname"><span class="pre">REFLEX_LOGGER</span></span><a class="headerlink" href="#scenario.reflex.REFLEX_LOGGER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logger instance for reflexive programming.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenario.reflex.qualname">
+<span class="sig-name descname"><span class="pre">qualname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.reflex.qualname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the qualified name of an object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obj</strong> – Object to retrieve the qualified name for.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Qualified name.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Accessing directly the <cite>__qualname__</cite> attribute makes mypy generate errors like ‘”…” has no attribute “__qualname__”’.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenario.reflex.isiterable">
+<span class="sig-name descname"><span class="pre">isiterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#scenario.reflex.isiterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells whether an object is iterable or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obj</strong> – Object to check.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when the object is iterable, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p>
+</dd>
+</dl>
+<p>Inspired from <a class="reference external" href="https://stackoverflow.com/questions/1952464/in-python-how-do-i-determine-if-an-object-is-iterable#1952481">https://stackoverflow.com/questions/1952464/in-python-how-do-i-determine-if-an-object-is-iterable#1952481</a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenario.reflex.importmodulefrompath">
+<span class="sig-name descname"><span class="pre">importmodulefrompath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">types.ModuleType</span></span></span><a class="headerlink" href="#scenario.reflex.importmodulefrompath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports a module from its Python script path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>script_path</strong> – Python script path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Module loaded.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenario.reflex.getloadedmodulefrompath">
+<span class="sig-name descname"><span class="pre">getloadedmodulefrompath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">types.ModuleType</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.reflex.getloadedmodulefrompath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a module already loaded corresponding to the given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>script_path</strong> – Python script path.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Corresponding module if already loaded.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenario.reflex.checkfuncqualname">
+<span class="sig-name descname"><span class="pre">checkfuncqualname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.reflex.checkfuncqualname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to retrieve the fully qualified name of a function or method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> – Path of the file the function is defined int.</p></li>
+<li><p><strong>line</strong> – Line number inside the function.</p></li>
+<li><p><strong>func_name</strong> – Short name of the function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Fully qualified name of the function, or <code class="docutils literal notranslate"><span class="pre">func_name</span></code> as is by default.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scenario.reflex.codelinecount">
+<span class="sig-name descname"><span class="pre">codelinecount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#scenario.reflex.codelinecount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the number of lines of the given code object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>code</strong> – Code object which lines to count.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Number of lines.</p>
+</dd>
+</dl>
+<p>Apparently, <a class="reference external" href="https://docs.python.org/3/library/inspect.html#types-and-members">inspect</a> does give the straight forward information.</p>
+<p>The <cite>co_lnotab</cite> attribute, being an “encoded mapping of line numbers to bytecode indices”, is our best chance for the purpose.</p>
+<p>The <a class="reference external" href="https://svn.python.org/projects/python/branches/pep-0384/Objects/lnotab_notes.txt">https://svn.python.org/projects/python/branches/pep-0384/Objects/lnotab_notes.txt</a> resource gives complementary information
+on how to parse this <cite>co_lnotab</cite> attribute.</p>
+<div class="warning admonition">
+<p class="admonition-title"><cite>co_lnotab</cite> depreciation.</p>
+<p>According to <a class="reference external" href="https://www.python.org/dev/peps/pep-0626/#backwards-compatibility">https://www.python.org/dev/peps/pep-0626/#backwards-compatibility</a>:
+“The co_lnotab attribute will be deprecated in 3.10 and removed in 3.12.”</p>
+</div>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.pkginfo.html"
+                          title="previous chapter">scenario.pkginfo module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.scenarioargs.html"
+                          title="next chapter">scenario.scenarioargs module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioargs.html" title="scenario.scenarioargs module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.pkginfo.html" title="scenario.pkginfo module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.reflex module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>

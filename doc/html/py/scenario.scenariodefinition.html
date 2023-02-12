@@ -1,0 +1,500 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scenario.scenariodefinition module &#8212; scenario  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pyramid.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="scenario.scenarioevents module" href="scenario.scenarioevents.html" />
+    <link rel="prev" title="scenario.scenarioconfig module" href="scenario.scenarioconfig.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioevents.html" title="scenario.scenarioevents module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioconfig.html" title="scenario.scenarioconfig module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" accesskey="U">scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenariodefinition module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-scenario.scenariodefinition">
+<span id="scenario-scenariodefinition-module"></span><h1>scenario.scenariodefinition module<a class="headerlink" href="#module-scenario.scenariodefinition" title="Permalink to this headline">¶</a></h1>
+<p>Scenario definition.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.MetaScenarioDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MetaScenarioDefinition</span></span><a class="headerlink" href="#scenario.scenariodefinition.MetaScenarioDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABCMeta</span></code></p>
+<p>Meta-class for <a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a>.</p>
+<p>So that it can be a meta-class for <a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a>,
+<a class="reference internal" href="#scenario.scenariodefinition.MetaScenarioDefinition" title="scenario.scenariodefinition.MetaScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaScenarioDefinition</span></code></a> must inherit from <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABCMeta</span></code> (which makes it inherit from <code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code> by the way)
+because the <a class="reference internal" href="scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi" title="scenario.stepuserapi.StepUserApi"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepUserApi</span></code></a> base class inherits from <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.MetaScenarioDefinition.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.MetaScenarioDefinition.__new__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overloads class definition of <a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> class and sub-classes.</p>
+<p>Sets <a class="reference internal" href="#scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper" title="scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetaScenarioDefinition.InitWrapper</span></code></a> instances in place of <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> methods,
+in order to have <a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> initializers enclosed with
+<a class="reference internal" href="scenario.scenariostack.html#scenario.scenariostack.BuildingContext.pushscenariodefinition" title="scenario.scenariostack.BuildingContext.pushscenariodefinition"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BuildingContext.pushscenariodefinition()</span></code></a> / <a class="reference internal" href="scenario.scenariostack.html#scenario.scenariostack.BuildingContext.popscenariodefinition" title="scenario.scenariostack.BuildingContext.popscenariodefinition"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BuildingContext.popscenariodefinition()</span></code></a> calls.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – New class name.</p></li>
+<li><p><strong>bases</strong> – Base classes for the new class.</p></li>
+<li><p><strong>attrs</strong> – New class attributes and methods.</p></li>
+<li><p><strong>kwargs</strong> – Optional arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InitWrapper</span></span><a class="headerlink" href="#scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Wrapper for <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> methods of <a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> instances.</p>
+<p>Encloses the initializer’s execution with
+<a class="reference internal" href="scenario.scenariostack.html#scenario.scenariostack.BuildingContext.pushscenariodefinition" title="scenario.scenariostack.BuildingContext.pushscenariodefinition"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BuildingContext.pushscenariodefinition()</span></code></a> / <a class="reference internal" href="scenario.scenariostack.html#scenario.scenariostack.BuildingContext.popscenariodefinition" title="scenario.scenariostack.BuildingContext.popscenariodefinition"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BuildingContext.popscenariodefinition()</span></code></a> calls,
+so that the building context of scenario stack knows about the scenario definition being built.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">function</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the original <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>init_method</strong> – Original <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.init_method">
+<span class="sig-name descname"><span class="pre">init_method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">function</span></em><a class="headerlink" href="#scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.init_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.__get__">
+<span class="sig-name descname"><span class="pre">__get__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">method</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.__get__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper descriptor: returns a <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> bound method with <code class="docutils literal notranslate"><span class="pre">obj</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – Optional instance reference.</p></li>
+<li><p><strong>objtype</strong> – Unused.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Bound initializer callable (as long as <code class="docutils literal notranslate"><span class="pre">obj</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
+</dd>
+</dl>
+<p>Inspired from:
+- <a class="reference external" href="https://docs.python.org/3/howto/descriptor.html">https://docs.python.org/3/howto/descriptor.html</a>
+- <a class="reference external" href="https://github.com/dabeaz/python-cookbook/blob/master/src/9/multiple_dispatch_with_function_annotations/example1.py">https://github.com/dabeaz/python-cookbook/blob/master/src/9/multiple_dispatch_with_function_annotations/example1.py</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.MetaScenarioDefinition.InitWrapper.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">__init__()</span></code> wrapper call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – <p>Positional arguments.</p>
+<p>First item should normally be the <a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioDefinition</span></code></a> instance the initializer is executed for.</p>
+</p></li>
+<li><p><strong>kwargs</strong> – Named arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Pushes the scenario definition to the building context of the scenario stack before the initializer’s execution,
+then removes it out after the initializer’s execution.</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScenarioDefinition</span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="scenario.stepuserapi.html#scenario.stepuserapi.StepUserApi" title="scenario.stepuserapi.StepUserApi"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepUserApi</span></code></a>, <a class="reference internal" href="scenario.assertions.html#scenario.assertions.Assertions" title="scenario.assertions.Assertions"><code class="xref py py-class docutils literal notranslate"><span class="pre">Assertions</span></code></a>, <a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
+<p>Base class for any final test scenario.</p>
+<p>See the <a class="reference internal" href="../quickstart.html#quickstart"><span class="std std-ref">quickstart guide</span></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.getinstance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getinstance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarScenarioDefinitionType</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.getinstance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expects and retrieves the current scenario definition with its appropriate type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The current scenario definition instance, typed with the final user scenario definition class this method is called onto.</p>
+</dd>
+</dl>
+<p>The “current” scenario is actually the one being executed or built.</p>
+<p>Makes it possible to easily access the attributes and methods defined with a user scenario definition.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.location">
+<span class="sig-name descname"><span class="pre">location</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.locations.html#scenario.locations.CodeLocation" title="scenario.locations.CodeLocation"><span class="pre">CodeLocation</span></a></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Definition location.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.script_path">
+<span class="sig-name descname"><span class="pre">script_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.path.html#scenario.path.Path" title="scenario.path.Path"><span class="pre">Path</span></a></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.script_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Script path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario name: i.e. script pretty path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.continue_on_error">
+<span class="sig-name descname"><span class="pre">continue_on_error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.continue_on_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Continue on error option.</p>
+<p>Local configuration for the current scenario.</p>
+<p>Prevails on <a class="reference internal" href="scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR" title="scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ScenarioConfig.Key.CONTINUE_ON_ERROR</span></code></a>
+(see <a class="reference internal" href="scenario.scenariorunner.html#scenario.scenariorunner.ScenarioRunner._shouldstop" title="scenario.scenariorunner.ScenarioRunner._shouldstop"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioRunner._shouldstop()</span></code></a>).</p>
+<p>Not set by default.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.__attributes">
+<span class="sig-name descname"><span class="pre">__attributes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.__attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario attributes (see <a class="reference internal" href="scenario.scenarioconfig.html#scenario.scenarioconfig.ScenarioConfig.expectedscenarioattributes" title="scenario.scenarioconfig.ScenarioConfig.expectedscenarioattributes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ScenarioConfig.expectedscenarioattributes()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.__step_definitions">
+<span class="sig-name descname"><span class="pre">__step_definitions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><span class="pre">StepDefinition</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.__step_definitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of steps that define the scenario.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.execution">
+<span class="sig-name descname"><span class="pre">execution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.scenarioexecution.html#scenario.scenarioexecution.ScenarioExecution" title="scenario.scenarioexecution.ScenarioExecution"><span class="pre">ScenarioExecution</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.execution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scenario execution, if any.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonical string representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human readable string representation of the scenario definition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.setattribute">
+<span class="sig-name descname"><span class="pre">setattribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">enum.Enum</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.setattribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines an attribute for the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Attribute name.</p></li>
+<li><p><strong>value</strong> – Attribute value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">self</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.getattribute">
+<span class="sig-name descname"><span class="pre">getattribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">enum.Enum</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.getattribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves an attribute value defined with the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – Attribute name.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Attribute value.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>KeyError</strong> – When the attribute name is not defined.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.getattributenames">
+<span class="sig-name descname"><span class="pre">getattributenames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.getattributenames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all attribute names defined with the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of attribute names, sorted in alphabetical order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.section">
+<span class="sig-name descname"><span class="pre">section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.stepsection.html#scenario.stepsection.StepSection" title="scenario.stepsection.StepSection"><span class="pre">StepSection</span></a></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a step section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>section_description</strong> – Description for the section.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The section step just added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.addstep">
+<span class="sig-name descname"><span class="pre">addstep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">VarStepDefinitionType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">VarStepDefinitionType</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.addstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds steps to the step list defining the scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>step_definition</strong> – Step definition to add.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The step just added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.getstep">
+<span class="sig-name descname"><span class="pre">getstep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_specification</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StepSpecificationType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><span class="pre">StepDefinition</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.getstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds a step definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_specification</strong> – Step specification (see <code class="xref py py-attr docutils literal notranslate"><span class="pre">stepdefinition.StepSpecificationType</span></code>), or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>index</strong> – Step index in the matching list. Last item when not specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Step definition found, if any.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.expectstep">
+<span class="sig-name descname"><span class="pre">expectstep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_specification</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">StepSpecificationType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="scenario.stepdefinition.html#scenario.stepdefinition.StepDefinition" title="scenario.stepdefinition.StepDefinition"><span class="pre">StepDefinition</span></a></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.expectstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expects a step definition.</p>
+<p>When the step cannot be found, an exception is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_specification</strong> – Step specification (see <code class="xref py py-attr docutils literal notranslate"><span class="pre">stepdefinition.StepSpecificationType</span></code>), or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>index</strong> – Step index in the matching list. Last item when not specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Expected step.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>KeyError</strong> – When the step definition could not be found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.steps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition.log_class">
+<span class="sig-name descname"><span class="pre">log_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition.log_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition._logger">
+<span class="sig-name descname"><span class="pre">_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">logging.Logger</span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition._logger" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Logger</span></code> instance as a member variable.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition._debug_enabled">
+<span class="sig-name descname"><span class="pre">_debug_enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition._debug_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> to enable log debugging.
+<code class="docutils literal notranslate"><span class="pre">None</span></code> lets the configuration tells whether debug log lines should be displayed for this logger.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition._log_color">
+<span class="sig-name descname"><span class="pre">_log_color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.console.html#scenario.console.Console.Color" title="scenario.console.Console.Color"><span class="pre">Console.Color</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition._log_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional log color configuration.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition._indentation">
+<span class="sig-name descname"><span class="pre">_indentation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition._indentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logger indentation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinition._extra_flags">
+<span class="sig-name descname"><span class="pre">_extra_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="scenario.logextradata.html#scenario.logextradata.LogExtraData" title="scenario.logextradata.LogExtraData"><span class="pre">LogExtraData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinition._extra_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extra flags configurations.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinitionHelper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ScenarioDefinitionHelper</span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinitionHelper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Scenario definition helper methods.</p>
+<p>Avoids the public exposition of methods for internal implementation only.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinitionHelper.getscenariodefinitionclassfromscript">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getscenariodefinitionclassfromscript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AnyPathType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinitionHelper.getscenariodefinitionclassfromscript" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the scenario definitions classes from a Python script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>script_path</strong> – Path of a Python script.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Scenario definition classes, if any.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinitionHelper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">definition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#scenario.scenariodefinition.ScenarioDefinition" title="scenario.scenariodefinition.ScenarioDefinition"><span class="pre">ScenarioDefinition</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinitionHelper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instanciates a helper for the given scenario definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>definition</strong> – Scenario definition instance this helper works for.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinitionHelper.definition">
+<span class="sig-name descname"><span class="pre">definition</span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinitionHelper.definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Related scenario definition.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinitionHelper._logger">
+<span class="sig-name descname"><span class="pre">_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="scenario.logger.html#scenario.logger.Logger" title="scenario.logger.Logger"><span class="pre">Logger</span></a></em><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinitionHelper._logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make this class log as if it was part of the <code class="xref py py-class docutils literal notranslate"><span class="pre">ScenarioRunner</span></code> execution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scenario.scenariodefinition.ScenarioDefinitionHelper.buildsteps">
+<span class="sig-name descname"><span class="pre">buildsteps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scenario.scenariodefinition.ScenarioDefinitionHelper.buildsteps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the scenario step list by inspecting the user scenario class,
+and feeds the scenario definition step list.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scenario.scenarioconfig.html"
+                          title="previous chapter">scenario.scenarioconfig module</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="scenario.scenarioevents.html"
+                          title="next chapter">scenario.scenarioevents module</a></p>
+  </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioevents.html" title="scenario.scenarioevents module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scenario.scenarioconfig.html" title="scenario.scenarioconfig module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">scenario  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../devel.html" >Development</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../devel.design.html" >Design</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../devel.design.pydoc.html" >Source documentation</a> &#187;</li>
+          <li class="nav-item nav-item-4"><a href="scenario.html" >scenario package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">scenario.scenariodefinition module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020-2023 Alexis Royer &lt;https://github.com/alxroyer/scenario&gt;.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>
