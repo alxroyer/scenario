@@ -17,6 +17,9 @@ paths:
   # Do not modify the APACHE-2.0 license file.
   "/LICENSES/APACHE-LICENSE-2.0.txt": "binary"
 
+  # Don't modify neither the documentation output.
+  "/doc/html/**/*": "binary"
+
   # Text file specifications.
   "*.suite": "text"
   "*.uml": "text"

@@ -21,6 +21,7 @@ paths:
   "/demo/*": null
   "/doc/data/*.json": null
   "/doc/data/*.campaign.xml": null
+  "/doc/html/**/*": null
   "/LICENSES/APACHE-LICENSE-2.0.txt": null
   "/tools/conf/license-header-text.txt": null
   "*.log": null
