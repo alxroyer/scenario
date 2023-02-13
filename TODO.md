@@ -18,7 +18,7 @@
 ## Roadmap to v0.3.0
 
 - Improve README.md:
-    - Fix `repo-checklicenseheaders`
+    - Publish documentation on readthedocs.
 - Issue #66: Avoid redefining `argparse` API.
     - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
     - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
