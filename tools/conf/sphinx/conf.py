@@ -110,8 +110,9 @@ add_module_names = False  # Inspired from https://stackoverflow.com/questions/20
 #               The default is 'alabaster'."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_theme
 # See https://www.sphinx-doc.org/en/master/usage/theming.html#builtin-themes
+# Define no template. Let the default template take place on https://readthedocs.org/.
 # html_theme = "bizstyle"
-html_theme = "pyramid"  # Warning: Does not display admonition titles.
+# html_theme = "pyramid"  # Warning: Does not display admonition titles.
 
 # [SPHINX_CONF]: "A dictionary of options that influence the look and feel of the selected theme.
 #                 These are theme-specific."

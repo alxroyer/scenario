@@ -19,7 +19,6 @@
 
 - Improve README.md:
     - Publish documentation on readthedocs.
-    - Use readthedocs's default template.
     - Move 'doc/src/uml/uml.conf' in 'tools/conf/sphinx/'.
 - Issue #66: Avoid redefining `argparse` API.
     - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
