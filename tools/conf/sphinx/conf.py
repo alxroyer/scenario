@@ -73,6 +73,10 @@ version = "0.2.2"
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-extensions
 extensions = []  # Will be extended later in this script.
 
+# [SPHINX_CONF]: "If true, the reST sources are included in the HTML build as ``_sources/name``. The default is ``True``."
+# See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_copy_source
+html_copy_source = False
+
 # [SPHINX_CONF]: "A list of glob-style patterns that should be excluded when looking for source files.
 #                 They are matched against the source file names relative to the source directory, using slashes as directory separators on all platforms."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-exclude_patterns
