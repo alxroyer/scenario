@@ -50,12 +50,12 @@ author = "Alexis Royer <alexis.royer@gmail.com>"
 
 # [SPHINX_CONF]: "A copyright statement in the style '2008, Author Name'."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-copyright
-copyright = "2021, Alexis Royer <alexis.royer@gmail.com>"  # noqa  ## Shadows built-in name 'copyright'
+copyright = "2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>"  # noqa  ## Shadows built-in name 'copyright'
 
 # [SPHINX_CONF]: "The major project version, used as the replacement for |version|.
 #                 For example, for the Python documentation, this may be something like 2.6."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-version
-version = "1.0.0"
+version = "0.2.2"
 
 
 # General configuration
