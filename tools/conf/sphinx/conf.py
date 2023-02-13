@@ -331,10 +331,15 @@ class PyDoc:
         """
         sphinxdebug("PyDoc.sphinx_configinited()")
 
-        sphinxinfo(f"app.confdir={app.confdir!r}")
-        sphinxinfo(f"app.doctreedir={app.doctreedir!r}")
-        sphinxinfo(f"app.outdir={app.outdir!r}")
-        sphinxinfo(f"app.srcdir={app.srcdir!r}")
+        sphinxdebug("app.confdir=%r", app.confdir)
+        sphinxdebug("app.doctreedir=%r", app.doctreedir)
+        sphinxdebug("app.outdir=%r", app.outdir)
+        sphinxdebug("app.srcdir=%r", app.srcdir)
+
+        _expected_src_dir = MAIN_PATH / "doc" / "src"  # type: pathlib.Path
+        if pathlib.Path(app.srcdir) != _expected_src_dir:
+            sphinxinfo(f"Fixing source directory from {app.srcdir!r} to {str(_expected_src_dir)!r}")
+            app.srcdir = str(_expected_src_dir)
 
     def sphinx_builderinited(
             self,
