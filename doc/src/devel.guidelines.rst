@@ -109,19 +109,6 @@ Deliver on an integration branch
 Deliver a new version
 ---------------------
 
-0. Merge on the master branch:
-
-   .. code-block:: bash
-
-       git checkout master
-       git merge --squash --ff-only int/vX.Y.Z+
-
-   Update the commit message, then:
-
-   .. code-block:: bash
-
-       git commit
-
 1. Check the scenario version stored in the code:
 
    Check the version tuple defined in 'src/pkginfo.py'.
@@ -130,28 +117,15 @@ Deliver a new version
 
 2. Apply :ref:`delivery checking <guidelines.deliver>` as described before.
 
-3. Update the documentation:
-
-   Check the ``copyright`` and ``version`` variables in 'tools/conf/sphinx/conf.py'.
-
-   Regenerate the documentation:
-
-   .. code-block:: bash
-
-       rm -rf doc/html/
-       ./tools/mkdoc.py
-
-   Commit modifications (with the ``--amend`` option).
-
-4. Add a tag on the final node:
+3. Add a tag on the final node:
 
    .. code-block:: bash
 
        git tag vX.Y.Z
 
-5. Push on the github repository:
+4. Push on the central repository:
 
    .. code-block:: bash
 
        git push
-       git push vX.Y.Z
+       git push --tags
