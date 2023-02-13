@@ -17,6 +17,6 @@
 from . import paths
 from .checktypes import CheckTypes
 from .deps import shouldupdate
-from .loggenerator import LogGenerator
+from .mkdoc import MkDoc
 from .subprocess import SubProcess
 from .thirdparty import checkthirdpartytoolversion

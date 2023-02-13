@@ -36,11 +36,11 @@ import sys
 import types
 import typing
 
-
-# Constants
-# =========
-
 MAIN_PATH = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
+sys.path.append(str(MAIN_PATH / "src"))
+sys.path.append(str(MAIN_PATH / "tools" / "src"))
+import scenario  # noqa: E402  ## Module level import not at top of file
+import scenario.tools  # noqa: E402  ## Module level import not at top of file
 
 
 # Project information
@@ -336,10 +336,13 @@ class PyDoc:
         sphinxdebug("app.outdir=%r", app.outdir)
         sphinxdebug("app.srcdir=%r", app.srcdir)
 
-        _expected_src_dir = MAIN_PATH / "doc" / "src"  # type: pathlib.Path
-        if pathlib.Path(app.srcdir) != _expected_src_dir:
-            sphinxinfo(f"Fixing source directory from {app.srcdir!r} to {str(_expected_src_dir)!r}")
-            app.srcdir = str(_expected_src_dir)
+        # Fix 'doc/src' path if needed.
+        if pathlib.Path(app.srcdir) != scenario.tools.paths.DOC_SRC_PATH:
+            sphinxinfo(f"Fixing source directory from {app.srcdir!r} to {scenario.tools.paths.DOC_SRC_PATH.abspath!r}")
+            app.srcdir = scenario.tools.paths.DOC_SRC_PATH.abspath
+
+        # Update 'doc/src/py' files.
+        scenario.tools.MkDoc().sphinxapidoc()
 
     def sphinx_builderinited(
             self,
