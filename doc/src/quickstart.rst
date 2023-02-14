@@ -23,12 +23,7 @@ Quick start
 Create your first test scenario
 -------------------------------
 
-.. todo:: Documentation needed for steps as objects.
-
-    This section describes in details how to write steps using ``step...()`` methods,
-    but it may be worth showing how to write steps with classes right away in the quickstart.
-
-The example below shows how to describe a test scenario.
+The example below shows how to describe a test scenario with step methods.
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
@@ -176,3 +171,20 @@ Give your scenario script as a positional argument to execute it:
 .. note:: The output presented above is a simplified version for documentation concerns.
           By default, test outputs are colored, and log lines give their timestamp
           (see :ref:`log colors <logging.colors>` and :ref:`log date/time <logging.date-time>` sections).
+
+
+.. _quickstart.reuse:
+
+Test code reuse
+---------------
+
+In order to quickly get a first test case running,
+the example before defines a scenario with `step methods`.
+
+As introduced in the :ref:`purpose section <purpose>`,
+the `scenario` framework is better being used with :ref:`step objects <step-objects>` for test code reuse.
+
+If you're interested in test code reuse,
+go straight away to :ref:`step object <step-objects>` or :ref:`subscenario <subscenarios>` sections.
+
+Otherwise, take a dive in the :ref:`advanced menu <advanced>` for further information on `scenario` features.

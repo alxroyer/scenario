@@ -429,7 +429,7 @@ from .stats import ExecTotalStats  # noqa: E402  ## Module level import not at t
 __doc__ += """
 .. py:attribute:: stack
 
-    Sscenario stack instance.
+    Scenario stack instance.
 """
 # noinspection PyPep8Naming
 from .scenariostack import SCENARIO_STACK as stack  # noqa: E402  ## Module level import not at top of file

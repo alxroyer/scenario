@@ -2,17 +2,53 @@
 
 ## Purpose
 
-`scenario` is a test framework with the following key features:
-- Test code reuse:
-    - Quickly write tests by instanciating steps just as *legos*, sequencing them as scenarios.
-    - Reuse existing scenarios as subscenario utils (initial conditions, transitions, ...)
-- Powerful logging system.
-- Handful configuration facilities.
-- Test documentation definition along the test code.
-- Rich assertion API, with evidence collection.
-- Flexible known issue tracking.
-- Campaign executions.
-- Test reports.
+The *scenario* library is a framework for writing and executing full campaigns of tests,
+with human-readable documentation.
+
+A *scenario* test case is a sequence of *steps*, executed one after the others,
+defining a *story* by the way.
+
+---
+
+One of the main interests of *scenario* is its ability to *reuse test code*:
+- [Step objects](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.step-objects.html):
+  Instanciate steps  one after the others, just like bricks,
+  and quickly write different versions of a story
+  (like a nominal test scenario, then alternative scenarios).
+- [Subscenarios](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.subscenarios.html):
+  Reuse existing test cases as subscenario utils,
+  a fair way to set up initial conditions for instance.
+
+Another strength of the *scenario* framework is its *documentation facilities*:
+- Tie the test documentation (actions, expected results) right next to the related test code
+  (see [quickstart](https://scenario-testing-framework.readthedocs.io/en/latest/quickstart.html) for an overview).
+  By the way, the code is more understandable, and the whole easier to maintain.
+- Easily collect test [evidence](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.evidence.html),
+  just by using the [assertion API](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.assertions.html) provided.
+- Use [execution reports](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.reports.html)
+  to generate deliverable documentation in the end.
+
+---
+
+*scenario* also comes with a set of high quality features,
+making tests easier to write and maintain:
+
+- Rich [assertion API](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.assertions.html),
+  with [evidence](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.evidence.html) collection (as introduced above).
+- Powerful [logging system](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.logging.html),
+  with class loggers, indentation and colorization.
+- Handful [configuration facilities](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.config-db.html).
+- [Campaign](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.campaigns.html) definition and execution.
+- [Scenario](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.reports.html)
+  and [campaign reports](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.campaigns.html#campaign-reports).
+- [Stability](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.stability.html) investigation tools.
+- Flexible [known issue](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.known-issues.html) and test workaround tracking.
+- ...
+
+
+## Example
+
+TODO
 
 
 ## Documentation

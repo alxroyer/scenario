@@ -15,26 +15,45 @@
 
 .. _purpose:
 
-Purpose of the `scenario` framework
-===================================
+Purpose of the `scenario` testing framework
+===========================================
 
-:py:mod:`scenario` is a framework to write and execute full campaigns of functional tests.
+The `scenario` library is a framework for writing and executing full campaigns of tests,
+with human-readable documentation.
 
-A scenario test case is a set of ordered steps executed one after the others.
-It describes a story from the beginning to the end of the test.
+A `scenario` test case is a sequence of `steps`, executed one after the others,
+defining a `story` by the way.
 
-One of the main interets of working with :py:mod:`scenario` is its ability to reuse a scenario, either:
+---
 
-- to derivate the normal set of steps of a nominal scenario in order to write error test cases from the first one,
-- or in initial condition steps, to bring the software or system under test in an appropriate state before the actual test steps begin.
+One of the main interests of `scenario` is its ability to `reuse test code`:
 
-The :py:mod:`scenario` framework also comes with a set of useful features to write, execute and debug tests:
+- :ref:`Step objects <step-objects>`:
+  Instanciate steps  one after the others, just like bricks,
+  and quickly write different versions of a story
+  (like a nominal test scenario, then alternative scenarios).
+- :ref:`Subscenarios <subscenarios>`:
+  Reuse existing test cases as subscenario utils,
+  a fair way to set up initial conditions for instance.
 
-- :ref:`log classes <logging.class-loggers>`, logging :ref:`indentation <logging.indentation>` and :ref:`colorization <logging.colors>`,
-- :ref:`rich assertions <assertions>`,
-- :ref:`evidence collection <evidence>`,
-- :ref:`configurations <config-db>`,
-- :ref:`handlers <handlers>`,
-- :ref:`campaign executions <campaigns>`,
-- :ref:`scenario <reports>` and :ref:`campaign report <campaigns.reports>` generations,
+Another strength of the `scenario` framework is its `documentation facilities`:
+
+- Tie the test documentation (actions, expected results) right next to the related test code
+  (see :ref:`quickstart <quickstart.first-scenario>` for an overview).
+  By the way, the code is more understandable, and the whole easier to maintain.
+- Easily collect test :ref:`evidence <evidence>`, just by using the :ref:`assertion API <assertions>` provided.
+- Use :ref:`execution reports <reports>` to generate deliverable documentation in the end.
+
+---
+
+`scenario` also comes with a set of high quality features,
+making tests easier to write and maintain:
+
+- Rich :ref:`assertion API <assertions>`, with :ref:`evidence <evidence>` collection (as introduced above).
+- Powerful :ref:`logging system <logging>`, with class loggers, indentation and colorization.
+- Handful :ref:`configuration facilities <config-db>`.
+- :ref:`Campaign <campaigns>` definition and execution.
+- :ref:`Scenario <reports>` and :ref:`campaign reports <campaigns.reports>`.
+- :ref:`Stability <stability>` investigation tools.
+- Flexible :ref:`known issue <known-issues>` and test workaround tracking.
 - ...

@@ -20,6 +20,8 @@
 - Improve README.md:
     - Publish documentation on readthedocs.
     - Move 'doc/src/uml/uml.conf' in 'tools/conf/sphinx/'.
+    - Check readthedocs keywords from the purpose text.
+    - Find a better subscenario demo.
 - Issue #66: Avoid redefining `argparse` API.
     - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
     - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
