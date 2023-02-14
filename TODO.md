@@ -18,10 +18,8 @@
 ## Roadmap to v0.3.0
 
 - Improve README.md:
-    - Publish documentation on readthedocs.
+    - Publish documentation on readthedocs (check final settings).
     - Move 'doc/src/uml/uml.conf' in 'tools/conf/sphinx/'.
-    - Check readthedocs keywords from the purpose text.
-    - Find a better subscenario demo.
 - Issue #66: Avoid redefining `argparse` API.
     - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
     - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
@@ -48,5 +46,5 @@
 
 - Issue #32: Fix scenario report JSON schema.
 - Documentation:
-    - Update the *Quickstart* section: tell about step objects.
+    - Find better step objects / subscenario demos.
 - Issue #15: Documentation: Set the final deliverable version: 1.0.0.

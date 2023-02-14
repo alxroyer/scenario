@@ -21,7 +21,7 @@ One of the main interests of *scenario* is its ability to *reuse test code*:
 
 Another strength of the *scenario* framework is its *documentation facilities*:
 - Tie the test documentation (actions, expected results) right next to the related test code
-  (see [quickstart](https://scenario-testing-framework.readthedocs.io/en/latest/quickstart.html) for an overview).
+  (see example below for an overview).
   By the way, the code is more understandable, and the whole easier to maintain.
 - Easily collect test [evidence](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.evidence.html),
   just by using the [assertion API](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.assertions.html) provided.
@@ -48,17 +48,68 @@ making tests easier to write and maintain:
 
 ## Example
 
-TODO
+Please refer to the [quickstart documenation](https://scenario-testing-framework.readthedocs.io/en/latest/quickstart.html)
+for details on the example below.
+
+```Python
+# -*- coding: utf-8 -*-
+
+import scenario
+
+
+class CommutativeAddition(scenario.Scenario):
+
+    SHORT_TITLE = "Commutative addition"
+    TEST_GOAL = "Addition of two members, swapping orders."
+
+    def __init__(self, a=1, b=3):
+        scenario.Scenario.__init__(self)
+        self.a = a
+        self.b = b
+        self.result1 = 0
+        self.result2 = 0
+
+    def step000(self):
+        self.STEP("Initial conditions")
+
+        if self.ACTION(f"Let a = {self.a}, and b = {self.b}"):
+            self.evidence(f"a = {self.a}")
+            self.evidence(f"b = {self.b}")
+
+    def step010(self):
+        self.STEP("a + b")
+
+        if self.ACTION("Compute (a + b) and store the result as result1."):
+            self.result1 = self.a + self.b
+            self.evidence(f"result1 = {self.result1}")
+
+    def step020(self):
+        self.STEP("b + a")
+
+        if self.ACTION("Compute (b + a) and store the result as result2."):
+            self.result2 = self.b + self.a
+            self.evidence(f"result2 = {self.result2}")
+
+    def step030(self):
+        self.STEP("Check")
+
+        if self.ACTION("Compare result1 and result2."):
+            pass
+        if self.RESULT("result1 and result2 are the same."):
+            self.assertequal(self.result1, self.result2)
+            self.evidence(f"{self.result1} == {self.result2}")
+```
 
 
 ## Documentation
 
-Official publication for documentation still pending.
+See the [online documentation](https://scenario-testing-framework.readthedocs.io/).
 
-Meanwhile, please read through:
-- [demo scripts](./demo/),
-- [documentation sources](./doc/src/) (ReStructured Text).
-
+> **Disclaimer**
+>
+> The documentation is not complete yet.
+> A couple of chapters still need to be filled in or improved.
+> Feel free to contribute on that point (see issue [#13](https://github.com/alxroyer/scenario/issues/13)).
 
 ## License
 
