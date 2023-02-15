@@ -104,8 +104,7 @@ The related test script should be placed below these ``if`` statements:
     :language: python
     :lines: 28-29
 
-This makes it possible for the :py:mod:`scenario` library
-to call the step methods for different purposes:
+This makes it possible for the `scenario` library to call the step methods for different purposes:
 
 1. to peak all the action and expected result descriptions, without executing the test script:
     in that case, the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()`
@@ -145,7 +144,7 @@ Scenario execution
 A scenario must be executed with a launcher script.
 
 A default launcher script is provided within the 'bin' directory
-(from the main directory of the :py:mod:`scenario` library):
+(from the main directory of the `scenario` library):
 
 .. code-block:: bash
 

@@ -34,7 +34,7 @@ from .testerrors import TestError
 
 class ScenarioEvent(StrEnum):
     """
-    Events described by the :mod:`scenario` framework.
+    Events described by the `scenario` framework.
 
     :const:`BEFORE_TEST_CASE` differs from :const:`BEFORE_TEST` in that
     :const:`BEFORE_TEST_CASE` is triggered within the context of a campaign execution

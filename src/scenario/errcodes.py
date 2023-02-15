@@ -26,7 +26,7 @@ import typing
 
 class ErrorCode(enum.IntEnum):
     """
-    Error codes enumerate.
+    Error codes enum.
 
     .. note:: Codes inspired from HTTP status codes, but with error codes less than 256.
 

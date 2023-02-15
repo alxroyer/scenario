@@ -22,7 +22,7 @@ Scenario attributes
 
     - May commonly be used to manage additional info like: test title, test objective, names of features tested.
     - Expected scenario attributes.
-    - Best practice: use of enumerate.
+    - Best practice: use of enums.
     - Best practice: overload `scenario.Scenario` with an initializer that requires your own scenario attributes.
     - ``--extra-info`` option, applicable for test and campaign launchers.
     - Extra info may be configured by default in your own launcher.

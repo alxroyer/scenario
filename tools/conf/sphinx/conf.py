@@ -144,7 +144,7 @@ if TODO_EXT:
 # ======
 # See https://www.sphinx-doc.org/en/master/usage/extensions/graphviz.html
 
-# No need to use the :mod:`sphinx.ext.graphviz` extension in as much as PlantUML is used directly to generate the diagrams.
+# No need to use the ``sphinx.ext.graphviz`` extension in as much as PlantUML is used directly to generate the diagrams.
 # extensions.append("sphinx.ext.graphviz")
 
 
@@ -259,7 +259,9 @@ class PyDoc:
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
-        # :mod:`sphinx` events:
+        # ``sphinx`` events:
+        # ==================
+
         # See [SPHINX_CORE_EVENTS] https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
         # for an overview of events that happen during a build.
         #
@@ -307,7 +309,9 @@ class PyDoc:
         # 16. event.build-finished(app, exception)
         app.connect("build-finished", self.sphinx_buildfinished)
 
-        # :mod:`autodoc` events.
+        # ``autodoc`` events.
+        # ===================
+
         # See [SPHINX_AUTODOC_EVENTS]:
         # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#docstring-preprocessing
         # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#skipping-members
@@ -723,7 +727,7 @@ class PyDoc:
             # in as much as sphinx-build automatically fills this parameter with what is inherited from the base builtin types (usually `object`).
             _is_documented = (obj.__doc__ is not None)
         elif (obj is not None) and isinstance(obj, enum.EnumMeta):
-            # Do not check the `lines` parameters for enumerates,
+            # Do not check the `lines` parameters for enums,
             # in as much as `sphinx-build` automatically fills this parameter with the defaut :class:`enum.Enum`'s docstring.
             _is_documented = (lines != ["An enumeration.", ""])
         if not _is_documented:

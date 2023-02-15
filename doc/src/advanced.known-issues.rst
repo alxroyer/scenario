@@ -29,7 +29,7 @@ seeing the test in the :py:const:`scenario.executionstatus.ExecutionStatus.FAIL`
 apparently because of that known issue,
 may occult useful information on other possible regressions.
 
-That's the reason why the :mod:`scenario` framework provides an API in order to register known issues in the tests
+That's the reason why the `scenario` framework provides an API in order to register known issues in the tests
 (see :py:meth:`scenario.stepuserapi.StepUserApi.knownissue()` and :py:class:`scenario.knownissues.KnownIssue`).
 
 

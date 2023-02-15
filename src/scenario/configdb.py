@@ -212,7 +212,7 @@ class ConfigDatabase(Logger):
         """
         Displays the configuration database with the given log level.
 
-        :param log_level: :mod:`logging` log level.
+        :param log_level: ``logging`` log level.
         """
         self._root.show(log_level)
 

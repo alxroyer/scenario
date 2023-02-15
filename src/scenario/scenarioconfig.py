@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-:mod:`scenario` framework configurations.
+`scenario` framework configurations.
 """
 
 import typing
@@ -35,16 +35,16 @@ from .path import Path
 
 class ScenarioConfig:
     """
-    :mod:`scenario` configuration management.
+    `scenario` configuration management.
 
-    This class defines static methods that helps reading :mod:`scenario` configurations:
+    This class defines static methods that help reading `scenario` configurations:
     from the program arguments (see: :class:`.args.Args`),
     and the configuration database (see: :class:`.configdb.ConfigDatabase`).
     """
 
     class Key(StrEnum):
         """
-        :mod:`scenario` configuration keys.
+        `scenario` configuration keys.
         """
 
         # Time & logging.
@@ -413,7 +413,7 @@ class ScenarioConfig:
 __doc__ += """
 .. py:attribute:: ScenarioConfigKey
 
-    Shortcut to the :class:`ScenarioConfig.Key` enumerate in order to make it possible to import it without the :class:`ScenarioConfig` class.
+    Shortcut to the :class:`ScenarioConfig.Key` enum in order to make it possible to import it without the :class:`ScenarioConfig` class.
 """
 ScenarioConfigKey = ScenarioConfig.Key
 

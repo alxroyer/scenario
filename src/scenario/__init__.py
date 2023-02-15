@@ -205,7 +205,7 @@ __doc__ += """
 
     Alias of :class:`.scenarioconfig.ScenarioConfig.Key`.
 
-    :mod:`scenario` configuration keys.
+    `scenario` configuration keys.
 """
 from .scenarioconfig import ScenarioConfigKey as ConfigKey  # noqa: E402  ## Module level import not at top of file
 
@@ -524,6 +524,6 @@ __doc__ += """
 
     Alias of :mod:`.enumutils`.
 
-    Enumerate utils.
+    Enum utils.
 """
 from . import enumutils as enum  # noqa: E402  ## Module level import not at top of file

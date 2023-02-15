@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-`enum` augmentations.
+``enum`` augmentations.
 """
 
 import enum
@@ -24,14 +24,14 @@ import typing
 
 class StrEnum(str, enum.Enum):
     """
-    String enumerate.
+    String enum.
     """
 
     def __str__(self):  # type: (...) -> str
         """
-        Returns the enumerate value (as ``enum.IntEnum.__int__()`` does) instead of a qualified enumerate name.
+        Returns the enum value (as ``enum.IntEnum.__int__()`` does) instead of a qualified enum name.
 
-        :return: Enumerate value.
+        :return: Enum value.
         """
         assert isinstance(self.value, str)
         return self.value
@@ -41,13 +41,13 @@ def enum2str(
         value,  # type: typing.Union[enum.Enum, str]
 ):  # type: (...) -> str
     """
-    Ensures a string value from a string/enumerate union.
+    Ensures a string value from a string/enum union.
 
-    :param value: String already, or string enumerate.
+    :param value: String already, or string enum.
     :return: String.
 
     .. note::
-        ``value`` if given as an enumerate is basically expected to be a string enumerate.
+        ``value`` if given as an enum is basically expected to be a string enum.
         Whether this is not the case, the value is converted as a string anyways.
     """
     if isinstance(value, enum.Enum):

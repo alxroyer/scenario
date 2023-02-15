@@ -168,7 +168,7 @@ class CampaignReport(Logger):
         # [CUBIC]: "time in seconds to execute all test suites."
         _xml_test_suites.setattr("time", str(campaign_execution.time.elapsed))
 
-        # :mod:`scenario` statistic, non JUnit standard...
+        # `scenario` statistics, non JUnit standard...
         _xml_test_suites.setattr("steps-executed", str(campaign_execution.steps.executed))
         _xml_test_suites.setattr("steps-total", str(campaign_execution.steps.total))
         _xml_test_suites.setattr("actions-executed", str(campaign_execution.actions.executed))
@@ -224,7 +224,7 @@ class CampaignReport(Logger):
             finally:
                 self.popindentation()
 
-        # Eventually check the :mod:`scenario` statistic, which are properties of :class:`.campaignexecution.CampaignExecution`.
+        # Eventually check the `scenario` statistics, which are properties of :class:`.campaignexecution.CampaignExecution`.
         self._xmlcheckstats(_xml_test_suites, "steps-executed", _campaign_execution.test_suite_executions)
         self._xmlcheckstats(_xml_test_suites, "steps-total", _campaign_execution.test_suite_executions)
         self._xmlcheckstats(_xml_test_suites, "actions-total", _campaign_execution.test_suite_executions)
@@ -299,7 +299,7 @@ class CampaignReport(Logger):
         # [CUBIC]: "when the test was executed in ISO 8601 format (2014-01-21T16:17:18). Timezone may not be specified. optional"
         _xml_test_suite.setattr("timestamp", toiso8601(test_suite_execution.time.start) if test_suite_execution.time.start else "")
 
-        # :mod:`scenario` statistic, non JUnit standard...
+        # `scenario` statistics, non JUnit standard...
         _xml_test_suite.setattr("steps-executed", str(test_suite_execution.steps.executed))
         _xml_test_suite.setattr("steps-total", str(test_suite_execution.steps.total))
         _xml_test_suite.setattr("actions-executed", str(test_suite_execution.actions.executed))
@@ -375,7 +375,7 @@ class CampaignReport(Logger):
             finally:
                 self.popindentation()
 
-        # Eventually check the :mod:`scenario` statistic, which are properties of :class:`.campaignexecution.TestSuite`.
+        # Eventually check the `scenario` statistics, which are properties of :class:`.campaignexecution.TestSuite`.
         self._xmlcheckstats(xml_test_suite, "steps-executed", _test_suite_execution.test_case_executions)
         self._xmlcheckstats(xml_test_suite, "steps-total", _test_suite_execution.test_case_executions)
         self._xmlcheckstats(xml_test_suite, "actions-total", _test_suite_execution.test_case_executions)
@@ -422,7 +422,7 @@ class CampaignReport(Logger):
         # [CUBIC]: "Time taken (in seconds) to execute the test. optional"
         _xml_test_case.setattr("time", str(test_case_execution.time.elapsed))
 
-        # :mod:`scenario` statistic, non JUnit standard...
+        # `scenario` statistics, non JUnit standard...
         _xml_test_case.setattr("steps-executed", str(test_case_execution.steps.executed))
         _xml_test_case.setattr("steps-total", str(test_case_execution.steps.total))
         _xml_test_case.setattr("actions-executed", str(test_case_execution.actions.executed))
@@ -567,7 +567,7 @@ class CampaignReport(Logger):
                 self.warning(f"Mismatching status {xml_test_case.getattr('status')!r} while no error")
 
         if _test_case_execution.scenario_execution:
-            # Check the :mod:`scenario` statistic, which are properties of :class:`.campaignexecution.TestCase`.
+            # Check the `scenario` statistics, which are properties of :class:`.campaignexecution.TestCase`.
             self._xmlcheckstats(xml_test_case, "steps-executed", [_test_case_execution.scenario_execution])
             self._xmlcheckstats(xml_test_case, "steps-total", [_test_case_execution.scenario_execution])
             self._xmlcheckstats(xml_test_case, "actions-total", [_test_case_execution.scenario_execution])

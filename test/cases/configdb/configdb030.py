@@ -113,13 +113,13 @@ class ConfigDb030(scenario.test.TestCase):
         self.addstep(CheckConfigValue("val", read_as=None, expected_type=str, expected_value="val"))
         self.addstep(CheckConfigValue("val", read_as=bool, expected_type=ValueError, origin=_code_location_origin))
 
-        self.section("Enumerate values")
+        self.section("Enum values")
         self.addstep(StoreConfigValue("val", ConfigDb030.SampleEnum.A))
         self.addstep(CheckConfigValue("val", read_as=None, expected_type=str, expected_value=str(ConfigDb030.SampleEnum.A.value)))
         self.addstep(StoreConfigValue("val", ConfigDb030.SampleIntEnum.A))
         self.addstep(CheckConfigValue("val", read_as=None, expected_type=int, expected_value=ConfigDb030.SampleIntEnum.A.value))
 
-        self.section("Enumerate definitions")
+        self.section("Enum definitions")
         self.addstep(StoreConfigValue("str-list", ConfigDb030.SampleEnum))
         self.addstep(CheckConfigValue("str-list", read_as=None, expected_type=list))
         self.addstep(CheckConfigValue("str-list[0]", read_as=None, expected_type=str, expected_value=str(ConfigDb030.SampleEnum.A.value)))
