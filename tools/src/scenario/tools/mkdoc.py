@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
@@ -33,22 +32,54 @@ class MkDoc:
 
     PLANTUML_PATH = paths.TOOLS_LIB_PATH / "plantuml.1.2020.15.jar"  # type: scenario.Path
 
+    class Args(scenario.Args):
+        def __init__(self):  # type: (...) -> None
+            scenario.Args.__init__(self, class_debugging=False)
+
+            self.setdescription("Documentation builder.")
+
+            self.logs = False  # type: bool
+            self.addarg("Log generation", "logs", bool).define(
+                "--logs",
+                action="store_true", default=False,
+                help=f"Update log files only.",
+            )
+
+            self.uml = False  # type: bool
+            self.addarg("UML diagram generation", "uml", bool).define(
+                "--uml",
+                action="store_true", default=False,
+                help=f"Update UML diagrams only.",
+            )
+
+        @property
+        def all(self):  # type: (...) -> bool
+            if self.logs:
+                return False
+            if self.uml:
+                return False
+            return True
+
     def run(self):  # type: (...) -> None
 
         # Command line arguments.
-        scenario.Args.setinstance(scenario.Args(class_debugging=False))
+        scenario.Args.setinstance(MkDoc.Args())
         scenario.Args.getinstance().setdescription("Documentation generation.")
         if not scenario.Args.getinstance().parse(sys.argv[1:]):
             sys.exit(int(scenario.Args.getinstance().error_code))
 
+        # Execution.
         scenario.Path.setmainpath(paths.MAIN_PATH)
         self.checktools()
-        self.buildlogs()
-        self.builddiagrams()
-        # `sphinxapidoc()` directly called from 'tools/conf/sphinx/conf.py',
-        # so that documentation generation from https://readthedocs.org/ generate the 'doc/src/py/' files automatically.
-        # self.sphinxapidoc()
-        self.sphinxbuild()
+        if MkDoc.Args.getinstance().all or MkDoc.Args.getinstance().logs:
+            self.buildlogs()
+        if MkDoc.Args.getinstance().all or MkDoc.Args.getinstance().uml:
+            self.builddiagrams()
+        if MkDoc.Args.getinstance().all:
+            # `sphinxapidoc()` directly called from 'tools/conf/sphinx/conf.py',
+            # so that documentation generation from https://readthedocs.org/ generate the 'doc/src/py/' files automatically.
+            # self.sphinxapidoc()
+            self.sphinxbuild()
 
     def checktools(self):  # type: (...) -> None
         checkthirdpartytoolversion("sphinx-apidoc", ["sphinx-apidoc", "--version"])
@@ -228,7 +259,7 @@ class MkDoc:
         """
         Builds the documentation diagrams.
         """
-        _cfg_path = paths.DOC_SRC_PATH / "uml" / "umlconf.uml"  # type: scenario.Path
+        _cfg_path = paths.TOOLS_CONF_PATH / "umlconf.uml"  # type: scenario.Path
         for _path in (paths.DOC_SRC_PATH / "uml").iterdir():  # type: scenario.Path
             if _path.is_file() and _path.name.endswith(".uml") and (not _path.samefile(_cfg_path)):
                 _png_outpath = _path.parent / _path.name.replace(".uml", ".png")  # type: scenario.Path
