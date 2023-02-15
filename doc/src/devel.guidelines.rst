@@ -155,3 +155,9 @@ Deliver a new version
 
        git push
        git push vX.Y.Z
+
+6. Configure readthedocs:
+
+   Go to the `readthedocs project page <https://readthedocs.org/projects/scenario-testing-framework/>`_.
+
+   Configure a build for the new version, and set it as the default.
