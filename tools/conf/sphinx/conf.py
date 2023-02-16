@@ -36,6 +36,12 @@ import sys
 import types
 import typing
 
+MAIN_PATH = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
+sys.path.append(str(MAIN_PATH / "src"))
+sys.path.append(str(MAIN_PATH / "tools" / "src"))
+import scenario  # noqa: E402  ## Module level import not at top of file
+import scenario.tools  # noqa: E402  ## Module level import not at top of file
+
 
 # Project information
 # ===================
@@ -50,12 +56,12 @@ author = "Alexis Royer <alexis.royer@gmail.com>"
 
 # [SPHINX_CONF]: "A copyright statement in the style '2008, Author Name'."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-copyright
-copyright = "2021, Alexis Royer <alexis.royer@gmail.com>"  # noqa  ## Shadows built-in name 'copyright'
+copyright = "2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>"  # noqa  ## Shadows built-in name 'copyright'
 
 # [SPHINX_CONF]: "The major project version, used as the replacement for |version|.
 #                 For example, for the Python documentation, this may be something like 2.6."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-version
-version = "1.0.0"
+version = "0.2.2"
 
 
 # General configuration
@@ -66,6 +72,10 @@ version = "1.0.0"
 #                 These can be extensions coming with Sphinx (named sphinx.ext.*) or custom ones."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-extensions
 extensions = []  # Will be extended later in this script.
+
+# [SPHINX_CONF]: "If true, the reST sources are included in the HTML build as ``_sources/name``. The default is ``True``."
+# See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_copy_source
+html_copy_source = False
 
 # [SPHINX_CONF]: "A list of glob-style patterns that should be excluded when looking for source files.
 #                 They are matched against the source file names relative to the source directory, using slashes as directory separators on all platforms."
@@ -100,8 +110,9 @@ add_module_names = False  # Inspired from https://stackoverflow.com/questions/20
 #               The default is 'alabaster'."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_theme
 # See https://www.sphinx-doc.org/en/master/usage/theming.html#builtin-themes
+# Define no template. Let the default template take place on https://readthedocs.org/.
 # html_theme = "bizstyle"
-html_theme = "pyramid"  # Warning: Does not display admonition titles.
+# html_theme = "pyramid"  # Warning: Does not display admonition titles.
 
 # [SPHINX_CONF]: "A dictionary of options that influence the look and feel of the selected theme.
 #                 These are theme-specific."
@@ -133,7 +144,7 @@ if TODO_EXT:
 # ======
 # See https://www.sphinx-doc.org/en/master/usage/extensions/graphviz.html
 
-# No need to use the :mod:`sphinx.ext.graphviz` extension in as much as PlantUML is used directly to generate the diagrams.
+# No need to use the ``sphinx.ext.graphviz`` extension in as much as PlantUML is used directly to generate the diagrams.
 # extensions.append("sphinx.ext.graphviz")
 
 
@@ -169,6 +180,13 @@ def sphinxdebug(
     sphinxlogger().debug(f"[conf] {fmt}", *args)
 
 
+def sphinxinfo(
+        msg,  # type: str
+):  # type: (...) -> None
+    sphinxlogger().debug("[conf] INFO: %s", msg)
+    sphinxlogger().info(msg)
+
+
 def sphinxwarning(
         msg,  # type: str
 ):  # type: (...) -> None
@@ -186,7 +204,6 @@ def sphinxwarning(
 extensions.append("sphinx.ext.autodoc")
 
 # Autodoc needs the path to be set appropriately so that the Python modules can be loaded and inspected.
-MAIN_PATH = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
 sys.path.insert(0, str(MAIN_PATH / "src"))
 
 # [SPHINX_AUTODOC]: "This value selects what content will be inserted into the main body of an autoclass directive. (...)
@@ -242,12 +259,18 @@ class PyDoc:
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
-        # :mod:`sphinx` events:
+        # ``sphinx`` events:
+        # ==================
+
         # See [SPHINX_CORE_EVENTS] https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
         # for an overview of events that happen during a build.
         #
         # 1. event.config-inited(app,config)
+        app.connect("config-inited", self.sphinx_configinited)
+
         # 2. event.builder-inited(app)
+        app.connect("builder-inited", self.sphinx_builderinited)
+
         # 3. event.env-get-outdated(app, env, added, changed, removed)
         # 4. event.env-before-read-docs(app, env, docnames)
         #
@@ -284,8 +307,11 @@ class PyDoc:
         #
         # 15. Generate output files
         # 16. event.build-finished(app, exception)
+        app.connect("build-finished", self.sphinx_buildfinished)
 
-        # :mod:`autodoc` events.
+        # ``autodoc`` events.
+        # ===================
+
         # See [SPHINX_AUTODOC_EVENTS]:
         # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#docstring-preprocessing
         # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#skipping-members
@@ -294,6 +320,49 @@ class PyDoc:
         sphinx.ext.autodoc.object_description = self.autodoc_objectdescription  # type: ignore  ## Incompatible types in assignment
         app.connect("autodoc-process-signature", self.autodoc_processsignature)
         app.connect("autodoc-process-docstring", self.autodoc_processdocstring)
+
+    def sphinx_configinited(
+            self,
+            app,  # type: sphinx.application.Sphinx
+            config,  # type: sphinx.application.Config
+    ):  # type: (...) -> None
+        """
+        https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-config-inited
+
+        [SPHINX_CORE_EVENTS]:
+            config-inited(app, config)
+
+            Emitted when the config object has been initialized.
+        """
+        sphinxdebug("PyDoc.sphinx_configinited()")
+
+        sphinxdebug("app.confdir=%r", app.confdir)
+        sphinxdebug("app.doctreedir=%r", app.doctreedir)
+        sphinxdebug("app.outdir=%r", app.outdir)
+        sphinxdebug("app.srcdir=%r", app.srcdir)
+
+        # Fix 'doc/src' path if needed.
+        if pathlib.Path(app.srcdir) != scenario.tools.paths.DOC_SRC_PATH:
+            sphinxinfo(f"Fixing source directory from {app.srcdir!r} to {scenario.tools.paths.DOC_SRC_PATH.abspath!r}")
+            app.srcdir = scenario.tools.paths.DOC_SRC_PATH.abspath
+
+        # Update 'doc/src/py' files.
+        scenario.tools.MkDoc().sphinxapidoc()
+
+    def sphinx_builderinited(
+            self,
+            app,  # type: sphinx.application.Sphinx
+    ):  # type: (...) -> None
+        """
+        See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-builder-inited
+
+        [SPHINX_CORE_EVENTS]:
+            builder-inited(app)
+
+            Emitted when the builder object has been created.
+            It is available as ``app.builder``.
+        """
+        sphinxdebug("PyDoc.sphinx_builderinited()")
 
     def sphinx_envupdated(
             self,
@@ -312,6 +381,7 @@ class PyDoc:
             and will be (re-)written during the writing phase.
         """
         sphinxdebug("PyDoc.sphinx_envupdated(env=%r)", env)
+
         self._warnundocitems()
 
     def sphinx_doctreeresolved(
@@ -335,6 +405,25 @@ class PyDoc:
         """
         sphinxdebug("PyDoc.sphinx_doctreeresolved(doctree=%r, docname=%r)", doctree, docname)
         self._simplifyreferences(docname, doctree)
+
+    def sphinx_buildfinished(
+            self,
+            app,  # type: sphinx.application.Sphinx
+            exception,  # type: typing.Optional[Exception]
+    ):  # type: (...) -> None
+        """
+        See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-build-finished
+
+        [SPHINX_CORE_EVENTS]:
+            build-finished(app, exception)
+
+            Emitted when a build has finished, before Sphinx exits, usually used for cleanup.
+            This event is emitted even when the build process raised an exception, given as the exception argument.
+            The exception is reraised in the application after the event handlers have run.
+            If the build process raised no exception, exception will be None.
+            This allows to customize cleanup actions depending on the exception status.
+        """
+        sphinxdebug("PyDoc.sphinx_buildfinished(exception=%r)", exception)
 
     def autodoc_skipmember(
             self,
@@ -638,7 +727,7 @@ class PyDoc:
             # in as much as sphinx-build automatically fills this parameter with what is inherited from the base builtin types (usually `object`).
             _is_documented = (obj.__doc__ is not None)
         elif (obj is not None) and isinstance(obj, enum.EnumMeta):
-            # Do not check the `lines` parameters for enumerates,
+            # Do not check the `lines` parameters for enums,
             # in as much as `sphinx-build` automatically fills this parameter with the defaut :class:`enum.Enum`'s docstring.
             _is_documented = (lines != ["An enumeration.", ""])
         if not _is_documented:

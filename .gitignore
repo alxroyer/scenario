@@ -15,10 +15,8 @@
 /.idea/
 /.mypy_cache/
 /doc/src/py/
-/doc/src/uml/*.png
 /doc/html/
 /test/results/
 
 __pycache__/
 *.pyc
-

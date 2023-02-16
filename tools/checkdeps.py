@@ -25,7 +25,7 @@ MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
-# :mod:`scenario` imports.
+# `scenario` imports.
 import scenario  # noqa: E402  ## Module level import not at top of file
 import scenario.tools  # noqa: E402  ## Module level import not at top of file
 
@@ -128,7 +128,7 @@ class ModuleDeps:
         DONE = "done"
 
     all = {}  # type: typing.Dict[str, ModuleDeps]
-    #: TODO: Use :mod:`scenario` logging indentation facilities instead?
+    #: TODO: Use `scenario` logging indentation facilities instead?
     indent_count = 0  # type: int
 
     @staticmethod

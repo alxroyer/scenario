@@ -18,7 +18,7 @@
 Development
 ===========
 
-This page describes how to develop the :py:mod:`scenario` library.
+This page describes how to develop the `scenario` library.
 
 .. toctree::
     :maxdepth: 3

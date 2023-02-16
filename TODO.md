@@ -42,6 +42,6 @@
 ## Roadmap to v1.0.0
 
 - Issue #32: Fix scenario report JSON schema.
-- Documentation:
-    - Update the *Quickstart* section: tell about step objects.
+- Issue #16: Documentation:
+    - Find better step objects / subscenario demos.
 - Issue #15: Documentation: Set the final deliverable version: 1.0.0.

@@ -33,7 +33,7 @@ import typing
 __doc__ += """
 .. py:attribute:: DURATION_REGEX
 
-    Regular expression matching a duration as displayed by :mod:`scenario` (i.e. last part of ISO8601).
+    Regular expression matching a duration as displayed by `scenario` (i.e. last part of ISO8601).
 """
 DURATION_REGEX = r"[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3,}"  # type: str
 

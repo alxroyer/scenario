@@ -144,7 +144,7 @@ class ConfigNode:
                 for _field_name in data:  # type: str
                     self.set(subkey=_field_name, data=data[_field_name], origin=origin)
 
-            # List data (or enumerate definitions).
+            # List data (or enum definitions).
             elif isinstance(data, (list, enum.EnumMeta)):
                 # Instanciate / check this node manages a list of sub-nodes.
                 if self._data is None:
@@ -154,7 +154,7 @@ class ConfigNode:
                 # Add sub-nodes for each item of the input list.
                 for _index in range(len(data)):  # type: int
                     self._data.append(ConfigNode(parent=self, key=f"{self.key}[{len(self._data)}]"))
-                    # Apply `list()` on `data` so that enumerate definitions can be indexed.
+                    # Apply `list()` on `data` so that enum definitions can be indexed.
                     self._data[-1].set(list(data)[_index], origin=origin)
 
             # Final value.
@@ -194,7 +194,7 @@ class ConfigNode:
         # - `IntEnum` to integers,
         elif isinstance(data, enum.IntEnum):
             self._data = data.value
-        # - other enumerates to strings,
+        # - other enums to strings,
         elif isinstance(data, enum.Enum):
             self._data = str(data.value)
         # - store the data as is otherwise.
@@ -243,7 +243,7 @@ class ConfigNode:
         """
         Displays the configuration database with the given log level.
 
-        :param log_level: :mod:`logging` log level.
+        :param log_level: ``logging`` log level.
         """
         from .configdb import CONFIG_DB
 

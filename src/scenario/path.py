@@ -61,7 +61,7 @@ class Path:
         Sets the main path, used to compute the relative :attr:`prettypath`.
 
         :param path: New main path.
-        :param log_level: Log level (as defined by the standard :mod:`logging` package) to use for the related log line.
+        :param log_level: Log level (as defined by the standard ``logging`` package) to use for the related log line.
         """
         from .loggermain import MAIN_LOGGER
 

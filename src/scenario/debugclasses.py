@@ -15,9 +15,9 @@
 # limitations under the License.
 
 """
-:mod:`scenario` debugging.
+`scenario` debugging.
 
-The :class:`DebugClass` enumerate defines the :mod:`scenario` debug classes (see: :class:`.logger.Logger`).
+The :class:`DebugClass` enum defines the `scenario` debug classes (see: :class:`.logger.Logger`).
 """
 
 # `StrEnum` used for inheritance.
@@ -26,7 +26,7 @@ from .enumutils import StrEnum
 
 class DebugClass(StrEnum):
     """
-    :mod:`scenario` debug classes.
+    `scenario` debug classes.
     """
     #: Program arguments debugging.
     ARGS = "scenario.Args"
