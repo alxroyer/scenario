@@ -75,7 +75,7 @@ if typing.TYPE_CHECKING:
 __doc__ += """
 .. py:attribute:: unittest
 
-    :class:`unittest.TestCase` instance used to call :mod:`unittest` assertion functions.
+    :class:`unittest.TestCase` instance used to call ``unittest`` assertion functions.
 """
 unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 

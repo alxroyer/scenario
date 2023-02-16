@@ -15,8 +15,8 @@
 
 .. _subscenarios:
 
-Subscenarios: reuse of scenarios in other scenarios
-===================================================
+Subscenarios: reuse existing scenarios in other scenarios
+=========================================================
 
 Scenarios can be reused as subscenarios in other ones.
 
@@ -27,14 +27,6 @@ for the following purposes:
 - reuse a nominal scenario as the initial condition of other ones,
   in order to bring the system or software under test in the expected initial state,
 - repeat a base scenario with varying input data.
-
-
-.. _subscenarios.alternative-scenarios:
-
-Alternative scenarios
----------------------
-
-.. todo:: Documentation needed for alternative scenarios.
 
 
 .. _subscenarios.initial-conditions:
@@ -49,6 +41,9 @@ Initial conditions
 
 Varying input data
 ------------------
+
+.. todo:: Improve subscenario documentation with a better example.
+
 
 In order to illustrate this use case of subscenarios,
 let's get back to the previous ``CommutativeAddition`` scenario

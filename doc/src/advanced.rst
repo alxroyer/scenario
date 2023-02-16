@@ -18,12 +18,6 @@
 Advanced usage
 ==============
 
-.. todo:: Documentation needed for advanced usage:
-
-    - Error management and assertions
-    - Inspections: handlers, scenario execution stack
-
-
 .. toctree::
     :maxdepth: 2
 
@@ -31,10 +25,12 @@ Advanced usage
     advanced.logging
     advanced.evidence
     advanced.error-management
+    advanced.stability
     advanced.known-issues
     advanced.test-libs
     advanced.handlers
     advanced.config-db
+    advanced.step-objects
     advanced.subscenarios
     advanced.goto
     advanced.multiple-executions
@@ -42,3 +38,4 @@ Advanced usage
     advanced.reports
     advanced.scenario-attributes
     advanced.launcher
+    advanced.scenario-stack

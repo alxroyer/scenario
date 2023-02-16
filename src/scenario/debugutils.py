@@ -122,7 +122,7 @@ class SafeRepr(DelayedStr):
     """
     Delays the computation of the safe canonical representation of an object.
 
-    Same as :mod:`unittest`, safe representation means that the string computed while not exceed a given length,
+    Same as ``unittest``, safe representation means that the string computed while not exceed a given length,
     so that it remains human readable.
     """
 

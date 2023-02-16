@@ -18,7 +18,7 @@
 Design
 ======
 
-This page describes the design of the :py:mod:`scenario` library.
+This page describes the design of the `scenario` library.
 
 .. toctree::
     :maxdepth: 2

@@ -663,11 +663,11 @@ class Assertions:
         :param string: String (or bytes) to check.
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
-        :return: :mod:`re` match object.
+        :return: ``re`` match object.
 
         .. note::
-            The ``regex`` and ``string`` parameters follow the usual order of :mod:`re` functions
-            (contrary to :mod:`unittest` ``assertRegex()``).
+            The ``regex`` and ``string`` parameters follow the usual order of ``re`` functions
+            (contrary to ``unittest`` ``assertRegex()``).
         """
         from .debugutils import saferepr
 
@@ -708,8 +708,8 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
 
         .. note::
-            The ``regex`` and ``string`` parameters follow the usual order of :mod:`re` functions
-            (contrary to :mod:`unittest` ``assertNotRegex()``).
+            The ``regex`` and ``string`` parameters follow the usual order of ``re`` functions
+            (contrary to ``unittest`` ``assertNotRegex()``).
         """
         from .debugutils import saferepr
 

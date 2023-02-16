@@ -15,17 +15,8 @@
 
 # TODO
 
-## Roadmap to v0.3.0
+## Roadmap to v0.2.3
 
-- Improve README.md:
-    - Improve 'Purpose' section.
-    - Remove license header at the top of the file, set it in the 'License' section.
-    - Bad reference to "BSD license" at the bottom.
-- Issue #66: Avoid redefining `argparse` API.
-    - Get rid of the `Args.addarg()` method and `ArgInfo` helper class.
-    - Idea: Use reflexion for argument definitions (recognizing a '_arg...' or '_defarg...' method name pattern),
-      and properties for typing and conversions.
-    - Check 'advanced.launcher.rst'.
 - Issue #58: Add sections for program arguments
     - `--help` show be presented alone at first
     - Then default `scenario` options could be presented in a first dedicated section.
@@ -44,9 +35,14 @@
     2. Prefer a `InternetSectionBegin` / `InternetSectionEnd` + goto approach (instead of `EnsureInternetConnection.isup()`).
 
 
+## Roadmap to v0.3.0
+
+- Issue #66: Avoid redefining `argparse` API.
+    - Integrate branch 'feature/#66/use-argparse-directly'.
+
+
 ## Roadmap to v1.0.0
 
 - Issue #32: Finalize scenario report JSON schema v1.
-- Documentation:
-    - Update the *Quickstart* section: tell about step objects.
-- Issue #15: Documentation: Set the final deliverable version: 1.0.0.
+- Issue #13: Documentation:
+    - Find better step objects / subscenario demos.
