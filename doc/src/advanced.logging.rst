@@ -21,7 +21,7 @@ Logging
 Logging is one of the first useful means that help investigating on test executions.
 That's the reason why a particular attention is paid to providing efficient logging facilities.
 
-For the purpose, the :py:mod:`scenario` framework makes use and extends the standard :py:mod:`logging` library.
+For the purpose, the `scenario` framework makes use and extends the standard ``logging`` library.
 
 
 .. _logging.log-levels:
@@ -29,7 +29,7 @@ For the purpose, the :py:mod:`scenario` framework makes use and extends the stan
 Log levels
 ----------
 
-As :py:mod:`logging` proposes it, log levels are defined by ``int`` values.
+As the system ``logging`` module proposes it, log levels are defined by ``int`` values.
 The *ERROR*, *WARNING*, *INFO* and *DEBUG* log levels are mostly to be considered.
 
 *ERROR*, *WARNING* and *INFO* log records are always displayed.
@@ -58,8 +58,8 @@ It may disabled through the :ref:`scenario.log_date_time <config-db.scenario.log
 Main logger
 -----------
 
-The :py:mod:`scenario` framework defines a main logger.
-It uses a regular :py:class:`logging.Logger` instance with 'scenario' for name [#logging-instance-attribute]_.
+The `scenario` framework defines a main logger.
+It uses a regular ``logging.Logger`` instance with ``'scenario'`` for name [#logging-instance-attribute]_.
 
 It is accessible through the :py:attr:`scenario.logging` variable.
 
@@ -100,7 +100,7 @@ A :py:class:`scenario.logger.Logger` instance may be created directly.
 
 But a common pattern is to inherit from :py:class:`scenario.logger.Logger`,
 either directly (see :ref:`test libraries <test-libs>`) or through an intermediate class.
-A couple of :py:mod:`scenario` classes inherit from the :py:class:`scenario.logger.Logger` class,
+A couple of `scenario` classes inherit from the :py:class:`scenario.logger.Logger` class,
 among others:
 
 - :py:class:`scenario.Scenario`,
@@ -168,7 +168,7 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
     :class: tip
 
     .. [#logging-instance-attribute]
-        In case you need to manipulate :mod:`logging` instance directly,
+        In case you need to manipulate ``logging`` instance directly,
         the :py:class:`logging.Logger` instances are available through the :py:attr:`scenario.logger.Logger.logging_instance` property.
 
         The :py:attr:`scenario.logger.Logger.logging_instance` property is available to both main logger and class loggers.
@@ -179,7 +179,7 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
 Colors
 ------
 
-The :py:mod:`scenario` framework manages colorization in the console, which facilitates hot analyses of the log flow.
+The `scenario` framework manages colorization in the console, which facilitates hot analyses of the log flow.
 
 Log colors may be disabled through the :ref:`scenario.log_color <config-db.scenario.log_color>` configuration value.
 
@@ -222,7 +222,7 @@ Indentation
 
 Log indentation also contributes in facilitating log analyses.
 
-The :py:mod:`scenario` provides several indentation mechanisms.
+The `scenario` framework provides several indentation mechanisms.
 
 
 .. _logging.indentation.scenario-stack:
@@ -230,18 +230,18 @@ The :py:mod:`scenario` provides several indentation mechanisms.
 Scenario stack indentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When :ref:`sub-scenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
+When :ref:`subscenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
 
 Example of output from the `commutativeadditions.py <../../demo/commutativeadditions.py>`_ sample test.
 
-.. Sub-scenario output log example: 'commutativeadditions.py'.
+.. Subscenario output log example: 'commutativeadditions.py'.
 .. literalinclude:: ../data/commutativeadditions.log
     :language: none
     :lines: 1-51
 
 *(Output truncated...)*
 
-If a sub-scenario executes another sub-scenario, the '|' indentation is doubled, and so on.
+If a subscenario executes another subscenario, the '|' indentation is doubled, and so on.
 
 
 .. _logging.indentation.class-logger:
@@ -442,7 +442,7 @@ That's the reason why the :py:mod:`scenario.debug` package gathers a couple of f
 Long texts
 ^^^^^^^^^^
 
-The :py:mod:`scenario` logging feature provides a way to log long texts on several lines.
+The `scenario` logging feature provides a way to log long texts on several lines.
 
 To do so, set the ``extra`` parameter using the :py:meth:`scenario.logger.Logger.longtext()` method when logging some text:
 
@@ -465,7 +465,7 @@ The ``max_lines`` parameter may be set to ``None`` in order to display the full 
 File logging
 ------------
 
-The :py:mod:`scenario` logging feature provides the ability to save the test log output into a file.
+The `scenario` logging feature provides the ability to save the test log output into a file.
 
 To do so, set the :ref:`scenario.log_file <config-db.scenario.log_file>` configuration value,
 either with the ``–-config-value`` command line option, or within a configuration file.
@@ -473,7 +473,7 @@ either with the ``–-config-value`` command line option, or within a configurat
 The command line example below
 disables the output in the console,
 but saves it into the 'doc/data/commutativeaddition.log' file
-(from the main directory of the :py:mod:`scenario` library):
+(from the main directory of the `scenario` library):
 
 .. code-block:: bash
 

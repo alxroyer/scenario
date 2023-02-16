@@ -18,7 +18,7 @@
 Configuration database
 ======================
 
-The :py:mod:`scenario` framework provides a general configuration database.
+The `scenario` framework provides a general configuration database.
 
 It is available through the :py:attr:`scenario.conf` attribute.
 
@@ -49,7 +49,7 @@ With the following sample data:
 - `"x.y"` points to the so-named list (the corresponding data being a ``list``),
 - `""` (empty string) points to root node.
 
-.. tip:: Configuration keys may be passed as strings or string enumerates.
+.. tip:: Configuration keys may be passed as strings or string enums.
 
 
 Loading and setting configurations through the command line
@@ -157,9 +157,9 @@ Configuration data can also be set (either sections or lists or single values, s
         * - ``enum.EnumMeta``
           - ``list``
         * - ``enum.IntEnum``
-          - ``int`` form of the enumerate value
+          - ``int`` form of the enum value
         * - Other ``enum.Enum``
-          - ``str`` form of the enumerate value
+          - ``str`` form of the enum value
 
 Configuration nodes can be accessed directly from the code, and provide an API that can be used from the user code
 (see :py:class:`scenario.confignode.ConfigNode`).
@@ -196,15 +196,15 @@ also display the configuration tree with origins.
 
 .. _config-db.scenario:
 
-:py:mod:`scenario` configurable keys and values
------------------------------------------------
+`scenario` configurable keys and values
+---------------------------------------
 
-The following table describes the :py:mod:`scenario` configurable keys & values.
+The following table describes the `scenario` configurable keys & values.
 
 .. tip::
 
-    Use the :py:class:`scenario.ConfigKey` shortcut to the internal :py:class:`scenario.scenarioconfig.ScenarioConfig.Key` enumerate
-    from :py:mod:`scenario` user code.
+    Use the :py:class:`scenario.ConfigKey` shortcut to the internal :py:class:`scenario.scenarioconfig.ScenarioConfig.Key` enum
+    from `scenario` user code.
 
 .. list-table:: Scenario configurable keys and values
     :widths: auto
@@ -327,7 +327,7 @@ The following table describes the :py:mod:`scenario` configurable keys & values.
       - File path string
       - Path of the scenario runner script.
         Useful when executing campaigns: may be used to make your own :ref:`launcher script path <launcher>` be called.
-      - 'bin/run-test.py' provided with the :py:mod:`scenario` framework
+      - 'bin/run-test.py' provided with the `scenario` framework
 
     * - .. _config-db.scenario.scenario_timeout:
 

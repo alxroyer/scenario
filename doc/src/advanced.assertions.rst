@@ -18,7 +18,7 @@
 Assertions
 ==========
 
-The :py:mod:`scenario` framework comes with a rich set of assertion methods, dealing with:
+The `scenario` framework comes with a rich set of assertion methods, dealing with:
 
 - Equalities, inequalities and comparisons,
 - ``None`` values, object references and types,
@@ -58,7 +58,7 @@ All assertion methods generally have the following parameters:
 .. admonition:: ``unittest`` assertions
     :class: note
 
-    The :py:mod:`scenario` assertions take great inspiration from the well known ``unitest`` module.
+    `scenario` assertions take great inspiration from the well known ``unittest`` module.
 
     All ``unittest`` assertions methods may not have their equivalent in the :py:class:`scenario.assertions.Assertions` class.
 

@@ -194,7 +194,7 @@ and use the values given by our :py:class:`DemoArgs` instance already set.
 Return code
 -----------
 
-Eventually, convert the enumerate value returned by :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` into a simple integer value,
+Eventually, convert the enum value returned by :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` into a simple integer value,
 so that the error can be handled in the shell that launched the command line.
 
 .. Error code.

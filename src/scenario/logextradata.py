@@ -27,7 +27,7 @@ from .enumutils import StrEnum
 
 class LogExtraData(StrEnum):
     """
-    Keys to can be used in the dictionary passed on in the ``extra`` parameter of the standard :mod:`logging` functions.
+    Keys to can be used in the dictionary passed on in the ``extra`` parameter of the standard ``logging`` functions.
     """
     #: Current logger reference.
     #:
@@ -52,14 +52,14 @@ class LogExtraData(StrEnum):
     #:
     #: ``True`` by default.
     #:
-    #: Still depends on usual :mod:`logging` configurations.
+    #: Still depends on usual ``logging`` configurations.
     DATE_TIME = "_date_time_"
 
     #: Extra flag: May color be used? (console only)
     #:
     #: ``True`` by default.
     #:
-    #: Still depends on usual :mod:`logging` configurations.
+    #: Still depends on usual ``logging`` configurations.
     COLOR = "_color_"
 
     #: Extra flag: Should the log level be displayed?
@@ -92,12 +92,12 @@ class LogExtraData(StrEnum):
             extra,  # type: typing.Dict[LogExtraData, typing.Any]
     ):  # type: (...) -> typing.Dict[str, typing.Any]
         """
-        Translates a {ExtraFlag: Any} dictionary into a :mod:`logging` compatible dictionary.
+        Translates a `{ExtraFlag: Any}` dictionary into a ``logging`` compatible dictionary.
 
-        The resulting dictionary basically deserves the ``extra`` parameter of :mod:`logging` functions.
+        The resulting dictionary basically deserves the ``extra`` parameter of ``logging`` functions.
 
-        :param extra: Enumerate dictionary to translate.
-        :return: :mod:`logging` compatible dictionary.
+        :param extra: Enum dictionary to translate.
+        :return: ``logging`` compatible dictionary.
         """
         _dict = {}  # type: typing.Dict[str, typing.Any]
         for _enum in extra:  # type: LogExtraData

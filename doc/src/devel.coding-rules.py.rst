@@ -86,7 +86,8 @@ Packages
 
 .. note::
 
-    :py:mod:`scenario.test`, :py:mod:`scenario.tools` subpackages at different locations
+    :py:mod:`scenario.test`, :py:mod:`scenario.tools` subpackages are implemented at different locations,
+    out of the main 'src/' directory.
 
 
 .. _coding-rules.py.static:
@@ -184,10 +185,10 @@ Order of Imports
   - One system import per ``import`` line.
   - Sort imports in the alphabetical order.
 
-2. Then :py:mod:`scenario` imports:
+2. Then `scenario` imports:
 
   - Use the relative form ``from .modulename import ClassName``.
-  - Sort :py:mod:`scenario` imports in the alphabetical order of module names.
+  - Sort `scenario` imports in the alphabetical order of module names.
   - For a given module import statement, sort the symbols imported
     in their alphabetical order as well.
 
@@ -225,8 +226,7 @@ it shall be justified with a comment at the end of the ``import`` line.
 ``typing.TYPE_CHECKING`` import statements shall be justified as well
 (see the :ref:`typing.TYPE_CHECKING <coding-rules.py.imports.TYPE_CHECKING>` section below).
 
-The ``tools/checkdeps.py`` scripts may help visualizing the :py:mod:`scenario`
-module dependencies:
+The 'tools/checkdeps.py' script may help visualizing `scenario` module dependencies:
 
 .. code-block:: bash
 
@@ -327,6 +327,15 @@ Use the ``typing.TYPE_CHECKING`` pattern for two reasons only:
     That's the reason why the ``typing.TYPE_CHECKING`` pattern
     shall be used as less as possible,
     i.e. when cyclic dependencies occur because type hints impose it.
+
+.. todo:: Add 'Type' suffix to ``typing.TYPE_CHECKING`` imports
+
+    Possible workaround for the risk identified above.
+
+    - Makes a differenciation between symbols imported for typings, and symbols imported for execution.
+    - Makes type checkings detect an error when the symbol has not been loaded for execution.
+    - Possibly generalize, and say all symbols imported at the main level should be for type checking only? tbc
+    - See issue #72.
 
 
 .. _coding-rules.py.compat:

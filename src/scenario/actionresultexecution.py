@@ -46,7 +46,7 @@ class ActionResultExecution:
         self.time = TimeStats()  # type: TimeStats
         #: Evidence items.
         self.evidence = []  # type: typing.List[str]
-        #: Sub-scenario executions.
+        #: Subscenario executions.
         self.subscenarios = []  # type: typing.List[ScenarioExecution]
         #: Errors.
         self.errors = []  # type: typing.List[TestError]

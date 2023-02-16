@@ -18,7 +18,7 @@ import enum
 
 
 class IssueLevel(enum.IntEnum):
-    #: Issues related to the System Under Test, i.e. the :mod:`scenario` library.
+    #: Issues related to the System Under Test, i.e. the `scenario` library itself in this case.
     SUT = 30
 
     #: Issues related to the tests.

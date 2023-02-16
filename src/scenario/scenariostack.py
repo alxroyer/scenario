@@ -311,7 +311,7 @@ class ScenarioStack(Logger):
         Current scenario definition under execution.
 
         The latest unterminated subscenario if any,
-        i.e. the main scenario if no current sub-scenario.
+        i.e. the main scenario if no current subscenario.
 
         Almost equivalent to :attr:`current_scenario_execution`, but retrieves the scenario definition instance.
         """
@@ -325,7 +325,7 @@ class ScenarioStack(Logger):
         Current scenario execution instance.
 
         The latest unterminated subscenario if any,
-        i.e. the main scenario if no current sub-scenario.
+        i.e. the main scenario if no current subscenario.
 
         Almost equivalent to :attr:`current_scenario_definition`, but retrieves the scenario execution instance.
         """

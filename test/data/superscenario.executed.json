@@ -19,12 +19,12 @@
 
   "name": "test/data/superscenario.py",
   "attributes": {
-    "TITLE": "Sub-scenario sample"
+    "TITLE": "Subscenario sample"
   },
   "steps": [
     {
       "location": "test/data/superscenario.py:37:SuperScenario.step001",
-      "description": "Sub-scenario execution",
+      "description": "Subscenario execution",
       "executions": [
         {
           "number": 1,
@@ -197,7 +197,7 @@
             {
               "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
               "evidence": [
-                "<regex>Sub-scenario executed successfully in \\d+.\\d+ seconds</regex>"
+                "<regex>Subscenario executed successfully in \\d+.\\d+ seconds</regex>"
               ],
               "errors": [],
               "warnings": [],

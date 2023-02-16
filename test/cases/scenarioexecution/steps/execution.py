@@ -73,9 +73,9 @@ class ExecScenario(ExecCommonArgs):
         if self.doexecute():
             self.subprocess = scenario.test.ScenarioSubProcess(*self.scenario_paths)
 
-        # Sub-scenario.
+        # Subscenario.
         if self.subscenario_path:
-            _action_description += f", with '{self.subscenario_path}' for sub-scenario"
+            _action_description += f", with '{self.subscenario_path}' for subscenario"
 
             if self.doexecute():
                 self.subprocess.setconfigvalue(SuperScenario.ConfigKey.SUBSCENARIO_PATH, self.subscenario_path)

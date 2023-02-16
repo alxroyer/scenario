@@ -27,8 +27,8 @@ class SubScenario001(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="Sub-scenario execution",
-            objective="Check log output and JSON report of a scenario that executes another scenario as a sub-scenario.",
+            title="Subscenario execution",
+            objective="Check log output and JSON report of a scenario that executes another scenario as a subscenario.",
             features=[scenario.test.features.SUBSCENARIOS],
         )
 

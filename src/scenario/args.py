@@ -116,9 +116,9 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
         # Initialize parsing members.
         # ===========================
 
-        #: :mod:`argparse` parser object.
+        #: ``argparse`` parser object.
         #:
-        #: Protected member, intentionnally available to subclasses.
+        #: Protected member, intentionally available to subclasses.
         self._arg_parser = argparse.ArgumentParser(add_help=False)  # type: argparse.ArgumentParser
 
         # Fix default `argparse` strings.
@@ -139,12 +139,12 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
 
         #: ``argparse`` parsed arguments opaque result.
         #:
-        #: Protected member, intentionnally available to subclasses.
+        #: Protected member, intentionally available to subclasses.
         self._args = None  # type: typing.Any
 
         #: Argument parsing error code.
         #:
-        #: Public member, intentionnally available to all.
+        #: Public member, intentionally available to all.
         self.error_code = ErrorCode.ARGUMENTS_ERROR  # type: ErrorCode
 
         # Define program arguments.
@@ -152,7 +152,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
 
         #: Help argument group.
         #:
-        #: Protected member, intentionnally available to subclasses.
+        #: Protected member, intentionally available to subclasses.
         self._help_group = self._arg_parser.add_argument_group("Help")
 
         self._help_group.add_argument(

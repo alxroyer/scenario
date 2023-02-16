@@ -413,7 +413,7 @@ class ScenarioReport(Logger):
 
             for _subscenario_execution in _action_result_execution.subscenarios:  # type: ScenarioExecution
                 try:
-                    self.debug("Generation JSON report sor sub-scenario %r", _subscenario_execution.definition)
+                    self.debug("Generation JSON report sor subscenario %r", _subscenario_execution.definition)
                     self.pushindentation("  | ")
                     _json_action_result_execution["subscenarios"].append(self._scenario2json(_subscenario_execution.definition, is_main=False))
                 finally:

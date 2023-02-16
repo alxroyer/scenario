@@ -19,12 +19,12 @@
 
   "name": "test/data/superscenario.py",
   "attributes": {
-    "TITLE": "Sub-scenario sample"
+    "TITLE": "Subscenario sample"
   },
   "steps": [
     {
       "location": "test/data/superscenario.py:37:SuperScenario.step001",
-      "description": "Sub-scenario execution",
+      "description": "Subscenario execution",
       "executions": [],
       "actions-results": [
         {

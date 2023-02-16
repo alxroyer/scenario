@@ -31,6 +31,11 @@ def shouldupdate(
     :param inputs: Input files.
     :return: ``True`` when an input file is newer than the output file, ``False`` otherwise.
     """
+    # If the output file does not exist yet, say it has to be updated.
+    if not output.exists():
+        return True
+
+    # Otherwise, compare file dates.
     def filetime(
             path,  # type: scenario.Path
     ):  # type: (...) -> float
