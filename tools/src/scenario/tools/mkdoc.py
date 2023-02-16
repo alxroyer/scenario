@@ -38,19 +38,27 @@ class MkDoc:
 
             self.setdescription("Documentation builder.")
 
-            self.logs = False  # type: bool
-            self.addarg("Log generation", "logs", bool).define(
+            self._mkdoc_group = self._arg_parser.add_argument_group("MkDoc")  # Type `argparse._ArgumentGroup` not available, let default typing.
+
+            self._mkdoc_group.add_argument(
                 "--logs",
-                action="store_true", default=False,
+                dest="logs", action="store_true", default=False,
                 help=f"Update log files only.",
             )
 
-            self.uml = False  # type: bool
-            self.addarg("UML diagram generation", "uml", bool).define(
+            self._mkdoc_group.add_argument(
                 "--uml",
-                action="store_true", default=False,
+                dest="uml", action="store_true", default=False,
                 help=f"Update UML diagrams only.",
             )
+
+        @property
+        def logs(self):  # type: (...) -> bool
+            return bool(self._args.logs)
+
+        @property
+        def uml(self):  # type: (...) -> bool
+            return bool(self._args.uml)
 
         @property
         def all(self):  # type: (...) -> bool
