@@ -144,7 +144,7 @@ As introduced above, extending the launcher script gives you the opportunity to 
 pre-operations, as soon as the command line arguments have been parsed,
 and post-operations after the test execution.
 
-Our `demo/run-demo.py <../../demo/run-demo.py>`_ script gives examples of pre & post-operations:
+Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run-demo.py>`_ script gives examples of pre & post-operations:
 
 - a welcome message displayed before the test is executed:
 

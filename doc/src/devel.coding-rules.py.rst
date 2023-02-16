@@ -328,14 +328,14 @@ Use the ``typing.TYPE_CHECKING`` pattern for two reasons only:
     shall be used as less as possible,
     i.e. when cyclic dependencies occur because type hints impose it.
 
-.. todo:: Add 'Type' suffix to ``typing.TYPE_CHECKING`` imports
+.. todo:: Add ``Type`` suffix to ``typing.TYPE_CHECKING`` imports
 
     Possible workaround for the risk identified above.
 
-    - Makes a differenciation between symbols imported for typings, and symbols imported for execution.
+    - Makes a difference between symbols imported for typings, and symbols imported for execution.
     - Makes type checkings detect an error when the symbol has not been loaded for execution.
     - Possibly generalize, and say all symbols imported at the main level should be for type checking only? tbc
-    - See issue #72.
+    - See `issue #72 <https://github.com/alxroyer/scenario/issues/72>`_.
 
 
 .. _coding-rules.py.compat:
