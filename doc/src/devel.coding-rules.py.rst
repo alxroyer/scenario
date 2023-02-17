@@ -159,7 +159,8 @@ it has proved that comment type hints did not suffer a couple of limitations com
       for _i in range(10):  # type: int
           pass
 
-- impossible to define the type of a couple of variables initialized from a function returning a tuple.
+- impossible to define the type of a couple of variables initialized from a function returning a tuple
+  (see `PEP 484 - Type comments <https://peps.python.org/pep-0484/#type-comments>`_ as well).
 
   .. code-block:: python
 
@@ -186,27 +187,31 @@ Exceptions for getters, setters and well known special functions when presented 
 
         def __init__(self):  # type: (...) -> None
             """
-            We may extend the constructor parameters in the future => use an ellipsis for the return type.
+            We may extend the constructor parameters in the future
+            => use an ellipsis, even though the method is currently presented on a single line.
             """
             self.__a = 0  # type: int
 
         def __str__(self):  # type: () -> str
             """
-            The :meth:`__str__()` special function is not subject to changes with its parameters => no ellipsis for the return type.
+            The :meth:`__str__()` special function is not subject to changes with its parameters
+            => no ellipsis.
             """
             return ""
 
         @property
         def a(self):  # type: () -> int
             """
-            No parameter for a getter => no ellipsis for the return type.
+            No parameter for a getter
+            => no ellipsis.
             """
             return self.__a
 
         @a.setter
         def a(self, value):  # type: (int) -> None
             """
-            Single parameter for a setter => no ellipsis for the return type.
+            Single parameter for a setter
+            => single line, no ellipsis.
             """
             self.__a = value
 
@@ -217,7 +222,8 @@ Exceptions for getters, setters and well known special functions when presented 
             p3=None,  # type: typing.Optional[bool]
         ):  # type: (...) -> None
             """
-            The list of parameters may evolve in the general case => use an ellipsis for the return type.
+            The list of parameters may evolve in the general case
+            => prefer multi-line presentation, use an ellipsis in any case.
             """
 
 
