@@ -17,11 +17,8 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #58: Add sections for program arguments
-    - `--help` show be presented alone at first
-    - Then default `scenario` options could be presented in a first dedicated section.
-    - Then user defined launchers may set their own options in a dedicated section as well.
 - Issue #71: Avoid using `(...)` for getters, setters, Python special method overrides, ...
+- Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
@@ -38,6 +35,8 @@
 ## Roadmap to v0.3.0
 
 - Issue #66: Avoid redefining `argparse` API.
+    - Integrate branch 'feature/#66/use-argparse-directly'.
+- Issue #58: Add sections for program arguments
     - Integrate branch 'feature/#66/use-argparse-directly'.
 
 
