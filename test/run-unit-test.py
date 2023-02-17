@@ -49,7 +49,7 @@ class UnitTestArgs(scenario.ScenarioArgs):
         self._defscenariopathsarg()
 
     @property
-    def check_expected_attributes(self):  # type: (...) -> bool
+    def check_expected_attributes(self):  # type: () -> bool
         return bool(self._args.check_expected_attributes)
 
 

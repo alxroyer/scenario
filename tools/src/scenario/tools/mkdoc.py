@@ -53,15 +53,15 @@ class MkDoc:
             )
 
         @property
-        def logs(self):  # type: (...) -> bool
+        def logs(self):  # type: () -> bool
             return bool(self._args.logs)
 
         @property
-        def uml(self):  # type: (...) -> bool
+        def uml(self):  # type: () -> bool
             return bool(self._args.uml)
 
         @property
-        def all(self):  # type: (...) -> bool
+        def all(self):  # type: () -> bool
             if self.logs:
                 return False
             if self.uml:

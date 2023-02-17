@@ -39,7 +39,7 @@ class Step(scenario.Step):
         scenario.Step.__init__(self)
 
     @property
-    def test_case(self):  # type: (...) -> TestCase
+    def test_case(self):  # type: () -> TestCase
         _scenario = scenario.stack.building.scenario_definition  # type: typing.Optional[scenario.Scenario]
         # Avoid failing when the `self.scenario` attribute does not exist yet.
         if hasattr(self, "scenario"):
@@ -155,7 +155,7 @@ class VerificationStep(Step):
         return self.exec_step.getexecstep(cls)
 
     @property
-    def subprocess(self):  # type: (...) -> SubProcess
+    def subprocess(self):  # type: () -> SubProcess
         return self.exec_step.subprocess
 
 

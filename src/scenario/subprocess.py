@@ -89,7 +89,7 @@ class SubProcess:
         #: Stderr reader thread routine.
         self._stderr_reader = None  # type: typing.Optional[threading.Thread]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -97,16 +97,16 @@ class SubProcess:
 
         return f"{qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Human readable string representation.
         """
-        _str = self.tostring()[2:-1]  # type: str
+        _str = self.tolongstring()[2:-1]  # type: str
         if len(_str) > 64 - 3:
             _str = _str[:64-3] + "..."
         return f"$({_str})"
 
-    def tostring(self):  # type: (...) -> str
+    def tolongstring(self):  # type: (...) -> str
         """
         Human readable full string representation.
         """
@@ -257,9 +257,9 @@ class SubProcess:
         The sub-process return code is available through the :attr:`returncode` attribute.
         """
         if self._async:
-            self._log(logging.DEBUG, "Launching %s", self.tostring())
+            self._log(logging.DEBUG, "Launching %s", self.tolongstring())
         else:
-            self._log(logging.DEBUG, "Executing %s", self.tostring())
+            self._log(logging.DEBUG, "Executing %s", self.tolongstring())
 
         # Prepare the current working directory.
         _cwd = pathlib.Path.cwd()  # type: AnyPathType
@@ -412,9 +412,9 @@ class SubProcess:
             raise ValueError(f"{self}: Cannot wait before the process is created")
         try:
             if timeout is not None:
-                self._log(logging.DEBUG, "Waiting for %s to terminate within %f seconds", self.tostring(), timeout)
+                self._log(logging.DEBUG, "Waiting for %s to terminate within %f seconds", self.tolongstring(), timeout)
             else:
-                self._log(logging.DEBUG, "Waiting for %s to terminate...", self.tostring())
+                self._log(logging.DEBUG, "Waiting for %s to terminate...", self.tolongstring())
             self.returncode = self._popen.wait(timeout=timeout)
         except subprocess.TimeoutExpired as _err:
             raise TimeoutError(str(_err))
@@ -427,7 +427,7 @@ class SubProcess:
             self._stderr_reader.join()
 
         if self.returncode != 0:
-            self._onerror("%s failed: retcode=%r, stderr=%s", self.tostring(), self.returncode, saferepr(self.stderr))
+            self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, saferepr(self.stderr))
 
         return self
 

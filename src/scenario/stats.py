@@ -43,7 +43,7 @@ class TimeStats:
         #: End time, if specified.
         self._end = None  # type: typing.Optional[float]
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Computes a string representation of the time interval in the '[%s - %s]' form.
 
@@ -54,7 +54,7 @@ class TimeStats:
         return f"[{f2strtime(self.start)} - {f2strtime(self.end)}]"
 
     @property
-    def start(self):  # type: (...) -> typing.Optional[float]
+    def start(self):  # type: () -> typing.Optional[float]
         """
         *Start* time getter.
         """
@@ -66,10 +66,7 @@ class TimeStats:
         return self._start
 
     @start.setter
-    def start(
-            self,
-            start,  # type: float
-    ):  # type: (...) -> None
+    def start(self, start):  # type: (float) -> None
         """
         *Start* time setter.
 
@@ -82,7 +79,7 @@ class TimeStats:
             self._elapsed = None
 
     @property
-    def elapsed(self):  # type: (...) -> typing.Optional[float]
+    def elapsed(self):  # type: () -> typing.Optional[float]
         """
         *Elapsed* time getter.
         """
@@ -94,10 +91,7 @@ class TimeStats:
         return self._elapsed
 
     @elapsed.setter
-    def elapsed(
-            self,
-            elapsed,  # type: float
-    ):  # type: (...) -> None
+    def elapsed(self, elapsed):  # type: (float) -> None
         """
         *Elapsed* time setter.
 
@@ -110,7 +104,7 @@ class TimeStats:
             self._end = None
 
     @property
-    def end(self):  # type: (...) -> typing.Optional[float]
+    def end(self):  # type: () -> typing.Optional[float]
         """
         *End* time getter.
         """
@@ -122,10 +116,7 @@ class TimeStats:
         return self._end
 
     @end.setter
-    def end(
-            self,
-            end,  # type: float
-    ):  # type: (...) -> None
+    def end(self, end):  # type: (float) -> None
         """
         *End* time setter.
 
@@ -215,7 +206,7 @@ class ExecTotalStats:
         #: Count of items executed.
         self.executed = 0  # type: int
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Computes a '%d' or '%d/%d' string representation of the statistics,
         depending on the :attr:`.args.Args.doc_only` parameter.

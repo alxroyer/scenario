@@ -26,10 +26,10 @@ class Feature:
         self.title = title  # type: str
         self.text = text  # type: str
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         return f"<Feature id={self.id!r} title={self.title!r}>"
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         return f"{self.id} - {self.title}"
 
 

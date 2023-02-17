@@ -238,7 +238,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
         return True
 
     @property
-    def parsed(self):  # type: (...) -> bool
+    def parsed(self):  # type: () -> bool
         """
         Parsed flag.
         Tells whether arguments have been successfully parsed yet or not.

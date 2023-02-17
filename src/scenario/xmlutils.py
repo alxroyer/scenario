@@ -52,7 +52,7 @@ class Xml:
             self._xml_doc = xml.dom.minidom.Document()  # type: xml.dom.minidom.Document
 
         @property
-        def root(self):  # type: (...) -> Xml.Node
+        def root(self):  # type: () -> Xml.Node
             """
             :return: Retrieves the root node of the document.
             """
@@ -60,10 +60,7 @@ class Xml:
             return Xml.Node(xml_element=self._xml_doc.documentElement)
 
         @root.setter
-        def root(
-                self,
-                root,  # type: Xml.Node
-        ):  # type: (...) -> None
+        def root(self, root):  # type: (Xml.Node) -> None
             """
             Set the root node of the document.
 
@@ -161,7 +158,7 @@ class Xml:
             self._xml_element = xml_element  # type: xml.dom.minidom.Element
 
         @property
-        def tag_name(self):  # type: (...) -> str
+        def tag_name(self):  # type: () -> str
             """
             :return: Tag name of the node.
             """
@@ -281,7 +278,7 @@ class Xml:
             self._xml_text = xml_text  # type: xml.dom.minidom.Text
 
         @property
-        def data(self):  # type: (...) -> str
+        def data(self):  # type: () -> str
             """
             Text content.
             """

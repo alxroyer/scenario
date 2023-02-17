@@ -65,21 +65,21 @@ class DemoArgs(scenario.ScenarioArgs):
         return True
 
     @property
-    def welcome_message(self):  # type: (...) -> str
+    def welcome_message(self):  # type: () -> str
         if self._args.welcome_name:
             return f"Hello {self._args.welcome_name}!"
         else:
             return "Hello you!"
 
     @property
-    def bye_message(self):  # type: (...) -> str
+    def bye_message(self):  # type: () -> str
         if self._args.welcome_name:
             return f"Bye {self._args.welcome_name}!"
         else:
             return "Bye!"
 
     @property
-    def show_config_db(self):  # type: (...) -> bool
+    def show_config_db(self):  # type: () -> bool
         return self._args.show_config_db
 
 

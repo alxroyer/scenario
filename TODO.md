@@ -17,7 +17,7 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #71: Avoid using `(...)` for getters, setters, Python special method overrides, ...
+- Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
@@ -44,3 +44,6 @@
 - Issue #32: Finalize scenario report JSON schema v1.
 - Issue #13: Documentation:
     - Find better step objects / subscenario demos.
+- Issue #73: Use mypy v1.0.0
+    - Requires Python >=3.7
+    - Try to revert mypy@0.971 workarounds in 'src/scenario/path.py'

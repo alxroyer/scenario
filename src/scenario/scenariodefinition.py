@@ -235,7 +235,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         #: Scenario execution, if any.
         self.execution = None  # type: typing.Optional[ScenarioExecution]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -247,7 +247,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         else:
             return super().__repr__()
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Human readable string representation of the scenario definition.
         """
@@ -374,7 +374,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         return _step_definition
 
     @property
-    def steps(self):  # type: (...) -> typing.List[StepDefinition]
+    def steps(self):  # type: () -> typing.List[StepDefinition]
         """
         Step list.
         """

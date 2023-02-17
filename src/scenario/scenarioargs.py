@@ -88,7 +88,7 @@ class CommonExecArgs:
         return True
 
     @property
-    def doc_only(self):  # type: (...) -> bool
+    def doc_only(self):  # type: () -> bool
         """
         ``True`` when the test(s) is(are) executed for documentation generation only,
         i.e. the test script(s) for actions and verifications should not be executed.
@@ -99,7 +99,7 @@ class CommonExecArgs:
         return bool(self._args.doc_only)
 
     @property
-    def issue_level_error(self):  # type: (...) -> typing.Optional[AnyIssueLevelType]
+    def issue_level_error(self):  # type: () -> typing.Optional[AnyIssueLevelType]
         """
         Error issue level.
         """
@@ -111,7 +111,7 @@ class CommonExecArgs:
         return IssueLevel.parse(self._args.issue_level_error)
 
     @property
-    def issue_level_ignored(self):  # type: (...) -> typing.Optional[AnyIssueLevelType]
+    def issue_level_ignored(self):  # type: () -> typing.Optional[AnyIssueLevelType]
         """
         Ignored issue level.
         """
@@ -241,7 +241,7 @@ class ScenarioArgs(Args, CommonExecArgs):
         return True
 
     @property
-    def json_report(self):  # type: (...) -> typing.Optional[Path]
+    def json_report(self):  # type: () -> typing.Optional[Path]
         """
         JSON report output file path.
         No JSON report when ``None``.
@@ -251,7 +251,7 @@ class ScenarioArgs(Args, CommonExecArgs):
         return None
 
     @property
-    def extra_info(self):  # type: (...) -> typing.Sequence[str]
+    def extra_info(self):  # type: () -> typing.Sequence[str]
         """
         Attribute names to display for extra info.
         Applicable when executing several tests.
@@ -259,7 +259,7 @@ class ScenarioArgs(Args, CommonExecArgs):
         return list(self._args.extra_info)
 
     @property
-    def scenario_paths(self):  # type: (...) -> typing.Sequence[Path]
+    def scenario_paths(self):  # type: () -> typing.Sequence[Path]
         """
         Path of the scenario Python script(s) to execute.
         """

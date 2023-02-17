@@ -60,7 +60,7 @@ class CommonLoggingArgs:
             )
 
     @property
-    def debug_main(self):  # type: (...) -> bool
+    def debug_main(self):  # type: () -> bool
         """
         Main logger debugging.
         """
@@ -78,7 +78,7 @@ class CommonLoggingArgs:
             return True
 
     @property
-    def debug_classes(self):  # type: (...) -> typing.Sequence[str]
+    def debug_classes(self):  # type: () -> typing.Sequence[str]
         """
         Debug classes.
         """

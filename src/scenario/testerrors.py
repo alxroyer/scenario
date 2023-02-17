@@ -59,13 +59,13 @@ class TestError(Exception):
         #: Error location.
         self.location = location  # type: typing.Optional[CodeLocation]
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Short representation of the error.
         """
         return self.message
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Programmatic representation of the error.
         """
@@ -205,7 +205,7 @@ class ExceptionError(TestError):
         # Redefine the type of :attr:`TestError.location` in order to explicitize it cannot be ``None`` for :class:`ExceptionError` instances.
         self.location = self.location  # type: CodeLocation
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Short representation of the exception error.
 

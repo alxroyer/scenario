@@ -56,7 +56,7 @@ class CommonConfigArgs:
         )
 
     @property
-    def config_paths(self):  # type: (...) -> typing.Sequence[Path]
+    def config_paths(self):  # type: () -> typing.Sequence[Path]
         """
         Configuration files.
         """
@@ -68,7 +68,7 @@ class CommonConfigArgs:
         return [Path(_config_path) for _config_path in self._args.config_paths]
 
     @property
-    def config_values(self):  # type: (...) -> typing.Mapping[str, str]
+    def config_values(self):  # type: () -> typing.Mapping[str, str]
         """
         Additional configuration values.
         """

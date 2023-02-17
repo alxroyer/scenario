@@ -27,7 +27,7 @@ class StrEnum(str, enum.Enum):
     String enum.
     """
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Returns the enum value (as ``enum.IntEnum.__int__()`` does) instead of a qualified enum name.
 

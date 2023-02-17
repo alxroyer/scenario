@@ -52,7 +52,7 @@ class ScenarioExpectations:
         self.result_stats = StatExpectations("results", None, None)  # type: StatExpectations
 
     @property
-    def name(self):  # type: (...) -> typing.Optional[str]
+    def name(self):  # type: () -> typing.Optional[str]
         if self.script_path:
             return self.script_path.prettypath
         return None

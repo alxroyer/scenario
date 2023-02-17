@@ -69,7 +69,7 @@ class ConfigNode:
         #: Origins of the configuration value: either a string or the path of the configuration file it was defined in.
         self.origins = []  # type: typing.List[OriginType]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
 
@@ -404,7 +404,7 @@ class ConfigNode:
         return None
 
     @property
-    def data(self):  # type: (...) -> typing.Any
+    def data(self):  # type: () -> typing.Any
         """
         Retrieves the node data as a JSON-like structure, or value as given.
 
@@ -485,7 +485,7 @@ class ConfigNode:
             raise ValueError(self.errmsg(f"{self._data!r} not a valid {qualname(type)} value"))
 
     @property
-    def origin(self):  # type: (...) -> OriginType
+    def origin(self):  # type: () -> OriginType
         """
         Representative origin for the current node.
         """

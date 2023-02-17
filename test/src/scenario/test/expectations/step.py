@@ -38,7 +38,7 @@ class StepExpectations:
         self.description = None  # type: typing.Optional[str]
         self.action_result_expectations = None  # type: typing.Optional[typing.List[ActionResultExpectations]]
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         if self.number is not None:
             return f"step#{self.number}"
         if self.name is not None:

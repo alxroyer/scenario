@@ -182,7 +182,7 @@ class ScenarioRunner(Logger):
     # Scenario execution.
 
     @property
-    def _execution_mode(self):  # type: (...) -> ScenarioRunner.ExecutionMode
+    def _execution_mode(self):  # type: () -> ScenarioRunner.ExecutionMode
         """
         Current execution mode.
 

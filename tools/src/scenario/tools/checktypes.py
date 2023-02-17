@@ -42,7 +42,7 @@ class CheckTypes:
             )
 
         @property
-        def all(self):  # type: (...) -> bool
+        def all(self):  # type: () -> bool
             return bool(self._args.all)
 
     def __init__(

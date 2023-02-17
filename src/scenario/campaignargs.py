@@ -147,7 +147,7 @@ class CampaignArgs(Args, CommonExecArgs):
         return True
 
     @property
-    def outdir(self):  # type: (...) -> Path
+    def outdir(self):  # type: () -> Path
         """
         Output directory path.
 
@@ -174,14 +174,14 @@ class CampaignArgs(Args, CommonExecArgs):
         self._args.outdir = outdir
 
     @property
-    def create_dt_subdir(self):  # type: (...) -> bool
+    def create_dt_subdir(self):  # type: () -> bool
         """
         ``True`` when an output subdirectory in :attr:`CampaignArgs.outdir` named with the campaign execution date and time should be created.
         """
         return bool(self._args.create_dt_subdir)
 
     @property
-    def extra_info(self):  # type: (...) -> typing.Sequence[str]
+    def extra_info(self):  # type: () -> typing.Sequence[str]
         """
         Attribute names to display for extra info.
         Applicable when executing several tests.
@@ -189,7 +189,7 @@ class CampaignArgs(Args, CommonExecArgs):
         return list(self._args.extra_info)
 
     @property
-    def test_suite_paths(self):  # type: (...) -> typing.Sequence[Path]
+    def test_suite_paths(self):  # type: () -> typing.Sequence[Path]
         """
         Campaign file path.
         """
