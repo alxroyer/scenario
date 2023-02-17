@@ -60,7 +60,9 @@ class ConfigDatabase(Logger):
         #: YAML configuration file format.
         YAML = "YAML"
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,  # type: ConfigDatabase
+    ):  # type: (...) -> None
         """
         Initializes instance attributes and configures logging for the :class:`ConfigDatabase` class.
         """
@@ -72,7 +74,7 @@ class ConfigDatabase(Logger):
         self._root = ConfigNode(parent=None, key="")  # type: ConfigNode
 
     def loadfile(
-            self,
+            self,  # type: ConfigDatabase
             path,  # type: AnyPathType
             format=None,  # type: ConfigDatabase.FileFormat  # noqa  ## Shadows built-in name 'format'
             root="",  # type: KeyType
@@ -115,7 +117,7 @@ class ConfigDatabase(Logger):
             raise NotImplementedError(f"Unknown file format {format}")
 
     def savefile(
-            self,
+            self,  # type: ConfigDatabase
             path,  # type: AnyPathType
             format=None,  # type: ConfigDatabase.FileFormat  # noqa  ## Shadows built-in name 'format'
             root="",  # type: KeyType
@@ -158,7 +160,7 @@ class ConfigDatabase(Logger):
             raise NotImplementedError(f"Unknown file format {format}")
 
     def set(
-            self,
+            self,  # type: ConfigDatabase
             key,  # type: KeyType
             data,  # type: typing.Any
             origin=None,  # type: OriginType
@@ -188,7 +190,7 @@ class ConfigDatabase(Logger):
         self.show(logging.DEBUG)
 
     def remove(
-            self,
+            self,  # type: ConfigDatabase
             key,  # type: KeyType
     ):  # type: (...) -> None
         """
@@ -206,7 +208,7 @@ class ConfigDatabase(Logger):
         self.show(logging.DEBUG)
 
     def show(
-            self,
+            self,  # type: ConfigDatabase
             log_level,  # type: int
     ):  # type: (...) -> None
         """
@@ -217,7 +219,7 @@ class ConfigDatabase(Logger):
         self._root.show(log_level)
 
     def getkeys(
-            self,
+            self,  # type: ConfigDatabase
     ):  # type: (...) -> typing.List[str]
         """
         Returns the list of keys.
@@ -227,7 +229,7 @@ class ConfigDatabase(Logger):
         return self._root.getkeys()
 
     def getnode(
-            self,
+            self,  # type: ConfigDatabase
             key,  # type: KeyType
     ):  # type: (...) -> typing.Optional[ConfigNode]
         """
@@ -255,7 +257,7 @@ class ConfigDatabase(Logger):
         ...
 
     def get(
-            self,
+            self,  # type: ConfigDatabase
             key,  # type: KeyType
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
             default=None,  # type: typing.Any

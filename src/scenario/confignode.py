@@ -257,8 +257,10 @@ class ConfigNode:
         elif isinstance(self._data, list):
             for _index in range(len(self._data)):  # type: int
                 self._data[_index].show(log_level)
-        else:
+        elif self.origins:
             CONFIG_DB.log(log_level, f"{self.key}: {self._data!r}  # from {', '.join(str(_origin) for _origin in self.origins)}")
+        else:
+            CONFIG_DB.log(log_level, f"{self.key}: {self._data!r}")
 
     def getkeys(self):  # type: (...) -> typing.List[str]
         """

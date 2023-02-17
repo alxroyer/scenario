@@ -39,10 +39,6 @@
 
 - Issue #66: Avoid redefining `argparse` API.
     - Execute campaign.
-    - Improve config-db display when empty (retex from 'demo/run-demo.py' update):
-      ```
-      [scenario.ConfigDatabase] : None  # from
-      ```
 
 
 ## Roadmap to v1.0.0
