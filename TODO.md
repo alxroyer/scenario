@@ -17,7 +17,6 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #71: Avoid using `(...)` for getters, setters, Python special method overrides, ...
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
