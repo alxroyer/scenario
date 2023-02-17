@@ -55,7 +55,7 @@ class ActionResultExecution:
 
         self.time.setstarttime()
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """

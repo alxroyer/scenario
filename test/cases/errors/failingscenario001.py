@@ -57,7 +57,7 @@ class FailingScenario001(scenario.test.TestCase):
         self.addstep(CheckJsonReportExceptionStorage(CheckJsonReportExpectations.getinstance()))
 
     @property
-    def error_location(self):  # type: (...) -> scenario.CodeLocation
+    def error_location(self):  # type: () -> scenario.CodeLocation
         assert self.scenario_expectations.errors and (len(self.scenario_expectations.errors) == 1)
         assert self.scenario_expectations.errors[0].location
         return scenario.CodeLocation.fromlongstring(self.scenario_expectations.errors[0].location)

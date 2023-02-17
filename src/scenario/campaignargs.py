@@ -93,7 +93,7 @@ class CampaignArgs(Args, CommonExecArgs):
             )
 
     @property
-    def outdir(self):  # type: (...) -> Path
+    def outdir(self):  # type: () -> Path
         """
         Output directory path as a public property.
         """

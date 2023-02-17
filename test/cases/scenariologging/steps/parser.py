@@ -111,7 +111,7 @@ class ParseScenarioLog(LogParserStep):
             self.step = step  # type: LogParserStep
             self._match = match  # type: typing.Match[bytes]
 
-        def __repr__(self):  # type: (...) -> str
+        def __repr__(self):  # type: () -> str
             return repr(self._match)
 
         def indentation(self):  # type: (...) -> bytes

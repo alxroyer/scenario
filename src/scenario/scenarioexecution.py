@@ -71,7 +71,7 @@ class ScenarioExecution:
         #: Make this class log as if it was part of the :class:`ScenarioRunner` execution.
         self._logger = SCENARIO_RUNNER  # type: Logger
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -151,7 +151,7 @@ class ScenarioExecution:
         self.__next_step_definition = step_definition
 
     @property
-    def current_step_definition(self):  # type: (...) -> typing.Optional[StepDefinition]
+    def current_step_definition(self):  # type: () -> typing.Optional[StepDefinition]
         """
         Current step definition being executed.
 
@@ -162,7 +162,7 @@ class ScenarioExecution:
     # Statistics & output.
 
     @property
-    def status(self):  # type: (...) -> ExecutionStatus
+    def status(self):  # type: () -> ExecutionStatus
         """
         Scenario execution status.
 
@@ -179,7 +179,7 @@ class ScenarioExecution:
             return ExecutionStatus.SUCCESS
 
     @property
-    def step_stats(self):  # type: (...) -> ExecTotalStats
+    def step_stats(self):  # type: () -> ExecTotalStats
         """
         Step statistics computation.
 
@@ -198,7 +198,7 @@ class ScenarioExecution:
         return _step_stats
 
     @property
-    def action_stats(self):  # type: (...) -> ExecTotalStats
+    def action_stats(self):  # type: () -> ExecTotalStats
         """
         Action statistics computation.
 
@@ -217,7 +217,7 @@ class ScenarioExecution:
         return _action_stats
 
     @property
-    def result_stats(self):  # type: (...) -> ExecTotalStats
+    def result_stats(self):  # type: () -> ExecTotalStats
         """
         Expected result statistics computation.
 

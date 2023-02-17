@@ -53,7 +53,7 @@ class MkDoc:
             )
 
         @property
-        def all(self):  # type: (...) -> bool
+        def all(self):  # type: () -> bool
             if self.logs:
                 return False
             if self.uml:

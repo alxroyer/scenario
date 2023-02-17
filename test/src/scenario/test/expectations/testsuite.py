@@ -48,13 +48,13 @@ class TestSuiteExpectations:
         return self.test_case_expectations[-1]
 
     @property
-    def step_stats(self):  # type: (...) -> StatExpectations
+    def step_stats(self):  # type: () -> StatExpectations
         return StatExpectations.sum("steps", self.test_case_expectations)
 
     @property
-    def action_stats(self):  # type: (...) -> StatExpectations
+    def action_stats(self):  # type: () -> StatExpectations
         return StatExpectations.sum("actions", self.test_case_expectations)
 
     @property
-    def result_stats(self):  # type: (...) -> StatExpectations
+    def result_stats(self):  # type: () -> StatExpectations
         return StatExpectations.sum("results", self.test_case_expectations)

@@ -26,6 +26,6 @@ from steps.logverifications import LogVerificationStep
 class LogOutfileVerificationStep(LogVerificationStep):
 
     @property
-    def log_path(self):  # type: (...) -> scenario.Path
+    def log_path(self):  # type: () -> scenario.Path
         assert self.subprocess.log_path, f"Log file should have generated with {self.subprocess}"
         return self.subprocess.log_path

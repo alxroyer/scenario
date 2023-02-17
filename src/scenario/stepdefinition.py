@@ -111,7 +111,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         #: Step executions.
         self.executions = []  # type: typing.List[StepExecution]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -122,21 +122,21 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         else:
             return f"<{qualname(type(self))}#{self.number}>"
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Returns a human readable representation of the step definition.
         """
         return f"step#{self.number} ({self.name})"
 
     @property
-    def name(self):  # type: (...) -> str
+    def name(self):  # type: () -> str
         """
         Step name, i.e. the fully qualified name of the class or method defining it.
         """
         return self.location.qualname
 
     @property
-    def number(self):  # type: (...) -> int
+    def number(self):  # type: () -> int
         """
         Step definition number.
 
@@ -174,7 +174,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         return self
 
     @property
-    def actions_results(self):  # type: (...) -> typing.List[ActionResultDefinition]
+    def actions_results(self):  # type: () -> typing.List[ActionResultDefinition]
         """
         Action / expected result list.
         """

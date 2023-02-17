@@ -40,7 +40,7 @@ class CampaignExpectations:
         return self.test_suite_expectations[-1]
 
     @property
-    def all_test_case_expectations(self):  # type: (...) -> typing.Optional[typing.List[ScenarioExpectations]]
+    def all_test_case_expectations(self):  # type: () -> typing.Optional[typing.List[ScenarioExpectations]]
         _all_test_case_expectations = []  # type: typing.List[ScenarioExpectations]
         if self.test_suite_expectations is None:
             return None
@@ -52,13 +52,13 @@ class CampaignExpectations:
         return _all_test_case_expectations
 
     @property
-    def step_stats(self):  # type: (...) -> StatExpectations
+    def step_stats(self):  # type: () -> StatExpectations
         return StatExpectations.sum("steps", self.test_suite_expectations)
 
     @property
-    def action_stats(self):  # type: (...) -> StatExpectations
+    def action_stats(self):  # type: () -> StatExpectations
         return StatExpectations.sum("actions", self.test_suite_expectations)
 
     @property
-    def result_stats(self):  # type: (...) -> StatExpectations
+    def result_stats(self):  # type: () -> StatExpectations
         return StatExpectations.sum("results", self.test_suite_expectations)

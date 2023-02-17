@@ -42,7 +42,7 @@ class TestData:
         self._findlocations(expected_locations)
 
     @property
-    def const_name(self):  # type: (...) -> str
+    def const_name(self):  # type: () -> str
         if not self.__const_name:
             # Search for the test data constant name in the `scenario.test.paths` module.
             _vars = vars(scenario.test.paths)  # type: typing.Dict[str, typing.Any]
@@ -130,7 +130,7 @@ class FileUpdater:
         self._writefile()
 
     @property
-    def _current_line(self):  # type: (...) -> int
+    def _current_line(self):  # type: () -> int
         return len(self.__output_lines) + 1
 
     def matchmodifyline(

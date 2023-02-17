@@ -50,7 +50,7 @@ class ParseFinalResultsLog(LogParserStep):
         self.json_scenario_stats = []  # type: typing.List[JSONDict]
 
     @property
-    def doc_only(self):  # type: (...) -> typing.Optional[bool]
+    def doc_only(self):  # type: () -> typing.Optional[bool]
         """
         Shortcut to *doc-only* mode.
         """

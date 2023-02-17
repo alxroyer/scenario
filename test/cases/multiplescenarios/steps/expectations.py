@@ -72,14 +72,14 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         return self.test_case.getpathdesc(path)
 
     @property
-    def parsed_data(self):  # type: (...) -> ParseFinalResultsLog
+    def parsed_data(self):  # type: () -> ParseFinalResultsLog
         """
         Shortcut to parsed data.
         """
         return self.getexecstep(ParseFinalResultsLog)
 
     @property
-    def doc_only(self):  # type: (...) -> typing.Optional[bool]
+    def doc_only(self):  # type: () -> typing.Optional[bool]
         """
         Shortcut to *doc-only* mode.
         """

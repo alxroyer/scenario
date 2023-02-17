@@ -178,7 +178,7 @@ we use a multi-line style with the ``(...)`` ellipsis pattern for return types
 (see `PEP 484 - Suggested syntax for Python 2.7 and straddling code <https://peps.python.org/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code>`_).
 It makes the code diffs shorter, and the maintainance simpler by the way.
 
-Exceptions for getters, setters and well known special functions.
+Exceptions for getters, setters and well known special functions when presented on a single line.
 
 .. code-block:: python
 
