@@ -41,7 +41,7 @@ class DelayedStr(abc.ABC):
         #: Cached string computation result.
         self.__str = None  # type: typing.Optional[str]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
 
@@ -50,7 +50,7 @@ class DelayedStr(abc.ABC):
         """
         return repr(str(self))
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Triggers the string computation on the first call, and cache it for later calls.
         """

@@ -182,7 +182,14 @@ class Path:
         if sys.version_info >= (3, 5):
             self.expanduser = self._abspath.expanduser  #: Shortcut to :meth:`pathlib.Path.expanduser()`.
         # :meth:`pathlib.Path.glob()` implemented as :meth:`glob()`.
-        self.group = self._abspath.group  #: Shortcut to :meth:`pathlib.Path.group()`.
+        #: Shortcut to :meth:`pathlib.Path.group()`.
+        self.group = (
+            # TODO:
+            #  Strange we had to ignore the following,
+            #  since there is no new nor deprecation notice in the [pathlib documentation](https://docs.python.org/3/library/pathlib.html#pathlib.Path.group).
+            #  Try to remove this mypy@0.971 workaround when switching to mypy@1.0.0 (#73).
+            self._abspath.group  # type: ignore  ## mypy 0.971 error: '"Path" has no attribute "group"'
+        )
         self.is_dir = self._abspath.is_dir  #: Shortcut to :meth:`pathlib.Path.is_dir()`.
         self.is_file = self._abspath.is_file  #: Shortcut to :meth:`pathlib.Path.is_file()`.
         if sys.version_info >= (3, 7):
@@ -197,7 +204,14 @@ class Path:
         self.lstat = self._abspath.lstat  #: Shortcut to :meth:`pathlib.Path.lstat()`.
         self.mkdir = self._abspath.mkdir  #: Shortcut for :meth:`pathlib.Path.mkdir()`.
         self.open = self._abspath.open  #: Shortcut to :meth:`pathlib.Path.open()`.
-        self.owner = self._abspath.owner  #: Shortcut to :meth:`pathlib.Path.owner()`.
+        #: Shortcut to :meth:`pathlib.Path.owner()`.
+        self.owner = (
+            # TODO:
+            #  Strange we had to ignore the following,
+            #  since there is no new nor deprecation notice in the [pathlib documentation](https://docs.python.org/3/library/pathlib.html#pathlib.Path.owner).
+            #  Try to remove this mypy@0.971 workaround when switching to mypy@1.0.0 (#73).
+            self._abspath.owner  # type: ignore  ## mypy 0.971 error: '"Path" has no attribute "owner"'
+        )
         if sys.version_info >= (3, 5):
             self.read_bytes = self._abspath.read_bytes  #: Shortcut to :meth:`pathlib.Path.read_bytes()`.
             self.read_text = self._abspath.read_text  #: Shortcut to :meth:`pathlib.Path.read_text()`.
@@ -220,13 +234,13 @@ class Path:
             self.write_bytes = self._abspath.write_bytes  #: Shortcut to :meth:`pathlib.Path.write_bytes()`.
             self.write_text = self._abspath.write_text  #: Shortcut to :meth:`pathlib.Path.write_text()`.
 
-    def __fspath__(self):  # type: (...) -> str
+    def __fspath__(self):  # type: () -> str
         """
         :class:`os.PathLike` interface implementation.
         """
         return os.fspath(self._abspath)
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -234,13 +248,13 @@ class Path:
 
         return f"<{qualname(type(self))} object for '{self.prettypath}'>"
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Human readable string representation (same as :attr:`prettypath`).
         """
         return self.prettypath
 
-    def __hash__(self):  # type: (...) -> int
+    def __hash__(self):  # type: () -> int
         """
         Hash computation.
 
@@ -249,35 +263,35 @@ class Path:
         return hash(self._abspath)
 
     @property
-    def parts(self):  # type: (...) -> typing.Tuple[str, ...]
+    def parts(self):  # type: () -> typing.Tuple[str, ...]
         """
         See `pathlib.PurePath.parts <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parts>`_.
         """
         return self._abspath.parts
 
     @property
-    def drive(self):  # type: (...) -> str
+    def drive(self):  # type: () -> str
         """
         See `pathlib.PurePath.drive <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.drive>`_.
         """
         return self._abspath.drive
 
     @property
-    def root(self):  # type: (...) -> str
+    def root(self):  # type: () -> str
         """
         See `pathlib.PurePath.root <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.root>`_.
         """
         return self._abspath.root
 
     @property
-    def anchor(self):  # type: (...) -> str
+    def anchor(self):  # type: () -> str
         """
         See `pathlib.PurePath.anchor <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.anchor>`_.
         """
         return self._abspath.anchor
 
     @property
-    def parents(self):  # type: (...) -> typing.Sequence[Path]
+    def parents(self):  # type: () -> typing.Sequence[Path]
         """
         Gives the list of parent directories as :class:`Path` objects.
 
@@ -286,7 +300,7 @@ class Path:
         return tuple([Path(_path) for _path in self._abspath.parents])
 
     @property
-    def parent(self):  # type: (...) -> Path
+    def parent(self):  # type: () -> Path
         """
         Gives the parent directory as a :class:`Path` object.
 
@@ -295,7 +309,7 @@ class Path:
         return Path(self._abspath.parent)
 
     @property
-    def name(self):  # type: (...) -> str
+    def name(self):  # type: () -> str
         """
         Base name of the path.
 
@@ -304,7 +318,7 @@ class Path:
         return self._abspath.name
 
     @property
-    def suffix(self):  # type: (...) -> str
+    def suffix(self):  # type: () -> str
         """
         Gives the extension of the file (or directory name), with its leading dot, if any,
         or an empty string if no extension.
@@ -314,7 +328,7 @@ class Path:
         return self._abspath.suffix
 
     @property
-    def suffixes(self):  # type: (...) -> typing.List[str]
+    def suffixes(self):  # type: () -> typing.List[str]
         """
         Gives the list of consecutive extensions, with their leading dot character.
 
@@ -323,7 +337,7 @@ class Path:
         return self._abspath.suffixes
 
     @property
-    def stem(self):  # type: (...) -> str
+    def stem(self):  # type: () -> str
         """
         Gives the basename of the path, without the final extension if any.
 
@@ -332,14 +346,14 @@ class Path:
         return self._abspath.stem
 
     @property
-    def abspath(self):  # type: (...) -> str
+    def abspath(self):  # type: () -> str
         """
         Absolute form of the path in the POSIX style.
         """
         return self._abspath.as_posix()
 
     @property
-    def prettypath(self):  # type: (...) -> str
+    def prettypath(self):  # type: () -> str
         """
         Gives the pretty path.
 

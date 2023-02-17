@@ -43,7 +43,7 @@ class CampaignOutdirFilesManager:
             self.json.path = campaign_execution.final_outdir_path / scenario_path.name.replace(".py", ".json")
 
         @property
-        def scenario_report(self):  # type: (...) -> typing.Optional[scenario.ScenarioExecution]
+        def scenario_report(self):  # type: () -> typing.Optional[scenario.ScenarioExecution]
             if self.json.content:
                 return self.json.content.execution
             return None
@@ -65,7 +65,7 @@ class CampaignOutdirFilesManager:
         return self._scenario_results[script_path.prettypath]
 
     @property
-    def junit_report_path(self):  # type: (...) -> scenario.Path
+    def junit_report_path(self):  # type: () -> scenario.Path
         return self._campaign_execution.junit_report_path
 
 

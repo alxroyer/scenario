@@ -101,7 +101,7 @@ class Logger:
         self._extra_flags = {}  # type: typing.Dict[LogExtraData, bool]
 
     @property
-    def logging_instance(self):  # type: (...) -> logging.Logger
+    def logging_instance(self):  # type: () -> logging.Logger
         """
         Provides the reference of the :class:`logging.Logger` instance attached with this :class:`Logger` instance.
         """
