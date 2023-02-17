@@ -24,10 +24,13 @@ Prerequisites
 Mandatory:
 
 - Python 3.6 or later (`https://www.python.org/downloads/ <https://www.python.org/downloads/>`_)
+    - Tested with version 3.6.8
 
 Recommended:
 
-- mypy (`https://pypi.org/project/mypy/ <https://pypi.org/project/mypy/>`_), tested with version 0.931
+- mypy (`https://pypi.org/project/mypy/ <https://pypi.org/project/mypy/>`_)
+    - Tested with version 0.931 (Python 3.6.8)
+    - Tested with version 0.971 (Python 3.6.8)
 - pytz (`https://pypi.org/project/pytz/ <https://pypi.org/project/pytz/>`_)
 - PyYAML (`https://pypi.org/project/PyYAML/ <https://pypi.org/project/PyYAML/>`_)
 
