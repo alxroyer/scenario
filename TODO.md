@@ -19,7 +19,13 @@
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports.
     - Check what it gives in the documentation extracted with Sphinx.
-    - Check what it woule be by using `typing.TYPE_CHECKING` imports as much as possible.
+        - Class renames are fixed to original names in the output documentation.
+        - But `typing.TYPE_CHECKING` breaks the link to the actual class.
+        - Seems that the issue is still opened in sphinx-autodoc: https://github.com/tox-dev/sphinx-autodoc-typehints/issues/22.
+        - A plugin exists around typehints: https://pypi.org/project/sphinx-autodoc-typehints/
+            - Perhaps a good option to fix typing issues, see options at https://pythonawesome.com/type-hints-support-for-the-sphinx-autodoc-extension/
+        - Possibly say in #72 that we won't go further until sphinx-autodoc is fixed.
+    - Check what it would be by using `typing.TYPE_CHECKING` imports as much as possible.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
