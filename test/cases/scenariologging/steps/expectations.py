@@ -19,7 +19,7 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
+    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
 
@@ -51,7 +51,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkscenario(
             self,
-            json_scenario,  # type: JSONDict
+            json_scenario,  # type: JsonDictType
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
 
@@ -132,7 +132,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkscenarioerrors(
             self,
-            json_scenario,  # type: JSONDict
+            json_scenario,  # type: JsonDictType
             jsonpath,  # type: str
             error_expectation_list,  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
     ):  # type: (...) -> None
@@ -225,7 +225,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkstep(
             self,
-            json_step,  # type: JSONDict
+            json_step,  # type: JsonDictType
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
         if step_expectations.name:
@@ -261,7 +261,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkactionresult(
             self,
-            json_action_result,  # type: JSONDict
+            json_action_result,  # type: JsonDictType
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
         _type_desc = "action" if action_result_expectations.type == scenario.ActionResult.Type.ACTION else "expected result"  # type: str

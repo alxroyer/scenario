@@ -17,7 +17,9 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #72: Review `typing.TYPE_CHECKINGS` imports
+- Issue #72: Review `typing.TYPE_CHECKINGS` imports.
+    - Check what it gives in the documentation extracted with Sphinx.
+    - Check what it woule be by using `typing.TYPE_CHECKING` imports as much as possible.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
@@ -35,8 +37,9 @@
 
 - Issue #66: Avoid redefining `argparse` API.
     - Integrate branch 'feature/#66/use-argparse-directly'.
-- Issue #58: Add sections for program arguments
+- Issue #58: Add sections for program arguments.
     - Integrate branch 'feature/#66/use-argparse-directly'.
+- Issue #74: Rename JSON reports into something else.
 
 
 ## Roadmap to v1.0.0

@@ -36,11 +36,7 @@ from .stepsection import StepSection
 from .stepuserapi import StepUserApi
 
 if typing.TYPE_CHECKING:
-    # `StepSpecificationType` and `VarStepDefinitionType` used in method signatures.
-    # Types declared for type checking only.
     from .stepdefinition import StepSpecificationType, VarStepDefinitionType
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

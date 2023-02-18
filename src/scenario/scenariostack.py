@@ -24,10 +24,6 @@ import typing
 from .actionresultdefinition import ActionResultDefinition
 # `ActionResultExecution` used in method signatures.
 from .actionresultexecution import ActionResultExecution
-if typing.TYPE_CHECKING:
-    # `AnyIssueLevelType` used in method signatures.
-    # Type declared for type checking only.
-    from .issuelevels import AnyIssueLevelType
 # `Logger` used for inheritance.
 from .logger import Logger
 # `ScenarioDefinition` used in method signatures.
@@ -40,6 +36,9 @@ from .stepdefinition import StepDefinition
 from .stepexecution import StepExecution
 # `StepUserApi` used in method signatures.
 from .stepuserapi import StepUserApi
+
+if typing.TYPE_CHECKING:
+    from .issuelevels import AnyIssueLevelType
 
 
 class BuildingContext:

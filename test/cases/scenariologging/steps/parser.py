@@ -19,7 +19,7 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
+    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
 
@@ -39,11 +39,11 @@ class ParseScenarioLog(LogParserStep):
         self.description = "Scenario log output parsing"
 
         # Initialize the scenario stack.
-        self._json_scenario_stack = []  # type: typing.List[JSONDict]
+        self._json_scenario_stack = []  # type: typing.List[JsonDictType]
         # Then create the first scenario.
-        self.json_main_scenario = self._newscenario()  # type: JSONDict
+        self.json_main_scenario = self._newscenario()  # type: JsonDictType
 
-    def _newscenario(self):  # type: (...) -> JSONDict
+    def _newscenario(self):  # type: (...) -> JsonDictType
         _json_new_scenario = {
             "name": None,
             "attributes": {},
@@ -58,7 +58,7 @@ class ParseScenarioLog(LogParserStep):
                 "results": {"executed": 0, "total": 0},
             },
             ParseScenarioLog.PARSE_STATE: "",
-        }  # type: JSONDict
+        }  # type: JsonDictType
 
         # Check the current stack in order to determine whether it is a subscenario.
         if self._json_scenario_stack:
@@ -77,7 +77,7 @@ class ParseScenarioLog(LogParserStep):
     def _getscenario(
             self,
             match,  # type: ParseScenarioLog._Match
-    ):  # type: (...) -> JSONDict
+    ):  # type: (...) -> JsonDictType
         """
         Retrieves the JSON data corresponding to the scenario with the given indentation.
 
@@ -208,7 +208,7 @@ class ParseScenarioLog(LogParserStep):
                 "name": self.tostr(_match.group(5)),
                 "description": self.tostr(_match.group(2)),
                 "actions-results": [],
-            }  # type: JSONDict
+            }  # type: JsonDictType
             self._getscenario(_match)["steps"].append(_json_step)
             self._setparsestate(_match, f"STEP '{_json_step['name']}'")
             _match.debug("Step: name=%r, description=%r", _json_step["name"], _json_step["description"])
@@ -221,7 +221,7 @@ class ParseScenarioLog(LogParserStep):
                 "type": self.tostr(_match.group(1)),
                 "description": self.tostr(_match.group(2)),
                 "subscenarios": [],
-            }  # type: JSONDict
+            }  # type: JsonDictType
             assert self._getscenario(_match)["steps"], "No current step, cannot add action/result"
             self._getscenario(_match)["steps"][-1]["actions-results"].append(_json_action_result)
             self._setparsestate(_match, f"{_json_action_result['type'].upper()} {_json_action_result['description']!r}")
@@ -302,7 +302,7 @@ class ParseScenarioLog(LogParserStep):
                 "type": "known-issue",
                 "message": self.tostr(_match.group(7)),
                 "location": self.tostr(b'%s:%s:%s' % (_match.group(8), _match.group(9), _match.group(10))),
-            }  # type: JSONDict
+            }  # type: JsonDictType
             if _match.group(5):
                 _known_issue["level"] = int(_match.group(5))
             if _match.group(6):
@@ -358,7 +358,7 @@ class ParseScenarioLog(LogParserStep):
         for _stats_type in ("step", "action", "result"):  # type: str
             _match = self._match(rb' *Number of %ss: (\d+)$' % self.tobytes(_stats_type.upper()), line)
             if _match:
-                _stats = {"executed": 0, "total": int(_match.group(1))}  # type: JSONDict
+                _stats = {"executed": 0, "total": int(_match.group(1))}  # type: JsonDictType
                 self.json_main_scenario["stats"][_stats_type + "s"] = _stats
                 _match.debug("Number of %s: %d", scenario.text.pluralize(_stats_type.upper()), _stats["total"])
                 return True

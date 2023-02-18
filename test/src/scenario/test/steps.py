@@ -18,7 +18,7 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
+    from scenario.typing import JsonDictType
 
 # `SubProcess` used in method signatures.
 from .subprocess import SubProcess
@@ -27,7 +27,7 @@ from .testcase import TestCase
 
 
 if typing.TYPE_CHECKING:
-    T = typing.TypeVar("T")
+    VarDataType = typing.TypeVar("VarDataType")
 
 
 class Step(scenario.Step):
@@ -51,10 +51,10 @@ class Step(scenario.Step):
 
     def testdatafromlist(
             self,
-            items,  # type: typing.List[T]
+            items,  # type: typing.List[VarDataType]
             index,  # type: int
-            default,  # type: T
-    ):  # type: (...) -> T
+            default,  # type: VarDataType
+    ):  # type: (...) -> VarDataType
         """
         Helps walking through test data as a list.
 
@@ -70,7 +70,7 @@ class Step(scenario.Step):
 
     def testdatafromjson(
             self,
-            json_data,  # type: typing.Optional[JSONDict]
+            json_data,  # type: typing.Optional[JsonDictType]
             jsonpath,  # type: typing.Optional[str]
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
     ):  # type: (...) -> typing.Any

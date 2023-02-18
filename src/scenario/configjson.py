@@ -22,11 +22,7 @@ import json
 import typing
 
 if typing.TYPE_CHECKING:
-    # `KeyType` used in method signatures.
-    # Type declared for type checking only.
     from .configtypes import KeyType
-    # `AnyPathType` used in method signatures and type definitions.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

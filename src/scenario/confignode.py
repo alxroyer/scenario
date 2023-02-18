@@ -24,9 +24,7 @@ import re
 import typing
 
 if typing.TYPE_CHECKING:
-    # `KeyType`, `OriginType` and `T` used in method signatures.
-    # Type declared for type checking only.
-    from .configtypes import KeyType, OriginType, T
+    from .configtypes import KeyType, OriginType, VarDataType
 
 
 class ConfigNode:
@@ -427,8 +425,8 @@ class ConfigNode:
 
     def cast(
             self,
-            type,  # type: typing.Type[T]  # noqa  ## Shadows built-in name 'type'
-    ):  # type: (...) -> T
+            type,  # type: typing.Type[VarDataType]  # noqa  ## Shadows built-in name 'type'
+    ):  # type: (...) -> VarDataType
         """
         Ensures the retrieval of the node data with the expected type.
 
@@ -444,33 +442,32 @@ class ConfigNode:
             if not isinstance(self._data, dict):
                 raise ValueError(self.errmsg(f"{self._data!r} not a valid dictionary"))
             # Call the property above that will build a JSON dictionary.
-            return self.data  # type: ignore  ## Returning Any from function declared to return "T"
+            return self.data  # type: ignore  ## Returning Any from function declared to return "VarDataType"
 
         # Dictionary.
         if type is list:
             if not isinstance(self._data, list):
                 raise ValueError(self.errmsg(f"{self._data!r} not a valid list"))
             # Call the property above that will build a JSON list.
-            return self.data  # type: ignore  ## Returning Any from function declared to return "T"
+            return self.data  # type: ignore  ## Returning Any from function declared to return "VarDataType"
 
         # Boolean type expected.
         if type is bool:
             if isinstance(self._data, bool):
                 # Direct bool value.
-                return self._data  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
+                return self._data  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
             if isinstance(self._data, (int, float)):
                 # Number to bool.
-                return True if self._data else False  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
+                return bool(self._data)  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
             if isinstance(self._data, str):
                 # String to bool.
                 if self._data.strip().lower() in ["true", "yes", "y", "1"]:
-                    return True  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
+                    return True  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
                 if self._data.strip().lower() in ["false", "no", "n", "0"]:
-                    return False  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
+                    return False  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
                 # Default: string to int to bool.
                 try:
-                    _int = int(self._data)  # type: int
-                    return True if _int else False  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
+                    return bool(int(self._data))  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
                 except ValueError:
                     pass
             raise ValueError(self.errmsg(f"{self._data!r} not a valid boolean value"))

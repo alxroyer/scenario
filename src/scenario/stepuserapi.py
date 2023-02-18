@@ -22,11 +22,7 @@ import abc
 import typing
 
 if typing.TYPE_CHECKING:
-    # `AnyIssueLevelType` used in method signatures.
-    # Type declared for type checking only.
     from .issuelevels import AnyIssueLevelType
-    # `StepSpecificationType` used in method signatures.
-    # Type declared for type checking only.
     from .stepdefinition import StepSpecificationType
 
 

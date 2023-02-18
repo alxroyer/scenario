@@ -20,8 +20,6 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    # `NotSetType` used in method signatures.
-    # Type declared for type checking only.
     from .notset import NotSetType
 
 

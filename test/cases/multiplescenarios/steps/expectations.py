@@ -19,7 +19,7 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
+    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
 
@@ -36,7 +36,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                 scenario_expectations,  # type: scenario.test.ScenarioExpectations
         ):  # type: (...) -> None
             self.expectations = scenario_expectations  # type: scenario.test.ScenarioExpectations
-            self.json = None  # type: typing.Optional[JSONDict]
+            self.json = None  # type: typing.Optional[JsonDictType]
 
     def __init__(
             self,
@@ -307,7 +307,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             jsonpath,  # type: str
     ):  # type: (...) -> None
         _scenario_expectations = scenario_data.expectations  # type: scenario.test.ScenarioExpectations
-        _json_scenario_stats = scenario_data.json or {}  # type: JSONDict
+        _json_scenario_stats = scenario_data.json or {}  # type: JsonDictType
         assert jsonpath in ("warnings", "errors")
         _error_expectations_list = None  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
         if jsonpath == "warnings":

@@ -18,7 +18,7 @@ import json
 import typing
 
 if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
+    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
 
@@ -75,7 +75,7 @@ class CheckExceptionLocation(JsonReportFileVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Exception location")
 
-        _json_error = {}  # type: JSONDict
+        _json_error = {}  # type: JsonDictType
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} error info from the JSON report"):
             _json_error = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"errors[{self.index}]", type=dict,
@@ -105,7 +105,7 @@ class CheckKnownIssueLocation(JsonReportFileVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Known issue location")
 
-        _json_known_issue = {}  # type: JSONDict
+        _json_known_issue = {}  # type: JsonDictType
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} known issue info from the JSON report"):
             _json_known_issue = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"warnings[{self.index}]", type=dict,

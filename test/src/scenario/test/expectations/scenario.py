@@ -24,9 +24,7 @@ from .error import ErrorExpectations
 # `StepExpectations` used in method signatures.
 from .step import StepExpectations
 if typing.TYPE_CHECKING:
-    # `TestSuiteExpectations` used in method signatures.
-    # Type declared for type checking only.
-    from .testsuite import TestSuiteExpectations
+    from .testsuite import TestSuiteExpectations as TestSuiteExpectationsType
 
 
 class ScenarioExpectations:
@@ -34,11 +32,11 @@ class ScenarioExpectations:
             self,
             script_path=None,  # type: scenario.Path
             class_name=None,  # type: str
-            test_suite_expectations=None,  # type: TestSuiteExpectations
+            test_suite_expectations=None,  # type: TestSuiteExpectationsType
     ):  # type: (...) -> None
         from .stats import StatExpectations
 
-        self.test_suite_expectations = test_suite_expectations  # type: typing.Optional[TestSuiteExpectations]
+        self.test_suite_expectations = test_suite_expectations  # type: typing.Optional[TestSuiteExpectationsType]
 
         self.class_name = class_name  # type: typing.Optional[str]
         self.script_path = script_path  # type: typing.Optional[scenario.Path]

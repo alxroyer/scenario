@@ -31,8 +31,6 @@ from .path import Path
 from .xmlutils import Xml
 
 if typing.TYPE_CHECKING:
-    # `Path` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

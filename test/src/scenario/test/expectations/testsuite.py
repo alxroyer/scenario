@@ -19,9 +19,7 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    # `CampaignExpectations` used in method signatures.
-    # Type declared for type checking only.
-    from .campaign import CampaignExpectations
+    from .campaign import CampaignExpectations as CampaignExpectationsType
 from .scenario import ScenarioExpectations
 from .stats import StatExpectations
 
@@ -29,10 +27,10 @@ from .stats import StatExpectations
 class TestSuiteExpectations:
     def __init__(
             self,
-            campaign_expectations,  # type: CampaignExpectations
+            campaign_expectations,  # type: CampaignExpectationsType
             test_suite_path=None,  # type: scenario.Path
     ):  # type: (...) -> None
-        self.campaign_expectations = campaign_expectations  # type: CampaignExpectations
+        self.campaign_expectations = campaign_expectations  # type: CampaignExpectationsType
 
         self.test_suite_path = test_suite_path  # type: typing.Optional[scenario.Path]
         self.test_case_expectations = None  # type: typing.Optional[typing.List[ScenarioExpectations]]

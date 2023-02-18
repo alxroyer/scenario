@@ -23,7 +23,7 @@ import json
 import typing
 
 if typing.TYPE_CHECKING:
-    from .typing import JSONDict
+    from .typing import JsonDictType
 
 
 class DelayedStr(abc.ABC):
@@ -210,7 +210,7 @@ class JsonDump(DelayedStr):
 
     def __init__(
             self,
-            json_data,  # type: JSONDict
+            json_data,  # type: JsonDictType
             **kwargs,  # type: typing.Any
     ):  # type: (...) -> None
         """
@@ -222,7 +222,7 @@ class JsonDump(DelayedStr):
         DelayedStr.__init__(self)
 
         #: JSON data to dump.
-        self.json_data = json_data  # type: JSONDict
+        self.json_data = json_data  # type: JsonDictType
         #: :func:`json.dumps()`-like arguments.
         self.kwargs = kwargs  # type: typing.Dict[str, typing.Any]
 
@@ -231,7 +231,7 @@ class JsonDump(DelayedStr):
 
 
 def jsondump(
-        json_data,  # type: JSONDict
+        json_data,  # type: JsonDictType
         **kwargs,  # type: typing.Any
 ):  # type: (...) -> JsonDump
     """

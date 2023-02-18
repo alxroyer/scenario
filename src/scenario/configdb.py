@@ -31,11 +31,7 @@ from .confignode import ConfigNode
 from .enumutils import StrEnum
 
 if typing.TYPE_CHECKING:
-    # `KeyType`, `OriginType` and `T` used in method signatures.
-    # Type declared for type checking only.
-    from .configtypes import KeyType, OriginType, T
-    # `AnyPathType` used in method signatures and type definitions.
-    # Type declared for type checking only.
+    from .configtypes import KeyType, OriginType, VarDataType
     from .path import AnyPathType
 
 
@@ -243,15 +239,15 @@ class ConfigDatabase(Logger):
         ...
 
     @typing.overload
-    def get(self, key, type):  # type: (KeyType, typing.Type[T]) -> typing.Optional[T]  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type):  # type: (KeyType, typing.Type[VarDataType]) -> typing.Optional[VarDataType]  # noqa  ## Shadows built-in name 'type'
         ...
 
     @typing.overload
-    def get(self, key, type, default):  # type: (KeyType, typing.Type[T], None) -> typing.Optional[T]  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type, default):  # type: (KeyType, typing.Type[VarDataType], None) -> typing.Optional[VarDataType]  # noqa  ## Shadows built-in name 'type'
         ...
 
     @typing.overload
-    def get(self, key, type, default):  # type: (KeyType, typing.Type[T], typing.Union[str, os.PathLike[str], bool, int, float]) -> T  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type, default):  # type: (KeyType, typing.Type[VarDataType], typing.Union[str, os.PathLike[str], bool, int, float]) -> VarDataType  # noqa  ## Shadows built-in name 'type'
         ...
 
     def get(

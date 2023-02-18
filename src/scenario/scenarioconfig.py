@@ -26,11 +26,11 @@ from .confignode import ConfigNode
 from .console import Console
 # `StrEnum` used for inheritance.
 from .enumutils import StrEnum
-if typing.TYPE_CHECKING:
-    # `AnyIssueLevelType` used in method signatures.
-    from .issuelevels import AnyIssueLevelType
 # `Path` used in method signatures.
 from .path import Path
+
+if typing.TYPE_CHECKING:
+    from .issuelevels import AnyIssueLevelType
 
 
 class ScenarioConfig:
@@ -329,8 +329,6 @@ class ScenarioConfig:
         from .args import Args
         from .configdb import CONFIG_DB
         from .issuelevels import IssueLevel
-        if typing.TYPE_CHECKING:
-            from .issuelevels import AnyIssueLevelType
         from .scenarioargs import CommonExecArgs
 
         _args = Args.getinstance()  # type: Args
@@ -349,8 +347,6 @@ class ScenarioConfig:
         from .args import Args
         from .configdb import CONFIG_DB
         from .issuelevels import IssueLevel
-        if typing.TYPE_CHECKING:
-            from .issuelevels import AnyIssueLevelType
         from .scenarioargs import CommonExecArgs
 
         _args = Args.getinstance()  # type: Args

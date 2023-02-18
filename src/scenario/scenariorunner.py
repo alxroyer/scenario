@@ -43,11 +43,7 @@ from .stepuserapi import StepUserApi
 from .testerrors import TestError
 
 if typing.TYPE_CHECKING:
-    # `StepSpecificationType` used in method signatures.
-    # Type declared for type checking only.
     from .stepdefinition import StepSpecificationType
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

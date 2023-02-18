@@ -21,7 +21,7 @@ Type definitions to help type hints.
 import typing
 
 
-# JSON
+# JSON.
 if typing.TYPE_CHECKING:
     #: JSON dictionary type.
-    JSONDict = typing.Dict[str, typing.Any]
+    JsonDictType = typing.Dict[str, typing.Any]

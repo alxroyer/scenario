@@ -28,8 +28,8 @@ if typing.TYPE_CHECKING:
 
 
 if typing.TYPE_CHECKING:
-    #: Variable type used in method signatures.
-    T = typing.TypeVar("T")
+    #: Variable type for configuration data.
+    VarDataType = typing.TypeVar("VarDataType")
 
     #: Key type.
     KeyType = typing.Union[str, enum.Enum]

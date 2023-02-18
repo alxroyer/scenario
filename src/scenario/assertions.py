@@ -28,16 +28,12 @@ import typing
 from . import assertionhelpers
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
-    # `StepExecution` used in method signatures.
-    # In order to avoid risks of cylic dependencies in the future, we deliberately choose to import it under `if typing.TYPE_CHECKING:`.
-    from .stepexecution import StepExecution
-    # `JSONDict` used in method signatures.
-    # Type declared for type checking only.
-    from .typing import JSONDict
+    from .stepexecution import StepExecution as StepExecutionType
+    from .typing import JsonDictType
 
+
+if typing.TYPE_CHECKING:
     #: Variable object type.
     VarObjType = typing.TypeVar("VarObjType", bound=object)
 
@@ -737,7 +733,7 @@ class Assertions:
             err=None,  # type: assertionhelpers.ErrParamType
             evidence=False,  # type: assertionhelpers.EvidenceParamType
             expect_end_time=True,  # type: bool
-    ):  # type: (...) -> StepExecution
+    ):  # type: (...) -> StepExecutionType
         """
         Checks the date/time is within the given step execution times.
 
@@ -782,7 +778,7 @@ class Assertions:
             err=None,  # type: assertionhelpers.ErrParamType
             evidence=False,  # type: assertionhelpers.EvidenceParamType
             expect_end_time=True,  # type: bool
-    ):  # type: (...) -> typing.Tuple[StepExecution, StepExecution]
+    ):  # type: (...) -> typing.Tuple[StepExecutionType, StepExecutionType]
         """
         Checks the date/time is in the execution times of a given range of steps.
 
@@ -802,11 +798,11 @@ class Assertions:
         assert start is not None, assertionhelpers.isnonemsg("asserttimeinsteps()", "start step specification")
         assert end is not None, assertionhelpers.isnonemsg("asserttimeinsteps()", "end step specification")
 
-        _step_execution1 = assertionhelpers.getstepexecution(start)  # type: StepExecution
+        _step_execution1 = assertionhelpers.getstepexecution(start)  # type: StepExecutionType
         _step_desc1 = str(_step_execution1.definition)  # type: str
         _start1 = _step_execution1.getstarttime()  # type: float
         _end1 = _step_execution1.getendtime(expect=True)  # type: float
-        _step_execution2 = assertionhelpers.getstepexecution(end)  # type: StepExecution
+        _step_execution2 = assertionhelpers.getstepexecution(end)  # type: StepExecutionType
         _step_desc2 = str(_step_execution2.definition)  # type: str
         _start2 = _step_execution2.getstarttime()  # type: float
         _end2 = _step_execution2.getendtime(expect=expect_end_time)  # type: float
@@ -838,7 +834,7 @@ class Assertions:
             step,  # type: typing.Optional[assertionhelpers.StepExecutionSpecificationType]
             err=None,  # type: assertionhelpers.ErrParamType
             evidence=False,  # type: assertionhelpers.EvidenceParamType
-    ):  # type: (...) -> StepExecution
+    ):  # type: (...) -> StepExecutionType
         """
         Checks the date/time is (strictly) before a given step executime time.
 
@@ -854,7 +850,7 @@ class Assertions:
         assert time is not None, assertionhelpers.isnonemsg("asserttimebeforestep()", "time")
         assert step is not None, assertionhelpers.isnonemsg("asserttimebeforestep()", "step specification")
 
-        _step_execution = assertionhelpers.getstepexecution(step)  # type: StepExecution
+        _step_execution = assertionhelpers.getstepexecution(step)  # type: StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
         _start = _step_execution.getstarttime()  # type: float
         assert time < _start, assertionhelpers.errmsg(
@@ -874,7 +870,7 @@ class Assertions:
             step,  # type: typing.Optional[assertionhelpers.StepExecutionSpecificationType]
             err=None,  # type: assertionhelpers.ErrParamType
             evidence=False,  # type: assertionhelpers.EvidenceParamType
-    ):  # type: (...) -> StepExecution
+    ):  # type: (...) -> StepExecutionType
         """
         Checks the date/time is (strictly) after a given step executime time.
 
@@ -890,7 +886,7 @@ class Assertions:
         assert time is not None, assertionhelpers.isnonemsg("asserttimeafterstep()", "time")
         assert step is not None, assertionhelpers.isnonemsg("asserttimeafterstep()", "step specification")
 
-        _step_execution = assertionhelpers.getstepexecution(step)  # type: StepExecution
+        _step_execution = assertionhelpers.getstepexecution(step)  # type: StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
         _end = _step_execution.getendtime(expect=True)  # type: float
         assert time > _end, assertionhelpers.errmsg(
@@ -1111,13 +1107,13 @@ class Assertions:
 
     @staticmethod
     def assertjson(
-            json_data,  # type: typing.Optional[JSONDict]
+            json_data,  # type: typing.Optional[JsonDictType]
             jsonpath,  # type: typing.Optional[str]
             err=None,  # type: assertionhelpers.ErrParamType
             evidence=False,  # type: assertionhelpers.EvidenceParamType
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
             value=None,  # type: typing.Union[int, str]
-            ref=None,  # type: JSONDict
+            ref=None,  # type: JsonDictType
             count=1,  # type: typing.Optional[int]
             len=None,  # type: int  # noqa  ## Shadows built-in name 'len'
     ):  # type: (...) -> typing.Any
@@ -1201,7 +1197,7 @@ class Assertions:
                 _items.append(_json_data)
 
         # Check types and values.
-        for _item in _items:  # type: typing.Union[JSONDict, int, str]
+        for _item in _items:  # type: typing.Union[JsonDictType, int, str]
             if type is not None:
                 assert isinstance(_item, type), _errormsg("Wrong type %r, %s expected", _item, qualname(type))
             if value is not None:

@@ -24,20 +24,14 @@ import typing
 import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
-    # `DelayedStr` used in type definitions.
-    # Avoid risks of cylic dependencies.
-    from .debugutils import DelayedStr
-    # `StepSpecificationType` used in type definitions.
-    # Avoid risks of cylic dependencies.
+    from .debugutils import DelayedStr as DelayedStrType
     from .stepdefinition import StepSpecificationType
-    # `StepExecution` used in type definitions.
-    # Avoid risks of cylic dependencies.
-    from .stepexecution import StepExecution
+    from .stepexecution import StepExecution as StepExecutionType
 
 
 if typing.TYPE_CHECKING:
     #: Optional error parameter type.
-    ErrParamType = typing.Optional[typing.Union[str, DelayedStr]]
+    ErrParamType = typing.Optional[typing.Union[str, DelayedStrType]]
 
     #: Evidence parameter type.
     EvidenceParamType = typing.Optional[typing.Union[bool, str]]
@@ -69,7 +63,7 @@ if typing.TYPE_CHECKING:
     #:
     #: If a string or step class only is not enough to find out the expected step execution,
     #: the step execution instance may be passed on directly.
-    StepExecutionSpecificationType = typing.Union[StepSpecificationType, StepExecution]
+    StepExecutionSpecificationType = typing.Union[StepSpecificationType, StepExecutionType]
 
 
 __doc__ += """
@@ -104,7 +98,7 @@ def safecontainer(
 
 def errmsg(
         optional,  # type: ErrParamType
-        standard,  # type: typing.Union[str, DelayedStr]
+        standard,  # type: typing.Union[str, DelayedStrType]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -133,7 +127,7 @@ def errmsg(
 
 def ctxmsg(
         context,  # type: str
-        err,  # type: typing.Union[str, DelayedStr]
+        err,  # type: typing.Union[str, DelayedStrType]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -172,7 +166,7 @@ def isnonemsg(
 
 def evidence(
         evidence_enabled,  # type: EvidenceParamType
-        regular,  # type: typing.Union[str, DelayedStr]
+        regular,  # type: typing.Union[str, DelayedStrType]
         *args,  # type: typing.Any
 ):  # type: (...) -> None
     """
@@ -204,7 +198,7 @@ def evidence(
 
 def getstepexecution(
         step_execution_specification,  # type: StepExecutionSpecificationType
-):  # type: (...) -> StepExecution
+):  # type: (...) -> StepExecutionType
     """
     Retrieves the (last) :class:`.stepexecution.StepExecution` instance corresponding to the given specification.
 

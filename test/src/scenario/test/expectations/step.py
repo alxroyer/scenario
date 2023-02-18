@@ -21,17 +21,15 @@ import scenario
 # `ActionResultExpectations` used in method signatures.
 from .actionresult import ActionResultExpectations
 if typing.TYPE_CHECKING:
-    # `ScenarioExpectations` used in method signatures.
-    # Type declared for type checking only.
-    from .scenario import ScenarioExpectations
+    from .scenario import ScenarioExpectations as ScenarioExpectationsType
 
 
 class StepExpectations:
     def __init__(
             self,
-            scenario_expectations,  # type: ScenarioExpectations
+            scenario_expectations,  # type: ScenarioExpectationsType
     ):  # type: (...) -> None
-        self.scenario_expectations = scenario_expectations  # type: ScenarioExpectations
+        self.scenario_expectations = scenario_expectations  # type: ScenarioExpectationsType
 
         self.number = None  # type: typing.Optional[int]
         self.name = None  # type: typing.Optional[str]

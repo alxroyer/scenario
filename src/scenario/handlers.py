@@ -28,8 +28,15 @@ from .scenariodefinition import ScenarioDefinition
 
 
 if typing.TYPE_CHECKING:
+    #: Event specification type.
+    #:
+    #: Simple string or `enum`.
     EventType = typing.Union[str, enum.Enum]
 
+    #: Handler type.
+    #:
+    #: :param: The event name as a simple string.
+    #: :return: The second argument gives the event data.
     HandlerType = typing.Callable[[str, typing.Any], None]
 
 

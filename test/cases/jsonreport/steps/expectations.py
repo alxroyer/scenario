@@ -20,7 +20,7 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
+    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
 
@@ -33,8 +33,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     class ScenarioTestedItems:
         def __init__(self):  # type: (...) -> None
-            self.step_executions = []  # type: typing.List[JSONDict]
-            self.action_result_executions = []  # type: typing.List[JSONDict]
+            self.step_executions = []  # type: typing.List[JsonDictType]
+            self.action_result_executions = []  # type: typing.List[JsonDictType]
 
     def __init__(
             self,
@@ -45,7 +45,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
         self.scenario_expectations = scenario_expectations  # type: scenario.test.ScenarioExpectations
         #: JSON data read from the report file.
-        self.json = {}  # type: JSONDict
+        self.json = {}  # type: JsonDictType
         #: For each scenario / subscenario executed, memorizes which steps, actions and expected results have already been processed.
         self._scenario_tested_items = []  # type: typing.List[CheckJsonReportExpectations.ScenarioTestedItems]
 
@@ -63,7 +63,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def checkjsonreport(
             self,
-            json_scenario,  # type: JSONDict
+            json_scenario,  # type: JsonDictType
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
         """
@@ -78,7 +78,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def _checkscenario(
             self,
-            json_scenario,  # type: JSONDict
+            json_scenario,  # type: JsonDictType
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
         # Do not debug the ``json_scenario`` content for the top scenario.
@@ -155,8 +155,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                     )
             else:
                 if self.RESULT(f"{len(_executions_txt)} step {_executions_txt} {_executions_txt.are} described in the report{_executions_txt.ifany(':', '.')}"):
-                    _all_step_executions = []  # type: typing.List[JSONDict]
-                    for _json_step_definition in self.assertjson(json_scenario, "steps", type=list):  # type: JSONDict
+                    _all_step_executions = []  # type: typing.List[JsonDictType]
+                    for _json_step_definition in self.assertjson(json_scenario, "steps", type=list):  # type: JsonDictType
                         _all_step_executions.extend(self.assertjson(_json_step_definition, "executions", type=list))
                     self.assertlen(
                         _all_step_executions, len(scenario_expectations.step_expectations),
@@ -165,7 +165,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             for _step_definition_index in range(len(scenario_expectations.step_expectations)):
                 self.RESULT(f"- Step #{_step_definition_index + 1}:")
                 _step_expectations = scenario_expectations.step_expectations[_step_definition_index]  # type: scenario.test.StepExpectations
-                _json_searched_step_definition = {}  # type: JSONDict
+                _json_searched_step_definition = {}  # type: JsonDictType
                 if self.doexecute():
                     for _json_step_definition in self.assertjson(json_scenario, "steps", type=list):  # type already defined above
                         if _step_expectations.name:
@@ -195,7 +195,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def _checkscenarioerrors(
             self,
-            json_scenario,  # type: JSONDict
+            json_scenario,  # type: JsonDictType
             jsonpath,  # type: str
             error_expectation_list,  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
     ):  # type: (...) -> None
@@ -289,7 +289,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def _checkstepdefinition(
             self,
-            json_step_definition,  # type: JSONDict
+            json_step_definition,  # type: JsonDictType
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
         if self.doexecute():
@@ -311,9 +311,9 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                 )
 
         if not self.getexecstep(ExecScenario).doc_only:
-            _json_searched_step_execution = {}  # type: JSONDict
+            _json_searched_step_execution = {}  # type: JsonDictType
             if self.doexecute():
-                for _json_step_execution in self.assertjson(json_step_definition, "executions", type=list):  # type: JSONDict
+                for _json_step_execution in self.assertjson(json_step_definition, "executions", type=list):  # type: JsonDictType
                     if _json_step_execution not in self._scenario_tested_items[-1].step_executions:
                         _json_searched_step_execution = _json_step_execution
                         break
@@ -339,8 +339,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             else:
                 if self.RESULT(f"{len(_executions_txt)} action/result {_executions_txt} "
                                f"{_executions_txt.are} described in the report{_executions_txt.ifany(':', '.')}"):
-                    _all_action_result_executions = []  # type: typing.List[JSONDict]
-                    for _json_action_result_definition in self.assertjson(json_step_definition, "actions-results", type=list):  # type: JSONDict
+                    _all_action_result_executions = []  # type: typing.List[JsonDictType]
+                    for _json_action_result_definition in self.assertjson(json_step_definition, "actions-results", type=list):  # type: JsonDictType
                         _all_action_result_executions.extend(self.assertjson(_json_action_result_definition, "executions", type=list))
                     self.assertlen(
                         _all_action_result_executions, len(step_expectations.action_result_expectations),
@@ -369,7 +369,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def _checkstepexecution(
             self,
-            json_step_execution,  # type: JSONDict
+            json_step_execution,  # type: JsonDictType
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
         if self.doexecute():
@@ -386,7 +386,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
         if len(self._scenario_tested_items[-1].step_executions) > 1:
             if self.RESULT(f"The {step_expectations} execution takes place after the previous one."):
-                _previous_step_execution = self._scenario_tested_items[-1].step_executions[-2]  # type: JSONDict
+                _previous_step_execution = self._scenario_tested_items[-1].step_executions[-2]  # type: JsonDictType
                 _previous_end = self.assertjson(
                     _previous_step_execution, "time.end", type=str,
                     evidence="Previous step end",
@@ -402,7 +402,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def _checkactionresultdefinition(
             self,
-            json_action_result_definition,  # type: JSONDict
+            json_action_result_definition,  # type: JsonDictType
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
         if self.doexecute():
@@ -424,9 +424,9 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             )
 
         if not self.getexecstep(ExecScenario).doc_only:
-            _json_searched_action_result_execution = {}  # type: JSONDict
+            _json_searched_action_result_execution = {}  # type: JsonDictType
             if self.doexecute():
-                for _json_action_resut_execution in self.assertjson(json_action_result_definition, "executions", type=list):  # type: JSONDict
+                for _json_action_resut_execution in self.assertjson(json_action_result_definition, "executions", type=list):  # type: JsonDictType
                     if _json_action_resut_execution not in self._scenario_tested_items[-1].action_result_executions:
                         _json_searched_action_result_execution = _json_action_resut_execution
                         break
@@ -452,7 +452,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def _checkactionresultexecution(
             self,
-            json_action_result_execution,  # type: JSONDict
+            json_action_result_execution,  # type: JsonDictType
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
         if self.doexecute():
@@ -465,7 +465,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
         if self.RESULT(f"The {_type_desc} execution times are bound in the current step execution time."):
             assert self._scenario_tested_items[-1].step_executions
-            _step_execution = self._scenario_tested_items[-1].step_executions[-1]  # type: JSONDict
+            _step_execution = self._scenario_tested_items[-1].step_executions[-1]  # type: JsonDictType
             _step_execution_start = self.assertjson(
                 _step_execution, "time.start", type=str,
                 evidence="Step start",
