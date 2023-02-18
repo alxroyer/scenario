@@ -22,8 +22,6 @@ import typing
 
 # `StrEnum` use for inheritance.
 from .enumutils import StrEnum
-# `CodeLocation` used in method signatures.
-from .locations import CodeLocation
 
 
 class ActionResultDefinition:
