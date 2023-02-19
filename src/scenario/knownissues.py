@@ -22,13 +22,12 @@ import logging
 import re
 import typing
 
-# `Logger` used in method signatures.
-from .logger import Logger
 # `TestError` used for inheritance.
 from .testerrors import TestError
 
 if typing.TYPE_CHECKING:
     from .issuelevels import AnyIssueLevelType
+    from .logger import Logger as _LoggerType
     from .typing import JsonDictType
 
 
@@ -237,7 +236,7 @@ class KnownIssue(TestError):
 
     def logerror(
             self,
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
             level=logging.WARNING,  # type: int
             indent="",  # type: str
     ):  # type: (...) -> None

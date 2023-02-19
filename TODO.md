@@ -25,6 +25,8 @@
         - A plugin exists around typehints: https://pypi.org/project/sphinx-autodoc-typehints/
             - Perhaps a good option to fix typing issues, see options at https://pythonawesome.com/type-hints-support-for-the-sphinx-autodoc-extension/
         - Possibly say in #72 that we won't go further until sphinx-autodoc is fixed.
+            - Try to do the same with the base `DelayedStr`, `Path` and `Xml` classes as well.
+            - Check 'bin/' 'demo/' 'test/' 'tools/'.
     - Check what it would be by using `typing.TYPE_CHECKING` imports as much as possible.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.

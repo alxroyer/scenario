@@ -22,18 +22,17 @@ import inspect
 import types
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
 # `Assertions` used for inheritance.
 from .assertions import Assertions
-# `KnownIssue` used in method signatures.
-from .knownissues import KnownIssue
-# `CodeLocation` used in method signatures.
-from .locations import CodeLocation
 # `Logger` used for inheritance.
 from .logger import Logger
 # `StepUserApi` used for inheritance.
 from .stepuserapi import StepUserApi
+
+if typing.TYPE_CHECKING:
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from .knownissues import KnownIssue as _KnownIssueType
+    from .locations import CodeLocation as _CodeLocationType
 
 
 class StepDefinition(StepUserApi, Assertions, Logger):
@@ -79,6 +78,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         """
         :param method: Method that defines the step, when applicable. Optional.
         """
+        from .locations import CodeLocation
         from .scenariodefinition import ScenarioDefinition
         from .stepexecution import StepExecution
 
@@ -106,7 +106,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         #: Step description.
         self.description = None  # type: typing.Optional[str]
         #: List of actions and expected results that define the step.
-        self.__action_result_definitions = []  # type: typing.List[ActionResultDefinition]
+        self.__action_result_definitions = []  # type: typing.List[_ActionResultDefinitionType]
 
         #: Step executions.
         self.executions = []  # type: typing.List[StepExecution]
@@ -160,7 +160,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
 
     def addactionresult(
             self,
-            *action_result_definitions  # type: ActionResultDefinition
+            *action_result_definitions  # type: _ActionResultDefinitionType
     ):  # type: (...) -> StepDefinition
         """
         Adds actions / expected results to the list defining the step.
@@ -168,13 +168,13 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         :param action_result_definitions: Action / expected result definitions to add.
         :return: ``self``
         """
-        for _action_result_definition in action_result_definitions:  # type: ActionResultDefinition
+        for _action_result_definition in action_result_definitions:  # type: _ActionResultDefinitionType
             _action_result_definition.step = self
             self.__action_result_definitions.append(_action_result_definition)
         return self
 
     @property
-    def actions_results(self):  # type: () -> typing.List[ActionResultDefinition]
+    def actions_results(self):  # type: () -> typing.List[_ActionResultDefinitionType]
         """
         Action / expected result list.
         """
@@ -183,7 +183,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
     def getactionresult(
             self,
             index,  # type: int
-    ):  # type: (...) -> ActionResultDefinition
+    ):  # type: (...) -> _ActionResultDefinitionType
         """
         Retrieves an :class:`.actionresultdefinition.ActionResultDefinition` instance from its location.
 
@@ -285,7 +285,7 @@ class StepDefinitionHelper:
         # Save a copy of the curent `ScenarioDefinition.known_issues` list in a hidden field.
         setattr(self.definition, "__init_known_issues", list(self.definition.known_issues))
 
-    def getinitknownissues(self):  # type: (...) -> typing.Sequence[KnownIssue]
+    def getinitknownissues(self):  # type: (...) -> typing.Sequence[_KnownIssueType]
         """
         Retrieves the known issue list saved by :meth:`stashinitknownissues()` for the related step definition.
 

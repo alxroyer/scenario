@@ -21,12 +21,10 @@ Step execution management.
 import time
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
-# `ExecTotalStats` used in method signatures.
-from .stats import ExecTotalStats
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
+if typing.TYPE_CHECKING:
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from .stats import ExecTotalStats as _ExecTotalStatsType
+    from .stepdefinition import StepDefinition as _StepDefinitionType
 
 
 class StepExecution:
@@ -39,7 +37,7 @@ class StepExecution:
 
     def __init__(
             self,
-            definition,  # type: StepDefinition
+            definition,  # type: _StepDefinitionType
             number,  # type: int
     ):  # type: (...) -> None
         """
@@ -54,7 +52,7 @@ class StepExecution:
         from .testerrors import TestError
 
         #: Owner step reference.
-        self.definition = definition  # type: StepDefinition
+        self.definition = definition  # type: _StepDefinitionType
         #: Step execution number.
         #:
         #: Execution number of this step execution within the steps executions of the related scenario.
@@ -65,7 +63,7 @@ class StepExecution:
         #:
         #: Differs from :attr:`__current_action_result_definition_index` in that this reference can be set to ``None``
         #: when the action / expected result execution is done.
-        self.current_action_result_definition = None  # type: typing.Optional[ActionResultDefinition]
+        self.current_action_result_definition = None  # type: typing.Optional[_ActionResultDefinitionType]
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
         #: Error.
@@ -86,7 +84,7 @@ class StepExecution:
 
         return f"<{qualname(type(self))}#{self.number} of {self.definition!r}>"
 
-    def getnextactionresultdefinition(self):  # type: (...) -> ActionResultDefinition
+    def getnextactionresultdefinition(self):  # type: (...) -> _ActionResultDefinitionType
         """
         Retrieves the next action/result definition to execute.
 
@@ -130,14 +128,17 @@ class StepExecution:
 
     @staticmethod
     def actionstats(
-            definition,  # type: StepDefinition
-    ):  # type: (...) -> ExecTotalStats
+            definition,  # type: _StepDefinitionType
+    ):  # type: (...) -> _ExecTotalStatsType
         """
         Computes action statistics for the given step definition.
 
         :param definition: Step definition to compute action statistics for.
         :return: Action statistics of the step.
         """
+        from .actionresultdefinition import ActionResultDefinition
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _action_result_definition in definition.actions_results:  # type: ActionResultDefinition
             if _action_result_definition.type == ActionResultDefinition.Type.ACTION:
@@ -147,16 +148,19 @@ class StepExecution:
 
     @staticmethod
     def resultstats(
-            definition,  # type: StepDefinition
-    ):  # type: (...) -> ExecTotalStats
+            definition,  # type: _StepDefinitionType
+    ):  # type: (...) -> _ExecTotalStatsType
         """
         Computes expected result statistics for the given step definition.
 
         :param definition: Step definition to compute expected result statistics for.
         :return: Expected result statistics of the step.
         """
+        from .actionresultdefinition import ActionResultDefinition
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
-        for _action_result_definition in definition.actions_results:  # type: ActionResultDefinition
+        for _action_result_definition in definition.actions_results:  # type: _ActionResultDefinitionType
             if _action_result_definition.type == ActionResultDefinition.Type.RESULT:
                 _stats.total += 1
                 _stats.executed += len(_action_result_definition.executions)

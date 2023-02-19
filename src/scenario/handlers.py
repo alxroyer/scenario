@@ -23,8 +23,9 @@ import typing
 
 # `Logger` used for inheritance.
 from .logger import Logger
-# `ScenarioDefinition` used in method signatures.
-from .scenariodefinition import ScenarioDefinition
+
+if typing.TYPE_CHECKING:
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
 if typing.TYPE_CHECKING:
@@ -49,7 +50,7 @@ class Handler:
             self,
             event,  # type: EventType
             handler,  # type: HandlerType
-            scenario_definition,  # type: typing.Optional[ScenarioDefinition]
+            scenario_definition,  # type: typing.Optional[_ScenarioDefinitionType]
             once,  # type: bool
     ):  # type: (...) -> None
         """
@@ -63,7 +64,7 @@ class Handler:
         #: Handler function.
         self.handler = handler  # type: HandlerType
         #: Related scenario, if any.
-        self.scenario_definition = scenario_definition  # type: typing.Optional[ScenarioDefinition]
+        self.scenario_definition = scenario_definition  # type: typing.Optional[_ScenarioDefinitionType]
         #: *Once* flag.
         self.once = once  # type: bool
 
@@ -90,7 +91,7 @@ class Handlers(Logger):
             self,
             event,  # type: EventType
             handler,  # type: HandlerType
-            scenario=None,  # type: ScenarioDefinition
+            scenario=None,  # type: _ScenarioDefinitionType
             once=False,  # type: bool
             first=False,  # type: bool
     ):  # type: (...) -> None

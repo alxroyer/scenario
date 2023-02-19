@@ -21,16 +21,17 @@ Campaign reports.
 import sys
 import typing
 
-# `CampaignExecution`, `TestCaseExecution` and `TestSuiteExecution` used in method signatures.
-from .campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
 # `Logger` used for inheritance.
 from .logger import Logger
-# `Path` used in method signatures.
+# Base class `Path` used in method signatures.
 from .path import Path
-# `Xml` used in method signatures.
+# Base class `Xml` used in method signatures.
 from .xmlutils import Xml
 
 if typing.TYPE_CHECKING:
+    from .campaignexecution import CampaignExecution as _CampaignExecutionType
+    from .campaignexecution import TestCaseExecution as _TestCaseExecutionType
+    from .campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
     from .path import AnyPathType
 
 
@@ -57,7 +58,7 @@ class CampaignReport(Logger):
 
     def writejunitreport(
             self,
-            campaign_execution,  # type: CampaignExecution
+            campaign_execution,  # type: _CampaignExecutionType
             junit_path,  # type: AnyPathType
     ):  # type: (...) -> bool
         """
@@ -93,7 +94,7 @@ class CampaignReport(Logger):
     def readjunitreport(
             self,
             junit_path,  # type: AnyPathType
-    ):  # type: (...) -> typing.Optional[CampaignExecution]
+    ):  # type: (...) -> typing.Optional[_CampaignExecutionType]
         """
         Reads the JUnit report.
 
@@ -113,7 +114,7 @@ class CampaignReport(Logger):
 
             # Analyze the JSON content.
             self._junit_path = Path(junit_path)
-            _campaign_execution = self._xml2campaign(_xml_doc)  # type: CampaignExecution
+            _campaign_execution = self._xml2campaign(_xml_doc)  # type: _CampaignExecutionType
 
             return _campaign_execution
         except Exception as _err:
@@ -126,7 +127,7 @@ class CampaignReport(Logger):
     def _campaign2xml(
             self,
             xml_doc,  # type: Xml.Document
-            campaign_execution,  # type: CampaignExecution
+            campaign_execution,  # type: _CampaignExecutionType
     ):  # type: (...) -> Xml.Node
         """
         Campaign JUnit XML generation.
@@ -177,7 +178,7 @@ class CampaignReport(Logger):
         # /testsuites/testsuite nodes:
         # [CUBIC]: "testsuite can appear multiple times, if contained in a testsuites element. It can also be the root element."
         _test_suite_id = 0  # type: int
-        for _test_suite_execution in campaign_execution.test_suite_executions:  # type: TestSuiteExecution
+        for _test_suite_execution in campaign_execution.test_suite_executions:  # type: _TestSuiteExecutionType
             _xml_test_suites.appendchild(self._testsuite2xml(xml_doc, _test_suite_execution, _test_suite_id))
             _test_suite_id += 1
 
@@ -186,13 +187,15 @@ class CampaignReport(Logger):
     def _xml2campaign(
             self,
             xml_doc,  # type: Xml.Document
-    ):  # type: (...) -> CampaignExecution
+    ):  # type: (...) -> _CampaignExecutionType
         """
         Campaign execution reading from JUnit report.
 
         :param xml_doc: JUnit XML document to read from.
         :return: Campaign execution data.
         """
+        from .campaignexecution import CampaignExecution
+
         _campaign_execution = CampaignExecution(outdir=self._junit_path.parent)  # type: CampaignExecution
 
         _xml_test_suites = xml_doc.root  # type: Xml.Node
@@ -235,7 +238,7 @@ class CampaignReport(Logger):
     def _testsuite2xml(
             self,
             xml_doc,  # type: Xml.Document
-            test_suite_execution,  # type: TestSuiteExecution
+            test_suite_execution,  # type: _TestSuiteExecutionType
             test_suite_id,  # type: int
     ):  # type: (...) -> Xml.Node
         """
@@ -307,7 +310,7 @@ class CampaignReport(Logger):
 
         # /testsuites/testsuite/testcase nodes:
         # [CUBIC]: "testcase can appear multiple times, see /testsuites/testsuite@tests"
-        for _test_case_execution in test_suite_execution.test_case_executions:  # type: TestCaseExecution
+        for _test_case_execution in test_suite_execution.test_case_executions:  # type: _TestCaseExecutionType
             _xml_test_suite.appendchild(self._testcase2xml(xml_doc, _test_case_execution))
 
         # /testsuite/system-out:
@@ -320,9 +323,9 @@ class CampaignReport(Logger):
 
     def _xml2testsuite(
             self,
-            campaign_execution,  # type: CampaignExecution
+            campaign_execution,  # type: _CampaignExecutionType
             xml_test_suite,  # type: Xml.Node
-    ):  # type: (...) -> TestSuiteExecution
+    ):  # type: (...) -> _TestSuiteExecutionType
         """
         Test suite reading from JUnit report.
 
@@ -330,7 +333,8 @@ class CampaignReport(Logger):
         :param xml_test_suite: JUnit XML to read from.
         :return: Test suite execution data.
         """
-        from .datetimeutils import f2strtime, fromiso8601, toiso8601
+        from .campaignexecution import TestSuiteExecution
+        from .datetimeutils import f2strtime, fromiso8601
         from .debugutils import callback
 
         _test_suite_execution = TestSuiteExecution(campaign_execution, self._xmlattr2path(xml_test_suite, "name"))  # type: TestSuiteExecution
@@ -386,7 +390,7 @@ class CampaignReport(Logger):
     def _testcase2xml(
             self,
             xml_doc,  # type: Xml.Document
-            test_case_execution,  # type: TestCaseExecution
+            test_case_execution,  # type: _TestCaseExecutionType
     ):  # type: (...) -> Xml.Node
         """
         Test case JUnit XML generation.
@@ -493,9 +497,9 @@ class CampaignReport(Logger):
 
     def _xml2testcase(
             self,
-            test_suite_execution,  # type: TestSuiteExecution
+            test_suite_execution,  # type: _TestSuiteExecutionType
             xml_test_case,  # type: Xml.Node
-    ):  # type: (...) -> TestCaseExecution
+    ):  # type: (...) -> _TestCaseExecutionType
         """
         Test case reading from JUnit XML.
 
@@ -503,6 +507,7 @@ class CampaignReport(Logger):
         :param xml_test_case: JUnit XML to read from.
         :return: Test case execution data.
         """
+        from .campaignexecution import TestCaseExecution
         from .executionstatus import ExecutionStatus
         from .knownissues import KnownIssue
         from .locations import CodeLocation
@@ -645,6 +650,7 @@ class CampaignReport(Logger):
 
         Displays warnings when the statistics mismatch.
         """
+        from .campaignexecution import TestCaseExecution, TestSuiteExecution
         from .scenarioexecution import ScenarioExecution
 
         assert attr_name.count("-") == 1

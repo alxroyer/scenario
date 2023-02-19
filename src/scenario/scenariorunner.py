@@ -23,28 +23,20 @@ import sys
 import time
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
 # `StrEnum` used for inheritance.
 from .enumutils import StrEnum
-# `ErrorCode` used in method signatures.
-from .errcodes import ErrorCode
-# `KnownIssue` used in method signatures.
-from .knownissues import KnownIssue
 # `Logger` used for inheritance.
 from .logger import Logger
-# `ScenarioDefinition` used in method signatures.
-from .scenariodefinition import ScenarioDefinition
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
-# `StepUserApi` used in method signatures.
-from .stepuserapi import StepUserApi
-# `TestError` used in method signatures.
-from .testerrors import TestError
 
 if typing.TYPE_CHECKING:
-    from .stepdefinition import StepSpecificationType
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from .errcodes import ErrorCode as _ErrorCodeType
+    from .knownissues import KnownIssue as _KnownIssueType
     from .path import AnyPathType
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from .stepdefinition import StepDefinition as _StepDefinitionType, StepSpecificationType
+    from .stepuserapi import StepUserApi as _StepUserApiType
+    from .testerrors import TestError as _TestErrorType
 
 
 class ScenarioRunner(Logger):
@@ -91,13 +83,14 @@ class ScenarioRunner(Logger):
         Logger.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
         self.setextraflag(LogExtraData.ACTION_RESULT_MARGIN, False)
 
-    def main(self):  # type: (...) -> ErrorCode
+    def main(self):  # type: (...) -> _ErrorCodeType
         """
         Scenario runner main function, as a member method.
 
         :return: Error code.
         """
         from .debugloggers import ExecTimesLogger
+        from .errcodes import ErrorCode
         from .loggermain import MAIN_LOGGER
         from .loggingservice import LOGGING_SERVICE
         from .path import Path
@@ -106,7 +99,7 @@ class ScenarioRunner(Logger):
         from .scenarioreport import SCENARIO_REPORT
         from .scenarioresults import SCENARIO_RESULTS
         from .scenariostack import SCENARIO_STACK
-        from .testerrors import ExceptionError
+        from .testerrors import ExceptionError, TestError
 
         _exec_times_logger = ExecTimesLogger("ScenarioRunner.main()")  # type: ExecTimesLogger
 
@@ -199,7 +192,7 @@ class ScenarioRunner(Logger):
     def executepath(
             self,
             scenario_path,  # type: AnyPathType
-    ):  # type: (...) -> ErrorCode
+    ):  # type: (...) -> _ErrorCodeType
         """
         Executes a scenario from its script path.
 
@@ -211,6 +204,7 @@ class ScenarioRunner(Logger):
         Feeds the :attr:`.scenarioresults.SCENARIO_RESULTS` instance.
         """
         from .debugloggers import ExecTimesLogger
+        from .errcodes import ErrorCode
         from .loggermain import MAIN_LOGGER
         from .scenariodefinition import ScenarioDefinitionHelper
         from .testerrors import ExceptionError
@@ -224,7 +218,7 @@ class ScenarioRunner(Logger):
         try:
             _scenario_definition_class = (
                 ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(scenario_path)
-            )  # type: typing.Type[ScenarioDefinition]
+            )  # type: typing.Type[_ScenarioDefinitionType]
             _exec_times_logger.tick("Once the definition class has been found")
         except ImportError as _err:
             ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
@@ -237,7 +231,7 @@ class ScenarioRunner(Logger):
             return ErrorCode.INPUT_FORMAT_ERROR
 
         try:
-            _scenario_definition = _scenario_definition_class()  # type: ScenarioDefinition
+            _scenario_definition = _scenario_definition_class()  # type: _ScenarioDefinitionType
             _exec_times_logger.tick("Once the definition class has been instanciated")
         except Exception as _err:
             # Unexpected exception.
@@ -258,9 +252,9 @@ class ScenarioRunner(Logger):
 
     def executescenario(
             self,
-            scenario_definition,  # type: ScenarioDefinition
+            scenario_definition,  # type: _ScenarioDefinitionType
             start_time=None,  # type: float
-    ):  # type: (...) -> ErrorCode
+    ):  # type: (...) -> _ErrorCodeType
         """
         Executes a scenario or subscenario.
 
@@ -274,6 +268,7 @@ class ScenarioRunner(Logger):
             Error code, but no :const:`.errcodes.ErrorCode.TEST_ERROR`.
         """
         from .debugloggers import ExecTimesLogger
+        from .errcodes import ErrorCode
 
         _exec_times_logger = ExecTimesLogger("ScenarioRunner.executescenario()")  # type: ExecTimesLogger
 
@@ -318,14 +313,15 @@ class ScenarioRunner(Logger):
 
     def _buildscenario(
             self,
-            scenario_definition,  # type: ScenarioDefinition
-    ):  # type: (...) -> ErrorCode
+            scenario_definition,  # type: _ScenarioDefinitionType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Builds a scenario definition.
 
         :param scenario_definition: :class:`.scenariodefinition.ScenarioDefinition` instance to populate with steps, actions and expected results definitions.
         :return: Error code.
         """
+        from .errcodes import ErrorCode
         from .scenariodefinition import ScenarioDefinitionHelper
         from .scenarioexecution import ScenarioExecution
         from .scenariostack import SCENARIO_STACK
@@ -369,14 +365,15 @@ class ScenarioRunner(Logger):
 
     def _beginscenario(
             self,
-            scenario_definition,  # type: ScenarioDefinition
-    ):  # type: (...) -> ErrorCode
+            scenario_definition,  # type: _ScenarioDefinitionType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Begins a scenario or subscenario execution.
 
         :param scenario_definition: Scenario or subscenario which execution to start.
         :return: Error code.
         """
+        from .errcodes import ErrorCode
         from .handlers import HANDLERS
         from .loggermain import MAIN_LOGGER
         from .scenarioconfig import SCENARIO_CONFIG
@@ -435,14 +432,15 @@ class ScenarioRunner(Logger):
 
     def _endscenario(
             self,
-            scenario_definition,  # type: ScenarioDefinition
-    ):  # type: (...) -> ErrorCode
+            scenario_definition,  # type: _ScenarioDefinitionType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Ends a scenario or subscenario execution.
 
         :param scenario_definition: Scenario or subscenario which execution to end.
         :return: Error code.
         """
+        from .errcodes import ErrorCode
         from .handlers import HANDLERS
         from .scenarioevents import ScenarioEvent, ScenarioEventData
         from .scenariologging import SCENARIO_LOGGING
@@ -488,7 +486,7 @@ class ScenarioRunner(Logger):
 
     def _execstep(
             self,
-            step_definition,  # type: StepDefinition
+            step_definition,  # type: _StepDefinitionType
     ):  # type: (...) -> None
         """
         Executes the step.
@@ -503,7 +501,7 @@ class ScenarioRunner(Logger):
         from .stepdefinition import StepDefinitionHelper
         from .stepexecution import StepExecution
         from .stepsection import StepSection
-        from .testerrors import ExceptionError
+        from .testerrors import ExceptionError, TestError
 
         self.debug("Beginning of %r", step_definition)
 
@@ -514,7 +512,7 @@ class ScenarioRunner(Logger):
             # Step execution number, starting from 1.
             # Sum up step executions already known for the given scenario.
             _step_number = 1  # type: int
-            for _step_definition in step_definition.scenario.steps:  # type: StepDefinition
+            for _step_definition in step_definition.scenario.steps:  # type: _StepDefinitionType
                 # Skip step sections.
                 if isinstance(_step_definition, StepSection):
                     continue
@@ -607,8 +605,8 @@ class ScenarioRunner(Logger):
 
     def _notifyknownissuedefinitions(
             self,
-            step_user_api,  # type: StepUserApi
-            known_issues=None,  # type: typing.Sequence[KnownIssue]
+            step_user_api,  # type: _StepUserApiType
+            known_issues=None,  # type: typing.Sequence[_KnownIssueType]
     ):  # type: (...) -> None
         """
         Notifies the known issues declared at the definition level for the given scenario or step definition.
@@ -622,13 +620,13 @@ class ScenarioRunner(Logger):
             if known_issues is None:
                 known_issues = step_user_api.known_issues
 
-            for _known_issue in known_issues:  # type: KnownIssue
+            for _known_issue in known_issues:  # type: _KnownIssueType
                 self.debug("Notifying known issue from %r", step_user_api)
                 self.onerror(_known_issue)
 
     def onactionresult(
             self,
-            action_result_type,  # type: ActionResultDefinition.Type
+            action_result_type,  # type: _ActionResultDefinitionType.Type
             description,  # type: str
     ):  # type: (...) -> None
         """
@@ -637,6 +635,7 @@ class ScenarioRunner(Logger):
         :param action_result_type: ACTION or RESULT.
         :param description: Action or expected result description.
         """
+        from .actionresultdefinition import ActionResultDefinition
         from .actionresultexecution import ActionResultExecution
         from .scenariologging import SCENARIO_LOGGING
         from .scenariostack import SCENARIO_STACK
@@ -724,8 +723,8 @@ class ScenarioRunner(Logger):
 
     def onerror(
             self,
-            error,  # type: TestError
-            originator=None,  # type: StepUserApi
+            error,  # type: _TestErrorType
+            originator=None,  # type: _StepUserApiType
     ):  # type: (...) -> None
         """
         Called when an error occurs.
@@ -735,10 +734,12 @@ class ScenarioRunner(Logger):
         """
         from .actionresultexecution import ActionResultExecution
         from .handlers import HANDLERS
+        from .knownissues import KnownIssue
         from .scenarioevents import ScenarioEvent, ScenarioEventData
         from .scenarioexecution import ScenarioExecution
         from .scenariologging import SCENARIO_LOGGING
         from .scenariostack import SCENARIO_STACK
+        from .stepdefinition import StepDefinition
         from .stepexecution import StepExecution
 
         self.debug("onerror(error=%r, originator=%r)", error, originator)
@@ -788,7 +789,7 @@ class ScenarioRunner(Logger):
                 if obj is None:
                     return False
                 # Determine the candidate list to store the error into.
-                _list = obj.warnings if error.iswarning() else obj.errors  # type: typing.List[TestError]
+                _list = obj.warnings if error.iswarning() else obj.errors  # type: typing.List[_TestErrorType]
                 # Do not store known issues twice (in the owner execution contexts among others).
                 if isinstance(error, KnownIssue) and (error in _list):
                     return False
@@ -815,6 +816,7 @@ class ScenarioRunner(Logger):
 
         :return: ``True`` when the scenario execution should stop, ``False`` when the scenario execution should continue on.
         """
+        from .knownissues import KnownIssue
         from .scenarioconfig import SCENARIO_CONFIG
         from .scenariostack import SCENARIO_STACK
 
@@ -822,7 +824,7 @@ class ScenarioRunner(Logger):
             # Errors occurred.
             # Check whether these errors are real errors, or just known issues considered as errors.
             _real_errors = 0  # type: int
-            for _error in SCENARIO_STACK.current_scenario_execution.errors:  # type: TestError
+            for _error in SCENARIO_STACK.current_scenario_execution.errors:  # type: _TestErrorType
                 if not isinstance(_error, KnownIssue):
                     _real_errors += 1
             if not _real_errors:
@@ -860,7 +862,7 @@ class ScenarioRunner(Logger):
         self.debug("Jumping to step %r.", to_step_specification)
 
         if SCENARIO_STACK.current_scenario_definition and SCENARIO_STACK.current_scenario_execution:
-            _next_step_definition = SCENARIO_STACK.current_scenario_definition.expectstep(to_step_specification)  # type: StepDefinition
+            _next_step_definition = SCENARIO_STACK.current_scenario_definition.expectstep(to_step_specification)  # type: _StepDefinitionType
             SCENARIO_STACK.current_scenario_execution.setnextstep(_next_step_definition)
             raise GotoException()
         else:

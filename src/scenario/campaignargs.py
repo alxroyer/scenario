@@ -22,7 +22,7 @@ import typing
 
 # `Args` used for inheritance.
 from .args import Args
-# `Path` used in method signatures.
+# Base class `Path` used in method signatures.
 from .path import Path
 # `CommonExecArgs` used for inheritance.
 from .scenarioargs import CommonExecArgs

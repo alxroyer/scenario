@@ -20,16 +20,14 @@
 
 import typing
 
-# `ConfigNode` used in method signatures.
-from .confignode import ConfigNode
-# `Console` used in method signatures.
-from .console import Console
 # `StrEnum` used for inheritance.
 from .enumutils import StrEnum
-# `Path` used in method signatures.
+# Base class `Path` used in method signatures.
 from .path import Path
 
 if typing.TYPE_CHECKING:
+    from .confignode import ConfigNode as _ConfigNodeType
+    from .console import Console as _ConsoleType
     from .issuelevels import AnyIssueLevelType
 
 
@@ -169,8 +167,8 @@ class ScenarioConfig:
     def logcolor(
             self,
             level,  # type: str
-            default,  # type: Console.Color
-    ):  # type: (...) -> Console.Color
+            default,  # type: _ConsoleType.Color
+    ):  # type: (...) -> _ConsoleType.Color
         """
         Retrieves the expected log color for the given log level.
 
@@ -180,7 +178,9 @@ class ScenarioConfig:
 
         Configurable through :attr:`Key.LOG_COLOR`.
         """
-        from .configdb import CONFIG_DB, ConfigNode
+        from .configdb import CONFIG_DB
+        from .confignode import ConfigNode
+        from .console import Console
 
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
         _config_node = CONFIG_DB.getnode(_key)  # type: typing.Optional[ConfigNode]
@@ -299,11 +299,11 @@ class ScenarioConfig:
         from .configdb import CONFIG_DB
         from .issuelevels import IssueLevel
 
-        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[ConfigNode]
+        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[_ConfigNodeType]
         if _root_node:
             for _name in _root_node.getsubkeys():  # type: str
                 # Retrieve the `int` value configured with the issue level name.
-                _subnode = _root_node.get(_name)  # type: typing.Optional[ConfigNode]
+                _subnode = _root_node.get(_name)  # type: typing.Optional[_ConfigNodeType]
                 assert _subnode, "Internal error"
                 try:
                     _value = _subnode.cast(int)  # type: int
@@ -375,7 +375,7 @@ class ScenarioConfig:
         """
         from .configdb import CONFIG_DB
 
-        _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[ConfigNode]
+        _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[_ConfigNodeType]
         if _conf_node:
             _data = _conf_node.data  # type: typing.Any
             if isinstance(_data, list):
@@ -392,7 +392,7 @@ class ScenarioConfig:
 
     def _warning(
             self,
-            node,  # type: ConfigNode
+            node,  # type: _ConfigNodeType
             msg,  # type: str
     ):  # type: (...) -> None
         """

@@ -21,9 +21,9 @@ Extra debugging loggers.
 import time
 import typing
 
-# `DelayedStr` used in method signatures.
+# Base class `DelayedStr` used in method signatures.
 from .debugutils import DelayedStr
-# `Logger` used for instanciation.
+# `Logger` used for inheritance.
 from .logger import Logger
 
 

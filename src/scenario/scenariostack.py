@@ -20,25 +20,18 @@ Scenario execution stack.
 
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
-# `ActionResultExecution` used in method signatures.
-from .actionresultexecution import ActionResultExecution
 # `Logger` used for inheritance.
 from .logger import Logger
-# `ScenarioDefinition` used in method signatures.
-from .scenariodefinition import ScenarioDefinition
-# `ScenarioExecution` used in method signatures.
-from .scenarioexecution import ScenarioExecution
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
-# `StepExecution` used in method signatures.
-from .stepexecution import StepExecution
-# `StepUserApi` used in method signatures.
-from .stepuserapi import StepUserApi
 
 if typing.TYPE_CHECKING:
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from .actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from .issuelevels import AnyIssueLevelType
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from .scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from .stepdefinition import StepDefinition as _StepDefinitionType
+    from .stepexecution import StepExecution as _StepExecutionType
+    from .stepuserapi import StepUserApi as _StepUserApiType
 
 
 class BuildingContext:
@@ -63,11 +56,11 @@ class BuildingContext:
               See :attr:`step_definition` and :meth:`fromoriginator()` for further details on the step definition reference management.
         """
         #: Scenario definitions being built.
-        self.__scenario_definitions = []  # type: typing.List[ScenarioDefinition]
+        self.__scenario_definitions = []  # type: typing.List[_ScenarioDefinitionType]
 
     def pushscenariodefinition(
             self,
-            scenario_definition,  # type: ScenarioDefinition
+            scenario_definition,  # type: _ScenarioDefinitionType
     ):  # type: (...) -> None
         """
         Pushes the reference of the scenario definition being built to the building context of the scenario stack.
@@ -80,7 +73,7 @@ class BuildingContext:
 
     def popscenariodefinition(
             self,
-            scenario_definition,  # type: ScenarioDefinition
+            scenario_definition,  # type: _ScenarioDefinitionType
     ):  # type: (...) -> None
         """
         Pops the reference of the scenario definition being built from the building context of the scenario stack.
@@ -98,7 +91,7 @@ class BuildingContext:
             )
 
     @property
-    def scenario_definition(self):  # type: () -> typing.Optional[ScenarioDefinition]
+    def scenario_definition(self):  # type: () -> typing.Optional[_ScenarioDefinitionType]
         """
         Main scenario definition being built (i.e. the first), if any.
         """
@@ -108,7 +101,7 @@ class BuildingContext:
             return None
 
     @property
-    def step_definition(self):  # type: () -> typing.Optional[StepDefinition]
+    def step_definition(self):  # type: () -> typing.Optional[_StepDefinitionType]
         """
         Step definition being built, if any.
 
@@ -131,8 +124,8 @@ class BuildingContext:
 
     def fromoriginator(
             self,
-            originator,  # type: StepUserApi
-    ):  # type: (...) -> StepUserApi
+            originator,  # type: _StepUserApiType
+    ):  # type: (...) -> _StepUserApiType
         """
         Determines the actual object being built.
 
@@ -147,6 +140,8 @@ class BuildingContext:
         - either a :class:`.stepdefinition.StepDefinition` reference directly,
         - or :class:`.scenariodefinition.ScenarioDefinition` reference.
         """
+        from .scenariodefinition import ScenarioDefinition
+
         if (originator is self.scenario_definition) and self.step_definition:
             # The call comes from the `ScenarioDefinition` being built, but a step definition is currently being built.
             # Return the latter in that case.
@@ -212,17 +207,17 @@ class ScenarioStack(Logger):
         #:
         #: The first item defines the :attr:`main_scenario`.
         #: The subscenarios (if any) then follow.
-        self.__scenario_executions = []  # type: typing.List[ScenarioExecution]
+        self.__scenario_executions = []  # type: typing.List[_ScenarioExecutionType]
 
         #: History of scenario executions.
         #:
         #: Main scenario executions only.
         #: In the chronological order.
-        self.history = []  # type: typing.List[ScenarioExecution]
+        self.history = []  # type: typing.List[_ScenarioExecutionType]
 
     def pushscenarioexecution(
             self,
-            scenario_execution,  # type: ScenarioExecution
+            scenario_execution,  # type: _ScenarioExecutionType
     ):  # type: (...) -> None
         """
         Adds a scenario execution instance in the scenario execution stack.
@@ -235,7 +230,7 @@ class ScenarioStack(Logger):
             self.history.append(scenario_execution)
         self.__scenario_executions.append(scenario_execution)
 
-    def popscenarioexecution(self):  # type: (...) -> ScenarioExecution
+    def popscenarioexecution(self):  # type: (...) -> _ScenarioExecutionType
         """
         Removes the last scenario execution from the scenario execution stack.
 
@@ -244,7 +239,7 @@ class ScenarioStack(Logger):
         self.debug("popscenarioexecution(): Popping scenario execution")
 
         assert self.__scenario_executions, "No more scenario execution in the scenario execution stack"
-        _last_scenario_execution = self.__scenario_executions.pop(-1)  # type: ScenarioExecution
+        _last_scenario_execution = self.__scenario_executions.pop(-1)  # type: _ScenarioExecutionType
         return _last_scenario_execution
 
     @property
@@ -257,7 +252,7 @@ class ScenarioStack(Logger):
         return len(self.__scenario_executions)
 
     @property
-    def main_scenario_definition(self):  # type: () -> typing.Optional[ScenarioDefinition]
+    def main_scenario_definition(self):  # type: () -> typing.Optional[_ScenarioDefinitionType]
         """
         Main scenario definition under execution.
 
@@ -271,7 +266,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def main_scenario_execution(self):  # type: () -> typing.Optional[ScenarioExecution]
+    def main_scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]
         """
         Main scenario execution instance.
 
@@ -286,7 +281,7 @@ class ScenarioStack(Logger):
 
     def ismainscenario(
             self,
-            scenario,  # type: typing.Union[ScenarioDefinition, ScenarioExecution]
+            scenario,  # type: typing.Union[_ScenarioDefinitionType, _ScenarioExecutionType]
     ):  # type: (...) -> bool
         """
         Tells whether the given scenario corresponds to the main one under execution.
@@ -294,6 +289,9 @@ class ScenarioStack(Logger):
         :param scenario: Scenario definition or scenario execution to check.
         :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
+        from .scenariodefinition import ScenarioDefinition
+        from .scenarioexecution import ScenarioExecution
+
         _scenario_definition = None  # type: typing.Optional[ScenarioDefinition]
         if isinstance(scenario, ScenarioDefinition):
             _scenario_definition = scenario
@@ -305,7 +303,7 @@ class ScenarioStack(Logger):
         return False
 
     @property
-    def current_scenario_definition(self):  # type: () -> typing.Optional[ScenarioDefinition]
+    def current_scenario_definition(self):  # type: () -> typing.Optional[_ScenarioDefinitionType]
         """
         Current scenario definition under execution.
 
@@ -319,7 +317,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_scenario_execution(self):  # type: () -> typing.Optional[ScenarioExecution]
+    def current_scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]
         """
         Current scenario execution instance.
 
@@ -334,7 +332,7 @@ class ScenarioStack(Logger):
 
     def iscurrentscenario(
             self,
-            scenario,  # type: typing.Union[ScenarioDefinition, ScenarioExecution]
+            scenario,  # type: typing.Union[_ScenarioDefinitionType, _ScenarioExecutionType]
     ):  # type: (...) -> bool
         """
         Tells whether the given scenario corresponds to the one on top of the scenario stack.
@@ -342,6 +340,9 @@ class ScenarioStack(Logger):
         :param scenario: Scenario definition or scenario execution to check.
         :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
+        from .scenariodefinition import ScenarioDefinition
+        from .scenarioexecution import ScenarioExecution
+
         _scenario_definition = None  # type: typing.Optional[ScenarioDefinition]
         if isinstance(scenario, ScenarioDefinition):
             _scenario_definition = scenario
@@ -353,7 +354,7 @@ class ScenarioStack(Logger):
         return False
 
     @property
-    def current_step_definition(self):  # type: () -> typing.Optional[StepDefinition]
+    def current_step_definition(self):  # type: () -> typing.Optional[_StepDefinitionType]
         """
         Current step definition under execution.
 
@@ -369,7 +370,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_step_execution(self):  # type: () -> typing.Optional[StepExecution]
+    def current_step_execution(self):  # type: () -> typing.Optional[_StepExecutionType]
         """
         Current step execution instance.
 
@@ -385,7 +386,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_action_result_definition(self):  # type: () -> typing.Optional[ActionResultDefinition]
+    def current_action_result_definition(self):  # type: () -> typing.Optional[_ActionResultDefinitionType]
         """
         Current action or expected result definition under execution.
 
@@ -400,7 +401,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_action_result_execution(self):  # type: () -> typing.Optional[ActionResultExecution]
+    def current_action_result_execution(self):  # type: () -> typing.Optional[_ActionResultExecutionType]
         """
         Current action or expected result execution instance.
 
@@ -448,7 +449,7 @@ class ScenarioStack(Logger):
                 or self.building.step_definition
                 or self.current_scenario_definition
                 or self.building.scenario_definition
-        )  # type: typing.Optional[typing.Union[ScenarioDefinition, StepDefinition]]
+        )  # type: typing.Optional[typing.Union[_ScenarioDefinitionType, _StepDefinitionType]]
         assert _step_user_api
         _step_user_api.knownissue(*args, **kwargs)
 

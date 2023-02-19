@@ -28,16 +28,13 @@ import typing
 from .assertions import Assertions
 # `Logger` used for inheritance.
 from .logger import Logger
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
-# `StepSection` used in method signatures.
-from .stepsection import StepSection
 # `StepUserApi` used for inheritance.
 from .stepuserapi import StepUserApi
 
 if typing.TYPE_CHECKING:
-    from .stepdefinition import StepSpecificationType, VarStepDefinitionType
     from .path import AnyPathType
+    from .stepdefinition import StepDefinition as _StepDefinitionType, StepSpecificationType, VarStepDefinitionType
+    from .stepsection import StepSection as _StepSectionType
 
 
 class MetaScenarioDefinition(abc.ABCMeta):
@@ -226,7 +223,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         self.__attributes = {}  # type: typing.Dict[str, typing.Any]
 
         #: List of steps that define the scenario.
-        self.__step_definitions = []  # type: typing.List[StepDefinition]
+        self.__step_definitions = []  # type: typing.List[_StepDefinitionType]
 
         #: Scenario execution, if any.
         self.execution = None  # type: typing.Optional[ScenarioExecution]
@@ -292,13 +289,15 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
     def section(
             self,
             section_description,  # type: str
-    ):  # type: (...) -> StepSection
+    ):  # type: (...) -> _StepSectionType
         """
         Adds a step section.
 
         :param section_description: Description for the section.
         :return: The section step just added.
         """
+        from .stepsection import StepSection
+
         _section_step = StepSection(section_description)  # type: StepSection
         _section_step.scenario = self
         self.__step_definitions.append(_section_step)
@@ -322,7 +321,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
             self,
             step_specification=None,  # type: StepSpecificationType
             index=None,  # type: int
-    ):  # type: (...) -> typing.Optional[StepDefinition]
+    ):  # type: (...) -> typing.Optional[_StepDefinitionType]
         """
         Finds a step definition.
 
@@ -332,8 +331,8 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         from .stepdefinition import StepDefinitionHelper
 
-        _matching_step_definitions = []  # type: typing.List[StepDefinition]
-        for _step_definition in self.__step_definitions:  # type: StepDefinition
+        _matching_step_definitions = []  # type: typing.List[_StepDefinitionType]
+        for _step_definition in self.__step_definitions:  # type: _StepDefinitionType
             if step_specification is None:
                 _matching_step_definitions.append(_step_definition)
             elif StepDefinitionHelper(_step_definition).matchspecification(step_specification):
@@ -351,7 +350,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
             self,
             step_specification=None,  # type: StepSpecificationType
             index=None,  # type: int
-    ):  # type: (...) -> StepDefinition
+    ):  # type: (...) -> _StepDefinitionType
         """
         Expects a step definition.
 
@@ -364,13 +363,13 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         from .stepdefinition import StepDefinitionHelper
 
-        _step_definition = self.getstep(step_specification, index)  # type: typing.Optional[StepDefinition]
+        _step_definition = self.getstep(step_specification, index)  # type: typing.Optional[_StepDefinitionType]
         if _step_definition is None:
             raise KeyError(f"No such step {StepDefinitionHelper.specificationdescription(step_specification)} (index: {index!r})")
         return _step_definition
 
     @property
-    def steps(self):  # type: () -> typing.List[StepDefinition]
+    def steps(self):  # type: () -> typing.List[_StepDefinitionType]
         """
         Step list.
         """
@@ -441,7 +440,7 @@ class ScenarioDefinitionHelper:
         and feeds the scenario definition step list.
         """
         from .reflex import qualname
-        from .stepdefinition import StepMethods
+        from .stepdefinition import StepDefinition, StepMethods
 
         # Scan methods.
         _methods = []  # type: typing.List[types.MethodType]

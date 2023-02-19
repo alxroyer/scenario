@@ -21,10 +21,13 @@ Campaign execution logging.
 import logging
 import typing
 
-# `CampaignExecution`, `TestCaseExecution` and `TestSuiteExecution` used in method signatures.
-from .campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
 # `StrEnum` used for inheritance.
 from .enumutils import StrEnum
+
+if typing.TYPE_CHECKING:
+    from .campaignexecution import CampaignExecution as _CampaignExecutionType
+    from .campaignexecution import TestCaseExecution as _TestCaseExecutionType
+    from .campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
 
 
 class CampaignLogging:
@@ -54,7 +57,7 @@ class CampaignLogging:
 
     def begincampaign(
             self,
-            campaign_execution,  # type: CampaignExecution
+            campaign_execution,  # type: _CampaignExecutionType
     ):  # type: (...) -> None
         """
         Displays the beginning of the campaign.
@@ -70,7 +73,7 @@ class CampaignLogging:
 
     def begintestsuite(
             self,
-            test_suite_execution,  # type: TestSuiteExecution
+            test_suite_execution,  # type: _TestSuiteExecutionType
     ):  # type: (...) -> None
         """
         Displays the beginning of a test suite.
@@ -86,7 +89,7 @@ class CampaignLogging:
 
     def begintestcase(
             self,
-            test_case_execution,  # type: TestCaseExecution
+            test_case_execution,  # type: _TestCaseExecutionType
     ):  # type: (...) -> None
         """
         Displays the beginning of a test case.
@@ -104,7 +107,7 @@ class CampaignLogging:
 
     def endtestcase(
             self,
-            test_case_execution,  # type: TestCaseExecution
+            test_case_execution,  # type: _TestCaseExecutionType
     ):  # type: (...) -> None
         """
         Displays the end of a test case.
@@ -137,7 +140,7 @@ class CampaignLogging:
 
     def endtestsuite(
             self,
-            test_suite_execution,  # type: TestSuiteExecution
+            test_suite_execution,  # type: _TestSuiteExecutionType
     ):  # type: (...) -> None
         """
         Displays the end of a test suite.
@@ -163,7 +166,7 @@ class CampaignLogging:
 
     def endcampaign(
             self,
-            campaign_execution,  # type: CampaignExecution
+            campaign_execution,  # type: _CampaignExecutionType
     ):  # type: (...) -> None
         """
         Displays the end of the campaign.
