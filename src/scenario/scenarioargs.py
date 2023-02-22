@@ -20,8 +20,7 @@ Scenario runner program arguments.
 
 import typing
 
-# `Args` used for inheritance.
-from .args import Args
+from .args import Args  # `Args` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .subprocess import SubProcess as _SubProcessType

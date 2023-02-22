@@ -21,18 +21,14 @@ Campaign reports.
 import sys
 import typing
 
-# `Logger` used for inheritance.
-from .logger import Logger
-# Base class `Path` used in method signatures.
-from .path import Path
-# Base class `Xml` used in method signatures.
-from .xmlutils import Xml
+from .logger import Logger  # `Logger` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .campaignexecution import CampaignExecution as _CampaignExecutionType
     from .campaignexecution import TestCaseExecution as _TestCaseExecutionType
     from .campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
-    from .path import AnyPathType
+    from .path import AnyPathType, Path as _PathType
+    from .xmlutils import Xml as _XmlType
 
 
 class CampaignReport(Logger):
@@ -50,6 +46,7 @@ class CampaignReport(Logger):
         Configures logging for the :class:`CampaignReport` class.
         """
         from .debugclasses import DebugClass
+        from .path import Path
 
         Logger.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
 
@@ -69,6 +66,8 @@ class CampaignReport(Logger):
         :return: ``True`` for success, ``False`` otherwise.
         """
         from .loggermain import MAIN_LOGGER
+        from .path import Path
+        from .xmlutils import Xml
 
         try:
             self.resetindentation()
@@ -104,6 +103,8 @@ class CampaignReport(Logger):
             ``None`` when the file could not be read, or its content could not be parsed successfully.
         """
         from .loggermain import MAIN_LOGGER
+        from .path import Path
+        from .xmlutils import Xml
 
         try:
             self.resetindentation()
@@ -126,9 +127,9 @@ class CampaignReport(Logger):
 
     def _campaign2xml(
             self,
-            xml_doc,  # type: Xml.Document
+            xml_doc,  # type: _XmlType.Document
             campaign_execution,  # type: _CampaignExecutionType
-    ):  # type: (...) -> Xml.Node
+    ):  # type: (...) -> _XmlType.Node
         """
         Campaign JUnit XML generation.
 
@@ -136,6 +137,8 @@ class CampaignReport(Logger):
         :param campaign_execution: Campaign execution to generate the JUnit XML for.
         :return: Campaign JUnit XML.
         """
+        from .xmlutils import Xml
+
         # /testsuites top node:
         # [CUBIC]: "if only a single testsuite element is present, the testsuites element can be omitted. All attributes are optional."
         _xml_test_suites = xml_doc.createnode("testsuites")  # type: Xml.Node
@@ -186,7 +189,7 @@ class CampaignReport(Logger):
 
     def _xml2campaign(
             self,
-            xml_doc,  # type: Xml.Document
+            xml_doc,  # type: _XmlType.Document
     ):  # type: (...) -> _CampaignExecutionType
         """
         Campaign execution reading from JUnit report.
@@ -195,6 +198,7 @@ class CampaignReport(Logger):
         :return: Campaign execution data.
         """
         from .campaignexecution import CampaignExecution
+        from .xmlutils import Xml
 
         _campaign_execution = CampaignExecution(outdir=self._junit_path.parent)  # type: CampaignExecution
 
@@ -237,10 +241,10 @@ class CampaignReport(Logger):
 
     def _testsuite2xml(
             self,
-            xml_doc,  # type: Xml.Document
+            xml_doc,  # type: _XmlType.Document
             test_suite_execution,  # type: _TestSuiteExecutionType
             test_suite_id,  # type: int
-    ):  # type: (...) -> Xml.Node
+    ):  # type: (...) -> _XmlType.Node
         """
         Test suite JUnit XML generation.
 
@@ -250,6 +254,7 @@ class CampaignReport(Logger):
         :return: Test suite JUnit XML.
         """
         from .datetimeutils import toiso8601
+        from .xmlutils import Xml
 
         _xml_test_suite = xml_doc.createnode("testsuite")  # type: Xml.Node
 
@@ -324,7 +329,7 @@ class CampaignReport(Logger):
     def _xml2testsuite(
             self,
             campaign_execution,  # type: _CampaignExecutionType
-            xml_test_suite,  # type: Xml.Node
+            xml_test_suite,  # type: _XmlType.Node
     ):  # type: (...) -> _TestSuiteExecutionType
         """
         Test suite reading from JUnit report.
@@ -336,6 +341,7 @@ class CampaignReport(Logger):
         from .campaignexecution import TestSuiteExecution
         from .datetimeutils import f2strtime, fromiso8601
         from .debugutils import callback
+        from .xmlutils import Xml
 
         _test_suite_execution = TestSuiteExecution(campaign_execution, self._xmlattr2path(xml_test_suite, "name"))  # type: TestSuiteExecution
 
@@ -389,9 +395,9 @@ class CampaignReport(Logger):
 
     def _testcase2xml(
             self,
-            xml_doc,  # type: Xml.Document
+            xml_doc,  # type: _XmlType.Document
             test_case_execution,  # type: _TestCaseExecutionType
-    ):  # type: (...) -> Xml.Node
+    ):  # type: (...) -> _XmlType.Node
         """
         Test case JUnit XML generation.
 
@@ -401,6 +407,7 @@ class CampaignReport(Logger):
         """
         from .knownissues import KnownIssue
         from .testerrors import ExceptionError, TestError
+        from .xmlutils import Xml
 
         _xml_test_case = xml_doc.createnode("testcase")  # type: Xml.Node
 
@@ -498,7 +505,7 @@ class CampaignReport(Logger):
     def _xml2testcase(
             self,
             test_suite_execution,  # type: _TestSuiteExecutionType
-            xml_test_case,  # type: Xml.Node
+            xml_test_case,  # type: _XmlType.Node
     ):  # type: (...) -> _TestCaseExecutionType
         """
         Test case reading from JUnit XML.
@@ -512,11 +519,12 @@ class CampaignReport(Logger):
         from .knownissues import KnownIssue
         from .locations import CodeLocation
         from .testerrors import ExceptionError, TestError
+        from .xmlutils import Xml
 
         # Note: The testcase/@name attribute is filled with the pretty path.
         #       The testcase/@classname attribute gives the full path.
         # _name = xml_test_case.getattr("name")  # type: str
-        _script_path = self._xmlattr2path(xml_test_case, "classname")  # type: Path
+        _script_path = self._xmlattr2path(xml_test_case, "classname")  # type: _PathType
         self.debug("testcase/@classname = '%s'", _script_path)
 
         _test_case_execution = TestCaseExecution(test_suite_execution, _script_path)  # type: TestCaseExecution
@@ -598,9 +606,9 @@ class CampaignReport(Logger):
 
     def _path2xmlattr(
             self,
-            xml_node,  # type: Xml.Node
+            xml_node,  # type: _XmlType.Node
             attr_name,  # type: str
-            path,  # type: Path
+            path,  # type: _PathType
     ):  # type: (...) -> None
         """
         Sets a path XML attribute.
@@ -612,6 +620,8 @@ class CampaignReport(Logger):
         :param attr_name: Attribute name.
         :param path: Path object to use to set the attribute value.
         """
+        from .path import Path
+
         _main_path = Path.getmainpath() or Path.cwd()  # type: Path
         if path.is_relative_to(_main_path):
             xml_node.setattr(attr_name, path.relative_to(_main_path))
@@ -620,9 +630,9 @@ class CampaignReport(Logger):
 
     def _xmlattr2path(
             self,
-            xml_node,  # type: Xml.Node
+            xml_node,  # type: _XmlType.Node
             attr_name,  # type: str
-    ):  # type: (...) -> Path
+    ):  # type: (...) -> _PathType
         """
         Path computation from an XML attribute.
 
@@ -633,11 +643,13 @@ class CampaignReport(Logger):
         :param attr_name: Attribute name to read.
         :return: Path computed.
         """
+        from .path import Path
+
         return Path(xml_node.getattr(attr_name), relative_to=Path.getmainpath() or Path.cwd())
 
     def _xmlcheckstats(
             self,
-            xml_node,  # type: Xml.Node
+            xml_node,  # type: _XmlType.Node
             attr_name,  # type: str
             objects,  # type: typing.List[typing.Any]
     ):  # type: (...) -> None

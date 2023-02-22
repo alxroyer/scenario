@@ -20,15 +20,13 @@
 
 import typing
 
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
-# Base class `Path` used in method signatures.
-from .path import Path
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .confignode import ConfigNode as _ConfigNodeType
     from .console import Console as _ConsoleType
     from .issuelevels import AnyIssueLevelType
+    from .path import Path as _PathType
 
 
 class ScenarioConfig:
@@ -138,7 +136,7 @@ class ScenarioConfig:
 
         return CONFIG_DB.get(self.Key.LOG_CONSOLE, type=bool, default=True)
 
-    def logoutpath(self):  # type: (...) -> typing.Optional[Path]
+    def logoutpath(self):  # type: (...) -> typing.Optional[_PathType]
         """
         Determines whether the log lines should be written in a log file.
 
@@ -147,6 +145,7 @@ class ScenarioConfig:
         Configurable through :const:`Key.LOG_FILE`.
         """
         from .configdb import CONFIG_DB
+        from .path import Path
 
         _log_outpath = None  # type: typing.Optional[Path]
         _config = CONFIG_DB.get(self.Key.LOG_FILE, type=str)  # type: typing.Optional[str]
@@ -244,13 +243,14 @@ class ScenarioConfig:
 
         return CONFIG_DB.get(self.Key.DELAY_BETWEEN_STEPS, type=float, default=0.001)
 
-    def runnerscriptpath(self):  # type: (...) -> Path
+    def runnerscriptpath(self):  # type: (...) -> _PathType
         """
         Gives the path of the scenario runner script path.
 
         Useful when executing campaigns.
         """
         from .configdb import CONFIG_DB
+        from .path import Path
 
         _abspath = CONFIG_DB.get(self.Key.RUNNER_SCRIPT_PATH, type=str, default=Path(__file__).parents[2] / "bin" / "run-test.py")  # type: str
         return Path(_abspath)

@@ -23,10 +23,8 @@ import sys
 import time
 import typing
 
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
-# `Logger` used for inheritance.
-from .logger import Logger
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
+from .logger import Logger  # `Logger` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType

@@ -20,8 +20,7 @@ Action / expected result definition.
 
 import typing
 
-# `StrEnum` use for inheritance.
-from .enumutils import StrEnum
+from .enumutils import StrEnum  # `StrEnum` use for inheritance.
 
 
 class ActionResultDefinition:

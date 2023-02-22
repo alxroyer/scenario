@@ -22,8 +22,7 @@ import logging
 import re
 import typing
 
-# `TestError` used for inheritance.
-from .testerrors import TestError
+from .testerrors import TestError  # `TestError` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .issuelevels import AnyIssueLevelType

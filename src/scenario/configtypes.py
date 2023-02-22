@@ -22,8 +22,6 @@ import enum
 import typing
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures and type definitions.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

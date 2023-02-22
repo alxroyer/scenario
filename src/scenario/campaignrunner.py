@@ -24,8 +24,7 @@ import sys
 import time
 import typing
 
-# `Logger` used for inheritance.
-from .logger import Logger
+from .logger import Logger  # `Logger` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .campaignexecution import CampaignExecution as _CampaignExecutionType

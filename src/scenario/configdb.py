@@ -23,10 +23,8 @@ import logging
 import os
 import typing
 
-# `Logger` used for inheritance.
-from .logger import Logger
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
+from .logger import Logger  # `Logger` used for inheritance.
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .confignode import ConfigNode as _ConfigNodeType

@@ -21,8 +21,7 @@ Campaign execution logging.
 import logging
 import typing
 
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .campaignexecution import CampaignExecution as _CampaignExecutionType

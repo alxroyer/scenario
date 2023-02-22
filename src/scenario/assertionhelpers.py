@@ -39,7 +39,7 @@ if typing.TYPE_CHECKING:
     #: Comparable type.
     #:
     #: Declared as a :class:`typing.TypeVar` so that every :class:`Comparable` parameter within the same function call is of the same type.
-    ComparableType = typing.TypeVar("ComparableType", int, float, str)
+    VarComparableType = typing.TypeVar("VarComparableType", int, float, str)
 
     #: Type representing a type, or a set of types.
     TypeOrTypesType = typing.Optional[typing.Union[type, typing.Iterable[type]]]
@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
     #: Item type.
     #:
     #: Declared as a :class:`typing.TypeVar` so that item and iterable parameters within the same function call are set with consistent types.
-    ItemType = typing.TypeVar("ItemType")
+    VarItemType = typing.TypeVar("VarItemType")
 
     #: Step execution specification.
     #:
@@ -75,8 +75,8 @@ unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 
 
 def safecontainer(
-        obj,  # type: typing.Iterable[ItemType]
-):  # type: (...) -> typing.Union[str, bytes, typing.List[ItemType]]
+        obj,  # type: typing.Iterable[VarItemType]
+):  # type: (...) -> typing.Union[str, bytes, typing.List[VarItemType]]
     """
     Ensures working with a string or list-like object.
 

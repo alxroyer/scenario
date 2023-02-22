@@ -18,8 +18,7 @@
 Step section management.
 """
 
-# `StepDefinition` used for inheritance.
-from .stepdefinition import StepDefinition
+from .stepdefinition import StepDefinition  # `StepDefinition` used for inheritance.
 
 
 class StepSection(StepDefinition):

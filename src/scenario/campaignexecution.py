@@ -24,14 +24,11 @@ which owns a list of :class:`TestCase` instances (one test case per scenario).
 
 import typing
 
-# Base class `Path` used in method signatures.
-from .path import Path
-
 if typing.TYPE_CHECKING:
     from .executionstatus import ExecutionStatus as _ExecutionStatusType
-    from .path import AnyPathType
+    from .path import AnyPathType, Path as _PathType
     from .scenarioexecution import ScenarioExecution as _ScenarioExecutionType
-    from .stats import ExecTotalStats as _ExecTotalStatsType, TimeStats as _TimeStatsType
+    from .stats import ExecTotalStats as _ExecTotalStatsType
     from .testerrors import TestError as _TestErrorType
 
 
@@ -50,6 +47,7 @@ class CampaignExecution:
 
             ``None`` initializes the output directory path with the current working directory.
         """
+        from .path import Path
         from .stats import TimeStats
 
         #: Output directory path.
@@ -67,7 +65,7 @@ class CampaignExecution:
         return super().__repr__()
 
     @property
-    def junit_path(self):  # type: () -> Path
+    def junit_path(self):  # type: () -> _PathType
         """
         JUnit path.
         """
@@ -148,6 +146,7 @@ class TestSuiteExecution:
             which makes the :attr:`test_suite_file` instance *void* as well.
             This path can be fixed programmatically later on.
         """
+        from .path import Path
         from .stats import TimeStats
         from .testsuitefile import TestSuiteFile
 
@@ -243,6 +242,7 @@ class TestCaseExecution:
             ``None`` initializes the :attr:`script_path` member with a *void* file path.
             This path can be fixed programmatically later on.
         """
+        from .path import Path
         from .stats import TimeStats
 
         #: Owner test suite execution.
@@ -392,7 +392,7 @@ class LogFileReader:
         Initializes :attr:`path` and :attr:`content` attributes with ``None``.
         """
         #: Test case log file path.
-        self.path = None  # type: typing.Optional[Path]
+        self.path = None  # type: typing.Optional[_PathType]
         #: Test case log file content.
         self.content = None  # type: typing.Optional[bytes]
 

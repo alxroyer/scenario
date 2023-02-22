@@ -24,12 +24,9 @@ import inspect
 import types
 import typing
 
-# `Assertions` used for inheritance.
-from .assertions import Assertions
-# `Logger` used for inheritance.
-from .logger import Logger
-# `StepUserApi` used for inheritance.
-from .stepuserapi import StepUserApi
+from .assertions import Assertions  # `Assertions` used for inheritance.
+from .logger import Logger  # `Logger` used for inheritance.
+from .stepuserapi import StepUserApi  # `StepUserApi` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .path import AnyPathType
