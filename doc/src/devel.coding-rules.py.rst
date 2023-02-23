@@ -242,12 +242,15 @@ Order of Imports
   - One system import per ``import`` line.
   - Sort imports in the alphabetical order.
 
-2. Then `scenario` imports:
+2. Then project imports (i.e. `scenario` imports):
 
   - Use the relative form ``from .modulename import ClassName``.
-  - Sort `scenario` imports in the alphabetical order of module names.
+  - Sort project imports in the alphabetical order of module names.
   - For a given module import statement, sort the symbols imported
-    in their alphabetical order as well.
+    in their alphabetical order as well:
+
+    - in a single line if the import line is not too long,
+    - or repeat the module import with one line per imported symbol otherwise.
 
 3. Then test imports (for test modules only).
 
@@ -266,24 +269,25 @@ Order of Imports
 The fewer project imports at the top level
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We call project imports imports from modules located in the same package.
-As a consequence, these imports are usually the relative ones.
+In order to avoid cyclic module dependencies in a package,
+the fewer project imports shall be placed at the top level of modules:
 
-In order to avoid cyclic module dependencies in the package,
-the fewer project imports shall be placed at the top level of modules.
-Postpone as much as possible the imports with local imports
-in function or methods where the symbol is actually used.
+- Postpone as much as possible the imports with local imports
+  in function or methods where the symbol is actually used.
+- Whenever possible, use :ref:`TYPE_CHECKING imports <coding-rules.py.imports.TYPE_CHECKING>`
+  for type hints.
 
-Nevertheless, this does not mean that local imports should be repeated
-every time that a basic object is used in each function of method
-(like :py:class:`scenario.path.Path` for instance).
+In order to ensure that remaining top level project imports are legitimate,
+they shall be justified with a comment at the end of the ``import`` line
+(:ref:`TYPE_CHECKING imports <coding-rules.py.imports.TYPE_CHECKING>` imports don't need to be justified).
 
-In order to ensure that a top level project import is legitimate,
-it shall be justified with a comment at the end of the ``import`` line.
-``typing.TYPE_CHECKING`` import statements shall be justified as well
-(see the :ref:`typing.TYPE_CHECKING <coding-rules.py.imports.TYPE_CHECKING>` section below).
+In the end, only a few top level project imports should remain:
 
-The 'tools/checkdeps.py' script may help visualizing `scenario` module dependencies:
+- Classes used for inheritance,
+- Classes used for global instanciations,
+- (and that's probably all...)
+
+The 'tools/checkdeps.py' script helps visualizing `scenario` module dependencies:
 
 .. code-block:: bash
 
@@ -295,18 +299,19 @@ The 'tools/checkdeps.py' script may help visualizing `scenario` module dependenc
 
 .. _coding-rules.py.imports.TYPE_CHECKING:
 
-``typing.TYPE_CHECKING`` pattern
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``TYPE_CHECKING`` imports
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 See `<https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports>`_
-for some information on this so-called pattern in this section.
+for some information on these so-called ``TYPE_CHECKINGS`` imports.
 
-Use the ``typing.TYPE_CHECKING`` pattern for two reasons only:
+Adding type hints to the Python code often leads to `cyclic dependencies` between modules of a same project.
 
-#. for types declared only when ``typing.TYPE_CHECKING`` is ``True`` of course (otherwise the code execution will fail),
-#. but then, **for cyclic type hint dependencies only**.
+``TYPE_CHECKING`` imports are an efficient way to avoid such cyclic dependencies.
+But doing so also usually leads to writing code that passes type checking, but fails when executed.
+Which is what we call the `type checking dilemma`.
 
-.. admonition:: Risks with the ``if typing.TYPE_CHECKING:`` pattern
+.. admonition:: ``TYPE_CHECKING:`` imports and the type checking dilemma
     :class: note
 
     Sometimes, a class ``A`` requires another class ``B``
@@ -317,8 +322,7 @@ Use the ``typing.TYPE_CHECKING`` pattern for two reasons only:
     in some of the methods involved.
 
     Still, from the type hint point of view, a cyclic dependency remains between the two modules.
-    The ``typing.TYPE_CHECKING`` pattern
-    makes it possible to handle such cyclic dependencies.
+    The ``TYPE_CHECKING`` condition makes it possible to handle such cyclic dependencies.
 
     But caution! the use of this pattern generates a risk on the execution side.
     Making an import under an ``if typing.TYPE_CHECKING:`` condition at the top of a module
@@ -381,18 +385,37 @@ Use the ``typing.TYPE_CHECKING`` pattern for two reasons only:
                         return _item
                 return None
 
-    That's the reason why the ``typing.TYPE_CHECKING`` pattern
-    shall be used as less as possible,
-    i.e. when cyclic dependencies occur because type hints impose it.
+In order to work around this dilemma,
+when importing an executable symbol at the global scope,
+a ``TYPE_CHECKING`` import shall rename the imported symbol with the ``Type`` suffix
+(plus the ``_`` prefix in order to limit the scope of this renamed symbol to the current module only).
 
-.. todo:: Add ``Type`` suffix to ``typing.TYPE_CHECKING`` imports
+.. code-block:: python
 
-    Possible workaround for the risk identified above.
+    if typing.TYPE_CHECKING:
+        # `TYPE_CHECKING` import made for type checking only.
+        # Required for the type hint of the `newneighbour()` function below in this example.
+        from .neighbour import Neighbour as _NeighbourType
 
-    - Makes a difference between symbols imported for typings, and symbols imported for execution.
-    - Makes type checkings detect an error when the symbol has not been loaded for execution.
-    - Possibly generalize, and say all symbols imported at the main level should be for type checking only? tbc
-    - See `issue #72 <https://github.com/alxroyer/scenario/issues/72>`_.
+    # Type hint: `Neighbour` symbol required for type checking. Use the renamed version.
+    def newneighbour():  # type: (...) -> _NeighbourType
+        # If we forget this local import, type checkers will point an error on the instanciation line below.
+        from .neighbour import Neighbour
+
+        # Instanction: `Neighbour` symbol required for execution.
+        _neighbour = Neighbour()  # type: Neighbour
+        return _neighbour
+
+Doins so, a difference is made between symbols imported for type checking, and symbols required for execution.
+By the way, type checkers won't miss lacking imports required for execution.
+
+Imported type-only symbols don't need to be renamed
+(they usually already end with the ``Type`` suffix).
+
+.. code-block:: python
+
+    if typing.TYPE_CHECKING:
+        from .path import AnyPathType
 
 
 .. _coding-rules.py.compat:
