@@ -232,7 +232,7 @@ Scenario stack indentation
 
 When :ref:`subscenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
 
-Example of output from the `commutativeadditions.py <../../demo/commutativeadditions.py>`_ sample test.
+Example of output from the `commutativeadditions.py <https://github.com/alxroyer/scenario/blob/master/demo/commutativeadditions.py>`_ sample test.
 
 .. Subscenario output log example: 'commutativeadditions.py'.
 .. literalinclude:: ../data/commutativeadditions.log

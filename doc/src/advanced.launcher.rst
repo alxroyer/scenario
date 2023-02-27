@@ -25,7 +25,7 @@ It is common that a user test environment needs to do a couple of things like:
 - offer configurable features.
 
 To do so, the user test environment may define its own launcher script,
-as illustrated by the `demo/run-demo.py <../../demo/run-demo.py>`_ file.
+as illustrated by the `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run-demo.py>`_ file.
 
 
 .. _launcher.extend-args:
@@ -96,7 +96,7 @@ As introduced above, extending the launcher script gives you the opportunity to 
 pre-operations, as soon as the command line arguments have been parsed,
 and post-operations after the test execution.
 
-Our `demo/run-demo.py <../../demo/run-demo.py>`_ script gives examples of pre & post-operations:
+Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run-demo.py>`_ script gives examples of pre & post-operations:
 
 - a welcome message displayed before the test is executed:
 
