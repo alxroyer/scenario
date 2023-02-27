@@ -33,13 +33,15 @@ Start with importing the :py:mod:`scenario` module:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 1-3
+    :start-at: # -*- coding: utf-8 -*-
+    :end-at: import scenario
 
 Within your module, declare a class that extends the base :py:class:`scenario.Scenario` class:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 6
+    :start-at: class CommutativeAddition
+    :lines: 1
 
 Depending on your configuration
 (see :py:meth:`scenario.scenarioconfig.ScenarioConfig.expectedscenarioattributes()`),
@@ -47,33 +49,39 @@ define your scenario attributes:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 8-9
+    :start-at: SHORT_TITLE
+    :end-at: TEST_GOAL
 
 Optionally, define an initializer that declares member attributes,
 which may condition the way the scenario works:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 11-16
+    :start-at: def __init__
+    :end-at: self.result2 = 0
 
 Then, define the test steps.
 Test steps are defined with methods starting with the ``step`` pattern:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 18
+    :start-at: def step000
+    :lines: 1
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 25
+    :start-at: def step010
+    :lines: 1
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 32
+    :start-at: def step020
+    :lines: 1
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 39
+    :start-at: def step030
+    :lines: 1
 
 The steps are executed in their alphabetical order.
 That's the reason why regular steps are usually numbered.
@@ -83,26 +91,30 @@ by calling the :py:meth:`scenario.stepuserapi.StepUserApi.STEP()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 19
+    :start-at: self.STEP("Initial conditions")
+    :lines: 1
 
 Define actions by calling the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 21
+    :start-at: self.ACTION(f"Let a =
+    :lines: 1
 
 Define expected results by calling the :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 44
+    :start-at: self.RESULT("result1 and result2 are the same.")
+    :lines: 1
 
 Actions and expected results shall be used as the condition of an ``if`` statement.
 The related test script should be placed below these ``if`` statements:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 28-29
+    :start-at: self.ACTION("Compute (a + b)
+    :end-at: self.result1 = self.a + self.b
 
 This makes it possible for the `scenario` library to call the step methods for different purposes:
 
@@ -120,18 +132,21 @@ provided by the :py:class:`scenario.Assertions` class:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 44-45
+    :start-at: self.RESULT("result1 and result2 are the same.")
+    :end-at: self.assertequal
 
 Eventually, the :py:meth:`scenario.stepuserapi.StepUserApi.evidence()` calls register :ref:`test evidence <evidence>` with the test results.
 This kind of call may be used under an action or expected result ``if`` statement.
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 28-30
+    :start-at: self.ACTION("Compute (a + b)
+    :end-at: self.evidence
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 44-46
+    :start-at: self.RESULT("result1 and result2 are the same.")
+    :end-at: self.evidence
 
 Your scenario is now ready to execute.
 

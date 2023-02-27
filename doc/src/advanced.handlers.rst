@@ -31,7 +31,8 @@ First of all, declare your handler function:
 .. scenario.Event.ERROR handler definition
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 18-20
+    :start-at: def _error
+    :end-at: scenario.logging.debug
 
 Then the handlers may be installed by calling the :py:meth:`scenario.handlers.Handlers.install()` method
 on the :py:attr:`scenario.handlers` manager:
@@ -39,7 +40,8 @@ on the :py:attr:`scenario.handlers` manager:
 .. scenario.Event.ERROR handler installation
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 50
+    :start-at: scenario.handlers.install(scenario.Event.ERROR, _error)
+    :lines: 1
 
 .. tip::
     The event may be passed as an enum constant or a string.
@@ -145,7 +147,8 @@ so that they can be type checked.
 .. UserEvent enum definition.
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 33-34
+    :start-at: class UserEvent
+    :end-at: FOO
 
 Then use the :py:meth:`scenario.handlers.Handlers.callhandlers()` method
 to make the registered handlers (matching their additional conditions in option) be called.
@@ -154,10 +157,11 @@ Pass on event data as a single objet, which can be whatever you want.
 .. Call of UserEvent.FOO handlers.
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 59
+    :start-at: scenario.handlers.callhandlers(UserEvent.FOO,
+    :lines: 1
 
 .. tip::
     Considering evolutivity concerns, event data should rather be set with:
 
-    - dedicated objects, like :py:class:`scenario.scenarioevents.ScenarioEventData` proposes,
+    - dedicated objects, like :py:class:`scenario.scenarioevents.ScenarioEventData` proposes it,
     - or more informal dictionaries, like the 'demo/handlers.py' sample does.

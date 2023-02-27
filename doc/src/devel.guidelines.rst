@@ -81,15 +81,10 @@ Deliver on an integration branch
    b. Check the HTML output in 'doc/html/':
 
       Check the pages that use the ``.. literalinclude::`` directive with the ``:lines:`` option
-      (following list established as of version v0.2.0):
+      (following list established on the 'int/v0.2.2+' branch):
 
-      - advanced.config-db.html
-      - advanced.handlers.html
-      - advanced.launcher.html
-      - advanced.logging.html
-      - advanced.subscenarios.html
-      - advanced.test-libs.html
-      - quickstart.html
+      - advanced.config-db.html (depending on 'doc/data/run-demo.show-configs.log')
+      - advanced.logging.html (depending on 'demo/loggingdemo.py', 3 times)
 
 5. Check files encoding:
 

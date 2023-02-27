@@ -60,19 +60,22 @@ To do so, start with loading your base scenario with a regular ``import`` statem
 
 .. literalinclude:: ../../demo/commutativeadditions.py
     :language: python
-    :lines: 8
+    :start-at: import CommutativeAddition
+    :lines: 1
 
 Instanciate it with the appropriate values:
 
 .. literalinclude:: ../../demo/commutativeadditions.py
     :language: python
-    :lines: 20
+    :start-at: _scenario = CommutativeAddition(4, 5)
+    :lines: 1
 
 And execute it as a subscenario:
 
 .. literalinclude:: ../../demo/commutativeadditions.py
     :language: python
-    :lines: 21
+    :start-after: _scenario = CommutativeAddition(4, 5)
+    :lines: 1
 
 Executing this super scenario produces the following output:
 
