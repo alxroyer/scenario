@@ -68,6 +68,7 @@ Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner
     :language: python
     :start-at: # Command line arguments.
     :end-at: sys.exit
+    :dedent:
 
 At this point, the user test environment can use the extra arguments added with the :py:class:`DemoArgs` class,
 but regular arguments as well.
@@ -77,6 +78,7 @@ but regular arguments as well.
     :language: python
     :start-at: # --show-configs option.
     :end-at: Test log saved
+    :dedent:
 
 Using the ``--help`` option displays both:
 
@@ -109,6 +111,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
     :language: python
     :start-at: # Welcome message.
     :end-at: scenario.logging.info
+    :dedent:
 
 - a bye message displayed just before the command line ends:
 
@@ -117,6 +120,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
     :language: python
     :start-at: # Bye message.
     :end-at: scenario.logging.info
+    :dedent:
 
 - optional display of the configuration database:
 
@@ -125,6 +129,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
     :language: python
     :start-at: # --show-configs option.
     :end-at: sys.exit
+    :dedent:
 
 - :ref:`configuration value settings <config-db.scenario>` that enable :ref:`file logging <logging.outfile>`:
 
@@ -133,6 +138,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
     :language: python
     :start-at: # File logging:
     :end-at: scenario.logging.info
+    :dedent:
 
 
 .. _launcher.execution:
@@ -148,6 +154,7 @@ and use the values given by our :py:class:`DemoArgs` instance already set.
     :language: python
     :start-at: # Scenario execution.
     :end-at: scenario.runner.main()
+    :dedent:
 
 
 .. _launcher.ret-code:
@@ -163,6 +170,7 @@ so that the error can be handled in the shell that launched the command line.
     :language: python
     :start-at: # Error code.
     :end-at: sys.exit
+    :dedent:
 
 
 .. _launcher.campaigns:
@@ -194,6 +202,7 @@ whatever the current working directory
     :language: python
     :start-at: # Main path.
     :end-at: scenario.Path.setmainpath
+    :dedent:
 
 .. tip::
     For display purpose, it is advised to set the *main path* after the program arguments have been analyzed.

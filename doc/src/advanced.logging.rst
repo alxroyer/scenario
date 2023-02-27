@@ -159,12 +159,14 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
     :language: python
     :start-at: Activate debugging for the class logger instance.
     :end-at: This is debug again.
+    :dedent:
 
 .. Related console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
     :start-at: Activate debugging for the class logger instance.
     :end-at: This is debug again.
+    :dedent:
 
 ... 2) through the ``--debug-class`` command line option, ...:
 
@@ -227,6 +229,7 @@ which is particularly useful when different class loggers generate interleaved l
     :language: python
     :start-at: setlogcolor
     :lines: 1
+    :dedent:
 
 
 .. _logging.indentation:
@@ -279,6 +282,7 @@ the logging lines of this class logger are indented the way below.
     :language: python
     :start-at: def step110
     :end-before: def step120
+    :dedent:
 
 .. Step `LoggingScenario.step110()` console output.
 .. literalinclude:: ../data/loggingdemo.log
@@ -320,6 +324,7 @@ it takes effect on every log lines:
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
     :start-at: def step120
+    :dedent:
 
 .. Step `LoggingScenario.step120()` console output.
 .. literalinclude:: ../data/loggingdemo.log

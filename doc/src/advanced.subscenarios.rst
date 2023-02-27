@@ -62,6 +62,7 @@ To do so, start with loading your base scenario with a regular ``import`` statem
     :language: python
     :start-at: import CommutativeAddition
     :lines: 1
+    :dedent:
 
 Instanciate it with the appropriate values:
 
@@ -69,6 +70,7 @@ Instanciate it with the appropriate values:
     :language: python
     :start-at: _scenario = CommutativeAddition(4, 5)
     :lines: 1
+    :dedent:
 
 And execute it as a subscenario:
 
@@ -76,6 +78,7 @@ And execute it as a subscenario:
     :language: python
     :start-after: _scenario = CommutativeAddition(4, 5)
     :lines: 1
+    :dedent:
 
 Executing this super scenario produces the following output:
 

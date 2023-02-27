@@ -42,6 +42,7 @@ on the :py:attr:`scenario.handlers` manager:
     :language: python
     :start-at: scenario.handlers.install(scenario.Event.ERROR, _error)
     :lines: 1
+    :dedent:
 
 .. tip::
     The event may be passed as an enum constant or a string.
@@ -159,6 +160,7 @@ Pass on event data as a single objet, which can be whatever you want.
     :language: python
     :start-at: scenario.handlers.callhandlers(UserEvent.FOO,
     :lines: 1
+    :dedent:
 
 .. tip::
     Considering evolutivity concerns, event data should rather be set with:

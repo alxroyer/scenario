@@ -51,6 +51,7 @@ define your scenario attributes:
     :language: python
     :start-at: SHORT_TITLE
     :end-at: TEST_GOAL
+    :dedent:
 
 Optionally, define an initializer that declares member attributes,
 which may condition the way the scenario works:
@@ -59,6 +60,7 @@ which may condition the way the scenario works:
     :language: python
     :start-at: def __init__
     :end-at: self.result2 = 0
+    :dedent:
 
 Then, define the test steps.
 Test steps are defined with methods starting with the ``step`` pattern:
@@ -67,21 +69,25 @@ Test steps are defined with methods starting with the ``step`` pattern:
     :language: python
     :start-at: def step000
     :lines: 1
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
     :start-at: def step010
     :lines: 1
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
     :start-at: def step020
     :lines: 1
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
     :start-at: def step030
     :lines: 1
+    :dedent:
 
 The steps are executed in their alphabetical order.
 That's the reason why regular steps are usually numbered.
@@ -93,6 +99,7 @@ by calling the :py:meth:`scenario.stepuserapi.StepUserApi.STEP()` method:
     :language: python
     :start-at: self.STEP("Initial conditions")
     :lines: 1
+    :dedent:
 
 Define actions by calling the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()` method:
 
@@ -100,6 +107,7 @@ Define actions by calling the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION(
     :language: python
     :start-at: self.ACTION(f"Let a =
     :lines: 1
+    :dedent:
 
 Define expected results by calling the :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` method:
 
@@ -107,6 +115,7 @@ Define expected results by calling the :py:meth:`scenario.stepuserapi.StepUserAp
     :language: python
     :start-at: self.RESULT("result1 and result2 are the same.")
     :lines: 1
+    :dedent:
 
 Actions and expected results shall be used as the condition of an ``if`` statement.
 The related test script should be placed below these ``if`` statements:
@@ -115,6 +124,7 @@ The related test script should be placed below these ``if`` statements:
     :language: python
     :start-at: self.ACTION("Compute (a + b)
     :end-at: self.result1 = self.a + self.b
+    :dedent:
 
 This makes it possible for the `scenario` library to call the step methods for different purposes:
 
@@ -134,6 +144,7 @@ provided by the :py:class:`scenario.Assertions` class:
     :language: python
     :start-at: self.RESULT("result1 and result2 are the same.")
     :end-at: self.assertequal
+    :dedent:
 
 Eventually, the :py:meth:`scenario.stepuserapi.StepUserApi.evidence()` calls register :ref:`test evidence <evidence>` with the test results.
 This kind of call may be used under an action or expected result ``if`` statement.
@@ -142,11 +153,13 @@ This kind of call may be used under an action or expected result ``if`` statemen
     :language: python
     :start-at: self.ACTION("Compute (a + b)
     :end-at: self.evidence
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
     :start-at: self.RESULT("result1 and result2 are the same.")
     :end-at: self.evidence
+    :dedent:
 
 Your scenario is now ready to execute.
 
