@@ -19,40 +19,48 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from .campaign import CampaignExpectations as CampaignExpectationsType
-from .scenario import ScenarioExpectations
-from .stats import StatExpectations
+    from .campaign import CampaignExpectations as _CampaignExpectationsType
+    from .scenario import ScenarioExpectations as _ScenarioExpectationsType
+    from .stats import StatExpectations as _StatExpectationsType
 
 
 class TestSuiteExpectations:
     def __init__(
             self,
-            campaign_expectations,  # type: CampaignExpectationsType
+            campaign_expectations,  # type: _CampaignExpectationsType
             test_suite_path=None,  # type: scenario.Path
     ):  # type: (...) -> None
-        self.campaign_expectations = campaign_expectations  # type: CampaignExpectationsType
+        self.campaign_expectations = campaign_expectations  # type: _CampaignExpectationsType
 
         self.test_suite_path = test_suite_path  # type: typing.Optional[scenario.Path]
-        self.test_case_expectations = None  # type: typing.Optional[typing.List[ScenarioExpectations]]
+        self.test_case_expectations = None  # type: typing.Optional[typing.List[_ScenarioExpectationsType]]
 
     def addtestcase(
             self,
             script_path=None,  # type: scenario.Path
             class_name=None,  # type: str
-    ):  # type: (...) -> ScenarioExpectations
+    ):  # type: (...) -> _ScenarioExpectationsType
+        from .scenario import ScenarioExpectations
+
         if self.test_case_expectations is None:
             self.test_case_expectations = []
         self.test_case_expectations.append(ScenarioExpectations(test_suite_expectations=self, script_path=script_path, class_name=class_name))
         return self.test_case_expectations[-1]
 
     @property
-    def step_stats(self):  # type: () -> StatExpectations
+    def step_stats(self):  # type: () -> _StatExpectationsType
+        from .stats import StatExpectations
+
         return StatExpectations.sum("steps", self.test_case_expectations)
 
     @property
-    def action_stats(self):  # type: () -> StatExpectations
+    def action_stats(self):  # type: () -> _StatExpectationsType
+        from .stats import StatExpectations
+
         return StatExpectations.sum("actions", self.test_case_expectations)
 
     @property
-    def result_stats(self):  # type: () -> StatExpectations
+    def result_stats(self):  # type: () -> _StatExpectationsType
+        from .stats import StatExpectations
+
         return StatExpectations.sum("results", self.test_case_expectations)

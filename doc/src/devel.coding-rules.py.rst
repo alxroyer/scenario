@@ -242,17 +242,22 @@ Order of Imports
   - One system import per ``import`` line.
   - Sort imports in the alphabetical order.
 
-2. Then project imports (i.e. `scenario` imports):
+2. Then project imports:
 
-  - Use the relative form ``from .modulename import ClassName``.
-  - Sort project imports in the alphabetical order of module names.
+  - Use the relative form ``from .modulename import ClassName``
+    (except for test cases and test data).
+  - Sort imports in the alphabetical order of module names.
   - For a given module import statement, sort the symbols imported
     in their alphabetical order as well:
 
     - in a single line if the import line is not too long,
     - or repeat the module import with one line per imported symbol otherwise.
 
-3. Then test imports (for test modules only).
+For :py:mod:`scenario.test`, :py:mod:`scenario.tools`, test cases and test data,
+an intermediate import section is used for :py:mod:`scenario` and related packages.
+
+Within a given import section,
+place the :ref:`TYPE_CHECKING block <coding-rules.py.imports.TYPE_CHECKING>` after imports required for execution.
 
 .. admonition:: Justification for ordering imports
     :class: note

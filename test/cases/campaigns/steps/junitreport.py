@@ -20,15 +20,15 @@ import scenario
 import scenario.test
 import scenario.text
 
-# Related steps:
-from .execution import ExecCampaign
+if typing.TYPE_CHECKING:
+    from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
 
 
 class CheckCampaignJunitReport(scenario.test.VerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecCampaign
+            exec_step,  # type: _ExecCampaignType
             campaign_expectations,  # type: scenario.test.CampaignExpectations
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
@@ -36,6 +36,8 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
         self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
 
     def step(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+
         self.STEP("JUnit report")
 
         scenario.logging.resetindentation()

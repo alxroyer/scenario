@@ -18,47 +18,53 @@ import typing
 
 import scenario
 
-# `ScenarioExpectations` used in method signatures.
-from .scenario import ScenarioExpectations
-# `StatExpectations` used in method signatures.
-from .stats import StatExpectations
-# `TestSuiteExpectations` used in method signatures.
-from .testsuite import TestSuiteExpectations
+if typing.TYPE_CHECKING:
+    from .scenario import ScenarioExpectations as _ScenarioExpectationsType
+    from .stats import StatExpectations as _StatExpectationsType
+    from .testsuite import TestSuiteExpectations as _TestSuiteExpectationsType
 
 
 class CampaignExpectations:
     def __init__(self):  # type: (...) -> None
-        self.test_suite_expectations = None  # type: typing.Optional[typing.List[TestSuiteExpectations]]
+        self.test_suite_expectations = None  # type: typing.Optional[typing.List[_TestSuiteExpectationsType]]
 
     def addtestsuite(
             self,
             test_suite_path=None,  # type: scenario.Path
-    ):  # type: (...) -> TestSuiteExpectations
+    ):  # type: (...) -> _TestSuiteExpectationsType
+        from .testsuite import TestSuiteExpectations
+
         if self.test_suite_expectations is None:
             self.test_suite_expectations = []
         self.test_suite_expectations.append(TestSuiteExpectations(self, test_suite_path=test_suite_path))
         return self.test_suite_expectations[-1]
 
     @property
-    def all_test_case_expectations(self):  # type: () -> typing.Optional[typing.List[ScenarioExpectations]]
-        _all_test_case_expectations = []  # type: typing.List[ScenarioExpectations]
+    def all_test_case_expectations(self):  # type: () -> typing.Optional[typing.List[_ScenarioExpectationsType]]
+        _all_test_case_expectations = []  # type: typing.List[_ScenarioExpectationsType]
         if self.test_suite_expectations is None:
             return None
-        for _test_suite_expectations in self.test_suite_expectations:  # type: TestSuiteExpectations
+        for _test_suite_expectations in self.test_suite_expectations:  # type: _TestSuiteExpectationsType
             if _test_suite_expectations.test_case_expectations is None:
                 return None
-            for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: ScenarioExpectations
+            for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: _ScenarioExpectationsType
                 _all_test_case_expectations.append(_test_case_expectations)
         return _all_test_case_expectations
 
     @property
-    def step_stats(self):  # type: () -> StatExpectations
+    def step_stats(self):  # type: () -> _StatExpectationsType
+        from .stats import StatExpectations
+
         return StatExpectations.sum("steps", self.test_suite_expectations)
 
     @property
-    def action_stats(self):  # type: () -> StatExpectations
+    def action_stats(self):  # type: () -> _StatExpectationsType
+        from .stats import StatExpectations
+
         return StatExpectations.sum("actions", self.test_suite_expectations)
 
     @property
-    def result_stats(self):  # type: () -> StatExpectations
+    def result_stats(self):  # type: () -> _StatExpectationsType
+        from .stats import StatExpectations
+
         return StatExpectations.sum("results", self.test_suite_expectations)

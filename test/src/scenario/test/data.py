@@ -19,9 +19,15 @@ import typing
 
 import scenario
 
-from . import configvalues
-from . import paths
-from .expectations import NOT_SET, CampaignExpectations, ErrorExpectations, ScenarioExpectations, TestSuiteExpectations
+if typing.TYPE_CHECKING:
+    from .configvalues import ConfigValuesType
+    from .expectations import CampaignExpectations as _CampaignExpectationsType
+    from .expectations import ScenarioExpectations as _ScenarioExpectationsType
+    from .expectations import TestSuiteExpectations as _TestTestSuiteExpectationsType
+
+
+# Export data scenario classes as a `scenarios` attribute.
+from . import datascenarios as scenarios
 
 
 class _ExpectationRequirements:
@@ -82,8 +88,8 @@ def scenarioexpectations(
         actions_results=False,  # type: bool
         error_details=False,  # type: bool
         stats=False,  # type: bool
-        config_values=None,  # type: configvalues.ConfigValuesType
-):  # type: (...) -> ScenarioExpectations
+        config_values=None,  # type: ConfigValuesType
+):  # type: (...) -> _ScenarioExpectationsType
     """
     Builds a :class:`.expectations.ScenarioExpectations` instance for the given scenario.
 
@@ -98,6 +104,10 @@ def scenarioexpectations(
     :param config_values: Extra configurations.
     :return: :class:`.expectations.ScenarioExpectations` instance
     """
+    from . import configvalues
+    from . import paths
+    from .expectations import ErrorExpectations, NOT_SET, ScenarioExpectations
+
     _reqs = _ExpectationRequirements(
         attributes=attributes,
         steps=steps,
@@ -503,7 +513,7 @@ def scenarioexpectations(
 
 
 def testsuiteexpectations(
-        campaign_expectations,  # type: CampaignExpectations
+        campaign_expectations,  # type: _CampaignExpectationsType
         test_suite_path,  # type: scenario.Path
         doc_only=False,  # type: bool
         continue_on_error=False,  # type: bool
@@ -512,9 +522,11 @@ def testsuiteexpectations(
         actions_results=False,  # type: bool
         error_details=False,  # type: bool
         stats=False,  # type: bool
-        config_values=None,  # type: configvalues.ConfigValuesType
-):  # type: (...) -> TestSuiteExpectations
-    _test_suite_expectations = campaign_expectations.addtestsuite(test_suite_path)  # type: TestSuiteExpectations
+        config_values=None,  # type: ConfigValuesType
+):  # type: (...) -> _TestTestSuiteExpectationsType
+    from . import paths
+
+    _test_suite_expectations = campaign_expectations.addtestsuite(test_suite_path)  # type: _TestTestSuiteExpectationsType
     _test_suite_expectations.test_case_expectations = []
 
     if test_suite_path.samefile(paths.TEST_DATA_TEST_SUITE):

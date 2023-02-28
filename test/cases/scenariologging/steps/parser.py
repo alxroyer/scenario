@@ -18,13 +18,12 @@ import re
 import typing
 
 import scenario
-if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Related steps:
-from steps.logparsing import LogParserStep
+from steps.logparsing import LogParserStep  # `LogParserStep` used for inheritance.
 
 
 class ParseScenarioLog(LogParserStep):

@@ -17,15 +17,14 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.internet import EnsureInternetConnection
-from steps.pippackages import EnsurePipPackage
-from steps.common import ExecScenario
-
 
 class ConfigDb320(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+        from steps.internet import EnsureInternetConnection
+        from steps.pippackages import EnsurePipPackage
+
         scenario.test.TestCase.__init__(
             self,
             title="'pyyaml' environment error",

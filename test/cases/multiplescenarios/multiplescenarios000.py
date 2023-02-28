@@ -14,18 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import typing
+
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-from steps.common import LogVerificationStep
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from steps.common import ExecScenario as _ExecScenarioType
 
 
 class MultipleScenarios000(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckFinalResultsLogExpectations, ExecScenario, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Multiple scenarios & incompatible options",
@@ -57,7 +60,7 @@ class CheckMultipleScenariosIncompatibleOption(LogVerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
+            exec_step,  # type: _ExecScenarioType
             option,  # type: str
     ):  # type: (...) -> None
         LogVerificationStep.__init__(self, exec_step)

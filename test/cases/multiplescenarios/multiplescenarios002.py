@@ -17,16 +17,15 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .steps.mainlog import CheckMultipleScenariosMainLog
-from .steps.parser import ParseFinalResultsLog
-from .steps.expectations import CheckFinalResultsLogExpectations
-
 
 class MultipleScenarios002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from multiplescenarios.steps.expectations import CheckFinalResultsLogExpectations
+        from multiplescenarios.steps.mainlog import CheckMultipleScenariosMainLog
+        from multiplescenarios.steps.parser import ParseFinalResultsLog
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Multiple scenarios --doc-only",

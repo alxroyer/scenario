@@ -17,19 +17,19 @@
 import json
 import typing
 
-if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Steps:
-from steps.common import ExecScenario
-from jsonreport.steps.reportfile import JsonReportFileVerificationStep
+from jsonreport.steps.reportfile import JsonReportFileVerificationStep  # `JsonReportFileVerificationStep` used for inheritance.
 
 
 class Issue33(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue #33! Fully qualified name for code locations",

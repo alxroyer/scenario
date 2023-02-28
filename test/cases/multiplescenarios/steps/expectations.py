@@ -18,14 +18,13 @@ import enum
 import typing
 
 import scenario
-if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Related steps:
-from steps.commonargs import ExecCommonArgs
-from .parser import ParseFinalResultsLog
+if typing.TYPE_CHECKING:
+    from multiplescenarios.steps.parser import ParseFinalResultsLog as _ParseFinalResultsLogType
 
 
 class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
@@ -40,7 +39,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ParseFinalResultsLog
+            exec_step,  # type: _ParseFinalResultsLogType
             scenario_expectations,  # type: typing.Sequence[scenario.test.ScenarioExpectations]
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
@@ -72,10 +71,12 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         return self.test_case.getpathdesc(path)
 
     @property
-    def parsed_data(self):  # type: () -> ParseFinalResultsLog
+    def parsed_data(self):  # type: () -> _ParseFinalResultsLogType
         """
         Shortcut to parsed data.
         """
+        from multiplescenarios.steps.parser import ParseFinalResultsLog
+
         return self.getexecstep(ParseFinalResultsLog)
 
     @property
@@ -83,6 +84,8 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         """
         Shortcut to *doc-only* mode.
         """
+        from steps.commonargs import ExecCommonArgs
+
         return self.getexecstep(ExecCommonArgs).doc_only
 
     def step(self):  # type: (...) -> None
@@ -407,6 +410,8 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             self,
             scenario_data,  # type: CheckFinalResultsLogExpectations.ScenarioData
     ):  # type: (...) -> None
+        from steps.common import ExecCommonArgs
+
         _scenario_expectations = scenario_data.expectations  # type: scenario.test.ScenarioExpectations
         if _scenario_expectations.attributes is not None:
             assert scenario.ConfigKey.RESULTS_EXTRA_INFO in self.getexecstep(ExecCommonArgs).config_values

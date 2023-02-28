@@ -18,23 +18,22 @@ import typing
 
 import scenario
 
-# `ActionResultExpectations` used in method signatures.
-from .actionresult import ActionResultExpectations
 if typing.TYPE_CHECKING:
-    from .scenario import ScenarioExpectations as ScenarioExpectationsType
+    from .actionresult import ActionResultExpectations as _ActionResultExpectationsType
+    from .scenario import ScenarioExpectations as _ScenarioExpectationsType
 
 
 class StepExpectations:
     def __init__(
             self,
-            scenario_expectations,  # type: ScenarioExpectationsType
+            scenario_expectations,  # type: _ScenarioExpectationsType
     ):  # type: (...) -> None
-        self.scenario_expectations = scenario_expectations  # type: ScenarioExpectationsType
+        self.scenario_expectations = scenario_expectations  # type: _ScenarioExpectationsType
 
         self.number = None  # type: typing.Optional[int]
         self.name = None  # type: typing.Optional[str]
         self.description = None  # type: typing.Optional[str]
-        self.action_result_expectations = None  # type: typing.Optional[typing.List[ActionResultExpectations]]
+        self.action_result_expectations = None  # type: typing.Optional[typing.List[_ActionResultExpectationsType]]
 
     def __str__(self):  # type: () -> str
         if self.number is not None:
@@ -48,7 +47,9 @@ class StepExpectations:
     def addaction(
             self,
             action,  # type: str
-    ):  # type: (...) -> ActionResultExpectations
+    ):  # type: (...) -> _ActionResultExpectationsType
+        from .actionresult import ActionResultExpectations
+
         _action = ActionResultExpectations(self)  # type: ActionResultExpectations
         _action.type = scenario.ActionResult.Type.ACTION
         _action.description = action
@@ -60,7 +61,9 @@ class StepExpectations:
     def addresult(
             self,
             result,  # type: str
-    ):  # type: (...) -> ActionResultExpectations
+    ):  # type: (...) -> _ActionResultExpectationsType
+        from .actionresult import ActionResultExpectations
+
         _result = ActionResultExpectations(self)  # type: ActionResultExpectations
         _result.type = scenario.ActionResult.Type.RESULT
         _result.description = result
@@ -72,7 +75,7 @@ class StepExpectations:
     def action(
             self,
             action_result_index,  # type: int
-    ):  # type: (...) -> ActionResultExpectations
+    ):  # type: (...) -> _ActionResultExpectationsType
         """
         Retrieves the corresponding :class:`ActionResultExpectations` object.
 
@@ -87,7 +90,7 @@ class StepExpectations:
     def result(
             self,
             action_result_index,  # type: int
-    ):  # type: (...) -> ActionResultExpectations
+    ):  # type: (...) -> _ActionResultExpectationsType
         """
         Retrieves the corresponding :class:`ActionResultExpectations` object.
 

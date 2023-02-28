@@ -19,14 +19,14 @@ import json
 import typing
 
 import scenario
-if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Related steps:
-from scenarioexecution.steps.execution import ExecScenario
-from .reportfile import JsonReportFileVerificationStep
+from .reportfile import JsonReportFileVerificationStep  # `JsonReportFileVerificationStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from scenarioexecution.steps.execution import ExecScenario as _ExecScenarioType
 
 
 class _JsonItems:
@@ -80,7 +80,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
+            exec_step,  # type: _ExecScenarioType
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
         JsonReportFileVerificationStep.__init__(self, exec_step)
@@ -123,6 +123,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             json_scenario,  # type: JsonDictType
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         # Do not debug the ``json_scenario`` content for the top scenario.
         # It has usually been debugged previously.
         if self.doexecute() and (len(self._scenario_tested_items) > 1):
@@ -334,6 +336,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             json_step_definition,  # type: JsonDictType
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         if self.doexecute():
             self.debug("_checkstepdefinition(): json_step_definition = %s", scenario.debug.jsondump(json_step_definition, indent=2),
                        extra=self.longtext(max_lines=20))
@@ -447,6 +451,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             json_action_result_definition,  # type: JsonDictType
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         if self.doexecute():
             self.debug("_checkactionresultdefinition(): json_action_result_definition = %s", scenario.debug.jsondump(json_action_result_definition, indent=2),
                        extra=self.longtext(max_lines=20))

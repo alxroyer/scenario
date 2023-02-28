@@ -16,15 +16,15 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .steps.logoutfile import LogOutfileVerificationStep
-from .logging500 import CheckNoConsoleLogging
+from logutils.steps.logoutfile import LogOutfileVerificationStep  # `LogOutfileVerificationStep` for inheritance.
 
 
 class Logging510(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from logutils.logging500 import CheckNoConsoleLogging
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="File logging",

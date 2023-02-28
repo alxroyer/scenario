@@ -22,13 +22,12 @@ import typing
 import scenario
 import scenario.test
 
-# Related steps:
-from .execution import ExecCampaign
-
 
 class CheckCampaignNoDtOutdir(scenario.test.VerificationStep):
 
     def step(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+
         self.STEP("No date/time output directory")
 
         _outdir_content = []  # type: typing.List[scenario.Path]
@@ -51,6 +50,8 @@ class CheckCampaignNoDtOutdir(scenario.test.VerificationStep):
 class CheckCampaignDtOutdir(scenario.test.VerificationStep):
 
     def step(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+
         self.STEP("Date/time output directory")
 
         _outdir_content = []  # type: typing.List[scenario.Path]

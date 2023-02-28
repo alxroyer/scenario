@@ -16,9 +16,9 @@
 
 import typing
 
+import scenario.test
 if typing.TYPE_CHECKING:
     import scenario
-import scenario.test
 
 
 class JsonReportFileVerificationStep(scenario.test.VerificationStep):

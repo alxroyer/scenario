@@ -17,14 +17,14 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import LogVerificationStep
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class Logging100(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Logging timestamps",

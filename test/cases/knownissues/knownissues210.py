@@ -18,16 +18,14 @@ import scenario
 import scenario.test
 import scenario.text
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import LogVerificationStep
-# Related scenarios:
-from knownissuedetailsscenario import KnownIssueDetailsScenario
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class KnownIssues210(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue level names",
@@ -39,7 +37,7 @@ class KnownIssues210(scenario.test.TestCase):
             scenario.test.paths.KNOWN_ISSUE_DETAILS_SCENARIO,
             config_values={
                 f"{scenario.ConfigKey.ISSUE_LEVEL_NAMES}.foo": 10,
-                KnownIssueDetailsScenario.ConfigKey.LEVEL: 10,
+                scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.LEVEL: 10,
             },
         ))
         self.addstep(CheckNamedIssueLevel(ExecScenario.getinstance(), name="foo", value=10, count=2))

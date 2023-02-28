@@ -18,13 +18,11 @@ import enum
 import re
 import typing
 
+import scenario.test
 if typing.TYPE_CHECKING:
     from scenario.typing import JsonDictType
-import scenario.test
 
-# Related steps:
-from steps.commonargs import ExecCommonArgs
-from steps.logparsing import LogParserStep
+from steps.logparsing import LogParserStep  # `LogParserStep` used for inheritance.
 
 
 class ParseFinalResultsLog(LogParserStep):
@@ -54,6 +52,8 @@ class ParseFinalResultsLog(LogParserStep):
         """
         Shortcut to *doc-only* mode.
         """
+        from steps.commonargs import ExecCommonArgs
+
         return self.getexecstep(ExecCommonArgs).doc_only
 
     def _setparsestate(

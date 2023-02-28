@@ -17,13 +17,12 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.pippackages import EnsurePipPackage
-
 
 class Timezone002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.pippackages import EnsurePipPackage
+
         scenario.test.TestCase.__init__(
             self,
             title="Timezone configuration",

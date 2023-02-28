@@ -16,14 +16,13 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .steps.full import CheckFullScenarioLogOutput
-
 
 class ScenarioLogging010(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from scenariologging.steps.full import CheckFullScenarioLogOutput
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Scenario logging simple scenario",

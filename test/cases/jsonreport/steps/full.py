@@ -18,21 +18,21 @@ import json
 import typing
 
 import scenario
-if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
 import scenario.test
 import scenario.text
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Related steps:
-from scenarioexecution.steps.execution import ExecScenario
-from .reportfile import JsonReportFileVerificationStep
+from jsonreport.steps.reportfile import JsonReportFileVerificationStep  # `JsonReportFileVerificationStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from scenarioexecution.steps.execution import ExecScenario as _ExecScenarioType
 
 
 class CheckFullJsonReport(JsonReportFileVerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
+            exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
         JsonReportFileVerificationStep.__init__(self, exec_step)
 

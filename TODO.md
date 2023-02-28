@@ -18,7 +18,7 @@
 ## Roadmap to v0.2.3
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports.
-    - Check 'test/', 'tools/'.
+    - Check 'tools/'.
     - Check what it gives in the documentation extracted with Sphinx.
         - Class renames are fixed to original names in the output documentation.
         - But `typing.TYPE_CHECKING` breaks the link to the actual class.

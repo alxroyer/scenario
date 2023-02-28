@@ -16,15 +16,14 @@
 
 import scenario.test
 
-# Steps:
-from .steps.execution import ExecCampaign
-from .steps.outdirfiles import CheckCampaignOutdirFiles
-from .steps.junitreport import CheckCampaignJunitReport
-
 
 class Campaign004(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+        from campaigns.steps.junitreport import CheckCampaignJunitReport
+        from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
+
         scenario.test.TestCase.__init__(
             self,
             title="Campaign --doc-only option",

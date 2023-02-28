@@ -17,15 +17,14 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.pippackages import EnsurePipPackage
-from steps.common import ExecScenario
-from .steps.subprocesslog import CheckConfigValueScenarioLog
-
 
 class ConfigDb300(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from configdb.steps.subprocesslog import CheckConfigValueScenarioLog
+        from steps.common import ExecScenario
+        from steps.pippackages import EnsurePipPackage
+
         scenario.test.TestCase.__init__(
             self,
             title="Load YAML configuration file",

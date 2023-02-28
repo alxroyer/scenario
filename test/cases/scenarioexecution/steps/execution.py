@@ -14,17 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import enum
 import typing
 
 import scenario
 import scenario.test
 import scenario.text
 
-# Related steps:
-from steps.commonargs import ExecCommonArgs
-# Related scenarios:
-from superscenario import SuperScenario
+from steps.commonargs import ExecCommonArgs  # `ExecCommonArgs` used for inheritance.
 
 
 class ExecScenario(ExecCommonArgs):
@@ -78,7 +74,7 @@ class ExecScenario(ExecCommonArgs):
             _action_description += f", with '{self.subscenario_path}' for subscenario"
 
             if self.doexecute():
-                self.subprocess.setconfigvalue(SuperScenario.ConfigKey.SUBSCENARIO_PATH, self.subscenario_path)
+                self.subprocess.setconfigvalue(scenario.test.data.scenarios.SuperScenario.ConfigKey.SUBSCENARIO_PATH, self.subscenario_path)
 
         _action_description1, _action_description2 = self._preparecommonargs()  # type: str, str
         _action_description += _action_description1
