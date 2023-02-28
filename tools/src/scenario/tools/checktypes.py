@@ -18,9 +18,6 @@ import sys
 
 import scenario
 
-from .subprocess import SubProcess
-from .thirdparty import checkthirdpartytoolversion
-
 
 class CheckTypes:
 
@@ -52,6 +49,9 @@ class CheckTypes:
         self.max_errors = max_errors  # type: int
 
     def run(self):  # type: (...) -> scenario.ErrorCode
+        from .subprocess import SubProcess
+        from .thirdparty import checkthirdpartytoolversion
+
         # Command line arguments.
         if not scenario.Args.isset():
             scenario.Args.setinstance(CheckTypes.Args(self))

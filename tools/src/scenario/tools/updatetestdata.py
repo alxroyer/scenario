@@ -20,8 +20,6 @@ import typing
 import scenario
 import scenario.test
 
-from . import paths
-
 
 class TestData:
 
@@ -185,6 +183,8 @@ class DataExpectationsUpdater(FileUpdater):
             self,
             test_data,  # type: TestData
     ):  # type: (...) -> None
+        from . import paths
+
         FileUpdater.__init__(
             self,
             paths.TEST_SRC_DATA_PATH, test_data,

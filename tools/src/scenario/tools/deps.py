@@ -36,7 +36,7 @@ def shouldupdate(
         return True
 
     # Otherwise, compare file dates.
-    def filetime(
+    def _filetime(
             path,  # type: scenario.Path
     ):  # type: (...) -> float
         assert path.is_file()
@@ -46,6 +46,6 @@ def shouldupdate(
         return float(_stat.st_atime) + (float(_stat.st_atime_ns) / 1000000.0)
     assert inputs
     for _input in inputs:  # type: scenario.Path
-        if filetime(_input) >= filetime(output):
+        if _filetime(_input) >= _filetime(output):
             return True
     return False
