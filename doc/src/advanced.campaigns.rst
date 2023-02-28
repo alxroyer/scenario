@@ -31,7 +31,7 @@ Test suite files
 
 Test suite files are text files that describe the scenario files to execute, or not to execute.
 
-Example from the `demo.suite <../../demo/demo.suite>`_ test suite file:
+Example from the `demo.suite <https://github.com/alxroyer/scenario/blob/master/demo/demo.suite>`_ test suite file:
 
 .. literalinclude:: ../../demo/demo.suite
     :language: none
