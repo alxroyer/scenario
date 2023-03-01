@@ -26,10 +26,10 @@ class Feature:
         self.title = title  # type: str
         self.text = text  # type: str
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         return f"<Feature id={self.id!r} title={self.title!r}>"
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         return f"{self.id} - {self.title}"
 
 
@@ -171,7 +171,7 @@ ALTERNATIVE_SCENARIOS = Feature(
         which can be done through different means:
 
         - Step picking,
-        - Partial sub-scenarios execution,
+        - Partial subscenarios execution,
         - Inheritance.
     """,
 )  # type: Feature
@@ -186,9 +186,9 @@ STEP_PICKING = Feature(
 
 SUBSCENARIOS = Feature(
     id="SUBSCENARIOS",
-    title="Sub-scenarios",
+    title="Subscenarios",
     text="""
-        A scenario shall execute all or part of other scenarios as sub-scenarios.
+        A scenario shall execute all or part of other scenarios as subscenarios.
     """,
 )  # type: Feature
 

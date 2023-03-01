@@ -66,13 +66,13 @@ class ActionResultDefinition:
         #: Executions.
         self.executions = []  # type: typing.List[ActionResultExecution]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
         return f"<{self.type} {self.description!r}>"
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Printable string representation.
         """

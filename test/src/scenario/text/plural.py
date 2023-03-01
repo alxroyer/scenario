@@ -96,38 +96,38 @@ class Countable:
         else:
             self._count = len(list(count_or_iterable))
 
-    def __len__(self):  # type: (...) -> int
+    def __len__(self):  # type: () -> int
         return self._count
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         return self.pluralize(self._singular_word)
 
     @property
-    def singular(self):  # type: (...) -> str
+    def singular(self):  # type: () -> str
         return self._singular_word
 
     @property
-    def plural(self):  # type: (...) -> str
+    def plural(self):  # type: () -> str
         return pluralize(self._singular_word, 0)
 
     @property
-    def are(self):  # type: (...) -> str
+    def are(self):  # type: () -> str
         return self.pluralize("is")
 
     @property
-    def have(self):  # type: (...) -> str
+    def have(self):  # type: () -> str
         return self.pluralize("has")
 
     @property
-    def their(self):  # type: (...) -> str
+    def their(self):  # type: () -> str
         return self.pluralize("its")
 
     @property
-    def they(self):  # type: (...) -> str
+    def they(self):  # type: () -> str
         return self.pluralize("it")
 
     @property
-    def were(self):  # type: (...) -> str
+    def were(self):  # type: () -> str
         return self.pluralize("was")
 
     def ifany(

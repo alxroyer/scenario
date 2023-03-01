@@ -108,7 +108,7 @@ class KnownIssue(TestError):
         #: Redefinition of :attr:`TestError.location` in order to explicitize it cannot be ``None`` for :class:`KnownIssue` instances.
         self.location = self.location  # type: CodeLocation
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Short representation of the known issue.
 
@@ -126,7 +126,7 @@ class KnownIssue(TestError):
         return _str
 
     @property
-    def url(self):  # type: (...) -> typing.Optional[str]
+    def url(self):  # type: () -> typing.Optional[str]
         """
         Issue URL getter.
 
@@ -137,10 +137,7 @@ class KnownIssue(TestError):
         return self._url
 
     @url.setter
-    def url(
-            self,
-            url,  # type: typing.Optional[str]
-    ):  # type: (...) -> None
+    def url(self, url):  # type: (typing.Optional[str]) -> None
         """
         Issue URL setter.
 

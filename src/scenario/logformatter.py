@@ -85,7 +85,7 @@ class LogFormatter(logging.Formatter):
             record,  # type: logging.LogRecord
     ):  # type: (...) -> str
         """
-        :mod:`logging` method overload that implements most of the :mod:`scenario` log formatting expectations.
+        ``logging`` method overload that implements most of the `scenario` log formatting expectations.
 
         :param record: Log record to format for printing.
         :return: Log string representation.

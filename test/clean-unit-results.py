@@ -24,7 +24,7 @@ MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 
-# :mod:`scenario` imports.
+# `scenario` imports.
 import scenario  # noqa: E402  ## Module level import not at top of file
 import scenario.test  # noqa: E402  ## Module level import not at top of file
 

@@ -23,12 +23,7 @@ Quick start
 Create your first test scenario
 -------------------------------
 
-.. todo:: Documentation needed for steps as objects.
-
-    This section describes in details how to write steps using ``step...()`` methods,
-    but it may be worth showing how to write steps with classes right away in the quickstart.
-
-The example below shows how to describe a test scenario.
+The example below shows how to describe a test scenario with step methods.
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
@@ -38,13 +33,15 @@ Start with importing the :py:mod:`scenario` module:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 1-3
+    :start-at: # -*- coding: utf-8 -*-
+    :end-at: import scenario
 
 Within your module, declare a class that extends the base :py:class:`scenario.Scenario` class:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 6
+    :start-at: class CommutativeAddition
+    :lines: 1
 
 Depending on your configuration
 (see :py:meth:`scenario.scenarioconfig.ScenarioConfig.expectedscenarioattributes()`),
@@ -52,33 +49,45 @@ define your scenario attributes:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 8-9
+    :start-at: SHORT_TITLE
+    :end-at: TEST_GOAL
+    :dedent:
 
 Optionally, define an initializer that declares member attributes,
 which may condition the way the scenario works:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 11-16
+    :start-at: def __init__
+    :end-at: self.result2 = 0
+    :dedent:
 
 Then, define the test steps.
 Test steps are defined with methods starting with the ``step`` pattern:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 18
+    :start-at: def step000
+    :lines: 1
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 25
+    :start-at: def step010
+    :lines: 1
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 32
+    :start-at: def step020
+    :lines: 1
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 39
+    :start-at: def step030
+    :lines: 1
+    :dedent:
 
 The steps are executed in their alphabetical order.
 That's the reason why regular steps are usually numbered.
@@ -88,29 +97,36 @@ by calling the :py:meth:`scenario.stepuserapi.StepUserApi.STEP()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 19
+    :start-at: self.STEP("Initial conditions")
+    :lines: 1
+    :dedent:
 
 Define actions by calling the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 21
+    :start-at: self.ACTION(f"Let a =
+    :lines: 1
+    :dedent:
 
 Define expected results by calling the :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 44
+    :start-at: self.RESULT("result1 and result2 are the same.")
+    :lines: 1
+    :dedent:
 
 Actions and expected results shall be used as the condition of an ``if`` statement.
 The related test script should be placed below these ``if`` statements:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 28-29
+    :start-at: self.ACTION("Compute (a + b)
+    :end-at: self.result1 = self.a + self.b
+    :dedent:
 
-This makes it possible for the :py:mod:`scenario` library
-to call the step methods for different purposes:
+This makes it possible for the `scenario` library to call the step methods for different purposes:
 
 1. to peak all the action and expected result descriptions, without executing the test script:
     in that case, the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()`
@@ -126,18 +142,24 @@ provided by the :py:class:`scenario.Assertions` class:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 44-45
+    :start-at: self.RESULT("result1 and result2 are the same.")
+    :end-at: self.assertequal
+    :dedent:
 
 Eventually, the :py:meth:`scenario.stepuserapi.StepUserApi.evidence()` calls register :ref:`test evidence <evidence>` with the test results.
 This kind of call may be used under an action or expected result ``if`` statement.
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 28-30
+    :start-at: self.ACTION("Compute (a + b)
+    :end-at: self.evidence
+    :dedent:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :lines: 44-46
+    :start-at: self.RESULT("result1 and result2 are the same.")
+    :end-at: self.evidence
+    :dedent:
 
 Your scenario is now ready to execute.
 
@@ -150,7 +172,7 @@ Scenario execution
 A scenario must be executed with a launcher script.
 
 A default launcher script is provided within the 'bin' directory
-(from the main directory of the :py:mod:`scenario` library):
+(from the main directory of the `scenario` library):
 
 .. code-block:: bash
 
@@ -176,3 +198,20 @@ Give your scenario script as a positional argument to execute it:
 .. note:: The output presented above is a simplified version for documentation concerns.
           By default, test outputs are colored, and log lines give their timestamp
           (see :ref:`log colors <logging.colors>` and :ref:`log date/time <logging.date-time>` sections).
+
+
+.. _quickstart.reuse:
+
+Test code reuse
+---------------
+
+In order to quickly get a first test case running,
+the example before defines a scenario with `step methods`.
+
+As introduced in the :ref:`purpose section <purpose>`,
+the `scenario` framework is better being used with :ref:`step objects <step-objects>` for test code reuse.
+
+If you're interested in test code reuse,
+go straight away to :ref:`step object <step-objects>` or :ref:`subscenario <subscenarios>` sections.
+
+Otherwise, take a dive in the :ref:`advanced menu <advanced>` for further information on `scenario` features.

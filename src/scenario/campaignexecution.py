@@ -63,7 +63,7 @@ class CampaignExecution:
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -71,14 +71,14 @@ class CampaignExecution:
         return super().__repr__()
 
     @property
-    def junit_path(self):  # type: (...) -> Path
+    def junit_path(self):  # type: () -> Path
         """
         JUnit path.
         """
         return self.outdir / "campaign.xml"
 
     @property
-    def steps(self):  # type: (...) -> ExecTotalStats
+    def steps(self):  # type: () -> ExecTotalStats
         """
         Step statistics.
         """
@@ -89,7 +89,7 @@ class CampaignExecution:
         return _stats
 
     @property
-    def actions(self):  # type: (...) -> ExecTotalStats
+    def actions(self):  # type: () -> ExecTotalStats
         """
         Action statistics.
         """
@@ -100,7 +100,7 @@ class CampaignExecution:
         return _stats
 
     @property
-    def results(self):  # type: (...) -> ExecTotalStats
+    def results(self):  # type: () -> ExecTotalStats
         """
         Expected result statistics.
         """
@@ -111,7 +111,7 @@ class CampaignExecution:
         return _stats
 
     @property
-    def counts(self):  # type: (...) -> CampaignStats
+    def counts(self):  # type: () -> CampaignStats
         """
         Campaign statistics.
         """
@@ -157,7 +157,7 @@ class TestSuiteExecution:
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -166,7 +166,7 @@ class TestSuiteExecution:
         return f"<{qualname(type(self))} of '{self.test_suite_file.path}'>"
 
     @property
-    def steps(self):  # type: (...) -> ExecTotalStats
+    def steps(self):  # type: () -> ExecTotalStats
         """
         Step statistics.
         """
@@ -177,7 +177,7 @@ class TestSuiteExecution:
         return _stats
 
     @property
-    def actions(self):  # type: (...) -> ExecTotalStats
+    def actions(self):  # type: () -> ExecTotalStats
         """
         Action statistics.
         """
@@ -188,7 +188,7 @@ class TestSuiteExecution:
         return _stats
 
     @property
-    def results(self):  # type: (...) -> ExecTotalStats
+    def results(self):  # type: () -> ExecTotalStats
         """
         Expected result statistics.
         """
@@ -199,7 +199,7 @@ class TestSuiteExecution:
         return _stats
 
     @property
-    def counts(self):  # type: (...) -> CampaignStats
+    def counts(self):  # type: () -> CampaignStats
         """
         Campaign statistics.
         """
@@ -245,7 +245,7 @@ class TestCaseExecution:
         #: Test case JSON output.
         self.json = JsonReportReader()  # type: JsonReportReader
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
@@ -254,7 +254,7 @@ class TestCaseExecution:
         return f"<{qualname(type(self))} of '{self.script_path}'>"
 
     @property
-    def scenario_execution(self):  # type: (...) -> typing.Optional[ScenarioExecution]
+    def scenario_execution(self):  # type: () -> typing.Optional[ScenarioExecution]
         """
         Scenario execution data.
         """
@@ -263,7 +263,7 @@ class TestCaseExecution:
         return None
 
     @property
-    def name(self):  # type: (...) -> str
+    def name(self):  # type: () -> str
         """
         Test case name.
         """
@@ -274,7 +274,7 @@ class TestCaseExecution:
             return self.script_path.prettypath
 
     @property
-    def status(self):  # type: (...) -> ExecutionStatus
+    def status(self):  # type: () -> ExecutionStatus
         """
         Scenario execution status.
         """
@@ -285,7 +285,7 @@ class TestCaseExecution:
             return ExecutionStatus.FAIL
 
     @property
-    def errors(self):  # type: (...) -> typing.List[TestError]
+    def errors(self):  # type: () -> typing.List[TestError]
         """
         Test errors.
         """
@@ -294,7 +294,7 @@ class TestCaseExecution:
         return []
 
     @property
-    def warnings(self):  # type: (...) -> typing.List[TestError]
+    def warnings(self):  # type: () -> typing.List[TestError]
         """
         Warnings.
         """
@@ -303,7 +303,7 @@ class TestCaseExecution:
         return []
 
     @property
-    def steps(self):  # type: (...) -> ExecTotalStats
+    def steps(self):  # type: () -> ExecTotalStats
         """
         Step statistics.
         """
@@ -312,7 +312,7 @@ class TestCaseExecution:
         return ExecTotalStats()
 
     @property
-    def actions(self):  # type: (...) -> ExecTotalStats
+    def actions(self):  # type: () -> ExecTotalStats
         """
         Action statistics.
         """
@@ -321,7 +321,7 @@ class TestCaseExecution:
         return ExecTotalStats()
 
     @property
-    def results(self):  # type: (...) -> ExecTotalStats
+    def results(self):  # type: () -> ExecTotalStats
         """
         Expected result statistics.
         """

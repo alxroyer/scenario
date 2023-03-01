@@ -70,7 +70,7 @@ class ScenarioRunner(Logger):
 
     class ExecutionMode(StrEnum):
         """
-        Execution mode enumerate.
+        Execution mode enum.
 
         Tells whether the scenario runner is currently:
 
@@ -99,7 +99,7 @@ class ScenarioRunner(Logger):
         """
         Scenario runner main function, as a member method.
 
-        :return: Error code from the :class:`.errcodes.ErrorCode` enumerate.
+        :return: Error code.
         """
         from .debugloggers import ExecTimesLogger
         from .loggermain import MAIN_LOGGER
@@ -182,7 +182,7 @@ class ScenarioRunner(Logger):
     # Scenario execution.
 
     @property
-    def _execution_mode(self):  # type: (...) -> ScenarioRunner.ExecutionMode
+    def _execution_mode(self):  # type: () -> ScenarioRunner.ExecutionMode
         """
         Current execution mode.
 
@@ -210,8 +210,7 @@ class ScenarioRunner(Logger):
         :param scenario_path:
             Scenario Python script path.
         :return:
-            Error code from the :class:`.errcodes.ErrorCode` enumerate,
-            but no :const:`.errcodes.ErrorCode.TEST_ERROR`.
+            Error code, but no :const:`.errcodes.ErrorCode.TEST_ERROR`.
 
         Feeds the :attr:`.scenarioresults.SCENARIO_RESULTS` instance.
         """
@@ -276,8 +275,7 @@ class ScenarioRunner(Logger):
 
             May be set in order to save the most accurate info on the starting time of the scenario.
         :return:
-            Error code from the :class:`.errcodes.ErrorCode` enumerate,
-            but no :const:`.errcodes.ErrorCode.TEST_ERROR`.
+            Error code, but no :const:`.errcodes.ErrorCode.TEST_ERROR`.
         """
         from .debugloggers import ExecTimesLogger
 
@@ -330,7 +328,7 @@ class ScenarioRunner(Logger):
         Builds a scenario definition.
 
         :param scenario_definition: :class:`.scenariodefinition.ScenarioDefinition` instance to populate with steps, actions and expected results definitions.
-        :return: Error code from the :class:`.errcodes.ErrorCode` enumerate.
+        :return: Error code.
         """
         from .scenariodefinition import ScenarioDefinitionHelper
         from .scenarioexecution import ScenarioExecution
@@ -378,10 +376,10 @@ class ScenarioRunner(Logger):
             scenario_definition,  # type: ScenarioDefinition
     ):  # type: (...) -> ErrorCode
         """
-        Begins a scenario or sub-scenario execution.
+        Begins a scenario or subscenario execution.
 
         :param scenario_definition: Scenario or subscenario which execution to start.
-        :return: Error code from the :class:`.errcodes.ErrorCode` enumerate.
+        :return: Error code.
         """
         from .handlers import HANDLERS
         from .loggermain import MAIN_LOGGER
@@ -396,7 +394,7 @@ class ScenarioRunner(Logger):
         # Scenario execution stack management:
         # - Note: The scenario execution instance has already been created in `_buildscenario()`.
         assert scenario_definition.execution
-        # - Before pushing the scenario execution to the stack, store the sub-scenario reference in the current action / expected result when applicable.
+        # - Before pushing the scenario execution to the stack, store the subscenario reference in the current action / expected result when applicable.
         if SCENARIO_STACK.current_action_result_execution:
             SCENARIO_STACK.current_action_result_execution.subscenarios.append(scenario_definition.execution)
         # - Eventually push the scenario execution to the execution stack.
@@ -447,7 +445,7 @@ class ScenarioRunner(Logger):
         Ends a scenario or subscenario execution.
 
         :param scenario_definition: Scenario or subscenario which execution to end.
-        :return: Error code from the :class:`.errcodes.ErrorCode` enumerate.
+        :return: Error code.
         """
         from .handlers import HANDLERS
         from .scenarioevents import ScenarioEvent, ScenarioEventData

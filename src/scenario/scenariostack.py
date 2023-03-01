@@ -99,7 +99,7 @@ class BuildingContext:
             )
 
     @property
-    def scenario_definition(self):  # type: (...) -> typing.Optional[ScenarioDefinition]
+    def scenario_definition(self):  # type: () -> typing.Optional[ScenarioDefinition]
         """
         Main scenario definition being built (i.e. the first), if any.
         """
@@ -109,7 +109,7 @@ class BuildingContext:
             return None
 
     @property
-    def step_definition(self):  # type: (...) -> typing.Optional[StepDefinition]
+    def step_definition(self):  # type: () -> typing.Optional[StepDefinition]
         """
         Step definition being built, if any.
 
@@ -249,7 +249,7 @@ class ScenarioStack(Logger):
         return _last_scenario_execution
 
     @property
-    def size(self):  # type: (...) -> int
+    def size(self):  # type: () -> int
         """
         Returns the size of the scenario execution stack.
 
@@ -258,7 +258,7 @@ class ScenarioStack(Logger):
         return len(self.__scenario_executions)
 
     @property
-    def main_scenario_definition(self):  # type: (...) -> typing.Optional[ScenarioDefinition]
+    def main_scenario_definition(self):  # type: () -> typing.Optional[ScenarioDefinition]
         """
         Main scenario definition under execution.
 
@@ -272,7 +272,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def main_scenario_execution(self):  # type: (...) -> typing.Optional[ScenarioExecution]
+    def main_scenario_execution(self):  # type: () -> typing.Optional[ScenarioExecution]
         """
         Main scenario execution instance.
 
@@ -306,12 +306,12 @@ class ScenarioStack(Logger):
         return False
 
     @property
-    def current_scenario_definition(self):  # type: (...) -> typing.Optional[ScenarioDefinition]
+    def current_scenario_definition(self):  # type: () -> typing.Optional[ScenarioDefinition]
         """
         Current scenario definition under execution.
 
         The latest unterminated subscenario if any,
-        i.e. the main scenario if no current sub-scenario.
+        i.e. the main scenario if no current subscenario.
 
         Almost equivalent to :attr:`current_scenario_execution`, but retrieves the scenario definition instance.
         """
@@ -320,12 +320,12 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_scenario_execution(self):  # type: (...) -> typing.Optional[ScenarioExecution]
+    def current_scenario_execution(self):  # type: () -> typing.Optional[ScenarioExecution]
         """
         Current scenario execution instance.
 
         The latest unterminated subscenario if any,
-        i.e. the main scenario if no current sub-scenario.
+        i.e. the main scenario if no current subscenario.
 
         Almost equivalent to :attr:`current_scenario_definition`, but retrieves the scenario execution instance.
         """
@@ -354,7 +354,7 @@ class ScenarioStack(Logger):
         return False
 
     @property
-    def current_step_definition(self):  # type: (...) -> typing.Optional[StepDefinition]
+    def current_step_definition(self):  # type: () -> typing.Optional[StepDefinition]
         """
         Current step definition under execution.
 
@@ -370,7 +370,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_step_execution(self):  # type: (...) -> typing.Optional[StepExecution]
+    def current_step_execution(self):  # type: () -> typing.Optional[StepExecution]
         """
         Current step execution instance.
 
@@ -386,7 +386,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_action_result_definition(self):  # type: (...) -> typing.Optional[ActionResultDefinition]
+    def current_action_result_definition(self):  # type: () -> typing.Optional[ActionResultDefinition]
         """
         Current action or expected result definition under execution.
 
@@ -401,7 +401,7 @@ class ScenarioStack(Logger):
         return None
 
     @property
-    def current_action_result_execution(self):  # type: (...) -> typing.Optional[ActionResultExecution]
+    def current_action_result_execution(self):  # type: () -> typing.Optional[ActionResultExecution]
         """
         Current action or expected result execution instance.
 

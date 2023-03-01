@@ -29,12 +29,54 @@ from scenarioexecution.steps.execution import ExecScenario
 from .reportfile import JsonReportFileVerificationStep
 
 
-class CheckJsonReportExpectations(JsonReportFileVerificationStep):
+class _JsonItems:
+    """
+    Class that implements a list of JSON dictionaries,
+    but compares them on basis of their ids.
+    """
 
-    class ScenarioTestedItems:
-        def __init__(self):  # type: (...) -> None
-            self.step_executions = []  # type: typing.List[JSONDict]
-            self.action_result_executions = []  # type: typing.List[JSONDict]
+    def __init__(self):  # type: (...) -> None
+        self._items = []  # type: typing.List[JSONDict]
+
+    def __contains__(
+            self,
+            item,  # type: JSONDict
+    ):  # type: (...) -> bool
+        for _item in self._items:  # type: JSONDict
+            if id(item) == id(_item):
+                return True
+        return False
+
+    def __getitem__(
+            self,
+            item,  # type: typing.Any
+    ):  # type: (...) -> JSONDict
+        return self._items[item]  # type: ignore  ## Returning Any from function declared to return "Dict[str, Any]"
+
+    def __iter__(self):  # type: (...) -> typing.Iterator[JSONDict]
+        return iter(self._items)
+
+    def __len__(self):  # type: () -> int
+        return len(self._items)
+
+    def append(
+            self,
+            item,  # type: JSONDict
+    ):  # type: (...) -> None
+        self._items.append(item)
+
+    def clear(self):  # type: (...) -> None
+        self._items.clear()
+
+
+class _ScenarioTestedItems:
+
+    def __init__(self):  # type: (...) -> None
+        self.step_executions = _JsonItems()  # type: _JsonItems
+        self.action_result_executions = _JsonItems()  # type: _JsonItems
+
+
+class CheckJsonReportExpectations(JsonReportFileVerificationStep):
 
     def __init__(
             self,
@@ -46,8 +88,8 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         self.scenario_expectations = scenario_expectations  # type: scenario.test.ScenarioExpectations
         #: JSON data read from the report file.
         self.json = {}  # type: JSONDict
-        #: For each scenario / sub-scenario executed, memorizes which steps, actions and expected results have already been processed.
-        self._scenario_tested_items = []  # type: typing.List[CheckJsonReportExpectations.ScenarioTestedItems]
+        #: For each scenario / subscenario executed, memorizes which steps, actions and expected results have already been processed.
+        self._scenario_tested_items = []  # type: typing.List[_ScenarioTestedItems]
 
     def step(self):  # type: (...) -> None
         self.STEP("Scenario report expectations")
@@ -70,7 +112,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         Set in a separate public method from :meth:`step()` so that it can be called by campaign test cases as well.
         """
         scenario.logging.resetindentation()
-        self._scenario_tested_items = [CheckJsonReportExpectations.ScenarioTestedItems()]
+        self._scenario_tested_items = [_ScenarioTestedItems()]
         self._checkscenario(
             json_scenario=json_scenario,
             scenario_expectations=scenario_expectations,
@@ -365,7 +407,7 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
                     )
 
         # Clear the action/result executions memory at the end of the step analysis.
-        self._scenario_tested_items[-1].action_result_executions = []
+        self._scenario_tested_items[-1].action_result_executions.clear()
 
     def _checkstepexecution(
             self,
@@ -441,11 +483,11 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
         else:
             if action_result_expectations.subscenario_expectations is not None:
                 self.assertisempty(action_result_expectations.subscenario_expectations, "Unexpected list of subscenarios for a --doc-only execution")
-                if self.RESULT("No sub-scenario has been executed."):
+                if self.RESULT("No subscenario has been executed."):
                     self.assertisempty(
                         self.assertjson(
                             json_action_result_definition, "executions", type=list,
-                            evidence="Sub-scenario executions",
+                            evidence="Subscenario executions",
                         ),
                         evidence=False,
                     )
@@ -496,16 +538,16 @@ class CheckJsonReportExpectations(JsonReportFileVerificationStep):
             )
 
         if action_result_expectations.subscenario_expectations is not None:
-            _subscenarios_txt = scenario.text.Countable("sub-scenario", action_result_expectations.subscenario_expectations)  # type: scenario.text.Countable
+            _subscenarios_txt = scenario.text.Countable("subscenario", action_result_expectations.subscenario_expectations)  # type: scenario.text.Countable
             if self.RESULT(f"{len(_subscenarios_txt)} {_subscenarios_txt} {_subscenarios_txt.have} been executed{_subscenarios_txt.ifany(':', '.')}"):
                 self.assertjson(
                     json_action_result_execution, "subscenarios", type=list, len=len(action_result_expectations.subscenario_expectations),
-                    evidence="Number of sub-scenarios",
+                    evidence="Number of subscenarios",
                 )
             for _subscenario_expectation_index in range(len(action_result_expectations.subscenario_expectations)):  # type: int
-                self.RESULT(f"- Sub-scenario #{_subscenario_expectation_index + 1}:")
+                self.RESULT(f"- Subscenario #{_subscenario_expectation_index + 1}:")
                 scenario.logging.pushindentation()
-                self._scenario_tested_items.append(CheckJsonReportExpectations.ScenarioTestedItems())
+                self._scenario_tested_items.append(_ScenarioTestedItems())
                 self._checkscenario(
                     json_scenario=self.testdatafromjson(json_action_result_execution, f"subscenarios[{_subscenario_expectation_index}]", type=dict),
                     scenario_expectations=action_result_expectations.subscenario_expectations[_subscenario_expectation_index],

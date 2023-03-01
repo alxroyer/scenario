@@ -18,6 +18,16 @@
 Documentation
 =============
 
+.. admonition:: Publication
+    :class: note
+
+    HTML documentation, if saved in a github repository, can be displayed using a ``https://htmlpreview.github.io/?https://github.com/...`` indirection
+    (inspired from https://stackoverflow.com/questions/8446218/how-to-see-an-html-page-on-github-as-a-normal-rendered-html-page-to-see-preview#12233684).
+    The display however is not optimal.
+
+    The documentation is published on the https://docs.readthedocs.io/ platform.
+
+
 Docstrings
 ----------
 

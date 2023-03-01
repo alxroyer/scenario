@@ -59,17 +59,17 @@ class ExecCampaign(ExecCommonArgs):
             self.description = "Campaign execution"
 
     @property
-    def cmdline_outdir_path(self):  # type: (...) -> scenario.Path
+    def cmdline_outdir_path(self):  # type: () -> scenario.Path
         assert self._cmdline_outdir_path is not None
         return self._cmdline_outdir_path
 
     @property
-    def final_outdir_path(self):  # type: (...) -> scenario.Path
+    def final_outdir_path(self):  # type: () -> scenario.Path
         assert self._final_outdir_path is not None
         return self._final_outdir_path
 
     @property
-    def junit_report_path(self):  # type: (...) -> scenario.Path
+    def junit_report_path(self):  # type: () -> scenario.Path
         return self.final_outdir_path / "campaign.xml"
 
     def step(self):  # type: (...) -> None

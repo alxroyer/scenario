@@ -21,7 +21,7 @@ Logging
 Logging is one of the first useful means that help investigating on test executions.
 That's the reason why a particular attention is paid to providing efficient logging facilities.
 
-For the purpose, the :py:mod:`scenario` framework makes use and extends the standard :py:mod:`logging` library.
+For the purpose, the `scenario` framework makes use and extends the standard ``logging`` library.
 
 
 .. _logging.log-levels:
@@ -29,7 +29,7 @@ For the purpose, the :py:mod:`scenario` framework makes use and extends the stan
 Log levels
 ----------
 
-As :py:mod:`logging` proposes it, log levels are defined by ``int`` values.
+As the system ``logging`` module proposes it, log levels are defined by ``int`` values.
 The *ERROR*, *WARNING*, *INFO* and *DEBUG* log levels are mostly to be considered.
 
 *ERROR*, *WARNING* and *INFO* log records are always displayed.
@@ -58,8 +58,8 @@ It may disabled through the :ref:`scenario.log_date_time <config-db.scenario.log
 Main logger
 -----------
 
-The :py:mod:`scenario` framework defines a main logger.
-It uses a regular :py:class:`logging.Logger` instance with 'scenario' for name [#logging-instance-attribute]_.
+The `scenario` framework defines a main logger.
+It uses a regular ``logging.Logger`` instance with ``'scenario'`` for name [#logging-instance-attribute]_.
 
 It is accessible through the :py:attr:`scenario.logging` variable.
 
@@ -67,11 +67,13 @@ Debugging is enabled by default with this main logger.
 
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 22-29
+    :start-at: def step010
+    :end-at: This is debug.
 
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 5-11
+    :start-at: STEP#1:
+    :end-at: This is debug.
 
 .. admonition:: Implementation details
     :class: note
@@ -100,7 +102,7 @@ A :py:class:`scenario.logger.Logger` instance may be created directly.
 
 But a common pattern is to inherit from :py:class:`scenario.logger.Logger`,
 either directly (see :ref:`test libraries <test-libs>`) or through an intermediate class.
-A couple of :py:mod:`scenario` classes inherit from the :py:class:`scenario.logger.Logger` class,
+A couple of `scenario` classes inherit from the :py:class:`scenario.logger.Logger` class,
 among others:
 
 - :py:class:`scenario.Scenario`,
@@ -109,7 +111,9 @@ among others:
 .. Inheriting from `scenario.Scenario`.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 12-13, 17-18
+    :start-at: class LoggingScenario
+    :end-at: scenario.Scenario.__init__(self)
+    :lines: 1-2, 6-
 
 .. todo:: Example needed for inheriting :py:class:`scenario.Step`.
 
@@ -122,12 +126,15 @@ Debugging is enabled by default for such user-defined scenario and step instance
 .. Step `LoggingScenario.step020()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 12, 30-38
+    :start-at: class LoggingScenario
+    :end-at: self.debug("This is debug.")
+    :lines: 1, 19-
 
 .. Step `LoggingScenario.step020()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 13-19
+    :start-at: STEP#2:
+    :end-before: This is debug.
 
 Otherwise, debugging is disabled by default for class loggers.
 
@@ -135,24 +142,31 @@ Otherwise, debugging is disabled by default for class loggers.
    and `LoggingScenario.step020()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 12, 16-19, 39-47
+    :start-at: class LoggingScenario
+    :end-at: self.class_logger.debug("This is debug.")
+    :lines: 1, 5-8, 28-
 
 .. Step `LoggingScenario.step030()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 21-26
+    :start-at: STEP#3:
+    :end-before: Activate debugging for the class logger instance.
 
 Class logger debugging can be activated on-demand, either 1) programmatically, ...:
 
 .. Programmatic debug enabling.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 49-53
+    :start-at: Activate debugging for the class logger instance.
+    :end-at: This is debug again.
+    :dedent:
 
 .. Related console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 27-29
+    :start-at: Activate debugging for the class logger instance.
+    :end-at: This is debug again.
+    :dedent:
 
 ... 2) through the ``--debug-class`` command line option, ...:
 
@@ -164,12 +178,13 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
 
 ---
 
-.. admonition:: Acces to :py:class:`logging.Logger` instances
+.. admonition:: Access to :py:class:`logging.Logger` instances
     :class: tip
 
     .. [#logging-instance-attribute]
-        In case you need to manipulate :mod:`logging` instance directly,
-        the :py:class:`logging.Logger` instances are available through the :py:attr:`scenario.logger.Logger.logging_instance` property.
+
+        In case you need to manipulate ``logging`` instance directly,
+        the ``logging.Logger`` instances are available through the :py:attr:`scenario.logger.Logger.logging_instance` property.
 
         The :py:attr:`scenario.logger.Logger.logging_instance` property is available to both main logger and class loggers.
 
@@ -179,7 +194,7 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
 Colors
 ------
 
-The :py:mod:`scenario` framework manages colorization in the console, which facilitates hot analyses of the log flow.
+The `scenario` framework manages colorization in the console, which facilitates hot analyses of the log flow.
 
 Log colors may be disabled through the :ref:`scenario.log_color <config-db.scenario.log_color>` configuration value.
 
@@ -212,7 +227,9 @@ which is particularly useful when different class loggers generate interleaved l
 .. Call to `scenario.Logger.setlogcolor()`.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 20
+    :start-at: setlogcolor
+    :lines: 1
+    :dedent:
 
 
 .. _logging.indentation:
@@ -222,7 +239,7 @@ Indentation
 
 Log indentation also contributes in facilitating log analyses.
 
-The :py:mod:`scenario` provides several indentation mechanisms.
+The `scenario` framework provides several indentation mechanisms.
 
 
 .. _logging.indentation.scenario-stack:
@@ -230,18 +247,18 @@ The :py:mod:`scenario` provides several indentation mechanisms.
 Scenario stack indentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When :ref:`sub-scenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
+When :ref:`subscenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
 
-Example of output from the `commutativeadditions.py <../../demo/commutativeadditions.py>`_ sample test.
+Example of output from the `commutativeadditions.py <https://github.com/alxroyer/scenario/blob/master/demo/commutativeadditions.py>`_ sample test.
 
-.. Sub-scenario output log example: 'commutativeadditions.py'.
+.. Subscenario output log example: 'commutativeadditions.py'.
 .. literalinclude:: ../data/commutativeadditions.log
     :language: none
-    :lines: 1-51
+    :end-at: EVIDENCE:   -> result1 = 2
 
 *(Output truncated...)*
 
-If a sub-scenario executes another sub-scenario, the '|' indentation is doubled, and so on.
+If a subscenario executes another subscenario, the '|' indentation is doubled, and so on.
 
 
 .. _logging.indentation.class-logger:
@@ -263,12 +280,15 @@ the logging lines of this class logger are indented the way below.
 .. Step `LoggingScenario.step110()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 55-74
+    :start-at: def step110
+    :end-before: def step120
+    :dedent:
 
 .. Step `LoggingScenario.step110()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 31-49
+    :start-at: STEP#4:
+    :end-before: STEP#5:
 
 .. admonition:: Additional indentation pattern
     :class: tip
@@ -303,12 +323,14 @@ it takes effect on every log lines:
 .. Step `LoggingScenario.step120()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 76-95
+    :start-at: def step120
+    :dedent:
 
 .. Step `LoggingScenario.step120()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 51-69
+    :start-at: STEP#5:
+    :end-before: END OF 'demo/loggingdemo.py'
 
 .. admonition:: Scenario stack v/s user identation
     :class: note
@@ -442,7 +464,7 @@ That's the reason why the :py:mod:`scenario.debug` package gathers a couple of f
 Long texts
 ^^^^^^^^^^
 
-The :py:mod:`scenario` logging feature provides a way to log long texts on several lines.
+The `scenario` logging feature provides a way to log long texts on several lines.
 
 To do so, set the ``extra`` parameter using the :py:meth:`scenario.logger.Logger.longtext()` method when logging some text:
 
@@ -465,7 +487,7 @@ The ``max_lines`` parameter may be set to ``None`` in order to display the full 
 File logging
 ------------
 
-The :py:mod:`scenario` logging feature provides the ability to save the test log output into a file.
+The `scenario` logging feature provides the ability to save the test log output into a file.
 
 To do so, set the :ref:`scenario.log_file <config-db.scenario.log_file>` configuration value,
 either with the ``–-config-value`` command line option, or within a configuration file.
@@ -473,7 +495,7 @@ either with the ``–-config-value`` command line option, or within a configurat
 The command line example below
 disables the output in the console,
 but saves it into the 'doc/data/commutativeaddition.log' file
-(from the main directory of the :py:mod:`scenario` library):
+(from the main directory of the `scenario` library):
 
 .. code-block:: bash
 

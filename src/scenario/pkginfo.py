@@ -27,7 +27,7 @@ class PackageInfo:
     """
 
     @property
-    def version(self):  # type: (...) -> str
+    def version(self):  # type: () -> str
         """
         Current version of the :mod:`scenario` package as a `semver <https://semver.org/>`_ string.
 
@@ -36,7 +36,7 @@ class PackageInfo:
         return ".".join([str(_i) for _i in self.version_tuple])
 
     @property
-    def version_tuple(self):  # type: (...) -> typing.Tuple[int, int, int]
+    def version_tuple(self):  # type: () -> typing.Tuple[int, int, int]
         """
         Current version of the :mod:`scenario` package as a `semver <https://semver.org/>`_ tuple.
 

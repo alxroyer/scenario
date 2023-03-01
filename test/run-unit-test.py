@@ -25,7 +25,7 @@ sys.path.append(str(MAIN_PATH / "test" / "cases"))
 sys.path.append(str(MAIN_PATH / "test" / "data"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 
-# :mod:`scenario` imports.
+# `scenario` imports.
 import scenario  # noqa: E402  ## Module level import not at top of file
 from scenario.scenarioconfig import SCENARIO_CONFIG  # noqa: E402  ## Module level import not at top of file
 import scenario.test  # noqa: E402  ## Module level import not at top of file
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     # Declare expected attributes.
     if UnitTestArgs.getinstance().check_expected_attributes:
-        # Memo: Enumerate definitions are stored as lists in the configuration database.
+        # Memo: Enum definitions are stored as lists in the configuration database.
         scenario.conf.set(scenario.ConfigKey.EXPECTED_ATTRIBUTES, scenario.test.ScenarioAttribute)
     # Configure test titles to be displayed as extra info (if nothing already configured).
     if not SCENARIO_CONFIG.resultsextrainfo():

@@ -49,7 +49,7 @@ class ErrorExpectations:
         self.message = message  # type: str
         self.location = location  # type: typing.Optional[str]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         return f"<ErrorExpectations {self.error_type!r} {self.message!r}>"
 
     def loggingtext(self):  # type: (...) -> str

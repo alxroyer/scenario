@@ -369,15 +369,15 @@ class CheckFullJsonReport(JsonReportFileVerificationStep):
         )
 
         _json_subscenarios_ref = self._assertjsonref(json_action_result_execution_ref, "subscenarios", type=list)  # type: typing.List[JSONDict]
-        _subscenarios_txt = scenario.text.Countable("sub-scenario", _json_subscenarios_ref)  # type: scenario.text.Countable
-        if self.RESULT(f"The number of sub-scenarios is {len(_subscenarios_txt)}{_subscenarios_txt.ifany(':', '.')}"):
+        _subscenarios_txt = scenario.text.Countable("subscenario", _json_subscenarios_ref)  # type: scenario.text.Countable
+        if self.RESULT(f"The number of subscenarios is {len(_subscenarios_txt)}{_subscenarios_txt.ifany(':', '.')}"):
             self.assertjson(
                 json_action_result_execution, "subscenarios", type=list, len=len(_json_subscenarios_ref),
-                evidence="Number of sub-scenarios",
+                evidence="Number of subscenarios",
             )
         for _subscenario_index in range(len(_json_subscenarios_ref)):  # type: int
             _json_subscenario_ref = _json_subscenarios_ref[_subscenario_index]  # type: JSONDict
-            self.RESULT(f"- Sub-scenario #{_subscenario_index + 1}:")
+            self.RESULT(f"- Subscenario #{_subscenario_index + 1}:")
             scenario.logging.pushindentation()
             self._checkscenario(
                 json_scenario=self.testdatafromjson(json_action_result_execution, f"subscenarios[{_subscenario_index}]", type=dict),

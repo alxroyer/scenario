@@ -100,7 +100,7 @@ store the execution information related to definition classes cited above.
 
 The :py:class:`scenario.scenariostack.ScenarioStack` also is a helper class for :py:class:`scenario.scenariorunner.ScenarioRunner`:
 
-- It stores the current stack of scenarios being executed (see :ref:`sub-scenarios <arch.subscenario-execution>`.
+- It stores the current stack of scenarios being executed (see :ref:`subscenarios <arch.subscenario-execution>`.
 - It also provides a couple of accessors to the current step, action or expected result being executed.
 
 The :py:class:`scenario.scenariorunner.ScenarioRunner` class remains the conductor of all:
@@ -136,7 +136,7 @@ The :py:class:`scenario.scenariorunner.ScenarioRunner` class remains the conduct
          and :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` call [#meth-onactionresult]_:
 
          #. A :py:class:`scenario.actionresultexecution.ActionResultExecution` instance is created [#meth-onactionresult]_.
-         #. If a sub-scenario is executed, then it is pushed to the :py:class:`scenario.scenariostack.ScenarioStack` instance [#meth-beginscenario]_,
+         #. If a subscenario is executed, then it is pushed to the :py:class:`scenario.scenariostack.ScenarioStack` instance [#meth-beginscenario]_,
             built [#meth-beginscenario]_ [#class-ScenarioDefinitionHelper]_ [#meth-execstep]_,
             executed [#meth-executescenario]_ [#meth-execstep]_,
             and eventually popped from the :py:class:`scenario.scenariostack.ScenarioStack` instance [#meth-endscenario]_.

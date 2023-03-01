@@ -81,17 +81,12 @@ Deliver on an integration branch
    b. Check the HTML output in 'doc/html/':
 
       Check the pages that use the ``.. literalinclude::`` directive with the ``:lines:`` option
-      (following list established as of version v0.2.0):
+      (following list established on the 'int/v0.2.2+' branch):
 
-      - advanced.config-db.html
-      - advanced.handlers.html
-      - advanced.launcher.html
-      - advanced.logging.html
-      - advanced.subscenarios.html
-      - advanced.test-libs.html
-      - quickstart.html
+      - advanced.config-db.html (depending on 'doc/data/run-demo.show-configs.log')
+      - advanced.logging.html (depending on 'demo/loggingdemo.py', 3 times)
 
-5. Eventually check files encoding:
+5. Check files encoding:
 
    Check all files use utf-8 encoding and unix end-of-line characters, and have the appropriate permissions:
 
@@ -109,6 +104,19 @@ Deliver on an integration branch
 Deliver a new version
 ---------------------
 
+0. Merge on the master branch:
+
+   .. code-block:: bash
+
+       git checkout master
+       git merge --squash --ff-only int/vX.Y.Z+
+
+   Update the commit message, then:
+
+   .. code-block:: bash
+
+       git commit
+
 1. Check the scenario version stored in the code:
 
    Check the version tuple defined in 'src/pkginfo.py'.
@@ -117,15 +125,34 @@ Deliver a new version
 
 2. Apply :ref:`delivery checking <guidelines.deliver>` as described before.
 
-3. Add a tag on the final node:
+3. Update the documentation:
+
+   Check the ``copyright`` and ``version`` variables in 'tools/conf/sphinx/conf.py'.
+
+   Regenerate the documentation:
+
+   .. code-block:: bash
+
+       rm -rf doc/html/
+       ./tools/mkdoc.py
+
+   Commit modifications (with the ``--amend`` option).
+
+4. Add a tag on the final node:
 
    .. code-block:: bash
 
        git tag vX.Y.Z
 
-4. Push on the central repository:
+5. Push on the github repository:
 
    .. code-block:: bash
 
        git push
-       git push --tags
+       git push vX.Y.Z
+
+6. Configure readthedocs:
+
+   Go to the `readthedocs project page <https://readthedocs.org/projects/scenario-testing-framework/>`_.
+
+   Configure a build for the new version, and set it as the default.

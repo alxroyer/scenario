@@ -18,7 +18,7 @@
 Handlers
 ========
 
-The :py:mod:`scenario` framework provides a service that triggers handlers on events.
+The `scenario` framework provides a service that triggers handlers on events.
 
 
 .. _handlers.handler-registration:
@@ -31,7 +31,8 @@ First of all, declare your handler function:
 .. scenario.Event.ERROR handler definition
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 18-20
+    :start-at: def _error
+    :end-at: scenario.logging.debug
 
 Then the handlers may be installed by calling the :py:meth:`scenario.handlers.Handlers.install()` method
 on the :py:attr:`scenario.handlers` manager:
@@ -39,12 +40,14 @@ on the :py:attr:`scenario.handlers` manager:
 .. scenario.Event.ERROR handler installation
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 50
+    :start-at: scenario.handlers.install(scenario.Event.ERROR, _error)
+    :lines: 1
+    :dedent:
 
 .. tip::
-    The event may be passed as an enumerate constant or a string.
+    The event may be passed as an enum constant or a string.
 
-    Using enumerates is usually a better option in as much as they can be type checked in camparison with simple strings.
+    Using enums is usually a better option in as much as they can be type checked in camparison with simple strings.
 
 The :py:meth:`scenario.handlers.Handlers.install()` method has a couple of parameters that specialize the way the handlers live and are triggered:
 
@@ -68,12 +71,12 @@ The handlers may be uninstalled thanks to the :py:meth:`scenario.handlers.Handle
 Scenario events
 ---------------
 
-The following tables describes the :py:mod:`scenario` events that can be used to register handlers for.
+The following tables describes the `scenario` events that can be used to register handlers for.
 
 .. tip::
 
-    Use the :py:class:`scenario.Event` shortcut to the internal :py:class:`scenario.scenarioevents.ScenarioEvent` enumerate
-    from :py:mod:`scenario` user code.
+    Use the :py:class:`scenario.Event` shortcut to the internal :py:class:`scenario.scenarioevents.ScenarioEvent` enum
+    from `scenario` user code.
 
 .. list-table:: Events raised during a scenario execution
     :widths: auto
@@ -139,13 +142,14 @@ Even though the handler service is basically provided to let user code react on 
 it is made as a general feature so that it can be used for other purposes.
 This way, you may define your own set of events within your test environment for instance.
 
-In order to do so, a good practice is to define your set of events with an enumerate,
+In order to do so, a good practice is to define your set of events with an enum,
 so that they can be type checked.
 
-.. UserEvent enumerate definition.
+.. UserEvent enum definition.
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 33-34
+    :start-at: class UserEvent
+    :end-at: FOO
 
 Then use the :py:meth:`scenario.handlers.Handlers.callhandlers()` method
 to make the registered handlers (matching their additional conditions in option) be called.
@@ -154,10 +158,12 @@ Pass on event data as a single objet, which can be whatever you want.
 .. Call of UserEvent.FOO handlers.
 .. literalinclude:: ../../demo/handlers.py
     :language: python
-    :lines: 59
+    :start-at: scenario.handlers.callhandlers(UserEvent.FOO,
+    :lines: 1
+    :dedent:
 
 .. tip::
     Considering evolutivity concerns, event data should rather be set with:
 
-    - dedicated objects, like :py:class:`scenario.scenarioevents.ScenarioEventData` proposes,
+    - dedicated objects, like :py:class:`scenario.scenarioevents.ScenarioEventData` proposes it,
     - or more informal dictionaries, like the 'demo/handlers.py' sample does.

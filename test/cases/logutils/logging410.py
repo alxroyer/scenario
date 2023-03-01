@@ -29,7 +29,7 @@ class Logging410(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario stack indentation",
-            objective="Check that indentation is shifted for each sub-scenario being executed.",
+            objective="Check that indentation is shifted for each subscenario being executed.",
             features=[scenario.test.features.LOGGING],
         )
 
@@ -60,7 +60,7 @@ class CheckMainScenario(LogVerificationStep):
             self.assertregex("^SCENARIO ", _main_beginning_line, evidence=True)
         if self.RESULT("The steps of the main scenario are displayed without indentation."):
             for _main_step_text in (
-                "STEP#1: Sub-scenario execution",
+                "STEP#1: Subscenario execution",
             ):  # type: str
                 for _main_step_line in self.assertlines(_main_step_text):  # type: str
                     self.assertregex(
@@ -102,7 +102,7 @@ class CheckMainScenario(LogVerificationStep):
         if self.RESULT("The 'EVIDENCE: ' patterns the the main scenario evidence are right-aligned "
                        f"with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
             for _main_evidence_text in (
-                "Sub-scenario executed successfully",
+                "Subscenario executed successfully",
             ):  # type: str
                 for _main_evidence_line in self.assertlines(_main_evidence_text):  # type: str
                     self.assertregex(
@@ -119,7 +119,7 @@ class CheckMainScenario(LogVerificationStep):
 class CheckSubScenario(LogVerificationStep):
 
     def step(self):  # type: (...) -> None
-        self.STEP("Sub-scenario indentation")
+        self.STEP("Subscenario indentation")
 
         assert isinstance(self.exec_step, CheckMainScenario)
 
@@ -136,7 +136,7 @@ class CheckSubScenario(LogVerificationStep):
             )  # type: int
             _subscenario_line_indentation = -1  # type: int
             for _subscenario_line in self.assertlines(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN):  # type: str
-                self.evidence(f"Sub-scenario line: {_subscenario_line!r}")
+                self.evidence(f"Subscenario line: {_subscenario_line!r}")
                 if _subscenario_line_indentation < 0:
                     _subscenario_line_indentation = _subscenario_line.find("|")
                     self.assertgreater(
@@ -148,16 +148,16 @@ class CheckSubScenario(LogVerificationStep):
                         _subscenario_line.find("|"), _subscenario_line_indentation,
                         evidence="'|' character position",
                     )
-            # Check we have actually processed sub-scenario lines.
+            # Check we have actually processed subscenario lines.
             self.assertgreater(_subscenario_line_indentation, 0)
-        if self.RESULT("The beginning of the sub-scenario is displayed "
+        if self.RESULT("The beginning of the subscenario is displayed "
                        f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern."):
             for _subscenario_beginning_line in self.assertlines(f"SCENARIO '{scenario.test.paths.SCENARIO_LOGGING_SCENARIO}'"):  # type: str
                 self.assertregex(
                     _subscenario_regex_start + r"SCENARIO ", _subscenario_beginning_line,
                     evidence=True,
                 )
-        if self.RESULT("The steps of the sub-scenario are displayed "
+        if self.RESULT("The steps of the subscenario are displayed "
                        f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern."):
             for _subscenario_step_text in (
                 "STEP#1: Scenario logging",
@@ -167,7 +167,7 @@ class CheckSubScenario(LogVerificationStep):
                         _subscenario_regex_start + r"STEP#[0-9]+", _subscenario_step_line,
                         evidence=True,
                     )
-        if self.RESULT("The 'ACTION: ' patterns of the sub-scenario actions are prefixed "
+        if self.RESULT("The 'ACTION: ' patterns of the subscenario actions are prefixed "
                        f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
                        f"then right-aligned with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
             for _subscenario_action_text in (
@@ -183,7 +183,7 @@ class CheckSubScenario(LogVerificationStep):
                         _subscenario_action_line,
                         evidence=True,
                     )
-        if self.RESULT("The 'RESULT: ' patterns of the of the sub-scenario expected results are prefixed "
+        if self.RESULT("The 'RESULT: ' patterns of the of the subscenario expected results are prefixed "
                        f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
                        f"then right-aligned with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
             for _subscenario_result_text in (
@@ -199,7 +199,7 @@ class CheckSubScenario(LogVerificationStep):
                         _subscenario_result_line,
                         evidence=True,
                     )
-        if self.RESULT("The 'EVIDENCE: ' patterns of of the sub-scenario evidence are prefixed "
+        if self.RESULT("The 'EVIDENCE: ' patterns of of the subscenario evidence are prefixed "
                        f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
                        f"then right-aligned with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
             for _subscenario_evidence_text in (

@@ -42,7 +42,7 @@ _main_loggers = 0  # type: int
 
 class Logger:
     """
-    :mod:`scenario` logger base class for the main logger and sub-loggers.
+    `scenario` logger base class for the main logger and sub-loggers.
 
     The :class:`Logger` class enables you to make your log lines be controlled by a *log class*.
     This will make the log lines be prefixed with the given log class,
@@ -101,7 +101,7 @@ class Logger:
         self._extra_flags = {}  # type: typing.Dict[LogExtraData, bool]
 
     @property
-    def logging_instance(self):  # type: (...) -> logging.Logger
+    def logging_instance(self):  # type: () -> logging.Logger
         """
         Provides the reference of the :class:`logging.Logger` instance attached with this :class:`Logger` instance.
         """
@@ -308,7 +308,7 @@ class Logger:
         :param self:
             In as much as ``self`` is bound with the method,
             even though the call was made from a :class:`logging.Logger` instance,
-            ``self`` remains a :mod:`scenario` :class:`Logger` when we arrive here.
+            ``self`` remains a `scenario` :class:`Logger` when we arrive here.
         :param level: Log level.
         :param msg: Log message.
         :param args: Other positional arguments as a tuple.
@@ -352,7 +352,7 @@ class Logger:
             **kwargs  # type: typing.Any
     ):  # type: (...) -> None
         """
-        After the :meth:`_log()` indirection, eventually sends the log data to the base :mod:`logging` module to create a log record.
+        After the :meth:`_log()` indirection, eventually sends the log data to the base ``logging`` module to create a log record.
 
         :param level: Log level.
         :param msg: Log message.

@@ -41,7 +41,7 @@ class DelayedStr(abc.ABC):
         #: Cached string computation result.
         self.__str = None  # type: typing.Optional[str]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
 
@@ -50,7 +50,7 @@ class DelayedStr(abc.ABC):
         """
         return repr(str(self))
 
-    def __str__(self):  # type: (...) -> str
+    def __str__(self):  # type: () -> str
         """
         Triggers the string computation on the first call, and cache it for later calls.
         """
@@ -122,7 +122,7 @@ class SafeRepr(DelayedStr):
     """
     Delays the computation of the safe canonical representation of an object.
 
-    Same as :mod:`unittest`, safe representation means that the string computed while not exceed a given length,
+    Same as ``unittest``, safe representation means that the string computed while not exceed a given length,
     so that it remains human readable.
     """
 

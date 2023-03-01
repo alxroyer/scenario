@@ -113,7 +113,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
 
         # Initialize parsing members.
 
-        #: :mod:`argparse` parser object.
+        #: ``argparse`` parser object.
         self.__arg_parser = argparse.ArgumentParser(add_help=False)  # type: argparse.ArgumentParser
 
         #: Arguments information.
@@ -270,7 +270,7 @@ class ArgInfo:
     """
     Class that describes a single program argument (single value, list or dictionary).
 
-    Whether the program argument is a single value, or a list of value, depends on the :mod:`argparse` definition made
+    Whether the program argument is a single value, or a list of value, depends on the ``argparse`` definition made
     through :meth:`ArgInfo.define()`.
     """
 
@@ -320,12 +320,12 @@ class ArgInfo:
             **kwargs  # type: typing.Any
     ):  # type: (...) -> None
         """
-        Defines the :mod:`argparse` command line argument.
+        Defines the ``argparse`` command line argument.
 
         :param args: List of positional arguments.
         :param kwargs: Dictionary of named arguments.
 
-        Refer to the regular :mod:`argparse` documentation, except for the :attr:`dest` parameter which should not be set.
+        Refer to the regular ``argparse`` documentation, except for the :attr:`dest` parameter which should not be set.
         The :attr:`Args.ArgInfo.member_name` member will be used for the purpose.
 
         Should be called on the :class:`Args.ArgInfo` returned the :meth:`Args.addarg()` method.
@@ -344,10 +344,10 @@ class ArgInfo:
             parsed_args,  # type: typing.Any
     ):  # type: (...) -> bool
         """
-        Process the argument value once parsed by :mod:`argparse` and feed the :class:`Args` instance.
+        Process the argument value once parsed by ``argparse`` and feed the :class:`Args` instance.
 
         :param args_instance: :class:`Args` instance to feed.
-        :param parsed_args: Opaque parsed object returned by the :mod:`argparse` library.
+        :param parsed_args: Opaque parsed object returned by the ``argparse`` library.
         :return: ``True`` when the operation succeeded, ``False`` otherwise.
         """
         from .loggermain import MAIN_LOGGER

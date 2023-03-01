@@ -60,7 +60,7 @@ class ScenarioResults(Logger):
         self._results.append(scenario_execution)
 
     @property
-    def count(self):  # type: (...) -> int
+    def count(self):  # type: () -> int
         """
         :return: Number of scenario execution results in the list.
         """

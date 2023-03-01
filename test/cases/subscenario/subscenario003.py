@@ -29,8 +29,8 @@ class SubScenario003(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="Sub-scenario error",
-            objective="Check that a super scenario executing a failing sub-scenario propagates the sub-scenario error as is.",
+            title="Subscenario error",
+            objective="Check that a super scenario executing a failing subscenario propagates the subscenario error as is.",
             features=[scenario.test.features.SUBSCENARIOS, scenario.test.features.ERROR_HANDLING],
         )
 

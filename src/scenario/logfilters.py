@@ -41,7 +41,7 @@ class LoggerLogFilter(logging.Filter):
         """
         logging.Filter.__init__(self)
 
-        #: Attached :mod:`scenario` :class:`.logger.Logger` instance.
+        #: Attached `scenario` :class:`.logger.Logger` instance.
         self._logger = logger  # type: Logger
 
     def filter(
@@ -80,7 +80,7 @@ class HandlerLogFilter(logging.Filter):
     """
     Log filter attached to a :class:`logging.Handler` instance.
 
-    Filters log records depending on :mod:`scenario` configurations:
+    Filters log records depending on `scenario` configurations:
     :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` and :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_FILE`.
     """
 

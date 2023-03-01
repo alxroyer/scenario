@@ -86,7 +86,8 @@ Packages
 
 .. note::
 
-    :py:mod:`scenario.test`, :py:mod:`scenario.tools` subpackages at different locations
+    :py:mod:`scenario.test`, :py:mod:`scenario.tools` subpackages are implemented at different locations,
+    out of the main 'src/' directory.
 
 
 .. _coding-rules.py.static:
@@ -108,14 +109,20 @@ Thus, please disable the "Method may be static" inspection rule in your PyCharm 
 Typings
 -------
 
-The code uses `Python 2 typings <https://mypy.readthedocs.io/en/stable/python2.html>`_.
+.. note::
+    Memo: The `mypy website <https://www.mypy-lang.org/>`_ points to `PEP 484 <https://www.python.org/dev/peps/pep-0484/>`_
+    as the reference for type annotations.
+
+The code uses `Python 2 type hints <https://peps.python.org/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code>`_,
+based on `type comments <https://peps.python.org/pep-0484/#type-comments>`_.
 
 Even though Python 2 compatibility is not expected,
 it has proved that comment type hints did not suffer a couple of limitations compared with Python 3 type hints:
 
 - impossible for a method to return an instance of the current class,
   without a prior ``import __future__ import annotations`` statement,
-  which is available from Python 3.8 only,
+  which is available from Python 3.8 only
+  (see `PEP 484 - The problem of forward declarations <https://peps.python.org/pep-0484/#the-problem-of-forward-declarations>`_),
 
   .. code-block:: python
 
@@ -135,11 +142,12 @@ it has proved that comment type hints did not suffer a couple of limitations com
           def meth():  # type: (...) -> A
               return A()
 
-- impossible to define the type of the iterating variable in a `for` loop statement,
+- impossible to define the type of the iterating variable in a ``for`` loop statement
+  (see `PEP 484 - Type comments <https://peps.python.org/pep-0484/#type-comments>`_),
 
   .. code-block:: python
 
-      # Python 3 type hints
+      # (Bad) python 3 type hints
 
       for _i: int in range(10):  # << SyntaxError: invalid syntax
           pass
@@ -151,11 +159,12 @@ it has proved that comment type hints did not suffer a couple of limitations com
       for _i in range(10):  # type: int
           pass
 
-- impossible to define the type of a couple of variables initialized from a function returning a tuple.
+- impossible to define the type of a couple of variables initialized from a function returning a tuple
+  (see `PEP 484 - Type comments <https://peps.python.org/pep-0484/#type-comments>`_ as well).
 
   .. code-block:: python
 
-      # Python 3 type hints
+      # (Bad) python 3 type hints
 
       _a: int, _b: str = func()  # << SyntaxError: invalid syntax
 
@@ -165,8 +174,57 @@ it has proved that comment type hints did not suffer a couple of limitations com
 
       _a, _b = func()  # type: int, str
 
-Furthermore, we use the `multi-line style <https://mypy.readthedocs.io/en/stable/python2.html#multi-line-python-2-function-annotations>`_,
-that makes the code diffs shorter, and the maintainance simpler by the way.
+For function and method type hints,
+we use a multi-line style with the ``(...)`` ellipsis pattern for return types
+(see `PEP 484 - Suggested syntax for Python 2.7 and straddling code <https://peps.python.org/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code>`_).
+It makes the code diffs shorter, and the maintainance simpler by the way.
+
+Exceptions for getters, setters and well known special functions when presented on a single line.
+
+.. code-block:: python
+
+    class MyClass:
+
+        def __init__(self):  # type: (...) -> None
+            """
+            We may extend the constructor parameters in the future
+            => use an ellipsis, even though the method is currently presented on a single line.
+            """
+            self.__a = 0  # type: int
+
+        def __str__(self):  # type: () -> str
+            """
+            The :meth:`__str__()` special function is not subject to changes with its parameters
+            => no ellipsis.
+            """
+            return ""
+
+        @property
+        def a(self):  # type: () -> int
+            """
+            No parameter for a getter
+            => no ellipsis.
+            """
+            return self.__a
+
+        @a.setter
+        def a(self, value):  # type: (int) -> None
+            """
+            Single parameter for a setter
+            => single line, no ellipsis.
+            """
+            self.__a = value
+
+        def method1(
+            self,
+            p1,  # type: int
+            p2,  # type: str
+            p3=None,  # type: typing.Optional[bool]
+        ):  # type: (...) -> None
+            """
+            The list of parameters may evolve in the general case
+            => prefer multi-line presentation, use an ellipsis in any case.
+            """
 
 
 .. _coding-rules.py.imports:
@@ -184,10 +242,10 @@ Order of Imports
   - One system import per ``import`` line.
   - Sort imports in the alphabetical order.
 
-2. Then :py:mod:`scenario` imports:
+2. Then `scenario` imports:
 
   - Use the relative form ``from .modulename import ClassName``.
-  - Sort :py:mod:`scenario` imports in the alphabetical order of module names.
+  - Sort `scenario` imports in the alphabetical order of module names.
   - For a given module import statement, sort the symbols imported
     in their alphabetical order as well.
 
@@ -225,8 +283,7 @@ it shall be justified with a comment at the end of the ``import`` line.
 ``typing.TYPE_CHECKING`` import statements shall be justified as well
 (see the :ref:`typing.TYPE_CHECKING <coding-rules.py.imports.TYPE_CHECKING>` section below).
 
-The ``tools/checkdeps.py`` scripts may help visualizing the :py:mod:`scenario`
-module dependencies:
+The 'tools/checkdeps.py' script may help visualizing `scenario` module dependencies:
 
 .. code-block:: bash
 
@@ -327,6 +384,15 @@ Use the ``typing.TYPE_CHECKING`` pattern for two reasons only:
     That's the reason why the ``typing.TYPE_CHECKING`` pattern
     shall be used as less as possible,
     i.e. when cyclic dependencies occur because type hints impose it.
+
+.. todo:: Add ``Type`` suffix to ``typing.TYPE_CHECKING`` imports
+
+    Possible workaround for the risk identified above.
+
+    - Makes a difference between symbols imported for typings, and symbols imported for execution.
+    - Makes type checkings detect an error when the symbol has not been loaded for execution.
+    - Possibly generalize, and say all symbols imported at the main level should be for type checking only? tbc
+    - See `issue #72 <https://github.com/alxroyer/scenario/issues/72>`_.
 
 
 .. _coding-rules.py.compat:

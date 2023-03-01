@@ -27,8 +27,8 @@ class Logging421(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         scenario.test.TestCase.__init__(
             self,
-            title="Additional user indentation in sub-scenario",
-            objective="Check that additional user indentation still works in sub-scenarios.",
+            title="Additional user indentation in subscenario",
+            objective="Check that additional user indentation still works in subscenarios.",
             features=[scenario.test.features.LOGGING, scenario.test.features.SUBSCENARIOS],
         )
 

@@ -28,14 +28,14 @@ class SuperScenario(scenario.Scenario):
     def __init__(self):  # type: (...) -> None
         scenario.Scenario.__init__(self)
 
-        self.setattribute("TITLE", "Sub-scenario sample")
+        self.setattribute("TITLE", "Subscenario sample")
 
         self.subscenario_path = scenario.Path(
             scenario.conf.get(SuperScenario.ConfigKey.SUBSCENARIO_PATH, type=str, default=scenario.test.paths.SIMPLE_SCENARIO),
         )  # type: scenario.Path
 
     def step001(self):  # type: (...) -> None  # location: step001
-        self.STEP("Sub-scenario execution")
+        self.STEP("Subscenario execution")
 
         _t0 = 0.0  # type: float
         _tf = 0.0  # type: float
@@ -45,4 +45,4 @@ class SuperScenario(scenario.Scenario):
             _tf = time.time()
 
         if self.RESULT("No exception is thrown."):
-            self.evidence(f"Sub-scenario executed successfully in {_tf - _t0:.3f} seconds")
+            self.evidence(f"Subscenario executed successfully in {_tf - _t0:.3f} seconds")

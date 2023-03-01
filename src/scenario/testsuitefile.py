@@ -58,7 +58,7 @@ class TestSuiteFile(Logger):
         #: .. seealso:: :meth:`read()`.
         self.script_paths = []  # type: typing.List[Path]
 
-    def __repr__(self):  # type: (...) -> str
+    def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """

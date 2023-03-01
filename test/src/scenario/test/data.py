@@ -438,7 +438,7 @@ def scenarioexpectations(
             _ConfigKey = SuperScenario.ConfigKey  # type: typing.Type[SuperScenario.ConfigKey]
             _subscenario_path = configvalues.getpath(config_values, _ConfigKey.SUBSCENARIO_PATH, default=paths.SIMPLE_SCENARIO)  # type: scenario.Path
 
-            # Compute the sub-scenario expectations whatever, so that we can adjust the status, error and statistics expectations appropriately.
+            # Compute the subscenario expectations whatever, so that we can adjust the status, error and statistics expectations appropriately.
             _subscenario_expectations = scenarioexpectations(
                 _subscenario_path,
                 doc_only=False,
@@ -451,10 +451,10 @@ def scenarioexpectations(
             assert _subscenario_expectations.status
 
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Sub-scenario sample")
+                _scenario_expectations.addattribute("TITLE", "Subscenario sample")
             if _reqs.steps():
                 # One single step.
-                _scenario_expectations.addstep(number=1, name="step001", description="Sub-scenario execution")
+                _scenario_expectations.addstep(number=1, name="step001", description="Subscenario execution")
                 if _reqs.actionsresults():
                     # Action
                     _scenario_expectations.step("step001").addaction(f"Execute the '{_subscenario_path}' scenario.")
@@ -462,13 +462,13 @@ def scenarioexpectations(
                         _scenario_expectations.step("step001").action(0).nosubscenarios()
                     else:
                         _scenario_expectations.step("step001").action(0).addsubscenario(_subscenario_expectations)
-                    # Result: only if the sub-scenario succeeded (or not executed).
+                    # Result: only if the subscenario succeeded (or not executed).
                     if doc_only or _subscenario_expectations.status == scenario.ExecutionStatus.SUCCESS:
                         _scenario_expectations.step("step001").addresult("No exception is thrown.")
-            # The status of the super-scenario will be the one of the sub-scenario.
+            # The status of the super-scenario will be the one of the subscenario.
             if not doc_only:
                 _scenario_expectations.status = _subscenario_expectations.status
-            # The errors should be propagated as is from the sub-scenario to the super-scenario.
+            # The errors should be propagated as is from the subscenario to the super-scenario.
             if _reqs.errordetails():
                 if not doc_only:
                     assert _subscenario_expectations.errors is not None
@@ -483,7 +483,7 @@ def scenarioexpectations(
                         steps=(1, 1),
                         # 1 action in any case.
                         actions=(1, 1),
-                        # The result will be executed only when the sub-scenario does not throw an expcetion.
+                        # The result will be executed only when the subscenario does not throw an expcetion.
                         results=(1 if _subscenario_expectations.status == scenario.ExecutionStatus.SUCCESS else 0, 1),
                     )
         _superscenarioscenario()
