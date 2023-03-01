@@ -57,6 +57,7 @@ class CodeLocation:
         """
         from .path import Path
 
+        assert tb_item.lineno is not None, f"Invalid traceback item {tb_item!r} (line missing)"
         return CodeLocation(
             file=Path(tb_item.filename),
             line=tb_item.lineno,
