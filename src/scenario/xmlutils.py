@@ -83,9 +83,7 @@ class Xml:
             from .path import Path
 
             _doc = Xml.Document()  # type: Xml.Document
-            _doc._xml_doc = xml.dom.minidom.parseString(  # type?: ignore  ## Call to untyped function "parseString" in typed context
-                Path(path).read_bytes(),
-            )
+            _doc._xml_doc = xml.dom.minidom.parseString(Path(path).read_bytes())
             return _doc
 
         def write(
@@ -99,9 +97,7 @@ class Xml:
             """
             from .path import Path
 
-            _xml_stream = self._xml_doc.toprettyxml(  # type?: ignore  ## Call to untyped function "toprettyxml" in typed context
-                encoding="utf-8",
-            )  # type: bytes
+            _xml_stream = self._xml_doc.toprettyxml(encoding="utf-8")  # type: bytes
             Path(path).write_bytes(_xml_stream)
 
         def createnode(
@@ -115,9 +111,7 @@ class Xml:
             :return: New node.
             """
             return Xml.Node(
-                xml_element=self._xml_doc.createElement(  # type?: ignore  ## Call to untyped function "createElement" in typed context
-                    tag_name,
-                ),
+                xml_element=self._xml_doc.createElement(tag_name),
             )
 
         def createtextnode(
@@ -131,9 +125,7 @@ class Xml:
             :return: New text node.
             """
             return Xml.TextNode(
-                xml_text=self._xml_doc.createTextNode(  # type: ignore  ## Call to untyped function "createTextNode" in typed context
-                    text,
-                ),
+                xml_text=self._xml_doc.createTextNode(text),
             )
 
     class INode(abc.ABC):
@@ -175,9 +167,7 @@ class Xml:
             :return: ``True`` when the node has an attribute of the given name, ``False`` otherwise.
             """
             # "If no such attribute exists, an empty string is returned, as if the attribute had no value."
-            _attr_value = self._xml_element.getAttribute(  # type: ignore  ## Call to untyped function "getAttribute" in typed context
-                name,
-            )  # type: str
+            _attr_value = self._xml_element.getAttribute(name)  # type: str
             if _attr_value:
                 return True
             else:
@@ -193,9 +183,7 @@ class Xml:
             :param name: Attribute name.
             :return: Attribute value, or possibly an empty string if the attribute does not exist.
             """
-            _attr_value = self._xml_element.getAttribute(  # type: ignore  ## Call to untyped function "getAttribute" in typed context
-                name,
-            )  # type: str
+            _attr_value = self._xml_element.getAttribute(name)  # type: str
             return _attr_value
 
         def setattr(
@@ -210,10 +198,7 @@ class Xml:
             :param value: Attribute value.
             :return: ``self``
             """
-            self._xml_element.setAttribute(  # type?: ignore  ## Call to untyped function "setAttribute" in typed context
-                name,
-                value,
-            )
+            self._xml_element.setAttribute(name, value)
             return self
 
         def getchildren(
@@ -227,9 +212,7 @@ class Xml:
             :return: List of children nodes.
             """
             _children = []  # type: typing.List[Xml.Node]
-            for _xml_child in self._xml_element.getElementsByTagName(  # type: ignore  ## Call to untyped function "getElementsByTagName" in typed context
-                    tag_name,
-            ):  # xml.dom.minidom.Element
+            for _xml_child in self._xml_element.getElementsByTagName(tag_name):  # xml.dom.minidom.Element
                 _children.append(Xml.Node(_xml_child))
             return _children
 

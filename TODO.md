@@ -45,5 +45,6 @@
 - Issue #13: Documentation:
     - Find better step objects / subscenario demos.
 - Issue #73: Use mypy v1.0.0
+    - Check 'tools/conf/mypy.conf' v/s the up-to-date mypy.conf documentation.
     - Try to revert mypy@0.971 workarounds in 'src/scenario/path.py'
     - Check issue065b => generate a known-issue only if the time lost is above 5%.
