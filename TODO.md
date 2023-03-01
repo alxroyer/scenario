@@ -20,6 +20,7 @@
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #73: Use mypy v1.0.0
     - Avoid installing extra python libs in the global scope.
+        - Interesting resource: https://stackoverflow.com/questions/1350466/preventing-python-code-from-importing-certain-modules#47854417
     - Check 'tools/conf/mypy.conf' v/s the up-to-date mypy.conf documentation.
     - Check issue065b => generate a known-issue only if the time lost is above 5%.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
