@@ -62,12 +62,12 @@ class CheckTypes:
         scenario.Path.setmainpath(self.main_path)
 
         # Mypy version verification.
-        checkthirdpartytoolversion("python", ["python", "--version"])
-        checkthirdpartytoolversion("mypy", ["mypy", "--version"])
+        checkthirdpartytoolversion("python", [sys.executable, "--version"])
+        checkthirdpartytoolversion("mypy", [sys.executable, "-m", "mypy", "--version"])
 
         # Mypy execution.
         scenario.logging.info(f"Executing mypy with '{self.mypy_conf_path}'...")
-        _subprocess = SubProcess("mypy")  # type: SubProcess
+        _subprocess = SubProcess(sys.executable, "-m", "mypy")  # type: SubProcess
         _subprocess.addargs("--config-file", self.mypy_conf_path)
         _subprocess.setcwd(self.main_path)
         _subprocess.showstdout(False).showstderr(False)
