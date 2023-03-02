@@ -96,6 +96,42 @@ from .actionresultdefinition import ActionResultDefinition as ActionResult  # no
 
 
 __doc__ += """
+Step sections
+=============
+
+Classes that can be used to define step sections.
+"""
+
+__doc__ += """
+.. py:attribute:: StepSectionDescription
+
+    Alias of :class:`.stepsection.StepSectionDescription`.
+
+    Step class that holds a description for a section of steps.
+    Automatically instanciated by :meth:`.scenariodefinition.ScenarioDefinition.section()`.
+"""
+from .stepsection import StepSectionDescription  # noqa: E402  ## Module level import not at top of file
+
+__doc__ += """
+.. py:attribute:: StepSectionBegin
+
+    Alias of :class:`.stepsection.StepSectionBegin`.
+
+    Step class to inherit from, then add in a scenario, in order to define the beginning of a step section.
+"""
+from .stepsection import StepSectionBegin  # noqa: E402  ## Module level import not at top of file
+
+__doc__ += """
+.. py:attribute:: StepSectionEnd
+
+    Alias of :class:`.stepsection.StepSectionEnd`.
+
+    Type of the :attr:`.stepsection.StepSectionBegin.end` step to add at the end of a step section.
+"""
+from .stepsection import StepSectionEnd  # noqa: E402  ## Module level import not at top of file
+
+
+__doc__ += """
 Assertions
 ==========
 
