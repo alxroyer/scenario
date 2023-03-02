@@ -18,7 +18,7 @@ import scenario
 import scenario.test
 
 # Steps:
-from steps.internet import EnsureInternetConnection
+from steps.internet import InternetSectionBegin
 from steps.pippackages import EnsurePipPackage
 from steps.common import ExecScenario
 
@@ -34,20 +34,16 @@ class ConfigDb320(scenario.test.TestCase):
         )
 
         self.section("'pyyaml' not installed")
-        if not EnsureInternetConnection.isup(self):
-            # Avoid going through 'pyyaml' uninstallation when Internet is not available,
-            # otherwise we may not be able to reinstall it afterwards.
-            self.knownissue(
-                level=scenario.test.IssueLevel.CONTEXT,
-                message="No internet connection: behaviour when 'pyyaml' missing not checked",
-            )
-        else:
-            self.addstep(EnsurePipPackage("pyyaml", "yaml", False))
-            self.addstep(ExecScenario(
-                scenario.test.paths.CONFIG_DB_SCENARIO,
-                config_files=[scenario.test.paths.datapath("conf.yml")],
-                expected_return_code=scenario.ErrorCode.ENVIRONMENT_ERROR,
-            ))
+        # Avoid going through 'pyyaml' uninstallation when Internet is not available,
+        # otherwise we may not be able to reinstall it afterwards.
+        _internet_section = self.addstep(InternetSectionBegin("Behaviour when 'pyyaml' missing not checked"))  # type: scenario.StepSectionBegin
+        self.addstep(EnsurePipPackage("pyyaml", "yaml", False))
+        self.addstep(ExecScenario(
+            scenario.test.paths.CONFIG_DB_SCENARIO,
+            config_files=[scenario.test.paths.datapath("conf.yml")],
+            expected_return_code=scenario.ErrorCode.ENVIRONMENT_ERROR,
+        ))
+        self.addstep(_internet_section.end)
 
         self.section("'pyyaml' installed")
         self.addstep(EnsurePipPackage("pyyaml", "yaml", True))
