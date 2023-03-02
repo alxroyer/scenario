@@ -27,9 +27,6 @@
     - `--repeat` or `--loop` option: loops over a test execution, in order to evaluate a failure/succes ratio.
     - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
     - `--stop-success` option: makes a campaign / test loop stop as soon as a test succeeds.
-- Issue #62: Refactor `EnsureInternetConnection`:
-    1. `ping` options are not the same depending on the platform
-    2. Prefer a `InternetSectionBegin` / `InternetSectionEnd` + goto approach (instead of `EnsureInternetConnection.isup()`).
 - Issue #76: Don't install / uninstall python packages from tests.
     - Interesting resource: https://stackoverflow.com/questions/1350466/preventing-python-code-from-importing-certain-modules#47854417.
     - Remove related Internet sections in 'configdb320.py' and 'timezone001.py'.
