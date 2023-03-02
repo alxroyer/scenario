@@ -132,7 +132,8 @@ class Handlers(Logger):
 
         if event in self._handlers:
             for _handler in self._handlers[event]:  # type: Handler
-                if _handler.handler is handler:
+                # Don't use the `is` operator, otherwise bound methods may not behave as expected.
+                if _handler.handler == handler:
                     self._handlers[event].remove(_handler)
                     return
         self.debug("No *%s* handler %r removed", event, handler)

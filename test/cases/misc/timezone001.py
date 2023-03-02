@@ -20,8 +20,7 @@ import scenario.test
 import scenario.text
 
 # Steps:
-from steps.internet import InternetSectionBegin
-from steps.pippackages import EnsurePipPackage
+from steps.pythonpackages import PythonPackageBegin
 
 
 class Timezone001(scenario.test.TestCase):
@@ -39,16 +38,14 @@ class Timezone001(scenario.test.TestCase):
         self.addstep(CheckToIso8601())
 
         self.section("'pytz' not installed")
-        # Avoid going through 'pytz' uninstallation when Internet is not available,
-        # otherwise we may not be able to reinstall it afterwards.
-        _internet_section = self.addstep(InternetSectionBegin("Behaviour when 'pytz' missing not checked"))  # type: scenario.StepSectionBegin
-        self.addstep(EnsurePipPackage("pytz", "pytz", False))
+        _no_pytz_section = self.addstep(PythonPackageBegin("pytz", "pytz", False))  # type: scenario.StepSectionBegin
         self.addstep(CheckTimezoneNames(pytz_installed=False))
-        self.addstep(_internet_section.end)
+        self.addstep(_no_pytz_section.end)
 
         self.section("'pytz' installed")
-        self.addstep(EnsurePipPackage("pytz", "pytz", True))
+        _pytz_section = self.addstep(PythonPackageBegin("pytz", "pytz", True))  # type: scenario.StepSectionBegin
         self.addstep(CheckTimezoneNames(pytz_installed=True))
+        self.addstep(_pytz_section.end)
 
 
 class CheckFromIso8601(scenario.test.Step):
