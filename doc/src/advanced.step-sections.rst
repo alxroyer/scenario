@@ -13,30 +13,14 @@
 .. limitations under the License.
 
 
-.. _advanced:
+.. _step-sections:
 
-Advanced usage
-==============
+Step sections
+=============
 
-.. toctree::
-    :maxdepth: 2
+.. todo:: Documentation needed for step sections.
 
-    advanced.assertions
-    advanced.logging
-    advanced.evidence
-    advanced.error-management
-    advanced.stability
-    advanced.known-issues
-    advanced.test-libs
-    advanced.handlers
-    advanced.config-db
-    advanced.step-objects
-    advanced.step-sections
-    advanced.subscenarios
-    advanced.goto
-    advanced.multiple-executions
-    advanced.campaigns
-    advanced.reports
-    advanced.scenario-attributes
-    advanced.launcher
-    advanced.scenario-stack
+    - Step section descriptions:
+        - :py:class:`scenario.stepsections.StepSectionDescription`
+        - :py:meth:`scenario.stepdefinition.StepDefinition.section()`
+    - Step section begin / end (:py:class:`scenario.stepsections.StepSectionBegin` and :py:class:`scenario.stepsections.StepSectionEnd`).

@@ -185,12 +185,12 @@ class ScenarioExecution:
 
         :return: Number of steps executed over the number of steps defined.
         """
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
 
         _step_stats = ExecTotalStats()  # type: ExecTotalStats
         for _step_definition in self.definition.steps:  # type: StepDefinition
             # Skip `StepSection` instances.
-            if isinstance(_step_definition, StepSection):
+            if isinstance(_step_definition, StepSectionDescription):
                 continue
 
             _step_stats.total += 1
@@ -205,12 +205,12 @@ class ScenarioExecution:
         :return: Number of actions executed over the number of actions defined.
         """
         from .stepexecution import StepExecution
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
 
         _action_stats = ExecTotalStats()  # type: ExecTotalStats
         for _step_definition in self.definition.steps:  # type: StepDefinition
             # Skip `StepSection` instances.
-            if isinstance(_step_definition, StepSection):
+            if isinstance(_step_definition, StepSectionDescription):
                 continue
 
             _action_stats.add(StepExecution.actionstats(_step_definition))
@@ -224,12 +224,12 @@ class ScenarioExecution:
         :return: Number of expected results executed over the number of expected results defined.
         """
         from .stepexecution import StepExecution
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
 
         _result_stats = ExecTotalStats()  # type: ExecTotalStats
         for _step_definition in self.definition.steps:  # type: StepDefinition
             # Skip `StepSection` instances.
-            if isinstance(_step_definition, StepSection):
+            if isinstance(_step_definition, StepSectionDescription):
                 continue
 
             _result_stats.add(StepExecution.resultstats(_step_definition))
