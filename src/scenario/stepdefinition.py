@@ -143,14 +143,14 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         Number of this step definition within the steps defining the related scenario.
         Starting from 1, as displayed to the user.
         """
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
 
         _step_number = 0  # type: int
         # Check the :attr:`scenario` attribute has been set with a real object.
         if hasattr(self.scenario, "name"):
             for _step_definition in self.scenario.steps:  # type: StepDefinition
                 # Skip section steps.
-                if isinstance(_step_definition, StepSection):
+                if isinstance(_step_definition, StepSectionDescription):
                     continue
 
                 _step_number += 1

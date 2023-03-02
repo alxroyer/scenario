@@ -31,8 +31,8 @@ from .scenariodefinition import ScenarioDefinition
 from .scenarioexecution import ScenarioExecution
 # `StepDefinition` used in method signatures.
 from .stepdefinition import StepDefinition
-# `StepSection` used in method signatures.
-from .stepsection import StepSection
+# `StepSectionDescription` used in method signatures.
+from .stepsection import StepSectionDescription
 # `TestError` used in method signatures.
 from .testerrors import TestError
 
@@ -126,15 +126,14 @@ class ScenarioLogging:
 
         self._calls.append(ScenarioLogging._Call.END_ATTRIBUTES)
 
-    def stepsection(
+    def stepsectiondescription(
             self,
-            step_section,  # type: StepSection
+            step_section_description,  # type: StepSectionDescription
     ):  # type: (...) -> None
         """
         Displays a step section.
 
-        :param step_section:
-        :return:
+        :param step_section_description: Step section description step.
         """
         from .loggermain import MAIN_LOGGER
 
@@ -148,8 +147,7 @@ class ScenarioLogging:
             MAIN_LOGGER.rawoutput("")
 
         MAIN_LOGGER.rawoutput("------------------------------------------------")
-        assert step_section.description is not None
-        MAIN_LOGGER.rawoutput(f"  {step_section.description}")
+        MAIN_LOGGER.rawoutput(f"  {step_section_description.description}")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
 
     def stepdescription(
@@ -162,7 +160,6 @@ class ScenarioLogging:
         :param step_definition: Step definition being executed.
         """
         from .loggermain import MAIN_LOGGER
-        from .scenarioargs import ScenarioArgs
 
         # Add space between two steps.
         MAIN_LOGGER.rawoutput("")

@@ -14,33 +14,84 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import typing
+
 import scenario
 import scenario.test
 
 
-class EnsureInternetConnection(scenario.test.Step):
+class InternetSectionBegin(scenario.StepSectionBegin):
+
+    def __init__(
+            self,
+            skip_message=None,  # type: str
+    ):  # type: (...) -> None
+        """
+        :param skip_message: Optional message to set in the knwon issue when the step section is skipped.
+        """
+        scenario.StepSectionBegin.__init__(self)
+
+        self.skip_message = skip_message  # type: typing.Optional[str]
+
+        self.is_internet_up = None  # type: typing.Optional[bool]
 
     def step(self):  # type: (...) -> None
-        self.STEP("Ensure Internet connection")
+        # Step description.
+        super().step()
 
-        _subprocess = scenario.SubProcess()  # type: scenario.SubProcess
+        _ping_subprocess = scenario.SubProcess()  # type: scenario.SubProcess
         if self.ACTION("Send a ping request to github.com."):
-            _subprocess = self._launchsubprocess(self)
-        if self.RESULT("github.com responded successfully."):
-            self.assertsubprocessretcode(
-                _subprocess, 0,
-                evidence=f"{_subprocess} return code",
-            )
+            _ping_subprocess = _launchpinggithubsubprocess(self)
 
-    @staticmethod
-    def _launchsubprocess(
-            logger,  # type: scenario.Logger
-    ):  # type: (...) -> scenario.SubProcess
-        _subprocess = scenario.SubProcess("ping", "-n", "1", "github.com")  # type: scenario.SubProcess
-        return _subprocess.setlogger(logger).run()
+        if self.ACTION("If github.com responded successfully, execute the next step. "
+                       f"Otherwise skip the next steps up to {self.end}."):
+            if _ping_subprocess.returncode == 0:
+                self.is_internet_up = True
 
-    @staticmethod
-    def isup(
-            logger,  # type: scenario.Logger
-    ):  # type: (...) -> bool
-        return EnsureInternetConnection._launchsubprocess(logger).returncode == 0
+                self.evidence(f"{_ping_subprocess} returned 0")
+            else:
+                self.is_internet_up = False
+
+                # Extract the last stdout line for evidence.
+                _last_stdout_line = b''  # type: bytes
+                _stdout_lines = _ping_subprocess.stdout.splitlines()  # type: typing.List[bytes]
+                while _stdout_lines and (not _last_stdout_line):
+                    _last_stdout_line = _stdout_lines.pop().strip()
+                self.evidence(f"{_ping_subprocess} returned {_ping_subprocess.returncode}: {_last_stdout_line!r}")
+
+                # Skip the step section.
+                if self.skip_message is not None:
+                    _skip_message = self.skip_message  # type: str
+                    # Ensure the first letter is a capital letter (don't change the rest of the text).
+                    _skip_message = _skip_message[:1].capitalize() + _skip_message[1:]
+                    _skip_message = f"No Internet connection. {_skip_message}"
+                else:
+                    _skip_message = "No Internet connection"
+                self.skipsection(
+                    issue_level=scenario.test.IssueLevel.CONTEXT,
+                    message=_skip_message,
+                )
+
+
+def isinternetup(
+        logger,  # type: scenario.Logger
+):  # type: (...) -> bool
+    return _launchpinggithubsubprocess(logger).returncode == 0
+
+
+def _launchpinggithubsubprocess(
+        logger,  # type: scenario.Logger
+):  # type: (...) -> scenario.SubProcess
+    # Find out the *ping count* option name depending on the platform.
+    _count_opt = "-c"  # type: str
+    # '-h' may be a wrong option (under Windows among others).
+    # Whatever, that will make the command display its help on stderr.
+    _ping_help = scenario.SubProcess("ping", "-h").run()  # type: scenario.SubProcess
+    if b'-c count' in (_ping_help.stdout + _ping_help.stderr):
+        _count_opt = "-c"
+    elif b'-n count' in (_ping_help.stdout + _ping_help.stderr):
+        _count_opt = "-n"
+
+    # Ping github.com.
+    _ping_github = scenario.SubProcess("ping", _count_opt, "1", "github.com")  # type: scenario.SubProcess
+    return _ping_github.setlogger(logger).run()

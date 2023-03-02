@@ -53,7 +53,7 @@ class EnsurePipPackage(scenario.test.Step):
             if importlib.util.find_spec(self.import_name) and (self.pip_name not in UNINSTALLED):
                 self.evidence(f"The '{self.import_name}' package can be imported.")
             else:
-                raise NotImplementedError("Install python packages in the user space.")
+                raise NotImplementedError("Don't install python packages from tests (#76)")
                 _install = scenario.SubProcess(sys.executable, "-m", "pip", "install", self.pip_name)  # type: scenario.SubProcess
                 _install.setlogger(self).run()
                 self.assertsubprocessretcode(
@@ -72,7 +72,7 @@ class EnsurePipPackage(scenario.test.Step):
             if (not importlib.util.find_spec(self.import_name)) or (self.pip_name in UNINSTALLED):
                 self.evidence(f"The '{self.import_name}' package cannot be imported.")
             else:
-                raise NotImplementedError("Uninstall python packages from the user space only.")
+                raise NotImplementedError("Don't uninstall python packages from tests (#76)")
                 _uninstall = scenario.SubProcess(sys.executable, "-m", "pip", "uninstall", "-y", self.pip_name)  # type: scenario.SubProcess
                 _uninstall.setlogger(self).run()
                 try:

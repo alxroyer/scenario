@@ -30,8 +30,8 @@ from .assertions import Assertions
 from .logger import Logger
 # `StepDefinition` used in method signatures.
 from .stepdefinition import StepDefinition
-# `StepSection` used in method signatures.
-from .stepsection import StepSection
+# `StepSectionDescription` used in method signatures.
+from .stepsection import StepSectionDescription
 # `StepUserApi` used for inheritance.
 from .stepuserapi import StepUserApi
 
@@ -295,18 +295,18 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
     def section(
             self,
-            section_description,  # type: str
-    ):  # type: (...) -> StepSection
+            description,  # type: str
+    ):  # type: (...) -> StepSectionDescription
         """
-        Adds a step section.
+        Adds a step section description.
 
-        :param section_description: Description for the section.
-        :return: The section step just added.
+        :param description: Description for the section.
+        :return: The step section description step just added.
         """
-        _section_step = StepSection(section_description)  # type: StepSection
-        _section_step.scenario = self
-        self.__step_definitions.append(_section_step)
-        return _section_step
+        _step_section_description = StepSectionDescription(description)  # type: StepSectionDescription
+        _step_section_description.scenario = self
+        self.__step_definitions.append(_step_section_description)
+        return _step_section_description
 
     def addstep(
             self,
