@@ -18,7 +18,7 @@ import scenario
 import scenario.test
 
 # Steps:
-from steps.pippackages import EnsurePipPackage
+from steps.pythonpackages import PythonPackageBegin
 from steps.common import ExecScenario
 from .steps.subprocesslog import CheckConfigValueScenarioLog
 
@@ -33,7 +33,8 @@ class ConfigDb300(scenario.test.TestCase):
             features=[scenario.test.features.CONFIG_DB],
         )
 
-        self.addstep(EnsurePipPackage("pyyaml", "yaml", True))
+        _pyyaml_section = self.addstep(PythonPackageBegin("pyyaml", "yaml", True))  # type: scenario.StepSectionBegin
+
         _conf_file = scenario.test.paths.datapath("conf.yml")  # type: scenario.Path
         self.addstep(ExecScenario(scenario.test.paths.CONFIG_DB_SCENARIO, config_files=[_conf_file]))
         # Note: 55 and not '055' as with INI files.
@@ -44,3 +45,5 @@ class ConfigDb300(scenario.test.TestCase):
         self.addstep(CheckConfigValueScenarioLog(ExecScenario.getinstance(), key="x.y[1].z", origin=_conf_file.prettypath, value="201"))
         self.addstep(CheckConfigValueScenarioLog(ExecScenario.getinstance(), key="x.y[2].z", origin=_conf_file.prettypath, value="202"))
         self.addstep(CheckConfigValueScenarioLog(ExecScenario.getinstance(), key="x.y[3].z", origin=_conf_file.prettypath, value="203"))
+
+        self.addstep(_pyyaml_section.end)

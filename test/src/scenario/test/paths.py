@@ -27,6 +27,7 @@ UNIT_RESULTS_PATH = MAIN_PATH / "test" / "results"  # type: scenario.Path
 # Launchers.
 TEST_LAUNCHER = MAIN_PATH / "bin" / "run-test.py"  # type: scenario.Path
 CAMPAIGN_LAUNCHER = MAIN_PATH / "bin" / "run-campaign.py"  # type: scenario.Path
+PACKAGE_BLACK_LIST_STARTER = MAIN_PATH / "test" / "tools" / "package-black-list-starter.py"  # type: scenario.Path
 UNIT_TEST_LAUNCHER = MAIN_PATH / "test" / "run-unit-test.py"  # type: scenario.Path
 UNIT_CAMPAIGN_LAUNCHER = MAIN_PATH / "test" / "run-unit-campaign.py"  # type: scenario.Path
 
