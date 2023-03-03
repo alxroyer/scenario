@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #76: Don't install / uninstall python packages from tests:
-    - Propagate package black list to subprocesses, and fix 'configdb320.py'.
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.

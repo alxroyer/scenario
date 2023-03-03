@@ -161,13 +161,35 @@ class SubProcess(scenario.SubProcess):
             timeout=None,  # type: float
     ):  # type: (...) -> SubProcess
         """
-        Overrides the base :meth:`scenario.tools.SubProcess.run()` method in order to avoid ``sys.exit()`` calls,
-        and generate assertion errors when appropriate.
+        Base :meth:`scenario.tools.SubProcess.run()` override.
 
         :return: See :meth:`SubProcess.run()`
         """
+        from .paths import PACKAGE_BLACK_LIST_STARTER
+        from .reflex import PACKAGE_BLACK_LIST, PACKAGE_BLACK_LIST_CONF_KEY
+
+        # Avoid `sys.exit()` calls.
         self.exitonerror(False)
+
+        # Propagate package black list.
+        if PACKAGE_BLACK_LIST:
+            for _i in range(len(self.cmd_line)):  # type: int
+                # Before the first argument ending with '.py', i.e. the final launcher script.
+                # Memo: `self.cmd_line[_i]` may be a string or `AnyPathType`, that's the reason why we use a `str()` operator below.
+                if str(self.cmd_line[_i]).endswith(".py"):
+                    # Use the *package black list starter* script as an intermediate.
+                    # Inserting multiple elements inspired from
+                    # https://stackoverflow.com/questions/39541370/how-to-insert-multiple-elements-into-a-list#39541404.
+                    self.cmd_line[_i:_i] = [
+                        PACKAGE_BLACK_LIST_STARTER,
+                        "--config-value", PACKAGE_BLACK_LIST_CONF_KEY, ",".join(PACKAGE_BLACK_LIST),  # Comma-separated list.
+                    ]
+                    break
+
+        # Execute the subprocess.
         super().run(timeout=timeout)
+
+        # Generate assertion errors when appropriate
         if self._expect_success:
             scenario.Assertions.assertequal(self.returncode, 0, f"{self.cmd_line!r} failed")
         else:
