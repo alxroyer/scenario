@@ -19,7 +19,18 @@
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #73: Use mypy v1.0.0
-    - Check 'tools/conf/mypy.conf' v/s the up-to-date mypy.conf documentation.
+    - Rename 'tools/conf/mypy.conf' as 'mypy.ini' (regular name for mypy configuration files).
+    - Try to set final commas after last terms.
+    - Try to simplify `files` configuration for `scenario.test` and `scenario.tools`.
+        - Possibly use `exclude` if mypy#9393 not fixed yet.
+    - Try to use `modules` or `packages` instead of `files` for `scenario`, `scenario.test` and `scenario.tools`.
+    - Test what it would be with `warn_return_any=False`.
+    - Check `enable_error_code` possible values.
+        - Especially [ignore-without-code](https://mypy.readthedocs.io/en/stable/error_code_list2.html#check-that-type-ignore-include-an-error-code-ignore-without-code).
+        - Possibly done by activating the `strict` option all in one!
+    - Try to disable `implicit_reexport`.
+    - Try to activate `show_error_context`, `show_column_numbers`, `pretty`.
+    - Try to get rid of the final `[mypy-xml.dom.*].ignore_missing_imports` configuration.
     - Check issue065b => generate a known-issue only if the time lost is above 5%.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
