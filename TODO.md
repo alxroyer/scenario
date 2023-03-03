@@ -19,7 +19,6 @@
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #73: Use mypy v1.0.0
-    - Try to set final commas after last terms.
     - Try to simplify `files` configuration for `scenario.test` and `scenario.tools`.
         - Possibly use `exclude` if mypy#9393 not fixed yet.
     - Try to use `modules` or `packages` instead of `files` for `scenario`, `scenario.test` and `scenario.tools`.
