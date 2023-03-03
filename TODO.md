@@ -19,9 +19,6 @@
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #73: Use mypy v1.0.0
-    - Try to simplify `files` configuration for `scenario.test` and `scenario.tools`.
-        - Possibly use `exclude` if mypy#9393 not fixed yet.
-    - Try to use `modules` or `packages` instead of `files` for `scenario`, `scenario.test` and `scenario.tools`.
     - Test what it would be with `warn_return_any=False`.
     - Check `enable_error_code` possible values.
         - Especially [ignore-without-code](https://mypy.readthedocs.io/en/stable/error_code_list2.html#check-that-type-ignore-include-an-error-code-ignore-without-code).
