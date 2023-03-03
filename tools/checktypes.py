@@ -31,6 +31,6 @@ import scenario.tools  # noqa: E402  ## Module level import not at top of file
 if __name__ == "__main__":
     _res = scenario.tools.CheckTypes(
         main_path=scenario.tools.paths.MAIN_PATH,
-        mypy_conf_path=scenario.tools.paths.TOOLS_CONF_PATH / "mypy.conf",
+        mypy_conf_path=scenario.tools.paths.TOOLS_CONF_PATH / "mypy.ini",
     ).run()  # type: scenario.ErrorCode
     sys.exit(int(_res))
