@@ -19,7 +19,6 @@
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports
 - Issue #73: Use mypy v1.0.0
-    - Test what it would be with `warn_return_any=False`.
     - Check `enable_error_code` possible values.
         - Especially [ignore-without-code](https://mypy.readthedocs.io/en/stable/error_code_list2.html#check-that-type-ignore-include-an-error-code-ignore-without-code).
         - Possibly done by activating the `strict` option all in one!

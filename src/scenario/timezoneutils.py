@@ -93,8 +93,7 @@ def fromstr(
     try:
         import pytz  # type: ignore  ## Library stubs not installed for "pytz"
 
-        return pytz.timezone(  # type: ignore  ## Returning Any from function declared to return "Optional[tzinfo]"
-            tz_desc,
-        )
+        _tz = pytz.timezone(tz_desc)  # type: datetime.tzinfo
+        return _tz
     except ImportError as _err:
         raise ImportError(f"{_err}, cannot parse timezone {tz_desc!r}")

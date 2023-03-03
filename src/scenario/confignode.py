@@ -460,7 +460,7 @@ class ConfigNode:
                 return self._data  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
             if isinstance(self._data, (int, float)):
                 # Number to bool.
-                return True if self._data else False  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
+                return bool(self._data)  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
             if isinstance(self._data, str):
                 # String to bool.
                 if self._data.strip().lower() in ["true", "yes", "y", "1"]:
@@ -469,8 +469,7 @@ class ConfigNode:
                     return False  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
                 # Default: string to int to bool.
                 try:
-                    _int = int(self._data)  # type: int
-                    return True if _int else False  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
+                    return bool(int(self._data))  # type: ignore  ## Incompatible return value type (got "bool", expected "T")
                 except ValueError:
                     pass
             raise ValueError(self.errmsg(f"{self._data!r} not a valid boolean value"))
