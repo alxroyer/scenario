@@ -21,6 +21,7 @@ from . import configvalues
 from . import data
 from . import features
 from . import paths
+from . import reflex
 from .attributes import ScenarioAttribute
 from .expectations import NOT_SET
 if typing.TYPE_CHECKING:

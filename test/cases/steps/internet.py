@@ -22,16 +22,8 @@ import scenario.test
 
 class InternetSectionBegin(scenario.StepSectionBegin):
 
-    def __init__(
-            self,
-            skip_message=None,  # type: str
-    ):  # type: (...) -> None
-        """
-        :param skip_message: Optional message to set in the knwon issue when the step section is skipped.
-        """
+    def __init__(self):  # type: (...) -> None
         scenario.StepSectionBegin.__init__(self)
-
-        self.skip_message = skip_message  # type: typing.Optional[str]
 
         self.is_internet_up = None  # type: typing.Optional[bool]
 
@@ -60,16 +52,9 @@ class InternetSectionBegin(scenario.StepSectionBegin):
                 self.evidence(f"{_ping_subprocess} returned {_ping_subprocess.returncode}: {_last_stdout_line!r}")
 
                 # Skip the step section.
-                if self.skip_message is not None:
-                    _skip_message = self.skip_message  # type: str
-                    # Ensure the first letter is a capital letter (don't change the rest of the text).
-                    _skip_message = _skip_message[:1].capitalize() + _skip_message[1:]
-                    _skip_message = f"No Internet connection. {_skip_message}"
-                else:
-                    _skip_message = "No Internet connection"
                 self.skipsection(
                     issue_level=scenario.test.IssueLevel.CONTEXT,
-                    message=_skip_message,
+                    message="No Internet connection",
                 )
 
 
