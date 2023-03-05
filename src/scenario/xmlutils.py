@@ -66,7 +66,7 @@ class Xml:
 
             :param root: Root node for the document.
             """
-            self._xml_doc.appendChild(  # type: ignore  ## Call to untyped function "appendChild" in typed context
+            self._xml_doc.appendChild(  # type: ignore[no-untyped-call]  ## Untyped function "appendChild"
                 getattr(root, "_xml_element"),
             )
 
@@ -239,11 +239,11 @@ class Xml:
             :return: The child just added.
             """
             assert isinstance(child, (Xml.Node, Xml.TextNode))
-            self._xml_element.appendChild(  # type: ignore  ## Call to untyped function "appendChild" in typed context
+            self._xml_element.appendChild(  # type: ignore[no-untyped-call]  ## Untyped function "appendChild"
                 getattr(child, "_xml_element") if isinstance(child, Xml.Node)
                 else getattr(child, "_xml_text"),
             )
-            return child  # type: ignore  ## Incompatible return value type (got "Union[Node, TextNode]", expected "VarNodeType")
+            return child  # type: ignore[return-value]  ## "Union[Node, TextNode]", expected "VarNodeType"
 
     class TextNode(INode):
         """

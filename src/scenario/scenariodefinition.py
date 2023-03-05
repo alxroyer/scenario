@@ -121,7 +121,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
             if obj is not None:
                 return types.MethodType(self, obj)
             else:
-                return self  # type: ignore  ## Incompatible return value type (got "InitWrapper", expected "MethodType")
+                return self  # type: ignore[return-value]  ## "InitWrapper", expected "MethodType"
 
         def __call__(
                 self,
@@ -454,10 +454,7 @@ class ScenarioDefinitionHelper:
             if _method_name.startswith("step"):
                 # According to https://stackoverflow.com/questions/41900639/python-unable-to-compare-bound-method-to-itself#41900748,
                 # we shall use `==` and not `is` for the test below.
-                #
-                # Ignore typings due to following error:
-                # > Non-overlapping equality check (left operand type: "UnboundMethodType", right operand type: "Callable[[str], StepSection]")
-                if _method == self.definition.section:  # type: ignore
+                if _method == self.definition.section:  # type: ignore[comparison-overlap]  ## left: "UnboundMethodType", right: "Callable[[str], StepSection]"
                     self._logger.debug("Skipping %r", _method)
                     continue
                 self._logger.debug("  Method: %s()", _method_name)

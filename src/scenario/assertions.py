@@ -166,7 +166,7 @@ class Assertions:
             evidence,
             "%s is not None", saferepr(obj),
         )
-        return obj  # type: ignore  ## Incompatible return value type (got "Optional[VarObjType]", expected "VarObjType")
+        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
 
     @staticmethod
     def assertisinstance(
@@ -197,7 +197,7 @@ class Assertions:
             evidence,
             "%s is an instance of %s", saferepr(obj), saferepr(type),
         )
-        return obj  # type: ignore  ## Incompatible return value type (got "Optional[VarObjType]", expected "VarObjType")
+        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
 
     @staticmethod
     def assertisnotinstance(
@@ -227,7 +227,7 @@ class Assertions:
             evidence,
             "%s is not an instance of %s", saferepr(obj), saferepr(type),
         )
-        return obj  # type: ignore  ## Incompatible return value type (got "Optional[VarObjType]", expected "VarObjType")
+        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
 
     @staticmethod
     def assertsameinstances(

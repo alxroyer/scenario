@@ -54,7 +54,7 @@ class SubProcess(scenario.SubProcess):
     ):  # type: (...) -> scenario.VarSubProcessType
         assert isinstance(self, SubProcess)
         self._show_stdout = show_stdout
-        return self  # type: ignore  ## Incompatible return value type (got "SubProcess", expected "scenario.VarSubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def showstderr(
             self,  # type: scenario.VarSubProcessType
@@ -62,7 +62,7 @@ class SubProcess(scenario.SubProcess):
     ):  # type: (...) -> scenario.VarSubProcessType
         assert isinstance(self, SubProcess)
         self._show_stderr = show_stderr
-        return self  # type: ignore  ## Incompatible return value type (got "SubProcess", expected "scenario.VarSubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def _onstdoutline(
             self,

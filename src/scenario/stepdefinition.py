@@ -59,14 +59,21 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         from .reflex import qualname
         from .scenariostack import SCENARIO_STACK
 
+        def _ensurereturntype(step_definition):  # type: (StepDefinition) -> VarStepDefinitionType
+            """
+            Avoids using ``# type: ignore`` pragmas every time this :meth:`StepDefinition.getinstance()` method returns a value.
+            """
+            _step_definition = typing.cast(typing.Any, step_definition)  # type: VarStepDefinitionType  # noqa  ## Shadows name '_step_definition' from outer scope
+            return _step_definition
+
         if SCENARIO_STACK.building.scenario_definition:
             _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(cls, index)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
-                return _step_definition  # type: ignore  ## Incompatible return value type (got "StepDefinition", expected "VarStepDefinitionType")
+                return _ensurereturntype(_step_definition)
         if SCENARIO_STACK.current_scenario_definition:
             _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(cls, index)  # Type already defined above.
             if _step_definition is not None:
-                return _step_definition  # type: ignore  ## Incompatible return value type (got "StepDefinition", expected "VarStepDefinitionType")
+                return _ensurereturntype(_step_definition)
         if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
             SCENARIO_STACK.raisecontexterror("No current scenario definition")
         else:

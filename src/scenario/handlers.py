@@ -132,7 +132,8 @@ class Handlers(Logger):
 
         if event in self._handlers:
             for _handler in self._handlers[event]:  # type: Handler
-                # Don't use the `is` operator, otherwise bound methods may not behave as expected.
+                # Don't use the `is` operator, otherwise bound methods may not behave as expected
+                # (see https://stackoverflow.com/questions/41900639/python-unable-to-compare-bound-method-to-itself#41900748).
                 if _handler.handler == handler:
                     self._handlers[event].remove(_handler)
                     return
