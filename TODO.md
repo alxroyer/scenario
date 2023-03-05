@@ -21,7 +21,6 @@
 - Issue #73: Use mypy v1.0.0
     - Check `enable_error_code` possible values.
         - Especially [ignore-without-code](https://mypy.readthedocs.io/en/stable/error_code_list2.html#check-that-type-ignore-include-an-error-code-ignore-without-code).
-        - Possibly done by activating the `strict` option all in one!
     - Try to disable `implicit_reexport`.
     - Try to activate `show_error_context`, `show_column_numbers`, `pretty`.
     - Try to get rid of the final `[mypy-xml.dom.*].ignore_missing_imports` configuration.
