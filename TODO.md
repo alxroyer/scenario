@@ -19,9 +19,7 @@
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports.
 - Issue #73: Use mypy v1.0.0
-    - Define / find stub for sphinx.ext.autodoc.
     - Try to activate `show_error_context`, `show_column_numbers`, `pretty`.
-    - Try to get rid of the final `[mypy-xml.dom.*].ignore_missing_imports` configuration.
     - Check issue065b => generate a known-issue only if the time lost is above 5%.
 - Issue #77: Avoid exporting implementation modules.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.

@@ -91,7 +91,7 @@ def fromstr(
 
     # Rely on the 'pytz' module by default.
     try:
-        import pytz  # type: ignore[import]  ## Library stubs not installed for "pytz"
+        import pytz
 
         _tz = pytz.timezone(tz_desc)  # type: datetime.tzinfo
         return _tz

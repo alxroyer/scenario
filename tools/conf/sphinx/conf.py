@@ -18,13 +18,13 @@
 # Configuration file for the Sphinx documentation builder.
 #
 # For a full list see the documentation:
-# [SPHINX_CONF] https://www.sphinx-doc.org/en/master/usage/configuration.html
+# [SPHINX_CONF](https://www.sphinx-doc.org/en/master/usage/configuration.html)
 
 
 # Imports
 # =======
 
-import docutils.nodes  # type: ignore[import]  ## Library stubs not installed for "docutils.nodes"
+import docutils.nodes
 import enum
 import inspect
 import logging
