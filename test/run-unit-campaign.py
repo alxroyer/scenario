@@ -78,7 +78,11 @@ if __name__ == "__main__":
     scenario.IssueLevel.definenames(scenario.test.IssueLevel)
     scenario.KnownIssue.seturlbuilder(lambda issue_id: (
         f"https://github.com/alxroyer/scenario/issues/{issue_id.lstrip('#')}"
-        if isinstance(issue_id, str) and issue_id.startswith("#")
+        if (
+            # Defensive condition.
+            isinstance(issue_id, str)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and issue_id.startswith("#")
+        )
         else None
     ))
 
