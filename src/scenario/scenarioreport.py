@@ -27,7 +27,7 @@ from .actionresultdefinition import ActionResultDefinition
 # `Logger` used for inheritance.
 from .logger import Logger
 # `ScenarioDefinition` used in method signatures.
-from .scenarioexecution import ScenarioDefinition
+from .scenariodefinition import ScenarioDefinition
 # `StepDefinition` used in method signatures.
 from .stepdefinition import StepDefinition
 

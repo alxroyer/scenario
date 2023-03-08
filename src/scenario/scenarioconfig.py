@@ -180,7 +180,8 @@ class ScenarioConfig:
 
         Configurable through :attr:`Key.LOG_COLOR`.
         """
-        from .configdb import CONFIG_DB, ConfigNode
+        from .configdb import CONFIG_DB
+        from .confignode import ConfigNode
 
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
         _config_node = CONFIG_DB.getnode(_key)  # type: typing.Optional[ConfigNode]
@@ -408,14 +409,6 @@ class ScenarioConfig:
         from .configdb import CONFIG_DB
 
         CONFIG_DB.warning(node.errmsg(msg))
-
-
-__doc__ += """
-.. py:attribute:: ScenarioConfigKey
-
-    Shortcut to the :class:`ScenarioConfig.Key` enum in order to make it possible to import it without the :class:`ScenarioConfig` class.
-"""
-ScenarioConfigKey = ScenarioConfig.Key
 
 
 __doc__ += """

@@ -185,7 +185,7 @@ class ConfigNode:
         :param data: Node's data being set.
         """
         from .configdb import CONFIG_DB
-        from .scenarioconfig import ScenarioConfigKey, SCENARIO_CONFIG
+        from .scenarioconfig import ScenarioConfig, SCENARIO_CONFIG
 
         # Apply automatic conversions:
         # - path-likes to strings,
@@ -205,7 +205,7 @@ class ConfigNode:
         CONFIG_DB.debug("%r: data = %r", self, data)
 
         # When the `scenario` TIMEZONE configuration is modified, invalidate the related cache value.
-        if self.key == ScenarioConfigKey.TIMEZONE:
+        if self.key == ScenarioConfig.Key.TIMEZONE:
             SCENARIO_CONFIG.invalidatetimezonecache()
 
     def remove(self):  # type: (...) -> None

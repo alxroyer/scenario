@@ -15,6 +15,8 @@
 # limitations under the License.
 
 
-from .lists import commalist
-from .numbers import adverbial, ordinal
-from .plural import Countable, pluralize
+from .lists import commalist as commalist
+from .numbers import adverbial as adverbial
+from .numbers import ordinal as ordinal
+from .plural import Countable as Countable
+from .plural import pluralize as pluralize

@@ -18,4 +18,4 @@
 # Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
 # Define this package as a namespace: we are currently extending it with the :mod:`scenario.test` subpackage.
 from pkgutil import extend_path
-__path__ = extend_path(__path__, __name__)
+__path__ = extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
