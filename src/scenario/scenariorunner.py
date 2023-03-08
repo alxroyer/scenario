@@ -306,7 +306,7 @@ class ScenarioRunner(Logger):
             self.popindentation()
 
             # Move to next step.
-            if scenario_definition.execution.current_step_definition:
+            if scenario_definition.execution.current_step_definition is not None:
                 scenario_definition.execution.nextstep()
         _exec_times_logger.tick("After step executions")
 
@@ -425,7 +425,7 @@ class ScenarioRunner(Logger):
             SCENARIO_LOGGING.endattributes()
 
         # Start execution time.
-        assert scenario_definition.execution
+        assert scenario_definition.execution is not None
         scenario_definition.execution.time.setstarttime()
 
         # Execute *before test* handlers.

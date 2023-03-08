@@ -434,7 +434,7 @@ class ScenarioDefinitionHelper:
         from .scenariorunner import SCENARIO_RUNNER
 
         #: Related scenario definition.
-        self.definition = definition
+        self.definition = definition  # type: ScenarioDefinition
 
         #: Make this class log as if it was part of the :class:`ScenarioRunner` execution.
         self._logger = SCENARIO_RUNNER  # type: Logger
@@ -464,6 +464,5 @@ class ScenarioDefinitionHelper:
         StepMethods.sortbynames(self._logger, _methods)
 
         # Eventually build the :class:`.stepdefinition.StepDefinition` objects.
-        assert self.definition
         for _method in _methods:  # `_method` already defined.
             self.definition.addstep(StepDefinition(method=_method))
