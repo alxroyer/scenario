@@ -262,7 +262,7 @@ class ScenarioReport(Logger):
         """
         from .debugutils import jsondump
         from .stepexecution import StepExecution
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
         from .testerrors import TestError
 
         self.debug("Generating JSON report for %r", step_definition)
@@ -274,7 +274,7 @@ class ScenarioReport(Logger):
         }  # type: JsonDictType
 
         # Do not set 'executions' and 'actions-results' lists for step sections.
-        if not isinstance(step_definition, StepSection):
+        if not isinstance(step_definition, StepSectionDescription):
             _json_step_definition["executions"] = []
             for _step_execution in step_definition.executions:  # type: StepExecution
                 _json_step_execution = {
@@ -316,7 +316,7 @@ class ScenarioReport(Logger):
         from .stats import TimeStats
         from .stepdefinition import StepDefinition
         from .stepexecution import StepExecution
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
         from .testerrors import TestError
 
         self.debug("Reading step instance from JSON: %s", jsondump(json_step_definition, indent=2),
@@ -335,7 +335,7 @@ class ScenarioReport(Logger):
             # Missing executions and/or actions/results.
             # Replace the general `StepDefinition` instance created above by a `StepSection` one.
             assert _step_definition.description is not None
-            _step_definition = StepSection(_step_definition.description)
+            _step_definition = StepSectionDescription(_step_definition.description)
         else:
             for _json_step_execution in json_step_definition["executions"]:  # type: JsonDictType
                 self.debug("Building step execution instance from JSON: %s", jsondump(_json_step_execution, indent=2),

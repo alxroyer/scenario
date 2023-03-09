@@ -25,8 +25,12 @@ sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 
 # `scenario` imports.
-import scenario  # noqa: E402  ## Module level import not at top of file
-import scenario.test  # noqa: E402  ## Module level import not at top of file
+try:
+    # Avoid "Module level import not at top of file" PEP8 warnings.
+    import scenario
+    import scenario.test
+finally:
+    pass
 
 
 if __name__ == "__main__":

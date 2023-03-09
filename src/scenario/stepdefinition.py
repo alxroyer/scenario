@@ -54,14 +54,21 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         from .reflex import qualname
         from .scenariostack import SCENARIO_STACK
 
+        def _ensurereturntype(step_definition):  # type: (StepDefinition) -> VarStepDefinitionType
+            """
+            Avoids using ``# type: ignore`` pragmas every time this :meth:`StepDefinition.getinstance()` method returns a value.
+            """
+            _step_definition = typing.cast(typing.Any, step_definition)  # type: VarStepDefinitionType  # noqa  ## Shadows name '_step_definition' from outer scope
+            return _step_definition
+
         if SCENARIO_STACK.building.scenario_definition:
             _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(cls, index)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
-                return _step_definition  # type: ignore  ## Incompatible return value type (got "StepDefinition", expected "VarStepDefinitionType")
+                return _ensurereturntype(_step_definition)
         if SCENARIO_STACK.current_scenario_definition:
             _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(cls, index)  # Type already defined above.
             if _step_definition is not None:
-                return _step_definition  # type: ignore  ## Incompatible return value type (got "StepDefinition", expected "VarStepDefinitionType")
+                return _ensurereturntype(_step_definition)
         if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
             SCENARIO_STACK.raisecontexterror("No current scenario definition")
         else:
@@ -139,14 +146,14 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         Number of this step definition within the steps defining the related scenario.
         Starting from 1, as displayed to the user.
         """
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
 
         _step_number = 0  # type: int
         # Check the :attr:`scenario` attribute has been set with a real object.
         if hasattr(self.scenario, "name"):
             for _step_definition in self.scenario.steps:  # type: StepDefinition
                 # Skip section steps.
-                if isinstance(_step_definition, StepSection):
+                if isinstance(_step_definition, StepSectionDescription):
                     continue
 
                 _step_number += 1

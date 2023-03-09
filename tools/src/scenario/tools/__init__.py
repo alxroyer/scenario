@@ -15,9 +15,9 @@
 # limitations under the License.
 
 
-from . import paths
-from .checktypes import CheckTypes
-from .deps import shouldupdate
-from .mkdoc import MkDoc
-from .subprocess import SubProcess
-from .thirdparty import checkthirdpartytoolversion
+from .checktypes import CheckTypes as CheckTypes
+from .deps import shouldupdate as shouldupdate
+from .mkdoc import MkDoc as MkDoc
+from . import paths as paths
+from .subprocess import SubProcess as SubProcess
+from .thirdparty import checkthirdpartytoolversion as checkthirdpartytoolversion

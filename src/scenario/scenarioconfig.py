@@ -407,14 +407,6 @@ class ScenarioConfig:
 
 
 __doc__ += """
-.. py:attribute:: ScenarioConfigKey
-
-    Shortcut to the :class:`ScenarioConfig.Key` enum in order to make it possible to import it without the :class:`ScenarioConfig` class.
-"""
-ScenarioConfigKey = ScenarioConfig.Key
-
-
-__doc__ += """
 .. py:attribute:: SCENARIO_CONFIG
 
     Main instance of :class:`ScenarioConfig`.

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import sys
+import typing
 
 import scenario
 
@@ -41,11 +42,13 @@ class CheckTypes:
             self,
             main_path,  # type: scenario.AnyPathType
             mypy_conf_path,  # type: scenario.AnyPathType
+            mypy_args=None,  # type: typing.Optional[typing.Sequence[str]]
             max_errors=50,  # type: int
     ):  # type: (...) -> None
 
         self.main_path = scenario.Path(main_path)  # type: scenario.Path
         self.mypy_conf_path = scenario.Path(mypy_conf_path)  # type: scenario.Path
+        self.mypy_args = mypy_args or []  # type: typing.Sequence[str]
         self.max_errors = max_errors  # type: int
 
     def run(self):  # type: (...) -> scenario.ErrorCode
@@ -62,13 +65,13 @@ class CheckTypes:
         scenario.Path.setmainpath(self.main_path)
 
         # Mypy version verification.
-        checkthirdpartytoolversion("python", ["python", "--version"])
-        checkthirdpartytoolversion("mypy", ["mypy", "--version"])
+        checkthirdpartytoolversion("python", [sys.executable, "--version"])
+        checkthirdpartytoolversion("mypy", [sys.executable, "-m", "mypy", "--version"])
 
         # Mypy execution.
         scenario.logging.info(f"Executing mypy with '{self.mypy_conf_path}'...")
-        _subprocess = SubProcess("mypy")  # type: SubProcess
-        _subprocess.addargs("--config-file", self.mypy_conf_path)
+        _subprocess = SubProcess(sys.executable, "-m", "mypy")  # type: SubProcess
+        _subprocess.addargs("--config-file", self.mypy_conf_path, *self.mypy_args)
         _subprocess.setcwd(self.main_path)
         _subprocess.showstdout(False).showstderr(False)
         _subprocess.exitonerror(False).run()

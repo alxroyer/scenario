@@ -18,13 +18,13 @@
 # Configuration file for the Sphinx documentation builder.
 #
 # For a full list see the documentation:
-# [SPHINX_CONF] https://www.sphinx-doc.org/en/master/usage/configuration.html
+# [SPHINX_CONF](https://www.sphinx-doc.org/en/master/usage/configuration.html)
 
 
 # Imports
 # =======
 
-import docutils.nodes  # type: ignore  ## Library stubs not installed for "docutils.nodes"
+import docutils.nodes
 import enum
 import inspect
 import logging
@@ -42,8 +42,12 @@ sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
 # `scenario` imports.
-import scenario  # noqa: E402  ## Module level import not at top of file
-import scenario.tools  # noqa: E402  ## Module level import not at top of file
+try:
+    # Avoid "Module level import not at top of file" PEP8 warnings.
+    import scenario
+    import scenario.tools
+finally:
+    pass
 
 
 # Project information
@@ -320,7 +324,7 @@ class PyDoc:
         # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#skipping-members
         app.connect("autodoc-skip-member", self.autodoc_skipmember)
         # Hack *autodoc* so that it does not display attribute values (see [sphinx#904](https://github.com/sphinx-doc/sphinx/issues/904)).
-        sphinx.ext.autodoc.object_description = self.autodoc_objectdescription  # type: ignore  ## Incompatible types in assignment
+        sphinx.ext.autodoc.object_description = self.autodoc_objectdescription
         app.connect("autodoc-process-signature", self.autodoc_processsignature)
         app.connect("autodoc-process-docstring", self.autodoc_processdocstring)
 
@@ -649,23 +653,29 @@ class PyDoc:
 
     def autodoc_objectdescription(
             self,
-            obj,  # type: typing.Optional[typing.Any]
+            object,  # type: typing.Any  # noqa  ## Shadows built-in name 'object'
     ):  # type: (...) -> str
         """
-        Replacement hack for :function:`sphinx.ext.autodoc.object_description()`.
+        Replacement hack for ``sphinx.ext.autodoc.object_description()``.
 
-        Raises a :exc:`ValueError` when ``obj`` is ``None``,
-        so that *autodoc* does not print out erroneous attribute values,
-        especially for instance attribute.
+        :param object: Caution! may be ``None``.
+        :raise ValueError:
+            When ``object`` is ``None``,
+            so that *autodoc* does not print out erroneous attribute values,
+            especially for instance attribute.
+
+        .. note::
+            The signature follows strictly the one of ``sphinx.util.inspect.object_description()``
+            in order to avoid typing errors when setting this method as a replacement for ``sphinx.ext.autodoc.object_description()``.
 
         .. warning::
             Unfortunately, it seems we have no way to differenciate class and instance attributes when the value is ``None``
             (see `sphinx#904 <https://github.com/sphinx-doc/sphinx/issues/904>`_).
         """
-        if obj is None:
+        if object is None:
             raise ValueError("No value for data/attributes")
         from sphinx.util.inspect import object_description
-        return object_description(obj)
+        return object_description(object)
 
     def autodoc_processdocstring(
             self,

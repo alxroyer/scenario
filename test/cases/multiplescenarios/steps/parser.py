@@ -109,30 +109,29 @@ class ParseFinalResultsLog(LogParserStep):
                 line,
                 err="Invalid line, should be the total statistics line",
             )
-            if _match:
-                self.json_total_stats = {
-                    "tests": {"total": int(_match.group(2)), "errors": int(_match.group(3)), "warnings": int(_match.group(4))},
-                    "steps": {"executed": None, "total": None},
-                    "actions": {"executed": None, "total": None},
-                    "results": {"executed": None, "total": None},
-                    "time": scenario.datetime.str2fduration(self.tostr(_match.group(8 if self.doc_only else 11))),
-                }
-                if self.doc_only:
-                    self.json_total_stats["steps"]["total"] = int(_match.group(5))
-                    self.json_total_stats["actions"]["total"] = int(_match.group(6))
-                    self.json_total_stats["results"]["total"] = int(_match.group(7))
-                else:
-                    self.json_total_stats["steps"]["executed"] = int(_match.group(5))
-                    self.json_total_stats["steps"]["total"] = int(_match.group(6))
-                    self.json_total_stats["actions"]["executed"] = int(_match.group(7))
-                    self.json_total_stats["actions"]["total"] = int(_match.group(8))
-                    self.json_total_stats["results"]["executed"] = int(_match.group(9))
-                    self.json_total_stats["results"]["total"] = int(_match.group(10))
-                self._debuglineinfo("Total statistics: %s", scenario.debug.jsondump(self.json_total_stats))
+            self.json_total_stats = {
+                "tests": {"total": int(_match.group(2)), "errors": int(_match.group(3)), "warnings": int(_match.group(4))},
+                "steps": {"executed": None, "total": None},
+                "actions": {"executed": None, "total": None},
+                "results": {"executed": None, "total": None},
+                "time": scenario.datetime.str2fduration(self.tostr(_match.group(8 if self.doc_only else 11))),
+            }
+            if self.doc_only:
+                self.json_total_stats["steps"]["total"] = int(_match.group(5))
+                self.json_total_stats["actions"]["total"] = int(_match.group(6))
+                self.json_total_stats["results"]["total"] = int(_match.group(7))
+            else:
+                self.json_total_stats["steps"]["executed"] = int(_match.group(5))
+                self.json_total_stats["steps"]["total"] = int(_match.group(6))
+                self.json_total_stats["actions"]["executed"] = int(_match.group(7))
+                self.json_total_stats["actions"]["total"] = int(_match.group(8))
+                self.json_total_stats["results"]["executed"] = int(_match.group(9))
+                self.json_total_stats["results"]["total"] = int(_match.group(10))
+            self._debuglineinfo("Total statistics: %s", scenario.debug.jsondump(self.json_total_stats))
 
-                self._setparsestate(ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES)
+            self._setparsestate(ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES)
 
-                return True
+            return True
 
         if self._parse_state == ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES:
             # New test case line.

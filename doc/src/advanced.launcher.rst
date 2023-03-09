@@ -25,7 +25,7 @@ It is common that a user test environment needs to do a couple of things like:
 - offer configurable features.
 
 To do so, the user test environment may define its own launcher script,
-as illustrated by the `demo/run-demo.py <../../demo/run-demo.py>`_ file.
+as illustrated by the `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run-demo.py>`_ file.
 
 
 .. _launcher.extend-args:
@@ -43,7 +43,8 @@ To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario.scenari
 .. Class declaration with constructor.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 19-38
+    :start-at: class DemoArgs
+    :end-before: def _checkargs
 
 The :py:meth:`scenario.args.Args._checkargs()` method may be overloaded in order to check additional constraints,
 after the arguments have been parsed, and the :py:class:`scenario.args.Args` attributes have been updated:
@@ -54,7 +55,8 @@ after the arguments have been parsed, and the :py:class:`scenario.args.Args` att
 .. Overload of the `_checkargs()` method.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 40-52
+    :start-at: def _checkargs
+    :end-at: return True
 
 Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method:
 
@@ -64,7 +66,9 @@ Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner
 .. Argument parsing.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 56-59
+    :start-at: # Command line arguments.
+    :end-at: sys.exit
+    :dedent:
 
 At this point, the user test environment can use the extra arguments added with the :py:class:`DemoArgs` class,
 but regular arguments as well.
@@ -72,7 +76,9 @@ but regular arguments as well.
 .. Use of arguments.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 64-75
+    :start-at: # --show-configs option.
+    :end-at: Test log saved
+    :dedent:
 
 Using the ``--help`` option displays both:
 
@@ -96,35 +102,43 @@ As introduced above, extending the launcher script gives you the opportunity to 
 pre-operations, as soon as the command line arguments have been parsed,
 and post-operations after the test execution.
 
-Our `demo/run-demo.py <../../demo/run-demo.py>`_ script gives examples of pre & post-operations:
+Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run-demo.py>`_ script gives examples of pre & post-operations:
 
 - a welcome message displayed before the test is executed:
 
 .. Welcome message.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 69-70
+    :start-at: # Welcome message.
+    :end-at: scenario.logging.info
+    :dedent:
 
 - a bye message displayed just before the command line ends:
 
 .. Bye message.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 80-81
+    :start-at: # Bye message.
+    :end-at: scenario.logging.info
+    :dedent:
 
 - optional display of the configuration database:
 
 .. Configuration database display.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 64-67
+    :start-at: # --show-configs option.
+    :end-at: sys.exit
+    :dedent:
 
 - :ref:`configuration value settings <config-db.scenario>` that enable :ref:`file logging <logging.outfile>`:
 
 .. File logging
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 72-75
+    :start-at: # File logging:
+    :end-at: scenario.logging.info
+    :dedent:
 
 
 .. _launcher.execution:
@@ -138,7 +152,9 @@ and use the values given by our :py:class:`DemoArgs` instance already set.
 .. Scenario execution.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 77-78
+    :start-at: # Scenario execution.
+    :end-at: scenario.runner.main()
+    :dedent:
 
 
 .. _launcher.ret-code:
@@ -152,7 +168,9 @@ so that the error can be handled in the shell that launched the command line.
 .. Error code.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 83-84
+    :start-at: # Error code.
+    :end-at: sys.exit
+    :dedent:
 
 
 .. _launcher.campaigns:
@@ -182,7 +200,9 @@ whatever the current working directory
 .. Setting the main path.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 61-62
+    :start-at: # Main path.
+    :end-at: scenario.Path.setmainpath
+    :dedent:
 
 .. tip::
     For display purpose, it is advised to set the *main path* after the program arguments have been analyzed.

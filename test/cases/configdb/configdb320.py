@@ -22,8 +22,7 @@ class ConfigDb320(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
         from steps.common import ExecScenario
-        from steps.internet import EnsureInternetConnection
-        from steps.pippackages import EnsurePipPackage
+        from steps.pythonpackages import PythonPackageBegin
 
         scenario.test.TestCase.__init__(
             self,
@@ -33,25 +32,19 @@ class ConfigDb320(scenario.test.TestCase):
         )
 
         self.section("'pyyaml' not installed")
-        if not EnsureInternetConnection.isup(self):
-            # Avoid going through 'pyyaml' uninstallation when Internet is not available,
-            # otherwise we may not be able to reinstall it afterwards.
-            self.knownissue(
-                level=scenario.test.IssueLevel.CONTEXT,
-                message="No internet connection: behaviour when 'pyyaml' missing not checked",
-            )
-        else:
-            self.addstep(EnsurePipPackage("pyyaml", "yaml", False))
-            self.addstep(ExecScenario(
-                scenario.test.paths.CONFIG_DB_SCENARIO,
-                config_files=[scenario.test.paths.datapath("conf.yml")],
-                expected_return_code=scenario.ErrorCode.ENVIRONMENT_ERROR,
-            ))
+        _no_pyyaml_section = self.addstep(PythonPackageBegin("pyyaml", "yaml", False))  # type: scenario.StepSectionBegin
+        self.addstep(ExecScenario(
+            scenario.test.paths.CONFIG_DB_SCENARIO,
+            config_files=[scenario.test.paths.datapath("conf.yml")],
+            expected_return_code=scenario.ErrorCode.ENVIRONMENT_ERROR,
+        ))
+        self.addstep(_no_pyyaml_section.end)
 
         self.section("'pyyaml' installed")
-        self.addstep(EnsurePipPackage("pyyaml", "yaml", True))
+        _pyyaml_section = self.addstep(PythonPackageBegin("pyyaml", "yaml", True))  # type: scenario.StepSectionBegin
         self.addstep(ExecScenario(
             scenario.test.paths.CONFIG_DB_SCENARIO,
             config_files=[scenario.test.paths.datapath("conf.yml")],
             expected_return_code=scenario.ErrorCode.SUCCESS,
         ))
+        self.addstep(_pyyaml_section.end)

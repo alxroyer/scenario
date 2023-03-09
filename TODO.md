@@ -73,17 +73,16 @@
                 - Page dating from 2021-11-23.
                 - Option actually existed in [version 1.13.1](https://github.com/tox-dev/sphinx-autodoc-typehints/blob/1.13.1/src/sphinx_autodoc_typehints/__init__.py#L502).
                 - Also existed in [version 1.12.0](https://github.com/tox-dev/sphinx-autodoc-typehints/blob/1.12.0/sphinx_autodoc_typehints.py#L483)
+- Issue #77: Avoid exporting implementation modules.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
         - Use in knownissues110.
+    - Use a type field with `StepSectionDescription`.
 - Issue #69: Add stability tracking options
     - `--repeat` or `--loop` option: loops over a test execution, in order to evaluate a failure/succes ratio.
     - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
     - `--stop-success` option: makes a campaign / test loop stop as soon as a test succeeds.
-- Issue #62: Refactor `EnsureInternetConnection`:
-    1. `ping` options are not the same depending on the platform
-    2. Prefer a `InternetSectionBegin` / `InternetSectionEnd` + goto approach (instead of `EnsureInternetConnection.isup()`).
 
 
 ## Roadmap to v0.3.0
@@ -100,7 +99,3 @@
 - Issue #32: Finalize scenario report JSON schema v1.
 - Issue #13: Documentation:
     - Find better step objects / subscenario demos.
-- Issue #73: Use mypy v1.0.0.
-    - Requires Python >= 3.7.
-    - Try to revert mypy@0.971 workarounds in 'src/scenario/path.py'.
-    - Update `coding-rules.py.compat` section.

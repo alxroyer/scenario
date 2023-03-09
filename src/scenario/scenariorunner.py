@@ -295,7 +295,7 @@ class ScenarioRunner(Logger):
             self.popindentation()
 
             # Move to next step.
-            if scenario_definition.execution.current_step_definition:
+            if scenario_definition.execution.current_step_definition is not None:
                 scenario_definition.execution.nextstep()
         _exec_times_logger.tick("After step executions")
 
@@ -416,7 +416,7 @@ class ScenarioRunner(Logger):
             SCENARIO_LOGGING.endattributes()
 
         # Start execution time.
-        assert scenario_definition.execution
+        assert scenario_definition.execution is not None
         scenario_definition.execution.time.setstarttime()
 
         # Execute *before test* handlers.
@@ -498,21 +498,21 @@ class ScenarioRunner(Logger):
         from .scenariostack import SCENARIO_STACK
         from .stepdefinition import StepDefinitionHelper
         from .stepexecution import StepExecution
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
         from .testerrors import ExceptionError, TestError
 
         self.debug("Beginning of %r", step_definition)
 
-        if isinstance(step_definition, StepSection):
+        if isinstance(step_definition, StepSectionDescription):
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                SCENARIO_LOGGING.stepsection(step_definition)
+                SCENARIO_LOGGING.stepsectiondescription(step_definition)
         else:
             # Step execution number, starting from 1.
             # Sum up step executions already known for the given scenario.
             _step_number = 1  # type: int
             for _step_definition in step_definition.scenario.steps:  # type: _StepDefinitionType
                 # Skip step sections.
-                if isinstance(_step_definition, StepSection):
+                if isinstance(_step_definition, StepSectionDescription):
                     continue
                 _step_number += len(_step_definition.executions)
 

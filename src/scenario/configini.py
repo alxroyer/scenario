@@ -51,7 +51,7 @@ class ConfigIni:
         _config_parser = configparser.ConfigParser()  # type: configparser.ConfigParser
         # Override the optionxform member in ordre to make the ConfigParser case sensitive.
         # See https://stackoverflow.com/questions/1611799/preserve-case-in-configparser#1611877/964122
-        _config_parser.optionxform = lambda optionstr: optionstr  # type: ignore  ## Cannot assign to a method
+        _config_parser.optionxform = lambda optionstr: optionstr  # type: ignore[assignment]  ## Cannot assign to a method
 
         _res = _config_parser.read(path, encoding=guessencoding(path))  # type: typing.List[str]
         if os.fspath(path) not in _res:
@@ -93,7 +93,7 @@ class ConfigIni:
         _config_parser = configparser.ConfigParser()  # type: configparser.ConfigParser
         # Override the optionxform member in ordre to make the ConfigParser case sensitive.
         # See https://stackoverflow.com/questions/1611799/preserve-case-in-configparser#1611877/964122
-        _config_parser.optionxform = lambda optionstr: optionstr  # type: ignore  ## Cannot assign to a method
+        _config_parser.optionxform = lambda optionstr: optionstr  # type: ignore[assignment]  ## Cannot assign to a method
 
         # Populate the `ConfigParser` with the dictionary from the root key.
         def _feedini(

@@ -84,7 +84,7 @@ class Logger:
             self._logger.parent = MAIN_LOGGER.logging_instance
             self._logger.propagate = True
         # :meth:`logging.Logger._log()` indirection.
-        self._logger._log = self._log  # type: ignore  ## Cannot assign to a method
+        self._logger._log = self._log  # type: ignore[assignment]  ## Cannot assign to a method
 
         #: ``True`` to enable log debugging.
         #: ``None`` lets the configuration tells whether debug log lines should be displayed for this logger.

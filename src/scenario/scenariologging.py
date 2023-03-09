@@ -28,7 +28,7 @@ if typing.TYPE_CHECKING:
     from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from .scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from .stepdefinition import StepDefinition as _StepDefinitionType
-    from .stepsection import StepSection as _StepSectionType
+    from .stepsection import StepSectionDescription as _StepSectionDescriptionType
     from .testerrors import TestError as _TestErrorType
 
 
@@ -121,15 +121,14 @@ class ScenarioLogging:
 
         self._calls.append(ScenarioLogging._Call.END_ATTRIBUTES)
 
-    def stepsection(
+    def stepsectiondescription(
             self,
-            step_section,  # type: _StepSectionType
+            step_section_description,  # type: _StepSectionDescriptionType
     ):  # type: (...) -> None
         """
         Displays a step section.
 
-        :param step_section:
-        :return:
+        :param step_section_description: Step section description step.
         """
         from .loggermain import MAIN_LOGGER
 
@@ -143,8 +142,7 @@ class ScenarioLogging:
             MAIN_LOGGER.rawoutput("")
 
         MAIN_LOGGER.rawoutput("------------------------------------------------")
-        assert step_section.description is not None
-        MAIN_LOGGER.rawoutput(f"  {step_section.description}")
+        MAIN_LOGGER.rawoutput(f"  {step_section_description.description}")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
 
     def stepdescription(

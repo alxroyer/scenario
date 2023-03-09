@@ -21,7 +21,7 @@ import scenario.test
 class Timezone002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.pippackages import EnsurePipPackage
+        from steps.pythonpackages import PythonPackageBegin
 
         scenario.test.TestCase.__init__(
             self,
@@ -36,13 +36,14 @@ class Timezone002(scenario.test.TestCase):
         self.addstep(CheckTimezoneConfig("-01:00", "2019-12-31T23:00:00.000000-01:00"))
 
         self.section("Literal timezones")
-        self.addstep(EnsurePipPackage("pytz", "pytz", True))
+        _pytz_section = self.addstep(PythonPackageBegin("pytz", "pytz", True))  # type: scenario.StepSectionBegin
         self.addstep(CheckTimezoneConfig("UTC", "2020-01-01T00:00:00.000000+00:00"))
         self.addstep(CheckTimezoneConfig("Z", "2020-01-01T00:00:00.000000+00:00"))
         self.addstep(CheckTimezoneConfig("CET", "2020-01-01T01:00:00.000000+01:00"))
         self.addstep(CheckTimezoneConfig("US/Eastern", "2019-12-31T19:00:00.000000-05:00"))
         self.addstep(CheckTimezoneConfig("US/Pacific", "2019-12-31T16:00:00.000000-08:00"))
         self.addstep(CheckTimezoneConfig("Japan", "2020-01-01T09:00:00.000000+09:00"))
+        self.addstep(_pytz_section.end)
 
 
 class CheckTimezoneConfig(scenario.test.Step):

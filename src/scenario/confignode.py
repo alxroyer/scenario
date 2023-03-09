@@ -183,7 +183,7 @@ class ConfigNode:
         :param data: Node's data being set.
         """
         from .configdb import CONFIG_DB
-        from .scenarioconfig import ScenarioConfigKey, SCENARIO_CONFIG
+        from .scenarioconfig import ScenarioConfig, SCENARIO_CONFIG
 
         # Apply automatic conversions:
         # - path-likes to strings,
@@ -203,7 +203,7 @@ class ConfigNode:
         CONFIG_DB.debug("%r: data = %r", self, data)
 
         # When the `scenario` TIMEZONE configuration is modified, invalidate the related cache value.
-        if self.key == ScenarioConfigKey.TIMEZONE:
+        if self.key == ScenarioConfig.Key.TIMEZONE:
             SCENARIO_CONFIG.invalidatetimezonecache()
 
     def remove(self):  # type: (...) -> None
@@ -437,37 +437,44 @@ class ConfigNode:
         """
         from .reflex import qualname
 
+        def _castreturntype(value):  # type: (typing.Any) -> VarDataType
+            """
+            Avoids using ``# type: ignore`` pragmas every time this :meth:`ConfigNode.cast()` method returns a value.
+            """
+            _value = value  # type: VarDataType
+            return _value
+
         # Dictionary.
         if type is dict:
             if not isinstance(self._data, dict):
                 raise ValueError(self.errmsg(f"{self._data!r} not a valid dictionary"))
             # Call the property above that will build a JSON dictionary.
-            return self.data  # type: ignore  ## Returning Any from function declared to return "VarDataType"
+            return _castreturntype(self.data)
 
         # Dictionary.
         if type is list:
             if not isinstance(self._data, list):
                 raise ValueError(self.errmsg(f"{self._data!r} not a valid list"))
             # Call the property above that will build a JSON list.
-            return self.data  # type: ignore  ## Returning Any from function declared to return "VarDataType"
+            return _castreturntype(self.data)
 
         # Boolean type expected.
         if type is bool:
             if isinstance(self._data, bool):
                 # Direct bool value.
-                return self._data  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
+                return _castreturntype(self._data)
             if isinstance(self._data, (int, float)):
                 # Number to bool.
-                return bool(self._data)  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
+                return _castreturntype(bool(self._data))
             if isinstance(self._data, str):
                 # String to bool.
                 if self._data.strip().lower() in ["true", "yes", "y", "1"]:
-                    return True  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
+                    return _castreturntype(True)
                 if self._data.strip().lower() in ["false", "no", "n", "0"]:
-                    return False  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
+                    return _castreturntype(False)
                 # Default: string to int to bool.
                 try:
-                    return bool(int(self._data))  # type: ignore  ## Incompatible return value type (got "bool", expected "VarDataType")
+                    return _castreturntype(bool(int(self._data)))
                 except ValueError:
                     pass
             raise ValueError(self.errmsg(f"{self._data!r} not a valid boolean value"))
@@ -475,7 +482,7 @@ class ConfigNode:
         # Other expected type.
         try:
             # Convert the configuration value in the ``type`` type.
-            return type(self._data)  # type: ignore  ## Too many arguments for "object"
+            return _castreturntype(typing.cast(typing.Any, type)(self._data))
         except ValueError:
             raise ValueError(self.errmsg(f"{self._data!r} not a valid {qualname(type)} value"))
 

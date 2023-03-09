@@ -341,7 +341,7 @@ class CampaignRunner(Logger):
         assert test_case_execution.scenario_execution
 
         # Dispatch handlers.
-        if test_case_execution.scenario_execution:
+        if test_case_execution.scenario_execution is not None:
             for _error in test_case_execution.scenario_execution.errors:  # type: TestError
                 HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
         HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))

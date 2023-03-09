@@ -51,7 +51,10 @@ class KnownIssueLevelUtils:
         """
         Call from an execution step.
         """
-        assert isinstance(self, KnownIssueLevelUtils) and isinstance(self, scenario.test.Step)
+        assert (
+            isinstance(self, KnownIssueLevelUtils)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, scenario.test.Step)
+        )
 
         # Prepare a tmp script path for each issue level.
         return [
@@ -69,7 +72,10 @@ class KnownIssueLevelUtils:
         """
         Call from an execution step.
         """
-        assert isinstance(self, KnownIssueLevelUtils) and isinstance(self, scenario.test.Step)
+        assert (
+            isinstance(self, KnownIssueLevelUtils)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, scenario.test.Step)
+        )
         self.assertequal(len(scenario_paths), len(self.ISSUE_LEVELS))
 
         for _index in range(len(self.ISSUE_LEVELS)):  # type: int
@@ -96,7 +102,10 @@ class KnownIssueLevelUtils:
         """
         Call from a scenario.
         """
-        assert isinstance(self, KnownIssueLevelUtils) and isinstance(self, scenario.test.TestCase)
+        assert (
+            isinstance(self, KnownIssueLevelUtils)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, scenario.test.TestCase)
+        )
         self.assertequal(len(scenario_paths), len(self.ISSUE_LEVELS))
 
         _scenario_expectation_list = []  # type: typing.List[scenario.test.ScenarioExpectations]

@@ -41,8 +41,7 @@ def checkthirdpartytoolversion(
         _cmd.setcwd(cwd)
     _cmd.showstdout(False).showstderr(False)
     _cmd.exitonerror(exit_on_error)
-    if not _cmd.run():
-        return None
+    _cmd.run()
 
     scenario.logging.debug("%s: reading _version", tool_name)
     _version = _cmd.stdout  # type: bytes

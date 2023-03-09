@@ -67,11 +67,13 @@ Debugging is enabled by default with this main logger.
 
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 22-29
+    :start-at: def step010
+    :end-at: This is debug.
 
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 5-11
+    :start-at: STEP#1:
+    :end-at: This is debug.
 
 .. admonition:: Implementation details
     :class: note
@@ -109,7 +111,9 @@ among others:
 .. Inheriting from `scenario.Scenario`.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 12-13, 17-18
+    :start-at: class LoggingScenario
+    :end-at: scenario.Scenario.__init__(self)
+    :lines: 1-2, 6-
 
 .. todo:: Example needed for inheriting :py:class:`scenario.Step`.
 
@@ -122,12 +126,15 @@ Debugging is enabled by default for such user-defined scenario and step instance
 .. Step `LoggingScenario.step020()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 12, 30-38
+    :start-at: class LoggingScenario
+    :end-at: self.debug("This is debug.")
+    :lines: 1, 19-
 
 .. Step `LoggingScenario.step020()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 13-19
+    :start-at: STEP#2:
+    :end-before: This is debug.
 
 Otherwise, debugging is disabled by default for class loggers.
 
@@ -135,24 +142,31 @@ Otherwise, debugging is disabled by default for class loggers.
    and `LoggingScenario.step020()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 12, 16-19, 39-47
+    :start-at: class LoggingScenario
+    :end-at: self.class_logger.debug("This is debug.")
+    :lines: 1, 5-8, 28-
 
 .. Step `LoggingScenario.step030()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 21-26
+    :start-at: STEP#3:
+    :end-before: Activate debugging for the class logger instance.
 
 Class logger debugging can be activated on-demand, either 1) programmatically, ...:
 
 .. Programmatic debug enabling.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 49-53
+    :start-at: Activate debugging for the class logger instance.
+    :end-at: This is debug again.
+    :dedent:
 
 .. Related console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 27-29
+    :start-at: Activate debugging for the class logger instance.
+    :end-at: This is debug again.
+    :dedent:
 
 ... 2) through the ``--debug-class`` command line option, ...:
 
@@ -164,12 +178,13 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
 
 ---
 
-.. admonition:: Acces to :py:class:`logging.Logger` instances
+.. admonition:: Access to :py:class:`logging.Logger` instances
     :class: tip
 
     .. [#logging-instance-attribute]
+
         In case you need to manipulate ``logging`` instance directly,
-        the :py:class:`logging.Logger` instances are available through the :py:attr:`scenario.logger.Logger.logging_instance` property.
+        the ``logging.Logger`` instances are available through the :py:attr:`scenario.logger.Logger.logging_instance` property.
 
         The :py:attr:`scenario.logger.Logger.logging_instance` property is available to both main logger and class loggers.
 
@@ -212,7 +227,9 @@ which is particularly useful when different class loggers generate interleaved l
 .. Call to `scenario.Logger.setlogcolor()`.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 20
+    :start-at: setlogcolor
+    :lines: 1
+    :dedent:
 
 
 .. _logging.indentation:
@@ -232,12 +249,12 @@ Scenario stack indentation
 
 When :ref:`subscenarios <subscenarios>` are executed, lines of '|' characters highlight the nestings of scenario executions.
 
-Example of output from the `commutativeadditions.py <../../demo/commutativeadditions.py>`_ sample test.
+Example of output from the `commutativeadditions.py <https://github.com/alxroyer/scenario/blob/master/demo/commutativeadditions.py>`_ sample test.
 
 .. Subscenario output log example: 'commutativeadditions.py'.
 .. literalinclude:: ../data/commutativeadditions.log
     :language: none
-    :lines: 1-51
+    :end-at: EVIDENCE:   -> result1 = 2
 
 *(Output truncated...)*
 
@@ -263,12 +280,15 @@ the logging lines of this class logger are indented the way below.
 .. Step `LoggingScenario.step110()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 55-74
+    :start-at: def step110
+    :end-before: def step120
+    :dedent:
 
 .. Step `LoggingScenario.step110()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 31-49
+    :start-at: STEP#4:
+    :end-before: STEP#5:
 
 .. admonition:: Additional indentation pattern
     :class: tip
@@ -303,12 +323,14 @@ it takes effect on every log lines:
 .. Step `LoggingScenario.step120()` python implementation.
 .. literalinclude:: ../../demo/loggingdemo.py
     :language: python
-    :lines: 76-95
+    :start-at: def step120
+    :dedent:
 
 .. Step `LoggingScenario.step120()` console output.
 .. literalinclude:: ../data/loggingdemo.log
     :language: none
-    :lines: 51-69
+    :start-at: STEP#5:
+    :end-before: END OF 'demo/loggingdemo.py'
 
 .. admonition:: Scenario stack v/s user identation
     :class: note
