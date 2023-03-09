@@ -27,7 +27,8 @@ if typing.TYPE_CHECKING:
 
 
 # Export data scenario classes as a `scenarios` attribute.
-from . import datascenarios as scenarios
+from . import datascenarios as _datascenarios
+scenarios = _datascenarios
 
 
 class _ExpectationRequirements:

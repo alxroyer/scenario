@@ -22,16 +22,19 @@ from . import paths
 sys.path.append(str(paths.DATA_PATH))
 
 
-from actionresultloopscenario import ActionResultLoopScenario  # noqa: E402  ## Module level import not at top of file
-from configdbscenario import ConfigDbScenario  # noqa: E402  ## Module level import not at top of file
-from failingscenario import FailingScenario  # noqa: E402  ## Module level import not at top of file
-from gotoscenario import GotoScenario  # noqa: E402  ## Module level import not at top of file
-from inheritingscenario import InheritingScenario  # noqa: E402  ## Module level import not at top of file
-from knownissuedetailsscenario import KnownIssueDetailsScenario  # noqa: E402  ## Module level import not at top of file
-from knownissuesscenario import KnownIssuesScenario  # noqa: E402  ## Module level import not at top of file
-from loggerscenario import LoggerScenario  # noqa: E402  ## Module level import not at top of file
-from loggingindentationscenario import LoggingIndentationScenario  # noqa: E402  ## Module level import not at top of file
-from scenariologgingscenario import ScenarioLoggingScenario  # noqa: E402  ## Module level import not at top of file
-from simplescenario import SimpleScenario  # noqa: E402  ## Module level import not at top of file
-from superscenario import SuperScenario  # noqa: E402  ## Module level import not at top of file
-from waitingscenario import WaitingScenario  # noqa: E402  ## Module level import not at top of file
+try:
+    from actionresultloopscenario import ActionResultLoopScenario as ActionResultLoopScenario
+    from configdbscenario import ConfigDbScenario as ConfigDbScenario
+    from failingscenario import FailingScenario as FailingScenario
+    from gotoscenario import GotoScenario as GotoScenario
+    from inheritingscenario import InheritingScenario as InheritingScenario
+    from knownissuedetailsscenario import KnownIssueDetailsScenario as KnownIssueDetailsScenario
+    from knownissuesscenario import KnownIssuesScenario as KnownIssuesScenario
+    from loggerscenario import LoggerScenario as LoggerScenario
+    from loggingindentationscenario import LoggingIndentationScenario as LoggingIndentationScenario
+    from scenariologgingscenario import ScenarioLoggingScenario as ScenarioLoggingScenario
+    from simplescenario import SimpleScenario as SimpleScenario
+    from superscenario import SuperScenario as SuperScenario
+    from waitingscenario import WaitingScenario as WaitingScenario
+finally:
+    pass
