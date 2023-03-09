@@ -166,7 +166,7 @@ class Assertions:
             evidence,
             "%s is not None", saferepr(obj),
         )
-        return obj  # type: ignore  ## Incompatible return value type (got "Optional[VarObjType]", expected "VarObjType")
+        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
 
     @staticmethod
     def assertisinstance(
@@ -197,7 +197,7 @@ class Assertions:
             evidence,
             "%s is an instance of %s", saferepr(obj), saferepr(type),
         )
-        return obj  # type: ignore  ## Incompatible return value type (got "Optional[VarObjType]", expected "VarObjType")
+        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
 
     @staticmethod
     def assertisnotinstance(
@@ -227,7 +227,7 @@ class Assertions:
             evidence,
             "%s is not an instance of %s", saferepr(obj), saferepr(type),
         )
-        return obj  # type: ignore  ## Incompatible return value type (got "Optional[VarObjType]", expected "VarObjType")
+        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
 
     @staticmethod
     def assertsameinstances(
@@ -346,6 +346,9 @@ class Assertions:
         """
         from .debugutils import saferepr
 
+        assert obj1 is not None, assertionhelpers.isnonemsg("assertless()", "obj1")
+        assert obj2 is not None, assertionhelpers.isnonemsg("assertless()", "obj2")
+
         assertionhelpers.unittest.assertLess(obj1, obj2, err)
         assertionhelpers.evidence(
             evidence,
@@ -368,6 +371,9 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from .debugutils import saferepr
+
+        assert obj1 is not None, assertionhelpers.isnonemsg("assertlessequal()", "obj1")
+        assert obj2 is not None, assertionhelpers.isnonemsg("assertlessequal()", "obj2")
 
         assertionhelpers.unittest.assertLessEqual(obj1, obj2, err)
         assertionhelpers.evidence(
@@ -392,6 +398,9 @@ class Assertions:
         """
         from .debugutils import saferepr
 
+        assert obj1 is not None, assertionhelpers.isnonemsg("assertgreater()", "obj1")
+        assert obj2 is not None, assertionhelpers.isnonemsg("assertgreater()", "obj2")
+
         assertionhelpers.unittest.assertGreater(obj1, obj2, err)
         assertionhelpers.evidence(
             evidence,
@@ -414,6 +423,9 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from .debugutils import saferepr
+
+        assert obj1 is not None, assertionhelpers.isnonemsg("assertgreaterequal()", "obj1")
+        assert obj2 is not None, assertionhelpers.isnonemsg("assertgreaterequal()", "obj2")
 
         assertionhelpers.unittest.assertGreaterEqual(obj1, obj2, err)
         assertionhelpers.evidence(
@@ -440,9 +452,9 @@ class Assertions:
         """
         from .debugutils import saferepr
 
-        assert between is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "between number")
-        assert low is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "low number")
-        assert high is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "high number")
+        assert between is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "between")
+        assert low is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "low")
+        assert high is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "high")
 
         assert (between > low) and (between < high), assertionhelpers.errmsg(
             err,
@@ -472,9 +484,9 @@ class Assertions:
         """
         from .debugutils import saferepr
 
-        assert between is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "between number")
-        assert low is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "low number")
-        assert high is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "high number")
+        assert between is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "between")
+        assert low is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "low")
+        assert high is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "high")
 
         assert (between >= low) and (between <= high), assertionhelpers.errmsg(
             err,
@@ -505,13 +517,16 @@ class Assertions:
         """
         from .debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertnear()", "value to check")
-        assert not isinstance(obj1, str), assertionhelpers.ctxmsg("assertnear()", "value to check should not be a string")
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertnear()", "reference value")
-        assert not isinstance(obj2, str), assertionhelpers.ctxmsg("assertnear()", "reference value should not be a string")
-        assert margin is not None, assertionhelpers.isnonemsg("assertnear()", "margin of error")
+        assert obj1 is not None, assertionhelpers.isnonemsg("assertnear()", "obj1")
+        assert not isinstance(obj1, str), assertionhelpers.ctxmsg("assertnear()", "obj1 should not be a string")
+        assert isinstance(obj1, (int, float))  # Should be obvious... Whatever, let's help the type checker.
+        assert obj2 is not None, assertionhelpers.isnonemsg("assertnear()", "obj2")
+        assert not isinstance(obj2, str), assertionhelpers.ctxmsg("assertnear()", "obj2 should not be a string")
+        assert isinstance(obj2, (int, float))  # Should be obvious... Whatever, let's help the type checker.
+        assert margin is not None, assertionhelpers.isnonemsg("assertnear()", "margin")
         assert not isinstance(margin, str), assertionhelpers.ctxmsg("assertnear()", "margin should not be a string")
-        assert float(margin) >= 0.0, assertionhelpers.ctxmsg("assertnear()", "margin of error should not be negative")
+        assert isinstance(margin, (int, float))  # Should be obvious... Whatever, let's help the type checker.
+        assert float(margin) >= 0.0, assertionhelpers.ctxmsg("assertnear()", "margin should not be negative")
 
         _margin_rate = (margin / obj2) * 100.0  # type: float
         Assertions.assertbetweenorequal(

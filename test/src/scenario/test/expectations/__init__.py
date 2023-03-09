@@ -17,13 +17,13 @@
 import typing
 
 
-from .actionresult import ActionResultExpectations
-from .campaign import CampaignExpectations
-from .error import ErrorExpectations
-from .notset import NOT_SET
+from .actionresult import ActionResultExpectations as ActionResultExpectations
+from .campaign import CampaignExpectations as CampaignExpectations
+from .error import ErrorExpectations as ErrorExpectations
+from .notset import NOT_SET as NOT_SET
 if typing.TYPE_CHECKING:
-    from .notset import NotSetType
-from .scenario import ScenarioExpectations
-from .stats import StatExpectations
-from .step import StepExpectations
-from .testsuite import TestSuiteExpectations
+    from .notset import NotSetType as NotSetType
+from .scenario import ScenarioExpectations as ScenarioExpectations
+from .stats import StatExpectations as StatExpectations
+from .step import StepExpectations as StepExpectations
+from .testsuite import TestSuiteExpectations as TestSuiteExpectations

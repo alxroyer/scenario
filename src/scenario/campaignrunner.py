@@ -195,7 +195,7 @@ class CampaignRunner(Logger):
         from .campaignlogging import CAMPAIGN_LOGGING
         from .configdb import CONFIG_DB
         from .confignode import ConfigNode
-        from .datetimeutils import f2strduration, ISO8601_REGEX
+        from .datetimeutils import ISO8601_REGEX
         from .debugloggers import ExecTimesLogger
         from .handlers import HANDLERS
         from .path import Path
@@ -337,7 +337,7 @@ class CampaignRunner(Logger):
         assert test_case_execution.scenario_execution
 
         # Dispatch handlers.
-        if test_case_execution.scenario_execution:
+        if test_case_execution.scenario_execution is not None:
             for _error in test_case_execution.scenario_execution.errors:  # type: TestError
                 HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
         HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))

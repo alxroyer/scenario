@@ -66,7 +66,7 @@ class SubProcess(scenario.SubProcess):
 
         self.unsetconfigvalue(config_key)
         self.addargs("--config-value", config_key, value)
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def unsetconfigvalue(
             self,  # type: scenario.VarSubProcessType
@@ -112,7 +112,7 @@ class SubProcess(scenario.SubProcess):
         self.log_path = log_outfile_path
 
         self.setconfigvalue(scenario.ConfigKey.LOG_FILE, self.log_path)
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def generatereport(
             self,  # type: scenario.VarSubProcessType
@@ -137,7 +137,7 @@ class SubProcess(scenario.SubProcess):
             scenario.Assertions.fail("Campaign reports not handled yet")
         else:
             scenario.Assertions.fail(f"Unknown launcher '{self.launcher_path}'")
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def expectsuccess(
             self,  # type: scenario.VarSubProcessType
@@ -154,7 +154,7 @@ class SubProcess(scenario.SubProcess):
         """
         assert isinstance(self, SubProcess)
         self._expect_success = expect_success
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def run(
             self,

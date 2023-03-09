@@ -25,12 +25,14 @@ sys.path.append(str(MAIN_PATH / "test" / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
 # `scenario` imports.
-import scenario  # noqa: E402  ## Module level import not at top of file
-import scenario.test  # noqa: E402  ## Module level import not at top of file
-import scenario.tools  # noqa: E402  ## Module level import not at top of file
-
-from scenario.tools.updatetestdata import TestData  # noqa: E402  ## Module level import not at top of file
-from scenario.tools.updatetestdata import updatedataexpectations, updatefile, updatejson, updatelog  # noqa: E402  ## Module level import not at top of file
+try:
+    # Avoid "Module level import not at top of file" PEP8 warnings.
+    import scenario
+    import scenario.test
+    import scenario.tools
+    from scenario.tools.updatetestdata import TestData, updatedataexpectations, updatefile, updatejson, updatelog
+finally:
+    pass
 
 
 class UpdateTestData:

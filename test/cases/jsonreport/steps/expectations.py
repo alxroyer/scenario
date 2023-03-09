@@ -49,9 +49,13 @@ class _JsonItems:
 
     def __getitem__(
             self,
-            item,  # type: typing.Any
+            item,  # type: int
     ):  # type: (...) -> JSONDict
-        return self._items[item]  # type: ignore  ## Returning Any from function declared to return "Dict[str, Any]"
+        """
+        :param item: Position only (no ``slice``, usage restriction assumed)
+        :return: Single JSON dictionary (restriction).
+        """
+        return self._items[item]
 
     def __iter__(self):  # type: (...) -> typing.Iterator[JSONDict]
         return iter(self._items)

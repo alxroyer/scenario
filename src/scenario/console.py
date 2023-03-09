@@ -92,5 +92,5 @@ def disableconsolebuffering():  # type: (...) -> None
         ):  # type: (...) -> typing.Any
             return getattr(self.stream, attr)
 
-    sys.stdout = Unbuffered(sys.stdout)  # type: ignore  ## Incompatible types in assignment (expression has type "Unbuffered", variable has type "IO[str]")
-    sys.stderr = Unbuffered(sys.stderr)  # type: ignore  ## Incompatible types in assignment (expression has type "Unbuffered", variable has type "IO[str]")
+    sys.stdout = Unbuffered(sys.stdout)  # type: ignore[assignment]  ## Expression has type "Unbuffered", variable has type "IO[str]"
+    sys.stderr = Unbuffered(sys.stderr)  # type: ignore[assignment]  ## Expression has type "Unbuffered", variable has type "IO[str]"

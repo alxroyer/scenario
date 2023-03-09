@@ -540,7 +540,7 @@ class CampaignReport(Logger):
             _test_case_execution.scenario_execution.errors = []
             for _xml_failure in xml_test_case.getchildren("failure"):  # type: Xml.Node
                 self.debug("New testcase/failure")
-                if _xml_failure.hasattr("message") and _test_case_execution.scenario_execution:
+                if _xml_failure.hasattr("message") and (_test_case_execution.scenario_execution is not None):
                     _error = TestError(_xml_failure.getattr("message"))  # type: TestError
                     self.debug("testcase/failure/@message = %r", _error.message)
                     if _xml_failure.hasattr("type"):

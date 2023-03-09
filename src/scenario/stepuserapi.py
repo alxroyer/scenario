@@ -127,7 +127,7 @@ class StepUserApi(abc.ABC):
 
         if not isinstance(evidence, str):
             # In case the user provides something that is not a regular string.
-            evidence = repr(evidence)  # type: ignore  ## Statement is unreachable
+            evidence = repr(evidence)  # type: ignore[unreachable]
         SCENARIO_RUNNER.onevidence(evidence)
 
     def goto(

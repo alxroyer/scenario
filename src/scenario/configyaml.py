@@ -53,7 +53,7 @@ class ConfigYaml:
 
         # Import `yaml`.
         try:
-            import yaml  # type: ignore  ## `yaml` may not be installed. Do not try to check typings for this package.
+            import yaml
         except ImportError as _err:
             raise EnvironmentError(_err)
 
