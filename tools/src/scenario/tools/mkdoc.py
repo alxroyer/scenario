@@ -28,6 +28,8 @@ from . import paths  # `paths` used for class member instanciation.
 class MkDoc:
 
     PLANTUML_PATH = paths.TOOLS_LIB_PATH / "plantuml.1.2020.15.jar"  # type: scenario.Path
+    PY_SPHINX_APIDOC = (sys.executable, "-m", "sphinx.ext.apidoc")  # type: typing.Sequence[str]
+    PY_SPHINX_BUILD = (sys.executable, "-m", "sphinx.cmd.build")  # type: typing.Sequence[str]
 
     class Args(scenario.Args):
         def __init__(self):  # type: (...) -> None
@@ -81,8 +83,9 @@ class MkDoc:
     def checktools(self):  # type: (...) -> None
         from .thirdparty import checkthirdpartytoolversion
 
-        checkthirdpartytoolversion("sphinx-apidoc", ["sphinx-apidoc", "--version"])
-        checkthirdpartytoolversion("sphinx-build", ["sphinx-build", "--version"])
+        checkthirdpartytoolversion("python", [sys.executable, "--version"])
+        checkthirdpartytoolversion("sphinx-apidoc", [*MkDoc.PY_SPHINX_APIDOC, "--version"])
+        checkthirdpartytoolversion("sphinx-build", [*MkDoc.PY_SPHINX_BUILD, "--version"])
         # tools.checkthirdpartytoolversion("dot", ["dot", "-V"])  ## PlantUML does not need dot to be installed for regular sequence diagrams.
         checkthirdpartytoolversion("java", ["java", "-version"])
         checkthirdpartytoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=paths.MAIN_PATH)
@@ -306,7 +309,7 @@ class MkDoc:
             shutil.rmtree(paths.DOC_SRC_PATH / "py")
 
         scenario.logging.info("Executing sphinx-apidoc...")
-        _subprocess = SubProcess("sphinx-apidoc")  # type: SubProcess
+        _subprocess = SubProcess(*MkDoc.PY_SPHINX_APIDOC)  # type: SubProcess
         _subprocess.addargs("--output-dir", paths.DOC_SRC_PATH / "py")
         _subprocess.addargs("--force", "--module-first", "--separate")
         _subprocess.addargs(paths.SRC_PATH / "scenario")
@@ -339,7 +342,7 @@ class MkDoc:
                 _path.touch()
 
         # Prepare the $(sphinx-build) process.
-        _subprocess = SubProcess("sphinx-build")  # type: SubProcess
+        _subprocess = SubProcess(*MkDoc.PY_SPHINX_BUILD)  # type: SubProcess
         # Debug & display:
         if scenario.Args.getinstance().debug_main:
             _subprocess.addargs("-vv")

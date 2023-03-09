@@ -22,6 +22,8 @@ import scenario
 
 class CheckTypes:
 
+    PY_MYPY = (sys.executable, "-m", "mypy")  # type: typing.Sequence[str]
+
     class Args(scenario.Args):
         def __init__(
                 self,
@@ -66,11 +68,11 @@ class CheckTypes:
 
         # Mypy version verification.
         checkthirdpartytoolversion("python", [sys.executable, "--version"])
-        checkthirdpartytoolversion("mypy", [sys.executable, "-m", "mypy", "--version"])
+        checkthirdpartytoolversion("mypy", [*CheckTypes.PY_MYPY, "--version"])
 
         # Mypy execution.
         scenario.logging.info(f"Executing mypy with '{self.mypy_conf_path}'...")
-        _subprocess = SubProcess(sys.executable, "-m", "mypy")  # type: SubProcess
+        _subprocess = SubProcess(*CheckTypes.PY_MYPY)  # type: SubProcess
         _subprocess.addargs("--config-file", self.mypy_conf_path, *self.mypy_args)
         _subprocess.setcwd(self.main_path)
         _subprocess.showstdout(False).showstderr(False)
