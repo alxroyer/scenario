@@ -18,8 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports.
-- Issue #73: Use mypy v1.0.0
-    - Check issue065b => generate a known-issue only if the time lost is above 5%.
 - Issue #77: Avoid exporting implementation modules.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
