@@ -105,6 +105,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
             :return: Bound initializer callable (as long as ``obj`` is not ``None``).
 
             Inspired from:
+
             - https://docs.python.org/3/howto/descriptor.html
             - https://github.com/dabeaz/python-cookbook/blob/master/src/9/multiple_dispatch_with_function_annotations/example1.py
             """
