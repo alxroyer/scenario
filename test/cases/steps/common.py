@@ -21,11 +21,14 @@ This module intends to provide shortcuts to common steps for test cases.
 """
 
 # Common steps:
-from jsonreport.steps.expectations import CheckJsonReportExpectations
-from multiplescenarios.steps.expectations import CheckFinalResultsLogExpectations
-from multiplescenarios.steps.parser import ParseFinalResultsLog
-from scenarioexecution.steps.execution import ExecScenario
-from scenariologging.steps.expectations import CheckScenarioLogExpectations
-from scenariologging.steps.parser import ParseScenarioLog
-from steps.commonargs import ExecCommonArgs
-from steps.logverifications import LogVerificationStep
+try:
+    from jsonreport.steps.expectations import CheckJsonReportExpectations as CheckJsonReportExpectations
+    from multiplescenarios.steps.expectations import CheckFinalResultsLogExpectations as CheckFinalResultsLogExpectations
+    from multiplescenarios.steps.parser import ParseFinalResultsLog as ParseFinalResultsLog
+    from scenarioexecution.steps.execution import ExecScenario as ExecScenario
+    from scenariologging.steps.expectations import CheckScenarioLogExpectations as CheckScenarioLogExpectations
+    from scenariologging.steps.parser import ParseScenarioLog as ParseScenarioLog
+    from steps.commonargs import ExecCommonArgs as ExecCommonArgs
+    from steps.logverifications import LogVerificationStep as LogVerificationStep
+finally:
+    pass

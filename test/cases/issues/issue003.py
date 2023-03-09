@@ -16,15 +16,12 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
-from steps.common import CheckJsonReportExpectations
-
 
 class Issue003(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue #3! Actions / Results differenciation even at the same location",

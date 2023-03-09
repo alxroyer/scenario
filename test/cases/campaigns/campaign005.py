@@ -16,14 +16,13 @@
 
 import scenario.test
 
-# Steps:
-from .steps.execution import ExecCampaign
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-
 
 class Campaign004(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+        from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Campaign & extra info",

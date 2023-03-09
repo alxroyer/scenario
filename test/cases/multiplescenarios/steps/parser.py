@@ -18,13 +18,11 @@ import enum
 import re
 import typing
 
-if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
 import scenario.test
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Related steps:
-from steps.commonargs import ExecCommonArgs
-from steps.logparsing import LogParserStep
+from steps.logparsing import LogParserStep  # `LogParserStep` used for inheritance.
 
 
 class ParseFinalResultsLog(LogParserStep):
@@ -46,14 +44,16 @@ class ParseFinalResultsLog(LogParserStep):
 
         self._parse_state = ParseFinalResultsLog.ParseState.END_NOT_REACHED_YET  # type: ParseFinalResultsLog.ParseState
 
-        self.json_total_stats = {}  # type: JSONDict
-        self.json_scenario_stats = []  # type: typing.List[JSONDict]
+        self.json_total_stats = {}  # type: JsonDictType
+        self.json_scenario_stats = []  # type: typing.List[JsonDictType]
 
     @property
     def doc_only(self):  # type: () -> typing.Optional[bool]
         """
         Shortcut to *doc-only* mode.
         """
+        from steps.commonargs import ExecCommonArgs
+
         return self.getexecstep(ExecCommonArgs).doc_only
 
     def _setparsestate(
@@ -109,30 +109,29 @@ class ParseFinalResultsLog(LogParserStep):
                 line,
                 err="Invalid line, should be the total statistics line",
             )
-            if _match:
-                self.json_total_stats = {
-                    "tests": {"total": int(_match.group(2)), "errors": int(_match.group(3)), "warnings": int(_match.group(4))},
-                    "steps": {"executed": None, "total": None},
-                    "actions": {"executed": None, "total": None},
-                    "results": {"executed": None, "total": None},
-                    "time": scenario.datetime.str2fduration(self.tostr(_match.group(8 if self.doc_only else 11))),
-                }
-                if self.doc_only:
-                    self.json_total_stats["steps"]["total"] = int(_match.group(5))
-                    self.json_total_stats["actions"]["total"] = int(_match.group(6))
-                    self.json_total_stats["results"]["total"] = int(_match.group(7))
-                else:
-                    self.json_total_stats["steps"]["executed"] = int(_match.group(5))
-                    self.json_total_stats["steps"]["total"] = int(_match.group(6))
-                    self.json_total_stats["actions"]["executed"] = int(_match.group(7))
-                    self.json_total_stats["actions"]["total"] = int(_match.group(8))
-                    self.json_total_stats["results"]["executed"] = int(_match.group(9))
-                    self.json_total_stats["results"]["total"] = int(_match.group(10))
-                self._debuglineinfo("Total statistics: %s", scenario.debug.jsondump(self.json_total_stats))
+            self.json_total_stats = {
+                "tests": {"total": int(_match.group(2)), "errors": int(_match.group(3)), "warnings": int(_match.group(4))},
+                "steps": {"executed": None, "total": None},
+                "actions": {"executed": None, "total": None},
+                "results": {"executed": None, "total": None},
+                "time": scenario.datetime.str2fduration(self.tostr(_match.group(8 if self.doc_only else 11))),
+            }
+            if self.doc_only:
+                self.json_total_stats["steps"]["total"] = int(_match.group(5))
+                self.json_total_stats["actions"]["total"] = int(_match.group(6))
+                self.json_total_stats["results"]["total"] = int(_match.group(7))
+            else:
+                self.json_total_stats["steps"]["executed"] = int(_match.group(5))
+                self.json_total_stats["steps"]["total"] = int(_match.group(6))
+                self.json_total_stats["actions"]["executed"] = int(_match.group(7))
+                self.json_total_stats["actions"]["total"] = int(_match.group(8))
+                self.json_total_stats["results"]["executed"] = int(_match.group(9))
+                self.json_total_stats["results"]["total"] = int(_match.group(10))
+            self._debuglineinfo("Total statistics: %s", scenario.debug.jsondump(self.json_total_stats))
 
-                self._setparsestate(ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES)
+            self._setparsestate(ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES)
 
-                return True
+            return True
 
         if self._parse_state == ParseFinalResultsLog.ParseState.TEST_CASE_STATS_LINES:
             # New test case line.
@@ -170,7 +169,7 @@ class ParseFinalResultsLog(LogParserStep):
                     "extra-info": self.tostr(_match.group(9 if self.doc_only else 12)),
                     "errors": [],
                     "warnings": [],
-                }  # type: JSONDict
+                }  # type: JsonDictType
                 if self.doc_only:
                     _json_scenario_stats["steps"]["total"] = int(_match.group(4))
                     _json_scenario_stats["actions"]["total"] = int(_match.group(5))
@@ -224,7 +223,7 @@ class ParseFinalResultsLog(LogParserStep):
                     "type": "known-issue",
                     "message": self.tostr(_match.group(7)),
                     "location": self.tostr(b'%s:%s:%s' % (_match.group(8), _match.group(9), _match.group(10))),
-                }  # type: JSONDict
+                }  # type: JsonDictType
                 if _match.group(5):
                     _known_issue["level"] = int(_match.group(5))
                 if _match.group(6):
@@ -265,7 +264,7 @@ class ParseFinalResultsLog(LogParserStep):
                     "type": self.tostr(_match.group(2)),
                     "message": self.tostr(_match.group(3)),
                     "location": self.tostr(b'%s:%s:%s' % (_match.group(4), _match.group(5), _match.group(6))),
-                }  # type: JSONDict
+                }  # type: JsonDictType
                 assert self.json_scenario_stats, "No current scenario"
                 self.json_scenario_stats[-1]["errors"].append(_json_error)
                 self._debuglineinfo("Error: %s", scenario.debug.jsondump(_json_error))

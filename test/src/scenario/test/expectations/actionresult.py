@@ -19,29 +19,25 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    # `ScenarioExpectations` used in method signatures.
-    # Type declared for type checking only.
-    from .scenario import ScenarioExpectations
-    # `StepExpectations` used in method signatures.
-    # Type declared for type checking only.
-    from .step import StepExpectations
+    from .scenario import ScenarioExpectations as ScenarioExpectationsType
+    from .step import StepExpectations as StepExpectationsType
 
 
 class ActionResultExpectations:
     def __init__(
             self,
-            step_expectations,  # type: StepExpectations
+            step_expectations,  # type: StepExpectationsType
     ):  # type: (...) -> None
-        self.step_expectations = step_expectations  # type: StepExpectations
+        self.step_expectations = step_expectations  # type: StepExpectationsType
 
         self.type = scenario.ActionResult.Type.ACTION  # type: scenario.ActionResult.Type
         self.description = None  # type: typing.Optional[str]
-        self.subscenario_expectations = None  # type: typing.Optional[typing.List[ScenarioExpectations]]
+        self.subscenario_expectations = None  # type: typing.Optional[typing.List[ScenarioExpectationsType]]
 
     def addsubscenario(
             self,
-            subscenario_expectations,  # type: ScenarioExpectations
-    ):  # type: (...) -> ScenarioExpectations
+            subscenario_expectations,  # type: ScenarioExpectationsType
+    ):  # type: (...) -> ScenarioExpectationsType
         if self.subscenario_expectations is None:
             self.subscenario_expectations = []
         self.subscenario_expectations.append(subscenario_expectations)

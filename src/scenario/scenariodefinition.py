@@ -24,24 +24,14 @@ import inspect
 import types
 import typing
 
-# `Assertions` used for inheritance.
-from .assertions import Assertions
-# `Logger` used for inheritance.
-from .logger import Logger
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
-# `StepSection` used in method signatures.
-from .stepsection import StepSection
-# `StepUserApi` used for inheritance.
-from .stepuserapi import StepUserApi
+from .assertions import Assertions  # `Assertions` used for inheritance.
+from .logger import Logger  # `Logger` used for inheritance.
+from .stepuserapi import StepUserApi  # `StepUserApi` used for inheritance.
 
 if typing.TYPE_CHECKING:
-    # `StepSpecificationType` and `VarStepDefinitionType` used in method signatures.
-    # Types declared for type checking only.
-    from .stepdefinition import StepSpecificationType, VarStepDefinitionType
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
+    from .stepdefinition import StepDefinition as _StepDefinitionType, StepSpecificationType, VarStepDefinitionType
+    from .stepsection import StepSectionDescription as _StepSectionDescriptionType
 
 
 class MetaScenarioDefinition(abc.ABCMeta):
@@ -115,13 +105,14 @@ class MetaScenarioDefinition(abc.ABCMeta):
             :return: Bound initializer callable (as long as ``obj`` is not ``None``).
 
             Inspired from:
+
             - https://docs.python.org/3/howto/descriptor.html
             - https://github.com/dabeaz/python-cookbook/blob/master/src/9/multiple_dispatch_with_function_annotations/example1.py
             """
             if obj is not None:
                 return types.MethodType(self, obj)
             else:
-                return self  # type: ignore  ## Incompatible return value type (got "InitWrapper", expected "MethodType")
+                return self  # type: ignore[return-value]  ## "InitWrapper", expected "MethodType"
 
         def __call__(
                 self,
@@ -230,7 +221,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         self.__attributes = {}  # type: typing.Dict[str, typing.Any]
 
         #: List of steps that define the scenario.
-        self.__step_definitions = []  # type: typing.List[StepDefinition]
+        self.__step_definitions = []  # type: typing.List[_StepDefinitionType]
 
         #: Scenario execution, if any.
         self.execution = None  # type: typing.Optional[ScenarioExecution]
@@ -295,18 +286,20 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
     def section(
             self,
-            section_description,  # type: str
-    ):  # type: (...) -> StepSection
+            description,  # type: str
+    ):  # type: (...) -> _StepSectionDescriptionType
         """
-        Adds a step section.
+        Adds a step section description.
 
-        :param section_description: Description for the section.
-        :return: The section step just added.
+        :param description: Description for the section.
+        :return: The step section description step just added.
         """
-        _section_step = StepSection(section_description)  # type: StepSection
-        _section_step.scenario = self
-        self.__step_definitions.append(_section_step)
-        return _section_step
+        from .stepsection import StepSectionDescription
+
+        _step_section_description = StepSectionDescription(description)  # type: StepSectionDescription
+        _step_section_description.scenario = self
+        self.__step_definitions.append(_step_section_description)
+        return _step_section_description
 
     def addstep(
             self,
@@ -326,7 +319,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
             self,
             step_specification=None,  # type: StepSpecificationType
             index=None,  # type: int
-    ):  # type: (...) -> typing.Optional[StepDefinition]
+    ):  # type: (...) -> typing.Optional[_StepDefinitionType]
         """
         Finds a step definition.
 
@@ -336,8 +329,8 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         from .stepdefinition import StepDefinitionHelper
 
-        _matching_step_definitions = []  # type: typing.List[StepDefinition]
-        for _step_definition in self.__step_definitions:  # type: StepDefinition
+        _matching_step_definitions = []  # type: typing.List[_StepDefinitionType]
+        for _step_definition in self.__step_definitions:  # type: _StepDefinitionType
             if step_specification is None:
                 _matching_step_definitions.append(_step_definition)
             elif StepDefinitionHelper(_step_definition).matchspecification(step_specification):
@@ -355,7 +348,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
             self,
             step_specification=None,  # type: StepSpecificationType
             index=None,  # type: int
-    ):  # type: (...) -> StepDefinition
+    ):  # type: (...) -> _StepDefinitionType
         """
         Expects a step definition.
 
@@ -368,13 +361,13 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         from .stepdefinition import StepDefinitionHelper
 
-        _step_definition = self.getstep(step_specification, index)  # type: typing.Optional[StepDefinition]
+        _step_definition = self.getstep(step_specification, index)  # type: typing.Optional[_StepDefinitionType]
         if _step_definition is None:
             raise KeyError(f"No such step {StepDefinitionHelper.specificationdescription(step_specification)} (index: {index!r})")
         return _step_definition
 
     @property
-    def steps(self):  # type: () -> typing.List[StepDefinition]
+    def steps(self):  # type: () -> typing.List[_StepDefinitionType]
         """
         Step list.
         """
@@ -434,7 +427,7 @@ class ScenarioDefinitionHelper:
         from .scenariorunner import SCENARIO_RUNNER
 
         #: Related scenario definition.
-        self.definition = definition
+        self.definition = definition  # type: ScenarioDefinition
 
         #: Make this class log as if it was part of the :class:`ScenarioRunner` execution.
         self._logger = SCENARIO_RUNNER  # type: Logger
@@ -445,7 +438,7 @@ class ScenarioDefinitionHelper:
         and feeds the scenario definition step list.
         """
         from .reflex import qualname
-        from .stepdefinition import StepMethods
+        from .stepdefinition import StepDefinition, StepMethods
 
         # Scan methods.
         _methods = []  # type: typing.List[types.MethodType]
@@ -454,10 +447,7 @@ class ScenarioDefinitionHelper:
             if _method_name.startswith("step"):
                 # According to https://stackoverflow.com/questions/41900639/python-unable-to-compare-bound-method-to-itself#41900748,
                 # we shall use `==` and not `is` for the test below.
-                #
-                # Ignore typings due to following error:
-                # > Non-overlapping equality check (left operand type: "UnboundMethodType", right operand type: "Callable[[str], StepSection]")
-                if _method == self.definition.section:  # type: ignore
+                if _method == self.definition.section:  # type: ignore[comparison-overlap]  ## left: "UnboundMethodType", right: "Callable[[str], StepSection]"
                     self._logger.debug("Skipping %r", _method)
                     continue
                 self._logger.debug("  Method: %s()", _method_name)
@@ -467,6 +457,5 @@ class ScenarioDefinitionHelper:
         StepMethods.sortbynames(self._logger, _methods)
 
         # Eventually build the :class:`.stepdefinition.StepDefinition` objects.
-        assert self.definition
         for _method in _methods:  # `_method` already defined.
             self.definition.addstep(StepDefinition(method=_method))

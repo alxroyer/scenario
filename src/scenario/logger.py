@@ -23,10 +23,9 @@ import logging
 import traceback
 import typing
 
-# `Console` used in method signatures.
-from .console import Console
-# `LogExtraData` used in method signatures.
-from .logextradata import LogExtraData
+if typing.TYPE_CHECKING:
+    from .console import Console as _ConsoleType
+    from .logextradata import LogExtraData as _LogExtraDataType
 
 
 __doc__ += """
@@ -85,20 +84,20 @@ class Logger:
             self._logger.parent = MAIN_LOGGER.logging_instance
             self._logger.propagate = True
         # :meth:`logging.Logger._log()` indirection.
-        self._logger._log = self._log  # type: ignore  ## Cannot assign to a method
+        self._logger._log = self._log  # type: ignore[assignment]  ## Cannot assign to a method
 
         #: ``True`` to enable log debugging.
         #: ``None`` lets the configuration tells whether debug log lines should be displayed for this logger.
         self._debug_enabled = None  # type: typing.Optional[bool]
 
         #: Optional log color configuration.
-        self._log_color = None  # type: typing.Optional[Console.Color]
+        self._log_color = None  # type: typing.Optional[_ConsoleType.Color]
 
         #: Logger indentation.
         self._indentation = ""  # type: str
 
         #: Extra flags configurations.
-        self._extra_flags = {}  # type: typing.Dict[LogExtraData, bool]
+        self._extra_flags = {}  # type: typing.Dict[_LogExtraDataType, bool]
 
     @property
     def logging_instance(self):  # type: () -> logging.Logger
@@ -140,7 +139,7 @@ class Logger:
 
     def setlogcolor(
             self,
-            color,  # type: typing.Optional[Console.Color]
+            color,  # type: typing.Optional[_ConsoleType.Color]
     ):  # type: (...) -> None
         """
         Sets or clears a log line color specialized for the logger.
@@ -153,7 +152,7 @@ class Logger:
         """
         self._log_color = color
 
-    def getlogcolor(self):  # type: (...) -> typing.Optional[Console.Color]
+    def getlogcolor(self):  # type: (...) -> typing.Optional[_ConsoleType.Color]
         """
         Returns the specialized log line color for this logger, if any.
 
@@ -208,7 +207,7 @@ class Logger:
 
     def setextraflag(
             self,
-            extra_flag,  # type: LogExtraData
+            extra_flag,  # type: _LogExtraDataType
             value,  # type: typing.Optional[bool]
     ):  # type: (...) -> None
         """
@@ -224,7 +223,7 @@ class Logger:
 
     def getextraflag(
             self,
-            extra_flag,  # type: LogExtraData
+            extra_flag,  # type: _LogExtraDataType
     ):  # type: (...) -> typing.Optional[bool]
         """
         Returns the extra flag configuration set (or not).
@@ -316,6 +315,8 @@ class Logger:
 
         Handles appropriately the optional ``exc_info`` parameter.
         """
+        from .logextradata import LogExtraData
+
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
         assert isinstance(self, Logger)
 
@@ -375,6 +376,8 @@ class Logger:
 
         See the :ref:`long text logging <logging.long-text>` section for more details.
         """
+        from .logextradata import LogExtraData
+
         return LogExtraData.extradata({
             LogExtraData.LONG_TEXT_MAX_LINES: max_lines,
         })

@@ -25,7 +25,8 @@ User test libraries
     .. Inheriting from `scenario.Logger`.
     .. literalinclude:: ../../demo/loggingdemo.py
         :language: python
-        :lines: 6-9
+        :start-at: class MyLogger
+        :end-at: scenario.Logger.__init__
 
     .. Inheriting from both `scenario.Assertions` and `scenario.Logger`.
     .. literalinclude:: ../../demo/htmltestlib.py

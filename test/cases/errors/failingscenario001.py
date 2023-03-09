@@ -19,16 +19,14 @@ import pathlib
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
-from steps.common import CheckJsonReportExpectations
-from steps.common import LogVerificationStep
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class FailingScenario001(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Failing scenario execution",
@@ -110,6 +108,8 @@ class CheckJsonReportExceptionStorage(scenario.test.VerificationStep):
             obj_type,  # type: str
             jsonpath_prefix,  # type: str
     ):  # type: (...) -> None
+        from steps.common import CheckJsonReportExpectations
+
         self.assertjson(
             self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors",
             type=list, len=1,

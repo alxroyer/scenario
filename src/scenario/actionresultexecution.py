@@ -20,8 +20,8 @@ Action / expected result execution management.
 
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
+if typing.TYPE_CHECKING:
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
 
 
 class ActionResultExecution:
@@ -31,7 +31,7 @@ class ActionResultExecution:
 
     def __init__(
             self,
-            definition,  # type: ActionResultDefinition
+            definition,  # type: _ActionResultDefinitionType
     ):  # type: (...) -> None
         """
         Sets the start time automatically.
@@ -41,7 +41,7 @@ class ActionResultExecution:
         from .testerrors import TestError
 
         #: Owner action/result reference.
-        self.definition = definition  # type: ActionResultDefinition
+        self.definition = definition  # type: _ActionResultDefinitionType
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
         #: Evidence items.

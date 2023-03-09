@@ -20,9 +20,7 @@ import scenario
 import scenario.test
 import scenario.text
 
-# Related steps:
-from .commonargs import ExecCommonArgs
-from .logprocessing import LogProcessor
+from steps.logprocessing import LogProcessor  # `LogProcessor` used for inheritance.
 
 
 class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
@@ -60,6 +58,8 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
             output=None,  # type: typing.AnyStr
             evidence=False,  # type: scenario.assertionhelpers.EvidenceParamType
     ):  # type: (...) -> typing.AnyStr
+        from .commonargs import ExecCommonArgs
+
         _lines = self._findlines(searched, output, find_all=False)  # type: typing.List[typing.AnyStr]
         self.assertisnotempty(
             _lines,
@@ -81,6 +81,8 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
             output=None,  # type: typing.AnyStr
             evidence=False,  # type: scenario.assertionhelpers.EvidenceParamType
     ):  # type: (...) -> typing.List[typing.AnyStr]
+        from .commonargs import ExecCommonArgs
+
         _lines = self._findlines(searched, output)  # type: typing.List[typing.AnyStr]
         self.assertisnotempty(
             _lines,
@@ -102,6 +104,8 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
             output=None,  # type: typing.AnyStr
             evidence=False,  # type: scenario.assertionhelpers.EvidenceParamType
     ):  # type: (...) -> None
+        from .commonargs import ExecCommonArgs
+
         for _line in self._findlines(searched, output):  # type: typing.AnyStr
             # The following assertion should always fail in as much as the line matches the `searched` pattern.
             # Nevertheless, we call `assertnotin()` on each line instead of `assertisempty()` on the list,
@@ -120,6 +124,8 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
             output=None,  # type: typing.AnyStr
             evidence=False,  # type: scenario.assertionhelpers.EvidenceParamType
     ):  # type: (...) -> typing.List[typing.AnyStr]
+        from .commonargs import ExecCommonArgs
+
         _lines = self._findlines(searched, output)  # type: typing.List[typing.AnyStr]
         self.assertlen(
             _lines, count,

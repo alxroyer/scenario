@@ -19,9 +19,6 @@ import typing
 
 import scenario.test
 
-# Steps:
-from .steps.currentprocess import StoreConfigValue, CheckConfigValue
-
 
 class ConfigDb030(scenario.test.TestCase):
 
@@ -34,6 +31,8 @@ class ConfigDb030(scenario.test.TestCase):
         B = 1
 
     def __init__(self):  # type: (...) -> None
+        from configdb.steps.currentprocess import CheckConfigValue, StoreConfigValue
+
         scenario.test.TestCase.__init__(
             self,
             title="Configuration value types and conversions",

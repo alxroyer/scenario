@@ -18,8 +18,6 @@ import typing
 
 import scenario
 
-from .subprocess import SubProcess
-
 
 def checkthirdpartytoolversion(
         tool_name,  # type: str
@@ -36,13 +34,14 @@ def checkthirdpartytoolversion(
     :param exit_on_error: ``False`` when the program should not fail if the tool is not found. ``True`` by default.
     :return: Version of the tool if found, ``None`` otherwise.
     """
+    from .subprocess import SubProcess
+
     _cmd = SubProcess(*cmd_line)  # type: SubProcess
     if cwd:
         _cmd.setcwd(cwd)
     _cmd.showstdout(False).showstderr(False)
     _cmd.exitonerror(exit_on_error)
-    if not _cmd.run():
-        return None
+    _cmd.run()
 
     scenario.logging.debug("%s: reading _version", tool_name)
     _version = _cmd.stdout  # type: bytes

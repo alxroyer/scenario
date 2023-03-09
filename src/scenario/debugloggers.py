@@ -21,10 +21,10 @@ Extra debugging loggers.
 import time
 import typing
 
-# `DelayedStr` used in method signatures.
-from .debugutils import DelayedStr
-# `Logger` used for instanciation.
-from .logger import Logger
+from .logger import Logger  # `Logger` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .debugutils import DelayedStr as _DelayedStrType
 
 
 class ExecTimesLogger(Logger):
@@ -54,7 +54,7 @@ class ExecTimesLogger(Logger):
 
     def tick(
             self,
-            message,  # type: typing.Union[str, DelayedStr]
+            message,  # type: typing.Union[str, _DelayedStrType]
     ):  # type: (...) -> None
         """
         Logs intermediate time information.

@@ -19,8 +19,8 @@ import typing
 import scenario
 import scenario.test
 
-# Related steps:
-from .execution import ExecCampaign
+if typing.TYPE_CHECKING:
+    from .execution import ExecCampaign as _ExecCampaignType
 
 
 class CampaignOutdirFilesManager:
@@ -31,7 +31,7 @@ class CampaignOutdirFilesManager:
     class ScenarioResults:
         def __init__(
                 self,
-                campaign_execution,  # type: ExecCampaign
+                campaign_execution,  # type: _ExecCampaignType
                 scenario_path,  # type: scenario.Path
         ):  # type: (...) -> None
             from scenario.campaignexecution import JsonReportReader, LogFileReader
@@ -50,9 +50,9 @@ class CampaignOutdirFilesManager:
 
     def __init__(
             self,
-            campaign_execution,  # type: ExecCampaign
+            campaign_execution,  # type: _ExecCampaignType
     ):  # type: (...) -> None
-        self._campaign_execution = campaign_execution  # type: ExecCampaign
+        self._campaign_execution = campaign_execution  # type: _ExecCampaignType
         #: *Pretty path* => :class:`CampaignOutdirFilesManager.ScenarioResults` dictionary.
         self._scenario_results = {}  # type: typing.Dict[str, CampaignOutdirFilesManager.ScenarioResults]
 
@@ -73,7 +73,7 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecCampaign
+            exec_step,  # type: _ExecCampaignType
             campaign_expectations,  # type: scenario.test.CampaignExpectations
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
@@ -83,6 +83,8 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
         self._outdir_content = []  # type: typing.List[scenario.Path]
 
     def step(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+
         self.STEP("Output directory content")
 
         if self.ACTION("Read the directory containing the campaign results."):

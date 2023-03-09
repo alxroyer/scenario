@@ -25,14 +25,10 @@ import sys
 import types
 import typing
 
-# `DebugClass` used to instanciate global variable.
-from .debugclasses import DebugClass
-# `Logger` used to instanciate global variable.
-from .logger import Logger
+from .debugclasses import DebugClass  # `DebugClass` used to instanciate global variable.
+from .logger import Logger  # `Logger` used to instanciate global variable.
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 
@@ -228,18 +224,16 @@ def checkfuncqualname(
                     return _res
             # Properties.
             for _prop_name, _prop in inspect.getmembers(cls, lambda obj: isinstance(obj, property)):  # type: str, property
-                def _prop2func(func):  # type: (typing.Any) -> types.FunctionType
-                    return func  # type: ignore  ## Returning Any from function declared to return "FunctionType"
                 if _prop.fget:
-                    _res = _walkfunction(_prop2func(_prop.fget))
+                    _res = _walkfunction(typing.cast(types.FunctionType, _prop.fget))
                     if _res is not None:
                         return _res
                 if _prop.fset:
-                    _res = _walkfunction(_prop2func(_prop.fset))
+                    _res = _walkfunction(typing.cast(types.FunctionType, _prop.fset))
                     if _res is not None:
                         return _res
                 if _prop.fdel:
-                    _res = _walkfunction(_prop2func(_prop.fdel))
+                    _res = _walkfunction(typing.cast(types.FunctionType, _prop.fdel))
                     if _res is not None:
                         return _res
         finally:

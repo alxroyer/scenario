@@ -40,14 +40,16 @@ To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario.scenari
 .. Class declaration with beginning of constructor, up to the call of the base class constructor.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 19-25
+    :start-at: class DemoArgs
+    :end-before: self.setdescription
 
 The final program description is set with the :py:meth:`scenario.args.Args.setdescription()` method.
 
 .. Args.setdescription() call.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 27
+    :start-at: self.setdescription
+    :lines: 1
 
 Extra arguments may be defined thanks to the protected :py:attr:`scenario.args.Args._arg_parser` member of type ``argparse.ArgumentParser``.
 
@@ -57,7 +59,8 @@ it is a good practice in :class:`scenario.args.Args` subclasses to use argument 
 .. Demo argument group with --welcome option.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 29-36
+    :start-at: # Add a demo argument group.
+    :end-before: # Extend configuration options
 
 Base :py:mod:`scenario` argument groups are also available to you through protected members:
 
@@ -70,7 +73,8 @@ Base :py:mod:`scenario` argument groups are also available to you through protec
 .. Configuration arguments extension.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 38-43
+    :start-at: # Extend configuration options
+    :end-before: # Define scenario paths as optional.
 
 When ``def_scenario_paths_arg`` (resp. ``def_test_suite_paths_arg``) is set to ``False``
 when calling the base :py:class:`scenario.scenarioargs.ScenarioArgs` (resp. :py:class:`scenario.campaignargs.CampaignArgs`) constructor,
@@ -80,7 +84,13 @@ provide a way to change cardinality and help for the positional arguments.
 .. Positional arguments redefinition.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 45-49
+    :start-at: scenario.ScenarioArgs.__init__
+    :end-before: self.setdescription
+
+.. literalinclude:: ../../demo/run-demo.py
+    :language: python
+    :start-at: self._defscenariopathsarg
+    :end-before: def _checkargs
 
 The :py:meth:`scenario.args.Args._checkargs()` method may be overloaded in order to check additional constraints,
 after the arguments have been parsed,
@@ -92,7 +102,9 @@ the ``argparse`` result being saved as the :py:attr:`scenario.args.Args._args` o
 .. Overload of the `_checkargs()` method.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 51-65
+    :start-at: def _checkargs
+    :end-at: return True
+    :dedent:
 
 Eventually, properties are defined in order to:
 
@@ -102,7 +114,9 @@ Eventually, properties are defined in order to:
 .. Argument data properties.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 67-83
+    :start-at: @property
+    :end-at: return self._args.show_config_db
+    :dedent:
 
 Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method:
 
@@ -112,7 +126,9 @@ Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner
 .. Argument parsing.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 87-90
+    :start-at: # Command line arguments.
+    :end-at: sys.exit
+    :dedent:
 
 At this point, the user test environment can use the extra arguments added with the :py:class:`DemoArgs` class,
 but regular arguments as well.
@@ -120,7 +136,9 @@ but regular arguments as well.
 .. Use of arguments.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 95-106
+    :start-at: # --show-configs option.
+    :end-at: Test log saved
+    :dedent:
 
 Using the ``--help`` option displays both:
 
@@ -151,28 +169,36 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 .. Welcome message.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 100-101
+    :start-at: # Welcome message.
+    :end-at: scenario.logging.info
+    :dedent:
 
 - a bye message displayed just before the command line ends:
 
 .. Bye message.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 111-112
+    :start-at: # Bye message.
+    :end-at: scenario.logging.info
+    :dedent:
 
 - optional display of the configuration database:
 
 .. Configuration database display.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 95-98
+    :start-at: # --show-configs option.
+    :end-at: sys.exit
+    :dedent:
 
 - :ref:`configuration value settings <config-db.scenario>` that enable :ref:`file logging <logging.outfile>`:
 
 .. File logging.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 103-106
+    :start-at: # File logging:
+    :end-at: scenario.logging.info
+    :dedent:
 
 
 .. _launcher.execution:
@@ -186,7 +212,9 @@ and use the values given by our :py:class:`DemoArgs` instance already set.
 .. Scenario execution.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 108-109
+    :start-at: # Scenario execution.
+    :end-at: scenario.runner.main()
+    :dedent:
 
 
 .. _launcher.ret-code:
@@ -200,7 +228,9 @@ so that the error can be handled in the shell that launched the command line.
 .. Error code.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 114-115
+    :start-at: # Error code.
+    :end-at: sys.exit
+    :dedent:
 
 
 .. _launcher.campaigns:
@@ -230,7 +260,9 @@ whatever the current working directory
 .. Setting the main path.
 .. literalinclude:: ../../demo/run-demo.py
     :language: python
-    :lines: 92-93
+    :start-at: # Main path.
+    :end-at: scenario.Path.setmainpath
+    :dedent:
 
 .. tip::
     For display purpose, it is advised to set the *main path* after the program arguments have been analyzed.

@@ -31,6 +31,7 @@ Advanced usage
     advanced.handlers
     advanced.config-db
     advanced.step-objects
+    advanced.step-sections
     advanced.subscenarios
     advanced.goto
     advanced.multiple-executions

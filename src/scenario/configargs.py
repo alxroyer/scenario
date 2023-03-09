@@ -20,8 +20,8 @@ Common configuration program arguments.
 
 import typing
 
-# `Path` used in method signatures.
-from .path import Path
+if typing.TYPE_CHECKING:
+    from .path import Path as _PathType
 
 
 class CommonConfigArgs:
@@ -56,11 +56,12 @@ class CommonConfigArgs:
         )
 
     @property
-    def config_paths(self):  # type: () -> typing.Sequence[Path]
+    def config_paths(self):  # type: () -> typing.Sequence[_PathType]
         """
         Configuration files.
         """
         from .args import Args
+        from .path import Path
 
         # Let typings know this class is actually a subclass of the base `Args` class.
         assert isinstance(self, CommonConfigArgs) and isinstance(self, Args)

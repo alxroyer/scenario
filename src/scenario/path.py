@@ -31,6 +31,9 @@ import typing
 
 
 if typing.TYPE_CHECKING:
+    #: Any path type.
+    #:
+    #: Simple string or ``os.PathLike``.
     AnyPathType = typing.Union[str, os.PathLike]
 
 
@@ -182,14 +185,9 @@ class Path:
         if sys.version_info >= (3, 5):
             self.expanduser = self._abspath.expanduser  #: Shortcut to :meth:`pathlib.Path.expanduser()`.
         # :meth:`pathlib.Path.glob()` implemented as :meth:`glob()`.
-        #: Shortcut to :meth:`pathlib.Path.group()`.
-        self.group = (
-            # TODO:
-            #  Strange we had to ignore the following,
-            #  since there is no new nor deprecation notice in the [pathlib documentation](https://docs.python.org/3/library/pathlib.html#pathlib.Path.group).
-            #  Try to remove this mypy@0.971 workaround when switching to mypy@1.0.0 (#73).
-            self._abspath.group  # type: ignore  ## mypy 0.971 error: '"Path" has no attribute "group"'
-        )
+        if sys.platform != "win32":
+            # Memo: `Path.group()` raises "NotImplementedError: Path.group() is unsupported on this system" under Windows.
+            self.group = self._abspath.group  #: Shortcut to :meth:`pathlib.Path.group()`.
         self.is_dir = self._abspath.is_dir  #: Shortcut to :meth:`pathlib.Path.is_dir()`.
         self.is_file = self._abspath.is_file  #: Shortcut to :meth:`pathlib.Path.is_file()`.
         if sys.version_info >= (3, 7):
@@ -204,14 +202,9 @@ class Path:
         self.lstat = self._abspath.lstat  #: Shortcut to :meth:`pathlib.Path.lstat()`.
         self.mkdir = self._abspath.mkdir  #: Shortcut for :meth:`pathlib.Path.mkdir()`.
         self.open = self._abspath.open  #: Shortcut to :meth:`pathlib.Path.open()`.
-        #: Shortcut to :meth:`pathlib.Path.owner()`.
-        self.owner = (
-            # TODO:
-            #  Strange we had to ignore the following,
-            #  since there is no new nor deprecation notice in the [pathlib documentation](https://docs.python.org/3/library/pathlib.html#pathlib.Path.owner).
-            #  Try to remove this mypy@0.971 workaround when switching to mypy@1.0.0 (#73).
-            self._abspath.owner  # type: ignore  ## mypy 0.971 error: '"Path" has no attribute "owner"'
-        )
+        if sys.platform != "win32":
+            # Memo: `Path.owner()` raises "NotImplementedError: Path.owner() is unsupported on this system" under Windows.
+            self.owner = self._abspath.owner  #: Shortcut to :meth:`pathlib.Path.owner()`.
         if sys.version_info >= (3, 5):
             self.read_bytes = self._abspath.read_bytes  #: Shortcut to :meth:`pathlib.Path.read_bytes()`.
             self.read_text = self._abspath.read_text  #: Shortcut to :meth:`pathlib.Path.read_text()`.

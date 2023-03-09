@@ -16,14 +16,12 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-
 
 class Issue42(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckFinalResultsLogExpectations, ExecScenario, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue #42! Bad known issue display on multiple test execution",

@@ -18,14 +18,12 @@ import typing
 
 import scenario.test
 
-# Steps:
-from .steps.currentprocess import LoadConfigFile, ShowConfigValue
-from .steps.currentprocess import CheckConfigValue, CheckDictConfigNode, CheckListConfigNode
-
 
 class ConfigDb120(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from configdb.steps.currentprocess import CheckConfigValue, CheckDictConfigNode, CheckListConfigNode, LoadConfigFile, ShowConfigValue
+
         scenario.test.TestCase.__init__(
             self,
             title="INI default values & sub-sections",

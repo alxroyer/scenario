@@ -21,9 +21,6 @@ import typing
 
 import scenario
 
-from .paths import CAMPAIGN_LAUNCHER, TEST_LAUNCHER
-from .testcase import TestCase
-
 
 class SubProcess(scenario.SubProcess):
 
@@ -66,7 +63,7 @@ class SubProcess(scenario.SubProcess):
 
         self.unsetconfigvalue(config_key)
         self.addargs("--config-value", config_key, value)
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def unsetconfigvalue(
             self,  # type: scenario.VarSubProcessType
@@ -105,6 +102,8 @@ class SubProcess(scenario.SubProcess):
         :param log_outfile_path: Path of the output file used.
         :return: ``self``
         """
+        from .testcase import TestCase
+
         assert isinstance(self, SubProcess)
 
         if log_outfile_path is None:
@@ -112,7 +111,7 @@ class SubProcess(scenario.SubProcess):
         self.log_path = log_outfile_path
 
         self.setconfigvalue(scenario.ConfigKey.LOG_FILE, self.log_path)
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def generatereport(
             self,  # type: scenario.VarSubProcessType
@@ -124,6 +123,9 @@ class SubProcess(scenario.SubProcess):
         :param report_path: Path of the output file used for report generation.
         :return: ``self``
         """
+        from .paths import CAMPAIGN_LAUNCHER, TEST_LAUNCHER
+        from .testcase import TestCase
+
         assert isinstance(self, SubProcess)
 
         if report_path is None:
@@ -137,7 +139,7 @@ class SubProcess(scenario.SubProcess):
             scenario.Assertions.fail("Campaign reports not handled yet")
         else:
             scenario.Assertions.fail(f"Unknown launcher '{self.launcher_path}'")
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def expectsuccess(
             self,  # type: scenario.VarSubProcessType
@@ -154,20 +156,42 @@ class SubProcess(scenario.SubProcess):
         """
         assert isinstance(self, SubProcess)
         self._expect_success = expect_success
-        return self  # type: ignore  ## Incompatible return value type (got "ScriptExecution", expected "SubProcessType")
+        return self  # type: ignore[return-value]  ## "SubProcess", expected "scenario.VarSubProcessType"
 
     def run(
             self,
             timeout=None,  # type: float
     ):  # type: (...) -> SubProcess
         """
-        Overrides the base :meth:`scenario.tools.SubProcess.run()` method in order to avoid ``sys.exit()`` calls,
-        and generate assertion errors when appropriate.
+        Base :meth:`scenario.tools.SubProcess.run()` override.
 
         :return: See :meth:`SubProcess.run()`
         """
+        from .paths import PACKAGE_BLACK_LIST_STARTER
+        from .reflex import PACKAGE_BLACK_LIST, PACKAGE_BLACK_LIST_CONF_KEY
+
+        # Avoid `sys.exit()` calls.
         self.exitonerror(False)
+
+        # Propagate package black list.
+        if PACKAGE_BLACK_LIST:
+            for _i in range(len(self.cmd_line)):  # type: int
+                # Before the first argument ending with '.py', i.e. the final launcher script.
+                # Memo: `self.cmd_line[_i]` may be a string or `AnyPathType`, that's the reason why we use a `str()` operator below.
+                if str(self.cmd_line[_i]).endswith(".py"):
+                    # Use the *package black list starter* script as an intermediate.
+                    # Inserting multiple elements inspired from
+                    # https://stackoverflow.com/questions/39541370/how-to-insert-multiple-elements-into-a-list#39541404.
+                    self.cmd_line[_i:_i] = [
+                        PACKAGE_BLACK_LIST_STARTER,
+                        "--config-value", PACKAGE_BLACK_LIST_CONF_KEY, ",".join(PACKAGE_BLACK_LIST),  # Comma-separated list.
+                    ]
+                    break
+
+        # Execute the subprocess.
         super().run(timeout=timeout)
+
+        # Generate assertion errors when appropriate
         if self._expect_success:
             scenario.Assertions.assertequal(self.returncode, 0, f"{self.cmd_line!r} failed")
         else:
@@ -187,6 +211,8 @@ class ScenarioSubProcess(SubProcess):
         :param scenario_paths: Target scenarios, as given to the 'run-test' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
+        from .paths import TEST_LAUNCHER
+
         SubProcess.__init__(self, TEST_LAUNCHER)
 
         self.scenario_paths = list(scenario_paths)  # type: typing.List[scenario.Path]
@@ -210,6 +236,8 @@ class CampaignSubProcess(SubProcess):
         :param unit_paths: Test unit definition files, as given to the 'run-campaign' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
+        from .paths import CAMPAIGN_LAUNCHER
+
         SubProcess.__init__(self, CAMPAIGN_LAUNCHER)
 
         self.unit_paths = list(unit_paths)  # type: typing.List[scenario.Path]

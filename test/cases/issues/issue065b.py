@@ -19,15 +19,18 @@ import typing
 import scenario
 import scenario.test
 
-# Steps:
-from campaigns.steps.execution import ExecCampaign
-from steps.common import ParseFinalResultsLog
-from steps.common import LogVerificationStep
+from issues.issue065a import CheckTimeLostStep  # `CheckTimeLostStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
+    from steps.common import ParseFinalResultsLog as _ParseFinalResultsLogType
 
 
 class Issue65b(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+        from steps.common import ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue #65! Campaign execution lost time",
@@ -49,20 +52,18 @@ class Issue65b(scenario.test.TestCase):
         ))
 
 
-class CheckTimes(LogVerificationStep):
+class CheckTimes(CheckTimeLostStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecCampaign
-            final_results,  # type: ParseFinalResultsLog
+            exec_step,  # type: _ExecCampaignType
+            final_results,  # type: _ParseFinalResultsLogType
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        CheckTimeLostStep.__init__(self, exec_step)
 
-        self.final_results = final_results  # type: ParseFinalResultsLog
+        self.final_results = final_results  # type: _ParseFinalResultsLogType
 
     def step(self):  # type: (...) -> None
-        from .issue065a import ratio
-
         self.STEP("Check times")
 
         _t1 = 0.0  # type: float
@@ -79,16 +80,11 @@ class CheckTimes(LogVerificationStep):
                 evidence="t2",
             )
 
-        self.knownissue(
-            level=scenario.test.IssueLevel.SUT, id="#65",
-            message="Still a bit more than 5% time lost when executing a campaign",
-        )
-        if self.RESULT(f"t2 is near t1 (margin = 5%)."):
-            self.assertnear(
-                _t2, _t1, margin=_t1 * 0.10,  # TODO: 10% instead of 5% as expected...
-                evidence=True,
+        if self.RESULT(f"t2 is near t1 (margin = {int(self.TIME_LOST_TOLERANCE * 100)}%)."):
+            self.assertlittletimelost(
+                actual=_t1, reported=_t2, tolerance=self.TIME_LOST_TOLERANCE,
+                execution_object="a scenario", evidence=True,
             )
-            self.evidence(f"Error: {_t1 - _t2} ({ratio(_t1 - _t2, _t1)})")
 
         # Info collection for the characterization of the known-issue tracked above.
 
@@ -118,19 +114,19 @@ class CheckTimes(LogVerificationStep):
 
             self.evidence(
                 f"Sub-process execution times: {_run_times!r} "
-                f"=> {sum(_run_times)} ({ratio(sum(_run_times), _t1)})"
+                f"=> {sum(_run_times)} ({self.ratio(sum(_run_times), _t1)})"
             )
             self.evidence(
                 f"Log file times: {_log_file_times!r} "
-                f"=> {sum(_log_file_times)} ({ratio(sum(_log_file_times), _t1)})"
+                f"=> {sum(_log_file_times)} ({self.ratio(sum(_log_file_times), _t1)})"
             )
             self.evidence(
                 f"JSON file times: {_json_file_times!r} "
-                f"=> {sum(_json_file_times)} ({ratio(sum(_json_file_times), _t1)})"
+                f"=> {sum(_json_file_times)} ({self.ratio(sum(_json_file_times), _t1)})"
             )
             self.evidence(
                 f"Untracked times (while executing test cases): {_untracked_times!r} "
-                f"=> {sum(_untracked_times)} ({ratio(sum(_untracked_times), _t1)})"
+                f"=> {sum(_untracked_times)} ({self.ratio(sum(_untracked_times), _t1)})"
             )
 
         _before_test_cases_time = 0.0  # type: float
@@ -140,15 +136,15 @@ class CheckTimes(LogVerificationStep):
             _match = self.assertregex(rb'^(%s) - ' % self.tobytes(scenario.datetime.ISO8601_REGEX), _before_test_cases_line)
             _before_test_cases_tf = scenario.datetime.fromiso8601(self.tostr(_match.group(1)))  # type: float
             _before_test_cases_time = _before_test_cases_tf - self.assertisnotnone(self.subprocess.time.start)
-            self.evidence(f"Before test cases: {_before_test_cases_time} ({ratio(_before_test_cases_time, _t1)})")
+            self.evidence(f"Before test cases: {_before_test_cases_time} ({self.ratio(_before_test_cases_time, _t1)})")
 
             _after_test_cases_line = self.assertlines(b'[scenario.#65.exec-times]')[-1]  # type: bytes
             _match = self.assertregex(rb'^(%s) - ' % self.tobytes(scenario.datetime.ISO8601_REGEX), _after_test_cases_line)
             _after_test_cases_t0 = scenario.datetime.fromiso8601(self.tostr(_match.group(1)))  # type: float
             _after_test_cases_time = self.assertisnotnone(self.subprocess.time.end) - _after_test_cases_t0
-            self.evidence(f"After test cases: {_after_test_cases_time} ({ratio(_after_test_cases_time, _t1)})")
+            self.evidence(f"After test cases: {_after_test_cases_time} ({self.ratio(_after_test_cases_time, _t1)})")
 
         if self.ACTION("Evaluate the total time lost."):
-            self.evidence(f"sub-process execution times vs t1: {_t1 - sum(_run_times)} ({ratio(_t1 - sum(_run_times), _t1)})")
-            self.evidence(f"t2 vs sub-process execution times: {sum(_run_times) - _t2} ({ratio(sum(_run_times) - _t2, sum(_run_times))})")
-            self.evidence(f"t2 vs t1 (total): {_t1 - _t2} ({ratio(_t1 - _t2, _t1)})")
+            self.evidence(f"sub-process execution times vs t1: {_t1 - sum(_run_times)} ({self.ratio(_t1 - sum(_run_times), _t1)})")
+            self.evidence(f"t2 vs sub-process execution times: {sum(_run_times) - _t2} ({self.ratio(sum(_run_times) - _t2, sum(_run_times))})")
+            self.evidence(f"t2 vs t1 (total): {_t1 - _t2} ({self.ratio(_t1 - _t2, _t1)})")

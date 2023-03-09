@@ -29,7 +29,7 @@
 # For the memo, this resource: https://stackoverflow.com/questions/38765577/overriding-sphinx-autodoc-alias-of-for-import-of-private-class
 # also seems to deal with the subject.
 #
-# That's the reason why we manually document the exported symbols with explicit ResStructuredText as aliases to the inner classes,
+# That's the reason why we manually document the exported symbols with explicit ReStructuredText as aliases to the inner classes,
 # which lets us define documentation sections by the way.
 
 """
@@ -40,10 +40,24 @@
 # Define this package as a namespace, so that it can be extended later on (with tools, tests, ...).
 # In as much as this code is python 2/3 compatible, we use *pkgutil-style namespace packages*.
 from pkgutil import extend_path
-__path__ = extend_path(__path__, __name__)
+__path__ = extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
 
 # Make system imports after the namespace definition above.
 import typing
+
+
+# Used to avoid PEP8 E402 warnings: "Module level import not at top of file".
+# Named with double leading underscores in order to avoid 'mkdoc.py' list it as an undocumented attribute.
+__pkg_def = True  # type: bool
+
+# A couple of symbols are exported by using an intermediate private symbol.
+# For instance, if we declare `logging` as following:
+# ```python
+# from .loggermain import MAIN_LOGGER as logging
+# ```
+# mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
+# Mypy seems not to support reexports with renamings.
+# Possibly something to do with [PEP 0848](https://peps.python.org/pep-0484/#stub-files) reexport rules for stub files...
 
 
 __doc__ += """
@@ -58,8 +72,9 @@ __doc__ += """
 
     Gives the package information: version, ...
 """
-# noinspection PyPep8Naming
-from .pkginfo import PKG_INFO as info  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .pkginfo import PKG_INFO as _PKG_INFO
+    info = _PKG_INFO
 
 
 __doc__ += """
@@ -75,8 +90,14 @@ __doc__ += """
     Alias of :class:`.scenariodefinition.ScenarioDefinition`.
 
     Base class to inherit from in order to define a test scenario.
+
+.. py:attribute:: ScenarioDefinition
+
+    Full class name of :class:`Scenario`.
 """
-from .scenariodefinition import ScenarioDefinition as Scenario  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenariodefinition import ScenarioDefinition as ScenarioDefinition
+    Scenario = ScenarioDefinition
 
 __doc__ += """
 .. py:attribute:: Step
@@ -84,15 +105,66 @@ __doc__ += """
     Alias of :class:`.stepdefinition.StepDefinition`.
 
     Base class to inherit from in order to define a test step.
+
+.. py:attribute:: StepDefinition
+
+    Full class name of :class:`Step`.
 """
-from .stepdefinition import StepDefinition as Step  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .stepdefinition import StepDefinition as StepDefinition
+    Step = StepDefinition
 
 __doc__ += """
 .. py:attribute:: ActionResult
 
     Alias of :class:`.actionresultdefinition.ActionResultDefinition`.
+
+.. py:attribute:: ActionResultDefinition
+
+    Full class name of :class:`ActionResult`.
 """
-from .actionresultdefinition import ActionResultDefinition as ActionResult  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .actionresultdefinition import ActionResultDefinition as ActionResultDefinition
+    ActionResult = ActionResultDefinition
+
+
+__doc__ += """
+Step sections
+=============
+
+Classes that can be used to define step sections.
+"""
+
+__doc__ += """
+.. py:attribute:: StepSectionDescription
+
+    Alias of :class:`.stepsection.StepSectionDescription`.
+
+    Step class that holds a description for a section of steps.
+    Automatically instanciated by :meth:`.scenariodefinition.ScenarioDefinition.section()`.
+"""
+if __pkg_def:
+    from .stepsection import StepSectionDescription as StepSectionDescription
+
+__doc__ += """
+.. py:attribute:: StepSectionBegin
+
+    Alias of :class:`.stepsection.StepSectionBegin`.
+
+    Step class to inherit from, then add in a scenario, in order to define the beginning of a step section.
+"""
+if __pkg_def:
+    from .stepsection import StepSectionBegin as StepSectionBegin
+
+__doc__ += """
+.. py:attribute:: StepSectionEnd
+
+    Alias of :class:`.stepsection.StepSectionEnd`.
+
+    Type of the :attr:`.stepsection.StepSectionBegin.end` step to add at the end of a step section.
+"""
+if __pkg_def:
+    from .stepsection import StepSectionEnd as StepSectionEnd
 
 
 __doc__ += """
@@ -112,7 +184,8 @@ __doc__ += """
     Can be subclassed.
     :class:`Scenario` and :class:`Step` inherit from this class.
 """
-from .assertions import Assertions  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .assertions import Assertions as Assertions
 
 __doc__ += """
 .. py:attribute:: assertionhelpers
@@ -121,7 +194,8 @@ __doc__ += """
 
     Helper functions and types when you want to write your own assertion routines.
 """
-from . import assertionhelpers  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from . import assertionhelpers as assertionhelpers
 
 
 __doc__ += """
@@ -140,15 +214,17 @@ __doc__ += """
 
     :class:`Scenario` and :class:`Step` inherit from this class.
 """
-from .logger import Logger  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .logger import Logger as Logger
 
 __doc__ += """
 .. py:attribute:: logging
 
     Main logger instance.
 """
-# noinspection PyPep8Naming
-from .loggermain import MAIN_LOGGER as logging  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .loggermain import MAIN_LOGGER as _MAIN_LOGGER
+    logging = _MAIN_LOGGER
 
 __doc__ += """
 .. py:attribute:: Console
@@ -157,7 +233,8 @@ __doc__ += """
 
     Console colors.
 """
-from .console import Console  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .console import Console as Console
 
 __doc__ += """
 .. py:attribute:: LogExtraData
@@ -166,7 +243,8 @@ __doc__ += """
 
     Logging extra data management.
 """
-from .logextradata import LogExtraData  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .logextradata import LogExtraData as LogExtraData
 
 __doc__ += """
 .. py:attribute:: debug
@@ -175,7 +253,8 @@ __doc__ += """
 
     Helper functions and types for debugging.
 """
-from . import debugutils as debug  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from . import debugutils as debug
 
 
 __doc__ += """
@@ -190,15 +269,17 @@ __doc__ += """
 
     Configuration manager instance.
 """
-# noinspection PyPep8Naming
-from .configdb import CONFIG_DB as conf  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .configdb import CONFIG_DB as _CONFIG_DB
+    conf = _CONFIG_DB
 
 __doc__ += """
 .. py:attribute:: ConfigNode
 
     Alias of :class:`.confignode.ConfigNode`.
 """
-from .confignode import ConfigNode  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .confignode import ConfigNode as ConfigNode
 
 __doc__ += """
 .. py:attribute:: ConfigKey
@@ -207,7 +288,9 @@ __doc__ += """
 
     `scenario` configuration keys.
 """
-from .scenarioconfig import ScenarioConfigKey as ConfigKey  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenarioconfig import ScenarioConfig as _ScenarioConfig
+    ConfigKey = _ScenarioConfig.Key
 
 
 __doc__ += """
@@ -228,8 +311,9 @@ __doc__ += """
 
         scenario.runner.main()
 """
-# noinspection PyPep8Naming
-from .scenariorunner import SCENARIO_RUNNER as runner  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenariorunner import SCENARIO_RUNNER as _SCENARIO_RUNNER
+    runner = _SCENARIO_RUNNER
 
 __doc__ += """
 .. py:attribute:: campaign_runner
@@ -242,8 +326,9 @@ __doc__ += """
 
         scenario.campaign_runner.main()
 """
-# noinspection PyPep8Naming
-from .campaignrunner import CAMPAIGN_RUNNER as campaign_runner  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .campaignrunner import CAMPAIGN_RUNNER as _CAMPAIGN_RUNNER
+    campaign_runner = _CAMPAIGN_RUNNER
 
 __doc__ += """
 .. py:attribute:: Args
@@ -252,7 +337,8 @@ __doc__ += """
 
     Base class for :class:`ScenarioArgs` and :class:`CampaignArgs`.
 """
-from .args import Args  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .args import Args as Args
 
 __doc__ += """
 .. py:attribute:: ScenarioArgs
@@ -261,7 +347,8 @@ __doc__ += """
 
     Inherit from this class in order to extend :class:`.scenariorunner.ScenarioRunner` arguments with your own launcher script ones.
 """
-from .scenarioargs import ScenarioArgs  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenarioargs import ScenarioArgs as ScenarioArgs
 
 __doc__ += """
 .. py:attribute:: CampaignArgs
@@ -270,7 +357,8 @@ __doc__ += """
 
     Inherit from this class in order to extend :class:`.campaignrunner.CampaignRunner` arguments with your own launcher script ones.
 """
-from .campaignargs import CampaignArgs  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .campaignargs import CampaignArgs as CampaignArgs
 
 __doc__ += """
 .. py:attribute:: ErrorCode
@@ -279,7 +367,8 @@ __doc__ += """
 
     Error codes returned by the :meth:`main()` methods of :class:`.scenariorunner.ScenarioRunner` and :class:`.campaignrunner.CampaignRunner`.
 """
-from .errcodes import ErrorCode  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .errcodes import ErrorCode as ErrorCode
 
 
 __doc__ += """
@@ -294,22 +383,27 @@ __doc__ += """
 
     Handler manager instance.
 """
-# noinspection PyPep8Naming
-from .handlers import HANDLERS as handlers  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .handlers import HANDLERS as _HANDLERS
+    handlers = _HANDLERS
 
 __doc__ += """
 .. py:attribute:: Event
 
     Alias of :class:`.scenarioevents.ScenarioEvent`.
 """
-from .scenarioevents import ScenarioEvent as Event  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenarioevents import ScenarioEvent as _ScenarioEvent
+    Event = _ScenarioEvent
 
 __doc__ += """
 .. py:attribute:: EventData
 
     Alias of :class:`.scenarioevents.ScenarioEventData`.
 """
-from .scenarioevents import ScenarioEventData as EventData  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenarioevents import ScenarioEventData as _ScenarioEventData
+    EventData = _ScenarioEventData
 
 
 __doc__ += """
@@ -326,49 +420,56 @@ __doc__ += """
 
     Describes the final status of a scenario or campaign execution.
 """
-from .executionstatus import ExecutionStatus  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .executionstatus import ExecutionStatus as ExecutionStatus
 
 __doc__ += """
 .. py:attribute:: ScenarioExecution
 
     Alias of :class:`.scenarioexecution.ScenarioExecution`.
 """
-from .scenarioexecution import ScenarioExecution  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenarioexecution import ScenarioExecution as ScenarioExecution
 
 __doc__ += """
 .. py:attribute:: StepExecution
 
     Alias of :class:`.stepexecution.StepExecution`.
 """
-from .stepexecution import StepExecution  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .stepexecution import StepExecution as StepExecution
 
 __doc__ += """
 .. py:attribute:: ActionResultExecution
 
     Alias of :class:`.actionresultexecution.ActionResultExecution`.
 """
-from .actionresultexecution import ActionResultExecution  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .actionresultexecution import ActionResultExecution as ActionResultExecution
 
 __doc__ += """
 .. py::attribute:: CampaignExecution
 
     Alias of :class:`.campaignexecutions.CampaignExecution`.
 """
-from .campaignexecution import CampaignExecution  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .campaignexecution import CampaignExecution as CampaignExecution
 
 __doc__ += """
 .. py::attribute:: TestSuiteExecution
 
     Alias of :class:`.campaignexecutions.TestSuiteExecution`.
 """
-from .campaignexecution import TestSuiteExecution  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .campaignexecution import TestSuiteExecution as TestSuiteExecution
 
 __doc__ += """
 .. py::attribute:: TestCaseExecution
 
     Alias of :class:`.campaignexecutions.TestCaseExecution`.
 """
-from .campaignexecution import TestCaseExecution  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .campaignexecution import TestCaseExecution as TestCaseExecution
 
 __doc__ += """
 .. py:attribute:: TestError
@@ -377,7 +478,8 @@ __doc__ += """
 
     Describes an error that occurred during the tests.
 """
-from .testerrors import TestError  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .testerrors import TestError as TestError
 
 __doc__ += """
 .. py:attribute:: ExceptionError
@@ -386,7 +488,8 @@ __doc__ += """
 
     Describes an error due to an exception that occurred during the tests.
 """
-from .testerrors import ExceptionError  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .testerrors import ExceptionError as ExceptionError
 
 __doc__ += """
 .. py:attribute:: KnownIssue
@@ -395,7 +498,8 @@ __doc__ += """
 
     Describes an error due to an exception that occurred during the tests.
 """
-from .knownissues import KnownIssue  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .knownissues import KnownIssue as KnownIssue
 
 __doc__ += """
 .. py:attribute:: IssueLevel
@@ -403,10 +507,15 @@ __doc__ += """
     Alias of :class:`.issuelevels.IssueLevel`.
 
     Provides methods to define named issue levels.
+
+.. py:attribute:: AnyIssueLevelType
+
+    Alias of :class:`.issuelevels.AnyIssueLevelType`.
 """
-from .issuelevels import IssueLevel  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .issuelevels import IssueLevel as IssueLevel
 if typing.TYPE_CHECKING:
-    from .issuelevels import AnyIssueLevelType
+    from .issuelevels import AnyIssueLevelType as AnyIssueLevelType
 
 __doc__ += """
 .. py:attribute:: TimeStats
@@ -415,7 +524,8 @@ __doc__ += """
 
     Describes execution time statistics.
 """
-from .stats import TimeStats  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .stats import TimeStats as TimeStats
 
 __doc__ += """
 .. py:attribute:: ExecTotalStats
@@ -424,15 +534,17 @@ __doc__ += """
 
     Describes count statistics: number of items executed, out of the total number of items.
 """
-from .stats import ExecTotalStats  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .stats import ExecTotalStats as ExecTotalStats
 
 __doc__ += """
 .. py:attribute:: stack
 
     Scenario stack instance.
 """
-# noinspection PyPep8Naming
-from .scenariostack import SCENARIO_STACK as stack  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenariostack import SCENARIO_STACK as _SCENARIO_STACK
+    stack = _SCENARIO_STACK
 
 
 __doc__ += """
@@ -447,16 +559,18 @@ __doc__ += """
 
     Scenario report manager.
 """
-# noinspection PyPep8Naming
-from .scenarioreport import SCENARIO_REPORT as report  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .scenarioreport import SCENARIO_REPORT as _SCENARIO_REPORT
+    report = _SCENARIO_REPORT
 
 __doc__ += """
 .. py:attribute:: campaign_report
 
     Campaign report manager.
 """
-# noinspection PyPep8Naming
-from .campaignreport import CAMPAIGN_REPORT as campaign_report  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .campaignreport import CAMPAIGN_REPORT as _CAMPAIGN_REPORT
+    campaign_report = _CAMPAIGN_REPORT
 
 
 __doc__ += """
@@ -474,9 +588,10 @@ __doc__ += """
 
     Alias of :class:`.path.AnyPathType`.
 """
-from .path import Path  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .path import Path as Path
 if typing.TYPE_CHECKING:
-    from .path import AnyPathType
+    from .path import AnyPathType as AnyPathType
 
 __doc__ += """
 .. py:attribute:: SubProcess
@@ -490,16 +605,18 @@ __doc__ += """
 
     Alias of :class:`.subprocess.VarSubProcessType`.
 """
-from .subprocess import SubProcess  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .subprocess import SubProcess as SubProcess
 if typing.TYPE_CHECKING:
-    from .subprocess import VarSubProcessType
+    from .subprocess import VarSubProcessType as VarSubProcessType
 
 __doc__ += """
 .. py:attribute:: CodeLocation
 
     Alias of :class:`.locations.CodeLocation`.
 """
-from .locations import CodeLocation  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from .locations import CodeLocation as CodeLocation
 
 __doc__ += """
 .. py:attribute:: datetime
@@ -508,7 +625,8 @@ __doc__ += """
 
     Date/time utils.
 """
-from . import datetimeutils as datetime  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from . import datetimeutils as datetime
 
 __doc__ += """
 .. py:attribute:: tz
@@ -517,7 +635,8 @@ __doc__ += """
 
     Timezone utils.
 """
-from . import timezoneutils as timezone  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from . import timezoneutils as timezone
 
 __doc__ += """
 .. py:attribute:: enum
@@ -526,4 +645,5 @@ __doc__ += """
 
     Enum utils.
 """
-from . import enumutils as enum  # noqa: E402  ## Module level import not at top of file
+if __pkg_def:
+    from . import enumutils as enum

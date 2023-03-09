@@ -26,14 +26,9 @@ import sys
 import threading
 import typing
 
-# `ErrorCode` used in method signatures.
-from .errcodes import ErrorCode
-# `Logger` used in method signatures.
-from .logger import Logger
-
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
+    from .errcodes import ErrorCode as _ErrorCodeType
+    from .logger import Logger as _LoggerType
     from .path import AnyPathType
 
 
@@ -63,13 +58,13 @@ class SubProcess:
         self.cwd = None  # type: typing.Optional[Path]
 
         #: See :meth:`setlogger()`.
-        self._logger = None  # type: typing.Optional[Logger]
+        self._logger = None  # type: typing.Optional[_LoggerType]
         #: Handler to call on each stdout line.
         self._stdout_line_handler = None  # type: typing.Optional[typing.Callable[[bytes], None]]
         #: Handler to call on each stderr line.
         self._stderr_line_handler = None  # type: typing.Optional[typing.Callable[[bytes], None]]
         #: See :meth:`exitonerror()`.
-        self._exit_on_error_code = None  # type: typing.Optional[ErrorCode]
+        self._exit_on_error_code = None  # type: typing.Optional[_ErrorCodeType]
 
         #: Sub-process return code.
         self.returncode = None  # type: typing.Optional[int]
@@ -185,7 +180,7 @@ class SubProcess:
 
     def setlogger(
             self,  # type: VarSubProcessType
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
     ):  # type: (...) -> VarSubProcessType
         """
         Directs log lines to the given logger instance.
@@ -224,7 +219,7 @@ class SubProcess:
 
     def exitonerror(
             self,  # type: VarSubProcessType
-            exit_on_error_code,  # type: typing.Union[bool, typing.Optional[ErrorCode]]
+            exit_on_error_code,  # type: typing.Union[bool, typing.Optional[_ErrorCodeType]]
     ):  # type: (...) -> VarSubProcessType
         """
         Tells whether the main program should stop (``sys.exit()``) in case of an error.
@@ -238,6 +233,8 @@ class SubProcess:
 
         The return code is available through the :attr:`returncode` attribute.
         """
+        from .errcodes import ErrorCode
+
         if isinstance(exit_on_error_code, bool):
             self._exit_on_error_code = ErrorCode.INTERNAL_ERROR if exit_on_error_code else None
         else:
@@ -488,4 +485,5 @@ class SubProcess:
 
 
 if typing.TYPE_CHECKING:
+    #: Variable subprocess type.
     VarSubProcessType = typing.TypeVar("VarSubProcessType", bound=SubProcess)

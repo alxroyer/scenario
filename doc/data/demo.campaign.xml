@@ -156,14 +156,14 @@ END OF 'demo/commutativeadditions.py'
 DEBUG    'scenario.before-test' handler called with test &lt;Handlers 'demo/handlers.py'&gt;
 DEBUG    'scenario.before-step' handler called with step &lt;StepDefinition 'Handlers.step010'&gt;
 
-STEP#1: `UserEvent.FOO` event triggering (demo/handlers.py:55:Handlers.step010)
+STEP#1: `UserEvent.FOO` event triggering (demo/handlers.py:54:Handlers.step010)
 ------------------------------------------------
     ACTION: Trigger the `UserEvent.FOO` event, with the following parameters: a=1 and b='bar'.
               DEBUG    'foo' handler called with {'a': 1, 'b': 'bar'}
 DEBUG    'scenario.after-step' handler called with step &lt;StepDefinition 'Handlers.step010'&gt;
 DEBUG    'scenario.before-step' handler called with step &lt;StepDefinition 'Handlers.step020'&gt;
 
-STEP#2: `UserEvent.FOO` event triggering (demo/handlers.py:61:Handlers.step020)
+STEP#2: `UserEvent.FOO` event triggering (demo/handlers.py:60:Handlers.step020)
 ------------------------------------------------
     ACTION: Trigger the `UserEvent.FOO` event, with the following parameters: a=2 and b='baz'.
               DEBUG    'foo' handler called with {'a': 2, 'b': 'baz'}

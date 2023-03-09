@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
     # File logging: use the first scenario file name to determine the output log file name.
     _outpath = DemoArgs.getinstance().scenario_paths[0].with_suffix(".log")
-    scenario.conf.set("scenario.log_file", _outpath)
+    scenario.conf.set(scenario.ConfigKey.LOG_FILE, _outpath)
     scenario.logging.info(f"Test log saved in '{_outpath}'")
 
     # Scenario execution.

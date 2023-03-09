@@ -16,18 +16,14 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
-from steps.common import LogVerificationStep
-from steps.common import CheckJsonReportExpectations
-# Related scenarios:
-from knownissuesscenario import KnownIssuesScenario
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class KnownIssues020(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Known issue persistence v/s test errors",
@@ -43,7 +39,7 @@ class KnownIssues020(scenario.test.TestCase):
         self.addstep(ExecScenario(
             scenario.test.paths.KNOWN_ISSUES_SCENARIO,
             # Make the KNOWN_ISSUES_SCENARIO generate an exception.
-            config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: True},
+            config_values={scenario.test.data.scenarios.KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: True},
             generate_report=True,
             expected_return_code=scenario.ErrorCode.TEST_ERROR,
         ))

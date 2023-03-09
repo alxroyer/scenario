@@ -27,12 +27,9 @@ depending on the instance installed with :meth:`Args.setinstance()`.
 import argparse
 import typing
 
-# `CommonConfigArgs` used for inheritance.
-from .configargs import CommonConfigArgs
-# `Logger` used for inheritance.
-from .logger import Logger
-# `CommonLoggingArgs` used for inheritance.
-from .loggingargs import CommonLoggingArgs
+from .configargs import CommonConfigArgs  # `CommonConfigArgs` used for inheritance.
+from .logger import Logger  # `Logger` used for inheritance.
+from .loggingargs import CommonLoggingArgs  # `CommonLoggingArgs` used for inheritance.
 
 
 class Args(Logger, CommonConfigArgs, CommonLoggingArgs):

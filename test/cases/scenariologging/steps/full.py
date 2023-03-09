@@ -19,15 +19,15 @@ import typing
 import scenario
 import scenario.test
 
-# Related steps:
-from scenarioexecution.steps.execution import ExecScenario
+if typing.TYPE_CHECKING:
+    from scenarioexecution.steps.execution import ExecScenario as _ExecScenarioType
 
 
 class CheckFullScenarioLogOutput(scenario.test.VerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
+            exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
 

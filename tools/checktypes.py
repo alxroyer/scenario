@@ -24,13 +24,17 @@ sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
 # `scenario` imports.
-import scenario  # noqa: E402  ## Module level import not at top of file
-import scenario.tools  # noqa: E402  ## Module level import not at top of file
+try:
+    # Avoid "Module level import not at top of file" PEP8 warnings.
+    import scenario
+    import scenario.tools
+finally:
+    pass
 
 
 if __name__ == "__main__":
     _res = scenario.tools.CheckTypes(
         main_path=scenario.tools.paths.MAIN_PATH,
-        mypy_conf_path=scenario.tools.paths.TOOLS_CONF_PATH / "mypy.conf",
+        mypy_conf_path=scenario.tools.paths.TOOLS_CONF_PATH / "mypy.ini",
     ).run()  # type: scenario.ErrorCode
     sys.exit(int(_res))

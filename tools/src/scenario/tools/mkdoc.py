@@ -22,15 +22,14 @@ import typing
 
 import scenario
 
-from . import paths
-from .deps import shouldupdate
-from .subprocess import SubProcess
-from .thirdparty import checkthirdpartytoolversion
+from . import paths  # `paths` used for class member instanciation.
 
 
 class MkDoc:
 
     PLANTUML_PATH = paths.TOOLS_LIB_PATH / "plantuml.1.2020.15.jar"  # type: scenario.Path
+    PY_SPHINX_APIDOC = (sys.executable, "-m", "sphinx.ext.apidoc")  # type: typing.Sequence[str]
+    PY_SPHINX_BUILD = (sys.executable, "-m", "sphinx.cmd.build")  # type: typing.Sequence[str]
 
     class Args(scenario.Args):
         def __init__(self):  # type: (...) -> None
@@ -90,8 +89,11 @@ class MkDoc:
             self.sphinxbuild()
 
     def checktools(self):  # type: (...) -> None
-        checkthirdpartytoolversion("sphinx-apidoc", ["sphinx-apidoc", "--version"])
-        checkthirdpartytoolversion("sphinx-build", ["sphinx-build", "--version"])
+        from .thirdparty import checkthirdpartytoolversion
+
+        checkthirdpartytoolversion("python", [sys.executable, "--version"])
+        checkthirdpartytoolversion("sphinx-apidoc", [*MkDoc.PY_SPHINX_APIDOC, "--version"])
+        checkthirdpartytoolversion("sphinx-build", [*MkDoc.PY_SPHINX_BUILD, "--version"])
         # tools.checkthirdpartytoolversion("dot", ["dot", "-V"])  ## PlantUML does not need dot to be installed for regular sequence diagrams.
         checkthirdpartytoolversion("java", ["java", "-version"])
         checkthirdpartytoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=paths.MAIN_PATH)
@@ -102,6 +104,8 @@ class MkDoc:
 
         Ensures the sample execution times do not fluctuate in the output documentation from build to build.
         """
+        from .subprocess import SubProcess
+
         _float_duration_regex = rb'\d+.\d+'  # type: bytes
         _float_duration_subst = b'SSS.mmmmmm'  # type: bytes
         _str_duration_regex = rb'\d{2}:\d{2}:\d{2}\.\d+'  # type: bytes
@@ -266,6 +270,9 @@ class MkDoc:
         """
         Builds the documentation diagrams.
         """
+        from .deps import shouldupdate
+        from .subprocess import SubProcess
+
         _cfg_path = paths.TOOLS_CONF_PATH / "umlconf.uml"  # type: scenario.Path
         for _path in (paths.DOC_SRC_PATH / "uml").iterdir():  # type: scenario.Path
             if _path.is_file() and _path.name.endswith(".uml") and (not _path.samefile(_cfg_path)):
@@ -300,6 +307,8 @@ class MkDoc:
           --ext-autodoc = enable autodoc extension
                           Not sure about what this option actually does...
         """
+        from .subprocess import SubProcess
+
         # First remove the previous 'doc/src/py/' directory with its .rst generated files.
         # Useful in case source modules have been renamed.
         if (paths.DOC_SRC_PATH / "py").is_dir():
@@ -307,7 +316,7 @@ class MkDoc:
             shutil.rmtree(paths.DOC_SRC_PATH / "py")
 
         scenario.logging.info("Executing sphinx-apidoc...")
-        _subprocess = SubProcess("sphinx-apidoc")  # type: SubProcess
+        _subprocess = SubProcess(*MkDoc.PY_SPHINX_APIDOC)  # type: SubProcess
         _subprocess.addargs("--output-dir", paths.DOC_SRC_PATH / "py")
         _subprocess.addargs("--force", "--module-first", "--separate")
         _subprocess.addargs(paths.SRC_PATH / "scenario")
@@ -329,6 +338,8 @@ class MkDoc:
           -v = increase verbosity (can be repeated)
           -T = show full traceback on exception
         """
+        from .subprocess import SubProcess
+
         scenario.logging.info("Executing sphinx-build...")
 
         scenario.logging.debug("Ensuring every .rst file timestamp has been updated")
@@ -338,7 +349,7 @@ class MkDoc:
                 _path.touch()
 
         # Prepare the $(sphinx-build) process.
-        _subprocess = SubProcess("sphinx-build")  # type: SubProcess
+        _subprocess = SubProcess(*MkDoc.PY_SPHINX_BUILD)  # type: SubProcess
         # Debug & display:
         if scenario.Args.getinstance().debug_main:
             _subprocess.addargs("-vv")

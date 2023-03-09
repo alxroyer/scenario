@@ -26,8 +26,12 @@ sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
 # `scenario` imports.
-import scenario  # noqa: E402  ## Module level import not at top of file
-import scenario.tools  # noqa: E402  ## Module level import not at top of file
+try:
+    # Avoid "Module level import not at top of file" PEP8 warnings.
+    import scenario
+    import scenario.tools
+finally:
+    pass
 
 
 class CheckDeps:
@@ -53,6 +57,10 @@ class CheckDeps:
                 _current_module = ModuleDeps.get(_src_path.name)  # type: ModuleDeps
                 scenario.logging.debug("  Reading %s:", _src_path)
                 for _line in _src_path.read_bytes().splitlines():  # type: bytes
+                    # Memo: In 'scenario/__init__.py', imports are maid in blocks in order to avoid PEP8 E402 import warnings.
+                    if _src_path == scenario.tools.paths.SRC_PATH / "scenario" / "__init__.py":
+                        # Strip leading spaces, for 'scenario/__init__.py' only!
+                        _line = _line.lstrip()
                     if not _line.startswith(b'from .'):
                         continue
                     _words = _line.split()  # type: typing.List[bytes]

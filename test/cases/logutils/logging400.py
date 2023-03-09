@@ -19,14 +19,16 @@ import typing
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import LogVerificationStep
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from steps.common import ExecScenario as _ExecScenarioType
 
 
 class Logging400(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Scenario logging indentation",
@@ -49,7 +51,7 @@ class CheckStepIndentation(LogVerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
+            exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
         LogVerificationStep.__init__(self, exec_step)
 
@@ -113,7 +115,7 @@ class CheckActionResult(LogVerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
+            exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
         LogVerificationStep.__init__(self, exec_step)
 

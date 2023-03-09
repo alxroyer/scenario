@@ -17,16 +17,13 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .knownissues210 import CheckNamedIssueLevel
-# Related scenarios:
-from knownissuedetailsscenario import KnownIssueDetailsScenario
-
 
 class KnownIssues280(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from knownissues.knownissues210 import CheckNamedIssueLevel
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue level names & multiple scenarios",
@@ -38,7 +35,7 @@ class KnownIssues280(scenario.test.TestCase):
             [scenario.test.paths.SIMPLE_SCENARIO, scenario.test.paths.KNOWN_ISSUE_DETAILS_SCENARIO],
             config_values={
                 f"{scenario.ConfigKey.ISSUE_LEVEL_NAMES}.foo": 10,
-                KnownIssueDetailsScenario.ConfigKey.LEVEL: 10,
+                scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.LEVEL: 10,
             },
         ))
         self.addstep(CheckNamedIssueLevel(ExecScenario.getinstance(), name="foo", value=10, count=3))

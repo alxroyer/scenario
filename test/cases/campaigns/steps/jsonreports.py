@@ -18,24 +18,25 @@ import json
 import typing
 
 import scenario
-if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
 import scenario.test
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Related steps:
-from jsonreport.steps.expectations import CheckJsonReportExpectations
-from scenarioexecution.steps.execution import ExecScenario
-from .outdirfiles import CampaignOutdirFilesManager
-from .execution import ExecCampaign
+if typing.TYPE_CHECKING:
+    from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
 
 
 class CheckCampaignJsonReports(scenario.test.VerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecCampaign
+            exec_step,  # type: _ExecCampaignType
             campaign_expectations,  # type: scenario.test.CampaignExpectations
     ):  # type: (...) -> None
+        from campaigns.steps.outdirfiles import CampaignOutdirFilesManager
+        from jsonreport.steps.expectations import CheckJsonReportExpectations
+        from scenarioexecution.steps.execution import ExecScenario
+
         scenario.test.VerificationStep.__init__(self, exec_step)
 
         self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
@@ -54,7 +55,7 @@ class CheckCampaignJsonReports(scenario.test.VerificationStep):
             for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: scenario.test.ScenarioExpectations
 
                 # Read the JSON report file.
-                _json = {}  # type: JSONDict
+                _json = {}  # type: JsonDictType
                 assert _test_case_expectations.script_path is not None
                 if self.ACTION(f"Read the JSON report file for '{_test_case_expectations.script_path}'."):
                     _json_path = self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path  # type: typing.Optional[scenario.Path]

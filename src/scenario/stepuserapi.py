@@ -22,11 +22,7 @@ import abc
 import typing
 
 if typing.TYPE_CHECKING:
-    # `AnyIssueLevelType` used in method signatures.
-    # Type declared for type checking only.
     from .issuelevels import AnyIssueLevelType
-    # `StepSpecificationType` used in method signatures.
-    # Type declared for type checking only.
     from .stepdefinition import StepSpecificationType
 
 
@@ -127,7 +123,7 @@ class StepUserApi(abc.ABC):
 
         if not isinstance(evidence, str):
             # In case the user provides something that is not a regular string.
-            evidence = repr(evidence)  # type: ignore  ## Statement is unreachable
+            evidence = repr(evidence)  # type: ignore[unreachable]
         SCENARIO_RUNNER.onevidence(evidence)
 
     def goto(

@@ -21,11 +21,7 @@ YAML configuration file management.
 import typing
 
 if typing.TYPE_CHECKING:
-    # `KeyType` used in method signatures.
-    # Type declared for type checking only.
     from .configtypes import KeyType
-    # `AnyPathType` used in method signatures and type definitions.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 
@@ -53,7 +49,7 @@ class ConfigYaml:
 
         # Import `yaml`.
         try:
-            import yaml  # type: ignore  ## `yaml` may not be installed. Do not try to check typings for this package.
+            import yaml
         except ImportError as _err:
             raise EnvironmentError(_err)
 

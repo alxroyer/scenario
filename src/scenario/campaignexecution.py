@@ -24,21 +24,12 @@ which owns a list of :class:`TestCase` instances (one test case per scenario).
 
 import typing
 
-# `ExecutionStatus` used in method signatures.
-from .executionstatus import ExecutionStatus
-# `Path` used in method signatures.
-from .path import Path
-# `ScenarioExecution` used in method signatures.
-from .scenarioexecution import ScenarioExecution
-# `ExecTotalStats` and `TimeStats` used in method signatures.
-from .stats import ExecTotalStats, TimeStats
-# `TestError` used in method signatures.
-from .testerrors import TestError
-
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
-    from .path import AnyPathType
+    from .executionstatus import ExecutionStatus as _ExecutionStatusType
+    from .path import AnyPathType, Path as _PathType
+    from .scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from .stats import ExecTotalStats as _ExecTotalStatsType
+    from .testerrors import TestError as _TestErrorType
 
 
 class CampaignExecution:
@@ -56,6 +47,9 @@ class CampaignExecution:
 
             ``None`` initializes the output directory path with the current working directory.
         """
+        from .path import Path
+        from .stats import TimeStats
+
         #: Output directory path.
         self.outdir = Path(outdir)  # type: Path
         #: Test suite results.
@@ -71,17 +65,19 @@ class CampaignExecution:
         return super().__repr__()
 
     @property
-    def junit_path(self):  # type: () -> Path
+    def junit_path(self):  # type: () -> _PathType
         """
         JUnit path.
         """
         return self.outdir / "campaign.xml"
 
     @property
-    def steps(self):  # type: () -> ExecTotalStats
+    def steps(self):  # type: () -> _ExecTotalStatsType
         """
         Step statistics.
         """
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.steps.total
@@ -89,10 +85,12 @@ class CampaignExecution:
         return _stats
 
     @property
-    def actions(self):  # type: () -> ExecTotalStats
+    def actions(self):  # type: () -> _ExecTotalStatsType
         """
         Action statistics.
         """
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.actions.total
@@ -100,10 +98,12 @@ class CampaignExecution:
         return _stats
 
     @property
-    def results(self):  # type: () -> ExecTotalStats
+    def results(self):  # type: () -> _ExecTotalStatsType
         """
         Expected result statistics.
         """
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.results.total
@@ -146,6 +146,8 @@ class TestSuiteExecution:
             which makes the :attr:`test_suite_file` instance *void* as well.
             This path can be fixed programmatically later on.
         """
+        from .path import Path
+        from .stats import TimeStats
         from .testsuitefile import TestSuiteFile
 
         #: Owner campaign execution.
@@ -166,10 +168,12 @@ class TestSuiteExecution:
         return f"<{qualname(type(self))} of '{self.test_suite_file.path}'>"
 
     @property
-    def steps(self):  # type: () -> ExecTotalStats
+    def steps(self):  # type: () -> _ExecTotalStatsType
         """
         Step statistics.
         """
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
@@ -177,10 +181,12 @@ class TestSuiteExecution:
         return _stats
 
     @property
-    def actions(self):  # type: () -> ExecTotalStats
+    def actions(self):  # type: () -> _ExecTotalStatsType
         """
         Action statistics.
         """
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
@@ -188,10 +194,12 @@ class TestSuiteExecution:
         return _stats
 
     @property
-    def results(self):  # type: () -> ExecTotalStats
+    def results(self):  # type: () -> _ExecTotalStatsType
         """
         Expected result statistics.
         """
+        from .stats import ExecTotalStats
+
         _stats = ExecTotalStats()  # type: ExecTotalStats
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
@@ -234,6 +242,9 @@ class TestCaseExecution:
             ``None`` initializes the :attr:`script_path` member with a *void* file path.
             This path can be fixed programmatically later on.
         """
+        from .path import Path
+        from .stats import TimeStats
+
         #: Owner test suite execution.
         self.test_suite_execution = test_suite_execution  # type: TestSuiteExecution
         #: Scenario script path.
@@ -254,7 +265,7 @@ class TestCaseExecution:
         return f"<{qualname(type(self))} of '{self.script_path}'>"
 
     @property
-    def scenario_execution(self):  # type: () -> typing.Optional[ScenarioExecution]
+    def scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]
         """
         Scenario execution data.
         """
@@ -274,10 +285,12 @@ class TestCaseExecution:
             return self.script_path.prettypath
 
     @property
-    def status(self):  # type: () -> ExecutionStatus
+    def status(self):  # type: () -> _ExecutionStatusType
         """
         Scenario execution status.
         """
+        from .executionstatus import ExecutionStatus
+
         if self.scenario_execution:
             return self.scenario_execution.status
         else:
@@ -285,7 +298,7 @@ class TestCaseExecution:
             return ExecutionStatus.FAIL
 
     @property
-    def errors(self):  # type: () -> typing.List[TestError]
+    def errors(self):  # type: () -> typing.List[_TestErrorType]
         """
         Test errors.
         """
@@ -294,7 +307,7 @@ class TestCaseExecution:
         return []
 
     @property
-    def warnings(self):  # type: () -> typing.List[TestError]
+    def warnings(self):  # type: () -> typing.List[_TestErrorType]
         """
         Warnings.
         """
@@ -303,28 +316,34 @@ class TestCaseExecution:
         return []
 
     @property
-    def steps(self):  # type: () -> ExecTotalStats
+    def steps(self):  # type: () -> _ExecTotalStatsType
         """
         Step statistics.
         """
+        from .stats import ExecTotalStats
+
         if self.scenario_execution:
             return self.scenario_execution.step_stats
         return ExecTotalStats()
 
     @property
-    def actions(self):  # type: () -> ExecTotalStats
+    def actions(self):  # type: () -> _ExecTotalStatsType
         """
         Action statistics.
         """
+        from .stats import ExecTotalStats
+
         if self.scenario_execution:
             return self.scenario_execution.action_stats
         return ExecTotalStats()
 
     @property
-    def results(self):  # type: () -> ExecTotalStats
+    def results(self):  # type: () -> _ExecTotalStatsType
         """
         Expected result statistics.
         """
+        from .stats import ExecTotalStats
+
         if self.scenario_execution:
             return self.scenario_execution.result_stats
         return ExecTotalStats()
@@ -373,7 +392,7 @@ class LogFileReader:
         Initializes :attr:`path` and :attr:`content` attributes with ``None``.
         """
         #: Test case log file path.
-        self.path = None  # type: typing.Optional[Path]
+        self.path = None  # type: typing.Optional[_PathType]
         #: Test case log file content.
         self.content = None  # type: typing.Optional[bytes]
 

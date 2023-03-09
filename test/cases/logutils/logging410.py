@@ -14,18 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import typing
+
 import scenario
-from scenario.scenariologging import ScenarioLogging
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import LogVerificationStep
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from steps.common import ExecScenario as _ExecScenarioType
 
 
 class Logging410(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Scenario stack indentation",
@@ -45,7 +48,7 @@ class CheckMainScenario(LogVerificationStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
+            exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
         LogVerificationStep.__init__(self, exec_step)
 
@@ -53,6 +56,8 @@ class CheckMainScenario(LogVerificationStep):
         self.result_indentation = 0  # type: int
 
     def step(self):  # type: (...) -> None
+        from scenario.scenariologging import ScenarioLogging
+
         self.STEP("Main scenario indentation")
 
         if self.RESULT("The beginning of the main scenario is displayed without indentation."):
@@ -119,6 +124,8 @@ class CheckMainScenario(LogVerificationStep):
 class CheckSubScenario(LogVerificationStep):
 
     def step(self):  # type: (...) -> None
+        from scenario.scenariologging import ScenarioLogging
+
         self.STEP("Subscenario indentation")
 
         assert isinstance(self.exec_step, CheckMainScenario)

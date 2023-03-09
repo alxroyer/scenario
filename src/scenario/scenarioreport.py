@@ -22,22 +22,14 @@ import json
 import sys
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
-# `Logger` used for inheritance.
-from .logger import Logger
-# `ScenarioDefinition` used in method signatures.
-from .scenarioexecution import ScenarioDefinition
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
+from .logger import Logger  # `Logger` used for inheritance.
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from .path import AnyPathType
-    # `JSONDict` used in method signatures.
-    # Type declared for type checking only.
-    from .typing import JSONDict
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from .stepdefinition import StepDefinition as _StepDefinitionType
+    from .typing import JsonDictType
 
 
 class ScenarioReport(Logger):
@@ -59,7 +51,7 @@ class ScenarioReport(Logger):
 
     def writejsonreport(
             self,
-            scenario_definition,  # type: ScenarioDefinition
+            scenario_definition,  # type: _ScenarioDefinitionType
             json_path,  # type: AnyPathType
     ):  # type: (...) -> bool
         """
@@ -78,7 +70,7 @@ class ScenarioReport(Logger):
 
             # Build the JSON content.
             self._json_path = Path(json_path)
-            _json = self._scenario2json(scenario_definition, is_main=True)  # type: JSONDict
+            _json = self._scenario2json(scenario_definition, is_main=True)  # type: JsonDictType
 
             # Write the JSON file.
             Path(json_path).write_text(json.dumps(_json, indent=2), encoding="utf-8")
@@ -94,7 +86,7 @@ class ScenarioReport(Logger):
     def readjsonreport(
             self,
             json_path,  # type: AnyPathType
-    ):  # type: (...) -> typing.Optional[ScenarioDefinition]
+    ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
         """
         Reads the JSON report file.
 
@@ -111,11 +103,11 @@ class ScenarioReport(Logger):
             self.debug("Reading scenario execution from JSON report '%s'", json_path)
 
             # Read the JSON file.
-            _json = json.loads(Path(json_path).read_bytes())  # type: JSONDict
+            _json = json.loads(Path(json_path).read_bytes())  # type: JsonDictType
 
             # Analyze the JSON content.
             self._json_path = Path(json_path)
-            _scenario_definition = self._json2scenario(_json)  # type: ScenarioDefinition
+            _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
 
             return _scenario_definition
         except Exception as _err:
@@ -127,9 +119,9 @@ class ScenarioReport(Logger):
 
     def _scenario2json(
             self,
-            scenario_definition,  # type: ScenarioDefinition
+            scenario_definition,  # type: _ScenarioDefinitionType
             is_main,  # type: bool
-    ):  # type: (...) -> JSONDict
+    ):  # type: (...) -> JsonDictType
         """
         Scenario report JSON generation.
 
@@ -145,7 +137,7 @@ class ScenarioReport(Logger):
         self.pushindentation()
 
         # Build a JSON object.
-        _json_scenario = {}  # type: JSONDict
+        _json_scenario = {}  # type: JsonDictType
 
         # JSON schema.
         if is_main:
@@ -168,7 +160,7 @@ class ScenarioReport(Logger):
 
         # Steps.
         _json_scenario["steps"] = []
-        for _step_definition in scenario_definition.steps:  # type: StepDefinition
+        for _step_definition in scenario_definition.steps:  # type: _StepDefinitionType
             _json_scenario["steps"].append(self._step2json(_step_definition))
 
         if scenario_definition.execution:
@@ -200,8 +192,8 @@ class ScenarioReport(Logger):
 
     def _json2scenario(
             self,
-            json_scenario,  # type: JSONDict
-    ):  # type: (...) -> ScenarioDefinition
+            json_scenario,  # type: JsonDictType
+    ):  # type: (...) -> _ScenarioDefinitionType
         """
         Scenario data reading from JSON report.
 
@@ -210,6 +202,7 @@ class ScenarioReport(Logger):
         """
         from .debugutils import jsondump
         from .path import Path
+        from .scenariodefinition import ScenarioDefinition
         from .scenarioexecution import ScenarioExecution
         from .stats import TimeStats
         from .testerrors import TestError
@@ -234,18 +227,18 @@ class ScenarioReport(Logger):
             _scenario_definition.setattribute(_attribute_name, json_scenario["attributes"][_attribute_name])
 
         # Steps.
-        for _json_step_definition in json_scenario["steps"]:  # type: JSONDict
-            _step_definition = self._json2step(_json_step_definition)  # type: StepDefinition
+        for _json_step_definition in json_scenario["steps"]:  # type: JsonDictType
+            _step_definition = self._json2step(_json_step_definition)  # type: _StepDefinitionType
             _scenario_definition.addstep(_step_definition)
 
         # Status & errors.
         _scenario_definition.execution = ScenarioExecution(_scenario_definition)
-        for _json_error in json_scenario["errors"]:  # type: JSONDict
+        for _json_error in json_scenario["errors"]:  # type: JsonDictType
             _scenario_definition.execution.errors.append(TestError.fromjson(_json_error))
             self.debug("Error: %s", _scenario_definition.execution.errors[-1])
         self.debug("Errors: %d", len(_scenario_definition.execution.errors))
 
-        for _json_warning in json_scenario["warnings"]:  # type: JSONDict
+        for _json_warning in json_scenario["warnings"]:  # type: JsonDictType
             _scenario_definition.execution.warnings.append(TestError.fromjson(_json_warning))
             self.debug("Warning: %s", _scenario_definition.execution.warnings[-1])
         self.debug("Warnings: %d", len(_scenario_definition.execution.warnings))
@@ -259,8 +252,8 @@ class ScenarioReport(Logger):
 
     def _step2json(
             self,
-            step_definition,  # type: StepDefinition
-    ):  # type: (...) -> JSONDict
+            step_definition,  # type: _StepDefinitionType
+    ):  # type: (...) -> JsonDictType
         """
         Generates the JSON report for a step.
 
@@ -269,7 +262,7 @@ class ScenarioReport(Logger):
         """
         from .debugutils import jsondump
         from .stepexecution import StepExecution
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
         from .testerrors import TestError
 
         self.debug("Generating JSON report for %r", step_definition)
@@ -278,10 +271,10 @@ class ScenarioReport(Logger):
         _json_step_definition = {
             "location": step_definition.location.tolongstring(),
             "description": step_definition.description,
-        }  # type: JSONDict
+        }  # type: JsonDictType
 
         # Do not set 'executions' and 'actions-results' lists for step sections.
-        if not isinstance(step_definition, StepSection):
+        if not isinstance(step_definition, StepSectionDescription):
             _json_step_definition["executions"] = []
             for _step_execution in step_definition.executions:  # type: StepExecution
                 _json_step_execution = {
@@ -289,7 +282,7 @@ class ScenarioReport(Logger):
                     "time": _step_execution.time.tojson(),
                     "errors": [],
                     "warnings": [],
-                }  # type: JSONDict
+                }  # type: JsonDictType
 
                 for _error in _step_execution.errors:  # type: TestError
                     _json_step_execution["errors"].append(_error.tojson())
@@ -300,7 +293,7 @@ class ScenarioReport(Logger):
                 _json_step_definition["executions"].append(_json_step_execution)
 
             _json_step_definition["actions-results"] = []
-            for _action_result_definition in step_definition.actions_results:  # type: ActionResultDefinition
+            for _action_result_definition in step_definition.actions_results:  # type: _ActionResultDefinitionType
                 _json_step_definition["actions-results"].append(self._actionresult2json(_action_result_definition))
 
         self.popindentation()
@@ -310,8 +303,8 @@ class ScenarioReport(Logger):
 
     def _json2step(
             self,
-            json_step_definition,  # type: JSONDict
-    ):  # type: (...) -> StepDefinition
+            json_step_definition,  # type: JsonDictType
+    ):  # type: (...) -> _StepDefinitionType
         """
         Step reading from JSON report.
 
@@ -321,8 +314,9 @@ class ScenarioReport(Logger):
         from .debugutils import jsondump
         from .locations import CodeLocation
         from .stats import TimeStats
+        from .stepdefinition import StepDefinition
         from .stepexecution import StepExecution
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
         from .testerrors import TestError
 
         self.debug("Reading step instance from JSON: %s", jsondump(json_step_definition, indent=2),
@@ -341,9 +335,9 @@ class ScenarioReport(Logger):
             # Missing executions and/or actions/results.
             # Replace the general `StepDefinition` instance created above by a `StepSection` one.
             assert _step_definition.description is not None
-            _step_definition = StepSection(_step_definition.description)
+            _step_definition = StepSectionDescription(_step_definition.description)
         else:
-            for _json_step_execution in json_step_definition["executions"]:  # type: JSONDict
+            for _json_step_execution in json_step_definition["executions"]:  # type: JsonDictType
                 self.debug("Building step execution instance from JSON: %s", jsondump(_json_step_execution, indent=2),
                            extra=self.longtext(max_lines=10))
                 self.pushindentation()
@@ -352,12 +346,12 @@ class ScenarioReport(Logger):
                 _step_execution.time = TimeStats.fromjson(_json_step_execution["time"])
                 self.debug("Time: %s", _step_execution.time)
 
-                for _json_error in _json_step_execution["errors"]:  # type: JSONDict
+                for _json_error in _json_step_execution["errors"]:  # type: JsonDictType
                     _step_execution.errors.append(TestError.fromjson(_json_error))
                     self.debug("Error: %s", _step_execution.errors[-1])
                 self.debug("Errors: %d", len(_step_execution.errors))
 
-                for _json_warning in _json_step_execution["warnings"]:  # type: JSONDict
+                for _json_warning in _json_step_execution["warnings"]:  # type: JsonDictType
                     _step_execution.warnings.append(TestError.fromjson(_json_warning))
                     self.debug("Warning: %s", _step_execution.warnings[-1])
                 self.debug("Warnings: %d", len(_step_execution.warnings))
@@ -365,8 +359,8 @@ class ScenarioReport(Logger):
                 _step_definition.executions.append(_step_execution)
                 self.popindentation()
 
-            for _json_action_result_definition in json_step_definition["actions-results"]:  # type: JSONDict
-                _action_result_definition = self._json2actionresult(_json_action_result_definition)  # type: ActionResultDefinition
+            for _json_action_result_definition in json_step_definition["actions-results"]:  # type: JsonDictType
+                _action_result_definition = self._json2actionresult(_json_action_result_definition)  # type: _ActionResultDefinitionType
                 _step_definition.addactionresult(_action_result_definition)
 
         self.popindentation()
@@ -374,8 +368,8 @@ class ScenarioReport(Logger):
 
     def _actionresult2json(
             self,
-            action_result_definition,  # type: ActionResultDefinition
-    ):  # type: (...) -> JSONDict
+            action_result_definition,  # type: _ActionResultDefinitionType
+    ):  # type: (...) -> JsonDictType
         """
         Generates the JSON report for an action / expected result.
 
@@ -394,7 +388,7 @@ class ScenarioReport(Logger):
             "type": str(action_result_definition.type),
             "description": action_result_definition.description,
             "executions": [],
-        }  # type: JSONDict
+        }  # type: JsonDictType
 
         for _action_result_execution in action_result_definition.executions:  # type: ActionResultExecution
             _json_action_result_execution = {
@@ -403,7 +397,7 @@ class ScenarioReport(Logger):
                 "errors": [],
                 "warnings": [],
                 "subscenarios": [],
-            }  # type: JSONDict
+            }  # type: JsonDictType
 
             for _error in _action_result_execution.errors:  # type: TestError
                 _json_action_result_execution["errors"].append(_error.tojson())
@@ -427,14 +421,15 @@ class ScenarioReport(Logger):
 
     def _json2actionresult(
             self,
-            json_action_result_definition,  # type: JSONDict
-    ):  # type: (...) -> ActionResultDefinition
+            json_action_result_definition,  # type: JsonDictType
+    ):  # type: (...) -> _ActionResultDefinitionType
         """
         Action / expected result reading from JSON report.
 
         :param json_action_result_definition: Action / expected result JSON report to read.
         :return: :class:`.actionresultdefinition.ActionResultDefinition` data.
         """
+        from .actionresultdefinition import ActionResultDefinition
         from .actionresultexecution import ActionResultExecution
         from .debugutils import jsondump
         from .stats import TimeStats
@@ -456,7 +451,7 @@ class ScenarioReport(Logger):
         )  # type: ActionResultDefinition
         self.debug("Description: %r", _action_result_definition.description)
 
-        for _json_action_result_execution in json_action_result_definition["executions"]:  # type: JSONDict
+        for _json_action_result_execution in json_action_result_definition["executions"]:  # type: JsonDictType
             self.debug("Reading action/result execution instance from JSON: %s", jsondump(_json_action_result_execution, indent=2),
                        extra=self.longtext(max_lines=10))
             self.pushindentation()
@@ -469,20 +464,20 @@ class ScenarioReport(Logger):
             _action_result_execution.evidence = _json_action_result_execution["evidence"].copy()
             self.debug("Evidence: %r", _action_result_execution.evidence)
 
-            for _json_error in _json_action_result_execution["errors"]:  # type: JSONDict
+            for _json_error in _json_action_result_execution["errors"]:  # type: JsonDictType
                 _action_result_execution.errors.append(TestError.fromjson(_json_error))
                 self.debug("Error: %s", _action_result_execution.errors[-1])
             self.debug("Error: %d", len(_action_result_execution.errors))
 
-            for _json_warning in _json_action_result_execution["warnings"]:  # type: JSONDict
+            for _json_warning in _json_action_result_execution["warnings"]:  # type: JsonDictType
                 _action_result_execution.warnings.append(TestError.fromjson(_json_warning))
                 self.debug("Warning: %s", _action_result_execution.warnings[-1])
             self.debug("Warning: %d", len(_action_result_execution.warnings))
 
-            for _json_subscenario in _json_action_result_execution["subscenarios"]:  # type: JSONDict
+            for _json_subscenario in _json_action_result_execution["subscenarios"]:  # type: JsonDictType
                 try:
                     self.pushindentation("  | ")
-                    _subscenario_definition = self._json2scenario(_json_subscenario)  # type: ScenarioDefinition
+                    _subscenario_definition = self._json2scenario(_json_subscenario)  # type: _ScenarioDefinitionType
                     if _subscenario_definition.execution:
                         _action_result_execution.subscenarios.append(_subscenario_definition.execution)
                 finally:

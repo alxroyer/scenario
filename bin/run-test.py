@@ -22,24 +22,17 @@ Scenario test launcher.
 import pathlib
 import sys
 
-
 try:
     import scenario
 except ImportError:
     _home_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
     _src_path = _home_path / "src"  # type: pathlib.Path
-    _init_path = _src_path / "scenario" / "__init__.py"  # type: pathlib.Path
-    if _init_path.is_file():
-        try:
-            sys.path.append(str(_src_path))
-            import scenario
-        except ImportError:
-            scenario = None  # type: ignore
-    else:
-        scenario = None  # type: ignore
-if "scenario" not in sys.modules:
-    print("Could not import scenario. Please adjust PYTHONPATH environment variable.")
-    sys.exit(40)  # ErrorCodes.ENVIRONMENT_ERROR
+    sys.path.append(str(_src_path))
+    import scenario
+finally:
+    if "scenario" not in sys.modules:
+        print("Could not import scenario. Please adjust PYTHONPATH environment variable.")
+        sys.exit(40)  # ErrorCodes.ENVIRONMENT_ERROR
 
 # Main script => redirect to TestRunner.main()
 _res = scenario.runner.main()  # type: scenario.ErrorCode

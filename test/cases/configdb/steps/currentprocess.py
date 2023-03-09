@@ -18,7 +18,6 @@ import logging
 import typing
 
 import scenario
-from scenario.reflex import qualname
 import scenario.test
 import scenario.text
 
@@ -207,6 +206,8 @@ class CheckConfigValue(scenario.test.Step):
         self.value_read = None  # type: typing.Any
 
     def step(self):  # type: (...) -> None
+        from scenario.reflex import qualname
+
         self.STEP(f"Read {self.key!r}{f' as `{qualname(self.read_as)}`' if self.read_as is not None else ''}")
 
         if self.read_as is None:

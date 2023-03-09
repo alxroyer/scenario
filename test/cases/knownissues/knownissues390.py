@@ -18,17 +18,14 @@ import typing
 
 import scenario.test
 
-# Steps:
-from campaigns.steps.execution import ExecCampaign
-from campaigns.steps.log import CheckCampaignLogExpectations
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-# Related scenarios:
-from knownissuedetailsscenario import KnownIssueDetailsScenario
-
 
 class KnownIssues390(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+        from campaigns.steps.log import CheckCampaignLogExpectations
+        from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Known issue ids & campaigns",
@@ -40,7 +37,7 @@ class KnownIssues390(scenario.test.TestCase):
         self.addstep(ExecCampaign(
             [scenario.test.paths.TEST_DATA_TEST_SUITE],
             config_values={
-                KnownIssueDetailsScenario.ConfigKey.ID: "#10",
+                scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.ID: "#10",
             },
         ))
 

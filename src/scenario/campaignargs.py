@@ -20,12 +20,11 @@ Campaign runner program arguments.
 
 import typing
 
-# `Args` used for inheritance.
-from .args import Args
-# `Path` used in method signatures.
-from .path import Path
-# `CommonExecArgs` used for inheritance.
-from .scenarioargs import CommonExecArgs
+from .args import Args  # `Args` used for inheritance.
+from .scenarioargs import CommonExecArgs  # `CommonExecArgs` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .path import Path as _PathType
 
 
 class CampaignArgs(Args, CommonExecArgs):
@@ -118,6 +117,7 @@ class CampaignArgs(Args, CommonExecArgs):
         :return: True for success, False otherwise.
         """
         from .loggermain import MAIN_LOGGER
+        from .path import Path
 
         if not Args._checkargs(self):
             return False
@@ -147,7 +147,7 @@ class CampaignArgs(Args, CommonExecArgs):
         return True
 
     @property
-    def outdir(self):  # type: () -> Path
+    def outdir(self):  # type: () -> _PathType
         """
         Output directory path.
 
@@ -158,6 +158,8 @@ class CampaignArgs(Args, CommonExecArgs):
 
         :raise ValueError: If the output directory has not been defined.
         """
+        from .path import Path
+
         if not self._args.outdir:
             raise ValueError("Output directory not set")
         # `self._args.outdir` should normally be a `Path` instance already, whatever.
@@ -167,7 +169,7 @@ class CampaignArgs(Args, CommonExecArgs):
         return self._args.outdir
 
     @outdir.setter
-    def outdir(self, outdir):  # type: (Path) -> None
+    def outdir(self, outdir):  # type: (_PathType) -> None
         """
         Output directory programmatic setter.
         """
@@ -189,8 +191,10 @@ class CampaignArgs(Args, CommonExecArgs):
         return list(self._args.extra_info)
 
     @property
-    def test_suite_paths(self):  # type: () -> typing.Sequence[Path]
+    def test_suite_paths(self):  # type: () -> typing.Sequence[_PathType]
         """
         Campaign file path.
         """
+        from .path import Path
+
         return [Path(_test_suite_path) for _test_suite_path in self._args.test_suite_paths]

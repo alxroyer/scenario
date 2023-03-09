@@ -19,10 +19,8 @@ import typing
 import scenario
 import scenario.test
 
-from steps.common import ParseFinalResultsLog
-
-# Related scenarios:
-from knownissuedetailsscenario import KnownIssueDetailsScenario
+if typing.TYPE_CHECKING:
+    from steps.common import ParseFinalResultsLog as _ParseFinalResultsLogType
 
 
 class KnownIssueLevelUtils:
@@ -53,7 +51,10 @@ class KnownIssueLevelUtils:
         """
         Call from an execution step.
         """
-        assert isinstance(self, KnownIssueLevelUtils) and isinstance(self, scenario.test.Step)
+        assert (
+            isinstance(self, KnownIssueLevelUtils)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, scenario.test.Step)
+        )
 
         # Prepare a tmp script path for each issue level.
         return [
@@ -71,7 +72,10 @@ class KnownIssueLevelUtils:
         """
         Call from an execution step.
         """
-        assert isinstance(self, KnownIssueLevelUtils) and isinstance(self, scenario.test.Step)
+        assert (
+            isinstance(self, KnownIssueLevelUtils)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, scenario.test.Step)
+        )
         self.assertequal(len(scenario_paths), len(self.ISSUE_LEVELS))
 
         for _index in range(len(self.ISSUE_LEVELS)):  # type: int
@@ -98,7 +102,10 @@ class KnownIssueLevelUtils:
         """
         Call from a scenario.
         """
-        assert isinstance(self, KnownIssueLevelUtils) and isinstance(self, scenario.test.TestCase)
+        assert (
+            isinstance(self, KnownIssueLevelUtils)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, scenario.test.TestCase)
+        )
         self.assertequal(len(scenario_paths), len(self.ISSUE_LEVELS))
 
         _scenario_expectation_list = []  # type: typing.List[scenario.test.ScenarioExpectations]
@@ -107,7 +114,7 @@ class KnownIssueLevelUtils:
                 scenario.test.paths.KNOWN_ISSUE_DETAILS_SCENARIO,
                 config_values={
                     **config_values,
-                    KnownIssueDetailsScenario.ConfigKey.LEVEL: self.ISSUE_LEVELS[_index],
+                    scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.LEVEL: self.ISSUE_LEVELS[_index],
                 },
                 error_details=True,
             )  # type: scenario.test.ScenarioExpectations
@@ -130,11 +137,13 @@ class CheckFinalResultsAscendingIssueLevelOrder(scenario.test.VerificationStep, 
 
     def __init__(
             self,
-            exec_step,  # type: ParseFinalResultsLog
+            exec_step,  # type: _ParseFinalResultsLogType
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
 
     def step(self):  # type: (...) -> None
+        from steps.common import ParseFinalResultsLog
+
         assert isinstance(self.exec_step, ParseFinalResultsLog)
 
         _sorted_issue_levels = sorted(self.ISSUE_LEVELS)  # type: typing.List[int]

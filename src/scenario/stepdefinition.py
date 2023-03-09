@@ -22,18 +22,13 @@ import inspect
 import types
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
-# `Assertions` used for inheritance.
-from .assertions import Assertions
-# `KnownIssue` used in method signatures.
-from .knownissues import KnownIssue
-# `CodeLocation` used in method signatures.
-from .locations import CodeLocation
-# `Logger` used for inheritance.
-from .logger import Logger
-# `StepUserApi` used for inheritance.
-from .stepuserapi import StepUserApi
+from .assertions import Assertions  # `Assertions` used for inheritance.
+from .logger import Logger  # `Logger` used for inheritance.
+from .stepuserapi import StepUserApi  # `StepUserApi` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from .knownissues import KnownIssue as _KnownIssueType
 
 
 class StepDefinition(StepUserApi, Assertions, Logger):
@@ -59,14 +54,21 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         from .reflex import qualname
         from .scenariostack import SCENARIO_STACK
 
+        def _ensurereturntype(step_definition):  # type: (StepDefinition) -> VarStepDefinitionType
+            """
+            Avoids using ``# type: ignore`` pragmas every time this :meth:`StepDefinition.getinstance()` method returns a value.
+            """
+            _step_definition = typing.cast(typing.Any, step_definition)  # type: VarStepDefinitionType  # noqa  ## Shadows name '_step_definition' from outer scope
+            return _step_definition
+
         if SCENARIO_STACK.building.scenario_definition:
             _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(cls, index)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
-                return _step_definition  # type: ignore  ## Incompatible return value type (got "StepDefinition", expected "VarStepDefinitionType")
+                return _ensurereturntype(_step_definition)
         if SCENARIO_STACK.current_scenario_definition:
             _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(cls, index)  # Type already defined above.
             if _step_definition is not None:
-                return _step_definition  # type: ignore  ## Incompatible return value type (got "StepDefinition", expected "VarStepDefinitionType")
+                return _ensurereturntype(_step_definition)
         if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
             SCENARIO_STACK.raisecontexterror("No current scenario definition")
         else:
@@ -79,6 +81,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         """
         :param method: Method that defines the step, when applicable. Optional.
         """
+        from .locations import CodeLocation
         from .scenariodefinition import ScenarioDefinition
         from .stepexecution import StepExecution
 
@@ -106,7 +109,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         #: Step description.
         self.description = None  # type: typing.Optional[str]
         #: List of actions and expected results that define the step.
-        self.__action_result_definitions = []  # type: typing.List[ActionResultDefinition]
+        self.__action_result_definitions = []  # type: typing.List[_ActionResultDefinitionType]
 
         #: Step executions.
         self.executions = []  # type: typing.List[StepExecution]
@@ -143,14 +146,14 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         Number of this step definition within the steps defining the related scenario.
         Starting from 1, as displayed to the user.
         """
-        from .stepsection import StepSection
+        from .stepsection import StepSectionDescription
 
         _step_number = 0  # type: int
         # Check the :attr:`scenario` attribute has been set with a real object.
         if hasattr(self.scenario, "name"):
             for _step_definition in self.scenario.steps:  # type: StepDefinition
                 # Skip section steps.
-                if isinstance(_step_definition, StepSection):
+                if isinstance(_step_definition, StepSectionDescription):
                     continue
 
                 _step_number += 1
@@ -160,7 +163,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
 
     def addactionresult(
             self,
-            *action_result_definitions  # type: ActionResultDefinition
+            *action_result_definitions  # type: _ActionResultDefinitionType
     ):  # type: (...) -> StepDefinition
         """
         Adds actions / expected results to the list defining the step.
@@ -168,13 +171,13 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         :param action_result_definitions: Action / expected result definitions to add.
         :return: ``self``
         """
-        for _action_result_definition in action_result_definitions:  # type: ActionResultDefinition
+        for _action_result_definition in action_result_definitions:  # type: _ActionResultDefinitionType
             _action_result_definition.step = self
             self.__action_result_definitions.append(_action_result_definition)
         return self
 
     @property
-    def actions_results(self):  # type: () -> typing.List[ActionResultDefinition]
+    def actions_results(self):  # type: () -> typing.List[_ActionResultDefinitionType]
         """
         Action / expected result list.
         """
@@ -183,7 +186,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
     def getactionresult(
             self,
             index,  # type: int
-    ):  # type: (...) -> ActionResultDefinition
+    ):  # type: (...) -> _ActionResultDefinitionType
         """
         Retrieves an :class:`.actionresultdefinition.ActionResultDefinition` instance from its location.
 
@@ -285,7 +288,7 @@ class StepDefinitionHelper:
         # Save a copy of the curent `ScenarioDefinition.known_issues` list in a hidden field.
         setattr(self.definition, "__init_known_issues", list(self.definition.known_issues))
 
-    def getinitknownissues(self):  # type: (...) -> typing.Sequence[KnownIssue]
+    def getinitknownissues(self):  # type: (...) -> typing.Sequence[_KnownIssueType]
         """
         Retrieves the known issue list saved by :meth:`stashinitknownissues()` for the related step definition.
 

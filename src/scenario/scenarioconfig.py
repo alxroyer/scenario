@@ -20,17 +20,13 @@
 
 import typing
 
-# `ConfigNode` used in method signatures.
-from .confignode import ConfigNode
-# `Console` used in method signatures.
-from .console import Console
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
+
 if typing.TYPE_CHECKING:
-    # `AnyIssueLevelType` used in method signatures.
+    from .confignode import ConfigNode as _ConfigNodeType
+    from .console import Console as _ConsoleType
     from .issuelevels import AnyIssueLevelType
-# `Path` used in method signatures.
-from .path import Path
+    from .path import Path as _PathType
 
 
 class ScenarioConfig:
@@ -140,7 +136,7 @@ class ScenarioConfig:
 
         return CONFIG_DB.get(self.Key.LOG_CONSOLE, type=bool, default=True)
 
-    def logoutpath(self):  # type: (...) -> typing.Optional[Path]
+    def logoutpath(self):  # type: (...) -> typing.Optional[_PathType]
         """
         Determines whether the log lines should be written in a log file.
 
@@ -149,6 +145,7 @@ class ScenarioConfig:
         Configurable through :const:`Key.LOG_FILE`.
         """
         from .configdb import CONFIG_DB
+        from .path import Path
 
         _log_outpath = None  # type: typing.Optional[Path]
         _config = CONFIG_DB.get(self.Key.LOG_FILE, type=str)  # type: typing.Optional[str]
@@ -169,8 +166,8 @@ class ScenarioConfig:
     def logcolor(
             self,
             level,  # type: str
-            default,  # type: Console.Color
-    ):  # type: (...) -> Console.Color
+            default,  # type: _ConsoleType.Color
+    ):  # type: (...) -> _ConsoleType.Color
         """
         Retrieves the expected log color for the given log level.
 
@@ -180,7 +177,9 @@ class ScenarioConfig:
 
         Configurable through :attr:`Key.LOG_COLOR`.
         """
-        from .configdb import CONFIG_DB, ConfigNode
+        from .configdb import CONFIG_DB
+        from .confignode import ConfigNode
+        from .console import Console
 
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
         _config_node = CONFIG_DB.getnode(_key)  # type: typing.Optional[ConfigNode]
@@ -244,13 +243,14 @@ class ScenarioConfig:
 
         return CONFIG_DB.get(self.Key.DELAY_BETWEEN_STEPS, type=float, default=0.001)
 
-    def runnerscriptpath(self):  # type: (...) -> Path
+    def runnerscriptpath(self):  # type: (...) -> _PathType
         """
         Gives the path of the scenario runner script path.
 
         Useful when executing campaigns.
         """
         from .configdb import CONFIG_DB
+        from .path import Path
 
         _abspath = CONFIG_DB.get(self.Key.RUNNER_SCRIPT_PATH, type=str, default=Path(__file__).parents[2] / "bin" / "run-test.py")  # type: str
         return Path(_abspath)
@@ -299,11 +299,11 @@ class ScenarioConfig:
         from .configdb import CONFIG_DB
         from .issuelevels import IssueLevel
 
-        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[ConfigNode]
+        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[_ConfigNodeType]
         if _root_node:
             for _name in _root_node.getsubkeys():  # type: str
                 # Retrieve the `int` value configured with the issue level name.
-                _subnode = _root_node.get(_name)  # type: typing.Optional[ConfigNode]
+                _subnode = _root_node.get(_name)  # type: typing.Optional[_ConfigNodeType]
                 assert _subnode, "Internal error"
                 try:
                     _value = _subnode.cast(int)  # type: int
@@ -329,8 +329,6 @@ class ScenarioConfig:
         from .args import Args
         from .configdb import CONFIG_DB
         from .issuelevels import IssueLevel
-        if typing.TYPE_CHECKING:
-            from .issuelevels import AnyIssueLevelType
         from .scenarioargs import CommonExecArgs
 
         _args = Args.getinstance()  # type: Args
@@ -349,8 +347,6 @@ class ScenarioConfig:
         from .args import Args
         from .configdb import CONFIG_DB
         from .issuelevels import IssueLevel
-        if typing.TYPE_CHECKING:
-            from .issuelevels import AnyIssueLevelType
         from .scenarioargs import CommonExecArgs
 
         _args = Args.getinstance()  # type: Args
@@ -379,7 +375,7 @@ class ScenarioConfig:
         """
         from .configdb import CONFIG_DB
 
-        _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[ConfigNode]
+        _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[_ConfigNodeType]
         if _conf_node:
             _data = _conf_node.data  # type: typing.Any
             if isinstance(_data, list):
@@ -396,7 +392,7 @@ class ScenarioConfig:
 
     def _warning(
             self,
-            node,  # type: ConfigNode
+            node,  # type: _ConfigNodeType
             msg,  # type: str
     ):  # type: (...) -> None
         """
@@ -408,14 +404,6 @@ class ScenarioConfig:
         from .configdb import CONFIG_DB
 
         CONFIG_DB.warning(node.errmsg(msg))
-
-
-__doc__ += """
-.. py:attribute:: ScenarioConfigKey
-
-    Shortcut to the :class:`ScenarioConfig.Key` enum in order to make it possible to import it without the :class:`ScenarioConfig` class.
-"""
-ScenarioConfigKey = ScenarioConfig.Key
 
 
 __doc__ += """

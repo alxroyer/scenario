@@ -15,16 +15,16 @@
 # limitations under the License.
 
 import scenario
-from scenario.scenariologging import ScenarioLogging
 import scenario.test
-
-# Steps:
-from .logging420 import ExecUserIndentation, CheckUserIndentation
 
 
 class Logging421(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from scenario.scenariologging import ScenarioLogging
+
+        from logutils.logging420 import CheckUserIndentation, ExecUserIndentation
+
         scenario.test.TestCase.__init__(
             self,
             title="Additional user indentation in subscenario",

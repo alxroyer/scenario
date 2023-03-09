@@ -16,18 +16,17 @@
 
 import scenario.test
 
-# Steps:
-from .steps.execution import ExecCampaign
-from .steps.log import CheckCampaignLogExpectations
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-from .steps.outdirfiles import CheckCampaignOutdirFiles
-from .steps.jsonreports import CheckCampaignJsonReports
-from .steps.junitreport import CheckCampaignJunitReport
-
 
 class Campaign002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+        from campaigns.steps.jsonreports import CheckCampaignJsonReports
+        from campaigns.steps.junitreport import CheckCampaignJunitReport
+        from campaigns.steps.log import CheckCampaignLogExpectations
+        from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
+        from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Campaign execution with several test suites",

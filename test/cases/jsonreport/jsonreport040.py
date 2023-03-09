@@ -16,14 +16,13 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .steps.full import CheckFullJsonReport
-
 
 class JsonReport040(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from jsonreport.steps.full import CheckFullJsonReport
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="JSON report subscenario",

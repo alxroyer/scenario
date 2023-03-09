@@ -17,19 +17,19 @@
 import json
 import typing
 
-if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
 import scenario.test
 import scenario.text
+if typing.TYPE_CHECKING:
+    from scenario.typing import JsonDictType
 
-# Steps:
-from steps.common import ExecScenario
-from jsonreport.steps.reportfile import JsonReportFileVerificationStep
+from jsonreport.steps.reportfile import JsonReportFileVerificationStep  # `JsonReportFileVerificationStep` used for inheritance.
 
 
 class Issue33(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue #33! Fully qualified name for code locations",
@@ -75,7 +75,7 @@ class CheckExceptionLocation(JsonReportFileVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Exception location")
 
-        _json_error = {}  # type: JSONDict
+        _json_error = {}  # type: JsonDictType
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} error info from the JSON report"):
             _json_error = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"errors[{self.index}]", type=dict,
@@ -105,7 +105,7 @@ class CheckKnownIssueLocation(JsonReportFileVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Known issue location")
 
-        _json_known_issue = {}  # type: JSONDict
+        _json_known_issue = {}  # type: JsonDictType
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} known issue info from the JSON report"):
             _json_known_issue = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"warnings[{self.index}]", type=dict,

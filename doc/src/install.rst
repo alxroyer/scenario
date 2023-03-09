@@ -23,21 +23,31 @@ Prerequisites
 
 Mandatory:
 
-- Python 3.6 or later (`https://www.python.org/downloads/ <https://www.python.org/downloads/>`_)
-    - Tested with version 3.6.8
+- Python 3.6 or later (https://www.python.org/downloads/)
+
+  - Python >= 3.7 recommended (for compatibility with mypy v1.0.0).
+  - Tested with versions 3.6.8 and 3.7.9.
 
 Recommended:
 
-- mypy (`https://pypi.org/project/mypy/ <https://pypi.org/project/mypy/>`_)
-    - Tested with version 0.931 (Python 3.6.8)
-    - Tested with version 0.971 (Python 3.6.8)
-- pytz (`https://pypi.org/project/pytz/ <https://pypi.org/project/pytz/>`_)
-- PyYAML (`https://pypi.org/project/PyYAML/ <https://pypi.org/project/PyYAML/>`_)
+- mypy (https://pypi.org/project/mypy/)
+
+  - Versions prior to 1.0.0 not supported anymore.
+  - Tested with version 1.0.1 (Python 3.7.9).
+
+- pytz (https://pypi.org/project/pytz/)
+
+- PyYAML (https://pypi.org/project/PyYAML/)
 
 Documentation generation (optional):
 
-- Sphinx (`https://pypi.org/project/Sphinx/ <https://pypi.org/project/Sphinx/>`_)
+- Sphinx (https://pypi.org/project/Sphinx/)
+
+  - Tested with version 4.4.0 (Python 3.6.8) and 5.3.0 (Python 3.7.9).
+
 - Java
+
+  - Tested with version 11.0.14.
 
 
 From sources

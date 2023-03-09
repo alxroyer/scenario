@@ -17,9 +17,7 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import LogVerificationStep
+from steps.common import ExecScenario, LogVerificationStep  # `ExecScenario` and `LogVerificationStep` used for inheritance.
 
 
 class Logging420(scenario.test.TestCase):

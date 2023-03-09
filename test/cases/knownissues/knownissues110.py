@@ -19,13 +19,7 @@ import typing
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
-from steps.common import CheckJsonReportExpectations
-from steps.common import LogVerificationStep
-# Related scenarios:
-from knownissuedetailsscenario import KnownIssueDetailsScenario
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class KnownIssues110(scenario.test.TestCase):
@@ -152,6 +146,8 @@ class KnownIssues110(scenario.test.TestCase):
             known_issue_level,  # type: typing.Optional[scenario.AnyIssueLevelType]
             expected_test_status,  # type: scenario.ExecutionStatus
     ):  # type: (...) -> None
+        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+
         self.section(
             f"Ignored / error issue level: [{scenario.IssueLevel.getdesc(ignored_issue_level)} - {scenario.IssueLevel.getdesc(error_issue_level)}], "
             f"known issue level: {scenario.IssueLevel.getdesc(known_issue_level)}, "
@@ -164,7 +160,7 @@ class KnownIssues110(scenario.test.TestCase):
             config_values={
                 scenario.ConfigKey.ISSUE_LEVEL_IGNORED: ignored_issue_level,
                 scenario.ConfigKey.ISSUE_LEVEL_ERROR: error_issue_level,
-                KnownIssueDetailsScenario.ConfigKey.LEVEL: known_issue_level,
+                scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.LEVEL: known_issue_level,
             },
             generate_report=True,
             expected_return_code=(

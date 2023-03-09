@@ -23,13 +23,15 @@ import typing
 MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "test" / "cases"))
-sys.path.append(str(MAIN_PATH / "test" / "data"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 
 # `scenario` imports.
-import scenario  # noqa: E402  ## Module level import not at top of file
-from scenario.scenarioconfig import SCENARIO_CONFIG  # noqa: E402  ## Module level import not at top of file
-import scenario.test  # noqa: E402  ## Module level import not at top of file
+try:
+    # Avoid "Module level import not at top of file" PEP8 warnings.
+    import scenario
+    import scenario.test
+finally:
+    pass
 
 
 # Command line arguments.
@@ -75,11 +77,17 @@ class UnitCampaignArgs(scenario.CampaignArgs):
 
 
 if __name__ == "__main__":
+    from scenario.scenarioconfig import SCENARIO_CONFIG
+
     # Configure issue level names and URL builder.
     scenario.IssueLevel.definenames(scenario.test.IssueLevel)
     scenario.KnownIssue.seturlbuilder(lambda issue_id: (
         f"https://github.com/alxroyer/scenario/issues/{issue_id.lstrip('#')}"
-        if isinstance(issue_id, str) and issue_id.startswith("#")
+        if (
+            # Defensive condition.
+            isinstance(issue_id, str)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and issue_id.startswith("#")
+        )
         else None
     ))
 

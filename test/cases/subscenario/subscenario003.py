@@ -16,17 +16,12 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
-from steps.common import CheckJsonReportExpectations
-# Related scenarios:
-from superscenario import SuperScenario
-
 
 class SubScenario003(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Subscenario error",
@@ -35,7 +30,9 @@ class SubScenario003(scenario.test.TestCase):
         )
 
         _scenario_expectations = scenario.test.data.scenarioexpectations(
-            scenario.test.paths.SUPERSCENARIO_SCENARIO, config_values={SuperScenario.ConfigKey.SUBSCENARIO_PATH: scenario.test.paths.FAILING_SCENARIO},
+            scenario.test.paths.SUPERSCENARIO_SCENARIO, config_values={
+                scenario.test.data.scenarios.SuperScenario.ConfigKey.SUBSCENARIO_PATH: scenario.test.paths.FAILING_SCENARIO,
+            },
             error_details=True, steps=True, actions_results=True,
         )  # type: scenario.test.ScenarioExpectations
 

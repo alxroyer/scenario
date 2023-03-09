@@ -20,15 +20,12 @@ Scenario runner program arguments.
 
 import typing
 
-# `Args` used for inheritance.
-from .args import Args
-# `Path` used in method signatures.
-from .path import Path
-# `SubProcess` used in method signatures.
-from .subprocess import SubProcess
+from .args import Args  # `Args` used for inheritance.
+
 if typing.TYPE_CHECKING:
-    # `AnyIssueLevelType` used in method signatures.
     from .issuelevels import AnyIssueLevelType
+    from .path import Path as _PathType
+    from .subprocess import SubProcess as _SubProcessType
 
 
 class CommonExecArgs:
@@ -125,7 +122,7 @@ class CommonExecArgs:
     @staticmethod
     def reportexecargs(
             args,  # type: CommonExecArgs
-            subprocess,  # type: SubProcess
+            subprocess,  # type: _SubProcessType
     ):  # type: (...) -> None
         """
         Report execution program arguments from an argument parser instance to the arguments of a sub-process being built.
@@ -227,7 +224,7 @@ class ScenarioArgs(Args, CommonExecArgs):
             return False
 
         # Scenario paths.
-        for _scenario_path in self.scenario_paths:  # type: Path
+        for _scenario_path in self.scenario_paths:  # type: _PathType
             if not _scenario_path.is_file():
                 MAIN_LOGGER.error(f"No such file '{_scenario_path}'")
                 return False
@@ -241,11 +238,13 @@ class ScenarioArgs(Args, CommonExecArgs):
         return True
 
     @property
-    def json_report(self):  # type: () -> typing.Optional[Path]
+    def json_report(self):  # type: () -> typing.Optional[_PathType]
         """
         JSON report output file path.
         No JSON report when ``None``.
         """
+        from .path import Path
+
         if self._args.json_report:
             return Path(self._args.json_report)
         return None
@@ -259,8 +258,10 @@ class ScenarioArgs(Args, CommonExecArgs):
         return list(self._args.extra_info)
 
     @property
-    def scenario_paths(self):  # type: () -> typing.Sequence[Path]
+    def scenario_paths(self):  # type: () -> typing.Sequence[_PathType]
         """
         Path of the scenario Python script(s) to execute.
         """
+        from .path import Path
+
         return [Path(_scenario_path) for _scenario_path in self._args.scenario_paths]

@@ -22,21 +22,22 @@ import logging
 import re
 import typing
 
-# `Logger` used in method signatures.
-from .logger import Logger
-# `TestError` used for inheritance.
-from .testerrors import TestError
+from .testerrors import TestError  # `TestError` used for inheritance.
 
 if typing.TYPE_CHECKING:
-    # `AnyIssueLevelType` used in method signatures.
-    # Type declared for type checking only.
     from .issuelevels import AnyIssueLevelType
-    # `JSONDict` used in method signatures.
-    # Type declared for type checking only.
-    from .typing import JSONDict
+    from .logger import Logger as _LoggerType
+    from .typing import JsonDictType
 
 
 if typing.TYPE_CHECKING:
+    #: Issue URL builder type.
+    #:
+    #: :param:
+    #:     The issue as given in known-issue functions.
+    #:     Generally a string starting with the '#' character.
+    #: :return:
+    #:     The URL string on success, ``None`` on failure.
     IssueUrlBuilderType = typing.Callable[[str], typing.Optional[str]]
 
 
@@ -234,7 +235,7 @@ class KnownIssue(TestError):
 
     def logerror(
             self,
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
             level=logging.WARNING,  # type: int
             indent="",  # type: str
     ):  # type: (...) -> None
@@ -246,7 +247,7 @@ class KnownIssue(TestError):
         if self.url:
             logger.log(level, f"%s  %s", indent, self.url)
 
-    def tojson(self):  # type: (...) -> JSONDict
+    def tojson(self):  # type: (...) -> JsonDictType
         """
         Converts the :class:`TestError` instance into a JSON dictionary.
 
@@ -257,7 +258,7 @@ class KnownIssue(TestError):
             "type": "known-issue",
             "message": self.message,
             "location": self.location.tolongstring(),
-        }  # type: JSONDict
+        }  # type: JsonDictType
 
         # Optional fields.
         if self.level is not None:
@@ -271,7 +272,7 @@ class KnownIssue(TestError):
 
     @staticmethod
     def fromjson(
-            json_data,  # type: JSONDict
+            json_data,  # type: JsonDictType
     ):  # type: (...) -> TestError
         """
         Builds a :class:`KnownIssue` instance from its JSON representation.
