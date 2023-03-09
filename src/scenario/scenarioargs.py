@@ -40,7 +40,10 @@ class CommonExecArgs:
         from .issuelevels import IssueLevel
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonExecArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         #: Test execution argument group.
         self._test_exec_group = self._arg_parser.add_argument_group("Test execution")  # Type `argparse._ArgumentGroup` not available, let default typing.
@@ -91,7 +94,10 @@ class CommonExecArgs:
         i.e. the test script(s) for actions and verifications should not be executed.
         """
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonExecArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         return bool(self._args.doc_only)
 
@@ -103,7 +109,10 @@ class CommonExecArgs:
         from .issuelevels import IssueLevel
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonExecArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         return IssueLevel.parse(self._args.issue_level_error)
 
@@ -115,7 +124,10 @@ class CommonExecArgs:
         from .issuelevels import IssueLevel
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonExecArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         return IssueLevel.parse(self._args.issue_level_ignored)
 

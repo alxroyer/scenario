@@ -40,7 +40,10 @@ class CommonLoggingArgs:
         from .args import Args
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonLoggingArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonLoggingArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         #: Logging argument group.
         self._logging_group = self._arg_parser.add_argument_group("Logging")  # Type `argparse._ArgumentGroup` not available, let default typing.
@@ -67,7 +70,10 @@ class CommonLoggingArgs:
         from .args import Args
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonLoggingArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonLoggingArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         if hasattr(self._args, "debug_main"):
             return bool(self._args.debug_main)
@@ -85,7 +91,10 @@ class CommonLoggingArgs:
         from .args import Args
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonLoggingArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonLoggingArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         if hasattr(self._args, "debug_classes"):
             return list(self._args.debug_classes)

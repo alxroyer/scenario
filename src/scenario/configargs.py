@@ -36,7 +36,10 @@ class CommonConfigArgs:
         from .args import Args
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonConfigArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonConfigArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         #: Configuration argument group.
         self._config_group = self._arg_parser.add_argument_group("Configuration")  # Type `argparse._ArgumentGroup` not available, let default typing.
@@ -64,7 +67,10 @@ class CommonConfigArgs:
         from .path import Path
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonConfigArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonConfigArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         return [Path(_config_path) for _config_path in self._args.config_paths]
 
@@ -76,7 +82,10 @@ class CommonConfigArgs:
         from .args import Args
 
         # Let typings know this class is actually a subclass of the base `Args` class.
-        assert isinstance(self, CommonConfigArgs) and isinstance(self, Args)
+        assert (
+            isinstance(self, CommonConfigArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
+            and isinstance(self, Args)
+        )
 
         _config_values = {}  # type: typing.Dict[str, str]
         for _config_value in self._args.config_values:  # type: typing.Tuple[str, str]
