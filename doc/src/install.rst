@@ -25,15 +25,14 @@ Mandatory:
 
 - Python 3.6 or later (`https://www.python.org/downloads/ <https://www.python.org/downloads/>`_),
   Python >= 3.7 recommended (for compatibility with mypy v1.0.0)
-    - Tested with version 3.6.8
-    - Tested with version 3.7.9
+  - Tested with version 3.6.8
+  - Tested with version 3.7.9
 
 Recommended:
 
 - mypy (`https://pypi.org/project/mypy/ <https://pypi.org/project/mypy/>`_)
-    - Tested with version 0.931 (Python 3.6.8)
-    - Tested with version 0.971 (Python 3.6.8)
-    - Tested with version 1.0.1 (Python 3.7.9)
+  - *Versions prior to 1.0.0 not supported anymore*
+  - Tested with version 1.0.1 (Python 3.7.9)
 - pytz (`https://pypi.org/project/pytz/ <https://pypi.org/project/pytz/>`_)
 - PyYAML (`https://pypi.org/project/PyYAML/ <https://pypi.org/project/PyYAML/>`_)
 

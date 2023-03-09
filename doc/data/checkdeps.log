@@ -6,7 +6,7 @@ INFO                                        issuelevels.py, knownissues.py, loca
 INFO                                        loggermain.py, path.py, pkginfo.py, scenarioargs.py, scenarioconfig.py,
 INFO                                        scenariodefinition.py, scenarioevents.py, scenarioexecution.py, scenarioreport.py,
 INFO                                        scenariorunner.py, scenariostack.py, stats.py, stepdefinition.py, stepexecution.py,
-INFO                                        subprocess.py, testerrors.py, timezoneutils.py]
+INFO                                        stepsection.py, subprocess.py, testerrors.py, timezoneutils.py]
 INFO     <04>           campaignargs.py => [args.py, scenarioargs.py]
 INFO     <03>                 reflex.py => [debugclasses.py, logger.py]
 INFO     <03>           scenarioargs.py => [args.py]
