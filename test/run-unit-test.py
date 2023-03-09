@@ -50,7 +50,7 @@ class UnitTestArgs(scenario.ScenarioArgs):
 
 
 if __name__ == "__main__":
-    from scenario.scenarioconfig import SCENARIO_CONFIG
+    from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to protected module
 
     # Configure issue level names and URL builder.
     scenario.IssueLevel.definenames(scenario.test.IssueLevel)

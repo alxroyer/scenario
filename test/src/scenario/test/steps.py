@@ -18,7 +18,7 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
+    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
 
 if typing.TYPE_CHECKING:
     from .subprocess import SubProcess as _SubProcessType

@@ -73,7 +73,7 @@ __doc__ += """
     Gives the package information: version, ...
 """
 if __pkg_def:
-    from .pkginfo import PKG_INFO as _PKG_INFO
+    from ._pkginfo import PKG_INFO as _PKG_INFO
     info = _PKG_INFO
 
 
@@ -96,7 +96,7 @@ __doc__ += """
     Full class name of :class:`Scenario`.
 """
 if __pkg_def:
-    from .scenariodefinition import ScenarioDefinition as ScenarioDefinition
+    from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
     Scenario = ScenarioDefinition
 
 __doc__ += """
@@ -111,7 +111,7 @@ __doc__ += """
     Full class name of :class:`Step`.
 """
 if __pkg_def:
-    from .stepdefinition import StepDefinition as StepDefinition
+    from ._stepdefinition import StepDefinition as StepDefinition
     Step = StepDefinition
 
 __doc__ += """
@@ -124,7 +124,7 @@ __doc__ += """
     Full class name of :class:`ActionResult`.
 """
 if __pkg_def:
-    from .actionresultdefinition import ActionResultDefinition as ActionResultDefinition
+    from ._actionresultdefinition import ActionResultDefinition as ActionResultDefinition
     ActionResult = ActionResultDefinition
 
 
@@ -144,7 +144,7 @@ __doc__ += """
     Automatically instanciated by :meth:`.scenariodefinition.ScenarioDefinition.section()`.
 """
 if __pkg_def:
-    from .stepsection import StepSectionDescription as StepSectionDescription
+    from ._stepsection import StepSectionDescription as StepSectionDescription
 
 __doc__ += """
 .. py:attribute:: StepSectionBegin
@@ -154,7 +154,7 @@ __doc__ += """
     Step class to inherit from, then add in a scenario, in order to define the beginning of a step section.
 """
 if __pkg_def:
-    from .stepsection import StepSectionBegin as StepSectionBegin
+    from ._stepsection import StepSectionBegin as StepSectionBegin
 
 __doc__ += """
 .. py:attribute:: StepSectionEnd
@@ -164,7 +164,7 @@ __doc__ += """
     Type of the :attr:`.stepsection.StepSectionBegin.end` step to add at the end of a step section.
 """
 if __pkg_def:
-    from .stepsection import StepSectionEnd as StepSectionEnd
+    from ._stepsection import StepSectionEnd as StepSectionEnd
 
 
 __doc__ += """
@@ -185,7 +185,7 @@ __doc__ += """
     :class:`Scenario` and :class:`Step` inherit from this class.
 """
 if __pkg_def:
-    from .assertions import Assertions as Assertions
+    from ._assertions import Assertions as Assertions
 
 __doc__ += """
 .. py:attribute:: assertionhelpers
@@ -195,7 +195,7 @@ __doc__ += """
     Helper functions and types when you want to write your own assertion routines.
 """
 if __pkg_def:
-    from . import assertionhelpers as assertionhelpers
+    from . import _assertionhelpers as assertionhelpers
 
 
 __doc__ += """
@@ -215,7 +215,7 @@ __doc__ += """
     :class:`Scenario` and :class:`Step` inherit from this class.
 """
 if __pkg_def:
-    from .logger import Logger as Logger
+    from ._logger import Logger as Logger
 
 __doc__ += """
 .. py:attribute:: logging
@@ -223,7 +223,7 @@ __doc__ += """
     Main logger instance.
 """
 if __pkg_def:
-    from .loggermain import MAIN_LOGGER as _MAIN_LOGGER
+    from ._loggermain import MAIN_LOGGER as _MAIN_LOGGER
     logging = _MAIN_LOGGER
 
 __doc__ += """
@@ -234,7 +234,7 @@ __doc__ += """
     Console colors.
 """
 if __pkg_def:
-    from .console import Console as Console
+    from ._console import Console as Console
 
 __doc__ += """
 .. py:attribute:: LogExtraData
@@ -244,7 +244,7 @@ __doc__ += """
     Logging extra data management.
 """
 if __pkg_def:
-    from .logextradata import LogExtraData as LogExtraData
+    from ._logextradata import LogExtraData as LogExtraData
 
 __doc__ += """
 .. py:attribute:: debug
@@ -254,7 +254,7 @@ __doc__ += """
     Helper functions and types for debugging.
 """
 if __pkg_def:
-    from . import debugutils as debug
+    from . import _debugutils as debug
 
 
 __doc__ += """
@@ -270,7 +270,7 @@ __doc__ += """
     Configuration manager instance.
 """
 if __pkg_def:
-    from .configdb import CONFIG_DB as _CONFIG_DB
+    from ._configdb import CONFIG_DB as _CONFIG_DB
     conf = _CONFIG_DB
 
 __doc__ += """
@@ -279,7 +279,7 @@ __doc__ += """
     Alias of :class:`.confignode.ConfigNode`.
 """
 if __pkg_def:
-    from .confignode import ConfigNode as ConfigNode
+    from ._confignode import ConfigNode as ConfigNode
 
 __doc__ += """
 .. py:attribute:: ConfigKey
@@ -289,7 +289,7 @@ __doc__ += """
     `scenario` configuration keys.
 """
 if __pkg_def:
-    from .scenarioconfig import ScenarioConfig as _ScenarioConfig
+    from ._scenarioconfig import ScenarioConfig as _ScenarioConfig
     ConfigKey = _ScenarioConfig.Key
 
 
@@ -312,7 +312,7 @@ __doc__ += """
         scenario.runner.main()
 """
 if __pkg_def:
-    from .scenariorunner import SCENARIO_RUNNER as _SCENARIO_RUNNER
+    from ._scenariorunner import SCENARIO_RUNNER as _SCENARIO_RUNNER
     runner = _SCENARIO_RUNNER
 
 __doc__ += """
@@ -327,7 +327,7 @@ __doc__ += """
         scenario.campaign_runner.main()
 """
 if __pkg_def:
-    from .campaignrunner import CAMPAIGN_RUNNER as _CAMPAIGN_RUNNER
+    from ._campaignrunner import CAMPAIGN_RUNNER as _CAMPAIGN_RUNNER
     campaign_runner = _CAMPAIGN_RUNNER
 
 __doc__ += """
@@ -338,7 +338,7 @@ __doc__ += """
     Base class for :class:`ScenarioArgs` and :class:`CampaignArgs`.
 """
 if __pkg_def:
-    from .args import Args as Args
+    from ._args import Args as Args
 
 __doc__ += """
 .. py:attribute:: ScenarioArgs
@@ -348,7 +348,7 @@ __doc__ += """
     Inherit from this class in order to extend :class:`.scenariorunner.ScenarioRunner` arguments with your own launcher script ones.
 """
 if __pkg_def:
-    from .scenarioargs import ScenarioArgs as ScenarioArgs
+    from ._scenarioargs import ScenarioArgs as ScenarioArgs
 
 __doc__ += """
 .. py:attribute:: CampaignArgs
@@ -358,7 +358,7 @@ __doc__ += """
     Inherit from this class in order to extend :class:`.campaignrunner.CampaignRunner` arguments with your own launcher script ones.
 """
 if __pkg_def:
-    from .campaignargs import CampaignArgs as CampaignArgs
+    from ._campaignargs import CampaignArgs as CampaignArgs
 
 __doc__ += """
 .. py:attribute:: ErrorCode
@@ -368,7 +368,7 @@ __doc__ += """
     Error codes returned by the :meth:`main()` methods of :class:`.scenariorunner.ScenarioRunner` and :class:`.campaignrunner.CampaignRunner`.
 """
 if __pkg_def:
-    from .errcodes import ErrorCode as ErrorCode
+    from ._errcodes import ErrorCode as ErrorCode
 
 
 __doc__ += """
@@ -384,7 +384,7 @@ __doc__ += """
     Handler manager instance.
 """
 if __pkg_def:
-    from .handlers import HANDLERS as _HANDLERS
+    from ._handlers import HANDLERS as _HANDLERS
     handlers = _HANDLERS
 
 __doc__ += """
@@ -393,7 +393,7 @@ __doc__ += """
     Alias of :class:`.scenarioevents.ScenarioEvent`.
 """
 if __pkg_def:
-    from .scenarioevents import ScenarioEvent as _ScenarioEvent
+    from ._scenarioevents import ScenarioEvent as _ScenarioEvent
     Event = _ScenarioEvent
 
 __doc__ += """
@@ -402,7 +402,7 @@ __doc__ += """
     Alias of :class:`.scenarioevents.ScenarioEventData`.
 """
 if __pkg_def:
-    from .scenarioevents import ScenarioEventData as _ScenarioEventData
+    from ._scenarioevents import ScenarioEventData as _ScenarioEventData
     EventData = _ScenarioEventData
 
 
@@ -421,7 +421,7 @@ __doc__ += """
     Describes the final status of a scenario or campaign execution.
 """
 if __pkg_def:
-    from .executionstatus import ExecutionStatus as ExecutionStatus
+    from ._executionstatus import ExecutionStatus as ExecutionStatus
 
 __doc__ += """
 .. py:attribute:: ScenarioExecution
@@ -429,7 +429,7 @@ __doc__ += """
     Alias of :class:`.scenarioexecution.ScenarioExecution`.
 """
 if __pkg_def:
-    from .scenarioexecution import ScenarioExecution as ScenarioExecution
+    from ._scenarioexecution import ScenarioExecution as ScenarioExecution
 
 __doc__ += """
 .. py:attribute:: StepExecution
@@ -437,7 +437,7 @@ __doc__ += """
     Alias of :class:`.stepexecution.StepExecution`.
 """
 if __pkg_def:
-    from .stepexecution import StepExecution as StepExecution
+    from ._stepexecution import StepExecution as StepExecution
 
 __doc__ += """
 .. py:attribute:: ActionResultExecution
@@ -445,7 +445,7 @@ __doc__ += """
     Alias of :class:`.actionresultexecution.ActionResultExecution`.
 """
 if __pkg_def:
-    from .actionresultexecution import ActionResultExecution as ActionResultExecution
+    from ._actionresultexecution import ActionResultExecution as ActionResultExecution
 
 __doc__ += """
 .. py::attribute:: CampaignExecution
@@ -453,7 +453,7 @@ __doc__ += """
     Alias of :class:`.campaignexecutions.CampaignExecution`.
 """
 if __pkg_def:
-    from .campaignexecution import CampaignExecution as CampaignExecution
+    from ._campaignexecution import CampaignExecution as CampaignExecution
 
 __doc__ += """
 .. py::attribute:: TestSuiteExecution
@@ -461,7 +461,7 @@ __doc__ += """
     Alias of :class:`.campaignexecutions.TestSuiteExecution`.
 """
 if __pkg_def:
-    from .campaignexecution import TestSuiteExecution as TestSuiteExecution
+    from ._campaignexecution import TestSuiteExecution as TestSuiteExecution
 
 __doc__ += """
 .. py::attribute:: TestCaseExecution
@@ -469,7 +469,7 @@ __doc__ += """
     Alias of :class:`.campaignexecutions.TestCaseExecution`.
 """
 if __pkg_def:
-    from .campaignexecution import TestCaseExecution as TestCaseExecution
+    from ._campaignexecution import TestCaseExecution as TestCaseExecution
 
 __doc__ += """
 .. py:attribute:: TestError
@@ -479,7 +479,7 @@ __doc__ += """
     Describes an error that occurred during the tests.
 """
 if __pkg_def:
-    from .testerrors import TestError as TestError
+    from ._testerrors import TestError as TestError
 
 __doc__ += """
 .. py:attribute:: ExceptionError
@@ -489,7 +489,7 @@ __doc__ += """
     Describes an error due to an exception that occurred during the tests.
 """
 if __pkg_def:
-    from .testerrors import ExceptionError as ExceptionError
+    from ._testerrors import ExceptionError as ExceptionError
 
 __doc__ += """
 .. py:attribute:: KnownIssue
@@ -499,7 +499,7 @@ __doc__ += """
     Describes an error due to an exception that occurred during the tests.
 """
 if __pkg_def:
-    from .knownissues import KnownIssue as KnownIssue
+    from ._knownissues import KnownIssue as KnownIssue
 
 __doc__ += """
 .. py:attribute:: IssueLevel
@@ -513,9 +513,9 @@ __doc__ += """
     Alias of :class:`.issuelevels.AnyIssueLevelType`.
 """
 if __pkg_def:
-    from .issuelevels import IssueLevel as IssueLevel
+    from ._issuelevels import IssueLevel as IssueLevel
 if typing.TYPE_CHECKING:
-    from .issuelevels import AnyIssueLevelType as AnyIssueLevelType
+    from ._issuelevels import AnyIssueLevelType as AnyIssueLevelType
 
 __doc__ += """
 .. py:attribute:: TimeStats
@@ -525,7 +525,7 @@ __doc__ += """
     Describes execution time statistics.
 """
 if __pkg_def:
-    from .stats import TimeStats as TimeStats
+    from ._stats import TimeStats as TimeStats
 
 __doc__ += """
 .. py:attribute:: ExecTotalStats
@@ -535,7 +535,7 @@ __doc__ += """
     Describes count statistics: number of items executed, out of the total number of items.
 """
 if __pkg_def:
-    from .stats import ExecTotalStats as ExecTotalStats
+    from ._stats import ExecTotalStats as ExecTotalStats
 
 __doc__ += """
 .. py:attribute:: stack
@@ -543,7 +543,7 @@ __doc__ += """
     Scenario stack instance.
 """
 if __pkg_def:
-    from .scenariostack import SCENARIO_STACK as _SCENARIO_STACK
+    from ._scenariostack import SCENARIO_STACK as _SCENARIO_STACK
     stack = _SCENARIO_STACK
 
 
@@ -560,7 +560,7 @@ __doc__ += """
     Scenario report manager.
 """
 if __pkg_def:
-    from .scenarioreport import SCENARIO_REPORT as _SCENARIO_REPORT
+    from ._scenarioreport import SCENARIO_REPORT as _SCENARIO_REPORT
     report = _SCENARIO_REPORT
 
 __doc__ += """
@@ -569,7 +569,7 @@ __doc__ += """
     Campaign report manager.
 """
 if __pkg_def:
-    from .campaignreport import CAMPAIGN_REPORT as _CAMPAIGN_REPORT
+    from ._campaignreport import CAMPAIGN_REPORT as _CAMPAIGN_REPORT
     campaign_report = _CAMPAIGN_REPORT
 
 
@@ -589,9 +589,9 @@ __doc__ += """
     Alias of :class:`.path.AnyPathType`.
 """
 if __pkg_def:
-    from .path import Path as Path
+    from ._path import Path as Path
 if typing.TYPE_CHECKING:
-    from .path import AnyPathType as AnyPathType
+    from ._path import AnyPathType as AnyPathType
 
 __doc__ += """
 .. py:attribute:: SubProcess
@@ -606,9 +606,9 @@ __doc__ += """
     Alias of :class:`.subprocess.VarSubProcessType`.
 """
 if __pkg_def:
-    from .subprocess import SubProcess as SubProcess
+    from ._subprocess import SubProcess as SubProcess
 if typing.TYPE_CHECKING:
-    from .subprocess import VarSubProcessType as VarSubProcessType
+    from ._subprocess import VarSubProcessType as VarSubProcessType
 
 __doc__ += """
 .. py:attribute:: CodeLocation
@@ -616,7 +616,7 @@ __doc__ += """
     Alias of :class:`.locations.CodeLocation`.
 """
 if __pkg_def:
-    from .locations import CodeLocation as CodeLocation
+    from ._locations import CodeLocation as CodeLocation
 
 __doc__ += """
 .. py:attribute:: datetime
@@ -626,7 +626,7 @@ __doc__ += """
     Date/time utils.
 """
 if __pkg_def:
-    from . import datetimeutils as datetime
+    from . import _datetimeutils as datetime
 
 __doc__ += """
 .. py:attribute:: tz
@@ -636,7 +636,7 @@ __doc__ += """
     Timezone utils.
 """
 if __pkg_def:
-    from . import timezoneutils as timezone
+    from . import _timezoneutils as timezone
 
 __doc__ += """
 .. py:attribute:: enum
@@ -646,4 +646,4 @@ __doc__ += """
     Enum utils.
 """
 if __pkg_def:
-    from . import enumutils as enum
+    from . import _enumutils as enum

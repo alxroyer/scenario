@@ -17,7 +17,7 @@
 import scenario
 
 
-class ScenarioAttribute(scenario.enumutils.StrEnum):
+class ScenarioAttribute(scenario.enum.StrEnum):
 
     TEST_TITLE = "TEST_TITLE"
     TEST_OBJECTIVE = "TEST_OBJECTIVE"

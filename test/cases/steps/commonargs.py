@@ -80,7 +80,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
                 else:
                     _action_description1 += ", with log colorization disabled"
             else:
-                _action_description1 += f", with {scenario.enumutils.enum2str(_config_key)}={_config_value!r}"
+                _action_description1 += f", with {scenario.enum.enum2str(_config_key)}={_config_value!r}"
 
             if self.doexecute():
                 self.subprocess.unsetconfigvalue(_config_key)

@@ -20,7 +20,7 @@ import typing
 
 import scenario.test
 if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
+    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
 
 from steps.logparsing import LogParserStep  # `LogParserStep` used for inheritance.
 

@@ -68,8 +68,8 @@ class SubProcess(scenario.SubProcess):
             self,
             line,  # type: bytes
     ):  # type: (...) -> None
-        from scenario.logformatter import LogFormatter
-        from scenario.scenarioconfig import SCENARIO_CONFIG
+        from scenario._logformatter import LogFormatter  # noqa  ## Access to a protected module
+        from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to a protected module
 
         if self._show_stdout:
             _line = line.decode("utf-8")  # type: str
@@ -81,8 +81,8 @@ class SubProcess(scenario.SubProcess):
             self,
             line,  # type: bytes
     ):  # type: (...) -> None
-        from scenario.logformatter import LogFormatter
-        from scenario.scenarioconfig import SCENARIO_CONFIG
+        from scenario._logformatter import LogFormatter  # noqa  ## Access to a protected module
+        from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to a protected module
 
         if self._show_stderr:
             _line = line.decode("utf-8")  # type: str

@@ -32,7 +32,7 @@ class KnownIssueDetailsScenario(scenario.Scenario):
         self.setattribute("TITLE", "Known issue details scenario sample")
 
     def step010(self):  # type: (...) -> None
-        from scenario.scenarioconfig import SCENARIO_CONFIG
+        from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to protected module
 
         self.STEP("Known issue details")
 
