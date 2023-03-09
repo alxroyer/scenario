@@ -17,14 +17,13 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.pythonpackages import PythonPackageBegin
-from steps.common import ExecScenario
-
 
 class ConfigDb320(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+        from steps.pythonpackages import PythonPackageBegin
+
         scenario.test.TestCase.__init__(
             self,
             title="'pyyaml' environment error",

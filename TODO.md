@@ -17,7 +17,6 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #72: Review `typing.TYPE_CHECKINGS` imports.
 - Issue #77: Avoid exporting implementation modules.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
@@ -34,8 +33,9 @@
 
 - Issue #66: Avoid redefining `argparse` API.
     - Integrate branch 'feature/#66/use-argparse-directly'.
-- Issue #58: Add sections for program arguments
+- Issue #58: Add sections for program arguments.
     - Integrate branch 'feature/#66/use-argparse-directly'.
+- Issue #74: Rename JSON reports into something else.
 
 
 ## Roadmap to v1.0.0

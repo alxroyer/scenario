@@ -20,12 +20,9 @@ Test suite file management.
 
 import typing
 
-# `Logger` used for inheritance.
-from .logger import Logger
+from .logger import Logger  # `Logger` used for inheritance.
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

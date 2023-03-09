@@ -16,16 +16,13 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .logging200 import CheckClassLoggerLogLevels
-# Related scenarios:
-from loggerscenario import LoggerScenario
-
 
 class Logging210(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from logutils.logging200 import CheckClassLoggerLogLevels
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Class logger debugging enabling",
@@ -47,7 +44,7 @@ class Logging210(scenario.test.TestCase):
         self.addstep(ExecScenario(
             scenario.test.paths.LOGGER_SCENARIO,
             # 'sample-log' explicitely not activated.
-            debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
+            debug_classes=[scenario.test.data.scenarios.LoggerScenario.LOGGER_DEBUG_CLASS],
             # Explicitely disable log date/time for verification purposes in `CheckClassLoggerLogLevels`.
             config_values={scenario.ConfigKey.LOG_DATETIME: False},
         ))

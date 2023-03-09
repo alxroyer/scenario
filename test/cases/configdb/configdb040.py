@@ -19,16 +19,12 @@ import typing
 import scenario
 import scenario.test
 
-# Steps:
-from .steps.currentprocess import StoreConfigValue
-from .steps.currentprocess import RemoveConfigValue
-from .steps.currentprocess import CheckConfigValue
-from .steps.currentprocess import CheckDictConfigNode
-
 
 class ConfigDb040(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from configdb.steps.currentprocess import CheckConfigValue, CheckDictConfigNode, RemoveConfigValue, StoreConfigValue
+
         scenario.test.TestCase.__init__(
             self,
             title="Configuration value unset",

@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import enum
 import shutil
 import typing
 
@@ -22,8 +21,7 @@ import scenario
 import scenario.test
 import scenario.text
 
-# Related steps:
-from steps.commonargs import ExecCommonArgs
+from steps.commonargs import ExecCommonArgs  # `ExecCommonArgs` used for inheritance.
 
 
 class ExecCampaign(ExecCommonArgs):

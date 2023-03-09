@@ -23,19 +23,12 @@ import logging
 import os
 import typing
 
-# `Logger` used for inheritance.
-from .logger import Logger
-# `ConfigNode` used in method signatures.
-from .confignode import ConfigNode
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
+from .logger import Logger  # `Logger` used for inheritance.
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
 
 if typing.TYPE_CHECKING:
-    # `KeyType`, `OriginType` and `T` used in method signatures.
-    # Type declared for type checking only.
-    from .configtypes import KeyType, OriginType, T
-    # `AnyPathType` used in method signatures and type definitions.
-    # Type declared for type checking only.
+    from .confignode import ConfigNode as _ConfigNodeType
+    from .configtypes import KeyType, OriginType, VarDataType
     from .path import AnyPathType
 
 
@@ -64,6 +57,7 @@ class ConfigDatabase(Logger):
         """
         Initializes instance attributes and configures logging for the :class:`ConfigDatabase` class.
         """
+        from .confignode import ConfigNode
         from .debugclasses import DebugClass
 
         Logger.__init__(self, log_class=DebugClass.CONFIG_DATABASE)
@@ -199,7 +193,7 @@ class ConfigDatabase(Logger):
         self.debug("ConfigDatabase.remove(key=%r)", key)
 
         # Search for the configuration node from the key, and call `remove()` on it when found.
-        _node = self._root.get(subkey=key)  # type: typing.Optional[ConfigNode]
+        _node = self._root.get(subkey=key)  # type: typing.Optional[_ConfigNodeType]
         if _node is not None:
             _node.remove()
 
@@ -229,7 +223,7 @@ class ConfigDatabase(Logger):
     def getnode(
             self,
             key,  # type: KeyType
-    ):  # type: (...) -> typing.Optional[ConfigNode]
+    ):  # type: (...) -> typing.Optional[_ConfigNodeType]
         """
         Retrieves the configuration node for the given key.
 
@@ -243,15 +237,15 @@ class ConfigDatabase(Logger):
         ...
 
     @typing.overload
-    def get(self, key, type):  # type: (KeyType, typing.Type[T]) -> typing.Optional[T]  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type):  # type: (KeyType, typing.Type[VarDataType]) -> typing.Optional[VarDataType]  # noqa  ## Shadows built-in name 'type'
         ...
 
     @typing.overload
-    def get(self, key, type, default):  # type: (KeyType, typing.Type[T], None) -> typing.Optional[T]  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type, default):  # type: (KeyType, typing.Type[VarDataType], None) -> typing.Optional[VarDataType]  # noqa  ## Shadows built-in name 'type'
         ...
 
     @typing.overload
-    def get(self, key, type, default):  # type: (KeyType, typing.Type[T], typing.Union[str, os.PathLike[str], bool, int, float]) -> T  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type, default):  # type: (KeyType, typing.Type[VarDataType], typing.Union[str, os.PathLike[str], bool, int, float]) -> VarDataType  # noqa  ## Shadows built-in name 'type'
         ...
 
     def get(
@@ -268,6 +262,8 @@ class ConfigDatabase(Logger):
         :param default: Default value.
         :return: Configuration value if set, or default value if set, or ``None`` otherwise.
         """
+        from .confignode import ConfigNode
+
         # Check input parameters:
         # - Convert default value from path-like to string.
         if isinstance(default, os.PathLike):

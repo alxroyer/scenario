@@ -18,16 +18,15 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario.typing import JSONDict
+    from scenario.typing import JsonDictType
 
-# `SubProcess` used in method signatures.
-from .subprocess import SubProcess
-# `TestCase` used in method signatures.
-from .testcase import TestCase
+if typing.TYPE_CHECKING:
+    from .subprocess import SubProcess as _SubProcessType
+    from .testcase import TestCase as _TestCaseType
 
 
 if typing.TYPE_CHECKING:
-    T = typing.TypeVar("T")
+    VarDataType = typing.TypeVar("VarDataType")
 
 
 class Step(scenario.Step):
@@ -39,7 +38,9 @@ class Step(scenario.Step):
         scenario.Step.__init__(self)
 
     @property
-    def test_case(self):  # type: () -> TestCase
+    def test_case(self):  # type: () -> _TestCaseType
+        from .testcase import TestCase
+
         _scenario = scenario.stack.building.scenario_definition  # type: typing.Optional[scenario.Scenario]
         # Avoid failing when the `self.scenario` attribute does not exist yet.
         if hasattr(self, "scenario"):
@@ -51,10 +52,10 @@ class Step(scenario.Step):
 
     def testdatafromlist(
             self,
-            items,  # type: typing.List[T]
+            items,  # type: typing.List[VarDataType]
             index,  # type: int
-            default,  # type: T
-    ):  # type: (...) -> T
+            default,  # type: VarDataType
+    ):  # type: (...) -> VarDataType
         """
         Helps walking through test data as a list.
 
@@ -70,7 +71,7 @@ class Step(scenario.Step):
 
     def testdatafromjson(
             self,
-            json_data,  # type: typing.Optional[JSONDict]
+            json_data,  # type: typing.Optional[JsonDictType]
             jsonpath,  # type: typing.Optional[str]
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
     ):  # type: (...) -> typing.Any
@@ -117,6 +118,8 @@ class ExecutionStep(Step):
     """
 
     def __init__(self):  # type: (...) -> None
+        from .subprocess import SubProcess
+
         Step.__init__(self)
 
         #: :class:`SubProcess` instance owned.
@@ -155,7 +158,7 @@ class VerificationStep(Step):
         return self.exec_step.getexecstep(cls)
 
     @property
-    def subprocess(self):  # type: () -> SubProcess
+    def subprocess(self):  # type: () -> _SubProcessType
         return self.exec_step.subprocess
 
 

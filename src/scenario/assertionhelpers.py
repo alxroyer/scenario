@@ -24,20 +24,14 @@ import typing
 import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
-    # `DelayedStr` used in type definitions.
-    # Avoid risks of cylic dependencies.
-    from .debugutils import DelayedStr
-    # `StepSpecificationType` used in type definitions.
-    # Avoid risks of cylic dependencies.
+    from .debugutils import DelayedStr as DelayedStrType
     from .stepdefinition import StepSpecificationType
-    # `StepExecution` used in type definitions.
-    # Avoid risks of cylic dependencies.
-    from .stepexecution import StepExecution
+    from .stepexecution import StepExecution as StepExecutionType
 
 
 if typing.TYPE_CHECKING:
     #: Optional error parameter type.
-    ErrParamType = typing.Optional[typing.Union[str, DelayedStr]]
+    ErrParamType = typing.Optional[typing.Union[str, DelayedStrType]]
 
     #: Evidence parameter type.
     EvidenceParamType = typing.Optional[typing.Union[bool, str]]
@@ -45,7 +39,7 @@ if typing.TYPE_CHECKING:
     #: Comparable type.
     #:
     #: Declared as a :class:`typing.TypeVar` so that every :class:`Comparable` parameter within the same function call is of the same type.
-    ComparableType = typing.TypeVar("ComparableType", int, float, str)
+    VarComparableType = typing.TypeVar("VarComparableType", int, float, str)
 
     #: Type representing a type, or a set of types.
     TypeOrTypesType = typing.Optional[typing.Union[type, typing.Iterable[type]]]
@@ -53,7 +47,7 @@ if typing.TYPE_CHECKING:
     #: Item type.
     #:
     #: Declared as a :class:`typing.TypeVar` so that item and iterable parameters within the same function call are set with consistent types.
-    ItemType = typing.TypeVar("ItemType")
+    VarItemType = typing.TypeVar("VarItemType")
 
     #: Step execution specification.
     #:
@@ -69,7 +63,7 @@ if typing.TYPE_CHECKING:
     #:
     #: If a string or step class only is not enough to find out the expected step execution,
     #: the step execution instance may be passed on directly.
-    StepExecutionSpecificationType = typing.Union[StepSpecificationType, StepExecution]
+    StepExecutionSpecificationType = typing.Union[StepSpecificationType, StepExecutionType]
 
 
 __doc__ += """
@@ -81,8 +75,8 @@ unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 
 
 def safecontainer(
-        obj,  # type: typing.Iterable[ItemType]
-):  # type: (...) -> typing.Union[str, bytes, typing.List[ItemType]]
+        obj,  # type: typing.Iterable[VarItemType]
+):  # type: (...) -> typing.Union[str, bytes, typing.List[VarItemType]]
     """
     Ensures working with a string or list-like object.
 
@@ -104,7 +98,7 @@ def safecontainer(
 
 def errmsg(
         optional,  # type: ErrParamType
-        standard,  # type: typing.Union[str, DelayedStr]
+        standard,  # type: typing.Union[str, DelayedStrType]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -133,7 +127,7 @@ def errmsg(
 
 def ctxmsg(
         context,  # type: str
-        err,  # type: typing.Union[str, DelayedStr]
+        err,  # type: typing.Union[str, DelayedStrType]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -172,7 +166,7 @@ def isnonemsg(
 
 def evidence(
         evidence_enabled,  # type: EvidenceParamType
-        regular,  # type: typing.Union[str, DelayedStr]
+        regular,  # type: typing.Union[str, DelayedStrType]
         *args,  # type: typing.Any
 ):  # type: (...) -> None
     """
@@ -204,7 +198,7 @@ def evidence(
 
 def getstepexecution(
         step_execution_specification,  # type: StepExecutionSpecificationType
-):  # type: (...) -> StepExecution
+):  # type: (...) -> StepExecutionType
     """
     Retrieves the (last) :class:`.stepexecution.StepExecution` instance corresponding to the given specification.
 

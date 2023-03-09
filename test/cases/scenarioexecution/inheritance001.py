@@ -16,14 +16,13 @@
 
 import scenario.test
 
-# Steps:
-from .steps.execution import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
-
 
 class Inheritance001(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from scenarioexecution.steps.execution import ExecScenario
+        from steps.common import CheckScenarioLogExpectations, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Inheritance & step order",

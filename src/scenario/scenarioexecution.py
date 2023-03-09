@@ -20,14 +20,11 @@ Scenario execution management.
 
 import typing
 
-# `ExecutionStatus` used in method signatures.
-from .executionstatus import ExecutionStatus
-# `ScenarioDefinition` used in method signatures.
-from .scenariodefinition import ScenarioDefinition
-# `ExecTotalStats` used in method signatures.
-from .stats import ExecTotalStats
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
+if typing.TYPE_CHECKING:
+    from .executionstatus import ExecutionStatus as _ExecutionStatusType
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from .stats import ExecTotalStats as _ExecTotalStatsType
+    from .stepdefinition import StepDefinition as _StepDefinitionType
 
 
 class ScenarioExecution:
@@ -40,7 +37,7 @@ class ScenarioExecution:
 
     def __init__(
             self,
-            definition,  # type: ScenarioDefinition
+            definition,  # type: _ScenarioDefinitionType
     ):  # type: (...) -> None
         """
         :param definition:
@@ -53,13 +50,13 @@ class ScenarioExecution:
         from .testerrors import TestError
 
         #: Related scenario definition.
-        self.definition = definition  # type: ScenarioDefinition
+        self.definition = definition  # type: _ScenarioDefinitionType
 
         #: Current step reference in the scenario step list.
-        self.__current_step_definition = None  # type: typing.Optional[StepDefinition]
+        self.__current_step_definition = None  # type: typing.Optional[_StepDefinitionType]
         #: Next step reference in the step list.
         #: Used when a :meth:`.scenariodefinition.ScenarioDefinition.goto()` call has been made.
-        self.__next_step_definition = None  # type: typing.Optional[StepDefinition]
+        self.__next_step_definition = None  # type: typing.Optional[_StepDefinitionType]
 
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
@@ -123,7 +120,7 @@ class ScenarioExecution:
 
         # Find out the position of the current step.
         _step_definition_index = self.definition.steps.index(self.__current_step_definition)  # type: int
-        _previous_step_definition = self.definition.steps[_step_definition_index]  # type: StepDefinition
+        _previous_step_definition = self.definition.steps[_step_definition_index]  # type: _StepDefinitionType
 
         # Switch to the next step.
         _step_definition_index += 1
@@ -139,7 +136,7 @@ class ScenarioExecution:
 
     def setnextstep(
             self,
-            step_definition,  # type: StepDefinition
+            step_definition,  # type: _StepDefinitionType
     ):  # type: (...) -> None
         """
         Arbitrary sets the next step for the step iterator.
@@ -151,7 +148,7 @@ class ScenarioExecution:
         self.__next_step_definition = step_definition
 
     @property
-    def current_step_definition(self):  # type: () -> typing.Optional[StepDefinition]
+    def current_step_definition(self):  # type: () -> typing.Optional[_StepDefinitionType]
         """
         Current step definition being executed.
 
@@ -162,7 +159,7 @@ class ScenarioExecution:
     # Statistics & output.
 
     @property
-    def status(self):  # type: () -> ExecutionStatus
+    def status(self):  # type: () -> _ExecutionStatusType
         """
         Scenario execution status.
 
@@ -171,6 +168,8 @@ class ScenarioExecution:
 
         :return: Scenario execution status.
         """
+        from .executionstatus import ExecutionStatus
+
         if self.errors:
             return ExecutionStatus.FAIL
         elif self.warnings:
@@ -179,16 +178,17 @@ class ScenarioExecution:
             return ExecutionStatus.SUCCESS
 
     @property
-    def step_stats(self):  # type: () -> ExecTotalStats
+    def step_stats(self):  # type: () -> _ExecTotalStatsType
         """
         Step statistics computation.
 
         :return: Number of steps executed over the number of steps defined.
         """
+        from .stats import ExecTotalStats
         from .stepsection import StepSectionDescription
 
         _step_stats = ExecTotalStats()  # type: ExecTotalStats
-        for _step_definition in self.definition.steps:  # type: StepDefinition
+        for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSection` instances.
             if isinstance(_step_definition, StepSectionDescription):
                 continue
@@ -198,17 +198,18 @@ class ScenarioExecution:
         return _step_stats
 
     @property
-    def action_stats(self):  # type: () -> ExecTotalStats
+    def action_stats(self):  # type: () -> _ExecTotalStatsType
         """
         Action statistics computation.
 
         :return: Number of actions executed over the number of actions defined.
         """
+        from .stats import ExecTotalStats
         from .stepexecution import StepExecution
         from .stepsection import StepSectionDescription
 
         _action_stats = ExecTotalStats()  # type: ExecTotalStats
-        for _step_definition in self.definition.steps:  # type: StepDefinition
+        for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSection` instances.
             if isinstance(_step_definition, StepSectionDescription):
                 continue
@@ -217,17 +218,18 @@ class ScenarioExecution:
         return _action_stats
 
     @property
-    def result_stats(self):  # type: () -> ExecTotalStats
+    def result_stats(self):  # type: () -> _ExecTotalStatsType
         """
         Expected result statistics computation.
 
         :return: Number of expected results executed over the number of expected results defined.
         """
+        from .stats import ExecTotalStats
         from .stepexecution import StepExecution
         from .stepsection import StepSectionDescription
 
         _result_stats = ExecTotalStats()  # type: ExecTotalStats
-        for _step_definition in self.definition.steps:  # type: StepDefinition
+        for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSection` instances.
             if isinstance(_step_definition, StepSectionDescription):
                 continue
@@ -249,6 +251,7 @@ class ScenarioExecution:
             - 0 if ``self`` and ``other`` have the same criticity,
             - 1 if ``self`` is more critical than ``other``.
         """
+        from .executionstatus import ExecutionStatus
         from .knownissues import KnownIssue
         from .testerrors import TestError
 

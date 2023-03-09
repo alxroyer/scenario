@@ -21,8 +21,7 @@ Step section management.
 import abc
 import typing
 
-# `StepDefinition` used for inheritance.
-from .stepdefinition import StepDefinition
+from .stepdefinition import StepDefinition  # `StepDefinition` used for inheritance.
 
 if typing.TYPE_CHECKING:
     from .issuelevels import AnyIssueLevelType

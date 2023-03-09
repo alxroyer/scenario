@@ -17,14 +17,13 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .steps.subprocesslog import CheckConfigValueScenarioLog
-
 
 class ConfigDb010(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from configdb.steps.subprocesslog import CheckConfigValueScenarioLog
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Configuration value from command line",

@@ -16,15 +16,14 @@
 
 import scenario.test
 
-# Steps:
-from campaigns.steps.execution import ExecCampaign
-from campaigns.steps.log import CheckCampaignLogExpectations
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-
 
 class KnownIssues090(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+        from campaigns.steps.log import CheckCampaignLogExpectations
+        from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Known issues & campaigns",

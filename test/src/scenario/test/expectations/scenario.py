@@ -19,14 +19,10 @@ import typing
 
 import scenario
 
-# `ErrorExpectations` used in method signatures.
-from .error import ErrorExpectations
-# `StepExpectations` used in method signatures.
-from .step import StepExpectations
 if typing.TYPE_CHECKING:
-    # `TestSuiteExpectations` used in method signatures.
-    # Type declared for type checking only.
-    from .testsuite import TestSuiteExpectations
+    from .error import ErrorExpectations as _ErrorExpectationsType
+    from .step import StepExpectations as _StepExpectationsType
+    from .testsuite import TestSuiteExpectations as _TestSuiteExpectationsType
 
 
 class ScenarioExpectations:
@@ -34,19 +30,19 @@ class ScenarioExpectations:
             self,
             script_path=None,  # type: scenario.Path
             class_name=None,  # type: str
-            test_suite_expectations=None,  # type: TestSuiteExpectations
+            test_suite_expectations=None,  # type: _TestSuiteExpectationsType
     ):  # type: (...) -> None
         from .stats import StatExpectations
 
-        self.test_suite_expectations = test_suite_expectations  # type: typing.Optional[TestSuiteExpectations]
+        self.test_suite_expectations = test_suite_expectations  # type: typing.Optional[_TestSuiteExpectationsType]
 
         self.class_name = class_name  # type: typing.Optional[str]
         self.script_path = script_path  # type: typing.Optional[scenario.Path]
         self.attributes = None  # type: typing.Optional[typing.Dict[str, str]]
-        self.step_expectations = None  # type: typing.Optional[typing.List[StepExpectations]]
+        self.step_expectations = None  # type: typing.Optional[typing.List[_StepExpectationsType]]
         self.status = None  # type: typing.Optional[scenario.ExecutionStatus]
-        self.errors = None  # type: typing.Optional[typing.List[ErrorExpectations]]
-        self.warnings = None  # type: typing.Optional[typing.List[ErrorExpectations]]
+        self.errors = None  # type: typing.Optional[typing.List[_ErrorExpectationsType]]
+        self.warnings = None  # type: typing.Optional[typing.List[_ErrorExpectationsType]]
         self.step_stats = StatExpectations("steps", None, None)  # type: StatExpectations
         self.action_stats = StatExpectations("actions", None, None)  # type: StatExpectations
         self.result_stats = StatExpectations("results", None, None)  # type: StatExpectations
@@ -71,7 +67,9 @@ class ScenarioExpectations:
             number=None,  # type: int
             name=None,  # type: str
             description=None,  # type: str
-    ):  # type: (...) -> StepExpectations
+    ):  # type: (...) -> _StepExpectationsType
+        from .step import StepExpectations
+
         _step_expectations = StepExpectations(self)  # type: StepExpectations
         _step_expectations.number = number
         _step_expectations.name = name
@@ -84,9 +82,9 @@ class ScenarioExpectations:
 
     def adderror(
             self,
-            error,  # type: ErrorExpectations
+            error,  # type: _ErrorExpectationsType
             level=None,  # type: int
-    ):  # type: (...) -> ErrorExpectations
+    ):  # type: (...) -> _ErrorExpectationsType
         if level is None:
             if error.cls is scenario.KnownIssue:
                 level = logging.WARNING
@@ -140,7 +138,7 @@ class ScenarioExpectations:
     def step(
             self,
             step_spec,  # type: typing.Union[int, str]
-    ):  # type: (...) -> StepExpectations
+    ):  # type: (...) -> _StepExpectationsType
         """
         Retrieves the corresponding :class:`StepExpectations` object.
 
@@ -148,7 +146,7 @@ class ScenarioExpectations:
         :return: :class:`StepExpectations` object.
         """
         assert self.step_expectations, "No step expectations yet"
-        for _step_expectation in self.step_expectations:  # type: StepExpectations
+        for _step_expectation in self.step_expectations:  # type: _StepExpectationsType
             if isinstance(step_spec, int):
                 if _step_expectation.number == step_spec:
                     return _step_expectation

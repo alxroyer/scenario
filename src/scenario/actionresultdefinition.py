@@ -20,10 +20,7 @@ Action / expected result definition.
 
 import typing
 
-# `StrEnum` use for inheritance.
-from .enumutils import StrEnum
-# `CodeLocation` used in method signatures.
-from .locations import CodeLocation
+from .enumutils import StrEnum  # `StrEnum` use for inheritance.
 
 
 class ActionResultDefinition:

@@ -24,9 +24,7 @@ import re
 import typing
 
 if typing.TYPE_CHECKING:
-    # `KeyType`, `OriginType` and `T` used in method signatures.
-    # Type declared for type checking only.
-    from .configtypes import KeyType, OriginType, T
+    from .configtypes import KeyType, OriginType, VarDataType
 
 
 class ConfigNode:
@@ -427,8 +425,8 @@ class ConfigNode:
 
     def cast(
             self,
-            type,  # type: typing.Type[T]  # noqa  ## Shadows built-in name 'type'
-    ):  # type: (...) -> T
+            type,  # type: typing.Type[VarDataType]  # noqa  ## Shadows built-in name 'type'
+    ):  # type: (...) -> VarDataType
         """
         Ensures the retrieval of the node data with the expected type.
 
@@ -439,11 +437,11 @@ class ConfigNode:
         """
         from .reflex import qualname
 
-        def _castreturntype(value):  # type: (typing.Any) -> T
+        def _castreturntype(value):  # type: (typing.Any) -> VarDataType
             """
             Avoids using ``# type: ignore`` pragmas every time this :meth:`ConfigNode.cast()` method returns a value.
             """
-            _value = value  # type: T
+            _value = value  # type: VarDataType
             return _value
 
         # Dictionary.

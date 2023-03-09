@@ -21,8 +21,8 @@ Log filtering.
 import logging
 import typing
 
-# `Logger` used in method signatures.
-from .logger import Logger
+if typing.TYPE_CHECKING:
+    from .logger import Logger as _LoggerType
 
 
 class LoggerLogFilter(logging.Filter):
@@ -34,7 +34,7 @@ class LoggerLogFilter(logging.Filter):
 
     def __init__(
             self,
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
     ):  # type: (...) -> None
         """
         :param logger: Attached :class:`.logger.Logger` instance.
@@ -42,7 +42,7 @@ class LoggerLogFilter(logging.Filter):
         logging.Filter.__init__(self)
 
         #: Attached `scenario` :class:`.logger.Logger` instance.
-        self._logger = logger  # type: Logger
+        self._logger = logger  # type: _LoggerType
 
     def filter(
             self,
@@ -63,7 +63,7 @@ class LoggerLogFilter(logging.Filter):
 
         # Ensure the current logger reference is set in the record as an extra data so that :class:`.logformatter.LogFormatter` knows about it.
         # Ensure class loggers prevail on the main logger.
-        _logger = LogExtraData.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[Logger]
+        _logger = LogExtraData.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
         if (not _logger) or (not _logger.log_class):
             LogExtraData.set(record, LogExtraData.CURRENT_LOGGER, self._logger)
 

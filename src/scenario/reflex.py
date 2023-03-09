@@ -25,14 +25,10 @@ import sys
 import types
 import typing
 
-# `DebugClass` used to instanciate global variable.
-from .debugclasses import DebugClass
-# `Logger` used to instanciate global variable.
-from .logger import Logger
+from .debugclasses import DebugClass  # `DebugClass` used to instanciate global variable.
+from .logger import Logger  # `Logger` used to instanciate global variable.
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

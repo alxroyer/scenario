@@ -23,8 +23,6 @@ import re
 import typing
 
 if typing.TYPE_CHECKING:
-    #  `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

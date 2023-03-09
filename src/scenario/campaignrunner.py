@@ -24,16 +24,13 @@ import sys
 import time
 import typing
 
-# `CampaignExecution`, `CampaignExecution` and `TestSuiteExecution` used in method signatures.
-from .campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
-# `ErrorCode` used in method signatures.
-from .errcodes import ErrorCode
-# `Logger` used for inheritance.
-from .logger import Logger
+from .logger import Logger  # `Logger` used for inheritance.
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
+    from .campaignexecution import CampaignExecution as _CampaignExecutionType
+    from .campaignexecution import TestCaseExecution as _TestCaseExecutionType
+    from .campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
+    from .errcodes import ErrorCode as _ErrorCodeType
     from .path import AnyPathType
 
 
@@ -59,16 +56,18 @@ class CampaignRunner(Logger):
 
         Logger.__init__(self, log_class=DebugClass.CAMPAIGN_RUNNER)
 
-    def main(self):  # type: (...) -> ErrorCode
+    def main(self):  # type: (...) -> _ErrorCodeType
         """
         Campaign runner main function, as a member method.
 
         :return: Error code.
         """
         from .campaignargs import CampaignArgs
+        from .campaignexecution import CampaignExecution
         from .campaignlogging import CAMPAIGN_LOGGING
         from .campaignreport import CAMPAIGN_REPORT
         from .datetimeutils import toiso8601
+        from .errcodes import ErrorCode
         from .handlers import HANDLERS
         from .loggermain import MAIN_LOGGER
         from .loggingservice import LOGGING_SERVICE
@@ -126,9 +125,9 @@ class CampaignRunner(Logger):
 
     def _exectestsuitefile(
             self,
-            campaign_execution,  # type: CampaignExecution
+            campaign_execution,  # type: _CampaignExecutionType
             test_suite_path,  # type: AnyPathType
-    ):  # type: (...) -> ErrorCode
+    ):  # type: (...) -> _ErrorCodeType
         """
         Executes a test suite file.
 
@@ -136,23 +135,27 @@ class CampaignRunner(Logger):
         :param test_suite_path: Test suite file to execute.
         :return: Error code.
         """
+        from .campaignexecution import TestSuiteExecution
+
         _test_suite_execution = TestSuiteExecution(campaign_execution, test_suite_path)  # type: TestSuiteExecution
         campaign_execution.test_suite_executions.append(_test_suite_execution)
-        _res = self._exectestsuite(_test_suite_execution)  # type: ErrorCode
+        _res = self._exectestsuite(_test_suite_execution)  # type: _ErrorCodeType
 
         return _res
 
     def _exectestsuite(
             self,
-            test_suite_execution,  # type: TestSuiteExecution
-    ):  # type: (...) -> ErrorCode
+            test_suite_execution,  # type: _TestSuiteExecutionType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Executes a test suite.
 
         :param test_suite_execution: Test suite to execute.
         :return: Error code.
         """
+        from .campaignexecution import TestCaseExecution
         from .campaignlogging import CAMPAIGN_LOGGING
+        from .errcodes import ErrorCode
         from .handlers import HANDLERS
         from .path import Path
         from .scenarioevents import ScenarioEvent, ScenarioEventData
@@ -183,8 +186,8 @@ class CampaignRunner(Logger):
 
     def _exectestcase(
             self,
-            test_case_execution,  # type: TestCaseExecution
-    ):  # type: (...) -> ErrorCode
+            test_case_execution,  # type: _TestCaseExecutionType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Executes a test case.
 
@@ -197,6 +200,7 @@ class CampaignRunner(Logger):
         from .confignode import ConfigNode
         from .datetimeutils import ISO8601_REGEX
         from .debugloggers import ExecTimesLogger
+        from .errcodes import ErrorCode
         from .handlers import HANDLERS
         from .path import Path
         from .scenarioconfig import SCENARIO_CONFIG

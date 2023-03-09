@@ -20,10 +20,10 @@ Scenario runner program arguments.
 
 import typing
 
-# `Args` used for inheritance.
-from .args import Args
-# `SubProcess` used in method signatures.
-from .subprocess import SubProcess
+from .args import Args  # `Args` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .subprocess import SubProcess as _SubProcessType
 
 
 class CommonExecArgs:
@@ -93,7 +93,7 @@ class CommonExecArgs:
     @staticmethod
     def reportexecargs(
             args,  # type: CommonExecArgs
-            subprocess,  # type: SubProcess
+            subprocess,  # type: _SubProcessType
     ):  # type: (...) -> None
         """
         Report execution program arguments from an argument parser instance to the arguments of a sub-process being built.

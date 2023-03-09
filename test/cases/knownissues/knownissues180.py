@@ -19,17 +19,16 @@ import typing
 import scenario
 import scenario.test
 
-from .steps.knownissuelevelutils import KnownIssueLevelUtils
-
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-from .steps.knownissuelevelutils import CheckFinalResultsAscendingIssueLevelOrder
+from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils  # `KnownIssueLevelUtils` used for inheritance.
+from steps.common import ExecScenario  # `ExecScenario` used for inheritance.
 
 
 class KnownIssues180(scenario.test.TestCase, KnownIssueLevelUtils):
 
     def __init__(self):  # type: (...) -> None
+        from knownissues.steps.knownissuelevelutils import CheckFinalResultsAscendingIssueLevelOrder
+        from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Known issue levels & multiple scenarios",

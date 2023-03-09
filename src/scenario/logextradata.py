@@ -21,8 +21,7 @@ Logging extra data handling.
 import logging
 import typing
 
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
 
 
 class LogExtraData(StrEnum):

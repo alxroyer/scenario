@@ -18,8 +18,7 @@
 Execution status management.
 """
 
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
 
 
 class ExecutionStatus(StrEnum):

@@ -15,19 +15,21 @@
 # limitations under the License.
 
 import abc
+import typing
 
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog
-from steps.common import LogVerificationStep
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from steps.common import ExecScenario as _ExecScenarioType, ParseScenarioLog as _ParseScenarioLogType
 
 
 class Issue65a(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Issue #65! Scenario execution lost time",
@@ -97,12 +99,12 @@ class CheckTimes(CheckTimeLostStep):
 
     def __init__(
             self,
-            exec_step,  # type: ExecScenario
-            scenario_logs,  # type: ParseScenarioLog
+            exec_step,  # type: _ExecScenarioType
+            scenario_logs,  # type: _ParseScenarioLogType
     ):  # type: (...) -> None
         CheckTimeLostStep.__init__(self, exec_step)
 
-        self.scenario_logs = scenario_logs  # type: ParseScenarioLog
+        self.scenario_logs = scenario_logs  # type: _ParseScenarioLogType
 
     def step(self):  # type: (...) -> None
         self.STEP("Check times")

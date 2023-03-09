@@ -19,8 +19,7 @@ import typing
 if typing.TYPE_CHECKING:
     import scenario
 
-# Related steps:
-from steps.logverifications import LogVerificationStep
+from steps.logverifications import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class LogOutfileVerificationStep(LogVerificationStep):

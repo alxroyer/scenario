@@ -18,15 +18,13 @@ import typing
 
 import scenario.test
 
-# Steps:
-from steps.pythonpackages import PythonPackageBegin
-from .steps.currentprocess import LoadConfigFile, SaveConfigFile
-from .steps.currentprocess import CheckConfigValue
-
 
 class ConfigDb310(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from configdb.steps.currentprocess import CheckConfigValue, LoadConfigFile, SaveConfigFile
+        from steps.pythonpackages import PythonPackageBegin
+
         scenario.test.TestCase.__init__(
             self,
             title="Save YAML configuration file",

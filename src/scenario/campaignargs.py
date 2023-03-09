@@ -20,12 +20,11 @@ Campaign runner program arguments.
 
 import typing
 
-# `Args` used for inheritance.
-from .args import Args
-# `Path` used in method signatures.
-from .path import Path
-# `CommonExecArgs` used for inheritance.
-from .scenarioargs import CommonExecArgs
+from .args import Args  # `Args` used for inheritance.
+from .scenarioargs import CommonExecArgs  # `CommonExecArgs` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .path import Path as _PathType
 
 
 class CampaignArgs(Args, CommonExecArgs):
@@ -45,6 +44,8 @@ class CampaignArgs(Args, CommonExecArgs):
                                 Useful for user programs that wish to redefine it.
         :param default_outdir_cwd: ``False`` to disable the use of the current directory by default.
         """
+        from .path import Path
+
         Args.__init__(self, class_debugging=True)
 
         self.setdescription("Scenario campaign execution.")
@@ -93,7 +94,7 @@ class CampaignArgs(Args, CommonExecArgs):
             )
 
     @property
-    def outdir(self):  # type: () -> Path
+    def outdir(self):  # type: () -> _PathType
         """
         Output directory path as a public property.
         """
@@ -111,6 +112,7 @@ class CampaignArgs(Args, CommonExecArgs):
         :return: True for success, False otherwise.
         """
         from .loggermain import MAIN_LOGGER
+        from .path import Path
 
         if not Args._checkargs(self, args):
             return False

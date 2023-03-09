@@ -20,16 +20,14 @@ import typing
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import LogVerificationStep
-# Related scenarios:
-from loggerscenario import LoggerScenario
+from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class Logging300(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Log colors",
@@ -43,21 +41,21 @@ class Logging300(scenario.test.TestCase):
 
         self.section("Log colors enabled by default")
         self.addstep(ExecScenario(
-            scenario.test.paths.LOGGER_SCENARIO, debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
+            scenario.test.paths.LOGGER_SCENARIO, debug_classes=[scenario.test.data.scenarios.LoggerScenario.LOGGER_DEBUG_CLASS],
             config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: None},
         ))
         self.addstep(CheckLogColors(ExecScenario.getinstance(0)))
 
         self.section("Log colors explicitely enabled")
         self.addstep(ExecScenario(
-            scenario.test.paths.LOGGER_SCENARIO, debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
+            scenario.test.paths.LOGGER_SCENARIO, debug_classes=[scenario.test.data.scenarios.LoggerScenario.LOGGER_DEBUG_CLASS],
             config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: True},
         ))
         self.addstep(CheckLogColors(ExecScenario.getinstance(1)))
 
         self.section("Log colors disabled")
         self.addstep(ExecScenario(
-            scenario.test.paths.LOGGER_SCENARIO, debug_classes=[LoggerScenario.LOGGER_DEBUG_CLASS],
+            scenario.test.paths.LOGGER_SCENARIO, debug_classes=[scenario.test.data.scenarios.LoggerScenario.LOGGER_DEBUG_CLASS],
             config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: False},
         ))
         self.addstep(CheckLogColors(ExecScenario.getinstance(2)))
@@ -66,6 +64,8 @@ class Logging300(scenario.test.TestCase):
 class CheckLogColors(LogVerificationStep):
 
     def step(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         if self.getexecstep(ExecScenario).getboolconfigvalue(scenario.ConfigKey.LOG_COLOR_ENABLED, default=True):
             self.STEP("Log colors")
         else:
@@ -89,6 +89,8 @@ class CheckLogColors(LogVerificationStep):
             log_level,  # type: int
             search,  # type: str
     ):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         _level_dict = {
             logging.ERROR: ("ERROR", "red", scenario.Console.Color.RED91),
             logging.WARNING: ("WARNING", "yellow", scenario.Console.Color.YELLOW33),

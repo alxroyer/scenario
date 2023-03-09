@@ -22,10 +22,9 @@ import logging
 import re
 import typing
 
-# `Console` used in method signatures.
-from .console import Console
-# `LogExtraData` used in method signatures.
-from .logextradata import LogExtraData
+if typing.TYPE_CHECKING:
+    from .console import Console as _ConsoleType
+    from .logextradata import LogExtraData as _LogExtraDataType
 
 
 class LogFormatter(logging.Formatter):
@@ -90,7 +89,9 @@ class LogFormatter(logging.Formatter):
         :param record: Log record to format for printing.
         :return: Log string representation.
         """
+        from .console import Console
         from .datetimeutils import toiso8601
+        from .logextradata import LogExtraData
         from .logger import Logger
         from .loggermain import MAIN_LOGGER
         from .scenariologging import ScenarioLogging
@@ -176,7 +177,7 @@ class LogFormatter(logging.Formatter):
     def _with(
             self,
             record,  # type: logging.LogRecord
-            extra_flag,  # type: LogExtraData
+            extra_flag,  # type: _LogExtraDataType
             default=True,  # type: bool
     ):  # type: (...) -> bool
         """
@@ -196,6 +197,7 @@ class LogFormatter(logging.Formatter):
         2. The scenario configuration,
         3. The current execution state.
         """
+        from .logextradata import LogExtraData
         from .logger import Logger
         from .loghandler import LogHandler
         from .scenarioconfig import SCENARIO_CONFIG
@@ -233,13 +235,14 @@ class LogFormatter(logging.Formatter):
     @staticmethod
     def _levelcolor(
             level,  # type: int
-    ):  # type: (...) -> Console.Color
+    ):  # type: (...) -> _ConsoleType.Color
         """
         Determines log color out from log level.
 
         :param level: Log level which respective color to find out.
         :return: Log color corresponding to the given log level.
         """
+        from .console import Console
         from .scenarioconfig import SCENARIO_CONFIG
 
         if level < logging.INFO:

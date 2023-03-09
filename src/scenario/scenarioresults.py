@@ -21,12 +21,11 @@ Scenario results management.
 import logging
 import typing
 
-# `Logger` used for inheritance.
-from .logger import Logger
-# `ScenarioExecution` used in method signatures.
-from .scenarioexecution import ScenarioExecution
-# `TestError` used in method signatures.
-from .testerrors import TestError
+from .logger import Logger  # `Logger` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from .testerrors import TestError as _TestErrorType
 
 
 class ScenarioResults(Logger):
@@ -43,11 +42,11 @@ class ScenarioResults(Logger):
         Logger.__init__(self, DebugClass.SCENARIO_RESULTS)
 
         #: List of :class:`ScenarioResult` instances.
-        self._results = []  # type: typing.List[ScenarioExecution]
+        self._results = []  # type: typing.List[_ScenarioExecutionType]
 
     def add(
             self,
-            scenario_execution,  # type: ScenarioExecution
+            scenario_execution,  # type: _ScenarioExecutionType
     ):  # type: (...) -> None
         """
         Adds a :class:`ScenarioResult` instance in the list.
@@ -86,10 +85,10 @@ class ScenarioResults(Logger):
         _status_field_len = 10  # type: int
         _stat_field_len = 10  # type: int
         _time_field_len = len(f2strduration(0.0))  # type: int
-        _successes = []  # type: typing.List[ScenarioExecution]
-        _warnings = []  # type: typing.List[ScenarioExecution]
-        _errors = []  # type: typing.List[ScenarioExecution]
-        for _scenario_execution in self._results:  # type: ScenarioExecution
+        _successes = []  # type: typing.List[_ScenarioExecutionType]
+        _warnings = []  # type: typing.List[_ScenarioExecutionType]
+        _errors = []  # type: typing.List[_ScenarioExecutionType]
+        for _scenario_execution in self._results:  # type: _ScenarioExecutionType
             _name_field_len = max(_name_field_len, len(_scenario_execution.definition.name))
             _status_field_len = max(_status_field_len, len(str(_scenario_execution.status)))
             _total_step_stats.add(_scenario_execution.step_stats)
@@ -145,7 +144,7 @@ class ScenarioResults(Logger):
             cls,
             log_level,  # type: int
             fmt,  # type: str
-            scenario_execution,  # type: ScenarioExecution
+            scenario_execution,  # type: _ScenarioExecutionType
     ):  # type: (...) -> None
         """
         Displays a scenario line.
@@ -173,16 +172,16 @@ class ScenarioResults(Logger):
         ))
 
         # Display warnings, then errors.
-        for _warning in scenario_execution.warnings:  # type: TestError
+        for _warning in scenario_execution.warnings:  # type: _TestErrorType
             cls._displayerror(logging.WARNING, _warning)
-        for _error in scenario_execution.errors:  # type: TestError
+        for _error in scenario_execution.errors:  # type: _TestErrorType
             cls._displayerror(logging.ERROR, _error)
 
     @classmethod
     def _displayerror(
             cls,
             log_level,  # type: int
-            error,  # type: TestError
+            error,  # type: _TestErrorType
     ):  # type: (...) -> None
         """
         Displays a test error.
@@ -190,7 +189,7 @@ class ScenarioResults(Logger):
         :param log_level: Log level to use.
         :param error: Test error to display.
         """
-        from .testerrors import ExceptionError
+        from .testerrors import ExceptionError, TestError
         from .loggermain import MAIN_LOGGER
 
         if isinstance(error, ExceptionError):

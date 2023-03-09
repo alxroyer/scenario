@@ -19,8 +19,7 @@ import typing
 
 import scenario.test
 
-# Related steps:
-from .logprocessing import LogProcessor
+from steps.logprocessing import LogProcessor  # `LogProcessor` used for inheritance.
 
 
 class LogParserStep(scenario.test.VerificationStep, LogProcessor, metaclass=abc.ABCMeta):

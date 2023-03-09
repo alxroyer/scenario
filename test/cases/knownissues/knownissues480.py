@@ -18,16 +18,12 @@ import typing
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseFinalResultsLog, CheckFinalResultsLogExpectations
-# Related scenarios:
-from knownissuedetailsscenario import KnownIssueDetailsScenario
-
 
 class KnownIssues480(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckFinalResultsLogExpectations, ExecScenario, ParseFinalResultsLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Known issue URLs & multiple scenarios",
@@ -39,8 +35,8 @@ class KnownIssues480(scenario.test.TestCase):
         self.addstep(ExecScenario(
             [scenario.test.paths.SIMPLE_SCENARIO, scenario.test.paths.KNOWN_ISSUE_DETAILS_SCENARIO],
             config_values={
-                KnownIssueDetailsScenario.ConfigKey.ID: "#10",
-                KnownIssueDetailsScenario.ConfigKey.URL_BASE: "https://repo/issues/",
+                scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.ID: "#10",
+                scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.URL_BASE: "https://repo/issues/",
             },
         ))
 

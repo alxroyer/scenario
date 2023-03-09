@@ -17,15 +17,13 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from jsonreport.steps.full import CheckFullJsonReport
-from steps.common import CheckJsonReportExpectations
-
 
 class Goto002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from jsonreport.steps.full import CheckFullJsonReport
+        from steps.common import CheckJsonReportExpectations, ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Goto scenario reports",

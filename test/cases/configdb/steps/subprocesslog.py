@@ -16,8 +16,7 @@
 
 import scenario.test
 
-# Related steps:
-from steps.logverifications import LogVerificationStep
+from steps.logverifications import LogVerificationStep  # `LogVerificationStep` used for inheritance.
 
 
 class CheckConfigValueScenarioLog(LogVerificationStep):

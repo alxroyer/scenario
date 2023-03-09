@@ -22,14 +22,12 @@ import enum
 import typing
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures and type definitions.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 
 if typing.TYPE_CHECKING:
-    #: Variable type used in method signatures.
-    T = typing.TypeVar("T")
+    #: Variable type for configuration data.
+    VarDataType = typing.TypeVar("VarDataType")
 
     #: Key type.
     KeyType = typing.Union[str, enum.Enum]

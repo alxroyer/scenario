@@ -17,13 +17,12 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-
 
 class Logging500(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Console logging",

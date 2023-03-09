@@ -31,6 +31,9 @@ import typing
 
 
 if typing.TYPE_CHECKING:
+    #: Any path type.
+    #:
+    #: Simple string or ``os.PathLike``.
     AnyPathType = typing.Union[str, os.PathLike]
 
 

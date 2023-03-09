@@ -16,14 +16,12 @@
 
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
-
 
 class KnownIssues010(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Known issues",

@@ -21,15 +21,22 @@ Handler management.
 import enum
 import typing
 
-# `Logger` used for inheritance.
-from .logger import Logger
-# `ScenarioDefinition` used in method signatures.
-from .scenariodefinition import ScenarioDefinition
+from .logger import Logger  # `Logger` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
 if typing.TYPE_CHECKING:
+    #: Event specification type.
+    #:
+    #: Simple string or `enum`.
     EventType = typing.Union[str, enum.Enum]
 
+    #: Handler type.
+    #:
+    #: :param: The event name as a simple string.
+    #: :return: The second argument gives the event data.
     HandlerType = typing.Callable[[str, typing.Any], None]
 
 
@@ -42,7 +49,7 @@ class Handler:
             self,
             event,  # type: EventType
             handler,  # type: HandlerType
-            scenario_definition,  # type: typing.Optional[ScenarioDefinition]
+            scenario_definition,  # type: typing.Optional[_ScenarioDefinitionType]
             once,  # type: bool
     ):  # type: (...) -> None
         """
@@ -56,7 +63,7 @@ class Handler:
         #: Handler function.
         self.handler = handler  # type: HandlerType
         #: Related scenario, if any.
-        self.scenario_definition = scenario_definition  # type: typing.Optional[ScenarioDefinition]
+        self.scenario_definition = scenario_definition  # type: typing.Optional[_ScenarioDefinitionType]
         #: *Once* flag.
         self.once = once  # type: bool
 
@@ -83,7 +90,7 @@ class Handlers(Logger):
             self,
             event,  # type: EventType
             handler,  # type: HandlerType
-            scenario=None,  # type: ScenarioDefinition
+            scenario=None,  # type: _ScenarioDefinitionType
             once=False,  # type: bool
             first=False,  # type: bool
     ):  # type: (...) -> None

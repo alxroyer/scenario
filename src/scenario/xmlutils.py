@@ -23,8 +23,6 @@ import typing
 import xml.dom.minidom
 
 if typing.TYPE_CHECKING:
-    # `AnyPathType` used in method signatures.
-    # Type declared for type checking only.
     from .path import AnyPathType
 
 

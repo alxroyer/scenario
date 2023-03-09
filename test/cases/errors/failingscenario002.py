@@ -17,14 +17,14 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from steps.common import ParseScenarioLog, CheckScenarioLogExpectations
+from steps.common import ExecScenario  # `ExecScenario` used for inheritance.
 
 
 class FailingScenario002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.common import CheckScenarioLogExpectations, ParseScenarioLog
+
         scenario.test.TestCase.__init__(
             self,
             title="Continue on error",

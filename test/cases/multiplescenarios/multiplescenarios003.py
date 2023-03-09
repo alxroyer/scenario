@@ -17,17 +17,14 @@
 import scenario
 import scenario.test
 
-# Steps:
-from steps.common import ExecScenario
-from .steps.parser import ParseFinalResultsLog
-from .steps.expectations import CheckFinalResultsLogExpectations
-# Related scenarios:
-from knownissuesscenario import KnownIssuesScenario
-
 
 class MultipleScenarios003(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from multiplescenarios.steps.expectations import CheckFinalResultsLogExpectations
+        from multiplescenarios.steps.parser import ParseFinalResultsLog
+        from steps.common import ExecScenario
+
         scenario.test.TestCase.__init__(
             self,
             title="Multiple scenarios & known issues",
@@ -43,7 +40,7 @@ class MultipleScenarios003(scenario.test.TestCase):
         self.addstep(ParseFinalResultsLog(ExecScenario.getinstance(0)))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(0), scenario_expectations=[
             scenario.test.data.scenarioexpectations(
-                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: False},
+                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={scenario.test.data.scenarios.KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: False},
                 error_details=True, stats=True,
             ),
             scenario.test.data.scenarioexpectations(scenario.test.paths.SIMPLE_SCENARIO),
@@ -52,13 +49,13 @@ class MultipleScenarios003(scenario.test.TestCase):
         self.section("Known issues mixed with errors")
         self.addstep(ExecScenario(
             [scenario.test.paths.KNOWN_ISSUES_SCENARIO, scenario.test.paths.SIMPLE_SCENARIO],
-            config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "1"},
+            config_values={scenario.test.data.scenarios.KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: "1"},
             expected_return_code=scenario.ErrorCode.TEST_ERROR,
         ))
         self.addstep(ParseFinalResultsLog(ExecScenario.getinstance(1)))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(1), scenario_expectations=[
             scenario.test.data.scenarioexpectations(
-                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: True},
+                scenario.test.paths.KNOWN_ISSUES_SCENARIO, config_values={scenario.test.data.scenarios.KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS: True},
                 error_details=True, stats=True,
             ),
             scenario.test.data.scenarioexpectations(scenario.test.paths.SIMPLE_SCENARIO),

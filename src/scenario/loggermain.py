@@ -22,8 +22,7 @@ with :attr:`MAIN_LOGGER` singleton.
 import logging
 import sys
 
-# `Logger` used for inheritance.
-from .logger import Logger
+from .logger import Logger  # `Logger` used for inheritance.
 
 
 class MainLogger(Logger):

@@ -18,14 +18,12 @@ import typing
 
 import scenario.test
 
-# Steps:
-from .steps.currentprocess import LoadConfigFile, SaveConfigFile
-from .steps.currentprocess import CheckConfigValue
-
 
 class ConfigDb110(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from configdb.steps.currentprocess import CheckConfigValue, LoadConfigFile, SaveConfigFile
+
         scenario.test.TestCase.__init__(
             self,
             title="Save INI configuration file",

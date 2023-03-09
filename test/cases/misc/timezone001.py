@@ -19,13 +19,12 @@ import typing
 import scenario.test
 import scenario.text
 
-# Steps:
-from steps.pythonpackages import PythonPackageBegin
-
 
 class Timezone001(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from steps.pythonpackages import PythonPackageBegin
+
         scenario.test.TestCase.__init__(
             self,
             title="Timezones with ISO8601 datetimes and DST",

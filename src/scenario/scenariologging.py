@@ -21,20 +21,15 @@ Scenario logging.
 import logging
 import typing
 
-# `ActionResultDefinition` used in method signatures.
-from .actionresultdefinition import ActionResultDefinition
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
-# `ScenarioDefinition` used in method signatures.
-from .scenariodefinition import ScenarioDefinition
-# `ScenarioExecution` used in method signatures.
-from .scenarioexecution import ScenarioExecution
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
-# `StepSectionDescription` used in method signatures.
-from .stepsection import StepSectionDescription
-# `TestError` used in method signatures.
-from .testerrors import TestError
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from .scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from .stepdefinition import StepDefinition as _StepDefinitionType
+    from .stepsection import StepSectionDescription as _StepSectionDescriptionType
+    from .testerrors import TestError as _TestErrorType
 
 
 class ScenarioLogging:
@@ -76,7 +71,7 @@ class ScenarioLogging:
 
     def beginscenario(
             self,
-            scenario_definition,  # type: ScenarioDefinition
+            scenario_definition,  # type: _ScenarioDefinitionType
     ):  # type: (...) -> None
         """
         Displays the beginning of a scenario execution.
@@ -128,7 +123,7 @@ class ScenarioLogging:
 
     def stepsectiondescription(
             self,
-            step_section_description,  # type: StepSectionDescription
+            step_section_description,  # type: _StepSectionDescriptionType
     ):  # type: (...) -> None
         """
         Displays a step section.
@@ -152,7 +147,7 @@ class ScenarioLogging:
 
     def stepdescription(
             self,
-            step_definition,  # type: StepDefinition
+            step_definition,  # type: _StepDefinitionType
     ):  # type: (...) -> None
         """
         Displays a step being executed.
@@ -175,7 +170,7 @@ class ScenarioLogging:
 
     def actionresult(
             self,
-            actionresult,  # type: ActionResultDefinition
+            actionresult,  # type: _ActionResultDefinitionType
             description,  # type: str
     ):  # type: (...) -> None
         """
@@ -184,6 +179,7 @@ class ScenarioLogging:
         :param actionresult: Action or expected result being executed.
         :param description: Action/result description.
         """
+        from .actionresultdefinition import ActionResultDefinition
         from .loggermain import MAIN_LOGGER
 
         if (actionresult.type == ActionResultDefinition.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
@@ -197,7 +193,7 @@ class ScenarioLogging:
 
     def error(
             self,
-            error,  # type: TestError
+            error,  # type: _TestErrorType
     ):  # type: (...) -> None
         """
         Displays the test exception.
@@ -245,7 +241,7 @@ class ScenarioLogging:
 
     def endscenario(
             self,
-            scenario_definition,  # type: ScenarioDefinition
+            scenario_definition,  # type: _ScenarioDefinitionType
     ):  # type: (...) -> None
         """
         Displays the end of a scenario execution.
@@ -268,7 +264,7 @@ class ScenarioLogging:
 
     def displaystatistics(
             self,
-            scenario_execution,  # type: ScenarioExecution
+            scenario_execution,  # type: _ScenarioExecutionType
     ):  # type: (...) -> None
         """
         Displays the scenario statistics.
@@ -281,9 +277,9 @@ class ScenarioLogging:
         MAIN_LOGGER.rawoutput("------------------------------------------------")
 
         # Display warnings and errors (if any).
-        for _warning in scenario_execution.warnings:  # type: TestError
+        for _warning in scenario_execution.warnings:  # type: _TestErrorType
             self.error(_warning)
-        for _error in scenario_execution.errors:  # type: TestError
+        for _error in scenario_execution.errors:  # type: _TestErrorType
             self.error(_error)
 
         # Terminate and display statistics.

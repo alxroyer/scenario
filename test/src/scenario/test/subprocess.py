@@ -21,9 +21,6 @@ import typing
 
 import scenario
 
-from .paths import CAMPAIGN_LAUNCHER, TEST_LAUNCHER
-from .testcase import TestCase
-
 
 class SubProcess(scenario.SubProcess):
 
@@ -105,6 +102,8 @@ class SubProcess(scenario.SubProcess):
         :param log_outfile_path: Path of the output file used.
         :return: ``self``
         """
+        from .testcase import TestCase
+
         assert isinstance(self, SubProcess)
 
         if log_outfile_path is None:
@@ -124,6 +123,9 @@ class SubProcess(scenario.SubProcess):
         :param report_path: Path of the output file used for report generation.
         :return: ``self``
         """
+        from .paths import CAMPAIGN_LAUNCHER, TEST_LAUNCHER
+        from .testcase import TestCase
+
         assert isinstance(self, SubProcess)
 
         if report_path is None:
@@ -209,6 +211,8 @@ class ScenarioSubProcess(SubProcess):
         :param scenario_paths: Target scenarios, as given to the 'run-test' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
+        from .paths import TEST_LAUNCHER
+
         SubProcess.__init__(self, TEST_LAUNCHER)
 
         self.scenario_paths = list(scenario_paths)  # type: typing.List[scenario.Path]
@@ -232,6 +236,8 @@ class CampaignSubProcess(SubProcess):
         :param unit_paths: Test unit definition files, as given to the 'run-campaign' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
+        from .paths import CAMPAIGN_LAUNCHER
+
         SubProcess.__init__(self, CAMPAIGN_LAUNCHER)
 
         self.unit_paths = list(unit_paths)  # type: typing.List[scenario.Path]

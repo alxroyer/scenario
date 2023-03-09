@@ -19,17 +19,17 @@ Scenario events.
 """
 
 import abc
+import typing
 
-# `StrEnum` used for inheritance.
-from .enumutils import StrEnum
-# `CampaignExecution`, `TestCaseExecution` and `TestSuiteExecution` used in method signatures.
-from .campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
-# `ScenarioDefinition` used in method signatures.
-from .scenariodefinition import ScenarioDefinition
-# `StepDefinition` used in method signatures.
-from .stepdefinition import StepDefinition
-# `TestError` used in method signatures.
-from .testerrors import TestError
+from .enumutils import StrEnum  # `StrEnum` used for inheritance.
+
+if typing.TYPE_CHECKING:
+    from .campaignexecution import CampaignExecution as _CampaignExecutionType
+    from .campaignexecution import TestCaseExecution as _TestCaseExecutionType
+    from .campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
+    from .scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from .stepdefinition import StepDefinition as _StepDefinitionType
+    from .testerrors import TestError as _TestErrorType
 
 
 class ScenarioEvent(StrEnum):
@@ -81,13 +81,13 @@ class ScenarioEventData(abc.ABC):
 
         def __init__(
                 self,
-                campaign_execution,  # type: CampaignExecution
+                campaign_execution,  # type: _CampaignExecutionType
         ):  # type: (...) -> None
             """
             :param campaign_execution: Campaign notified.
             """
             #: Campaign notified.
-            self.campaign = campaign_execution  # type: CampaignExecution
+            self.campaign = campaign_execution  # type: _CampaignExecutionType
 
     class TestSuite:
         """
@@ -96,13 +96,13 @@ class ScenarioEventData(abc.ABC):
 
         def __init__(
                 self,
-                test_suite_execution,  # type: TestSuiteExecution
+                test_suite_execution,  # type: _TestSuiteExecutionType
         ):  # type: (...) -> None
             """
             :param test_suite_execution: Test suite notified.
             """
             #: Test suite notified.
-            self.test_suite = test_suite_execution  # type: TestSuiteExecution
+            self.test_suite = test_suite_execution  # type: _TestSuiteExecutionType
 
     class TestCase:
         """
@@ -111,13 +111,13 @@ class ScenarioEventData(abc.ABC):
 
         def __init__(
                 self,
-                test_case_execution,  # type: TestCaseExecution
+                test_case_execution,  # type: _TestCaseExecutionType
         ):  # type: (...) -> None
             """
             :param test_case_execution: Test case notified.
             """
             #: Test case notified.
-            self.test_case = test_case_execution  # type: TestCaseExecution
+            self.test_case = test_case_execution  # type: _TestCaseExecutionType
 
     class Scenario:
         """
@@ -126,13 +126,13 @@ class ScenarioEventData(abc.ABC):
 
         def __init__(
                 self,
-                scenario_definition,  # type: ScenarioDefinition
+                scenario_definition,  # type: _ScenarioDefinitionType
         ):  # type: (...) -> None
             """
             :param scenario_definition: Scenario notified.
             """
             #: Scenario notified.
-            self.scenario = scenario_definition  # type: ScenarioDefinition
+            self.scenario = scenario_definition  # type: _ScenarioDefinitionType
 
     class Step:
         """
@@ -141,13 +141,13 @@ class ScenarioEventData(abc.ABC):
 
         def __init__(
                 self,
-                step_definition,  # type: StepDefinition
+                step_definition,  # type: _StepDefinitionType
         ):  # type: (...) -> None
             """
             :param step_definition: Step notified.
             """
             #: Step notified.
-            self.step = step_definition  # type: StepDefinition
+            self.step = step_definition  # type: _StepDefinitionType
 
     class Error:
         """
@@ -156,10 +156,10 @@ class ScenarioEventData(abc.ABC):
 
         def __init__(
                 self,
-                error,  # type: TestError
+                error,  # type: _TestErrorType
         ):  # type: (...) -> None
             """
             :param error: Error notified.
             """
             #: Error notified.
-            self.error = error  # type: TestError
+            self.error = error  # type: _TestErrorType
