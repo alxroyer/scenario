@@ -19,7 +19,6 @@
 
 - Issue #72: Review `typing.TYPE_CHECKINGS` imports.
 - Issue #73: Use mypy v1.0.0
-    - Try to activate `show_error_context`, `show_column_numbers`, `pretty`.
     - Check issue065b => generate a known-issue only if the time lost is above 5%.
 - Issue #77: Avoid exporting implementation modules.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.

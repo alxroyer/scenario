@@ -195,7 +195,7 @@ class CampaignRunner(Logger):
         from .campaignlogging import CAMPAIGN_LOGGING
         from .configdb import CONFIG_DB
         from .confignode import ConfigNode
-        from .datetimeutils import f2strduration, ISO8601_REGEX
+        from .datetimeutils import ISO8601_REGEX
         from .debugloggers import ExecTimesLogger
         from .handlers import HANDLERS
         from .path import Path
