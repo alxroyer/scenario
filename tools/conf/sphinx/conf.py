@@ -36,11 +36,18 @@ import sys
 import types
 import typing
 
+# Path management.
 MAIN_PATH = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
-import scenario  # noqa: E402  ## Module level import not at top of file
-import scenario.tools  # noqa: E402  ## Module level import not at top of file
+
+# `scenario` imports.
+try:
+    # Avoid "Module level import not at top of file" PEP8 warnings.
+    import scenario
+    import scenario.tools
+finally:
+    pass
 
 
 # Project information
