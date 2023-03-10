@@ -23,7 +23,9 @@
     - Search for "from \. import [^_]"
     - Update coding rules.
         - Module names.
-        - Package definition and export strategy.
+        - Package definition and export strategy:
+            - Private implementation: '_' prefix.
+            - Comment may be set in docstring when public submodules shall be explicitly imported.
         - Save note on renamed class exports.
 - Clarify usage for `# noqa`.
     - See https://www.alpharithms.com/noqa-python-501210/.
