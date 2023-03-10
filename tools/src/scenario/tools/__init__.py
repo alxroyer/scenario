@@ -18,6 +18,7 @@
 from .checktypes import CheckTypes as CheckTypes
 from .deps import shouldupdate as shouldupdate
 from .mkdoc import MkDoc as MkDoc
-from . import paths as paths
+import scenario.tools.paths as _paths
+paths = _paths
 from .subprocess import SubProcess as SubProcess
 from .thirdparty import checkthirdpartytoolversion as checkthirdpartytoolversion

@@ -21,8 +21,8 @@ if typing.TYPE_CHECKING:
     from scenario._typing import JsonDictType  # noqa  ## Access to protected module
 
 if typing.TYPE_CHECKING:
-    from .subprocess import SubProcess as _SubProcessType
-    from .testcase import TestCase as _TestCaseType
+    from ._subprocess import SubProcess as _SubProcessType
+    from ._testcase import TestCase as _TestCaseType
 
 
 if typing.TYPE_CHECKING:
@@ -39,7 +39,7 @@ class Step(scenario.Step):
 
     @property
     def test_case(self):  # type: () -> _TestCaseType
-        from .testcase import TestCase
+        from ._testcase import TestCase
 
         _scenario = scenario.stack.building.scenario_definition  # type: typing.Optional[scenario.Scenario]
         # Avoid failing when the `self.scenario` attribute does not exist yet.
@@ -118,7 +118,7 @@ class ExecutionStep(Step):
     """
 
     def __init__(self):  # type: (...) -> None
-        from .subprocess import SubProcess
+        from ._subprocess import SubProcess
 
         Step.__init__(self)
 

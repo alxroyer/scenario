@@ -19,8 +19,8 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from .scenario import ScenarioExpectations as ScenarioExpectationsType
-    from .step import StepExpectations as StepExpectationsType
+    from ._scenario import ScenarioExpectations as ScenarioExpectationsType
+    from ._step import StepExpectations as StepExpectationsType
 
 
 class ActionResultExpectations:

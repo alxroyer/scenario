@@ -20,9 +20,9 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from .error import ErrorExpectations as _ErrorExpectationsType
-    from .step import StepExpectations as _StepExpectationsType
-    from .testsuite import TestSuiteExpectations as _TestSuiteExpectationsType
+    from ._error import ErrorExpectations as _ErrorExpectationsType
+    from ._step import StepExpectations as _StepExpectationsType
+    from ._testsuite import TestSuiteExpectations as _TestSuiteExpectationsType
 
 
 class ScenarioExpectations:
@@ -32,7 +32,7 @@ class ScenarioExpectations:
             class_name=None,  # type: str
             test_suite_expectations=None,  # type: _TestSuiteExpectationsType
     ):  # type: (...) -> None
-        from .stats import StatExpectations
+        from ._stats import StatExpectations
 
         self.test_suite_expectations = test_suite_expectations  # type: typing.Optional[_TestSuiteExpectationsType]
 
@@ -68,7 +68,7 @@ class ScenarioExpectations:
             name=None,  # type: str
             description=None,  # type: str
     ):  # type: (...) -> _StepExpectationsType
-        from .step import StepExpectations
+        from ._step import StepExpectations
 
         _step_expectations = StepExpectations(self)  # type: StepExpectations
         _step_expectations.number = number
@@ -115,7 +115,7 @@ class ScenarioExpectations:
             actions=None,  # type: typing.Union[int, typing.Tuple[int, int]]
             results=None,  # type: typing.Union[int, typing.Tuple[int, int]]
     ):  # type: (...) -> None
-        from .stats import StatExpectations
+        from ._stats import StatExpectations
 
         def _setstats(
                 instance,  # type: StatExpectations

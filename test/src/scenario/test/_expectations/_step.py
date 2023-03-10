@@ -19,8 +19,8 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from .actionresult import ActionResultExpectations as _ActionResultExpectationsType
-    from .scenario import ScenarioExpectations as _ScenarioExpectationsType
+    from ._actionresult import ActionResultExpectations as _ActionResultExpectationsType
+    from ._scenario import ScenarioExpectations as _ScenarioExpectationsType
 
 
 class StepExpectations:
@@ -48,7 +48,7 @@ class StepExpectations:
             self,
             action,  # type: str
     ):  # type: (...) -> _ActionResultExpectationsType
-        from .actionresult import ActionResultExpectations
+        from ._actionresult import ActionResultExpectations
 
         _action = ActionResultExpectations(self)  # type: ActionResultExpectations
         _action.type = scenario.ActionResult.Type.ACTION
@@ -62,7 +62,7 @@ class StepExpectations:
             self,
             result,  # type: str
     ):  # type: (...) -> _ActionResultExpectationsType
-        from .actionresult import ActionResultExpectations
+        from ._actionresult import ActionResultExpectations
 
         _result = ActionResultExpectations(self)  # type: ActionResultExpectations
         _result.type = scenario.ActionResult.Type.RESULT

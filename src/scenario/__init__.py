@@ -213,7 +213,11 @@ __doc__ += """
     Helper functions and types when you want to write your own assertion routines.
 """
 if __pkg_def:
-    from . import _assertionhelpers as assertionhelpers
+    # Note:
+    # It seems we can't reexport `assertionhelpers` from the '_assertions.py' module, otherwise it causes failures with mypy...
+    # Let's reexport `assertionhelpers` directly from the '_assertions.py' source module.
+    import scenario._assertionhelpers as _assertionhelpers
+    assertionhelpers = _assertionhelpers
 
 
 __doc__ += """
@@ -272,7 +276,8 @@ __doc__ += """
     Helper functions and types for debugging.
 """
 if __pkg_def:
-    from . import _debugutils as debug
+    import scenario._debugutils as _debugutils
+    debug = _debugutils
 
 
 __doc__ += """
@@ -644,7 +649,8 @@ __doc__ += """
     Date/time utils.
 """
 if __pkg_def:
-    from . import _datetimeutils as datetime
+    import scenario._datetimeutils as _datetimeutils
+    datetime = _datetimeutils
 
 __doc__ += """
 .. py:attribute:: tz
@@ -654,7 +660,8 @@ __doc__ += """
     Timezone utils.
 """
 if __pkg_def:
-    from . import _timezoneutils as timezone
+    import scenario._timezoneutils as _timezoneutils
+    timezone = _timezoneutils
 
 __doc__ += """
 .. py:attribute:: enum
@@ -664,4 +671,5 @@ __doc__ += """
     Enum utils.
 """
 if __pkg_def:
-    from . import _enumutils as enum
+    import scenario._enumutils as _enumutils
+    enum = _enumutils

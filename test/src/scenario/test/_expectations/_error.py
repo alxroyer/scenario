@@ -20,7 +20,7 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from .notset import NotSetType
+    from ._notset import NotSetType
 
 
 class ErrorExpectations:

@@ -14,13 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import typing
+
 
 # The following `try` block avoids IDEs folding the following import lines.
 try:
-    from ._lists import commalist as commalist
-    from ._numbers import adverbial as adverbial
-    from ._numbers import ordinal as ordinal
-    from ._plural import Countable as Countable
-    from ._plural import pluralize as pluralize
+    from ._actionresult import ActionResultExpectations as ActionResultExpectations
+    from ._campaign import CampaignExpectations as CampaignExpectations
+    from ._error import ErrorExpectations as ErrorExpectations
+    from ._notset import NOT_SET as NOT_SET
+    if typing.TYPE_CHECKING:
+        from ._notset import NotSetType as NotSetType
+    from ._scenario import ScenarioExpectations as ScenarioExpectations
+    from ._stats import StatExpectations as StatExpectations
+    from ._step import StepExpectations as StepExpectations
+    from ._testsuite import TestSuiteExpectations as TestSuiteExpectations
 finally:
     pass

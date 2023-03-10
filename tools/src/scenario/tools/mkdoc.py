@@ -22,12 +22,12 @@ import typing
 
 import scenario
 
-from . import paths  # `paths` used for class member instanciation.
+import scenario.tools.paths as _paths  # `_paths` used for class member instanciation.
 
 
 class MkDoc:
 
-    PLANTUML_PATH = paths.TOOLS_LIB_PATH / "plantuml.1.2020.15.jar"  # type: scenario.Path
+    PLANTUML_PATH = _paths.TOOLS_LIB_PATH / "plantuml.1.2020.15.jar"  # type: scenario.Path
     PY_SPHINX_APIDOC = (sys.executable, "-m", "sphinx.ext.apidoc")  # type: typing.Sequence[str]
     PY_SPHINX_BUILD = (sys.executable, "-m", "sphinx.cmd.build")  # type: typing.Sequence[str]
 
@@ -68,7 +68,7 @@ class MkDoc:
             sys.exit(int(scenario.Args.getinstance().error_code))
 
         # Execution.
-        scenario.Path.setmainpath(paths.MAIN_PATH)
+        scenario.Path.setmainpath(_paths.MAIN_PATH)
         self.checktools()
         if MkDoc.Args.getinstance().all or MkDoc.Args.getinstance().logs:
             self.buildlogs()
@@ -88,7 +88,7 @@ class MkDoc:
         checkthirdpartytoolversion("sphinx-build", [*MkDoc.PY_SPHINX_BUILD, "--version"])
         # tools.checkthirdpartytoolversion("dot", ["dot", "-V"])  ## PlantUML does not need dot to be installed for regular sequence diagrams.
         checkthirdpartytoolversion("java", ["java", "-version"])
-        checkthirdpartytoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=paths.MAIN_PATH)
+        checkthirdpartytoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=_paths.MAIN_PATH)
 
     def buildlogs(self):  # type: (...) -> None
         """
@@ -124,13 +124,13 @@ class MkDoc:
             if positionals:
                 _basename_no_ext = "+".join([_positional.stem for _positional in positionals]) + suffix
 
-            _log_out_path = paths.DOC_DATA_PATH / (_basename_no_ext + ".log")  # type: scenario.Path
-            _json_report_out_path = paths.DOC_DATA_PATH / (_basename_no_ext + ".json")  # type: scenario.Path
+            _log_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".log")  # type: scenario.Path
+            _json_report_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".json")  # type: scenario.Path
             _tmp_outdir = None  # type: typing.Optional[scenario.Path]
             if positionals:
                 if sum([_positional.name.endswith(".py") for _positional in positionals]) == 0:
-                    _tmp_outdir = paths.MAIN_PATH / "out"
-            _xml_report_out_path = paths.DOC_DATA_PATH / (_basename_no_ext + ".xml")  # type: scenario.Path
+                    _tmp_outdir = _paths.MAIN_PATH / "out"
+            _xml_report_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".xml")  # type: scenario.Path
 
             scenario.logging.info(f"Updating {_log_out_path}")
             _subprocess = SubProcess(sys.executable, script)  # type: SubProcess
@@ -145,7 +145,7 @@ class MkDoc:
                 scenario.logging.debug("Creating directory '%s'", _tmp_outdir)
                 _tmp_outdir.mkdir(parents=True, exist_ok=True)
                 _subprocess.addargs("--outdir", _tmp_outdir)
-            _subprocess.setcwd(paths.MAIN_PATH)
+            _subprocess.setcwd(_paths.MAIN_PATH)
             _subprocess.showstdout(False)
             _subprocess.run()
 
@@ -172,7 +172,7 @@ class MkDoc:
 
             # Dump the scenario executions summary when required.
             if summary and (_summary_total_line_index > 0):
-                _log_summary_out_path = paths.DOC_DATA_PATH / (_basename_no_ext + ".summary.log")  # type: scenario.Path
+                _log_summary_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".summary.log")  # type: scenario.Path
                 scenario.logging.info(f"Updating {_log_summary_out_path}")
                 _dumptext(_log_summary_out_path, b'\n'.join(_log_lines[_summary_total_line_index - 1:]))
 
@@ -205,59 +205,59 @@ class MkDoc:
 
         # Help logs.
         _generatelog(
-            paths.BIN_PATH / "run-test.py", options=["--help"],
+            _paths.BIN_PATH / "run-test.py", options=["--help"],
             suffix=".help",
         )
         _generatelog(
-            paths.BIN_PATH / "run-campaign.py", options=["--help"],
+            _paths.BIN_PATH / "run-campaign.py", options=["--help"],
             suffix=".help",
         )
         _generatelog(
-            paths.DEMO_PATH / "run-demo.py", options=["--help"],
+            _paths.DEMO_PATH / "run-demo.py", options=["--help"],
             suffix=".help",
         )
 
         # Scenario executions.
         _generatelog(
-            paths.BIN_PATH / "run-test.py",
-            positionals=[paths.DEMO_PATH / "commutativeaddition.py"],
+            _paths.BIN_PATH / "run-test.py",
+            positionals=[_paths.DEMO_PATH / "commutativeaddition.py"],
             json_report=True,
         )
         _generatelog(
-            paths.BIN_PATH / "run-test.py",
-            positionals=[paths.DEMO_PATH / "commutativeadditions.py"],
+            _paths.BIN_PATH / "run-test.py",
+            positionals=[_paths.DEMO_PATH / "commutativeadditions.py"],
             json_report=True,
         )
         _generatelog(
-            paths.BIN_PATH / "run-test.py",
-            positionals=[paths.DEMO_PATH / "loggingdemo.py"],
+            _paths.BIN_PATH / "run-test.py",
+            positionals=[_paths.DEMO_PATH / "loggingdemo.py"],
             json_report=True,
         )
         _generatelog(
-            paths.BIN_PATH / "run-test.py",
-            positionals=[paths.DEMO_PATH / "commutativeaddition.py", paths.DEMO_PATH / "loggingdemo.py"],
+            _paths.BIN_PATH / "run-test.py",
+            positionals=[_paths.DEMO_PATH / "commutativeaddition.py", _paths.DEMO_PATH / "loggingdemo.py"],
             summary=True,
         )
         _generatelog(
-            paths.DEMO_PATH / "run-demo.py", options=[
-                "--config-file", paths.DEMO_PATH / "conf.json",
+            _paths.DEMO_PATH / "run-demo.py", options=[
+                "--config-file", _paths.DEMO_PATH / "conf.json",
                 "--config-value", "x.y[0].z", "0",
                 "--show-configs",
-                paths.DEMO_PATH / "htmllogin.py",
+                _paths.DEMO_PATH / "htmllogin.py",
             ],
             suffix=".show-configs",
         )
-        if (paths.DEMO_PATH / "htmllogin.log").exists():
-            (paths.DEMO_PATH / "htmllogin.log").unlink()
+        if (_paths.DEMO_PATH / "htmllogin.log").exists():
+            (_paths.DEMO_PATH / "htmllogin.log").unlink()
 
         # Campaign executions.
         _generatelog(
-            paths.BIN_PATH / "run-campaign.py", positionals=[paths.DEMO_PATH / "demo.suite"],
+            _paths.BIN_PATH / "run-campaign.py", positionals=[_paths.DEMO_PATH / "demo.suite"],
             suffix=".campaign", summary=True, xml_report=True,
         )
 
         # Import dependencies.
-        _generatelog(paths.MAIN_PATH / "tools" / "checkdeps.py")
+        _generatelog(_paths.MAIN_PATH / "tools" / "checkdeps.py")
 
     def builddiagrams(self):  # type: (...) -> None
         """
@@ -266,8 +266,8 @@ class MkDoc:
         from .deps import shouldupdate
         from .subprocess import SubProcess
 
-        _cfg_path = paths.TOOLS_CONF_PATH / "umlconf.uml"  # type: scenario.Path
-        for _path in (paths.DOC_SRC_PATH / "uml").iterdir():  # type: scenario.Path
+        _cfg_path = _paths.TOOLS_CONF_PATH / "umlconf.uml"  # type: scenario.Path
+        for _path in (_paths.DOC_SRC_PATH / "uml").iterdir():  # type: scenario.Path
             if _path.is_file() and _path.name.endswith(".uml") and (not _path.samefile(_cfg_path)):
                 _png_outpath = _path.parent / _path.name.replace(".uml", ".png")  # type: scenario.Path
                 if shouldupdate(_png_outpath, [_path, _cfg_path]):
@@ -275,7 +275,7 @@ class MkDoc:
                     _subprocess = SubProcess("java", "-jar", self.PLANTUML_PATH)  # type: SubProcess
                     _subprocess.addargs("-config", _cfg_path)
                     _subprocess.addargs(_path)
-                    _subprocess.setcwd(paths.MAIN_PATH)
+                    _subprocess.setcwd(_paths.MAIN_PATH)
                     _subprocess.run()
                 else:
                     scenario.logging.info(f"No need to update {_png_outpath} from {_path}")
@@ -304,16 +304,16 @@ class MkDoc:
 
         # First remove the previous 'doc/src/py/' directory with its .rst generated files.
         # Useful in case source modules have been renamed.
-        if (paths.DOC_SRC_PATH / "py").is_dir():
-            scenario.logging.info(f"Removing {paths.DOC_SRC_PATH / 'py'}")
-            shutil.rmtree(paths.DOC_SRC_PATH / "py")
+        if (_paths.DOC_SRC_PATH / "py").is_dir():
+            scenario.logging.info(f"Removing {_paths.DOC_SRC_PATH / 'py'}")
+            shutil.rmtree(_paths.DOC_SRC_PATH / "py")
 
         scenario.logging.info("Executing sphinx-apidoc...")
         _subprocess = SubProcess(*MkDoc.PY_SPHINX_APIDOC)  # type: SubProcess
-        _subprocess.addargs("--output-dir", paths.DOC_SRC_PATH / "py")
+        _subprocess.addargs("--output-dir", _paths.DOC_SRC_PATH / "py")
         _subprocess.addargs("--force", "--module-first", "--separate")
-        _subprocess.addargs(paths.SRC_PATH / "scenario")
-        _subprocess.setcwd(paths.MAIN_PATH)
+        _subprocess.addargs(_paths.SRC_PATH / "scenario")
+        _subprocess.setcwd(_paths.MAIN_PATH)
         _subprocess.run()
 
     def sphinxbuild(self):  # type: (...) -> None
@@ -352,11 +352,11 @@ class MkDoc:
         # Write all files:
         _subprocess.addargs("-a")
         # Configuration file:
-        _subprocess.addargs("-c", paths.TOOLS_CONF_PATH / "sphinx")
+        _subprocess.addargs("-c", _paths.TOOLS_CONF_PATH / "sphinx")
         # Source directory:
-        _subprocess.addargs(paths.DOC_SRC_PATH)
+        _subprocess.addargs(_paths.DOC_SRC_PATH)
         # Output directory:
-        _subprocess.addargs(paths.DOC_OUT_PATH)
+        _subprocess.addargs(_paths.DOC_OUT_PATH)
 
         # $(sphinx-build) execution.
         def _onstderrline(line):  # type: (bytes) -> None
@@ -369,5 +369,5 @@ class MkDoc:
                 _level = logging.DEBUG
             scenario.logging.log(_level, line.decode("utf-8"))
         _subprocess.onstderrline(_onstderrline)
-        _subprocess.setcwd(paths.MAIN_PATH)
+        _subprocess.setcwd(_paths.MAIN_PATH)
         _subprocess.run()

@@ -102,7 +102,7 @@ class SubProcess(scenario.SubProcess):
         :param log_outfile_path: Path of the output file used.
         :return: ``self``
         """
-        from .testcase import TestCase
+        from ._testcase import TestCase
 
         assert isinstance(self, SubProcess)
 
@@ -123,8 +123,8 @@ class SubProcess(scenario.SubProcess):
         :param report_path: Path of the output file used for report generation.
         :return: ``self``
         """
-        from .paths import CAMPAIGN_LAUNCHER, TEST_LAUNCHER
-        from .testcase import TestCase
+        from ._paths import CAMPAIGN_LAUNCHER, TEST_LAUNCHER
+        from ._testcase import TestCase
 
         assert isinstance(self, SubProcess)
 
@@ -167,8 +167,8 @@ class SubProcess(scenario.SubProcess):
 
         :return: See :meth:`SubProcess.run()`
         """
-        from .paths import PACKAGE_BLACK_LIST_STARTER
-        from .reflex import PACKAGE_BLACK_LIST, PACKAGE_BLACK_LIST_CONF_KEY
+        from ._paths import PACKAGE_BLACK_LIST_STARTER
+        from ._reflex import PACKAGE_BLACK_LIST, PACKAGE_BLACK_LIST_CONF_KEY
 
         # Avoid `sys.exit()` calls.
         self.exitonerror(False)
@@ -211,7 +211,7 @@ class ScenarioSubProcess(SubProcess):
         :param scenario_paths: Target scenarios, as given to the 'run-test' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
-        from .paths import TEST_LAUNCHER
+        from ._paths import TEST_LAUNCHER
 
         SubProcess.__init__(self, TEST_LAUNCHER)
 
@@ -236,7 +236,7 @@ class CampaignSubProcess(SubProcess):
         :param unit_paths: Test unit definition files, as given to the 'run-campaign' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
-        from .paths import CAMPAIGN_LAUNCHER
+        from ._paths import CAMPAIGN_LAUNCHER
 
         SubProcess.__init__(self, CAMPAIGN_LAUNCHER)
 

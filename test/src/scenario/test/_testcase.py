@@ -21,7 +21,7 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from .features import Feature as _FeatureType
+    from ._features import Feature as _FeatureType
 
 
 class TestCase(scenario.Scenario):
@@ -35,8 +35,8 @@ class TestCase(scenario.Scenario):
             objective,  # type: str
             features,  # type: typing.List[_FeatureType]
     ):  # type: (...) -> None
-        from .attributes import ScenarioAttribute
-        from .paths import MAIN_PATH
+        from ._attributes import ScenarioAttribute
+        from ._paths import MAIN_PATH
 
         scenario.Scenario.__init__(self)
 

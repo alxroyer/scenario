@@ -24,6 +24,8 @@ import builtins
 import re
 import typing
 
+import scenario._assertionhelpers as _assertionhelpers  # `_assertionhelpers` used for global instanciation.
+
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType, EvidenceParamType, StepExecutionSpecificationType, TypeOrTypesType, VarComparableType, VarItemType
     from ._path import AnyPathType
@@ -34,6 +36,14 @@ if typing.TYPE_CHECKING:
 if typing.TYPE_CHECKING:
     #: Variable object type.
     VarObjType = typing.TypeVar("VarObjType", bound=object)
+
+
+__doc__ += """
+.. py:attribute:: assertionhelpers
+
+    Shortcut to :mod:`._assertionhelpers`.
+"""
+assertionhelpers = _assertionhelpers
 
 
 class Assertions:
@@ -57,8 +67,6 @@ class Assertions:
 
         :param err: Error message.
         """
-        from . import _assertionhelpers as assertionhelpers
-
         assertionhelpers.unittest.fail(err)
 
     @staticmethod
@@ -70,8 +78,6 @@ class Assertions:
 
         :param err: Error message.
         """
-        from . import _assertionhelpers as assertionhelpers
-
         assertionhelpers.unittest.fail(f"TODO: {err}")
 
     # General equality.
@@ -91,7 +97,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assertionhelpers.unittest.assertEqual(obj1, obj2, err)
@@ -115,7 +120,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assertionhelpers.unittest.assertNotEqual(obj1, obj2, err)
@@ -139,8 +143,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
-
         assertionhelpers.unittest.assertIsNone(obj, err)
         assertionhelpers.evidence(
             evidence,
@@ -161,7 +163,6 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: The value ``obj``, ensured not to be ``None``.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assertionhelpers.unittest.assertIsNotNone(obj, err)
@@ -189,7 +190,6 @@ class Assertions:
 
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert type is not None, assertionhelpers.isnonemsg("assertisinstance()", "type")
@@ -220,7 +220,6 @@ class Assertions:
 
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert type is not None, assertionhelpers.isnonemsg("assertisnotinstance()", "type")
@@ -249,7 +248,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert obj1 is not None, assertionhelpers.isnonemsg("assertsameinstances()", "obj1")
@@ -279,7 +277,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert obj1 is not None, assertionhelpers.isnonemsg("assertdifferentinstances()", "obj1")
@@ -309,8 +306,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
-
         assertionhelpers.unittest.assertTrue(value, err)
         assertionhelpers.evidence(
             evidence,
@@ -330,8 +325,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
-
         assertionhelpers.unittest.assertFalse(value, err)
         assertionhelpers.evidence(
             evidence,
@@ -355,7 +348,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert obj1 is not None, assertionhelpers.isnonemsg("assertless()", "obj1")
@@ -382,7 +374,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert obj1 is not None, assertionhelpers.isnonemsg("assertlessequal()", "obj1")
@@ -409,7 +400,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert obj1 is not None, assertionhelpers.isnonemsg("assertgreater()", "obj1")
@@ -436,7 +426,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert obj1 is not None, assertionhelpers.isnonemsg("assertgreaterequal()", "obj1")
@@ -465,7 +454,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert between is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "between")
@@ -498,7 +486,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert between is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "between")
@@ -532,7 +519,6 @@ class Assertions:
         :param evidence:
         :return: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert obj1 is not None, assertionhelpers.isnonemsg("assertnear()", "obj1")
@@ -581,7 +567,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert string is not None, assertionhelpers.isnonemsg("assertstartswith()", "string")
@@ -611,7 +596,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert string is not None, assertionhelpers.isnonemsg("assertnotstartswith()", "string")
@@ -641,7 +625,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert string is not None, assertionhelpers.isnonemsg("assertendswith()", "string")
@@ -671,7 +654,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert string is not None, assertionhelpers.isnonemsg("assertnotendswith()", "string")
@@ -706,7 +688,6 @@ class Assertions:
             The ``regex`` and ``string`` parameters follow the usual order of ``re`` functions
             (contrary to ``unittest`` ``assertRegex()``).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert regex is not None, assertionhelpers.isnonemsg("assertregex()", "regex")
@@ -749,7 +730,6 @@ class Assertions:
             The ``regex`` and ``string`` parameters follow the usual order of ``re`` functions
             (contrary to ``unittest`` ``assertNotRegex()``).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
 
         assert regex is not None, assertionhelpers.isnonemsg("assertnotregex()", "regex")
@@ -787,7 +767,6 @@ class Assertions:
         :param expect_end_time: ``True`` when the step execution is expected to be terminated.
         :return: Step execution that matched the specification.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
         from ._stepexecution import StepExecution
@@ -834,7 +813,6 @@ class Assertions:
         :param expect_end_time: ``True`` when the ``end`` step execution is expected to be terminated.
         :return: Step execution that matched the ``start`` and ``end`` specifications.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
         from ._stats import TimeStats
@@ -889,7 +867,6 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
 
@@ -926,7 +903,6 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
 
@@ -962,7 +938,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
         from ._reflex import isiterable
 
@@ -992,7 +967,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
         from ._reflex import isiterable
 
@@ -1024,7 +998,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
         from ._reflex import isiterable
 
@@ -1057,7 +1030,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
         from ._reflex import isiterable
 
@@ -1093,7 +1065,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
         from ._reflex import isiterable
 
@@ -1132,7 +1103,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import saferepr
         from ._reflex import isiterable
 
@@ -1196,7 +1166,6 @@ class Assertions:
 
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._debugutils import FmtAndArgs, saferepr
         from ._reflex import qualname
 
@@ -1306,7 +1275,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._path import Path
 
         assert path is not None, assertionhelpers.isnonemsg("assertexists()", "path")
@@ -1335,7 +1303,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._path import Path
 
         assert path is not None, assertionhelpers.isnonemsg("assertnotexists()", "path")
@@ -1364,7 +1331,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._path import Path
 
         assert path is not None, assertionhelpers.isnonemsg("assertisfile()", "path")
@@ -1393,7 +1359,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._path import Path
 
         assert path is not None, assertionhelpers.isnonemsg("assertisdir()", "path")
@@ -1424,7 +1389,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._path import Path
 
         assert path1 is not None, assertionhelpers.isnonemsg("assertsamepaths()", "path1")
@@ -1458,7 +1422,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._path import Path
 
         assert path is not None, assertionhelpers.isnonemsg("assertisrelativeto()", "path")
@@ -1492,7 +1455,6 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from . import _assertionhelpers as assertionhelpers
         from ._path import Path
 
         assert path is not None, assertionhelpers.isnonemsg("assertisnotrelativeto()", "path")

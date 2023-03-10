@@ -19,9 +19,9 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from .scenario import ScenarioExpectations as _ScenarioExpectationsType
-    from .stats import StatExpectations as _StatExpectationsType
-    from .testsuite import TestSuiteExpectations as _TestSuiteExpectationsType
+    from ._scenario import ScenarioExpectations as _ScenarioExpectationsType
+    from ._stats import StatExpectations as _StatExpectationsType
+    from ._testsuite import TestSuiteExpectations as _TestSuiteExpectationsType
 
 
 class CampaignExpectations:
@@ -32,7 +32,7 @@ class CampaignExpectations:
             self,
             test_suite_path=None,  # type: scenario.Path
     ):  # type: (...) -> _TestSuiteExpectationsType
-        from .testsuite import TestSuiteExpectations
+        from ._testsuite import TestSuiteExpectations
 
         if self.test_suite_expectations is None:
             self.test_suite_expectations = []
@@ -53,18 +53,18 @@ class CampaignExpectations:
 
     @property
     def step_stats(self):  # type: () -> _StatExpectationsType
-        from .stats import StatExpectations
+        from ._stats import StatExpectations
 
         return StatExpectations.sum("steps", self.test_suite_expectations)
 
     @property
     def action_stats(self):  # type: () -> _StatExpectationsType
-        from .stats import StatExpectations
+        from ._stats import StatExpectations
 
         return StatExpectations.sum("actions", self.test_suite_expectations)
 
     @property
     def result_stats(self):  # type: () -> _StatExpectationsType
-        from .stats import StatExpectations
+        from ._stats import StatExpectations
 
         return StatExpectations.sum("results", self.test_suite_expectations)

@@ -19,6 +19,7 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Rename modules around '__init__.py' files.
+    - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
     - Search for "`.[^_]" patterns.
     - Search for "from \. import [^_]"
     - Update coding rules.
@@ -26,6 +27,12 @@
         - Package definition and export strategy:
             - Private implementation: '_' prefix.
             - Comment may be set in docstring when public submodules shall be explicitly imported.
+            - Avoid `from . import` pattern, but:
+              ```python
+              import full.path.to._privatepackagename as _privatepackagename
+              publicpackagename = _privatepackagename
+              ```
+              Note: Seems can't be reexported (unfortunately).
         - Save note on renamed class exports.
 - Clarify usage for `# noqa`.
     - See https://www.alpharithms.com/noqa-python-501210/.
