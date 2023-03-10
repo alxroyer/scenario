@@ -50,6 +50,18 @@ import typing
 # Named with double leading underscores in order to avoid 'mkdoc.py' list it as an undocumented attribute.
 __pkg_def = True  # type: bool
 
+# Used for renamed class exports (`ScenarioDefinition` exported as `Scenario` for instance):
+# - A simple assignment `Scenario = ScenarioExecution` works for type checking,
+#   but confuses IDEs.
+# - A renamed import `from ._scenariodefinition import ScenarioDefinition as Scenario` works better for IDEs,
+#   but is not enough for type checking export controls.
+# - A renamed import backed with an additional declaration of the exported symbol in `__all__` fulfills both expectations
+#   (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
+# - Since this implies redundant declarations,
+#   and other non-renamed exports, or local assignments, stand for valid exports,
+#   we limit this workaround to class renames only.
+__all__ = []  # type: typing.List[str]
+
 # A couple of symbols are exported by using an intermediate private symbol.
 # For instance, if we declare `logging` as following:
 # ```python
@@ -97,7 +109,9 @@ __doc__ += """
 """
 if __pkg_def:
     from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
-    Scenario = ScenarioDefinition
+    # Renamed class export.
+    from ._scenariodefinition import ScenarioDefinition as Scenario
+    __all__.append("Scenario")
 
 __doc__ += """
 .. py:attribute:: Step
@@ -112,7 +126,9 @@ __doc__ += """
 """
 if __pkg_def:
     from ._stepdefinition import StepDefinition as StepDefinition
-    Step = StepDefinition
+    # Renamed class export.
+    from ._stepdefinition import StepDefinition as Step
+    __all__.append("Step")
 
 __doc__ += """
 .. py:attribute:: ActionResult
@@ -125,7 +141,9 @@ __doc__ += """
 """
 if __pkg_def:
     from ._actionresultdefinition import ActionResultDefinition as ActionResultDefinition
-    ActionResult = ActionResultDefinition
+    # Renamed class export.
+    from ._actionresultdefinition import ActionResultDefinition as ActionResult
+    __all__.append("ActionResult")
 
 
 __doc__ += """

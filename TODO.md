@@ -24,6 +24,7 @@
     - Update coding rules.
         - Module names.
         - Package definition and export strategy.
+        - Save note on renamed class exports.
 - Clarify usage for `# noqa`.
     - See https://www.alpharithms.com/noqa-python-501210/.
     - Codes seem to be checker specific (`flake8` among others).
