@@ -22,7 +22,7 @@ import typing
 
 import scenario
 
-import scenario.tools.paths as _paths  # `_paths` used for class member instanciation.
+import scenario.tools._paths as _paths  # `_paths` used for class member instanciation.
 
 
 class MkDoc:
@@ -81,14 +81,14 @@ class MkDoc:
             self.sphinxbuild()
 
     def checktools(self):  # type: (...) -> None
-        from .thirdparty import checkthirdpartytoolversion
+        from .tracking import tracktoolversion
 
-        checkthirdpartytoolversion("python", [sys.executable, "--version"])
-        checkthirdpartytoolversion("sphinx-apidoc", [*MkDoc.PY_SPHINX_APIDOC, "--version"])
-        checkthirdpartytoolversion("sphinx-build", [*MkDoc.PY_SPHINX_BUILD, "--version"])
-        # tools.checkthirdpartytoolversion("dot", ["dot", "-V"])  ## PlantUML does not need dot to be installed for regular sequence diagrams.
-        checkthirdpartytoolversion("java", ["java", "-version"])
-        checkthirdpartytoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=_paths.MAIN_PATH)
+        tracktoolversion("python", [sys.executable, "--version"])
+        tracktoolversion("sphinx-apidoc", [*MkDoc.PY_SPHINX_APIDOC, "--version"])
+        tracktoolversion("sphinx-build", [*MkDoc.PY_SPHINX_BUILD, "--version"])
+        # tracktoolversion("dot", ["dot", "-V"])  ## PlantUML does not need dot to be installed for regular sequence diagrams.
+        tracktoolversion("java", ["java", "-version"])
+        tracktoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=_paths.MAIN_PATH)
 
     def buildlogs(self):  # type: (...) -> None
         """
@@ -96,7 +96,7 @@ class MkDoc:
 
         Ensures the sample execution times do not fluctuate in the output documentation from build to build.
         """
-        from .subprocess import SubProcess
+        from ._subprocess import SubProcess
 
         _float_duration_regex = rb'\d+.\d+'  # type: bytes
         _float_duration_subst = b'SSS.mmmmmm'  # type: bytes
@@ -263,8 +263,8 @@ class MkDoc:
         """
         Builds the documentation diagrams.
         """
+        from ._subprocess import SubProcess
         from .deps import shouldupdate
-        from .subprocess import SubProcess
 
         _cfg_path = _paths.TOOLS_CONF_PATH / "umlconf.uml"  # type: scenario.Path
         for _path in (_paths.DOC_SRC_PATH / "uml").iterdir():  # type: scenario.Path
@@ -300,7 +300,7 @@ class MkDoc:
           --ext-autodoc = enable autodoc extension
                           Not sure about what this option actually does...
         """
-        from .subprocess import SubProcess
+        from ._subprocess import SubProcess
 
         # First remove the previous 'doc/src/py/' directory with its .rst generated files.
         # Useful in case source modules have been renamed.
@@ -331,7 +331,7 @@ class MkDoc:
           -v = increase verbosity (can be repeated)
           -T = show full traceback on exception
         """
-        from .subprocess import SubProcess
+        from ._subprocess import SubProcess
 
         scenario.logging.info("Executing sphinx-build...")
 

@@ -341,6 +341,8 @@ class PyDoc:
 
             Emitted when the config object has been initialized.
         """
+        from scenario.tools.mkdoc import MkDoc
+
         sphinxdebug("PyDoc.sphinx_configinited()")
 
         sphinxdebug("app.confdir=%r", app.confdir)
@@ -354,7 +356,7 @@ class PyDoc:
             app.srcdir = scenario.tools.paths.DOC_SRC_PATH.abspath
 
         # Update 'doc/src/py' files.
-        scenario.tools.MkDoc().sphinxapidoc()
+        MkDoc().sphinxapidoc()
 
     def sphinx_builderinited(
             self,

@@ -19,14 +19,14 @@ import typing
 import scenario
 
 
-def checkthirdpartytoolversion(
+def tracktoolversion(
         tool_name,  # type: str
         cmd_line,  # type: typing.List[typing.Union[str, scenario.AnyPathType]]
         cwd=None,  # type: scenario.AnyPathType
         exit_on_error=True,  # type: bool
 ):  # type: (...) -> typing.Optional[str]
     """
-    Checks that a third party tool exists.
+    Checks that a tool exists and tracks its version.
 
     :param tool_name: Tool name, for display purpose.
     :param cmd_line: Command line used to display the tool's version.
@@ -34,7 +34,7 @@ def checkthirdpartytoolversion(
     :param exit_on_error: ``False`` when the program should not fail if the tool is not found. ``True`` by default.
     :return: Version of the tool if found, ``None`` otherwise.
     """
-    from .subprocess import SubProcess
+    from ._subprocess import SubProcess
 
     _cmd = SubProcess(*cmd_line)  # type: SubProcess
     if cwd:

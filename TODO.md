@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #77: Avoid exporting implementation modules.
-    - Rename modules around '__init__.py' files.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
     - Search for "`.[^_]" patterns.
     - Search for "from \. import [^_]"

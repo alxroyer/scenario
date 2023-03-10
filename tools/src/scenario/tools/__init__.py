@@ -15,10 +15,10 @@
 # limitations under the License.
 
 
-from .checktypes import CheckTypes as CheckTypes
-from .deps import shouldupdate as shouldupdate
-from .mkdoc import MkDoc as MkDoc
-import scenario.tools.paths as _paths
-paths = _paths
-from .subprocess import SubProcess as SubProcess
-from .thirdparty import checkthirdpartytoolversion as checkthirdpartytoolversion
+# The following `try` block avoids IDEs folding the following import lines.
+try:
+    import scenario.tools._paths as _paths
+    paths = _paths
+    from ._subprocess import SubProcess as SubProcess
+finally:
+    pass

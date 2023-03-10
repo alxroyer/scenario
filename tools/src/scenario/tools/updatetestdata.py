@@ -183,7 +183,7 @@ class DataExpectationsUpdater(FileUpdater):
             self,
             test_data,  # type: TestData
     ):  # type: (...) -> None
-        from .paths import TEST_SRC_DATA_PATH
+        from ._paths import TEST_SRC_DATA_PATH
 
         FileUpdater.__init__(
             self,

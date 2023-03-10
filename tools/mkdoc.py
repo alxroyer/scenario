@@ -23,13 +23,8 @@ MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
-# `scenario` imports.
-try:
-    # Avoid "Module level import not at top of file" PEP8 warnings.
-    import scenario.tools
-finally:
-    pass
-
 
 if __name__ == "__main__":
-    scenario.tools.MkDoc().run()
+    from scenario.tools.mkdoc import MkDoc
+
+    MkDoc().run()
