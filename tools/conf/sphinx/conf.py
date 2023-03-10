@@ -998,7 +998,7 @@ class PyDoc:
         if isinstance(element, docutils.nodes.reference):
             _reference = element  # type: docutils.nodes.reference
             _reftitle = _reference.get("reftitle", "")  # type: str
-            _match = re.match(r"^scenario\.([a-z0-9]+)\.(.*)", _reftitle)
+            _match = re.match(r"^scenario\.([_a-z0-9]+)\.(.*)", _reftitle)
             if _match:
                 short_ref = _match.group(2)
             else:
