@@ -50,7 +50,16 @@ import typing
 # Named with double leading underscores in order to avoid 'mkdoc.py' list it as an undocumented attribute.
 __pkg_def = True  # type: bool
 
-# Used for renamed class exports (`ScenarioDefinition` exported as `Scenario` for instance):
+# A couple of symbols are exported by using an intermediate private symbol.
+# For instance, if we declare `logging` as following:
+# ```python
+# from .loggermain import MAIN_LOGGER as logging
+# ```
+# mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
+# Mypy seems not to support reexports with renamings.
+# Possibly something to do with [PEP 0848](https://peps.python.org/pep-0484/#stub-files) reexport rules for stub files...
+
+# Renamed class exports (`ScenarioDefinition` exported as `Scenario` for instance):
 # - A simple assignment `Scenario = ScenarioExecution` works for type checking,
 #   but confuses IDEs.
 # - A renamed import `from ._scenariodefinition import ScenarioDefinition as Scenario` works better for IDEs,
@@ -61,15 +70,6 @@ __pkg_def = True  # type: bool
 #   and other non-renamed exports, or local assignments, stand for valid exports,
 #   we limit this workaround to class renames only.
 __all__ = []  # type: typing.List[str]
-
-# A couple of symbols are exported by using an intermediate private symbol.
-# For instance, if we declare `logging` as following:
-# ```python
-# from .loggermain import MAIN_LOGGER as logging
-# ```
-# mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
-# Mypy seems not to support reexports with renamings.
-# Possibly something to do with [PEP 0848](https://peps.python.org/pep-0484/#stub-files) reexport rules for stub files...
 
 
 __doc__ += """
@@ -673,3 +673,12 @@ __doc__ += """
 if __pkg_def:
     import scenario._enumutils as _enumutils
     enum = _enumutils
+
+
+# Since the implementation is done in private modules,
+# Sphinx will put implementation documentation at the end of the `scenario` documentation page.
+# Finish with the title below, as an introduction to it.
+__doc__ += """
+Implementation
+==============
+"""
