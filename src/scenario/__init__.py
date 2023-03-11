@@ -80,9 +80,9 @@ Package information
 __doc__ += """
 .. py:attribute:: info
 
-    Alias of :attr:`.pkginfo.PKG_INFO`.
-
     Gives the package information: version, ...
+
+    .. seealso:: :attr:`._pkginfo.PackageInfo` implementation.
 """
 if __pkg_def:
     from ._pkginfo import PKG_INFO as _PKG_INFO
@@ -99,9 +99,9 @@ Classes to inherit from in order to describe test scenarios and libraries.
 __doc__ += """
 .. py:attribute:: Scenario
 
-    Alias of :class:`.scenariodefinition.ScenarioDefinition`.
-
     Base class to inherit from in order to define a test scenario.
+
+    .. seealso:: :class:`._scenariodefinition.ScenarioDefinition` implementation.
 
 .. py:attribute:: ScenarioDefinition
 
@@ -116,9 +116,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: Step
 
-    Alias of :class:`.stepdefinition.StepDefinition`.
-
     Base class to inherit from in order to define a test step.
+
+    .. seealso:: :class:`._stepdefinition.StepDefinition` implementation.
 
 .. py:attribute:: StepDefinition
 
@@ -133,7 +133,7 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ActionResult
 
-    Alias of :class:`.actionresultdefinition.ActionResultDefinition`.
+    .. seealso:: :class:`._actionresultdefinition.ActionResultDefinition` implementation.
 
 .. py:attribute:: ActionResultDefinition
 
@@ -156,10 +156,10 @@ Classes that can be used to define step sections.
 __doc__ += """
 .. py:attribute:: StepSectionDescription
 
-    Alias of :class:`.stepsection.StepSectionDescription`.
-
     Step class that holds a description for a section of steps.
-    Automatically instanciated by :meth:`.scenariodefinition.ScenarioDefinition.section()`.
+    Automatically instanciated by :meth:`._scenariodefinition.ScenarioDefinition.section()`.
+
+    .. seealso:: :class:`._stepsection.StepSectionDescription` implementation.
 """
 if __pkg_def:
     from ._stepsection import StepSectionDescription as StepSectionDescription
@@ -167,9 +167,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: StepSectionBegin
 
-    Alias of :class:`.stepsection.StepSectionBegin`.
-
     Step class to inherit from, then add in a scenario, in order to define the beginning of a step section.
+
+    .. seealso:: :class:`._stepsection.StepSectionBegin` implementation.
 """
 if __pkg_def:
     from ._stepsection import StepSectionBegin as StepSectionBegin
@@ -177,9 +177,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: StepSectionEnd
 
-    Alias of :class:`.stepsection.StepSectionEnd`.
+    Type of the :attr:`._stepsection.StepSectionBegin.end` step to add at the end of a step section.
 
-    Type of the :attr:`.stepsection.StepSectionBegin.end` step to add at the end of a step section.
+    .. seealso:: :class:`._stepsection.StepSectionEnd` implementation.
 """
 if __pkg_def:
     from ._stepsection import StepSectionEnd as StepSectionEnd
@@ -195,12 +195,12 @@ Make verifications on data.
 __doc__ += """
 .. py:attribute:: Assertions
 
-    Alias of :class:`.assertions.Assertions`.
-
     Library of static assertion methods.
 
-    Can be sub-classes.
+    Can be sub-classed.
     :class:`Scenario` and :class:`Step` inherit from this class.
+
+    .. seealso:: :class:`._assertions.Assertions` implementation.
 """
 if __pkg_def:
     from ._assertions import Assertions as Assertions
@@ -208,9 +208,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: assertionhelpers
 
-    Alias of :mod:`.assertionhelpers`.
-
     Helper functions and types when you want to write your own assertion routines.
+
+    .. seealso:: :mod:`._assertionhelpers` implementation.
 """
 if __pkg_def:
     # Note:
@@ -230,11 +230,11 @@ Logging management.
 __doc__ += """
 .. py:attribute:: Logger
 
-    Alias of :class:`.logger.Logger`.
-
     Object with logging capabilities.
 
     :class:`Scenario` and :class:`Step` inherit from this class.
+
+    .. seealso:: :class:`._logger.Logger` implementation.
 """
 if __pkg_def:
     from ._logger import Logger as Logger
@@ -251,9 +251,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: Console
 
-    Alias of :class:`.console.Console`.
-
     Console colors.
+
+    .. seealso:: :class:`._console.Console` implementation.
 """
 if __pkg_def:
     from ._console import Console as Console
@@ -261,9 +261,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: LogExtraData
 
-    Alias of :class:`.logextradata.LogExtraData`.
-
     Logging extra data management.
+
+    .. seealso:: :class:`._logextradata.LogExtraData` implementation.
 """
 if __pkg_def:
     from ._logextradata import LogExtraData as LogExtraData
@@ -271,9 +271,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: debug
 
-    Alias of :mod:`.debugutils`.
-
     Helper functions and types for debugging.
+
+    .. seealso:: :mod:`._debugutils` implementation.
 """
 if __pkg_def:
     import scenario._debugutils as _debugutils
@@ -291,6 +291,8 @@ __doc__ += """
 .. py:attribute:: conf
 
     Configuration manager instance.
+
+    .. seealso:: :class:`._configdb.ConfigDatabase` implemenation.
 """
 if __pkg_def:
     from ._configdb import CONFIG_DB as _CONFIG_DB
@@ -299,7 +301,7 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ConfigNode
 
-    Alias of :class:`.confignode.ConfigNode`.
+    .. seealso:: :class:`._confignode.ConfigNode` implementation.
 """
 if __pkg_def:
     from ._confignode import ConfigNode as ConfigNode
@@ -307,9 +309,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ConfigKey
 
-    Alias of :class:`.scenarioconfig.ScenarioConfig.Key`.
-
     `scenario` configuration keys.
+
+    .. seealso:: :class:`._scenarioconfig.ScenarioConfig.Key` implementation.
 """
 if __pkg_def:
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfig
@@ -333,6 +335,8 @@ __doc__ += """
     .. code-block:: python
 
         scenario.runner.main()
+
+    .. seealso:: :class:`._scenariorunner.ScenarioRunner` implementation.
 """
 if __pkg_def:
     from ._scenariorunner import SCENARIO_RUNNER as _SCENARIO_RUNNER
@@ -348,6 +352,8 @@ __doc__ += """
     .. code-block:: python
 
         scenario.campaign_runner.main()
+
+    .. seealso:: :class:`._campaignrunner.CampaignRunner` implementation.
 """
 if __pkg_def:
     from ._campaignrunner import CAMPAIGN_RUNNER as _CAMPAIGN_RUNNER
@@ -356,9 +362,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: Args
 
-    Alias of :class:`.args.Args`.
-
     Base class for :class:`ScenarioArgs` and :class:`CampaignArgs`.
+
+    .. seealso:: :class:`._args.Args` implementation.
 """
 if __pkg_def:
     from ._args import Args as Args
@@ -366,9 +372,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ScenarioArgs
 
-    Alias of :class:`.scenarioargs.ScenarioArgs`.
+    Inherit from this class in order to extend :class:`._scenariorunner.ScenarioRunner` arguments with your own launcher script ones.
 
-    Inherit from this class in order to extend :class:`.scenariorunner.ScenarioRunner` arguments with your own launcher script ones.
+    .. seealso:: :class:`._scenarioargs.ScenarioArgs` implementation.
 """
 if __pkg_def:
     from ._scenarioargs import ScenarioArgs as ScenarioArgs
@@ -376,9 +382,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: CampaignArgs
 
-    Alias of :class:`.campaignargs.CampaignArgs`.
+    Inherit from this class in order to extend :class:`._campaignrunner.CampaignRunner` arguments with your own launcher script ones.
 
-    Inherit from this class in order to extend :class:`.campaignrunner.CampaignRunner` arguments with your own launcher script ones.
+    .. seealso:: :class:`._campaignargs.CampaignArgs` implementation.
 """
 if __pkg_def:
     from ._campaignargs import CampaignArgs as CampaignArgs
@@ -386,9 +392,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ErrorCode
 
-    Alias of :class:`.errcodes.ErrorCode`.
+    Error codes returned by :meth:`._scenariorunner.ScenarioRunner.main()` and :meth:`._campaignrunner.CampaignRunner.main()`.
 
-    Error codes returned by the :meth:`main()` methods of :class:`.scenariorunner.ScenarioRunner` and :class:`.campaignrunner.CampaignRunner`.
+    .. seealso:: :class:`._errcodes.ErrorCode` implementation.
 """
 if __pkg_def:
     from ._errcodes import ErrorCode as ErrorCode
@@ -405,6 +411,8 @@ __doc__ += """
 .. py:attribute:: handlers
 
     Handler manager instance.
+
+    .. seealso:: :class:`._handlers.Handlers` implementation.
 """
 if __pkg_def:
     from ._handlers import HANDLERS as _HANDLERS
@@ -413,7 +421,7 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: Event
 
-    Alias of :class:`.scenarioevents.ScenarioEvent`.
+    .. seealso:: :class:`._scenarioevents.ScenarioEvent` implementation.
 """
 if __pkg_def:
     from ._scenarioevents import ScenarioEvent as _ScenarioEvent
@@ -422,7 +430,7 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: EventData
 
-    Alias of :class:`.scenarioevents.ScenarioEventData`.
+    .. seealso:: :class:`._scenarioevents.ScenarioEventData` implementation.
 """
 if __pkg_def:
     from ._scenarioevents import ScenarioEventData as _ScenarioEventData
@@ -439,9 +447,9 @@ Sometimes, you may need to access information about the test execution itself.
 __doc__ += """
 .. py:attribute:: ExecutionStatus
 
-    Alias of :class:`.executionstatus.ExecutionStatus`.
-
     Describes the final status of a scenario or campaign execution.
+
+    .. seealso:: :class:`._executionstatus.ExecutionStatus` implementation.
 """
 if __pkg_def:
     from ._executionstatus import ExecutionStatus as ExecutionStatus
@@ -449,7 +457,7 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ScenarioExecution
 
-    Alias of :class:`.scenarioexecution.ScenarioExecution`.
+    .. seealso:: :class:`._scenarioexecution.ScenarioExecution` implementation.
 """
 if __pkg_def:
     from ._scenarioexecution import ScenarioExecution as ScenarioExecution
@@ -457,7 +465,7 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: StepExecution
 
-    Alias of :class:`.stepexecution.StepExecution`.
+    .. seealso:: :class:`._stepexecution.StepExecution` implementation.
 """
 if __pkg_def:
     from ._stepexecution import StepExecution as StepExecution
@@ -465,7 +473,7 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ActionResultExecution
 
-    Alias of :class:`.actionresultexecution.ActionResultExecution`.
+    .. seealso:: :class:`._actionresultexecution.ActionResultExecution` implementation.
 """
 if __pkg_def:
     from ._actionresultexecution import ActionResultExecution as ActionResultExecution
@@ -473,7 +481,7 @@ if __pkg_def:
 __doc__ += """
 .. py::attribute:: CampaignExecution
 
-    Alias of :class:`.campaignexecutions.CampaignExecution`.
+    .. seealso:: :class:`._campaignexecutions.CampaignExecution` implementation.
 """
 if __pkg_def:
     from ._campaignexecution import CampaignExecution as CampaignExecution
@@ -481,7 +489,7 @@ if __pkg_def:
 __doc__ += """
 .. py::attribute:: TestSuiteExecution
 
-    Alias of :class:`.campaignexecutions.TestSuiteExecution`.
+    .. seealso:: :class:`._campaignexecutions.TestSuiteExecution` implementation.
 """
 if __pkg_def:
     from ._campaignexecution import TestSuiteExecution as TestSuiteExecution
@@ -489,7 +497,7 @@ if __pkg_def:
 __doc__ += """
 .. py::attribute:: TestCaseExecution
 
-    Alias of :class:`.campaignexecutions.TestCaseExecution`.
+    .. seealso:: :class:`._campaignexecutions.TestCaseExecution` implementation.
 """
 if __pkg_def:
     from ._campaignexecution import TestCaseExecution as TestCaseExecution
@@ -497,9 +505,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: TestError
 
-    Alias of :class:`.testerrors.TestError`.
+    Base class that describes an error that occurred during the tests.
 
-    Describes an error that occurred during the tests.
+    .. seealso:: :class:`._testerrors.TestError` implementation.
 """
 if __pkg_def:
     from ._testerrors import TestError as TestError
@@ -507,9 +515,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ExceptionError
 
-    Alias of :class:`.testerrors.ExceptionError`.
+    Subclass of :class:`TestError` that describes an error due to an exception that occurred during the tests.
 
-    Describes an error due to an exception that occurred during the tests.
+    .. seealso:: :class:`._testerrors.ExceptionError` implementation.
 """
 if __pkg_def:
     from ._testerrors import ExceptionError as ExceptionError
@@ -517,9 +525,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: KnownIssue
 
-    Alias of :class:`.knownissues.KnownIssue`.
+    Subclass of :class:`TestError` that describes an error due to an exception that occurred during the tests.
 
-    Describes an error due to an exception that occurred during the tests.
+    .. seealso:: :class:`._knownissues.KnownIssue` implementation.
 """
 if __pkg_def:
     from ._knownissues import KnownIssue as KnownIssue
@@ -527,13 +535,13 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: IssueLevel
 
-    Alias of :class:`.issuelevels.IssueLevel`.
-
     Provides methods to define named issue levels.
+
+    .. seealso:: :class:`._issuelevels.IssueLevel` implementation.
 
 .. py:attribute:: AnyIssueLevelType
 
-    Alias of :class:`.issuelevels.AnyIssueLevelType`.
+    .. seealso:: :class:`._issuelevels.AnyIssueLevelType` implementation.
 """
 if __pkg_def:
     from ._issuelevels import IssueLevel as IssueLevel
@@ -543,9 +551,9 @@ if typing.TYPE_CHECKING:
 __doc__ += """
 .. py:attribute:: TimeStats
 
-    Alias of :class:`.stats.TimeStats`.
-
     Describes execution time statistics.
+
+    .. seealso:: :class:`._stats.TimeStats` implementation.
 """
 if __pkg_def:
     from ._stats import TimeStats as TimeStats
@@ -553,9 +561,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: ExecTotalStats
 
-    Alias of :class:`.stats.ExecTotalStats`.
-
     Describes count statistics: number of items executed, out of the total number of items.
+
+    .. seealso:: :class:`._stats.ExecTotalStats` implementation.
 """
 if __pkg_def:
     from ._stats import ExecTotalStats as ExecTotalStats
@@ -564,6 +572,8 @@ __doc__ += """
 .. py:attribute:: stack
 
     Scenario stack instance.
+
+    .. seealso:: :class:`._scenariostack.ScenarioStack` implementation.
 """
 if __pkg_def:
     from ._scenariostack import SCENARIO_STACK as _SCENARIO_STACK
@@ -581,6 +591,8 @@ __doc__ += """
 .. py:attribute:: report
 
     Scenario report manager.
+
+    .. seealso:: :class:`._scenarioreport.ScenarioReport` implementation.
 """
 if __pkg_def:
     from ._scenarioreport import SCENARIO_REPORT as _SCENARIO_REPORT
@@ -590,6 +602,8 @@ __doc__ += """
 .. py:attribute:: campaign_report
 
     Campaign report manager.
+
+    .. seealso:: :class:`._campaignreport.CampaignReport` implementation.
 """
 if __pkg_def:
     from ._campaignreport import CAMPAIGN_REPORT as _CAMPAIGN_REPORT
@@ -604,12 +618,11 @@ Miscellaneous
 __doc__ += """
 .. py:attribute:: Path
 
-    Alias of :class:`.path.Path`.
-
+    .. seealso:: :class:`._path.Path` implementation.
 
 .. py:attribute:: AnyPathType
 
-    Alias of :class:`.path.AnyPathType`.
+    .. seealso:: :class:`._path.AnyPathType` implementation.
 """
 if __pkg_def:
     from ._path import Path as Path
@@ -619,14 +632,13 @@ if typing.TYPE_CHECKING:
 __doc__ += """
 .. py:attribute:: SubProcess
 
-    Alias of :class:`.subprocess.SubProcess`.
-
     Eases the way to prepare a sub-process, execute it, and then retrieve its results.
 
+    .. seealso:: :class:`._subprocess.SubProcess` implementation.
 
 .. py:attribute:: VarSubProcessType
 
-    Alias of :class:`.subprocess.VarSubProcessType`.
+    .. seealso:: :class:`._subprocess.VarSubProcessType` implementation.
 """
 if __pkg_def:
     from ._subprocess import SubProcess as SubProcess
@@ -636,7 +648,7 @@ if typing.TYPE_CHECKING:
 __doc__ += """
 .. py:attribute:: CodeLocation
 
-    Alias of :class:`.locations.CodeLocation`.
+    .. seealso:: :class:`._locations.CodeLocation` implementation.
 """
 if __pkg_def:
     from ._locations import CodeLocation as CodeLocation
@@ -644,9 +656,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: datetime
 
-    Alias of :mod:`.datetimeutils`.
-
     Date/time utils.
+
+    .. seealso:: :mod:`._datetimeutils` implementation.
 """
 if __pkg_def:
     import scenario._datetimeutils as _datetimeutils
@@ -655,9 +667,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: tz
 
-    Alias of :mod:`.timezoneutils`.
-
     Timezone utils.
+
+    .. seealso:: :mod:`._timezoneutils` implementation.
 """
 if __pkg_def:
     import scenario._timezoneutils as _timezoneutils
@@ -666,9 +678,9 @@ if __pkg_def:
 __doc__ += """
 .. py:attribute:: enum
 
-    Alias of :mod:`.enumutils`.
-
     Enum utils.
+
+    .. seealso:: :mod:`._enumutils` implementation.
 """
 if __pkg_def:
     import scenario._enumutils as _enumutils
