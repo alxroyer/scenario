@@ -26,6 +26,8 @@
             - Interesting resource: https://stackoverflow.com/questions/38765577/overriding-sphinx-autodoc-alias-of-for-import-of-private-class.
             - Tried to `Scenario = Scenario`, as advised above, but type checkings fail.
             - No such items in the official documentation: https://scenario-testing-framework.readthedocs.io/en/v0.2.2/py/scenario.html.
+        - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
+        - Find out why 'checkdeps.py' takes so long.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
     - Search for "`.[^_]" patterns.
     - Search for "from \. import [^_]"
