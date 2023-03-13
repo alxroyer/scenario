@@ -38,7 +38,6 @@
 
 # Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
 # Define this package as a namespace, so that it can be extended later on (with tools, tests, ...).
-# In as much as this code is python 2/3 compatible, we use *pkgutil-style namespace packages*.
 from pkgutil import extend_path
 __path__ = extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
 
