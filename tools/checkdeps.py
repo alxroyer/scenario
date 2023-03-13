@@ -56,9 +56,10 @@ class CheckDeps:
             if _src_path.is_file() and _src_path.name.endswith(".py"):
                 _current_module = ModuleDeps.get(_src_path.name)  # type: ModuleDeps
                 scenario.logging.debug("  Reading %s:", _src_path)
+                _is_scenario_init = (_src_path == scenario.tools.paths.SRC_PATH / "scenario" / "__init__.py")  # type: bool
                 for _line in _src_path.read_bytes().splitlines():  # type: bytes
                     # Memo: In 'scenario/__init__.py', imports are maid in blocks in order to avoid PEP8 E402 import warnings.
-                    if _src_path == scenario.tools.paths.SRC_PATH / "scenario" / "__init__.py":
+                    if _is_scenario_init:
                         # Strip leading spaces, for 'scenario/__init__.py' only!
                         _line = _line.lstrip()
                     if (
