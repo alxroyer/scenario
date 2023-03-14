@@ -35,10 +35,9 @@ def trackmoduleitems(
 
     .. warning:: Does not track untyped attributes.
     """
-    from ._sphinxlogging import SphinxLogger
+    from ._logging import Logger
 
-    _logger = SphinxLogger("trackmoduleitems()", enable_debug=True)
-
+    _logger = Logger.getinstance(Logger.Id.TRACK_MODULE_ITEMS)  # type: Logger
     _logger.debug("trackmoduleitems(module=%r)", module)
 
     assert inspect.ismodule(module), f"Not a module {module!r}"
@@ -87,9 +86,9 @@ DOCUMENTED_ITEMS = {}  # type: typing.Dict[str, DocumentedItem]
 
 
 def warnundocitems():  # type: (...) -> None
-    from ._sphinxlogging import SphinxLogger
+    from ._logging import Logger
 
-    _logger = SphinxLogger("warnundocitems()", enable_debug=True)
+    _logger = Logger.getinstance(Logger.Id.WARN_UNDOC_ITEMS)  # type: Logger
 
     # Print out console warnings for non documented tracked items.
     for _undoc_fq_name in TRACKED_ITEMS:  # type: str

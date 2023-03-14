@@ -354,7 +354,7 @@ class SubProcess:
                 try:
                     self._stdout_line_handler(_line)
                 except Exception as _err:
-                    self._log(logging.ERROR, str(_err))
+                    self._log(logging.ERROR, "  stdout: %r", _err)
 
     def _readstderrthread(self):  # type: (...) -> None
         """
@@ -380,7 +380,7 @@ class SubProcess:
                 try:
                     self._stderr_line_handler(_line)
                 except Exception as _err:
-                    self._log(logging.ERROR, str(_err))
+                    self._log(logging.ERROR, "  stderr: %r", _err)
 
     def isrunning(self):  # type: (...) -> bool
         """

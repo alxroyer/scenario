@@ -26,8 +26,10 @@ def setup(
     :param app: Sphinx application.
     """
     from ._autodochandlers import AutodocHandlers
+    from ._logging import loggingsetup
     from ._sphinxhandlers import SphinxHandlers
 
+    loggingsetup()
     _sphinx_handlers = SphinxHandlers()  # type: SphinxHandlers
     _sphinx_handlers.setup(app)
     _autodoc_handlers = AutodocHandlers()  # type: AutodocHandlers

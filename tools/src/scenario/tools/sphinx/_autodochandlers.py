@@ -101,11 +101,10 @@ class AutodocHandlers:
 
         Prevents ``__init__()``, ``__repr__()`` and ``__str__()`` methods from being skipped.
         """
+        from ._logging import Logger
         from ._reflex import isspecialfunction, fqname
-        from ._sphinxlogging import SphinxLogger
 
-        _logger = SphinxLogger("autodoc:skip-member", enable_debug=True)
-
+        _logger = Logger.getinstance(Logger.Id.AUTODOC_SKIP_MEMBER)  # type: Logger
         _logger.debug("skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",
                       owner_type, nfq_name, obj, would_skip, options)
 
@@ -201,10 +200,9 @@ class AutodocHandlers:
                 The event handler can return a new tuple (signature, return_annotation)
                 to change what Sphinx puts into the output.
         """
-        from ._sphinxlogging import SphinxLogger
+        from ._logging import Logger
 
-        _logger = SphinxLogger("autodoc:skip-member", enable_debug=True)
-
+        _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_SIGNATURE)  # type: Logger
         _logger.debug("processsignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
                       what, fq_name, obj, options, signature, return_annotation)
 
@@ -249,7 +247,7 @@ class AutodocHandlers:
                         re.match(r"^([^#]+)( *#.*)( = \w+)$", _args[_index])
                         # Otherwise match with no default value.
                         # The empty group in the end is left intentionally for grouping compatibility between the two regex.
-                        or re.match(r"^([^#]+)( *#.*)()$", _args[_index])
+                        or re.match(r"^([^#]+)( *#.*)()$", _args[_index])  # Empty group assumed.
                     )  # type: typing.Optional[typing.Match[str]]
                     assert _match, _errmsg(f"Could not parse comment from {_args[_index]!r}")
                     _args[_index] = _match.group(1).rstrip() + _match.group(3)
@@ -340,11 +338,10 @@ class AutodocHandlers:
         If not, prints a warning in the console and generates a warning in the output documentation.
         """
         from ._documenteditems import DOCUMENTED_ITEMS, DocumentedItem, TRACKED_ITEMS, trackmoduleitems
+        from ._logging import Logger
         from ._reflex import isspecialfunction
-        from ._sphinxlogging import SphinxLogger
 
-        _logger = SphinxLogger("autodoc:process-docstring", enable_debug=True)
-
+        _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_DOCSTRING)  # type: Logger
         _logger.debug("processdocstring(what=%r, fq_name=%r, obj=%r, options=%r, lines=%r)",
                       what, fq_name, obj, options, lines)
 

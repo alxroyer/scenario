@@ -87,14 +87,16 @@ class SphinxHandlers:
 
             Emitted when the config object has been initialized.
         """
-        from ._sphinxlogging import SphinxLogger
         from .._paths import DOC_SRC_PATH
         from ..mkdoc import MkDoc
+        from ._logging import Logger, savesphinxverbosity
 
-        _logger = SphinxLogger("sphinx:config-inited", enable_debug=True)  # type: SphinxLogger
+        savesphinxverbosity(app.verbosity)
 
+        _logger = Logger.getinstance(Logger.Id.SPHINX_CONFIG_INITED)  # type: Logger
         _logger.debug("configinited()")
 
+        _logger.debug("app.verbosity=%r", app.verbosity)
         _logger.debug("app.confdir=%r", app.confdir)
         _logger.debug("app.doctreedir=%r", app.doctreedir)
         _logger.debug("app.outdir=%r", app.outdir)
@@ -122,10 +124,9 @@ class SphinxHandlers:
             Emitted when the builder object has been created.
             It is available as ``app.builder``.
         """
-        from ._sphinxlogging import SphinxLogger
+        from ._logging import Logger
 
-        _logger = SphinxLogger("sphinx:builder-inited", enable_debug=True)  # type: SphinxLogger
-
+        _logger = Logger.getinstance(Logger.Id.SPHINX_BUILDER_INITED)  # type: Logger
         _logger.debug("SphinxHendlers.builderinited()")
 
     def envupdated(
@@ -145,10 +146,9 @@ class SphinxHandlers:
             and will be (re-)written during the writing phase.
         """
         from ._documenteditems import warnundocitems
-        from ._sphinxlogging import SphinxLogger
+        from ._logging import Logger
 
-        _logger = SphinxLogger("sphinx:env-updated", enable_debug=True)  # type: SphinxLogger
-
+        _logger = Logger(Logger.Id.SPHINX_ENV_UPDATED)  # type: Logger
         _logger.debug("envupdated(env=%r)", env)
 
         warnundocitems()
@@ -172,11 +172,10 @@ class SphinxHandlers:
             Here is the place to replace custom nodes that don’t have visitor methods in the writers,
             so that they don’t cause errors when the writers encounter them.
         """
+        from ._logging import Logger
         from ._references import simplifyreferences
-        from ._sphinxlogging import SphinxLogger
 
-        _logger = SphinxLogger("sphinx:doctreee-resolved", enable_debug=True)  # type: SphinxLogger
-
+        _logger = Logger.getinstance(Logger.Id.SPHINX_DOCTREE_RESOLVED)  # type: Logger
         _logger.debug("SphincHandlers.doctreeresolved(doctree=%r, docname=%r)", doctree, docname)
 
         simplifyreferences(docname, doctree)
@@ -198,8 +197,7 @@ class SphinxHandlers:
             If the build process raised no exception, exception will be None.
             This allows to customize cleanup actions depending on the exception status.
         """
-        from ._sphinxlogging import SphinxLogger
+        from ._logging import Logger
 
-        _logger = SphinxLogger("sphinx:build-finished", enable_debug=True)  # type: SphinxLogger
-
+        _logger = Logger.getinstance(Logger.Id.SPHINX_BUILD_FINISHED)  # type: Logger
         _logger.debug("SohinxHandlers.buildfinished(exception=%r)", exception)
