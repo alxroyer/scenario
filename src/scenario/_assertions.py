@@ -24,7 +24,7 @@ import builtins
 import re
 import typing
 
-import scenario._assertionhelpers as _assertionhelpers  # `_assertionhelpers` used for global instanciation.
+from . import _assertionhelpers  # `_assertionhelpers` used for global instanciation.
 
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType, EvidenceParamType, StepExecutionSpecificationType, TypeOrTypesType, VarComparableType, VarItemType

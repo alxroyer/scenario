@@ -78,6 +78,7 @@ class CheckDeps:
                         or ((_words[0] == b'import') and (_words[2] == b'as'))
                     )
                     if _words[1].startswith(b'scenario.'):
+                        scenario.logging.warning(f"Python 3.6 incompatible import form {_line!r}")
                         # Module reexports: Transform 'scenario.xxx' into '.xxx'.
                         _words[1] = _words[1][len(b'scenario'):]
                     if _words[1] != b'.':
@@ -88,8 +89,7 @@ class CheckDeps:
                         scenario.logging.debug("    %s => %s", _src_path.name, _module_name.decode("utf-8") + ".py")
                         _current_module.adddep(ModuleDeps.get(_module_name.decode("utf-8") + ".py"))
                     else:
-                        # ``from . import <module>`` pattern (formerly in '__init__.py' files, deprecated form).
-                        scenario.logging.warning(f"Deprecated import form {_line!r}")
+                        # ``from . import <module>`` pattern.
 
                         # The module name(s) was(were) after the ``import`` keyword.
                         _line = _line[_line.find(b'import') + len(b'import'):]

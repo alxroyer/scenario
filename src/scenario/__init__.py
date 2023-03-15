@@ -215,8 +215,7 @@ if __pkg_def:
     # Note:
     # It seems we can't reexport `assertionhelpers` from the '_assertions.py' module, otherwise it causes failures with mypy...
     # Let's reexport `assertionhelpers` directly from the '_assertions.py' source module.
-    import scenario._assertionhelpers as _assertionhelpers
-    assertionhelpers = _assertionhelpers
+    from . import _assertionhelpers as assertionhelpers
 
 
 __doc__ += """
@@ -275,8 +274,7 @@ __doc__ += """
     .. seealso:: :mod:`._debugutils` implementation.
 """
 if __pkg_def:
-    import scenario._debugutils as _debugutils
-    debug = _debugutils
+    from . import _debugutils as debug
 
 
 __doc__ += """
@@ -660,8 +658,7 @@ __doc__ += """
     .. seealso:: :mod:`._datetimeutils` implementation.
 """
 if __pkg_def:
-    import scenario._datetimeutils as _datetimeutils
-    datetime = _datetimeutils
+    from . import _datetimeutils as datetime
 
 __doc__ += """
 .. py:attribute:: tz
@@ -671,8 +668,7 @@ __doc__ += """
     .. seealso:: :mod:`._timezoneutils` implementation.
 """
 if __pkg_def:
-    import scenario._timezoneutils as _timezoneutils
-    timezone = _timezoneutils
+    from . import _timezoneutils as timezone
 
 __doc__ += """
 .. py:attribute:: enum
@@ -682,8 +678,7 @@ __doc__ += """
     .. seealso:: :mod:`._enumutils` implementation.
 """
 if __pkg_def:
-    import scenario._enumutils as _enumutils
-    enum = _enumutils
+    from . import _enumutils as enum
 
 
 # Since the implementation is done in private modules,

@@ -41,6 +41,13 @@
               publicpackagename = _privatepackagename
               ```
               Note: Seems can't be reexported (unfortunately).
+            - BUT, it seems this pattern does not work with namespace packages with Python 3.6.
+              For instance:
+              ```python
+              import scenario.tools._paths as _paths
+              ```
+              in 'tools/scenario/tools/__init__.py' fails with the following error:
+              "AttributeError: module 'scenario' has no attribute 'tools'"
         - Save note on renamed class exports.
 - Clarify usage for `# noqa`.
     - See https://www.alpharithms.com/noqa-python-501210/.

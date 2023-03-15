@@ -19,7 +19,7 @@ import typing
 
 import scenario
 
-import scenario.test._datascenarios as _datascenarios  # `_datascenarios` used for global instanciation.
+from . import _datascenarios  # `_datascenarios` used for global instanciation.
 
 if typing.TYPE_CHECKING:
     from ._configvalues import ConfigValuesType
@@ -106,11 +106,9 @@ def scenarioexpectations(
     :param config_values: Extra configurations.
     :return: :class:`.expectations.ScenarioExpectations` instance
     """
+    from . import _configvalues as _configvalues
     from ._expectations import ErrorExpectations, NOT_SET, ScenarioExpectations
-
-    # Shortcuts to neighbour modules.
-    import scenario.test._configvalues as _configvalues
-    import scenario.test._paths as _paths
+    from . import _paths as _paths
 
     _reqs = _ExpectationRequirements(
         attributes=attributes,
@@ -528,8 +526,7 @@ def testsuiteexpectations(
         stats=False,  # type: bool
         config_values=None,  # type: ConfigValuesType
 ):  # type: (...) -> _TestTestSuiteExpectationsType
-    # Shortcut to neighbour module.
-    import scenario.test._paths as _paths
+    from . import _paths as _paths
 
     _test_suite_expectations = campaign_expectations.addtestsuite(test_suite_path)  # type: _TestTestSuiteExpectationsType
     _test_suite_expectations.test_case_expectations = []

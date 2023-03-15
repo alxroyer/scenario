@@ -20,10 +20,8 @@ import typing
 # The following `try` block avoids IDEs folding the following import lines.
 try:
     from ._attributes import ScenarioAttribute as ScenarioAttribute
-    import scenario.test._configvalues as _configvalues
-    configvalues = _configvalues
-    import scenario.test._data as _data
-    data = _data
+    from . import _configvalues as configvalues
+    from . import _data as data
     from ._expectations import ActionResultExpectations as ActionResultExpectations
     from ._expectations import CampaignExpectations as CampaignExpectations
     from ._expectations import ErrorExpectations as ErrorExpectations
@@ -34,13 +32,10 @@ try:
     from ._expectations import StatExpectations as StatExpectations
     from ._expectations import StepExpectations as StepExpectations
     from ._expectations import TestSuiteExpectations as TestSuiteExpectations
-    import scenario.test._features as _features
-    features = _features
+    from . import _features as features
     from ._knownissues import IssueLevel as IssueLevel
-    import scenario.test._paths as _paths
-    paths = _paths
-    import scenario.test._reflex as _reflex
-    reflex = _reflex
+    from . import _paths as paths
+    from . import _reflex as reflex
     if typing.TYPE_CHECKING:
         from ._steps import AnyExecutionStepType as AnyExecutionStepType
     from ._steps import ExecutionStep as ExecutionStep

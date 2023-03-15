@@ -22,7 +22,7 @@ import typing
 
 import scenario
 
-import scenario.tools._paths as _paths  # `_paths` used for class member instanciation.
+from . import _paths  # `_paths` used for class member instanciation.
 
 
 class MkDoc:

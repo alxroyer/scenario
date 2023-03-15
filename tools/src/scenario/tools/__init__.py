@@ -17,8 +17,7 @@
 
 # The following `try` block avoids IDEs folding the following import lines.
 try:
-    import scenario.tools._paths as _paths
-    paths = _paths
+    from . import _paths as paths
     from ._subprocess import SubProcess as SubProcess
 finally:
     pass
