@@ -118,3 +118,11 @@ class Logger:
     ):  # type: (...) -> None
         self.debug(f"WARNING: {fmt}", *args)
         sphinxlogger().warning(f"WARNING: {fmt}", *args)
+
+    def error(
+            self,
+            fmt,  # type: str
+            *args  # type: typing.Any
+    ):  # type: (...) -> None
+        self.debug(f"ERROR: {fmt}", *args)
+        sphinxlogger().error(f"ERROR: {fmt}", *args)
