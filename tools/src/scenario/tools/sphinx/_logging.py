@@ -60,6 +60,7 @@ class Logger:
         SPHINX_CONFIG_INITED = "sphinx:config-inited"
         SPHINX_BUILDER_INITED = "sphinx:builder-inited"
         SPHINX_ENV_UPDATED = "sphinx:env-updated"
+        SPHINX_MISSING_REFERENCE = "sphinx:missing-reference"
         SPHINX_DOCTREE_RESOLVED = "sphinx:doctreee-resolved"
         SPHINX_BUILD_FINISHED = "sphinx:build-finished"
         # Autodoc handlers.

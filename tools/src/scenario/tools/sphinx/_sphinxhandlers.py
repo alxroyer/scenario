@@ -68,6 +68,7 @@ class SphinxHandlers:
         #        - In the event that any reference nodes fail to resolve, the following may emit:
         #        - event.missing-reference(env, node, contnode)
         #        - event.warn-missing-reference(domain, node)
+        app.connect("missing-reference", self.missingreference)
         app.connect("doctree-resolved", self.doctreeresolved)
 
         # 15. Generate output files
@@ -152,6 +153,41 @@ class SphinxHandlers:
         _logger.debug("envupdated(env=%r)", env)
 
         warnundocitems()
+
+    def missingreference(
+            self,
+            app,  # type: sphinx.application.Sphinx
+            env,  # type: typing.Any
+            node,  # type: typing.Any
+            contnode,  # type: typing.Any
+    ):  # type: (...) -> typing.Any
+        """
+        See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-missing-reference
+
+        [SPHINX_CORE_EVENTS]:
+            Emitted when a cross-reference to an object cannot be resolved.
+            If the event handler can resolve the reference,
+            it should return a new docutils node to be inserted in the document tree in place of the node ``node``.
+            Usually this node is a ``reference`` node containing ``contnode`` as a child.
+            If the handler can not resolve the cross-reference, it can either return None to let other handlers try,
+            or raise ``NoUri`` to prevent other handlers in trying and suppress a warning about this cross-reference being unresolved.
+
+        :param app:
+        :param env:
+            [SPHINX_CORE_EVENTS]:
+                The build environment (``app.builder.env``).
+        :param node:
+            [SPHINX_CORE_EVENTS]:
+                The ``pending_xref`` node to be resolved.
+                Its attributes ``reftype``, ``reftarget``, ``modname`` and ``classname`` attributes determine the type and target of the reference.
+        :param contnode:
+            [SPHINX_CORE_EVENTS]:
+                The node that carries the text and formatting inside the future reference and should be a child of the returned reference node.
+        """
+        from ._logging import Logger
+
+        _logger = Logger.getinstance(Logger.Id.SPHINX_MISSING_REFERENCE)  # type: Logger
+        _logger.debug("missingreference(env=%r, node=%r, contnode=%r)", env, node, contnode)
 
     def doctreeresolved(
             self,

@@ -19,6 +19,7 @@ scenario:
     # - "scenario.tools.sphinx:sphinx:conf-inited"
     # - "scenario.tools.sphinx:sphinx:builder-inited"
     # - "scenario.tools.sphinx:sphinx:env-updated"
+    # - "scenario.tools.sphinx:sphinx:missing-reference"
     # - "scenario.tools.sphinx:sphinx:doctreee-resolved"
     # - "scenario.tools.sphinx:sphinx:build-finished"
     # Autodoc handler.
