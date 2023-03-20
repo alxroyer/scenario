@@ -98,8 +98,6 @@ class AutodocHandlers:
                 If more than one enabled extension handles the autodoc-skip-member event,
                 autodoc will use the first non-None value returned by a handler.
                 Handlers should return None to fall back to the skipping behavior of autodoc and other enabled extensions.
-
-        Prevents ``__init__()``, ``__repr__()`` and ``__str__()`` methods from being skipped.
         """
         from ._logging import Logger
         from ._reflex import isspecialfunction, fqname
@@ -108,13 +106,12 @@ class AutodocHandlers:
         _logger.debug("skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",
                       owner_type, nfq_name, obj, would_skip, options)
 
-        if would_skip:
-            # When overriding `enum.Enum`, an undocumented function warning is displayed for '_generate_next_value_'.
-            # noinspection PyProtectedMember
-            if obj == enum.Enum._generate_next_value_:
-                _logger.debug("`%s` should be skipped!", fqname(obj))
-                return True
+        # When overriding `enum.Enum`, an undocumented function warning is displayed for '_generate_next_value_'.
+        if obj == enum.Enum._generate_next_value_:  # noqa  ## Access to protected member
+            _logger.debug("`%s` should be skipped!", fqname(obj))
+            return True
 
+        if would_skip:
             if inspect.isclass(obj) and (nfq_name != "__metaclass__"):
                 _logger.debug("class `%s` not skipped!", fqname(obj))
                 return False
