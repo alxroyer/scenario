@@ -59,6 +59,8 @@ class Logger:
         # Sphinx handlers.
         SPHINX_CONFIG_INITED = "sphinx:config-inited"
         SPHINX_BUILDER_INITED = "sphinx:builder-inited"
+        SPHINX_SOURCE_READ = "sphinx:source-read"
+        SPHINX_DOCTREE_READ = "sphinx:doctree-read"
         SPHINX_ENV_UPDATED = "sphinx:env-updated"
         SPHINX_MISSING_REFERENCE = "sphinx:missing-reference"
         SPHINX_DOCTREE_RESOLVED = "sphinx:doctreee-resolved"

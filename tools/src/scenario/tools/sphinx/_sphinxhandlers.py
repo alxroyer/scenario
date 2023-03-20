@@ -37,21 +37,23 @@ class SphinxHandlers:
 
         # 3. event.env-get-outdated(app, env, added, changed, removed)
         # 4. event.env-before-read-docs(app, env, docnames)
-        #
+
         # for docname in docnames:
         #    5. event.env-purge-doc(app, env, docname)
         #
         #    if doc changed and not removed:
         #       6. source-read(app, docname, source)
+        app.connect("source-read", self.sourceread)
         #       7. run source parsers: text -> docutils.document
         #          - parsers can be added with the app.add_source_parser() API
         #       8. apply transforms based on priority: docutils.document -> docutils.document
         #          - event.doctree-read(app, doctree) is called in the middle of transforms,
         #            transforms come before/after this event depending on their priority.
-        #
+        app.connect("doctree-read", self.doctreeread)
+
         # 9. event.env-merge-info(app, env, docnames, other)
         #    - if running in parallel mode, this event will be emitted for each process
-        #
+
         # 10. event.env-updated(app, env)
         app.connect("env-updated", self.envupdated)
         # 11. event.env-get-updated(app, env)
@@ -68,8 +70,8 @@ class SphinxHandlers:
         #        - In the event that any reference nodes fail to resolve, the following may emit:
         #        - event.missing-reference(env, node, contnode)
         #        - event.warn-missing-reference(domain, node)
-        app.connect("missing-reference", self.missingreference)
         app.connect("doctree-resolved", self.doctreeresolved)
+        app.connect("missing-reference", self.missingreference)
 
         # 15. Generate output files
         # 16. event.build-finished(app, exception)
@@ -129,6 +131,49 @@ class SphinxHandlers:
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_BUILDER_INITED)  # type: Logger
         _logger.debug("SphinxHendlers.builderinited()")
+
+    def sourceread(
+            self,
+            app,  # type: sphinx.application.Sphinx
+            docname,  # type: str
+            source,  # type: typing.List[str]
+    ):  # type: (...) -> None
+        """
+        See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-source-read
+
+        [SPHINX_CORE_EVENTS]:
+            source-read(app, docname, source)
+
+            Emitted when a source file has been read.
+            The source argument is a list whose single element is the contents of the source file.
+            You can process the contents and replace this item to implement source-level transformations.
+
+            For example, if you want to use $ signs to delimit inline math, like in LaTeX,
+            you can use a regular expression to replace ``$...$`` by ``:math:`...```.
+        """
+        from ._logging import Logger
+
+        _logger = Logger(Logger.Id.SPHINX_SOURCE_READ)  # type: Logger
+        _logger.debug("sourceread(docname=%r, source=%r)", docname, source)
+
+    def doctreeread(
+            self,
+            app,  # type: sphinx.application.Sphinx
+            doctree,  # type: docutils.nodes.document
+    ):  # type: (...) -> None
+        """
+        See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-doctree-read
+
+        [SPHINX_CORE_EVENTS]:
+            doctree-read(app, doctree)
+
+            Emitted when a doctree has been parsed and read by the environment, and is about to be pickled.
+            The doctree can be modified in-place.
+        """
+        from ._logging import Logger
+
+        _logger = Logger(Logger.Id.SPHINX_DOCTREE_READ)  # type: Logger
+        _logger.debug("doctreeread(doctree=%r)", doctree)
 
     def envupdated(
             self,

@@ -18,6 +18,8 @@ scenario:
     # Sphinx handlers.
     # - "scenario.tools.sphinx:sphinx:conf-inited"
     # - "scenario.tools.sphinx:sphinx:builder-inited"
+    # - "scenario.tools.sphinx:sphinx:source-read"
+    # - "scenario.tools.sphinx:sphinx:doctree-read"
     # - "scenario.tools.sphinx:sphinx:env-updated"
     # - "scenario.tools.sphinx:sphinx:missing-reference"
     # - "scenario.tools.sphinx:sphinx:doctreee-resolved"
