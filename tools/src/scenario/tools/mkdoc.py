@@ -75,7 +75,7 @@ class MkDoc:
         if MkDoc.Args.getinstance().all or MkDoc.Args.getinstance().uml:
             self.builddiagrams()
         if MkDoc.Args.getinstance().all:
-            # `sphinxapidoc()` directly called from 'tools/conf/sphinx/conf.py',
+            # `sphinxapidoc()` directly called from Sphinx handlers,
             # so that documentation generation from https://readthedocs.org/ generate the 'doc/src/py/' files automatically.
             # self.sphinxapidoc()
             self.sphinxbuild()
@@ -283,22 +283,6 @@ class MkDoc:
     def sphinxapidoc(self):  # type: (...) -> None
         """
         Sphinx-apidoc execution: build .rst source files from the python sources.
-
-        Useful options:
-          -o DESTDIR, --output-dir DESTDIR = directory to place all output
-          -f, --force = overwrite existing files
-                        => apparently, does not ensure an update of the output file timestamps,
-                           thus the `touch` line prior to `sphinx-build` still needs to be done.
-          -e, --separate = put documentation for each module on its own page
-          --tocfile TOCFILE = filename of table of contents (default: modules)
-          -T, --no-toc = don't create a table of contents file
-          --implicit-namespaces = interpret module paths according to PEP-0420 implicit namespaces specification
-          -M, --module-first = put module documentation before submodule documentation
-          -H HEADER, --doc-project HEADER = project name (default: root module name)
-          -t TEMPLATEDIR, --templatedir TEMPLATEDIR = template directory for template files
-          -q = no output on stdout, just warnings on stderr
-          --ext-autodoc = enable autodoc extension
-                          Not sure about what this option actually does...
         """
         from ._subprocess import SubProcess
 
@@ -308,11 +292,37 @@ class MkDoc:
             scenario.logging.info(f"Removing {_paths.DOC_SRC_PATH / 'py'}")
             shutil.rmtree(_paths.DOC_SRC_PATH / "py")
 
+        # Execute sphinx-apidoc.
+        #
+        # [SPHINX_APIDOC_HELP]:
+        #     `sphinx-apidoc --help`
         scenario.logging.info("Executing sphinx-apidoc...")
+
         _subprocess = SubProcess(*MkDoc.PY_SPHINX_APIDOC)  # type: SubProcess
+        # [SPHINX_APIDOC_HELP]:
+        #     -o DESTDIR, --output-dir DESTDIR = "directory to place all output"
         _subprocess.addargs("--output-dir", _paths.DOC_SRC_PATH / "py")
-        _subprocess.addargs("--force", "--module-first", "--separate")
+        # [SPHINX_APIDOC_HELP]:
+        #     -f, --force = "overwrite existing files"
+        #
+        # Apparently, does not ensure an update of the output file timestamps,
+        # That's the reason why the `shutil.rmtree()` call above still needs to be done.
+        _subprocess.addargs("--force")
+        # [SPHINX_APIDOC_HELP]:
+        #     -M, --module-first = "put module documentation before submodule documentation"
+        _subprocess.addargs("--module-first")
+        # [SPHINX_APIDOC_HELP]:
+        #     -P, --private = "include '_private' modules"
+        #
+        # We choose to leave the documentation for exported symbols in separate private module pages for the following reasons:
+        # - Lots of cross references are missing otherwise.
+        # - It keeps the main `scenario` page short and well organized (huge, hard to navigate into otherwise).
+        _subprocess.addargs("--private")
+        # [SPHINX_APIDOC_HELP]:
+        #     -e, --separate = "put documentation for each module on its own page"
+        _subprocess.addargs("--separate")
         _subprocess.addargs(_paths.SRC_PATH / "scenario")
+
         _subprocess.setcwd(_paths.MAIN_PATH)
         _subprocess.run()
 
