@@ -326,6 +326,31 @@ class MkDoc:
         _subprocess.setcwd(_paths.MAIN_PATH)
         _subprocess.run()
 
+        # Fix 'scenario.rst'.
+        _scenario_rst_path = _paths.DOC_SRC_PATH / "py" / "scenario.rst"  # type: scenario.Path
+        scenario.logging.info(f"Fixing {_scenario_rst_path}")
+        _scenario_rst_lines = _scenario_rst_path.read_bytes().splitlines()  # type: typing.List[bytes]
+        _line_index = 0  # type: int
+        while _line_index < len(_scenario_rst_lines):
+            _line = _scenario_rst_lines[_line_index]  # type: bytes
+            _match = re.search(rb'(:.*members:)', _line)  # type: typing.Optional[typing.Match[bytes]]
+            if _match:
+                # Avoid documenting module members for 'scenario/__init__.py',
+                # otherwise Sphinx repeats documentation for each exported symbol at the end of the module.
+                # This causes "more than one target found for cross-reference" errors,
+                # and is moreover contradictory with the `--private` and `--separate` *apidoc* options used above.
+                scenario.logging.debug("Removing automodule `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
+                del _scenario_rst_lines[_line_index]
+                continue
+            if b':maxdepth:' in _line:
+                # Limit private module TOC depth to 1,
+                # otherwise all symbols contained in each are displayed with this TOC,
+                # which is heavy and useless.
+                scenario.logging.debug("Fixing submodule toc depth to 1")
+                _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*:maxdepth:) *(\d+)$', rb'\1 1', _line)
+            _line_index += 1
+        _scenario_rst_path.write_bytes(b'\n'.join(_scenario_rst_lines))
+
     def sphinxbuild(self):  # type: (...) -> None
         """
         Sphinx-build execution: build the sphinx documentation.
