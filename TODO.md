@@ -49,6 +49,9 @@
               in 'tools/scenario/tools/__init__.py' fails with the following error:
               "AttributeError: module 'scenario' has no attribute 'tools'"
         - Save note on renamed class exports.
+- Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
+- Issue #80: Provide a subscenario step class.
+    - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
 - Clarify usage for `# noqa`.
     - See https://www.alpharithms.com/noqa-python-501210/.
     - Codes seem to be checker specific (`flake8` among others).
