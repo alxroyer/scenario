@@ -175,6 +175,10 @@ use double backquotes to highlight function and method parameters.
 Module attributes
 -----------------
 
+.. todo::
+    Check which is the most convenient way to document a constant / attribute:
+    ``.. py:attribute::`` pragma or a docstring placed after the constant / attribute.
+
 Module attributes should be documented using the ``.. py:attribute::`` pragma,
 extending the ``__doc__`` variable.
 
