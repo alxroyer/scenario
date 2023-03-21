@@ -36,39 +36,37 @@
 :mod:`scenario` package definition.
 """
 
+# Package management
+# ==================
+
 # Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
-# Define this package as a namespace, so that it can be extended later on (with tools, tests, ...).
+# Define this package as a namespace, so that it can be extended later on (with `scenario.tools`, `scenario.test`, ...).
 import pkgutil
 __path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+
+
+# System imports
+# ==============
 
 # Make system imports after the namespace definition above.
 import typing
 
 
-# Used to avoid PEP8 E402 warnings: "Module level import not at top of file".
-# Named with double leading underscores in order to avoid 'mkdoc.py' list it as an undocumented attribute.
+# Export management
+# =================
+
+# Explicit export declarations (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
+__all__ = []  # type: typing.List[str]
+
+# Used to avoid PEP8 E402 warnings: "Module level import not at top of file" for re-exports below.
 __pkg_def = True  # type: bool
 
-# A couple of symbols are exported by using an intermediate private symbol.
-# For instance, if we declare `logging` as following:
-# ```python
-# from .loggermain import MAIN_LOGGER as logging
-# ```
-# mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
-# Mypy seems not to support reexports with renamings.
-# Possibly something to do with [PEP 0848](https://peps.python.org/pep-0484/#stub-files) reexport rules for stub files...
 
-# Renamed class exports (`ScenarioDefinition` exported as `Scenario` for instance):
-# - A simple assignment `Scenario = ScenarioExecution` works for type checking,
-#   but confuses IDEs.
-# - A renamed import `from ._scenariodefinition import ScenarioDefinition as Scenario` works better for IDEs,
-#   but is not enough for type checking export controls.
-# - A renamed import backed with an additional declaration of the exported symbol in `__all__` fulfills both expectations
-#   (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
-# - Since this implies redundant declarations,
-#   and other non-renamed exports, or local assignments, stand for valid exports,
-#   we limit this workaround to class renames only.
-__all__ = []  # type: typing.List[str]
+# Documentation management
+# ========================
+
+# Private constants in this modules are named with double leading underscores
+# in order to avoid 'mkdoc.py' list them as an undocumented attribute.
 
 
 __doc__ += """
@@ -84,8 +82,8 @@ __doc__ += """
     .. seealso:: :attr:`._pkginfo.PackageInfo` implementation.
 """
 if __pkg_def:
-    from ._pkginfo import PKG_INFO as _PKG_INFO
-    info = _PKG_INFO
+    from ._pkginfo import PKG_INFO as info  # noqa  ## Constant variable imported as non-constant
+    __all__.append("info")
 
 
 __doc__ += """
@@ -107,8 +105,6 @@ __doc__ += """
     Full class name of :class:`Scenario`.
 """
 if __pkg_def:
-    from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
-    # Renamed class export.
     from ._scenariodefinition import ScenarioDefinition as Scenario
     __all__.append("Scenario")
 
@@ -120,12 +116,12 @@ __doc__ += """
     .. seealso:: :class:`._stepdefinition.StepDefinition` implementation.
 
 .. py:attribute:: StepDefinition
+    from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
+    __all__.append("ScenarioDefinition")
 
     Full class name of :class:`Step`.
 """
 if __pkg_def:
-    from ._stepdefinition import StepDefinition as StepDefinition
-    # Renamed class export.
     from ._stepdefinition import StepDefinition as Step
     __all__.append("Step")
 
@@ -135,15 +131,17 @@ __doc__ += """
     .. seealso:: :class:`._actionresultdefinition.ActionResultDefinition` implementation.
 
 .. py:attribute:: ActionResultDefinition
+    from ._stepdefinition import StepDefinition as StepDefinition
+    __all__.append("StepDefinition")
 
     Full class name of :class:`ActionResult`.
 """
 if __pkg_def:
-    from ._actionresultdefinition import ActionResultDefinition as ActionResultDefinition
-    # Renamed class export.
     from ._actionresultdefinition import ActionResultDefinition as ActionResult
     __all__.append("ActionResult")
 
+    from ._actionresultdefinition import ActionResultDefinition as ActionResultDefinition
+    __all__.append("ActionResultDefinition")
 
 __doc__ += """
 Step sections
@@ -162,6 +160,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._stepsection import StepSectionDescription as StepSectionDescription
+    __all__.append("StepSectionDescription")
 
 __doc__ += """
 .. py:attribute:: StepSectionBegin
@@ -172,6 +171,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._stepsection import StepSectionBegin as StepSectionBegin
+    __all__.append("StepSectionBegin")
 
 __doc__ += """
 .. py:attribute:: StepSectionEnd
@@ -182,6 +182,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._stepsection import StepSectionEnd as StepSectionEnd
+    __all__.append("StepSectionEnd")
 
 
 __doc__ += """
@@ -202,12 +203,13 @@ __doc__ += """
     .. seealso:: :class:`._assertions.Assertions` implementation.
 """
 if __pkg_def:
-    from ._assertions import Assertions as Assertions
 
 __doc__ += """
 .. py:attribute:: assertionhelpers
 
     Helper functions and types when you want to write your own assertion routines.
+    from ._assertions import Assertions as Assertions
+    __all__.append("Assertions")
 
     .. seealso:: :mod:`._assertionhelpers` implementation.
 """
@@ -216,6 +218,7 @@ if __pkg_def:
     # It seems we can't reexport `assertionhelpers` from the '_assertions.py' module, otherwise it causes failures with mypy...
     # Let's reexport `assertionhelpers` directly from the '_assertions.py' source module.
     from . import _assertionhelpers as assertionhelpers
+    __all__.append("assertionhelpers")
 
 
 __doc__ += """
@@ -235,26 +238,28 @@ __doc__ += """
     .. seealso:: :class:`._logger.Logger` implementation.
 """
 if __pkg_def:
-    from ._logger import Logger as Logger
 
 __doc__ += """
 .. py:attribute:: logging
+    from ._logger import Logger as Logger
+    __all__.append("Logger")
 
     Main logger instance.
 """
 if __pkg_def:
-    from ._loggermain import MAIN_LOGGER as _MAIN_LOGGER
-    logging = _MAIN_LOGGER
 
 __doc__ += """
 .. py:attribute:: Console
 
     Console colors.
+    from ._loggermain import MAIN_LOGGER as logging  # noqa  ## Constant variable imported as non-constant
+    __all__.append("logging")
 
     .. seealso:: :class:`._console.Console` implementation.
 """
 if __pkg_def:
     from ._console import Console as Console
+    __all__.append("Console")
 
 __doc__ += """
 .. py:attribute:: LogExtraData
@@ -265,6 +270,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._logextradata import LogExtraData as LogExtraData
+    __all__.append("LogExtraData")
 
 __doc__ += """
 .. py:attribute:: debug
@@ -275,6 +281,7 @@ __doc__ += """
 """
 if __pkg_def:
     from . import _debugutils as debug
+    __all__.append("debug")
 
 
 __doc__ += """
@@ -292,16 +299,17 @@ __doc__ += """
     .. seealso:: :class:`._configdb.ConfigDatabase` implemenation.
 """
 if __pkg_def:
-    from ._configdb import CONFIG_DB as _CONFIG_DB
-    conf = _CONFIG_DB
 
 __doc__ += """
 .. py:attribute:: ConfigNode
+    from ._configdb import CONFIG_DB as conf  # noqa  ## Constant variable imported as non-constant
+    __all__.append("conf")
 
     .. seealso:: :class:`._confignode.ConfigNode` implementation.
 """
 if __pkg_def:
     from ._confignode import ConfigNode as ConfigNode
+    __all__.append("ConfigNode")
 
 __doc__ += """
 .. py:attribute:: ConfigKey
@@ -311,8 +319,10 @@ __doc__ += """
     .. seealso:: :class:`._scenarioconfig.ScenarioConfig.Key` implementation.
 """
 if __pkg_def:
+    # Note: Can't re-export `ScenarioConfig.Key` as `ConfigKey` with a single `import` statement. Use an intermediate private instance.
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfig
     ConfigKey = _ScenarioConfig.Key
+    __all__.append("ConfigKey")
 
 
 __doc__ += """
@@ -336,8 +346,6 @@ __doc__ += """
     .. seealso:: :class:`._scenariorunner.ScenarioRunner` implementation.
 """
 if __pkg_def:
-    from ._scenariorunner import SCENARIO_RUNNER as _SCENARIO_RUNNER
-    runner = _SCENARIO_RUNNER
 
 __doc__ += """
 .. py:attribute:: campaign_runner
@@ -349,12 +357,12 @@ __doc__ += """
     .. code-block:: python
 
         scenario.campaign_runner.main()
+    from ._scenariorunner import SCENARIO_RUNNER as runner  # noqa  ## Constant variable imported as non-constant
+    __all__.append("runner")
 
     .. seealso:: :class:`._campaignrunner.CampaignRunner` implementation.
 """
 if __pkg_def:
-    from ._campaignrunner import CAMPAIGN_RUNNER as _CAMPAIGN_RUNNER
-    campaign_runner = _CAMPAIGN_RUNNER
 
 __doc__ += """
 .. py:attribute:: Args
@@ -364,17 +372,21 @@ __doc__ += """
     .. seealso:: :class:`._args.Args` implementation.
 """
 if __pkg_def:
-    from ._args import Args as Args
 
 __doc__ += """
 .. py:attribute:: ScenarioArgs
+    from ._campaignrunner import CAMPAIGN_RUNNER as campaign_runner  # noqa  ## Constant variable imported as non-constant
+    __all__.append("campaign_runner")
 
     Inherit from this class in order to extend :class:`._scenariorunner.ScenarioRunner` arguments with your own launcher script ones.
+    from ._args import Args as Args
+    __all__.append("Args")
 
     .. seealso:: :class:`._scenarioargs.ScenarioArgs` implementation.
 """
 if __pkg_def:
     from ._scenarioargs import ScenarioArgs as ScenarioArgs
+    __all__.append("ScenarioArgs")
 
 __doc__ += """
 .. py:attribute:: CampaignArgs
@@ -385,6 +397,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._campaignargs import CampaignArgs as CampaignArgs
+    __all__.append("CampaignArgs")
 
 __doc__ += """
 .. py:attribute:: ErrorCode
@@ -395,6 +408,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._errcodes import ErrorCode as ErrorCode
+    __all__.append("ErrorCode")
 
 
 __doc__ += """
@@ -412,8 +426,8 @@ __doc__ += """
     .. seealso:: :class:`._handlers.Handlers` implementation.
 """
 if __pkg_def:
-    from ._handlers import HANDLERS as _HANDLERS
-    handlers = _HANDLERS
+    from ._handlers import HANDLERS as handlers  # noqa  ## Constant variable imported as non-constant
+    __all__.append("handlers")
 
 __doc__ += """
 .. py:attribute:: Event
@@ -421,17 +435,17 @@ __doc__ += """
     .. seealso:: :class:`._scenarioevents.ScenarioEvent` implementation.
 """
 if __pkg_def:
-    from ._scenarioevents import ScenarioEvent as _ScenarioEvent
-    Event = _ScenarioEvent
 
 __doc__ += """
 .. py:attribute:: EventData
+    from ._scenarioevents import ScenarioEvent as Event
+    __all__.append("Event")
 
     .. seealso:: :class:`._scenarioevents.ScenarioEventData` implementation.
 """
 if __pkg_def:
-    from ._scenarioevents import ScenarioEventData as _ScenarioEventData
-    EventData = _ScenarioEventData
+    from ._scenarioevents import ScenarioEventData as EventData
+    __all__.append("EventData")
 
 
 __doc__ += """
@@ -450,6 +464,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._executionstatus import ExecutionStatus as ExecutionStatus
+    __all__.append("ExecutionStatus")
 
 __doc__ += """
 .. py:attribute:: ScenarioExecution
@@ -458,6 +473,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._scenarioexecution import ScenarioExecution as ScenarioExecution
+    __all__.append("ScenarioExecution")
 
 __doc__ += """
 .. py:attribute:: StepExecution
@@ -466,6 +482,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._stepexecution import StepExecution as StepExecution
+    __all__.append("StepExecution")
 
 __doc__ += """
 .. py:attribute:: ActionResultExecution
@@ -474,6 +491,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._actionresultexecution import ActionResultExecution as ActionResultExecution
+    __all__.append("ActionResultExecution")
 
 __doc__ += """
 .. py::attribute:: CampaignExecution
@@ -482,6 +500,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._campaignexecution import CampaignExecution as CampaignExecution
+    __all__.append("CampaignExecution")
 
 __doc__ += """
 .. py::attribute:: TestSuiteExecution
@@ -490,6 +509,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._campaignexecution import TestSuiteExecution as TestSuiteExecution
+    __all__.append("TestSuiteExecution")
 
 __doc__ += """
 .. py::attribute:: TestCaseExecution
@@ -498,6 +518,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._campaignexecution import TestCaseExecution as TestCaseExecution
+    __all__.append("TestCaseExecution")
 
 __doc__ += """
 .. py:attribute:: TestError
@@ -508,6 +529,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._testerrors import TestError as TestError
+    __all__.append("TestError")
 
 __doc__ += """
 .. py:attribute:: ExceptionError
@@ -518,6 +540,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._testerrors import ExceptionError as ExceptionError
+    __all__.append("ExceptionError")
 
 __doc__ += """
 .. py:attribute:: KnownIssue
@@ -528,6 +551,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._knownissues import KnownIssue as KnownIssue
+    __all__.append("KnownIssue")
 
 __doc__ += """
 .. py:attribute:: IssueLevel
@@ -542,8 +566,10 @@ __doc__ += """
 """
 if __pkg_def:
     from ._issuelevels import IssueLevel as IssueLevel
+    __all__.append("IssueLevel")
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as AnyIssueLevelType
+    __all__.append("AnyIssueLevelType")
 
 __doc__ += """
 .. py:attribute:: TimeStats
@@ -554,6 +580,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._stats import TimeStats as TimeStats
+    __all__.append("TimeStats")
 
 __doc__ += """
 .. py:attribute:: ExecTotalStats
@@ -564,6 +591,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._stats import ExecTotalStats as ExecTotalStats
+    __all__.append("ExecTotalStats")
 
 __doc__ += """
 .. py:attribute:: stack
@@ -573,8 +601,8 @@ __doc__ += """
     .. seealso:: :class:`._scenariostack.ScenarioStack` implementation.
 """
 if __pkg_def:
-    from ._scenariostack import SCENARIO_STACK as _SCENARIO_STACK
-    stack = _SCENARIO_STACK
+    from ._scenariostack import SCENARIO_STACK as stack  # noqa  ## Constant variable imported as non-constant
+    __all__.append("stack")
 
 
 __doc__ += """
@@ -592,19 +620,19 @@ __doc__ += """
     .. seealso:: :class:`._scenarioreport.ScenarioReport` implementation.
 """
 if __pkg_def:
-    from ._scenarioreport import SCENARIO_REPORT as _SCENARIO_REPORT
-    report = _SCENARIO_REPORT
 
 __doc__ += """
 .. py:attribute:: campaign_report
 
     Campaign report manager.
+    from ._scenarioreport import SCENARIO_REPORT as report  # noqa  ## Constant variable imported as non-constant
+    __all__.append("report")
 
     .. seealso:: :class:`._campaignreport.CampaignReport` implementation.
 """
 if __pkg_def:
-    from ._campaignreport import CAMPAIGN_REPORT as _CAMPAIGN_REPORT
-    campaign_report = _CAMPAIGN_REPORT
+    from ._campaignreport import CAMPAIGN_REPORT as campaign_report  # noqa  ## Constant variable imported as non-constant
+    __all__.append("campaign_report")
 
 
 __doc__ += """
@@ -623,8 +651,10 @@ __doc__ += """
 """
 if __pkg_def:
     from ._path import Path as Path
+    __all__.append("Path")
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as AnyPathType
+    __all__.append("AnyPathType")
 
 __doc__ += """
 .. py:attribute:: SubProcess
@@ -639,8 +669,10 @@ __doc__ += """
 """
 if __pkg_def:
     from ._subprocess import SubProcess as SubProcess
+    __all__.append("SubProcess")
 if typing.TYPE_CHECKING:
     from ._subprocess import VarSubProcessType as VarSubProcessType
+    __all__.append("VarSubProcessType")
 
 __doc__ += """
 .. py:attribute:: CodeLocation
@@ -649,6 +681,7 @@ __doc__ += """
 """
 if __pkg_def:
     from ._locations import CodeLocation as CodeLocation
+    __all__.append("CodeLocation")
 
 __doc__ += """
 .. py:attribute:: datetime
@@ -659,6 +692,7 @@ __doc__ += """
 """
 if __pkg_def:
     from . import _datetimeutils as datetime
+    __all__.append("datetime")
 
 __doc__ += """
 .. py:attribute:: tz
@@ -669,6 +703,7 @@ __doc__ += """
 """
 if __pkg_def:
     from . import _timezoneutils as timezone
+    __all__.append("timezone")
 
 __doc__ += """
 .. py:attribute:: enum
@@ -679,6 +714,7 @@ __doc__ += """
 """
 if __pkg_def:
     from . import _enumutils as enum
+    __all__.append("enum")
 
 
 # Since the implementation is done in private modules,

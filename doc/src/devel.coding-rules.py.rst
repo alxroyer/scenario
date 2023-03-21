@@ -90,6 +90,91 @@ Packages
     out of the main 'src/' directory.
 
 
+.. _coding-rules.py.re-exports:
+
+Re-exports
+----------
+
+'__init__.py' files usually declare the set of public symbols for the package they define,
+by re-exporting those symbols from the neighbour modules in the given package.
+
+In order to keep it simple, as long as the package does not rename exported items, use the explicit export pattern
+(see `PEP 0848 <https://peps.python.org/pep-0484/#stub-files>`_ reexport rules):
+
+.. code-block:: python
+
+    # Non-renamed explicit export.
+    from ._privatemodule import MyClass as MyClass
+
+If only modules and/or attributes must be renamed, intermediate private instances may be used:
+
+.. code-block:: python
+
+    # Renamed attribute export.
+    from ._privatemodule import original_attr as _private_attr
+    exported_attr = _private_attr
+
+    # Renamed module export.
+    from . import _privatemodule
+    renamedmodule = _privatemodule
+
+.. admonition:: Memo - No renamed attribute or module exports with a single ``from ... import ... as ...`` statement
+    :class: note
+
+    If we declare :py:attr:`scenario.logging` as following:
+
+    .. code-block:: python
+
+        from ._loggermain import MAIN_LOGGER as logging
+        # No `__all__` declaration afterwards.
+
+    mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
+
+    Same with :py:attr:`scenario.tools.data.scenarios`, the following in 'test/src/scenario/test/data.py':
+
+    .. code-block:: python
+
+        from . import _datascenarios as scenarios
+
+    makes mypy fail with '"Module scenario.test._data" does not explicitly export attribute "scenarios"  [attr-defined]' errors.
+
+If exported classes are renamed, use explicit ``__all__`` declarations
+(see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
+For consistency reasons, back every export of such module with an ``__all__`` declaration,
+even though non renamed exports don't really need it.
+
+.. code-block:: python
+
+    # `__all__` export declaration.
+    __all__ = []
+
+    # Renamed attribute export.
+    from ._privatemodule import original_attr as exported_attr
+    __all__.append("exported_attr")
+
+    # Renamed module export.
+    from . import _originalmodule as exportedmodule
+    __all__.append("exportedmodule")
+
+    # Renamed class export.
+    from ._privatemodule import OriginalClass as ExportedClass
+    __all__.append("ExportedClass")
+
+.. admonition:: Memo - No renamed class exports with alias instanciations
+    :class: note
+
+    Renamed class exports don't work well with every type checker or IDE when exported through alias instanciations.
+
+    For instance, if we declare :py:class:`scenario.Scenario` as following:
+
+    .. code-block:: python
+
+        from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
+        Scenario = ScenarioDefinition
+
+    mypy succeeds, but IDEs get confused.
+
+
 .. _coding-rules.py.static:
 
 Static & class methods
