@@ -71,12 +71,12 @@ class ScenarioEvent(StrEnum):
 
 class ScenarioEventData(abc.ABC):
     """
-    Container classes associated with :class:`ScenarioEvent` events.
+    Data classes associated with :class:`ScenarioEvent` events.
     """
 
     class Campaign:
         """
-        :const:`ScenarioEvent.BEFORE_CAMPAIGN` and :const:`ScenarioEvent.AFTER_CAMPAIGN` data container.
+        :const:`ScenarioEvent.BEFORE_CAMPAIGN` and :const:`ScenarioEvent.AFTER_CAMPAIGN` data.
         """
 
         def __init__(
@@ -91,7 +91,7 @@ class ScenarioEventData(abc.ABC):
 
     class TestSuite:
         """
-        :const:`ScenarioEvent.BEFORE_TEST_SUITE` and :const:`ScenarioEvent.AFTER_TEST_SUITE` data container.
+        :const:`ScenarioEvent.BEFORE_TEST_SUITE` and :const:`ScenarioEvent.AFTER_TEST_SUITE` data.
         """
 
         def __init__(
@@ -106,7 +106,7 @@ class ScenarioEventData(abc.ABC):
 
     class TestCase:
         """
-        :const:`ScenarioEvent.BEFORE_TEST_CASE` and :const:`ScenarioEvent.AFTER_TEST_CASE` data container.
+        :const:`ScenarioEvent.BEFORE_TEST_CASE` and :const:`ScenarioEvent.AFTER_TEST_CASE` data.
         """
 
         def __init__(
@@ -121,7 +121,7 @@ class ScenarioEventData(abc.ABC):
 
     class Scenario:
         """
-        :const:`ScenarioEvent.BEFORE_TEST` and :const:`ScenarioEvent.AFTER_TEST` data container.
+        :const:`ScenarioEvent.BEFORE_TEST` and :const:`ScenarioEvent.AFTER_TEST` data.
         """
 
         def __init__(
@@ -136,7 +136,7 @@ class ScenarioEventData(abc.ABC):
 
     class Step:
         """
-        :const:`ScenarioEvent.BEFORE_STEP` and :const:`ScenarioEvent.AFTER_STEP` data container.
+        :const:`ScenarioEvent.BEFORE_STEP` and :const:`ScenarioEvent.AFTER_STEP` data.
         """
 
         def __init__(
@@ -151,7 +151,7 @@ class ScenarioEventData(abc.ABC):
 
     class Error:
         """
-        :const:`ScenarioEvent.ERROR` data container.
+        :const:`ScenarioEvent.ERROR` data.
         """
 
         def __init__(

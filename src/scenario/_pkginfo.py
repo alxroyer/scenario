@@ -50,4 +50,4 @@ __doc__ += """
 
     Main :class:`PackageInfo` instance.
 """
-PKG_INFO = PackageInfo()
+PKG_INFO = PackageInfo()  # type: PackageInfo

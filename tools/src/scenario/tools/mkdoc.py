@@ -399,9 +399,6 @@ class MkDoc:
             if b'TODO entry found:' in line:
                 # Just warn on todos.
                 _level = logging.WARNING
-            elif b'WARNING: duplicate object description' in line:
-                # Just debug dublicate object warnings.
-                _level = logging.DEBUG
             scenario.logging.log(_level, line.decode("utf-8"))
         _subprocess.onstderrline(_onstderrline)
         _subprocess.setcwd(_paths.MAIN_PATH)

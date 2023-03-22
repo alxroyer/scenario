@@ -44,7 +44,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         """
         Expects and retrieves a step with its appropriate type.
 
-        :param index: Optional step index of the kind. Optional. See :meth:`.scenariodefinition.ScenarioDefinition.getstep()` for more details.
+        :param index: Optional step index of the kind. See :meth:`.scenariodefinition.ScenarioDefinition.getstep()` for more details.
         :return: The expected step for the current scenario, typed with the final user step definition class this method is called onto.
 
         The "current" scenario is actually the one being executed or built.

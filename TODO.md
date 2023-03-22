@@ -19,19 +19,8 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Document Sphinx implementation separately.
-          Memo of former notes:
-            - Things seem to go wrong because of `__all__`addition.
-                - Try to hot fix loaded modules, by removing the `__all__` symbol if any.
-                - See new Sphinx handlers.
-            - "Inline emphasis start-string without end-string" errors:
-                - Due to the addition of `__all__` in 'scenario/__init__.py'.
-                - Could not reproduce the problem with the 'tmp/sphinx/' example.
-            - Get rid of "alias of " items.
-                - Interesting resource: https://stackoverflow.com/questions/38765577/overriding-sphinx-autodoc-alias-of-for-import-of-private-class.
-                - Tried to `Scenario = Scenario`, as advised above, but type checkings fail.
-                - No such items in the official documentation: https://scenario-testing-framework.readthedocs.io/en/v0.2.2/py/scenario.html.
-            - Check whether we can make `Sphinx` not generate documentation for items declared in `__all__`.
+        - Add references in 'src/scenario/__init__.py' to the dedicated chapters.
+            - Move known-issues exported symbols in a dedicated section.
         - Check whether there are still missing references if we don't generate documentation for private modules.
         - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
@@ -57,6 +46,7 @@
               in 'tools/scenario/tools/__init__.py' fails with the following error:
               "AttributeError: module 'scenario' has no attribute 'tools'"
         - Save note on renamed class exports.
+    - Use docstrings after module attribute instead of `.. py:atribute:` directives.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
