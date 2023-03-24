@@ -23,14 +23,17 @@ import typing
 
 
 class AutodocHandlers:
+    """
+    See [SPHINX_AUTODOC_EVENTS]:
+
+    - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#docstring-preprocessing
+    - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#skipping-members
+    """
 
     def setup(
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
-        # See [SPHINX_AUTODOC_EVENTS]:
-        # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#docstring-preprocessing
-        # - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#skipping-members
         app.connect("autodoc-skip-member", self.skipmember)
         # Hack *autodoc* so that it does not display attribute values (see [sphinx#904](https://github.com/sphinx-doc/sphinx/issues/904)).
         sphinx.ext.autodoc.object_description = self.objectdescription

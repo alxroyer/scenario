@@ -21,14 +21,15 @@ import typing
 
 
 class SphinxHandlers:
+    """
+    See [SPHINX_CORE_EVENTS] https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+    for an overview of events that happen during a build.
+    """
 
     def setup(
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
-        # See [SPHINX_CORE_EVENTS] https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
-        # for an overview of events that happen during a build.
-        #
         # 1. event.config-inited(app,config)
         app.connect("config-inited", self.configinited)
 
@@ -91,7 +92,7 @@ class SphinxHandlers:
             Emitted when the config object has been initialized.
         """
         from .._paths import DOC_SRC_PATH
-        from ..mkdoc import MkDoc
+        from ._commands import sphinxapidoc
         from ._logging import Logger, savesphinxverbosity
 
         savesphinxverbosity(app.verbosity)
@@ -112,7 +113,7 @@ class SphinxHandlers:
             app.srcdir = DOC_SRC_PATH.abspath
 
         # Update 'doc/src/py/' files.
-        MkDoc().sphinxapidoc()
+        sphinxapidoc()
 
     def builderinited(
             self,

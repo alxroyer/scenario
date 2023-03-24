@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import re
 import shutil
 import sys
@@ -28,8 +27,6 @@ from . import _paths  # `_paths` used for class member instanciation.
 class MkDoc:
 
     PLANTUML_PATH = _paths.TOOLS_LIB_PATH / "plantuml.1.2020.15.jar"  # type: scenario.Path
-    PY_SPHINX_APIDOC = (sys.executable, "-m", "sphinx.ext.apidoc")  # type: typing.Sequence[str]
-    PY_SPHINX_BUILD = (sys.executable, "-m", "sphinx.cmd.build")  # type: typing.Sequence[str]
 
     class Args(scenario.Args):
         def __init__(self):  # type: (...) -> None
@@ -60,6 +57,7 @@ class MkDoc:
             return True
 
     def run(self):  # type: (...) -> None
+        from .sphinx import sphinxbuild
 
         # Command line arguments.
         scenario.Args.setinstance(MkDoc.Args())
@@ -77,15 +75,16 @@ class MkDoc:
         if MkDoc.Args.getinstance().all:
             # `sphinxapidoc()` directly called from Sphinx handlers,
             # so that documentation generation from https://readthedocs.org/ generate the 'doc/src/py/' files automatically.
-            # self.sphinxapidoc()
-            self.sphinxbuild()
+            # sphinxapidoc()
+            sphinxbuild()
 
     def checktools(self):  # type: (...) -> None
+        from .sphinx import PY_SPHINX_APIDOC_CMD, PY_SPHINX_BUILD_CMD
         from .tracking import tracktoolversion
 
         tracktoolversion("python", [sys.executable, "--version"])
-        tracktoolversion("sphinx-apidoc", [*MkDoc.PY_SPHINX_APIDOC, "--version"])
-        tracktoolversion("sphinx-build", [*MkDoc.PY_SPHINX_BUILD, "--version"])
+        tracktoolversion("sphinx-apidoc", [*PY_SPHINX_APIDOC_CMD, "--version"])
+        tracktoolversion("sphinx-build", [*PY_SPHINX_BUILD_CMD, "--version"])
         # tracktoolversion("dot", ["dot", "-V"])  ## PlantUML does not need dot to be installed for regular sequence diagrams.
         tracktoolversion("java", ["java", "-version"])
         tracktoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=_paths.MAIN_PATH)
@@ -279,127 +278,3 @@ class MkDoc:
                     _subprocess.run()
                 else:
                     scenario.logging.info(f"No need to update {_png_outpath} from {_path}")
-
-    def sphinxapidoc(self):  # type: (...) -> None
-        """
-        Sphinx-apidoc execution: build .rst source files from the python sources.
-        """
-        from ._subprocess import SubProcess
-
-        # First remove the previous 'doc/src/py/' directory with its .rst generated files.
-        # Useful in case source modules have been renamed.
-        if (_paths.DOC_SRC_PATH / "py").is_dir():
-            scenario.logging.info(f"Removing {_paths.DOC_SRC_PATH / 'py'}")
-            shutil.rmtree(_paths.DOC_SRC_PATH / "py")
-
-        # Execute sphinx-apidoc.
-        #
-        # [SPHINX_APIDOC_HELP]:
-        #     `sphinx-apidoc --help`
-        scenario.logging.info("Executing sphinx-apidoc...")
-
-        _subprocess = SubProcess(*MkDoc.PY_SPHINX_APIDOC)  # type: SubProcess
-        # [SPHINX_APIDOC_HELP]:
-        #     -o DESTDIR, --output-dir DESTDIR = "directory to place all output"
-        _subprocess.addargs("--output-dir", _paths.DOC_SRC_PATH / "py")
-        # [SPHINX_APIDOC_HELP]:
-        #     -f, --force = "overwrite existing files"
-        #
-        # Apparently, does not ensure an update of the output file timestamps,
-        # That's the reason why the `shutil.rmtree()` call above still needs to be done.
-        _subprocess.addargs("--force")
-        # [SPHINX_APIDOC_HELP]:
-        #     -M, --module-first = "put module documentation before submodule documentation"
-        _subprocess.addargs("--module-first")
-        # [SPHINX_APIDOC_HELP]:
-        #     -P, --private = "include '_private' modules"
-        #
-        # We choose to leave the documentation for exported symbols in separate private module pages for the following reasons:
-        # - Lots of cross references are missing otherwise.
-        # - It keeps the main `scenario` page short and well organized (huge, hard to navigate into otherwise).
-        _subprocess.addargs("--private")
-        # [SPHINX_APIDOC_HELP]:
-        #     -e, --separate = "put documentation for each module on its own page"
-        _subprocess.addargs("--separate")
-        _subprocess.addargs(_paths.SRC_PATH / "scenario")
-
-        _subprocess.setcwd(_paths.MAIN_PATH)
-        _subprocess.run()
-
-        # Fix 'scenario.rst'.
-        _scenario_rst_path = _paths.DOC_SRC_PATH / "py" / "scenario.rst"  # type: scenario.Path
-        scenario.logging.info(f"Fixing {_scenario_rst_path}")
-        _scenario_rst_lines = _scenario_rst_path.read_bytes().splitlines()  # type: typing.List[bytes]
-        _line_index = 0  # type: int
-        while _line_index < len(_scenario_rst_lines):
-            _line = _scenario_rst_lines[_line_index]  # type: bytes
-            _match = re.search(rb'(:.*members:)', _line)  # type: typing.Optional[typing.Match[bytes]]
-            if _match:
-                # Avoid documenting module members for 'scenario/__init__.py',
-                # otherwise Sphinx repeats documentation for each exported symbol at the end of the module.
-                # This causes "more than one target found for cross-reference" errors,
-                # and is moreover contradictory with the `--private` and `--separate` *apidoc* options used above.
-                scenario.logging.debug("Removing automodule `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
-                del _scenario_rst_lines[_line_index]
-                continue
-            if b':maxdepth:' in _line:
-                # Limit private module TOC depth to 1,
-                # otherwise all symbols contained in each are displayed with this TOC,
-                # which is heavy and useless.
-                scenario.logging.debug("Fixing submodule toc depth to 1")
-                _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*:maxdepth:) *(\d+)$', rb'\1 1', _line)
-            _line_index += 1
-        _scenario_rst_path.write_bytes(b'\n'.join(_scenario_rst_lines))
-
-    def sphinxbuild(self):  # type: (...) -> None
-        """
-        Sphinx-build execution: build the sphinx documentation.
-
-        Useful options:
-          -b buildername = The most important option: it selects a builder.
-          -a = write all files (default: only write new and changed files)
-          -n = nit-picky mode, warn about all missing references
-               => Generates tons of false errors, due to typings that sphinx does not handle correctly. Do not use.
-          -W = turn warnings into errors
-          --color = do emit colored output (default: auto-detect)
-          -q = no output on stdout, just warnings on stderr
-          -v = increase verbosity (can be repeated)
-          -T = show full traceback on exception
-        """
-        from ._subprocess import SubProcess
-
-        scenario.logging.info("Executing sphinx-build...")
-
-        scenario.logging.debug("Ensuring every .rst file timestamp has been updated")
-        for _path in scenario.tools.paths.DOC_SRC_PATH.iterdir():  # type: scenario.Path
-            if _path.is_file() and _path.name.endswith(".rst"):
-                scenario.logging.debug("%r.touch()", _path)
-                _path.touch()
-
-        # Prepare the $(sphinx-build) process.
-        _subprocess = SubProcess(*MkDoc.PY_SPHINX_BUILD)  # type: SubProcess
-        # Debug & display:
-        if scenario.Args.getinstance().debug_main:
-            _subprocess.addargs("-vv")
-        _subprocess.addargs("--color")
-        # Builder:
-        _subprocess.addargs("-b", "html")
-        # Write all files:
-        _subprocess.addargs("-a")
-        # Configuration file:
-        _subprocess.addargs("-c", _paths.TOOLS_CONF_PATH / "sphinx")
-        # Source directory:
-        _subprocess.addargs(_paths.DOC_SRC_PATH)
-        # Output directory:
-        _subprocess.addargs(_paths.DOC_OUT_PATH)
-
-        # $(sphinx-build) execution.
-        def _onstderrline(line):  # type: (bytes) -> None
-            _level = logging.ERROR  # type: int
-            if b'TODO entry found:' in line:
-                # Just warn on todos.
-                _level = logging.WARNING
-            scenario.logging.log(_level, line.decode("utf-8"))
-        _subprocess.onstderrline(_onstderrline)
-        _subprocess.setcwd(_paths.MAIN_PATH)
-        _subprocess.run()

@@ -17,6 +17,10 @@
 
 # The following `try` block avoids IDEs folding the following import lines.
 try:
+    from ._commands import PY_SPHINX_APIDOC_CMD as PY_SPHINX_APIDOC_CMD
+    from ._commands import PY_SPHINX_BUILD_CMD as PY_SPHINX_BUILD_CMD
+    from ._commands import sphinxapidoc as sphinxapidoc
+    from ._commands import sphinxbuild as sphinxbuild
     from ._setup import setup as setup
 finally:
     pass
