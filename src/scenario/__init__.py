@@ -89,7 +89,7 @@ __doc__ += """
 Base classes
 ============
 
-Classes to inherit from in order to describe test scenarios and libraries.
+Classes that define a test scenario.
 """
 
 __doc__ += __export_table_start
@@ -114,7 +114,8 @@ if __pkg_def:
 if __pkg_def:
     __doc__ += """
     * - :class:`Step`
-      - Base class to inherit from in order to define a test step.
+      - Base class to inherit from in order to define a test step
+        (see :ref:`step objects <step-objects>`).
       - :class:`._stepdefinition.StepDefinition`
     """
     from ._stepdefinition import StepDefinition as Step
@@ -131,7 +132,8 @@ if __pkg_def:
 if __pkg_def:
     __doc__ += """
     * - :class:`ActionResult`
-      -
+      - Each action / expected result creates an instance of this class
+        (you should normally not inherit from it).
       - :class:`._actionresultdefinition.ActionResultDefinition`
     """
     from ._actionresultdefinition import ActionResultDefinition as ActionResult
@@ -152,7 +154,8 @@ __doc__ += """
 Step sections
 =============
 
-Classes that can be used to define step sections.
+Once you have opted for :ref:`step objects <step-objects>`,
+classes that can be used to define :ref:`step sections <step-sections>`.
 """
 
 __doc__ += __export_table_start
@@ -191,7 +194,10 @@ __doc__ += """
 Assertions
 ==========
 
-Make verifications on data.
+:ref:`Assertions` can be used from :class:`Scenario` and :class:`Step` classes,
+or in :ref:`test libraries <test-libs>`.
+
+Assertion routines also provide an easy way to collect :ref:`evidence <evidence>`.
 """
 
 __doc__ += __export_table_start
@@ -224,10 +230,40 @@ __doc__ += __export_table_end
 
 
 __doc__ += """
+Known issues
+============
+
+Track :ref:`known issues <known-issues>` instead of letting tests fail with unqualified errors.
+"""
+
+__doc__ += __export_table_start
+
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    * - :class:`AnyIssueLevelType`
+      - ``int`` or ``enum.Enum`` that describes an issue level.
+      - :class:`._issuelevels.AnyIssueLevelType`
+    """
+    from ._issuelevels import AnyIssueLevelType as AnyIssueLevelType
+    __all__.append("AnyIssueLevelType")
+
+if __pkg_def:
+    __doc__ += """
+    * - :class:`IssueLevel`
+      - Abstract class that provides methods to define named issue levels.
+      - :class:`._issuelevels.IssueLevel`
+    """
+    from ._issuelevels import IssueLevel as IssueLevel
+    __all__.append("IssueLevel")
+
+__doc__ += __export_table_end
+
+
+__doc__ += """
 Logging
 =======
 
-Logging management.
+Use `scenario` :ref:`logging facilities <logging>` to facilitate test execution analyses.
 """
 
 __doc__ += __export_table_start
@@ -286,7 +322,7 @@ __doc__ += """
 Configuration
 =============
 
-Configuration management.
+Modulate test executions thanks to the `scenario` :ref:`open configuration database <config-db>`.
 """
 
 __doc__ += __export_table_start
@@ -327,7 +363,7 @@ __doc__ += """
 Launchers
 =========
 
-Classes to launch the test scenarios and campaigns from custom launcher scripts.
+Classes for launching test scenarios and campaigns from :ref:`custom launcher scripts <launcher>`.
 """
 
 __doc__ += __export_table_start
@@ -407,7 +443,7 @@ __doc__ += """
 Handlers (advanced)
 ===================
 
-Add reactive code.
+Register :ref:`handlers <handlers>` for reactive code to be called on events.
 """
 
 __doc__ += __export_table_start
@@ -443,13 +479,23 @@ __doc__ += __export_table_end
 
 
 __doc__ += """
-Execution result classes (advanced)
-===================================
+Execution (advanced)
+====================
 
-Sometimes, you may need to access information about the test execution itself.
+In certain circumstances (:ref:`launcher scripts <launcher>`, :ref:`handlers <handlers>`, ...),
+you may need to access information about test execution.
 """
 
 __doc__ += __export_table_start
+
+if __pkg_def:
+    __doc__ += """
+    * - :attr:`stack`
+      - :ref:`Scenario stack <scenario-stack>` instance.
+      - :class:`._scenariostack.ScenarioStack`
+    """
+    from ._scenariostack import SCENARIO_STACK as stack  # noqa  ## Constant variable imported as non-constant
+    __all__.append("stack")
 
 if __pkg_def:
     __doc__ += """
@@ -491,7 +537,7 @@ if __pkg_def:
     __doc__ += """
     * - :class:`CampaignExecution`
       -
-      - :class:`._campaignexecutions.CampaignExecution`
+      - :class:`._campaignexecution.CampaignExecution`
     """
     from ._campaignexecution import CampaignExecution as CampaignExecution
     __all__.append("CampaignExecution")
@@ -500,7 +546,7 @@ if __pkg_def:
     __doc__ += """
     * - :class:`TestSuiteExecution`
       -
-      - :class:`._campaignexecutions.TestSuiteExecution`
+      - :class:`._campaignexecution.TestSuiteExecution`
     """
     from ._campaignexecution import TestSuiteExecution as TestSuiteExecution
     __all__.append("TestSuiteExecution")
@@ -509,10 +555,18 @@ if __pkg_def:
     __doc__ += """
     * - :class:`TestCaseExecution`
       -
-      - :class:`._campaignexecutions.TestCaseExecution`
+      - :class:`._campaignexecution.TestCaseExecution`
     """
     from ._campaignexecution import TestCaseExecution as TestCaseExecution
     __all__.append("TestCaseExecution")
+
+__doc__ += __export_table_end
+
+__doc__ += """
+:ref:`Error management <errors>`:
+"""
+
+__doc__ += __export_table_start
 
 if __pkg_def:
     __doc__ += """
@@ -535,28 +589,19 @@ if __pkg_def:
 if __pkg_def:
     __doc__ += """
     * - :class:`KnownIssue`
-      - Subclass of :class:`TestError` that describes an error due to an exception that occurred during the tests.
+      - Subclass of :class:`TestError` that describes a known issue.
       - :class:`._knownissues.KnownIssue`
     """
     from ._knownissues import KnownIssue as KnownIssue
     __all__.append("KnownIssue")
 
-if __pkg_def:
-    __doc__ += """
-    * - :class:`IssueLevel`
-      - Provides methods to define named issue levels.
-      - :class:`._issuelevels.IssueLevel`
-    """
-    from ._issuelevels import IssueLevel as IssueLevel
-    __all__.append("IssueLevel")
-if typing.TYPE_CHECKING:
-    __doc__ += """
-    * - :class:`AnyIssueLevelType`
-      -
-      - :class:`._issuelevels.AnyIssueLevelType`
-    """
-    from ._issuelevels import AnyIssueLevelType as AnyIssueLevelType
-    __all__.append("AnyIssueLevelType")
+__doc__ += __export_table_end
+
+__doc__ += """
+Statistics:
+"""
+
+__doc__ += __export_table_start
 
 if __pkg_def:
     __doc__ += """
@@ -576,15 +621,6 @@ if __pkg_def:
     from ._stats import ExecTotalStats as ExecTotalStats
     __all__.append("ExecTotalStats")
 
-if __pkg_def:
-    __doc__ += """
-    * - :attr:`stack`
-      - Scenario stack instance.
-      - :class:`._scenariostack.ScenarioStack`
-    """
-    from ._scenariostack import SCENARIO_STACK as stack  # noqa  ## Constant variable imported as non-constant
-    __all__.append("stack")
-
 __doc__ += __export_table_end
 
 
@@ -592,7 +628,7 @@ __doc__ += """
 Reports (advanced)
 ==================
 
-The following objects give you the opportunity to read and write scenario and campaign reports.
+The following objects give you the opportunity to read and write :ref:`scenario and campaign reports <reports>`.
 """
 
 __doc__ += __export_table_start
@@ -621,6 +657,8 @@ __doc__ += __export_table_end
 __doc__ += """
 Miscellaneous
 =============
+
+The `scenario` framework also exposes a couple of useful classes and types that may be used.
 """
 
 __doc__ += __export_table_start

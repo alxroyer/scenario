@@ -19,10 +19,9 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Add references in 'src/scenario/__init__.py' to the dedicated chapters.
-            - Move known-issues exported symbols in a dedicated section.
         - Check whether there are still missing references if we don't generate documentation for private modules.
         - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
+        - Check whether we can re-import `scenario` modules a second time with `typing.TYPE_CHECKING := True`.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
       Check whether an exception is caught and re-thrown, not just `pass`.
     - Search for "`.[^_]" patterns.
