@@ -58,7 +58,7 @@ class ActionResultDefinition:
         #: Owner step.
         #:
         #: Initially set with a void reference.
-        #: Fixed when :meth:`.stepdefinition.StepDefinition.addactionsresults()` is called.
+        #: Fixed when :meth:`._stepdefinition.StepDefinition.addactionresult()` is called.
         self.step = StepDefinition.__new__(StepDefinition)  # type: StepDefinition
         #: Executions.
         self.executions = []  # type: typing.List[ActionResultExecution]

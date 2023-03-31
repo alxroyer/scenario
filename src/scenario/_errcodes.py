@@ -17,7 +17,7 @@
 """
 Command line error codes.
 
-Error codes returned by the :class:`.scenariorunner.ScenarioRunner` or :class:`.campaignrunner.CampaignRunner` programs.
+Error codes returned by the :class:`._scenariorunner.ScenarioRunner` or :class:`._campaignrunner.CampaignRunner` programs.
 """
 
 import enum

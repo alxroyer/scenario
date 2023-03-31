@@ -52,7 +52,7 @@ class DelayedStr(abc.ABC):
 
     def __str__(self):  # type: () -> str
         """
-        Triggers the string computation on the first call, and cache it for later calls.
+        Triggers the string computation on the first call, and caches it for later calls.
         """
         if self.__str is None:
             self.__str = self._computestr()
@@ -66,7 +66,7 @@ class DelayedStr(abc.ABC):
         :return:
             String computed for the object.
 
-            Will be cached by :meth:`__str__()`.
+            Will be cached by :meth:`DelayedStr.__str__()`.
         """
         raise NotImplementedError("Not implemented")
 
@@ -217,13 +217,13 @@ class JsonDump(DelayedStr):
         Stores the JSON data for later dump.
 
         :param json_data: JSON data to dump.
-        :param kwargs: :func:`json.dumps()`-like arguments.
+        :param kwargs: ``json.dumps()``-like arguments.
         """
         DelayedStr.__init__(self)
 
         #: JSON data to dump.
         self.json_data = json_data  # type: JsonDictType
-        #: :func:`json.dumps()`-like arguments.
+        #: ``json.dumps()``-like arguments.
         self.kwargs = kwargs  # type: typing.Dict[str, typing.Any]
 
     def _computestr(self):  # type: (...) -> str
@@ -238,7 +238,7 @@ def jsondump(
     Dump of JSON data.
 
     :param json_data: JSON data to dump.
-    :param kwargs: :func:`json.dumps()`-like arguments.
+    :param kwargs: ``json.dumps()``-like arguments.
     :return: :class:`JsonDump` delayed computation object.
     """
     return JsonDump(json_data, **kwargs)

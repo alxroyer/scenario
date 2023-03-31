@@ -41,7 +41,7 @@ class ScenarioResults(Logger):
 
         Logger.__init__(self, DebugClass.SCENARIO_RESULTS)
 
-        #: List of :class:`ScenarioResult` instances.
+        #: List of :class:`._scenarioexecution.ScenarioExecution` instances.
         self._results = []  # type: typing.List[_ScenarioExecutionType]
 
     def add(
@@ -49,7 +49,7 @@ class ScenarioResults(Logger):
             scenario_execution,  # type: _ScenarioExecutionType
     ):  # type: (...) -> None
         """
-        Adds a :class:`ScenarioResult` instance in the list.
+        Adds a :class:`._scenarioexecution.ScenarioExecution` instance in the list.
 
         :param scenario_execution: Scenario execution instance.
         """
@@ -69,7 +69,7 @@ class ScenarioResults(Logger):
         """
         Displays the results of the scenario executions in the list.
 
-        Designed to display convient information after :class:`.scenariologging.ScenarioLogging` and :class:`.campaignlogging.CampaignLogging` outputs.
+        Designed to display convient information after :class:`._scenariologging.ScenarioLogging` and :class:`._campaignlogging.CampaignLogging` outputs.
         """
         from ._datetimeutils import f2strduration
         from ._loggermain import MAIN_LOGGER

@@ -42,8 +42,8 @@ Python docstrings follow the *ReStructured Text* format.
 
     Select the "reStructured Text" option.
 
-The 'Initializer' word in :py:meth:`__init__()` docstrings should be avoided.
-:py:meth:`__init__()` docstrings should be more specific on what the initializers do for the object.
+The 'Initializer' word in ``__init__()`` docstrings should be avoided.
+``__init__()`` docstrings should be more specific on what the initializers do for the object.
 
 Sphinx accepts a couple of keywords for a same meaning
 (see `stackoverflow.com#34160968 <https://stackoverflow.com/questions/34160968/python-docstring-raise-vs-raises#34212785>`_
@@ -269,5 +269,10 @@ This section does not really describe a rule, but rather tracks the history of o
     - Deactivation of module member documentation:
       ``:(xxx-)member:`` `autodoc` options removed in 'doc/src/py/scenario.rst' after `sphinx-apidoc` execution.
 
-    - Short introductions only (instead of real attribute documentations) for exported symbols,
+    - Short introductions only (instead of ``.. py:attribute::`` documentations) for exported symbols,
       with cross-references to private module documentations.
+
+  - When we activated warnings, we figured out that we had a number of missing references for `scenario.Scenario`, `scenario.logging`...
+
+    - Module member documentation being still deactivated,
+      we eventually set back ``.. py:attribute::`` documentations for exported symbols in the module docstring of 'src/scenario/__init__.py'.

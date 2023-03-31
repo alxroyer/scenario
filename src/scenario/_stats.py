@@ -207,7 +207,7 @@ class ExecTotalStats:
     def __str__(self):  # type: () -> str
         """
         Computes a '%d' or '%d/%d' string representation of the statistics,
-        depending on the :attr:`.args.Args.doc_only` parameter.
+        depending on the :attr:`._scenarioargs.CommonExecArgs.doc_only` parameter.
 
         :return: String representation of the statistics.
         """

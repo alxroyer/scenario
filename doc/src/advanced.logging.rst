@@ -78,7 +78,7 @@ Debugging is enabled by default with this main logger.
 .. admonition:: Implementation details
     :class: note
 
-    The main logger carries the :py:class:`logging.Handler` instances.
+    The main logger carries the ``logging.Handler`` instances.
     It ownes up to two handlers:
 
     1. A first one for the console output, always set.
@@ -94,15 +94,15 @@ Class loggers make it possible to classify sets of log lines with a given subjec
 The *log class* is displayed within the log lines, between square brackets,
 and furthermore makes it possible to enable or disable debug log lines for it.
 
-A :py:class:`scenario.logger.Logger` instance may be created directly.
+A :py:class:`scenario._logger.Logger` instance may be created directly.
 
 .. code-block:: python
 
     _logger = scenario.Logger("My logger")
 
-But a common pattern is to inherit from :py:class:`scenario.logger.Logger`,
+But a common pattern is to inherit from :py:class:`scenario._logger.Logger`,
 either directly (see :ref:`test libraries <test-libs>`) or through an intermediate class.
-A couple of `scenario` classes inherit from the :py:class:`scenario.logger.Logger` class,
+A couple of `scenario` classes inherit from the :py:class:`scenario._logger.Logger` class,
 among others:
 
 - :py:class:`scenario.Scenario`,
@@ -178,15 +178,15 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
 
 ---
 
-.. admonition:: Access to :py:class:`logging.Logger` instances
+.. admonition:: Access to ``logging.Logger`` instances
     :class: tip
 
     .. [#logging-instance-attribute]
 
         In case you need to manipulate ``logging`` instance directly,
-        the ``logging.Logger`` instances are available through the :py:attr:`scenario.logger.Logger.logging_instance` property.
+        the ``logging.Logger`` instances are available through the :py:attr:`scenario._logger.Logger.logging_instance` property.
 
-        The :py:attr:`scenario.logger.Logger.logging_instance` property is available to both main logger and class loggers.
+        The :py:attr:`scenario._logger.Logger.logging_instance` property is available to both main logger and class loggers.
 
 
 .. _logging.colors:
@@ -270,9 +270,9 @@ Additional indentation may be useful when the test makes verifications in a recu
 
 It may be set using the following methods:
 
-- :py:meth:`scenario.logger.Logger.pushindentation()`,
-- :py:meth:`scenario.logger.Logger.popindentation()`,
-- :py:meth:`scenario.logger.Logger.resetindentation()`.
+- :py:meth:`scenario._logger.Logger.pushindentation()`,
+- :py:meth:`scenario._logger.Logger.popindentation()`,
+- :py:meth:`scenario._logger.Logger.resetindentation()`.
 
 When these calls are made on a class logger,
 the logging lines of this class logger are indented the way below.
@@ -293,7 +293,7 @@ the logging lines of this class logger are indented the way below.
 .. admonition:: Additional indentation pattern
     :class: tip
 
-    The :py:meth:`scenario.logger.Logger.pushindentation()` and :py:meth:`scenario.logger.Logger.popindentation()` methods
+    The :py:meth:`scenario._logger.Logger.pushindentation()` and :py:meth:`scenario._logger.Logger.popindentation()` methods
     have a ``indentation`` parameter that lets you change the 4-space default pattern by what you need.
 
     When removing indentation, the indentation pattern passed on must be the same as the one added in regards.
@@ -313,8 +313,8 @@ the logging lines of this class logger are indented the way below.
 Main logger indentation
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-When :py:meth:`scenario.logger.Logger.pushindentation()`, :py:meth:`scenario.logger.Logger.popindentation()`
-and :py:meth:`scenario.logger.Logger.resetindentation()` calls are made on the main logger,
+When :py:meth:`scenario._logger.Logger.pushindentation()`, :py:meth:`scenario._logger.Logger.popindentation()`
+and :py:meth:`scenario._logger.Logger.resetindentation()` calls are made on the main logger,
 it takes effect on every log lines:
 
 - main logger and class logger loggings (from *DEBUG* to *ERROR* log levels),
@@ -373,7 +373,7 @@ The second option is preferrable to the first one in as much as as
 it is easier to maintain (main point for f-strings),
 and f-strings are around 10% more efficient.
 
-Still, with f-strings, the resulting string is computed before it is passed to the :py:meth:`scenario.logger.Logger.debug()` method,
+Still, with f-strings, the resulting string is computed before it is passed to the :py:meth:`scenario._logger.Logger.debug()` method,
 and possibly discarded after being computed.
 
 That's the reason why, the third option is even more efficient for debug logging:
@@ -401,17 +401,17 @@ That's the reason why the :py:mod:`scenario.debug` package gathers a couple of f
       - Example
 
     * -
-      - :py:class:`scenario.debugutils.DelayedStr`
+      - :py:class:`scenario._debugutils.DelayedStr`
       - Abstract class that defines a string which computation may be delayed.
 
         You may inherit from this base class for specific needs.
       -
 
     * -
-      - :py:class:`scenario.debugutils.FmtAndArgs`
+      - :py:class:`scenario._debugutils.FmtAndArgs`
       - Describes a delayed string that should be built with format and arguments.
 
-        The string can be prepared step by step, thanks to the :py:meth:`scenario.debugutils.FmtAndArgs.push()` method.
+        The string can be prepared step by step, thanks to the :py:meth:`scenario._debugutils.FmtAndArgs.push()` method.
 
         The application of the arguments is delayed on time when needed.
       - .. code-block:: python
@@ -422,8 +422,8 @@ That's the reason why the :py:mod:`scenario.debug` package gathers a couple of f
             _str.push(".")
             self.debug(_str)
 
-    * - :py:func:`scenario.debugutils.saferepr()`
-      - :py:class:`scenario.debugutils.SafeRepr`
+    * - :py:func:`scenario._debugutils.saferepr()`
+      - :py:class:`scenario._debugutils.SafeRepr`
       - Computes a *repr*-like string, but ensures a *not-too-long* string, possibly focused on certain parts,
         such computation being delayed as for the others.
       - .. code-block:: python
@@ -434,8 +434,8 @@ That's the reason why the :py:mod:`scenario.debug` package gathers a couple of f
                 scenario.debug.saferepr(longtext, focus=searched),
             )
 
-    * - :py:func:`scenario.debugutils.jsondump()`
-      - :py:class:`scenario.debugutils.JsonDump`
+    * - :py:func:`scenario._debugutils.jsondump()`
+      - :py:class:`scenario._debugutils.JsonDump`
       - Delays the dump computation for JSON data.
       - .. code-block:: python
 
@@ -444,10 +444,10 @@ That's the reason why the :py:mod:`scenario.debug` package gathers a couple of f
                 extra=self.longtext(max_lines=10),
             )
 
-        .. tip:: :py:func:`scenario.debugutils.jsondump()` may basically be displayed as :ref:`long texts <logging.long-text>`.
+        .. tip:: :py:func:`scenario._debugutils.jsondump()` may basically be displayed as :ref:`long texts <logging.long-text>`.
 
-    * - :py:func:`scenario.debugutils.callback()`
-      - :py:class:`scenario.debugutils.CallbackStr`
+    * - :py:func:`scenario._debugutils.callback()`
+      - :py:class:`scenario._debugutils.CallbackStr`
       - Delays the execution of a string builder callback.
 
         Possibly set with a lambda, this function makes it possible to delay quite everything.
@@ -466,7 +466,7 @@ Long texts
 
 The `scenario` logging feature provides a way to log long texts on several lines.
 
-To do so, set the ``extra`` parameter using the :py:meth:`scenario.logger.Logger.longtext()` method when logging some text:
+To do so, set the ``extra`` parameter using the :py:meth:`scenario._logger.Logger.longtext()` method when logging some text:
 
 .. code-block:: python
 
@@ -474,9 +474,9 @@ To do so, set the ``extra`` parameter using the :py:meth:`scenario.logger.Logger
                extra=self.longtext(max_lines=10))
 
 This feature has primarily been designed for debugging, but it works with the
-:py:meth:`scenario.logger.Logger.info()`,
-:py:meth:`scenario.logger.Logger.warning()` and
-:py:meth:`scenario.logger.Logger.error()`
+:py:meth:`scenario._logger.Logger.info()`,
+:py:meth:`scenario._logger.Logger.warning()` and
+:py:meth:`scenario._logger.Logger.error()`
 methods as well.
 
 The ``max_lines`` parameter may be set to ``None`` in order to display the full text.
@@ -512,7 +512,7 @@ but saves it into the 'doc/data/commutativeaddition.log' file
 .. tip::
 
     The :ref:`scenario.log_file <config-db.scenario.log_file>` configuration value may also be set programmatically
-    through the :py:meth:`scenario.configdb.ConfigDatabase.set()` method,
+    through the :py:meth:`scenario._configdb.ConfigDatabase.set()` method,
     as illustrated in the :ref:`launcher script extension <launcher.pre-post>` section.
 
 
@@ -521,16 +521,17 @@ but saves it into the 'doc/data/commutativeaddition.log' file
 Extra flags
 -----------
 
-The :py:class:`scenario.logextradata.LogExtraData` define a set of flags that can be set to specialize the behaviour of each :py:class:`scenario.logger.Logger`.
+The :py:class:`scenario._logextradata.LogExtraData` define a set of flags
+that can be set to specialize the behaviour of each :py:class:`scenario._logger.Logger`.
 
-For instance, the :py:class:`scenario.scenariorunner.ScenarioRunner` and :py:class:`scenario.scenariostack.ScenarioStack` classes
-disable the :py:const:`scenario.logextradata.LogExtraData.ACTION_RESULT_MARGIN` flag,
+For instance, the :py:class:`scenario._scenariorunner.ScenarioRunner` and :py:class:`scenario._scenariostack.ScenarioStack` classes
+disable the :py:const:`scenario._logextradata.LogExtraData.ACTION_RESULT_MARGIN` flag,
 so that their related log lines remain aligned on the left whatever the current action / expected result context is.
 
 Please, refer the following links for details on extra flags:
 
-- :py:class:`scenario.logextradata.LogExtraData`
-- :py:meth:`scenario.logger.Logger.setextraflag()`
+- :py:class:`scenario._logextradata.LogExtraData`
+- :py:meth:`scenario._logger.Logger.setextraflag()`
 
 .. warning::
     Setting extra flags on class loggers, or even worse on the main logger, may lead to unpredictable behaviours.

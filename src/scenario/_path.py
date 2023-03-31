@@ -19,7 +19,7 @@ Path management.
 
 .. py:attribute:: AnyPathType
 
-    Type for path-like data: either a simple string or a :class:`os.PathLike` instance.
+    Type for path-like data: either a simple string or a ``os.PathLike`` instance.
 """
 
 import logging
@@ -41,14 +41,14 @@ class Path:
     """
     Helper class for path management.
 
-    This class really looks like :class:`pathlib.Path`,
+    This class really looks like ``pathlib.Path``,
     but differs from it in that:
 
     1. it ensures persistent paths, even though initialized from a relative path and the current directory changes afterwards,
     2. it provides a :attr:`prettypath` display from a main directory set for the current project (see :meth:`setmainpath()`),
     3. it does not describe the current working implicitely when initialized from nothing, but a *void* path.
 
-    The :class:`Path` class supports the :class:`os.PathLike` interface.
+    The :class:`Path` class supports the ``os.PathLike`` interface.
     """
 
     #: Main path, used to compute the relative :attr:`prettypath`.
@@ -134,7 +134,7 @@ class Path:
 
         If the path given is relative, it is transformed in its absolute form from the current working directory.
         """
-        #: :class:`pathlib.Path` instance used to store the absolute path described by this :class:`Path` instance.
+        #: ``pathlib.Path`` instance used to store the absolute path described by this :class:`Path` instance.
         self._abspath = pathlib.Path("//void/path")  # type: pathlib.Path
         if isinstance(path, Path):
             # No need to duplicate the immutable `pathlib.Path` object.
@@ -155,81 +155,82 @@ class Path:
                 self._abspath = path.resolve()
 
         # === `pathlib.PurePath` API support ===
-        # :attr:`pathlib.PurePath.parts` implemented as :attr:`parts`.
-        # :attr:`pathlib.PurePath.drive` implemented as :attr:`drive`.
-        # :attr:`pathlib.PurePath.root` implemented as :attr:`root`.
-        # :attr:`pathlib.PurePath.anchor` implemented as :attr:`anchor`.
-        # :attr:`pathlib.PurePath.parents` implemented as :attr:`parents`.
-        # :attr:`pathlib.PurePath.parent` implemented as :attr:`parent`.
-        # :attr:`pathlib.PurePath.name` implemented as :attr:`name`.
-        # :attr:`pathlib.PurePath.suffix` implemented as :attr:`suffix`.
-        # :attr:`pathlib.PurePath.stem` implemented as :attr:`stem`.
-        self.as_posix = self._abspath.as_posix  #: Shortcut to :meth:`pathlib.PurePath.as_posix()`.
-        self.as_uri = self._abspath.as_uri  #: Shortcut to :meth:`pathlib.PurePath.as_uri()`.
-        self.is_absolute = self._abspath.is_absolute  #: Shortcut to :meth:`pathlib.PurePath.is_absolute()`.
-        # :meth:`pathlib.PurePath.is_relative_to()` implemented as :meth:`is_relative_to()`.
-        self.is_reserved = self._abspath.is_reserved  #: Shortcut to :meth:`pathlib.PurePath.is_reserved()`.
-        # :meth:`pathlib.PurePath.joinpath()` implemented as :meth:`joinpath()`.
-        self.match = self._abspath.match  #: Shortcut to :meth:`pathlib.PurePath.match()`.
-        # :meth:`pathlib.PurePath.relative_to()` implemented as :meth:`relative_to()`.
-        # :meth:`pathlib.PurePath.with_name()` implemented as :meth:`with_name()`.
-        # :meth:`pathlib.PurePath.with_stem()` implemented as :meth:`with_stem()`.
-        # :meth:`pathlib.PurePath.with_suffix()` implemented as :meth:`with_suffix()`.
+        # `pathlib.PurePath.parts` implemented as a member property.
+        # `pathlib.PurePath.drive` implemented as a member property.
+        # `pathlib.PurePath.root` implemented as a member property.
+        # `pathlib.PurePath.anchor` implemented as a member property.
+        # `pathlib.PurePath.parents` implemented as a member property.
+        # `pathlib.PurePath.parent` implemented as a member property.
+        # `pathlib.PurePath.name` implemented as a member property.
+        # `pathlib.PurePath.suffix` implemented as a member property.
+        # `pathlib.PurePath.suffixes` implemented as a member property.
+        # `pathlib.PurePath.stem` implemented as a member property.
+        self.as_posix = self._abspath.as_posix  #: Shortcut to ``pathlib.PurePath.as_posix()``.
+        self.as_uri = self._abspath.as_uri  #: Shortcut to ``pathlib.PurePath.as_uri()``.
+        self.is_absolute = self._abspath.is_absolute  #: Shortcut to ``pathlib.PurePath.is_absolute()``.
+        # `pathlib.PurePath.is_relative_to()` implemented as a member method.
+        self.is_reserved = self._abspath.is_reserved  #: Shortcut to ``pathlib.PurePath.is_reserved()``.
+        # `pathlib.PurePath.joinpath()` implemented as a member method.
+        self.match = self._abspath.match  #: Shortcut to ``pathlib.PurePath.match()``.
+        # `pathlib.PurePath.relative_to()` implemented as a member method.
+        # `pathlib.PurePath.with_name()` implemented as a member method.
+        # `pathlib.PurePath.with_stem()` implemented as a member method.
+        # `pathlib.PurePath.with_suffix()` implemented as a member method.
 
         # === `pathlib.Path` API support ===
-        # :meth:`pathlib.Path.cwd()` implemented as :meth:`cwd()`.
-        # :meth:`pathlib.Path.home()` implemented as :meth:`home()`.
-        self.stat = self._abspath.stat  #: Shortcut to :meth:`pathlib.Path.stat()`.
-        self.chmod = self._abspath.chmod  #: Shortcut to :meth:`pathlib.Path.chmod()`.
-        self.exists = self._abspath.exists  #: Shortcut to :meth:`pathlib.Path.exists()`.
+        # `pathlib.Path.cwd()` implemented as a static method.
+        # `pathlib.Path.home()` implemented as a static method.
+        self.stat = self._abspath.stat  #: Shortcut to ``pathlib.Path.stat()``.
+        self.chmod = self._abspath.chmod  #: Shortcut to ``pathlib.Path.chmod()``.
+        self.exists = self._abspath.exists  #: Shortcut to ``pathlib.Path.exists()``.
         if sys.version_info >= (3, 5):
-            self.expanduser = self._abspath.expanduser  #: Shortcut to :meth:`pathlib.Path.expanduser()`.
-        # :meth:`pathlib.Path.glob()` implemented as :meth:`glob()`.
+            self.expanduser = self._abspath.expanduser  #: Shortcut to ``pathlib.Path.expanduser()``.
+        # `pathlib.Path.glob()` implemented as a member method.
         if sys.platform != "win32":
             # Memo: `Path.group()` raises "NotImplementedError: Path.group() is unsupported on this system" under Windows.
-            self.group = self._abspath.group  #: Shortcut to :meth:`pathlib.Path.group()`.
-        self.is_dir = self._abspath.is_dir  #: Shortcut to :meth:`pathlib.Path.is_dir()`.
-        self.is_file = self._abspath.is_file  #: Shortcut to :meth:`pathlib.Path.is_file()`.
+            self.group = self._abspath.group  #: Shortcut to ``pathlib.Path.group()``.
+        self.is_dir = self._abspath.is_dir  #: Shortcut to ``pathlib.Path.is_dir()``.
+        self.is_file = self._abspath.is_file  #: Shortcut to ``pathlib.Path.is_file()``.
         if sys.version_info >= (3, 7):
-            self.is_mount = self._abspath.is_mount  #: Shortcut to :meth:`pathlib.Path.is_mount()`.
-        self.is_symlink = self._abspath.is_symlink  #: Shortcut to :meth:`pathlib.Path.is_symlink()`.
-        self.is_socket = self._abspath.is_socket  #: Shortcut to :meth:`pathlib.Path.is_socket()`.
-        self.is_fifo = self._abspath.is_fifo  #: Shortcut to :meth:`pathlib.Path.is_fifo()`.
-        self.is_block_device = self._abspath.is_block_device  #: Shortcut to :meth:`pathlib.Path.is_block_device()`.
-        self.is_char_device = self._abspath.is_char_device  #: Shortcut to :meth:`pathlib.Path.is_char_device()`.
-        # :meth:`pathlib.Path.iterdir()` implemented as :meth:`iterdir()`.
-        self.lchmod = self._abspath.lchmod  #: Shortcut to :meth:`pathlib.Path.lchmod()`.
-        self.lstat = self._abspath.lstat  #: Shortcut to :meth:`pathlib.Path.lstat()`.
-        self.mkdir = self._abspath.mkdir  #: Shortcut for :meth:`pathlib.Path.mkdir()`.
-        self.open = self._abspath.open  #: Shortcut to :meth:`pathlib.Path.open()`.
+            self.is_mount = self._abspath.is_mount  #: Shortcut to ``pathlib.Path.is_mount()``.
+        self.is_symlink = self._abspath.is_symlink  #: Shortcut to ``pathlib.Path.is_symlink()``.
+        self.is_socket = self._abspath.is_socket  #: Shortcut to ``pathlib.Path.is_socket()``.
+        self.is_fifo = self._abspath.is_fifo  #: Shortcut to ``pathlib.Path.is_fifo()``.
+        self.is_block_device = self._abspath.is_block_device  #: Shortcut to ``pathlib.Path.is_block_device()``.
+        self.is_char_device = self._abspath.is_char_device  #: Shortcut to ``pathlib.Path.is_char_device()``.
+        # `pathlib.Path.iterdir()` implemented as a member method.
+        self.lchmod = self._abspath.lchmod  #: Shortcut to ``pathlib.Path.lchmod()``.
+        self.lstat = self._abspath.lstat  #: Shortcut to ``pathlib.Path.lstat()``.
+        self.mkdir = self._abspath.mkdir  #: Shortcut for ``pathlib.Path.mkdir()``.
+        self.open = self._abspath.open  #: Shortcut to ``pathlib.Path.open()``.
         if sys.platform != "win32":
             # Memo: `Path.owner()` raises "NotImplementedError: Path.owner() is unsupported on this system" under Windows.
-            self.owner = self._abspath.owner  #: Shortcut to :meth:`pathlib.Path.owner()`.
+            self.owner = self._abspath.owner  #: Shortcut to ``pathlib.Path.owner()``.
         if sys.version_info >= (3, 5):
-            self.read_bytes = self._abspath.read_bytes  #: Shortcut to :meth:`pathlib.Path.read_bytes()`.
-            self.read_text = self._abspath.read_text  #: Shortcut to :meth:`pathlib.Path.read_text()`.
+            self.read_bytes = self._abspath.read_bytes  #: Shortcut to ``pathlib.Path.read_bytes()``.
+            self.read_text = self._abspath.read_text  #: Shortcut to ``pathlib.Path.read_text()``.
         if sys.version_info >= (3, 9):
-            self.readlink = self._abspath.readlink  #: Shortcut to :meth:`pathlib.Path.readlink()`.
-        # :meth:`pathlib.Path.rename()` implemented as :meth:`rename()`.
-        # :meth:`pathlib.Path.replace()` implemented as :meth:`replace()`.
-        # :meth:`pathlib.Path.resolve()` implemented as :meth: `resolve()`.
-        # :meth:`pathlib.Path.rglob()` implemented as :meth:`rglob()`.
-        self.rmdir = self._abspath.rmdir  #: Shortcut to :meth:`pathlib.Path.rmdir()`.
-        # :meth:`pathlib.Path.samefile()` implemented as :meth:`samefile()`.
-        self.symlink_to = self._abspath.symlink_to  #: Shortcut to :meth:`pathlib.Path.symlink_to()`.
+            self.readlink = self._abspath.readlink  #: Shortcut to ``pathlib.Path.readlink()``.
+        # `pathlib.Path.rename()` implemented as a member method.
+        # `pathlib.Path.replace()` implemented as a member method.
+        # `pathlib.Path.resolve()` implemented as a member method.
+        # `pathlib.Path.rglob()` implemented as a member method.
+        self.rmdir = self._abspath.rmdir  #: Shortcut to ``pathlib.Path.rmdir()``.
+        # `pathlib.Path.samefile()` implemented as a member method.
+        self.symlink_to = self._abspath.symlink_to  #: Shortcut to ``pathlib.Path.symlink_to()``.
         if sys.version_info >= (3, 10):
-            self.hardlink_to = self._abspath.hardlink_to  #: Shortcut to :meth:`pathlib.Path.hardlink_to()`.
+            self.hardlink_to = self._abspath.hardlink_to  #: Shortcut to ``pathlib.Path.hardlink_to()``.
         if sys.version_info >= (3, 8):
-            self.link_to = self._abspath.link_to  #: Shortcut to :meth:`pathlib.Path.link_to()`.
-        self.touch = self._abspath.touch  #: Shortcut to :meth:`pathlib.Path.touch()`.
-        self.unlink = self._abspath.unlink  #: Shortcut to :meth:`pathlib.Path.unlink()`.
+            self.link_to = self._abspath.link_to  #: Shortcut to ``pathlib.Path.link_to()``.
+        self.touch = self._abspath.touch  #: Shortcut to ``pathlib.Path.touch()``.
+        self.unlink = self._abspath.unlink  #: Shortcut to ``pathlib.Path.unlink()``.
         if sys.version_info >= (3, 5):
-            self.write_bytes = self._abspath.write_bytes  #: Shortcut to :meth:`pathlib.Path.write_bytes()`.
-            self.write_text = self._abspath.write_text  #: Shortcut to :meth:`pathlib.Path.write_text()`.
+            self.write_bytes = self._abspath.write_bytes  #: Shortcut to ``pathlib.Path.write_bytes()``.
+            self.write_text = self._abspath.write_text  #: Shortcut to ``pathlib.Path.write_text()``.
 
     def __fspath__(self):  # type: () -> str
         """
-        :class:`os.PathLike` interface implementation.
+        ``os.PathLike`` interface implementation.
         """
         return os.fspath(self._abspath)
 
@@ -504,10 +505,10 @@ class Path:
         :return: Relative path from ``other`` in the POSIX style.
 
         .. note::
-            The behaviour of this method differs from the one of :meth:`pathlib.PurePath.relative_to()`.
+            The behaviour of this method differs from the one of ``pathlib.PurePath.relative_to()``.
 
-            :meth:`pathlib.PurePath.relative_to()` raises a ``ValueError`` as soon as this path is not a sub-path of ``other``.
-            In order te be able compute relative paths beginning with "../", we use :func:`os.path.relpath()` instead.
+            ``pathlib.PurePath.relative_to()`` raises a ``ValueError`` as soon as this path is not a sub-path of ``other``.
+            In order te be able compute relative paths beginning with "../", we use ``os.path.relpath()`` instead.
 
         See `pathlib.PurePath.relative_to() <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.relative_to>`_.
         """
@@ -533,9 +534,11 @@ class Path:
         """
         Returns the list of files that match the given pattern.
 
-        :param pattern: Path pattern (see :func:`glob.glob()`).
-                        May be either a relative or an absolute path specification.
-        :return: List of paths that match the pattern.
+        :param pattern:
+            Path pattern (see ``glob.glob()``).
+            May be either a relative or an absolute path specification.
+        :return:
+            List of paths that match the pattern.
 
         See `pathlib.Path.glob() <https://docs.python.org/3/library/pathlib.html#pathlib.Path.glob>`_.
         """

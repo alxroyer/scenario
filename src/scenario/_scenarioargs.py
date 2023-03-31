@@ -113,10 +113,10 @@ class ScenarioArgs(Args, CommonExecArgs):
     """
     Scenario runner program argument management.
 
-    Provides arguments for the :class:`.scenariorunner.ScenarioRunner` execution.
+    Provides arguments for the :class:`._scenariorunner.ScenarioRunner` execution.
 
     Arguments given through the command line prevail on the configurations in the configuration files
-    (see :class:`.scenarioconfig.ScenarioConfig`).
+    (see :class:`._scenarioconfig.ScenarioConfig`).
     """
 
     def __init__(

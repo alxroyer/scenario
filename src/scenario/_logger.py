@@ -47,7 +47,7 @@ class Logger:
     This will make the log lines be prefixed with the given log class,
     and give you the opportunity to activate or deactivate the corresponding debug log lines
     programmatically (see :meth:`enabledebug()`)
-    or by configuration (see :meth:`.scenarioconfig.ScenarioConfig.debugclasses()`).
+    or by configuration (see :meth:`._scenarioconfig.ScenarioConfig.debugclasses()`).
     """
 
     def __init__(
@@ -68,8 +68,8 @@ class Logger:
         #: Log class.
         self.log_class = enum2str(log_class)  # type: str
 
-        # Build the :class:`logging.Logger` instance, and attach a filter.
-        #: :class:`logging.Logger` instance as a member variable.
+        # Build the ``logging.Logger`` instance, and attach a filter.
+        #: ``logging.Logger`` instance as a member variable.
         self._logger = logging.Logger(name=self.log_class, level=logging.DEBUG)  # type: logging.Logger
         self._logger.addFilter(LoggerLogFilter(logger=self))
         if not self.log_class:
@@ -85,7 +85,7 @@ class Logger:
 
             self._logger.parent = MAIN_LOGGER.logging_instance
             self._logger.propagate = True
-        # :meth:`logging.Logger._log()` indirection.
+        # `logging.Logger._log()` indirection.
         self._logger._log = self._log  # type: ignore[assignment]  ## Cannot assign to a method
 
         #: ``True`` to enable log debugging.
@@ -304,11 +304,11 @@ class Logger:
             **kwargs  # type: typing.Any
     ):  # type: (...) -> None
         """
-        :meth:`logging.Logger._log()` method indirection.
+        ``logging.Logger._log()`` method indirection.
 
         :param self:
             In as much as ``self`` is bound with the method,
-            even though the call was made from a :class:`logging.Logger` instance,
+            even though the call was made from a ``logging.Logger`` instance,
             ``self`` remains a `scenario` :class:`Logger` when we arrive here.
         :param level: Log level.
         :param msg: Log message.

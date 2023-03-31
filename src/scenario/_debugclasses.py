@@ -17,7 +17,7 @@
 """
 `scenario` debugging.
 
-The :class:`DebugClass` enum defines the `scenario` debug classes (see: :class:`.logger.Logger`).
+The :class:`DebugClass` enum defines the `scenario` debug classes (see: :class:`._logger.Logger`).
 """
 
 from ._enumutils import StrEnum  # `StrEnum` used for inheritance.

@@ -30,11 +30,11 @@ class LogExtraData(StrEnum):
     """
     #: Current logger reference.
     #:
-    #: Stores a class:`.logger.Logger` instance reference.
+    #: Stores a class:`._logger.Logger` instance reference.
     #:
-    #: Automatically set by :class:`.logfilters.LoggerLogFilter`
-    #: so that :class:`.logformatter.LogFormatter`
-    #: knows about the current :class:`.logger.Logger` instance
+    #: Automatically set by :class:`._logfilters.LoggerLogFilter`
+    #: so that :class:`._logformatter.LogFormatter`
+    #: knows about the current :class:`._logger.Logger` instance
     #: when processing the log event.
     CURRENT_LOGGER = "_logger_"
 

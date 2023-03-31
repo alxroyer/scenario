@@ -22,4 +22,4 @@ Error management
 
     - By default, errors break the test execution (:ref:`assertions <assertions>` or any exception).
     - Except for :ref:`known errors <known-issues.issue-level-error>`.
-    - Except when the ``--continue-on-error`` option or :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR` configuration is set.
+    - Except when the ``--continue-on-error`` option or :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR` configuration is set.

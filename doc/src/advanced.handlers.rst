@@ -34,7 +34,7 @@ First of all, declare your handler function:
     :start-at: def _error
     :end-at: scenario.logging.debug
 
-Then the handlers may be installed by calling the :py:meth:`scenario.handlers.Handlers.install()` method
+Then the handlers may be installed by calling the :py:meth:`scenario._handlers.Handlers.install()` method
 on the :py:attr:`scenario.handlers` manager:
 
 .. scenario.Event.ERROR handler installation
@@ -49,7 +49,7 @@ on the :py:attr:`scenario.handlers` manager:
 
     Using enums is usually a better option in as much as they can be type checked in camparison with simple strings.
 
-The :py:meth:`scenario.handlers.Handlers.install()` method has a couple of parameters that specialize the way the handlers live and are triggered:
+The :py:meth:`scenario._handlers.Handlers.install()` method has a couple of parameters that specialize the way the handlers live and are triggered:
 
 :scenario:
     Related scenario, if any.
@@ -63,7 +63,7 @@ The :py:meth:`scenario.handlers.Handlers.install()` method has a couple of param
     Make this handler be called prior to other handlers when the event is met,
     otherwise the handler is called after the other handlers already registered for the given event.
 
-The handlers may be uninstalled thanks to the :py:meth:`scenario.handlers.Handlers.uninstall()` method.
+The handlers may be uninstalled thanks to the :py:meth:`scenario._handlers.Handlers.uninstall()` method.
 
 
 .. _handlers.scenario-events:
@@ -75,7 +75,7 @@ The following tables describes the `scenario` events that can be used to registe
 
 .. tip::
 
-    Use the :py:class:`scenario.Event` shortcut to the internal :py:class:`scenario.scenarioevents.ScenarioEvent` enum
+    Use the :py:class:`scenario.Event` shortcut to the internal :py:class:`scenario._scenarioevents.ScenarioEvent` enum
     from `scenario` user code.
 
 .. list-table:: Events raised during a scenario execution
@@ -86,21 +86,21 @@ The following tables describes the `scenario` events that can be used to registe
     * - Event
       - Description
       - Data type
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.BEFORE_TEST` = "scenario.before-test"
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.BEFORE_TEST` = "scenario.before-test"
       - *Before test* handlers: handlers that are executed at the beginning of the scenario.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Scenario`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.BEFORE_STEP` = "scenario.before-step"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Scenario`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.BEFORE_STEP` = "scenario.before-step"
       - *Before step* handlers: handlers that are executed before each step.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Step`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.ERROR` = "scenario.error"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Step`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.ERROR` = "scenario.error"
       - Error handler: handlers that are executed on test errors.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Error`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.AFTER_STEP` = "scenario.after-step"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Error`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.AFTER_STEP` = "scenario.after-step"
       - *After step* handlers: handlers that are executed after each step.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Step`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.AFTER_TEST` = "scenario.after-test"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Step`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.AFTER_TEST` = "scenario.after-test"
       - *After test* handlers: handlers that are executed at the end of the scenario.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Scenario`
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Scenario`
 
 .. list-table:: Events raised during a campaign execution
     :widths: auto
@@ -110,27 +110,27 @@ The following tables describes the `scenario` events that can be used to registe
     * - Event
       - Description
       - Data type
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.BEFORE_CAMPAIGN` = "scenario.before-campaign"
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.BEFORE_CAMPAIGN` = "scenario.before-campaign"
       - *Before campaign* handlers: handlers that are executed at the beginning of the campaign.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Campaign`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_SUITE` = "scenario.before-test-suite"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Campaign`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.BEFORE_TEST_SUITE` = "scenario.before-test-suite"
       - *Before test suite* handlers: handlers that are executed at the beginning of each test suite.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.TestSuite`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.BEFORE_TEST_CASE` = "scenario.before-test-case"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.TestSuite`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.BEFORE_TEST_CASE` = "scenario.before-test-case"
       - *Before test case* handlers: handlers that are executed at the beginning of each test case.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.TestCase`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.ERROR` = "scenario.error"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.TestCase`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.ERROR` = "scenario.error"
       - Error handler: handlers that are executed on test errors.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Error`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.AFTER_TEST_CASE` = "scenario.after-test-case"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Error`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.AFTER_TEST_CASE` = "scenario.after-test-case"
       - *After test case* handlers: handlers that are executed after each test case.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.TestCase`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.AFTER_TEST_SUITE` = "scenario.after-test-suite"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.TestCase`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.AFTER_TEST_SUITE` = "scenario.after-test-suite"
       - *After test suite* handlers: handlers that are executed after each test suite.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.TestSuite`
-    * - :py:attr:`scenario.scenarioevents.ScenarioEvent.AFTER_CAMPAIGN` = "scenario.after-campaign"
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.TestSuite`
+    * - :py:attr:`scenario._scenarioevents.ScenarioEvent.AFTER_CAMPAIGN` = "scenario.after-campaign"
       - *After campaign* handlers: handlers that are executed after the campaign.
-      - :py:class:`scenario.scenarioevents.ScenarioEventData.Campaign`
+      - :py:class:`scenario._scenarioevents.ScenarioEventData.Campaign`
 
 
 .. _handlers.user-events:
@@ -151,7 +151,7 @@ so that they can be type checked.
     :start-at: class UserEvent
     :end-at: FOO
 
-Then use the :py:meth:`scenario.handlers.Handlers.callhandlers()` method
+Then use the :py:meth:`scenario._handlers.Handlers.callhandlers()` method
 to make the registered handlers (matching their additional conditions in option) be called.
 Pass on event data as a single objet, which can be whatever you want.
 
@@ -165,5 +165,5 @@ Pass on event data as a single objet, which can be whatever you want.
 .. tip::
     Considering evolutivity concerns, event data should rather be set with:
 
-    - dedicated objects, like :py:class:`scenario.scenarioevents.ScenarioEventData` proposes it,
+    - dedicated objects, like :py:class:`scenario._scenarioevents.ScenarioEventData` proposes it,
     - or more informal dictionaries, like the 'demo/handlers.py' sample does.

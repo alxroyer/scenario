@@ -106,7 +106,7 @@ class KnownIssue(TestError):
         #: Issue URL set, or computed from :attr:`id` and :attr:`_url_builder`.
         self._url = url  # type: typing.Optional[str]
 
-        #: Redefinition of :attr:`TestError.location` in order to explicitize it cannot be ``None`` for :class:`KnownIssue` instances.
+        #: Redefinition of :attr:`._testerrors.TestError.location` in order to explicitize it cannot be ``None`` for :class:`KnownIssue` instances.
         self.location = self.location  # type: CodeLocation
 
     def __str__(self):  # type: () -> str
@@ -240,7 +240,7 @@ class KnownIssue(TestError):
             indent="",  # type: str
     ):  # type: (...) -> None
         """
-        :meth:`.testerrors.TestError.logerror` override in order to display the issue URL on a second line (if any).
+        :meth:`._testerrors.TestError.logerror` override in order to display the issue URL on a second line (if any).
         """
         super().logerror(logger=logger, level=level, indent=indent)
 
@@ -249,7 +249,7 @@ class KnownIssue(TestError):
 
     def tojson(self):  # type: (...) -> JsonDictType
         """
-        Converts the :class:`TestError` instance into a JSON dictionary.
+        Converts the :class:`._testerrors.TestError` instance into a JSON dictionary.
 
         :return: JSON dictionary.
         """

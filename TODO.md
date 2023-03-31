@@ -19,9 +19,11 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Check whether there are still missing references if we don't generate documentation for private modules.
-        - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
         - Check whether we can re-import `scenario` modules a second time with `typing.TYPE_CHECKING := True`.
+        - Check whether there are still missing references if we don't generate documentation for private modules.
+        - Remove `scenario.logging` timestamps from `sphinxapidoc()` logs.
+        - Change from `#:` Sphinx comments to `"""` doctrings?
+        - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
       Check whether an exception is caught and re-thrown, not just `pass`.
     - Search for "`.[^_]" patterns.
@@ -46,6 +48,7 @@
               "AttributeError: module 'scenario' has no attribute 'tools'"
         - Save note on renamed class exports.
     - Use docstrings after module attribute instead of `.. py:atribute:` directives.
+- Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.

@@ -21,16 +21,16 @@ Known issues
 One dilemma we commonly have to face when managing tests is to deal with known issues.
 
 On the one hand, as long as a known issue exists, the feature that the test verifies cannot be said to be completely fulfilled.
-Thus, putting the test in the :py:const:`scenario.executionstatus.ExecutionStatus.FAIL` status is a formal way
+Thus, putting the test in the :py:const:`scenario._executionstatus.ExecutionStatus.FAIL` status is a formal way
 to mark the corresponding feature as not fully supported yet.
 
 On the other hand, from the continuous integration point of view,
-seeing the test in the :py:const:`scenario.executionstatus.ExecutionStatus.FAIL` status from day to day,
+seeing the test in the :py:const:`scenario._executionstatus.ExecutionStatus.FAIL` status from day to day,
 apparently because of that known issue,
 may occult useful information on other possible regressions.
 
 That's the reason why the `scenario` framework provides an API in order to register known issues in the tests
-(see :py:meth:`scenario.stepuserapi.StepUserApi.knownissue()` and :py:class:`scenario.knownissues.KnownIssue`).
+(see :py:meth:`scenario._stepuserapi.StepUserApi.knownissue()` and :py:class:`scenario._knownissues.KnownIssue`).
 
 
 .. _known-issues.default:
@@ -39,17 +39,17 @@ Default behaviour
 -----------------
 
 By default, known issues are handled as simple warnings,
-making the tests fall to the intermediate :py:const:`scenario.executionstatus.ExecutionStatus.WARNINGS` status.
+making the tests fall to the intermediate :py:const:`scenario._executionstatus.ExecutionStatus.WARNINGS` status.
 The warnings are logged in the console, and saved in :ref:`test reports <reports>`.
 
 This way, a regression will be highlighted as soon as it occurs by the continuous integration process,
-in as much as the test will turn to the :py:const:`scenario.executionstatus.ExecutionStatus.FAIL` status.
+in as much as the test will turn to the :py:const:`scenario._executionstatus.ExecutionStatus.FAIL` status.
 
 This way, one can safely implement a workaround in a test affected by a known issue,
 but track it formally in the same time.
 Once the known issue has been fixed in the *software/system under test* (SUT),
 the workaround and the known issue reference can be removed from the test,
-hopefully turning the latter into the :py:const:`scenario.executionstatus.ExecutionStatus.SUCCESS` status.
+hopefully turning the latter into the :py:const:`scenario._executionstatus.ExecutionStatus.SUCCESS` status.
 
 
 .. _known-issues.issue-levels:
@@ -67,14 +67,14 @@ Issues may exist for various reasons, representing various criticities:
    (Internet not ready, ability of the test platform, ...) which may be less critical again than real defects of the test environment (3).
 5. *Other reasons...*
 
-In order to discriminate the various situations, known issues may be registered with an issue level (:py:class:`scenario.issuelevels.IssueLevel`).
+In order to discriminate the various situations, known issues may be registered with an issue level (:py:class:`scenario._issuelevels.IssueLevel`).
 
 Issue levels are basically integer values.
 The higher, the more critical.
 Programmatically, they can be described by an ``enum.IntEnum``.
 
 They can be associated with meaningful names,
-with the help of the :py:meth:`scenario.issuelevels.IssueLevel.definenames()` and/or :py:meth:`scenario.issuelevels.IssueLevel.addname()` methods,
+with the help of the :py:meth:`scenario._issuelevels.IssueLevel.definenames()` and/or :py:meth:`scenario._issuelevels.IssueLevel.addname()` methods,
 or :ref:`scenario.issue_levels <config-db.scenario.issue_levels>` configurations.
 These names make it easier to read in the console, and maintain in the test code.
 
@@ -82,7 +82,7 @@ These names make it easier to read in the console, and maintain in the test code
     :class: tip
 
     If issue levels are defined with an ``enum.IntEnum``,
-    this ``enum.IntEnum`` class can be passed on as is to the :py:meth:`scenario.issuelevels.IssueLevel.definenames()` method.
+    this ``enum.IntEnum`` class can be passed on as is to the :py:meth:`scenario._issuelevels.IssueLevel.definenames()` method.
 
     .. code-block:: python
 
@@ -163,7 +163,7 @@ Issue identifiers
 
 Known issues may be registered with an issue identifier, refering to a tier bugtracker tool.
 
-Optionally, a URL builder handler may be installed (see :py:meth:`scenario.knownissues.KnownIssue.seturlbuilder()`),
+Optionally, a URL builder handler may be installed (see :py:meth:`scenario._knownissues.KnownIssue.seturlbuilder()`),
 in order to build URLs to the tier bugtracker tool from issue identifiers.
 These URLs are then displayed in the console and saved in :ref:`test reports <reports>`,
 and are usually directly clickable from both contexts.
@@ -220,5 +220,5 @@ but there is no guarantee that the known issue will be saved with the test resul
 .. admonition:: Known issues from test libraries
     :class: tip
 
-    The :meth:`scenario.scenariostack.ScenarioStack.knownissue()` is provided
+    The :meth:`scenario._scenariostack.ScenarioStack.knownissue()` is provided
     in order to register known issues from anywhere in :ref:`test libraries <test-libs>`.

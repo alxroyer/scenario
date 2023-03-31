@@ -48,7 +48,7 @@ class BuildingContext:
         - but no step definition!
 
           .. warning::
-              We do not store a step definition reference here, fed from :meth:`.stepdefinition.StepDefinition.__init__()` especially,
+              We do not store a step definition reference here, fed from :meth:`._stepdefinition.StepDefinition.__init__()` especially,
               for the reason that we cannot guarantee that the reference of a volatile step definition
               would not take the place of a real step definition being built.
 
@@ -105,16 +105,16 @@ class BuildingContext:
         Step definition being built, if any.
 
         The step definition being built is the one currently executed
-        in :const:`.scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS` execution mode
-        by :meth:`.scenariorunner.ScenarioRunner._buildscenario()`.
+        in :attr:`._scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS` execution mode
+        by :meth:`._scenariorunner.ScenarioRunner._buildscenario()`.
 
         .. warning::
             This does not cover the case of method calls directly made in a step object initializer,
             and especially for:
 
-            - :meth:`.stepuserapi.StepUserApi.knownissue()`
+            - :meth:`._stepuserapi.StepUserApi.knownissue()`
 
-            In order to cover such cases, theses methods shall set an ``originator`` parameter when calling :class:`.scenariorunner.ScenarioRunner` methods,
+            In order to cover such cases, theses methods shall set an ``originator`` parameter when calling :class:`._scenariorunner.ScenarioRunner` methods,
             to let the latter identify the appropriate instance being built with the help of the :meth:`fromoriginator()` method.
         """
         if self.scenario_definition and self.scenario_definition.execution:
@@ -128,16 +128,16 @@ class BuildingContext:
         """
         Determines the actual object being built.
 
-        :param originator: :class:`.stepuserapi.StepUserApi` instance that made a call.
-        :return: :class:`.stepuserapi.StepUserApi` actually being built.
+        :param originator: :class:`._stepuserapi.StepUserApi` instance that made a call.
+        :return: :class:`._stepuserapi.StepUserApi` actually being built.
 
         Fixes the ``originator`` reference from the current scenario definition being built
         to the current step definition being built if any.
 
         Lets the ``originator`` reference as is otherwise:
 
-        - either a :class:`.stepdefinition.StepDefinition` reference directly,
-        - or :class:`.scenariodefinition.ScenarioDefinition` reference.
+        - either a :class:`._stepdefinition.StepDefinition` reference directly,
+        - or :class:`._scenariodefinition.ScenarioDefinition` reference.
         """
         from ._scenariodefinition import ScenarioDefinition
 
@@ -159,24 +159,13 @@ class ScenarioStack(Logger):
     """
     Scenario execution stack management.
 
-    This class acts as a helper for the :class:`.scenariorunner.ScenarioRunner` class.
+    This class acts as a helper for the :class:`._scenariorunner.ScenarioRunner` class.
 
-    It also determines the :ref:`scenario stack logging indentation <logging.indentation.scenario-stack>`.
+    It saves the stack of main scenario and subscenarios,
+    but also the current context of step, action / result,
+    being defined or executed.
 
-    .. note::
-
-        The fact that the :class:`ScenarioStack` class is a helper for the :class:`.scenariorunner.ScenarioRunner` one
-        explains the definition of the additional methods and properties:
-
-        - :meth:`checkcurrentscenario()`,
-        - :attr:`current_step`,
-        - :attr:`current_action_result`.
-
-        By the way, this makes this class being a bit more than just a *scenario stack manager*,
-        but rather a *scenario execution context manager*.
-
-        Whatever, the name of this class is convenient as is,
-        even though it is labelled as a "stack" only.
+    Also helps in computing the :ref:`scenario stack logging indentation <logging.indentation.scenario-stack>`.
     """
 
     class ContextError(Exception):
@@ -204,7 +193,7 @@ class ScenarioStack(Logger):
 
         #: Scenario execution stack.
         #:
-        #: The first item defines the :attr:`main_scenario`.
+        #: The first item defines the :attr:`main_scenario_execution`.
         #: The subscenarios (if any) then follow.
         self.__scenario_executions = []  # type: typing.List[_ScenarioExecutionType]
 
@@ -360,7 +349,7 @@ class ScenarioStack(Logger):
         Out of the current scenario.
 
         Compared with :attr:`current_step_execution`,
-        this method returns the step definition whatever the execution mode of the :class:`.scenariorunner.ScenarioRunner`.
+        this method returns the step definition whatever the execution mode of the :class:`._scenariorunner.ScenarioRunner`.
 
         ``None`` if no current step definition under execution.
         """
@@ -373,10 +362,10 @@ class ScenarioStack(Logger):
         """
         Current step execution instance.
 
-        Out of the :attr:`current_step`.
+        Out of the :attr:`current_step_definition`.
 
         Compared with :attr:`current_step_definition`,
-        this method may not return a step execution instance when the :class:`.scenariorunner.ScenarioRunner` is building objects.
+        this method may not return a step execution instance when the :class:`._scenariorunner.ScenarioRunner` is building objects.
 
         ``None`` if no current step execution instance.
         """
@@ -421,7 +410,7 @@ class ScenarioStack(Logger):
         """
         Deprecated.
 
-        See :meth:`.stepuserapi.StepUserApi.knownissue()`.
+        See :meth:`._stepuserapi.StepUserApi.knownissue()`.
         """
 
     @typing.overload
@@ -432,7 +421,7 @@ class ScenarioStack(Logger):
             id=None,  # type: str  # noqa  ## Shadows built-in name 'id'
     ):  # type: (...) -> None
         """
-        See :meth:`.stepuserapi.StepUserApi.knownissue()`.
+        See :meth:`._stepuserapi.StepUserApi.knownissue()`.
         """
 
     def knownissue(

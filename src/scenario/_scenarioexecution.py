@@ -31,7 +31,7 @@ class ScenarioExecution:
     """
     Object that gathers execution information for a scenario.
 
-    The scenario execution information is not stored in the base :class:`.scenariodefinition.ScenarioDefinition` class for user scenario definitions.
+    The scenario execution information is not stored in the base :class:`._scenariodefinition.ScenarioDefinition` class for user scenario definitions.
     In order to avoid confusion, the dedicated members and methods are implemented in a separate class: :class:`ScenarioExecution`.
     """
 
@@ -55,7 +55,7 @@ class ScenarioExecution:
         #: Current step reference in the scenario step list.
         self.__current_step_definition = None  # type: typing.Optional[_StepDefinitionType]
         #: Next step reference in the step list.
-        #: Used when a :meth:`.scenariodefinition.ScenarioDefinition.goto()` call has been made.
+        #: Used when a :meth:`._stepuserapi.StepUserApi.goto()` call has been made.
         self.__next_step_definition = None  # type: typing.Optional[_StepDefinitionType]
 
         #: Time statistics.
@@ -65,7 +65,7 @@ class ScenarioExecution:
         #: Warnings.
         self.warnings = []  # type: typing.List[TestError]
 
-        #: Make this class log as if it was part of the :class:`ScenarioRunner` execution.
+        #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
         self._logger = SCENARIO_RUNNER  # type: Logger
 
     def __repr__(self):  # type: () -> str
@@ -151,8 +151,6 @@ class ScenarioExecution:
     def current_step_definition(self):  # type: () -> typing.Optional[_StepDefinitionType]
         """
         Current step definition being executed.
-
-        Depends on the current active step iterator (see :meth:`backtosteptype()`).
         """
         return self.__current_step_definition
 
@@ -163,8 +161,8 @@ class ScenarioExecution:
         """
         Scenario execution status.
 
-        :attr:`.executionstatus.ExecutionStatus.FAIL` when an exception is set,
-        :attr:`.executionstatus.ExecutionStatus.SUCCESS` otherwise.
+        :attr:`._executionstatus.ExecutionStatus.FAIL` when an exception is set,
+        :attr:`._executionstatus.ExecutionStatus.SUCCESS` otherwise.
 
         :return: Scenario execution status.
         """

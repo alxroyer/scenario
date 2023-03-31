@@ -29,11 +29,11 @@ The `scenario` framework comes with a rich set of assertion methods, dealing wit
 - Files and directories.
 
 For the full list of assertion methods,
-please refer to the detailed documentation of the :py:class:`scenario.assertions.Assertions` class
+please refer to the detailed documentation of the :py:class:`scenario._assertions.Assertions` class
 which defines them.
 
 It constitutes a base class for common classes like
-:py:class:`scenario.scenariodefinition.ScenarioDefinition` and :py:class:`scenario.stepdefinition.StepDefinition`.
+:py:class:`scenario._scenariodefinition.ScenarioDefinition` and :py:class:`scenario._stepdefinition.StepDefinition`.
 
 All assertion methods generally have the following parameters:
 
@@ -60,6 +60,6 @@ All assertion methods generally have the following parameters:
 
     `scenario` assertions take great inspiration from the well known ``unittest`` module.
 
-    All ``unittest`` assertions methods may not have their equivalent in the :py:class:`scenario.assertions.Assertions` class.
+    All ``unittest`` assertions methods may not have their equivalent in the :py:class:`scenario._assertions.Assertions` class.
 
-    In case you need one of these, the :py:attr:`scenario.assertionhelpers.unittest` object makes it available.
+    In case you need one of these, the :py:attr:`scenario._assertionhelpers.unittest` object makes it available.

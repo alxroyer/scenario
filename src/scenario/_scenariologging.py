@@ -102,7 +102,7 @@ class ScenarioLogging:
         :param name: Scenario attribute name.
         :param value: Scenario attribute value.
 
-        .. seealso:: :meth:`.scenarioconfig.ScenarioConfig.expectedscenarioattributes()`
+        .. seealso:: :meth:`._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`
         """
         from ._loggermain import MAIN_LOGGER
 

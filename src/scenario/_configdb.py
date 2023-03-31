@@ -167,7 +167,7 @@ class ConfigDatabase(Logger):
 
             Can be a single value, a dictionary or a list.
 
-            When a :class:`os.PathLike` is given, it is automatically converted in its string form with :func:`os.fspath()`.
+            When a ``os.PathLike`` is given, it is automatically converted in its string form with ``os.fspath()``.
 
             When ``None`` is given, it is equivalent to calling :meth:`remove()` for the given ``key``.
         :param origin:

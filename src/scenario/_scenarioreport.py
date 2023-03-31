@@ -309,7 +309,7 @@ class ScenarioReport(Logger):
         Step reading from JSON report.
 
         :param json_step_definition: Step definition JSON report to read.
-        :return: :class:`.stepdefinition.StepDefinition` data.
+        :return: :class:`._stepdefinition.StepDefinition` data.
         """
         from ._debugutils import jsondump
         from ._locations import CodeLocation
@@ -427,7 +427,7 @@ class ScenarioReport(Logger):
         Action / expected result reading from JSON report.
 
         :param json_action_result_definition: Action / expected result JSON report to read.
-        :return: :class:`.actionresultdefinition.ActionResultDefinition` data.
+        :return: :class:`._actionresultdefinition.ActionResultDefinition` data.
         """
         from ._actionresultdefinition import ActionResultDefinition
         from ._actionresultexecution import ActionResultExecution

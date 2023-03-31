@@ -31,12 +31,12 @@ class StepSectionDescription(StepDefinition):
     """
     Step section description.
 
-    Overloads :class:`.stepdefinition.StepDefinition` but does not act as a regular step.
+    Overloads :class:`._stepdefinition.StepDefinition` but does not act as a regular step.
 
-    :class:`.scenariorunner.ScenarioRunner` actually recognizes :class:`StepSection` instances
-    and skips their execution.
+    :class:`._scenariorunner.ScenarioRunner` actually recognizes :class:`StepSectionDescription` instances,
+    logs them, but skips their execution.
 
-    :class:`.scenarioreport.ScenarioReport` also recognizes :class:`StepSection` instances,
+    :class:`._scenarioreport.ScenarioReport` also recognizes :class:`StepSectionDescription` instances,
     and therefore does not generate 'executions' nor 'actions-results' sections for them.
     """
 
@@ -140,7 +140,7 @@ class StepSectionEnd(StepDefinition):
     """
     End of a step section.
 
-    Target of :meth:`.stepuserapi.StepUserApi.goto()` call from the :class:`StepSectionBegin` step at the beginning of the section.
+    Target of :meth:`._stepuserapi.StepUserApi.goto()` call from the :class:`StepSectionBegin` step at the beginning of the section.
     """
 
     def __init__(

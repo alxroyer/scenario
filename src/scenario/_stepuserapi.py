@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-User API methods for user :class:`.scenariodefinition.ScenarioDefinition` or :class:`.stepdefinition.StepDefinition` overloads.
+User API methods for user :class:`._scenariodefinition.ScenarioDefinition` or :class:`._stepdefinition.StepDefinition` overloads.
 """
 
 import abc
@@ -29,7 +29,7 @@ if typing.TYPE_CHECKING:
 class StepUserApi(abc.ABC):
     """
     Base class that defines the methods made available
-    for user :class:`.scenariodefinition.ScenarioDefinition` or :class:`.stepdefinition.StepDefinition` overloads.
+    for user :class:`._scenariodefinition.ScenarioDefinition` or :class:`._stepdefinition.StepDefinition` overloads.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -133,7 +133,7 @@ class StepUserApi(abc.ABC):
         """
         Makes the execution jump to the given step.
 
-        :param to_step_specification: Step specification of the step to jump to (see :attr:`.stepdefinition.StepSpecificationType`).
+        :param to_step_specification: Step specification of the step to jump to (see :attr:`._stepdefinition.StepSpecificationType`).
         """
         from ._scenariorunner import SCENARIO_RUNNER
 

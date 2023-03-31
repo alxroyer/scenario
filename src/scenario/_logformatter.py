@@ -37,24 +37,24 @@ class LogFormatter(logging.Formatter):
         See :ref:`log date/time <logging.date-time>` documentation.
 
         Displayed by default, unless it is disabled through
-        the :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME` configuration,
-        or the :attr:`ExtraFlag.DATE_TIME` extra flag.
+        the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_DATETIME` configuration,
+        or the :attr:`._logextradata.LogExtraData.DATE_TIME` extra flag.
     :Log level display:
         See :ref:`log levels <logging.log-levels>` documentation.
 
         Log level is always displayed,
-        unless it is disabled through the :attr:`ExtraFlag.LOG_LEVEL` extra flag.
+        unless it is disabled through the :attr:`._logextradata.LogExtraData.LOG_LEVEL` extra flag.
     :Date/time display:
         See :ref:`log date/time <logging.date-time>` documentation.
 
         Displayed by default, unless it is disabled through
-        the :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME` configuration,
-        or the :attr:`ExtraFlag.DATE_TIME` extra flag.
+        the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_DATETIME` configuration,
+        or the :attr:`._logextradata.LogExtraData.DATE_TIME` extra flag.
     :Log level display:
         See :ref:`log levels <logging.log-levels>` documentation.
 
         Log level is always displayed,
-        unless it is disabled through the :attr:`ExtraFlag.LOG_LEVEL` extra flag.
+        unless it is disabled through the :attr:`._logextradata.LogExtraData.LOG_LEVEL` extra flag.
     :Log class display:
         See :ref:`class loggers <logging.class-loggers>` documentation.
     :Indentation:
@@ -63,8 +63,8 @@ class LogFormatter(logging.Formatter):
         See :ref:`log colors <logging.colors>` documentation.
 
         Console log colorization may be disabled through
-        the :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` configuration,
-        or the :attr:`ExtraFlag.COLOR` extra flag.
+        the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` configuration,
+        or the :attr:`._logextradata.LogExtraData.COLOR` extra flag.
     """
 
     def __init__(
@@ -72,11 +72,11 @@ class LogFormatter(logging.Formatter):
             handler,  # type: logging.Handler
     ):  # type: (...) -> None
         """
-        :param handler: Attached :class:`logging.Handler`.
+        :param handler: Attached ``logging.Handler``.
         """
         logging.Formatter.__init__(self)
 
-        #: Attached :class:`logging.Handler`.
+        #: Attached ``logging.Handler``.
         self._handler = handler  # type: logging.Handler
 
     def format(

@@ -39,7 +39,7 @@ if typing.TYPE_CHECKING:
 
 class ScenarioRunner(Logger):
     """
-    Test execution engine: runs scenarios, i.e. instances derived from the :class:`.scenariodefinition.ScenarioDefinition` class.
+    Test execution engine: runs scenarios, i.e. instances derived from the :class:`._scenariodefinition.ScenarioDefinition` class.
 
     Only one instance, accessible through the :attr:`SCENARIO_RUNNER` singleton.
 
@@ -47,11 +47,11 @@ class ScenarioRunner(Logger):
 
     This class works with the following helper classes, with their respected purpose:
 
-    - :class:`.scenarioargs.ScenarioArgs`: command line arguments,
-    - :class:`.scenarioexecution.ScenarioExecution`: object that describes a scenario execution,
-    - :class:`.scenariostack.ScenarioStack`: stack of :class:`.scenarioexecution.ScenarioExecution`,
-    - :class:`.scenariologging.ScenarioLogging`: scenario execution logging,
-    - :class:`.scenarioreport.ScenarioReport`: scenario report generation.
+    - :class:`._scenarioargs.ScenarioArgs`: command line arguments,
+    - :class:`._scenarioexecution.ScenarioExecution`: object that describes a scenario execution,
+    - :class:`._scenariostack.ScenarioStack`: stack of :class:`._scenarioexecution.ScenarioExecution`,
+    - :class:`._scenariologging.ScenarioLogging`: scenario execution logging,
+    - :class:`._scenarioreport.ScenarioReport`: scenario report generation.
     """
 
     class ExecutionMode(StrEnum):
@@ -119,8 +119,8 @@ class ScenarioRunner(Logger):
                 _exec_times_logger.tick("Before executepath()")
                 _res = self.executepath(_scenario_path)  # type: ErrorCode
                 if _res != ErrorCode.SUCCESS:
-                    # The :meth:`executepath()` and :meth:`execute()` methods don't return :const:`.errcodes.ErrorCode.TEST_ERROR`.
-                    # If the return code is not :const:`.errcodes.ErrorCode.SUCCESS` at this point, it means this is a serious error.
+                    # The `executepath()` and `execute()` methods don't return `ErrorCode.TEST_ERROR`.
+                    # If the return code is not `ErrorCode.SUCCESS` at this point, it means this is a serious error.
                     # Stop processing right away.
                     return _res
 
@@ -135,7 +135,7 @@ class ScenarioRunner(Logger):
                 if _scenario_execution.errors:
                     _errors.append(ErrorCode.TEST_ERROR)
 
-                # Feed the :attr:`.scenarioresults.SCENARIO_RESULTS` instance.
+                # Feed the `SCENARIO_RESULTS` instance.
                 SCENARIO_RESULTS.add(_scenario_execution)
                 _exec_times_logger.tick("After executepath()")
 
@@ -197,9 +197,9 @@ class ScenarioRunner(Logger):
         :param scenario_path:
             Scenario Python script path.
         :return:
-            Error code, but no :const:`.errcodes.ErrorCode.TEST_ERROR`.
+            Error code, but no :attr:`._errcodes.ErrorCode.TEST_ERROR`.
 
-        Feeds the :attr:`.scenarioresults.SCENARIO_RESULTS` instance.
+        Feeds the :attr:`._scenarioresults.SCENARIO_RESULTS` instance.
         """
         from ._debugloggers import ExecTimesLogger
         from ._errcodes import ErrorCode
@@ -263,7 +263,7 @@ class ScenarioRunner(Logger):
 
             May be set in order to save the most accurate info on the starting time of the scenario.
         :return:
-            Error code, but no :const:`.errcodes.ErrorCode.TEST_ERROR`.
+            Error code, but no :attr:`._errcodes.ErrorCode.TEST_ERROR`.
         """
         from ._debugloggers import ExecTimesLogger
         from ._errcodes import ErrorCode
@@ -316,7 +316,7 @@ class ScenarioRunner(Logger):
         """
         Builds a scenario definition.
 
-        :param scenario_definition: :class:`.scenariodefinition.ScenarioDefinition` instance to populate with steps, actions and expected results definitions.
+        :param scenario_definition: :class:`._scenariodefinition.ScenarioDefinition` instance to populate with steps, actions and expected results definitions.
         :return: Error code.
         """
         from ._errcodes import ErrorCode
@@ -586,7 +586,7 @@ class ScenarioRunner(Logger):
             description,  # type: str
     ):  # type: (...) -> None
         """
-        Call redirection from :meth:`.scenariodefinition.ScenarioDefinition.STEP()`.
+        Call redirection from :meth:`._stepuserapi.StepUserApi.STEP()`.
 
         :param description: Step description.
         """
@@ -609,10 +609,11 @@ class ScenarioRunner(Logger):
         """
         Notifies the known issues declared at the definition level for the given scenario or step definition.
 
-        :param step_user_api: Scenario or step definition to process known issues for.
+        :param step_user_api:
+            Scenario or step definition to process known issues for.
         :param known_issues:
             Specific known issue list to process.
-            Defaults to :attr:`.stepuserapi.StepUserApi.known_issues` when not set.
+            Defaults to :attr:`._stepuserapi.StepUserApi.known_issues` when not set.
         """
         if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
             if known_issues is None:
@@ -628,7 +629,7 @@ class ScenarioRunner(Logger):
             description,  # type: str
     ):  # type: (...) -> None
         """
-        Call redirection from :meth:`.scenariodefinition.ScenarioDefinition.ACTION()` or :meth:`.scenariodefinition.ScenarioDefinition.RESULT()`.
+        Call redirection from :meth:`._stepuserapi.StepUserApi.ACTION()` or :meth:`._stepuserapi.StepUserApi.RESULT()`.
 
         :param action_result_type: ACTION or RESULT.
         :param description: Action or expected result description.
@@ -694,7 +695,7 @@ class ScenarioRunner(Logger):
             evidence,  # type: str
     ):  # type: (...) -> None
         """
-        Call redirection from :meth:`.scenariodefinition.ScenarioDefinition.EVIDENCE()`.
+        Call redirection from :meth:`._stepuserapi.StepUserApi.evidence()`.
 
         :param evidence: Evidence text.
         """
@@ -851,7 +852,7 @@ class ScenarioRunner(Logger):
             to_step_specification,  # type: StepSpecificationType
     ):  # type: (...) -> None
         """
-        Call redirection from :meth:`.scenariodefinition.ScenarioDefinition.goto()`.
+        Call redirection from :meth:`._stepuserapi.StepUserApi.goto()`.
 
         :param to_step_specification: Specification of the next step to execute.
         """
@@ -869,7 +870,7 @@ class ScenarioRunner(Logger):
 
 class GotoException(Exception):
     """
-    Breaks execution in a step method when :meth:`.scenariodefinition.ScenarioDefinition.goto()` is called.
+    Breaks execution in a step method when :meth:`._stepuserapi.StepUserApi.goto()` is called.
     """
 
 

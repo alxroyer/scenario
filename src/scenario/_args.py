@@ -18,7 +18,8 @@
 Base module for program arguments management.
 
 :meth:`Args.getinstance()` gives the only only instance of program arguments,
-May actually be a :class:`.scenarioargs.ExecArgs` or a :class:`.campaignargs.CampaignArgs` instance.
+May actually be a :class:`._scenarioargs.ScenarioArgs` or a :class:`._campaignargs.CampaignArgs` instance,
+or whatever :class:`Args` derived-class instance.
 """
 
 import argparse
@@ -37,8 +38,8 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
     Handles:
 
     - ``--help`` option,
-    - Configuration file options,
-    - Logging options.
+    - Configuration file options (see :class:`._configargs.CommonConfigArgs`),
+    - Logging options (see :class:`._loggingargs.CommonLoggingArgs`).
     """
 
     #: Main instance of :class:`Args`.
@@ -101,7 +102,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
         """
         Defines common program arguments.
 
-        :param class_debugging: See :class:`.loggingargs.CommonLoggingArgs`.
+        :param class_debugging: See :class:`._loggingargs.CommonLoggingArgs`.
         """
         from ._debugclasses import DebugClass
         from ._errcodes import ErrorCode
@@ -170,7 +171,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
             When defined as a 2 items tuple, the argument feeds a dictionary:
             the first item of the tuple shall be ``str`` (for the dictionary keys),
             and the second item gives the type of the dictionary values.
-        :return: :class:`Args.ArgInfo` instance whose :meth:`ArgInfo.define()` should be called onto.
+        :return: :class:`ArgInfo` instance whose :meth:`ArgInfo.define()` should be called onto.
 
         :meth:`ArgInfo.define()` should be called on the :class:`ArgInfo` object returned:
 
@@ -255,7 +256,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
         """
         Handler for special verifications on program arguments.
 
-        :param args: The untyped object returned by :meth:`argparse.ArgumentParser.parse_args()`.
+        :param args: The untyped object returned by ``argparse.ArgumentParser.parse_args()``.
         :return: ``True`` for success, ``False`` otherwise.
 
         Shall be overridden in subclasses.
@@ -279,18 +280,18 @@ class ArgInfo:
             member_type,  # type: typing.Union[type, typing.Tuple[typing.Type[str], type], typing.Callable[[str], typing.Any]]
     ):  # type: (...) -> None
         """
-        :param arg_parser: Related :class:`argparse.ArgumentParser` instance.
+        :param arg_parser: Related ``argparse.ArgumentParser`` instance.
         :param member_desc: Textual description of the program argument(s).
         :param member_name: Corresponding member name in the owner :class:`Args` instance.
         :param member_type:
             Base type of the program argument(s).
             See :meth:`Args.addarg()` for a detailed description of this parameter.
 
-        :meth:`Args.ArgInfo.define()` should be called onto each :class:`Args.ArgInfo` instance newly created.
+        :meth:`ArgInfo.define()` should be called onto each :class:`ArgInfo` instance newly created.
 
-        .. seealso:: :meth:`Args.addarg()`, :meth:`Args.ArgInfo.define()`
+        .. seealso:: :meth:`Args.addarg()`, :meth:`ArgInfo.define()`
         """
-        #: Related :class:`argparse.ArgumentParser` instance.
+        #: Related ``argparse.ArgumentParser`` instance.
         self.arg_parser = arg_parser  # type: argparse.ArgumentParser
         #: Textual description of the program argument(s).
         self.member_desc = member_desc  # type: str
@@ -308,7 +309,7 @@ class ArgInfo:
             self.value_type = member_type[1]
         else:
             self.value_type = member_type
-        #: :class:`argparse.Action` instance defined by the :meth:`Args.ArgInfo.define()` method.
+        #: ``argparse.Action`` instance defined by the :meth:`ArgInfo.define()` method.
         self.parser_arg = None  # type: typing.Optional[argparse.Action]
 
     def define(
@@ -322,10 +323,10 @@ class ArgInfo:
         :param args: List of positional arguments.
         :param kwargs: Dictionary of named arguments.
 
-        Refer to the regular ``argparse`` documentation, except for the :attr:`dest` parameter which should not be set.
-        The :attr:`Args.ArgInfo.member_name` member will be used for the purpose.
+        Refer to the regular ``argparse`` documentation, except for the ``dest`` parameter which should not be set.
+        The :attr:`ArgInfo.member_name` member will be used for the purpose.
 
-        Should be called on the :class:`Args.ArgInfo` returned the :meth:`Args.addarg()` method.
+        Should be called on the :class:`ArgInfo` returned the :meth:`Args.addarg()` method.
 
         .. seealso:: :meth:`Args.addarg()`
         """

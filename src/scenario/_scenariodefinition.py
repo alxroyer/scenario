@@ -39,8 +39,8 @@ class MetaScenarioDefinition(abc.ABCMeta):
     Meta-class for :class:`ScenarioDefinition`.
 
     So that it can be a meta-class for :class:`ScenarioDefinition`,
-    :class:`MetaScenarioDefinition` must inherit from :class:`abc.ABCMeta` (which makes it inherit from :class:`type` by the way)
-    because the :class:`.stepuserapi.StepUserApi` base class inherits from :class:`abc.ABC`.
+    :class:`MetaScenarioDefinition` must inherit from ``abc.ABCMeta`` (which makes it inherit from ``type`` by the way)
+    because the :class:`._stepuserapi.StepUserApi` base class inherits from ``abc.ABC``.
     """
 
     def __new__(
@@ -55,7 +55,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
 
         Sets :class:`MetaScenarioDefinition.InitWrapper` instances in place of ``__init__()`` methods,
         in order to have :class:`ScenarioDefinition` initializers enclosed with
-        :meth:`.scenariostack.BuildingContext.pushscenariodefinition()` / :meth:`.scenariostack.BuildingContext.popscenariodefinition()` calls.
+        :meth:`._scenariostack.BuildingContext.pushscenariodefinition()` / :meth:`._scenariostack.BuildingContext.popscenariodefinition()` calls.
 
         :param name: New class name.
         :param bases: Base classes for the new class.
@@ -72,7 +72,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
         Wrapper for ``__init__()`` methods of :class:`ScenarioDefinition` instances.
 
         Encloses the initializer's execution with
-        :meth:`.scenariostack.BuildingContext.pushscenariodefinition()` / :meth:`.scenariostack.BuildingContext.popscenariodefinition()` calls,
+        :meth:`._scenariostack.BuildingContext.pushscenariodefinition()` / :meth:`._scenariostack.BuildingContext.popscenariodefinition()` calls,
         so that the building context of scenario stack knows about the scenario definition being built.
         """
 
@@ -211,13 +211,13 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         #:
         #: Local configuration for the current scenario.
         #:
-        #: Prevails on :attr:`.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
-        #: (see :meth:`.scenariorunner.ScenarioRunner._shouldstop()`).
+        #: Prevails on :attr:`._scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
+        #: (see :meth:`._scenariorunner.ScenarioRunner._shouldstop()`).
         #:
         #: Not set by default.
         self.continue_on_error = None  # type: typing.Optional[bool]
 
-        #: Scenario attributes (see :meth:`.scenarioconfig.ScenarioConfig.expectedscenarioattributes()`).
+        #: Scenario attributes (see :meth:`._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`).
         self.__attributes = {}  # type: typing.Dict[str, typing.Any]
 
         #: List of steps that define the scenario.
@@ -323,7 +323,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         Finds a step definition.
 
-        :param step_specification: Step specification (see :attr:`.stepdefinition.StepSpecificationType`), or ``None``.
+        :param step_specification: Step specification (see :attr:`._stepdefinition.StepSpecificationType`), or ``None``.
         :param index: Step index in the matching list. Last item when not specified.
         :return: Step definition found, if any.
         """
@@ -354,7 +354,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
         When the step cannot be found, an exception is raised.
 
-        :param step_specification: Step specification (see :attr:`.stepdefinition.StepSpecificationType`), or ``None``.
+        :param step_specification: Step specification (see :attr:`._stepdefinition.StepSpecificationType`), or ``None``.
         :param index: Step index in the matching list. Last item when not specified.
         :return: Expected step.
         :raise KeyError: When the step definition could not be found.
@@ -429,7 +429,7 @@ class ScenarioDefinitionHelper:
         #: Related scenario definition.
         self.definition = definition  # type: ScenarioDefinition
 
-        #: Make this class log as if it was part of the :class:`ScenarioRunner` execution.
+        #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
         self._logger = SCENARIO_RUNNER  # type: Logger
 
     def buildsteps(self):  # type: (...) -> None
@@ -456,6 +456,6 @@ class ScenarioDefinitionHelper:
         # Sort methods.
         StepMethods.sortbynames(self._logger, _methods)
 
-        # Eventually build the :class:`.stepdefinition.StepDefinition` objects.
+        # Eventually build the `StepDefinition` objects.
         for _method in _methods:  # `_method` already defined.
             self.definition.addstep(StepDefinition(method=_method))

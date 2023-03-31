@@ -42,10 +42,10 @@ class CampaignRunner(Logger):
 
     This class works with the following helper classes, with their respected purpose:
 
-    - :class:`.campaignargs.CampaignArgs`: command line arguments,
-    - :class:`.campaignexecution.CampaignExecution`: object that describes a campaign execution,
-    - :class:`.campaignlogging.CampaignLogging`: campaign execution logging,
-    - :class:`.campaignreport.CampaignReport`: campaign report generation.
+    - :class:`._campaignargs.CampaignArgs`: command line arguments,
+    - :class:`._campaignexecution.CampaignExecution`: object that describes a campaign execution,
+    - :class:`._campaignlogging.CampaignLogging`: campaign execution logging,
+    - :class:`._campaignreport.CampaignReport`: campaign report generation.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -131,7 +131,7 @@ class CampaignRunner(Logger):
         """
         Executes a test suite file.
 
-        :param campaign_execution: :class:`CampaignExecution` object to store results into.
+        :param campaign_execution: :class:`._campaignexecution.CampaignExecution` object to store results into.
         :param test_suite_path: Test suite file to execute.
         :return: Error code.
         """
@@ -315,7 +315,7 @@ class CampaignRunner(Logger):
                     _match = re.match(
                         # Note:
                         # 4 spaces after 'ERROR' in general
-                        # 2 more spaces due to :meth:`.testerrors.ExceptionError.logerror()`
+                        # 2 more spaces due to `ExceptionError.logerror()`
                         rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % ISO8601_REGEX.encode("utf-8"),
                         _stdout_line,
                     )  # type: typing.Optional[typing.Match[bytes]]
@@ -352,7 +352,7 @@ class CampaignRunner(Logger):
         test_case_execution.time.setendtime()
         CAMPAIGN_LOGGING.endtestcase(test_case_execution)
 
-        # Feed the :attr:`.scenarioresults.SCENARIO_RESULTS` instance.
+        # Feed the `SCENARIO_RESULTS` instance.
         SCENARIO_RESULTS.add(test_case_execution.scenario_execution)
 
         _exec_times_logger.finish()

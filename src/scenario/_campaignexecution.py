@@ -18,8 +18,8 @@
 Campaign execution results.
 
 The :class:`CampaignExecution` class stores the execution results of a campaign.
-It owns a list of :class:`TestSuite` instances (actually one, called 'All'),
-which owns a list of :class:`TestCase` instances (one test case per scenario).
+It owns a list of :class:`TestSuiteExecution` instances (actually one, called 'All'),
+which owns a list of :class:`TestCaseExecution` instances (one test case per scenario).
 """
 
 import typing
@@ -235,7 +235,7 @@ class TestCaseExecution:
     ):  # type: (...) -> None
         """
         :param test_suite_execution:
-            Owner :class:`TestSuite` object.
+            Owner :class:`TestSuiteExecution` object.
         :param script_path:
             Scenario script path.
 

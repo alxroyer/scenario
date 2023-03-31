@@ -44,7 +44,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         """
         Expects and retrieves a step with its appropriate type.
 
-        :param index: Optional step index of the kind. See :meth:`.scenariodefinition.ScenarioDefinition.getstep()` for more details.
+        :param index: Optional step index of the kind. See :meth:`._scenariodefinition.ScenarioDefinition.getstep()` for more details.
         :return: The expected step for the current scenario, typed with the final user step definition class this method is called onto.
 
         The "current" scenario is actually the one being executed or built.
@@ -88,7 +88,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         #: Owner scenario.
         #:
         #: Initially set with a void reference.
-        #: Fixed when :meth:`.scenariodefinition.ScenarioDefinition.addsteps()` is called.
+        #: Fixed when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
         self.scenario = ScenarioDefinition.__new__(ScenarioDefinition)  # type: ScenarioDefinition
 
         #: Step method, if any.
@@ -188,7 +188,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
             index,  # type: int
     ):  # type: (...) -> _ActionResultDefinitionType
         """
-        Retrieves an :class:`.actionresultdefinition.ActionResultDefinition` instance from its location.
+        Retrieves an :class:`._actionresultdefinition.ActionResultDefinition` instance from its location.
 
         :param index: Action/result definition index.
         :return: Action/result definition instance.
@@ -283,14 +283,14 @@ class StepDefinitionHelper:
 
         I.e. the known issues declared at the definition level, before the :meth:StepDefinition.step()` method has been called.
 
-        The appropriate call to this method is made in :meth:`.scenariorunner.ScenarioRunner._buildscenario()`.
+        The appropriate call to this method is made in :meth:`._scenariorunner.ScenarioRunner._buildscenario()`.
         """
         # Save a copy of the curent `ScenarioDefinition.known_issues` list in a hidden field.
         setattr(self.definition, "__init_known_issues", list(self.definition.known_issues))
 
     def getinitknownissues(self):  # type: (...) -> typing.Sequence[_KnownIssueType]
         """
-        Retrieves the known issue list saved by :meth:`stashinitknownissues()` for the related step definition.
+        Retrieves the known issue list saved by :meth:`saveinitknownissues()` for the related step definition.
 
         :return: *Init* known issue list.
         """

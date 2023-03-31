@@ -424,8 +424,8 @@ Which is what we call the `type checking dilemma`.
 
     Let's illustrate that point with an example.
 
-    Let the ``a.py`` module define a super class :py:class:`A`
-    with a :py:meth:`getb()` method returning a :py:class:`B` instance or ``None``:
+    Let the ``a.py`` module define a super class ``A``
+    with a ``getb()`` method returning a ``B`` instance or ``None``:
 
     .. code-block:: python
 
@@ -439,7 +439,7 @@ Which is what we call the `type checking dilemma`.
                         return _item
                 return None
 
-    Let the ``b.py`` module define :py:class:`B`, a subclass of :py:class:`A`:
+    Let the ``b.py`` module define ``B``, a subclass of ``A``:
 
     .. code-block:: python
 
@@ -449,19 +449,19 @@ Which is what we call the `type checking dilemma`.
             def __init__(self):
                 A.__init__(self)
 
-    The :py:class:`B` class depends on the :py:class:`A` class for type hints *and* execution.
+    The ``B`` class depends on the ``A`` class for type hints *and* execution.
     So the ``from .a import A`` import statement must be set at the top of the ``b.py`` module.
 
-    The :py:class:`A` class needs the :py:class:`B` class
-    for the signature of its :py:meth:`A.getb()` method only.
+    The ``A`` class needs the ``B`` class
+    for the signature of its ``A.getb()`` method only.
     Thus, the ``from .b import B`` import statement is set at the top of the ``a.py`` module,
     but under a ``if typing.TYPE_CHECKING:`` condition.
 
-    This makes type checking pass, but fails when the :py:meth:`A.getb()` method is executed.
-    Indeed, in ``a.py``, as the :py:class:`B` class is imported for type checking only,
+    This makes type checking pass, but fails when the ``A.getb()`` method is executed.
+    Indeed, in ``a.py``, as the ``B`` class is imported for type checking only,
     the class is not defined when the ``isinstance()`` call is made.
     By the way, the import statement must be repeated as a local import
-    when the :py:class:`B` class is actually used in the :py:meth:`A.getb()` method:
+    when the ``B`` class is actually used in the ``A.getb()`` method:
 
     .. code-block:: python
 

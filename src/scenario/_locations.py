@@ -19,7 +19,7 @@ Execution location management.
 
 Execution locations may be used:
 
-- to locate a class / function / method definition (see :class:`.scenariodefinition.ScenarioDefinition` and :class:`.stepdefinition.StepDefinition`),
+- to locate a class / function / method definition (see :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`),
 - to locate the place of the current execution, or where an exception occurred.
 """
 
@@ -66,7 +66,7 @@ class CodeLocation:
             method,  # type: types.MethodType
     ):  # type: (...) -> CodeLocation
         """
-        Computes an :class:`ExecutionLocation` based on a method.
+        Computes an :class:`CodeLocation` based on a method.
 
         :param method: Method to locate.
         :return: :class:`CodeLocation` instance.
@@ -87,7 +87,7 @@ class CodeLocation:
             cls,  # type: type
     ):  # type: (...) -> CodeLocation
         """
-        Computes an :class:`ExecutionLocation` based on a class.
+        Computes an :class:`CodeLocation` based on a class.
 
         :param cls: Class to locate.
         :return: :class:`CodeLocation` instance.
@@ -120,8 +120,8 @@ class CodeLocation:
 
         #: File path.
         #:
-        #: Set as a :class:`.path.Path` when ``file`` is passed on as a :class:`.path.Path`.
-        #: Set as a :class:`pathlib.Path` otherwise, possibly a relative path in that case.
+        #: Set as a :class:`._path.Path` when ``file`` is passed on as a :class:`._path.Path`.
+        #: Set as a ``pathlib.Path`` otherwise, possibly a relative path in that case.
         self.file = pathlib.Path(file)  # type: typing.Union[pathlib.Path, Path]
         if isinstance(file, Path):
             self.file = file
@@ -161,7 +161,7 @@ class CodeLocation:
             long_string,  # type: str
     ):  # type: (...) -> CodeLocation
         """
-        Computes an :class:`ExecutionLocation` from its long text representation.
+        Computes an :class:`CodeLocation` from its long text representation.
 
         :param long_string: Long text, as returned by :meth:`tolongstring()`.
         :return: :class:`CodeLocation` instance.
@@ -241,7 +241,7 @@ class ExecutionLocations(Logger):
         self.debug("len(tb_items) = %d", len(tb_items))
         self.pushindentation()
 
-        # For each stack trace element which class is just above :class:`.scenariodefinition.ScenarioDefinition`.
+        # For each stack trace element which class is just above `ScenarioDefinition`.
         for _tb_item in reversed(tb_items):  # type: traceback.FrameSummary
             # Stop when `limit` is reached.
             if limit is not None:

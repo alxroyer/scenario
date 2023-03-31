@@ -38,11 +38,13 @@ class CampaignArgs(Args, CommonExecArgs):
             default_outdir_cwd=True,  # type: bool
     ):  # type: (...) -> None
         """
-        Defines program arguments for :class:`.campaignrunner.CampaignRunner`.
+        Defines program arguments for :class:`._campaignrunner.CampaignRunner`.
 
-        :param positional_args: ``False`` to disable the scenario path positional arguments definition.
-                                Useful for user programs that wish to redefine it.
-        :param default_outdir_cwd: ``False`` to disable the use of the current directory by default.
+        :param positional_args:
+            ``False`` to disable the scenario path positional arguments definition.
+            Useful for user programs that wish to redefine it.
+        :param default_outdir_cwd:
+            ``False`` to disable the use of the current directory by default.
         """
         from ._path import Path
 

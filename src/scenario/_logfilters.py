@@ -27,7 +27,7 @@ if typing.TYPE_CHECKING:
 
 class LoggerLogFilter(logging.Filter):
     """
-    Log filter attached to a :class:`.logger.Logger` instance.
+    Log filter attached to a :class:`._logger.Logger` instance.
 
     Filters log records depending on the log level and the associated logger configuration.
     """
@@ -37,11 +37,11 @@ class LoggerLogFilter(logging.Filter):
             logger,  # type: _LoggerType
     ):  # type: (...) -> None
         """
-        :param logger: Attached :class:`.logger.Logger` instance.
+        :param logger: Attached :class:`._logger.Logger` instance.
         """
         logging.Filter.__init__(self)
 
-        #: Attached `scenario` :class:`.logger.Logger` instance.
+        #: Attached `scenario` :class:`._logger.Logger` instance.
         self._logger = logger  # type: _LoggerType
 
     def filter(
@@ -51,17 +51,18 @@ class LoggerLogFilter(logging.Filter):
         """
         Filtering hook implementation.
 
-        :param record: Log record to check for filtering.
+        :param record:
+            Log record to check for filtering.
         :return:
-            See :meth:`logging.Filter.filter()`: "Is the specified record to be logged? Returns 0 for no, nonzero for yes."
+            See ``logging.Filter.filter()``: "Is the specified record to be logged? Returns 0 for no, nonzero for yes."
 
             Nevertheless, we can see from the code that booleans are actually returned.
 
-        Checks whether the log record should be filtered out due to the attached :class:`Logger` configuration.
+        Checks whether the log record should be filtered out due to the attached :class:`._logger.Logger` configuration.
         """
         from ._logextradata import LogExtraData
 
-        # Ensure the current logger reference is set in the record as an extra data so that :class:`.logformatter.LogFormatter` knows about it.
+        # Ensure the current logger reference is set in the record as an extra data so that `LogFormatter` knows about it.
         # Ensure class loggers prevail on the main logger.
         _logger = LogExtraData.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
         if (not _logger) or (not _logger.log_class):
@@ -72,16 +73,16 @@ class LoggerLogFilter(logging.Filter):
             if not self._logger.isdebugenabled():
                 return False
 
-        # Fall back to the :class:`logging.Filter` parent implementation.
+        # Fall back to the `logging.Filter` parent implementation.
         return super().filter(record)
 
 
 class HandlerLogFilter(logging.Filter):
     """
-    Log filter attached to a :class:`logging.Handler` instance.
+    Log filter attached to a ``logging.Handler`` instance.
 
     Filters log records depending on `scenario` configurations:
-    :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` and :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_FILE`.
+    :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` and :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_FILE`.
     """
 
     def __init__(
@@ -89,11 +90,11 @@ class HandlerLogFilter(logging.Filter):
             handler,  # type: typing.Optional[logging.Handler]
     ):  # type: (...) -> None
         """
-        :param handler: Attached :class:`logging.Handler`.
+        :param handler: Attached ``logging.Handler``.
         """
         logging.Filter.__init__(self)
 
-        #: Attached :class:`logging.Handler`.
+        #: Attached ``logging.Handler``.
         self._handler = handler  # type: typing.Optional[logging.Handler]
 
     def filter(
@@ -105,11 +106,11 @@ class HandlerLogFilter(logging.Filter):
 
         :param record: Log record to check for filtering.
         :return:
-            See :meth:`logging.Filter.filter()`: "Is the specified record to be logged? Returns 0 for no, nonzero for yes."
+            See ``logging.Filter.filter()``: "Is the specified record to be logged? Returns 0 for no, nonzero for yes."
 
             Nevertheless, we can see from the code that booleans are actually returned.
 
-        Checks the :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` or :attr:`.scenarioconfig.ScenarioConfig.Key.LOG_FILE` configurations,
+        Checks the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` or :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_FILE` configurations,
         depending on the handler attached.
         """
         from ._loghandler import LogHandler

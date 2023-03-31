@@ -17,7 +17,7 @@
 """
 Assertion helpers.
 
-Functions, types and constants for the :class:`.assertions.Assertions` class.
+Functions, types and constants for the :class:`._assertions.Assertions` class.
 """
 
 import typing
@@ -52,8 +52,8 @@ if typing.TYPE_CHECKING:
     #: Step execution specification.
     #:
     #: Either:
-    #: - a string representation (see :attr:`.stepdefinition.StepSpecificationType`),
-    #: - a step definition class (see :attr:`.stepdefinition.StepSpecificationType` as well),
+    #: - a string representation (see :attr:`._stepdefinition.StepSpecificationType`),
+    #: - a step definition class (see :attr:`._stepdefinition.StepSpecificationType` as well),
     #: - or the step execution instance directly.
     #:
     #: When the specification is a string or a step class, the step execution is determined the following way:
@@ -69,7 +69,7 @@ if typing.TYPE_CHECKING:
 __doc__ += """
 .. py:attribute:: unittest
 
-    :class:`unittest.TestCase` instance used to call ``unittest`` assertion functions.
+    ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.
 """
 unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 
@@ -200,9 +200,9 @@ def getstepexecution(
         step_execution_specification,  # type: StepExecutionSpecificationType
 ):  # type: (...) -> StepExecutionType
     """
-    Retrieves the (last) :class:`.stepexecution.StepExecution` instance corresponding to the given specification.
+    Retrieves the (last) :class:`._stepexecution.StepExecution` instance corresponding to the given specification.
 
-    :param step_execution_specification: Step execution specification (see :attr:`.assertionhelpers.StepExecutionSpecType`).
+    :param step_execution_specification: Step execution specification (see :attr:`._assertionhelpers.StepExecutionSpecType`).
     :return: Step execution corresponding to the given specification.
     :raise: Exception when the step execution could not be found.
     """

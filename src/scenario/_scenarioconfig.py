@@ -34,8 +34,8 @@ class ScenarioConfig:
     `scenario` configuration management.
 
     This class defines static methods that help reading `scenario` configurations:
-    from the program arguments (see: :class:`.args.Args`),
-    and the configuration database (see: :class:`.configdb.ConfigDatabase`).
+    from the program arguments (see: :class:`._args.Args`),
+    and the configuration database (see: :class:`._configdb.ConfigDatabase`).
     """
 
     class Key(StrEnum):
@@ -198,7 +198,7 @@ class ScenarioConfig:
 
         :return: List of debug classes.
 
-        Adds debug classes defined by the program arguments (see :attr:`.args.Args.debug_classes`)
+        Adds debug classes defined by the program arguments (see :attr:`._loggingargs.CommonLoggingArgs.debug_classes`)
         plus those defined by the configurations (see :const:`Key.DEBUG_CLASSES`).
         """
         from ._args import Args

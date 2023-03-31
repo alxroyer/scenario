@@ -179,7 +179,7 @@ class SphinxHandlers:
     def envupdated(
             self,
             app,  # type: sphinx.application.Sphinx
-            env,  # type: typing.Any
+            env,  # type: sphinx.application.BuildEnvironment
     ):  # type: (...) -> None
         """
         See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-env-updated
@@ -203,10 +203,10 @@ class SphinxHandlers:
     def missingreference(
             self,
             app,  # type: sphinx.application.Sphinx
-            env,  # type: typing.Any
-            node,  # type: typing.Any
-            contnode,  # type: typing.Any
-    ):  # type: (...) -> typing.Any
+            env,  # type: sphinx.application.BuildEnvironment
+            node,  # type: docutils.nodes.Node
+            contnode,  # type: docutils.nodes.Node
+    ):  # type: (...) -> None
         """
         See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-missing-reference
 
@@ -234,6 +234,17 @@ class SphinxHandlers:
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_MISSING_REFERENCE)  # type: Logger
         _logger.debug("missingreference(env=%r, node=%r, contnode=%r)", env, node, contnode)
+
+        if node.source and node.line:
+            if contnode.astext() in (
+                "DemoArgs",
+                "scenario.test",
+                "scenario.tools",
+                "scenario.tools.data.scenarios",
+            ):
+                return
+
+            _logger.warning(f"{node.source}:{node.line}: Reference missing {contnode.astext()}")
 
     def doctreeresolved(
             self,

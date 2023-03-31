@@ -31,8 +31,9 @@ class StepExecution:
     """
     Step execution information.
 
-    .. note:: Due to the :ref:`*goto* feature <goto>`, a step may be executed several times.
-              By the way, a :class:`.stepdefinition.StepDefinition` instance may own multiple instances of :class:`StepExecution`.
+    .. note::
+        Due to the :ref:`goto feature <goto>`, a step may be executed several times.
+        By the way, a :class:`._stepdefinition.StepDefinition` instance may own multiple instances of :class:`StepExecution`.
     """
 
     def __init__(
@@ -88,7 +89,7 @@ class StepExecution:
         """
         Retrieves the next action/result definition to execute.
 
-        :return: Next :class:`.actionresultdefinition.ActionResultDefinition` instance to execute.
+        :return: Next :class:`._actionresultdefinition.ActionResultDefinition` instance to execute.
 
         Sets the :attr:`current_action_result_definition` reference by the way.
         """

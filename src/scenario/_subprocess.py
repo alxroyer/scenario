@@ -75,7 +75,7 @@ class SubProcess:
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
 
-        #: :class:`subprocess.Popen` instance.
+        #: ``subprocess.Popen`` instance.
         self._popen = None  # type: typing.Optional[subprocess.Popen[bytes]]
         #: Tells whether the :meth:`run()` method should wait for the end of the sub-process.
         self._async = False  # type: bool
@@ -226,8 +226,8 @@ class SubProcess:
 
         :param exit_on_error_code:
             Set to ``None`` to keep executing in case of an error (default behaviour).
-            Set to a :class:`.errcodes.ErrorCode` value to make the main program stop with the given error code.
-            ``True`` is an equivalent for :const:`.errcodes.ErrorCode.INTERNAL_ERROR`,
+            Set to a :class:`._errcodes.ErrorCode` value to make the main program stop with the given error code.
+            ``True`` is an equivalent for :attr:`._errcodes.ErrorCode.INTERNAL_ERROR`,
             ``False`` is an equivalent for ``None``.
         :return: ``self``
 

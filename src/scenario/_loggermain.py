@@ -27,7 +27,7 @@ from ._logger import Logger  # `Logger` used for inheritance.
 
 class MainLogger(Logger):
     """
-    Main logger augmentation of :class:`.logger.Logger`.
+    Main logger augmentation of :class:`._logger.Logger`.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -62,7 +62,7 @@ class MainLogger(Logger):
         """
         Logs a line with automatic formattings disabled.
 
-        Helper function for the :class:`.scenariologging.ScenarioLogging` and :class:`.campaignlogging.CampaignLogging` classes.
+        Helper function for the :class:`._scenariologging.ScenarioLogging` and :class:`._campaignlogging.CampaignLogging` classes.
 
         :param message: Log message to output.
         """
