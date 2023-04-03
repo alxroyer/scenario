@@ -24,7 +24,16 @@
 # Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
 # Define this package as a namespace, so that it can be extended later on (with `scenario.tools`, `scenario.test`, ...).
 import pkgutil
-__path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+try:
+    __path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+except NameError as _err:
+    # The `pkgutil.extend_path()` call above may fail due to `__path__` being undefined,
+    # which is the case when this module is reloaded programmatically with `typing.TYPE_CHECKING` enabled in our `scenario.tools.sphinx` implementation.
+    # Ignore the error in that case.
+    if "__path__" in str(_err):
+        pass
+    else:
+        raise _err
 
 
 # System imports
@@ -233,7 +242,7 @@ if typing.TYPE_CHECKING:
 
         ``int`` or ``enum.Enum`` that describes an issue level.
 
-        .. seealso:: :class:`._issuelevels.AnyIssueLevelType` implementation.
+        .. seealso:: :obj:`._issuelevels.AnyIssueLevelType` implementation.
     """
     from ._issuelevels import AnyIssueLevelType as AnyIssueLevelType
     __all__.append("AnyIssueLevelType")
@@ -672,7 +681,7 @@ The `scenario` framework also exposes a couple of useful classes and types that 
 
 if __pkg_def:
     __doc__ += """
-    .. py::attribute:: Path
+    .. py:attribute:: Path
 
         ``pathlib.Path`` augmentation:
 
@@ -689,7 +698,7 @@ if typing.TYPE_CHECKING:
 
         Any kind of path, :class:`Path` included.
 
-        .. seealso:: :class:`._path.AnyPathType` implementation.
+        .. seealso:: :obj:`._path.AnyPathType` implementation.
     """
     from ._path import AnyPathType as AnyPathType
     __all__.append("AnyPathType")
@@ -706,11 +715,11 @@ if __pkg_def:
     __all__.append("SubProcess")
 if typing.TYPE_CHECKING:
     __doc__ += """
-    .. py:attributes:: VarSubProcessType
+    .. py:attribute:: VarSubProcessType
 
         Variable subprocess type, :class:`SubProcess` and subclasses.
 
-        .. seealso:: :class:`._subprocess.VarSubProcessType` implementation.
+        .. seealso:: :obj:`._subprocess.VarSubProcessType` implementation.
     """
     from ._subprocess import VarSubProcessType as VarSubProcessType
     __all__.append("VarSubProcessType")

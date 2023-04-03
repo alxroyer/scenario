@@ -18,6 +18,7 @@ scenario:
     # Sphinx handlers.
     # - "scenario.tools.sphinx:sphinx:conf-inited"
     # - "scenario.tools.sphinx:sphinx:builder-inited"
+    # - "scenario.tools.sphinx:sphinx:env-before-read-docs"
     # - "scenario.tools.sphinx:sphinx:source-read"
     # - "scenario.tools.sphinx:sphinx:doctree-read"
     # - "scenario.tools.sphinx:sphinx:env-updated"
@@ -28,6 +29,8 @@ scenario:
     # - "scenario.tools.sphinx:autodoc:skip-member"
     # - "scenario.tools.sphinx:autodoc:process-signature"
     # - "scenario.tools.sphinx:autodoc:process-docstring"
+    # Reflection.
+    # - "scenario.tools.sphinx:type-checking-reload"
     # Documented items.
     # - "scenario.tools.sphinx:track-module-items"
     # - "scenario.tools.sphinx:warn-undoc-items"

@@ -323,7 +323,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         Finds a step definition.
 
-        :param step_specification: Step specification (see :attr:`._stepdefinition.StepSpecificationType`), or ``None``.
+        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`), or ``None``.
         :param index: Step index in the matching list. Last item when not specified.
         :return: Step definition found, if any.
         """
@@ -354,7 +354,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
         When the step cannot be found, an exception is raised.
 
-        :param step_specification: Step specification (see :attr:`._stepdefinition.StepSpecificationType`), or ``None``.
+        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`), or ``None``.
         :param index: Step index in the matching list. Last item when not specified.
         :return: Expected step.
         :raise KeyError: When the step definition could not be found.

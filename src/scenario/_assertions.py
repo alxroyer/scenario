@@ -761,7 +761,7 @@ class Assertions:
         Checks the date/time is within the given step execution times.
 
         :param time: Date/time to check.
-        :param step: Step specification (see :attr:`._assertionhelpers.StepExecutionSpecType`).
+        :param step: Step specification (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :param expect_end_time: ``True`` when the step execution is expected to be terminated.
@@ -806,8 +806,8 @@ class Assertions:
         Checks the date/time is in the execution times of a given range of steps.
 
         :param time: Date/time to check.
-        :param start: Specification of the first step of the range (see :attr:`._assertionhelpers.StepExecutionSpecType`).
-        :param end: Specification of the last step of the range (see :attr:`._assertionhelpers.StepExecutionSpecType`).
+        :param start: Specification of the first step of the range (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
+        :param end: Specification of the last step of the range (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :param expect_end_time: ``True`` when the ``end`` step execution is expected to be terminated.
@@ -862,7 +862,7 @@ class Assertions:
         Checks the date/time is (strictly) before a given step executime time.
 
         :param time: Date/time to check.
-        :param step: Step specification (see :attr:`._assertionhelpers.StepExecutionSpecType`).
+        :param step: Step specification (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.
@@ -898,7 +898,7 @@ class Assertions:
         Checks the date/time is (strictly) after a given step executime time.
 
         :param time: Date/time to check.
-        :param step: Step specification (see :attr:`._assertionhelpers.StepExecutionSpecType`).
+        :param step: Step specification (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.

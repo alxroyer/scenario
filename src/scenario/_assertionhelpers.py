@@ -38,7 +38,7 @@ if typing.TYPE_CHECKING:
 
     #: Comparable type.
     #:
-    #: Declared as a :class:`typing.TypeVar` so that every :class:`Comparable` parameter within the same function call is of the same type.
+    #: Declared as a ``typing.TypeVar`` so that every comparable parameter within the same function call is of the same type.
     VarComparableType = typing.TypeVar("VarComparableType", int, float, str)
 
     #: Type representing a type, or a set of types.
@@ -46,14 +46,14 @@ if typing.TYPE_CHECKING:
 
     #: Item type.
     #:
-    #: Declared as a :class:`typing.TypeVar` so that item and iterable parameters within the same function call are set with consistent types.
+    #: Declared as a ``typing.TypeVar`` so that item and iterable parameters within the same function call are set with consistent types.
     VarItemType = typing.TypeVar("VarItemType")
 
     #: Step execution specification.
     #:
     #: Either:
-    #: - a string representation (see :attr:`._stepdefinition.StepSpecificationType`),
-    #: - a step definition class (see :attr:`._stepdefinition.StepSpecificationType` as well),
+    #: - a string representation (see :obj:`._stepdefinition.StepSpecificationType`),
+    #: - a step definition class (see :obj:`._stepdefinition.StepSpecificationType` as well),
     #: - or the step execution instance directly.
     #:
     #: When the specification is a string or a step class, the step execution is determined the following way:
@@ -202,7 +202,7 @@ def getstepexecution(
     """
     Retrieves the (last) :class:`._stepexecution.StepExecution` instance corresponding to the given specification.
 
-    :param step_execution_specification: Step execution specification (see :attr:`._assertionhelpers.StepExecutionSpecType`).
+    :param step_execution_specification: Step execution specification (see :obj:`StepExecutionSpecificationType`).
     :return: Step execution corresponding to the given specification.
     :raise: Exception when the step execution could not be found.
     """

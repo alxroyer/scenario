@@ -75,7 +75,8 @@ class Logger:
         if not self.log_class:
             # Main logger.
             global _main_loggers
-            assert _main_loggers < 1, "Only one main logger"
+            # Note: A second dummy main logger may be instanciated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
+            assert (_main_loggers < 1) or typing.TYPE_CHECKING, "Only one main logger"
             _main_loggers += 1
         else:
             # Child logger.
@@ -320,7 +321,7 @@ class Logger:
         from ._logextradata import LogExtraData
 
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
-        assert isinstance(self, Logger)
+        assert isinstance(self, Logger), f"{self!r} is not of type {Logger!r}"
 
         # Remove the exception info from the named arguments if any.
         _exc_info = None  # type: typing.Any

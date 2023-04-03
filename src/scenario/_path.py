@@ -16,10 +16,6 @@
 
 """
 Path management.
-
-.. py:attribute:: AnyPathType
-
-    Type for path-like data: either a simple string or a ``os.PathLike`` instance.
 """
 
 import logging
@@ -31,9 +27,7 @@ import typing
 
 
 if typing.TYPE_CHECKING:
-    #: Any path type.
-    #:
-    #: Simple string or ``os.PathLike``.
+    #: Type for path-like data: either a simple string or a ``os.PathLike`` instance.
     AnyPathType = typing.Union[str, os.PathLike]
 
 

@@ -411,6 +411,7 @@ if typing.TYPE_CHECKING:
     #: Step specification.
     #:
     #: Either:
+    #:
     #: 1. a step definition instance directly,
     #: 2. or a step definition class,
     #: 3. a string representation, being the qualified name of the class or method (right part),

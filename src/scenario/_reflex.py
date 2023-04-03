@@ -81,11 +81,13 @@ def isiterable(
 
 def importmodulefrompath(
         script_path,  # type: AnyPathType
+        sys_modules_cache=True,  # type: bool
 ):  # type: (...) -> types.ModuleType
     """
     Imports a module from its Python script path.
 
     :param script_path: Python script path.
+    :param sys_modules_cache: Read from modules previously loaded and cached in ``sys.modules``, save loaded modules in ``sys.modules`` otherwise.
     :return: Module loaded.
     """
     from ._path import Path
@@ -107,8 +109,9 @@ def importmodulefrompath(
             ).as_posix().replace("/", ".")[:-3]
 
     # First check whether the scenario has already been loaded.
-    if _module_name in sys.modules:
-        return sys.modules[_module_name]
+    if sys_modules_cache:
+        if _module_name in sys.modules:
+            return sys.modules[_module_name]
 
     try:
         # Inspired from https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
@@ -121,7 +124,8 @@ def importmodulefrompath(
 
         # Register the module just loaded in the ``sys.modules`` dictionary.
         # Note: Works even if `_module_name` is in the "package.module" form.
-        sys.modules[_module_name] = _module
+        if sys_modules_cache:
+            sys.modules[_module_name] = _module
 
         REFLEX_LOGGER.debug("importmodulefrompath('%s') => %r", script_path, _module)
         return _module

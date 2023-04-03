@@ -18,70 +18,6 @@
 Documentation
 =============
 
-.. admonition:: Publication
-    :class: note
-
-    HTML documentation, if saved in a github repository, can be displayed using a ``https://htmlpreview.github.io/?https://github.com/...`` indirection
-    (inspired from https://stackoverflow.com/questions/8446218/how-to-see-an-html-page-on-github-as-a-normal-rendered-html-page-to-see-preview#12233684).
-    The display however is not optimal.
-
-    The documentation is published on the https://docs.readthedocs.io/ platform.
-
-
-Docstrings
-----------
-
-Python docstrings follow the *ReStructured Text* format.
-
-.. admonition:: PyCharm configuration
-    :class: tip
-
-    In order to make PyCharm use the *ReStructured Text* format for docstrings, go through:
-    "File" > "Settings" > "Tools" > "Python Integrated Tools" > "Docstrings" > "Docstring format"
-    (as of PyCharm 2021.1.1)
-
-    Select the "reStructured Text" option.
-
-The 'Initializer' word in ``__init__()`` docstrings should be avoided.
-``__init__()`` docstrings should be more specific on what the initializers do for the object.
-
-Sphinx accepts a couple of keywords for a same meaning
-(see `stackoverflow.com#34160968 <https://stackoverflow.com/questions/34160968/python-docstring-raise-vs-raises#34212785>`_
-and `github.com <https://github.com/JetBrains/intellij-community/blob/210e0ed138627926e10094bb9c76026319cec178/python/src/com/jetbrains/python/documentation/docstrings/TagBasedDocString.java>`_).
-Let's choose of them:
-
-.. list-table:: Preferred ReStructured Text tags
-    :widths: auto
-    :header-rows: 1
-    :stub-columns: 0
-
-    * - Preferred tag
-      - Unused tags
-      - Justification
-    * - ``:return:``
-      - ``:returns:``
-      - ``:return:`` is the default tag used by PyCharm when generating a docstring pattern.
-    * - ``:raise:``
-      - ``:raises:``
-      - Consistency with ``:return:``.
-
-The ``:raise:`` syntax is the following:
-
-.. code-block:: python
-
-    """
-    :raise: Unspecified exception type.
-    :raise ValueError: System exception.
-    :raise .neighbourmodule.MyException: Project defined exception.
-    """
-
-The exception type can be specified:
-
-- It must be set before the second colon (Sphinx handles it a makes an dedicated presentation for it).
-- It can be either a system exception type, or a project exception defined in the current or a neighbour module
-  (same syntax as within a ``:class:`MyException``` syntax).
-
-
 Admonitions: notes, warnings...
 -------------------------------
 
@@ -148,13 +84,108 @@ However, we use the ``:py`` domain specification in `.rst` files in order to be 
 <https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#cross-referencing-python-objects>`_.
 
 
+Docstrings
+----------
+
+Python docstrings follow the *ReStructured Text* format.
+
+
+Module attributes & types
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. todo:: Check which is the most convenient way to document a constant / attribute / type.
+
+    ``.. py:attribute::`` pragma, ``#:`` sphinx comment, or docstring placed after the constant / attribute / type?
+
+Module attributes should be documented using the ``.. py:attribute::`` pragma,
+extending the ``__doc__`` variable.
+
+.. code-block:: python
+
+    __doc__ += """
+    .. py:attribute:: MY_CONST
+
+        Attribute description.
+    """
+    MY_CONST = 0  # type: int
+
+Otherwise, they may not be cross-referenced from other modules.
+
+
+Types can be documented with ``#:`` sphinx comments.
+
+
+Classes
+^^^^^^^
+
+Leading doctring, at the beginning of the class definition.
+
+
+Class members
+^^^^^^^^^^^^^
+
+Class attributes should be documented using ``#:`` sphinx comments.
+
+
+Functions and methods
+^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: PyCharm configuration
+    :class: tip
+
+    In order to make PyCharm use the *ReStructured Text* format for docstrings, go through:
+    "File" > "Settings" > "Tools" > "Python Integrated Tools" > "Docstrings" > "Docstring format"
+    (as of PyCharm 2021.1.1)
+
+    Select the "reStructured Text" option.
+
+The 'Initializer' word in ``__init__()`` docstrings should be avoided.
+``__init__()`` docstrings should be more specific on what the initializers do for the object.
+
+Sphinx accepts a couple of keywords for a same meaning
+(see `stackoverflow.com#34160968 <https://stackoverflow.com/questions/34160968/python-docstring-raise-vs-raises#34212785>`_
+and `github.com <https://github.com/JetBrains/intellij-community/blob/210e0ed138627926e10094bb9c76026319cec178/python/src/com/jetbrains/python/documentation/docstrings/TagBasedDocString.java>`_).
+Let's choose a couple of them:
+
+.. list-table:: Preferred ReStructured Text tags
+    :widths: auto
+    :header-rows: 1
+    :stub-columns: 0
+
+    * - Preferred tag
+      - Unused tags
+      - Justification
+    * - ``:return:``
+      - ``:returns:``
+      - ``:return:`` is the default tag used by PyCharm when generating a docstring pattern.
+    * - ``:raise:``
+      - ``:raises:``
+      - Consistency with ``:return:``.
+
+The ``:raise:`` syntax is the following:
+
+.. code-block:: python
+
+    """
+    :raise: Unspecified exception type.
+    :raise ValueError: System exception.
+    :raise .neighbourmodule.MyException: Project defined exception.
+    """
+
+The exception type can be specified:
+
+- It must be set before the second colon (Sphinx handles it a makes an dedicated presentation for it).
+- It can be either a system exception type, or a project exception defined in the current or a neighbour module
+  (same syntax as within a ``:class:`MyException``` syntax).
+
+
 Cross references
 ----------------
 
 Use relative imports as much as possible to reference symbols out of the current module.
 
-In as much as `Sphinx` does not provide a directive to cross-reference them,
-use double backquotes to highlight function and method parameters.
+In as much as `Sphinx` does not provide a directive to cross-reference function and method parameters,
+use double backquotes to highlight them.
 
 .. admonition:: Cross referencing parameters
     :class: note
@@ -171,6 +202,9 @@ use double backquotes to highlight function and method parameters.
     - `<https://stackoverflow.com/questions/11168178/how-do-i-reference-a-documented-python-function-parameter-using-sphinx-markup>`_
     - `<https://pypi.org/project/sphinx-paramlinks/>`_
 
+Sphinx does not provide a dedicated directive to cross-reference types, ``:class:`` does not work neither.
+Use the default ``:obj:`` directive instead (see https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#role-py-obj).
+
 
 Property return type hint
 -------------------------
@@ -181,28 +215,6 @@ Nevertheless, we do not make use of the ``:type:`` directive,
 which would be redundant with the return type hint already set.
 The `sphinx#7837 <https://github.com/sphinx-doc/sphinx/issues/7837>`_ enhancement request
 has been opened for that purpose.
-
-
-Module attributes
------------------
-
-.. todo:: Check which is the most convenient way to document a constant / attribute.
-
-    ``.. py:attribute::`` pragma or docstring placed after the constant / attribute.
-
-Module attributes should be documented using the ``.. py:attribute::`` pragma,
-extending the ``__doc__`` variable.
-
-.. code-block:: python
-
-    __doc__ += """
-    .. py:attribute:: MY_CONST
-
-        Attribute description.
-    """
-    MY_CONST = 0  # type: int
-
-Otherwise, they may not be cross-referenced from other modules.
 
 
 Re-exports

@@ -133,7 +133,7 @@ class StepUserApi(abc.ABC):
         """
         Makes the execution jump to the given step.
 
-        :param to_step_specification: Step specification of the step to jump to (see :attr:`._stepdefinition.StepSpecificationType`).
+        :param to_step_specification: Step specification of the step to jump to (see :obj:`._stepdefinition.StepSpecificationType`).
         """
         from ._scenariorunner import SCENARIO_RUNNER
 

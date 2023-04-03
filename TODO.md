@@ -18,8 +18,11 @@
 ## Roadmap to v0.2.3
 
 - Issue #77: Avoid exporting implementation modules.
+    - Check 'reflex' terminology, 'reflective programming' or 'reflection' seem to be the right terms.
     - Fix documentation generation:
-        - Check whether we can re-import `scenario` modules a second time with `typing.TYPE_CHECKING := True`.
+        - Can we use `:data:` or `:const:` directives, or even `:obj:`, for cross-referencing module attributes?
+        - Choose between `#:` or docstrings placed after attributes and types.
+        - Avoid expanding types in output documentation.
         - Check whether there are still missing references if we don't generate documentation for private modules.
         - Remove `scenario.logging` timestamps from `sphinxapidoc()` logs.
         - Change from `#:` Sphinx comments to `"""` doctrings?
@@ -65,6 +68,7 @@
     - `--repeat` or `--loop` option: loops over a test execution, in order to evaluate a failure/succes ratio.
     - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
     - `--stop-success` option: makes a campaign / test loop stop as soon as a test succeeds.
+- Issue #78: Contribute to sphinx-autodoc-typehints#22, replying to https://github.com/tox-dev/sphinx-autodoc-typehints/issues/22#issuecomment-423289499
 
 
 ## Roadmap to v0.3.0

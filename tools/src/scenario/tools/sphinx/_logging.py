@@ -59,6 +59,7 @@ class Logger:
         # Sphinx handlers.
         SPHINX_CONFIG_INITED = "sphinx:config-inited"
         SPHINX_BUILDER_INITED = "sphinx:builder-inited"
+        SPHINX_ENV_BEFORE_READ_DOCS = "sphinx:env-before-read-docs"
         SPHINX_SOURCE_READ = "sphinx:source-read"
         SPHINX_DOCTREE_READ = "sphinx:doctree-read"
         SPHINX_ENV_UPDATED = "sphinx:env-updated"
@@ -69,6 +70,8 @@ class Logger:
         AUTODOC_SKIP_MEMBER = "autodoc:skip-member"
         AUTODOC_PROCESS_SIGNATURE = "autodoc:process-signature"
         AUTODOC_PROCESS_DOCSTRING = "autodoc:process-docstring"
+        # Reflection.
+        TYPE_CHECKING_RELOAD = "type-checking-reload"
         # Documented items.
         TRACK_MODULE_ITEMS = "track-module-items"
         WARN_UNDOC_ITEMS = "warn-undoc-items"

@@ -38,6 +38,7 @@ class SphinxHandlers:
 
         # 3. event.env-get-outdated(app, env, added, changed, removed)
         # 4. event.env-before-read-docs(app, env, docnames)
+        app.connect("env-before-read-docs", self.envbeforereaddocs)
 
         # for docname in docnames:
         #    5. event.env-purge-doc(app, env, docname)
@@ -132,6 +133,32 @@ class SphinxHandlers:
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_BUILDER_INITED)  # type: Logger
         _logger.debug("SphinxHendlers.builderinited()")
+
+    def envbeforereaddocs(
+            self,
+            app,  # type: sphinx.application.Sphinx
+            env,  # type: sphinx.application.BuildEnvironment
+            docnames,  # type: typing.Sequence[str]
+    ):  # type: (...) -> typing.Any
+        """
+        See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-env-before-read-docs
+
+        [SPHINX_CORE_EVENTS]:
+            Emitted after the environment has determined the list of all added and changed files and just before it reads them.
+            It allows extension authors to reorder the list of docnames (inplace) before processing,
+            or add more docnames that Sphinx did not consider changed
+            (but never add any docnames that are not in env.found_docs).
+
+            You can also remove document names; do this with caution since it will make Sphinx treat changed files as unchanged.
+        """
+        from ._logging import Logger
+        from ._reflex import reloadscenariowithtypechecking
+
+        _logger = Logger(Logger.Id.SPHINX_ENV_BEFORE_READ_DOCS)  # type: Logger
+        _logger.debug("envbeforereaddocs(env=%r, docnames=%r)", env, docnames)
+
+        _logger.debug("Reloading `scenario` modules with `typing.TYPE_CHECKING` enabled")
+        reloadscenariowithtypechecking()
 
     def sourceread(
             self,
@@ -293,4 +320,4 @@ class SphinxHandlers:
         from ._logging import Logger
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_BUILD_FINISHED)  # type: Logger
-        _logger.debug("SohinxHandlers.buildfinished(exception=%r)", exception)
+        _logger.debug("SphinxHandlers.buildfinished(exception=%r)", exception)
