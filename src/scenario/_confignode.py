@@ -73,7 +73,7 @@ class ConfigNode:
 
         Gives the configuration key and type of data.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         _repr = f"<{qualname(type(self))}"  # type: str
         _repr += f" key='{self.key}'"
@@ -435,7 +435,7 @@ class ConfigNode:
 
         When the configuration data is not of the expected type, a ``ValueError`` is raised.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         def _castreturntype(value):  # type: (typing.Any) -> VarDataType
             """

@@ -26,7 +26,7 @@ def fqname(
         obj,  # type: typing.Any
 ):  # type: (...) -> str
     """
-    .. todo:: Check whether :func:`fqname()` could be factorized with :func:`scenario._reflex.qualname()`.
+    .. todo:: Check whether :func:`fqname()` could be factorized with :func:`scenario._reflection.qualname()`.
     """
     if inspect.ismodule(obj):
         return str(obj.__name__)
@@ -221,7 +221,7 @@ _reloadwithtypechecking_cache = []  # type: typing.List[str]
 def reloadwithtypechecking(
         module_name,  # type: str
 ):  # type: (...) -> None
-    from scenario._reflex import importmodulefrompath  # noqa  ## Access to a protected member.
+    from scenario._reflection import importmodulefrompath  # noqa  ## Access to a protected member.
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TYPE_CHECKING_RELOAD)  # type: Logger

@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #77: Avoid exporting implementation modules.
-    - Check 'reflex' terminology, 'reflective programming' or 'reflection' seem to be the right terms.
     - Fix documentation generation:
         - Can we use `:data:` or `:const:` directives, or even `:obj:`, for cross-referencing module attributes?
         - Choose between `#:` or docstrings placed after attributes and types.

@@ -41,8 +41,8 @@ class DebugClass(StrEnum):
     HANDLERS = "scenario.Handlers"
     #: Logging statistics.
     LOG_STATS = "scenario.LogStats"
-    #: Reflexive programmation debugging.
-    REFLEX = "scenario.reflex"
+    #: Reflective programmation debugging.
+    REFLECTION = "scenario.reflection"
     #: Scenario report debugging.
     SCENARIO_REPORT = "scenario.ScenarioReport"
     #: Scenario results debugging.

@@ -172,7 +172,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
         Makes it possible to easily access the attributes and methods defined with a user scenario definition.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
         from ._scenariostack import SCENARIO_STACK
 
         if isinstance(SCENARIO_STACK.building.scenario_definition, cls):
@@ -230,7 +230,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         # Sometimes, `__repr__()` may be called on an object being built.
         if hasattr(self, "name"):
@@ -397,7 +397,7 @@ class ScenarioDefinitionHelper:
         :return: Scenario definition classes, if any.
         """
         from ._path import Path
-        from ._reflex import importmodulefrompath
+        from ._reflection import importmodulefrompath
 
         # Load the test scenario module.
         script_path = Path(script_path)
@@ -437,7 +437,7 @@ class ScenarioDefinitionHelper:
         Reads the scenario step list by inspecting the user scenario class,
         and feeds the scenario definition step list.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
         from ._stepdefinition import StepDefinition, StepMethods
 
         # Scan methods.

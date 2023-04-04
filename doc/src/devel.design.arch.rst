@@ -34,7 +34,7 @@ that a :ref:`launcher script <launcher>` should call.
 This method:
 
 1. analyzes the command line arguments and loads the configuration files (see the :ref:`related design section <arch.configuration>`),
-2. builds a scenario instance from the given scenario script, with reflexive programming,
+2. builds a scenario instance from the given scenario script, with reflective programming,
 3. proceeds with the scenario execution.
 
 The :py:class:`scenario._scenariorunner.ScenarioRunner` class works with a couple of helper classes.
@@ -116,7 +116,7 @@ The :py:class:`scenario._scenariorunner.ScenarioRunner` class remains the conduc
       is set to :py:attr:`scenario._scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS`:
 
       #. In case the steps are defined with ``step...()`` methods,
-         the :py:class:`scenario._scenariodefinition.ScenarioDefinition` is fed using reflexive programmation
+         the :py:class:`scenario._scenariodefinition.ScenarioDefinition` is fed using reflective programming
          (the same for scenario attributes defined with class members)
          [#meth-beginscenario]_ [#class-ScenarioDefinitionHelper]_.
       #. Each step is executed a first time [#meth-beginscenario]_ [#meth-execstep]_ in order to build

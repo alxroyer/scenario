@@ -232,7 +232,7 @@ class Path:
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         return f"<{qualname(type(self))} object for '{self.prettypath}'>"
 

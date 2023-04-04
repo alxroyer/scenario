@@ -35,7 +35,7 @@ try:
     from . import _features as features
     from ._knownissues import IssueLevel as IssueLevel
     from . import _paths as paths
-    from . import _reflex as reflex
+    from . import _reflection as reflection
     if typing.TYPE_CHECKING:
         from ._steps import AnyExecutionStepType as AnyExecutionStepType
     from ._steps import ExecutionStep as ExecutionStep

@@ -152,7 +152,7 @@ class SphinxHandlers:
             You can also remove document names; do this with caution since it will make Sphinx treat changed files as unchanged.
         """
         from ._logging import Logger
-        from ._reflex import reloadscenariowithtypechecking
+        from ._reflection import reloadscenariowithtypechecking
 
         _logger = Logger(Logger.Id.SPHINX_ENV_BEFORE_READ_DOCS)  # type: Logger
         _logger.debug("envbeforereaddocs(env=%r, docnames=%r)", env, docnames)

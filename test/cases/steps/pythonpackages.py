@@ -58,7 +58,7 @@ class PythonPackageBegin(scenario.StepSectionBegin):
             self.evidence(f"Module spec for '{self.import_name}': {scenario.debug.saferepr(_module_spec)}")
 
             # Ensure the package is not in the black list.
-            self.assertnotin(self.import_name, scenario.test.reflex.PACKAGE_BLACK_LIST, f"Package '{self.import_name}' should not be black-listed")
+            self.assertnotin(self.import_name, scenario.test.reflection.PACKAGE_BLACK_LIST, f"Package '{self.import_name}' should not be black-listed")
 
         if self.ACTION(f"If the package is not available, skip next steps up to {self.end}."):
             if not self.is_installed:
@@ -70,8 +70,8 @@ class PythonPackageBegin(scenario.StepSectionBegin):
     def _stepunexpected(self):  # type: (...) -> None
         if self.ACTION(f"Ensure the '{self.import_name}' package can't be loaded."):
             # Set the disabled package name in the black list.
-            scenario.test.reflex.PACKAGE_BLACK_LIST.append(self.import_name)
-            self.debug("Package black list: %r", scenario.test.reflex.PACKAGE_BLACK_LIST)
+            scenario.test.reflection.PACKAGE_BLACK_LIST.append(self.import_name)
+            self.debug("Package black list: %r", scenario.test.reflection.PACKAGE_BLACK_LIST)
 
             # Make the package name being removed automatically from the black list in case of a failure before the end step.
             scenario.handlers.install(
@@ -113,8 +113,8 @@ class PythonPackageEnd(scenario.StepSectionEnd):
             *args  # type: typing.Any
     ):  # type: (...) -> None
         # Remove the package name from the black list.
-        if self.begin.import_name in scenario.test.reflex.PACKAGE_BLACK_LIST:
-            scenario.test.reflex.PACKAGE_BLACK_LIST.remove(self.begin.import_name)
-            self.debug("Package black list: %r", scenario.test.reflex.PACKAGE_BLACK_LIST)
+        if self.begin.import_name in scenario.test.reflection.PACKAGE_BLACK_LIST:
+            scenario.test.reflection.PACKAGE_BLACK_LIST.remove(self.begin.import_name)
+            self.debug("Package black list: %r", scenario.test.reflection.PACKAGE_BLACK_LIST)
         else:
             self.warning(f"No such package '{self.begin.import_name}' in the black list")

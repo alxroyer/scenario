@@ -939,7 +939,7 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from ._debugutils import saferepr
-        from ._reflex import isiterable
+        from ._reflection import isiterable
 
         assert obj is not None, assertionhelpers.isnonemsg("assertisempty()", "obj")
         assert isiterable(obj), assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", saferepr(obj))
@@ -968,7 +968,7 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from ._debugutils import saferepr
-        from ._reflex import isiterable
+        from ._reflection import isiterable
 
         assert obj is not None, assertionhelpers.isnonemsg("assertisempty()", "obj")
         assert isiterable(obj), assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", saferepr(obj))
@@ -999,7 +999,7 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from ._debugutils import saferepr
-        from ._reflex import isiterable
+        from ._reflection import isiterable
 
         assert obj is not None, assertionhelpers.isnonemsg("assertlen()", "obj")
         assert isiterable(obj), assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", saferepr(obj))
@@ -1031,7 +1031,7 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from ._debugutils import saferepr
-        from ._reflex import isiterable
+        from ._reflection import isiterable
 
         if isinstance(container, (str, bytes)):
             assert obj is not None, assertionhelpers.isnonemsg("assertin()", "obj")
@@ -1066,7 +1066,7 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from ._debugutils import saferepr
-        from ._reflex import isiterable
+        from ._reflection import isiterable
 
         if isinstance(container, (str, bytes)):
             assert obj is not None, assertionhelpers.isnonemsg("assertnotin()", "obj")
@@ -1104,7 +1104,7 @@ class Assertions:
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         from ._debugutils import saferepr
-        from ._reflex import isiterable
+        from ._reflection import isiterable
 
         assert container is not None, assertionhelpers.isnonemsg("assertcount()", "container")
         assert isiterable(container), assertionhelpers.ctxmsg("assertcount()", "invalid container type %s", saferepr(container))
@@ -1167,7 +1167,7 @@ class Assertions:
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
         from ._debugutils import FmtAndArgs, saferepr
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         _json_safe_repr_max_length = 32  # type: int
 

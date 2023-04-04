@@ -51,7 +51,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
 
         Makes it possible to easily access the attributes and methods defined with a user step definition.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
         from ._scenariostack import SCENARIO_STACK
 
         def _ensurereturntype(step_definition):  # type: (StepDefinition) -> VarStepDefinitionType
@@ -118,7 +118,7 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         if type(self) is StepDefinition:
             return f"<{qualname(type(self))} {self.name!r}>"
@@ -267,7 +267,7 @@ class StepDefinitionHelper:
         :param step_specification: Step specification to compute a string representation for.
         :return: String representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         if isinstance(step_specification, StepDefinition):
             return f"[instance is {step_specification}]"
@@ -320,7 +320,7 @@ class StepMethods:
 
         Used by the :meth:`sortbyhierarchythennames()` and :meth:`sortbyreversehierarchythennames()` methods.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         _count = 0  # type: int
         for _cls in inspect.getmro(method.__self__.__class__):  # type: type
@@ -341,7 +341,7 @@ class StepMethods:
         :param methods: Array of methods to debug.
         :return: Debug representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         return f"[{', '.join(qualname(_method) for _method in methods)}]"
 

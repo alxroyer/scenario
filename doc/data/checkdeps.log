@@ -10,7 +10,7 @@ INFO                                         _stats.py, _stepdefinition.py, _ste
 INFO                                         _testerrors.py, _timezoneutils.py]
 INFO     <04>           _campaignargs.py => [_args.py, _scenarioargs.py]
 INFO     <04>            _stepsection.py => [_stepdefinition.py]
-INFO     <03>                 _reflex.py => [_debugclasses.py, _logger.py]
+INFO     <03>             _reflection.py => [_debugclasses.py, _logger.py]
 INFO     <03>           _scenarioargs.py => [_args.py]
 INFO     <03>     _scenariodefinition.py => [_assertions.py, _logger.py, _stepuserapi.py]
 INFO     <03>         _stepdefinition.py => [_assertions.py, _logger.py, _stepuserapi.py]

@@ -88,7 +88,7 @@ class SubProcess:
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         return f"{qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
 

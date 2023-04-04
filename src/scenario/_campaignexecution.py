@@ -163,7 +163,7 @@ class TestSuiteExecution:
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         return f"<{qualname(type(self))} of '{self.test_suite_file.path}'>"
 
@@ -260,7 +260,7 @@ class TestCaseExecution:
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         return f"<{qualname(type(self))} of '{self.script_path}'>"
 

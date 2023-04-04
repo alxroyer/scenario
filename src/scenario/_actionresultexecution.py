@@ -59,6 +59,6 @@ class ActionResultExecution:
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         return f"<{qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"

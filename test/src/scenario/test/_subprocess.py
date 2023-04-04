@@ -168,7 +168,7 @@ class SubProcess(scenario.SubProcess):
         :return: See :meth:`SubProcess.run()`
         """
         from ._paths import PACKAGE_BLACK_LIST_STARTER
-        from ._reflex import PACKAGE_BLACK_LIST, PACKAGE_BLACK_LIST_CONF_KEY
+        from ._reflection import PACKAGE_BLACK_LIST, PACKAGE_BLACK_LIST_CONF_KEY
 
         # Avoid `sys.exit()` calls.
         self.exitonerror(False)

@@ -59,7 +59,7 @@ class TestSuiteFile(Logger):
         """
         Canonical string representation.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         return f"<{qualname(type(self))} path='{self.path}'>"
 

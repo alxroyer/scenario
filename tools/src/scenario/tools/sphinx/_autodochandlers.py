@@ -103,7 +103,7 @@ class AutodocHandlers:
                 Handlers should return None to fall back to the skipping behavior of autodoc and other enabled extensions.
         """
         from ._logging import Logger
-        from ._reflex import isspecialfunction, fqname
+        from ._reflection import isspecialfunction, fqname
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_SKIP_MEMBER)  # type: Logger
         _logger.debug("skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",
@@ -339,7 +339,7 @@ class AutodocHandlers:
         """
         from ._documenteditems import DOCUMENTED_ITEMS, DocumentedItem, TRACKED_ITEMS, trackmoduleitems
         from ._logging import Logger
-        from ._reflex import isspecialfunction
+        from ._reflection import isspecialfunction
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_DOCSTRING)  # type: Logger
         _logger.debug("processdocstring(what=%r, fq_name=%r, obj=%r, options=%r, lines=%r)",

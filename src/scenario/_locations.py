@@ -72,7 +72,7 @@ class CodeLocation:
         :return: :class:`CodeLocation` instance.
         """
         from ._path import Path
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         _source_file = inspect.getsourcefile(method)  # type: typing.Optional[str]
         assert _source_file
@@ -93,7 +93,7 @@ class CodeLocation:
         :return: :class:`CodeLocation` instance.
         """
         from ._path import Path
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         _source_file = inspect.getsourcefile(cls)  # type: typing.Optional[str]
         assert _source_file
@@ -232,7 +232,7 @@ class ExecutionLocations(Logger):
         :return: Stack of :class:`CodeLocation`.
         """
         from ._path import Path
-        from ._reflex import checkfuncqualname
+        from ._reflection import checkfuncqualname
 
         self.debug("Computing test location:")
 

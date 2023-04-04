@@ -77,7 +77,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
         .. warning:: The main :class:`Args` instance is not created automatically by this method,
                      and should be set with :meth:`setinstance()` prior to any :meth:`getinstance()` call.
         """
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         assert Args._instance is not None, f"No {qualname(cls)} instance available"
         assert isinstance(Args._instance, cls), f"Wrong type {qualname(type(Args._instance))}, {qualname(cls)} expected"
@@ -350,7 +350,7 @@ class ArgInfo:
         """
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
-        from ._reflex import qualname
+        from ._reflection import qualname
 
         # Retrieve and check members from both: the :class:`Args` instance on the one hand, and the opaque parsed object on the other hand.
         if self.member_name not in vars(args_instance):
