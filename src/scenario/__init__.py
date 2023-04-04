@@ -23,17 +23,12 @@
 
 # Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
 # Define this package as a namespace, so that it can be extended later on (with `scenario.tools`, `scenario.test`, ...).
+#
+# Memo:
+# Don't try to fix `__path__` prior to making the `pkgutil.extend_path()` call below, nor catch a potential `NameError`,
+# otherwise IDEs may get confused with `scenario.test`, `scenario.tools`, ... extensions.
 import pkgutil
-try:
-    __path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
-except NameError as _err:
-    # The `pkgutil.extend_path()` call above may fail due to `__path__` being undefined,
-    # which is the case when this module is reloaded programmatically with `typing.TYPE_CHECKING` enabled in our `scenario.tools.sphinx` implementation.
-    # Ignore the error in that case.
-    if "__path__" in str(_err):
-        pass
-    else:
-        raise _err
+__path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
 
 
 # System imports

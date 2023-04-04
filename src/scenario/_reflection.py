@@ -89,17 +89,30 @@ def importmodulefrompath(
     :param script_path: Python script path.
     :param sys_modules_cache: Read from modules previously loaded and cached in ``sys.modules``, save loaded modules in ``sys.modules`` otherwise.
     :return: Module loaded.
+
+    .. admonition:: Known issues when loading a '__init__.py' package definition file
+        :class: warning
+
+        '__init__.py' scripts are imported as a regular scripts, not package definitions.
+
+        Known side effects:
+
+        - ``__path__`` definition is missing, preventing usage of `pkgutil.extend_path()` consequently.
     """
     from ._path import Path
 
     script_path = pathlib.Path(script_path).resolve()
     assert script_path.is_file(), f"No such file '{script_path}'"
-    assert script_path.name.endswith(".py"), f"Not a Python script '{script_path}'"
+    assert script_path.suffix == ".py", f"Not a Python script '{script_path}'"
 
     # Determine the module name:
-    # - Use the module basename by default.
-    _module_name = script_path.name[:-3]  # type: str
-    # - Check whether the script is part of a `sys.path`, in order to preserve the module's package belonging.
+    # - Use the directory name in case of a '__init__.py' file.
+    if script_path.name == "__init__.py":
+        _module_name = script_path.parent.name  # type: str
+    # - Use the module basename without extension otherwise.
+    else:
+        _module_name = script_path.stem  # Type already declared above.
+    # - Then check whether the script is part of a `sys.path`, in order to preserve the module's package belonging.
     for _python_path in sys.path:  # type: str
         # Note: `pathlib.PurePath.is_relative_to()` exists from Python 3.9 only. Use `scenario.Path` for the purpose.
         if Path(script_path).is_relative_to(_python_path):
@@ -107,6 +120,8 @@ def importmodulefrompath(
                 # Note: `_python_path` may be a relative path. Ensure an absolute path in order to be able to compute a relative path from it.
                 pathlib.Path(_python_path).resolve()
             ).as_posix().replace("/", ".")[:-3]
+            if _module_name.endswith(".__init__"):
+                _module_name = _module_name[:-len(".__init__")]
 
     # First check whether the scenario has already been loaded.
     if sys_modules_cache:
@@ -116,7 +131,9 @@ def importmodulefrompath(
     try:
         # Inspired from https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
         assert sys.version_info >= (3, 6), f"Incorrect Python version {sys.version}, 3.6 required at least"
-        _module_spec = importlib.util.spec_from_file_location(_module_name, script_path)  # type: typing.Any
+        _module_spec = importlib.util.spec_from_file_location(_module_name, script_path)  # Implicit type: `importlib._bootstrap.ModuleSpec`
+        if (not _module_spec) or (not _module_spec.loader):
+            raise ImportError(f"Could not build spec to load '{script_path}'")
         _module = importlib.util.module_from_spec(_module_spec)  # type: typing.Optional[types.ModuleType]
         if _module is None:
             raise ImportError(f"Could not load '{script_path}'")

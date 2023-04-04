@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import importlib
 import inspect
+import pathlib
 import re
 import sys
 import traceback
@@ -260,20 +262,26 @@ def reloadwithtypechecking(
                 # Activate `typing.TYPE_CHECKING`.
                 typing.TYPE_CHECKING = True
 
-                # Reload the module:
-                # - Don't use `importlib.reload()`, otherwise the original modules would be replaced, possibly breaking consistency by the way.
-                # importlib.reload(_original_module)
-                # - Reload as a detached module...
+                # Reload the module (without replacing the original one).
                 _logger.debug("Reloading %r...", module_name)
                 assert _original_module.__file__
-                _reloaded_module = importmodulefrompath(
-                    _original_module.__file__,
-                    # Don't read from `sys.modules`, nor save the reloaded module in `sys.modules`.
-                    sys_modules_cache=False,
-                )
+                if pathlib.Path(_original_module.__file__).name != "__init__.py":
+                    # Don't use `importlib.reload()` in general, otherwise the original modules would be replaced, possibly breaking consistency by the way.
+                    _reloaded_module = importmodulefrompath(
+                        _original_module.__file__,
+                        # Don't read from `sys.modules`, nor save the reloaded module in `sys.modules`.
+                        sys_modules_cache=False,
+                    )  # type: types.ModuleType
+                else:
+                    # Don't use `importlib.reload()`, except for packages!
+                    # due to `importmodulefrompath()` can't ensure the `__path__` symbol to be defined,
+                    # which is required for the `scenario` package.
+                    _reloaded_module = importlib.reload(_original_module)  # Type already declared above.
+                    # Fix `sys.modules` in order to keep the original module as the reference.
+                    sys.modules[module_name] = _original_module
                 _logger.debug("_reloaded_module = %r", _reloaded_module)
 
-                #   ... then copy extra members from the reloaded module to the original one.
+                # Copy extra members from the reloaded module to the original one.
                 _original_members = vars(_original_module)  # type: typing.Dict[str, typing.Any]
                 _reloaded_members = vars(_reloaded_module)  # type: typing.Dict[str, typing.Any]
                 for _member_name in _reloaded_members:  # type: str
