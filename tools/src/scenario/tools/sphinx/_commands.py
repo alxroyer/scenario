@@ -71,6 +71,9 @@ def sphinxapidoc():  # type: (...) -> None
     # [SPHINX_APIDOC_HELP]:
     #     -e, --separate = "put documentation for each module on its own page"
     _subprocess.addargs("--separate")
+    # [SPHINX_APIDOC_HELP]
+    #     -T, --no-toc = "don't create a table of contents file"
+    _subprocess.addargs("--no-toc")
     _subprocess.addargs(SRC_PATH / "scenario")
 
     # Configure `.. automodule::` options.
