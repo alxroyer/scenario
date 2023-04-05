@@ -260,18 +260,57 @@ class SphinxHandlers:
         from ._logging import Logger
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_MISSING_REFERENCE)  # type: Logger
-        _logger.debug("missingreference(env=%r, node=%r, contnode=%r)", env, node, contnode)
+        # Memo: '%s' gives better info for nodes.
+        _logger.debug("missingreference(env=%r, node=%s, contnode=%s)", env, node, contnode)
 
-        if node.source and node.line:
-            if contnode.astext() in (
-                "DemoArgs",
-                "scenario.test",
-                "scenario.tools",
-                "scenario.tools.data.scenarios",
+        if (
+            isinstance(node, docutils.nodes.Element)
+            and node.source and node.line
+            and ("reftarget" in node.attributes) and ("reftype" in node.attributes)
+        ):
+            _ref_target = node.attributes["reftarget"]  # type: str
+            _ref_type = node.attributes["reftype"]  # type: str
+
+            if (_ref_target, _ref_type) in (
+                # Basic Python names.
+                ("bool", "class"),
+                ("Exception", "class"),
+                ("int", "class"),
+                ("None", "obj"),
+                ("object", "class"),
+                ("str", "class"),
+                ("type", "class"),
+                # `abc` names.
+                ("abc.ABC", "class"),
+                ("abc.ABCMeta", "class"),
+                # `enum` names.
+                ("enum.Enum", "class"),
+                ("enum.IntEnum", "class"),
+                # `logging` names.
+                ("logging.Filter", "class"),
+                ("logging.Formatter", "class"),
+                ("logging.Logger", "class"),
+                # `os` names.
+                ("os.PathLike", "class"),
+                # `typing` names.
+                ("typing.Any", "obj"),
+                ("typing.Callable", "class"),
+                ("typing.Dict", "class"),
+                ("typing.Iterable", "class"),
+                ("typing.Optional", "obj"),
+                ("typing.Type", "class"),
+                ("typing.Union", "obj"),
+                # `scenario` undocumented items.
+                ("DemoArgs", "class"),
+                ("scenario.test", "mod"),
+                ("scenario.tools", "mod"),
+                ("scenario.tools.data.scenarios", "attr"),
             ):
-                return
-
-            _logger.warning(f"{node.source}:{node.line}: Reference missing {contnode.astext()}")
+                # Simple debug line.
+                _logger.debug(f"{node.source}:{node.line}: {_ref_type} reference missing {_ref_target}")
+            else:
+                # Warning.
+                _logger.warning(f"{node.source}:{node.line}: {_ref_type} reference missing {_ref_target}")
 
     def doctreeresolved(
             self,

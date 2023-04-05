@@ -19,6 +19,22 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
+        - Hide inherited attributes:
+            - ```
+              [scenario.tools.sphinx:autodoc:skip-member] skipmember(owner_type='class', nfq_name='_checkargs', obj=<function CampaignArgs._checkargs at 0x0000022617F33A68>, would_skip=False, options={'show-inheritance': True, 'members': <sphinx.ext.autodoc._All object at 0x00000226192E5BC8>, 'private-members': <sphinx.ext.autodoc._All object at 0x00000226192E5BC8>, 'undoc-members': True, 'ignore-module-all': True, 'member-order': 'bysource'})
+              [scenario.tools.sphinx:autodoc:skip-member] skipmember(nfq_name='_checkargs') => default would_skip=False
+              (...)
+              [scenario.tools.sphinx:autodoc:skip-member] skipmember(owner_type='class', nfq_name='_logger', obj=<object object at 0x0000022618DE5970>, would_skip=False, options={'show-inheritance': True, 'members': <sphinx.ext.autodoc._All object at 0x00000226192E5BC8>, 'private-members': <sphinx.ext.autodoc._All object at 0x00000226192E5BC8>, 'undoc-members': True, 'ignore-module-all': True, 'member-order': 'bysource'})
+              [scenario.tools.sphinx:autodoc:skip-member] skipmember(nfq_name='_logger') => default would_skip=False
+              ```
+            - Seems it worked with version v0.2.2:
+                - At least on readthedocs.io (current v0.2.2).
+                - But not on local files, even with Python 3.6 / Sphinx 4.4.0.
+                - To be checked on readthedocs.io with a temporary version.
+            - Memos:
+                - https://github.com/sphinx-doc/sphinx/pull/8587/files#diff-e43bdd6f8f37a12d2536e09e57c5e8999cb8de18b9c7ba49126f90576c4328acL670,
+                  line 670: inner function `is_filtered_inherited_member()`
+                - [sphinx#741](https://github.com/sphinx-doc/sphinx/issues/741) "autodoc inherited-members won't work for inherited attributes (data members)"
         - Can we use `:data:` or `:const:` directives, or even `:obj:`, for cross-referencing module attributes?
         - Choose between `#:` or docstrings placed after attributes and types.
         - Avoid expanding types in output documentation.
