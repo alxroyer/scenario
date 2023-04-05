@@ -24,6 +24,8 @@ import scenario
 
 
 PY_SPHINX_APIDOC_CMD = (sys.executable, "-m", "sphinx.ext.apidoc")  # type: typing.Sequence[str]
+
+# Memo: apparently equivalent to `python -m sphinx` (retex from readthedocs.io).
 PY_SPHINX_BUILD_CMD = (sys.executable, "-m", "sphinx.cmd.build")  # type: typing.Sequence[str]
 
 
@@ -71,6 +73,15 @@ def sphinxapidoc():  # type: (...) -> None
     _subprocess.addargs("--separate")
     _subprocess.addargs(SRC_PATH / "scenario")
 
+    # Configure `.. automodule::` options.
+    #
+    # Inspired from:
+    # - https://stackoverflow.com/questions/47302616/document-members-for-inherited-classes-in-sphinx
+    # - https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html#envvar-SPHINX_APIDOC_OPTIONS
+    # _subprocess.setenv(SPHINX_APIDOC_OPTIONS=",".join([
+    #     ...
+    # ]))
+
     _subprocess.setcwd(MAIN_PATH)
     _subprocess.run()
 
@@ -87,9 +98,8 @@ def sphinxapidoc():  # type: (...) -> None
             # otherwise Sphinx repeats documentation for each exported symbol at the end of the module.
             # This causes "more than one target found for cross-reference" errors,
             # and is moreover contradictory with the `--private` and `--separate` *apidoc* options used above.
-            scenario.logging.debug("Removing automodule `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
-            del _scenario_rst_lines[_line_index]
-            continue
+            scenario.logging.debug("Disabling autodoc `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
+            _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*):(no-|)(.*members):(.*)$', rb'\1:no-\3:\4', _line)
         if b':maxdepth:' in _line:
             # Limit private module TOC depth to 1,
             # otherwise all symbols contained in each are displayed with this TOC,

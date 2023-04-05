@@ -168,6 +168,20 @@ autoclass_content = "class"
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_member_order
 autodoc_member_order = "bysource"
 
+# [SPHINX_AUTODOC]: "The default options for autodoc directives.
+#                    They are applied to all autodoc directives automatically.
+#                    It must be a dictionary which maps option names to the values.
+#                    (...)
+#                    The supported options are 'members', 'member-order', 'undoc-members', 'private-members', 'special-members', 'inherited-members',
+#                    'show-inheritance', 'ignore-module-all', 'imported-members', 'exclude-members', 'class-doc-from' and 'no-value'."
+# See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_default_options
+#
+# Probably useless when the `SPHINX_APIDOC_OPTIONS` environment variable is set when executing `sphinx-apidoc`,
+# in as much as this configuration describes *default behaviours* when nothing already specified.
+# autodoc_default_options = {
+#    ...
+# }  # type: typing.Dict[str, typing.Any]
+
 # [SPHINX_AUTODOC]: "If this boolean value is set to True (which is the default), autodoc will look at the first line of the docstring
 #                    for functions and methods, and if it looks like a signature, use the line as the signature
 #                    and remove it from the docstring content."
