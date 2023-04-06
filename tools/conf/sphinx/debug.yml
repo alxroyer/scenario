@@ -32,7 +32,6 @@ scenario:
     # Reflection.
     # - "scenario.tools.sphinx:type-checking-reload"
     # Documented items.
-    # - "scenario.tools.sphinx:track-module-items"
-    # - "scenario.tools.sphinx:warn-undoc-items"
+    # - "scenario.tools.sphinx:track-documented-items"
     # References.
     # - "scenario.tools.sphinx:simplify-references"

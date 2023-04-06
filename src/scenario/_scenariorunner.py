@@ -41,7 +41,7 @@ class ScenarioRunner(Logger):
     """
     Test execution engine: runs scenarios, i.e. instances derived from the :class:`._scenariodefinition.ScenarioDefinition` class.
 
-    Only one instance, accessible through the :attr:`SCENARIO_RUNNER` singleton.
+    Only one instance, accessible through the :data:`SCENARIO_RUNNER` singleton.
 
     Implements the :meth:`main()` function for scenario executions.
 
@@ -199,7 +199,7 @@ class ScenarioRunner(Logger):
         :return:
             Error code, but no :attr:`._errcodes.ErrorCode.TEST_ERROR`.
 
-        Feeds the :attr:`._scenarioresults.SCENARIO_RESULTS` instance.
+        Feeds the :data:`._scenarioresults.SCENARIO_RESULTS` instance.
         """
         from ._debugloggers import ExecTimesLogger
         from ._errcodes import ErrorCode
@@ -874,9 +874,5 @@ class GotoException(Exception):
     """
 
 
-__doc__ += """
-.. py:attribute:: SCENARIO_RUNNER
-
-    Main instance of :class:`ScenarioRunner`.
-"""
+#: Main instance of :class:`ScenarioRunner`.
 SCENARIO_RUNNER = ScenarioRunner()  # type: ScenarioRunner

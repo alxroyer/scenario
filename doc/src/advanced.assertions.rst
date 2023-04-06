@@ -62,4 +62,4 @@ All assertion methods generally have the following parameters:
 
     All ``unittest`` assertions methods may not have their equivalent in the :py:class:`scenario._assertions.Assertions` class.
 
-    In case you need one of these, the :py:attr:`scenario._assertionhelpers.unittest` object makes it available.
+    In case you need one of these, the :py:data:`scenario._assertionhelpers.unittest` object makes it available.

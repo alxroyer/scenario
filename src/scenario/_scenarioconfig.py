@@ -406,9 +406,5 @@ class ScenarioConfig:
         CONFIG_DB.warning(node.errmsg(msg))
 
 
-__doc__ += """
-.. py:attribute:: SCENARIO_CONFIG
-
-    Main instance of :class:`ScenarioConfig`.
-"""
+#: Main instance of :class:`ScenarioConfig`.
 SCENARIO_CONFIG = ScenarioConfig()  # type: ScenarioConfig

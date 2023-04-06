@@ -287,9 +287,5 @@ class ConfigDatabase(Logger):
         return None
 
 
-__doc__ += """
-.. py:attribute:: CONFIG_DB
-
-    Main instance of :class:`ConfigDatabase`.
-"""
+#: Main instance of :class:`ConfigDatabase`.
 CONFIG_DB = ConfigDatabase()  # type: ConfigDatabase

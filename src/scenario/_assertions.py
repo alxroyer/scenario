@@ -38,11 +38,7 @@ if typing.TYPE_CHECKING:
     VarObjType = typing.TypeVar("VarObjType", bound=object)
 
 
-__doc__ += """
-.. py:attribute:: assertionhelpers
-
-    Shortcut to :mod:`._assertionhelpers`.
-"""
+#: Shortcut to :mod:`._assertionhelpers`.
 assertionhelpers = _assertionhelpers
 
 

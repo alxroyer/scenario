@@ -20,7 +20,7 @@ Configuration database
 
 The `scenario` framework provides a general configuration database.
 
-It is available through the :py:attr:`scenario.conf` attribute.
+It is available through the :py:data:`scenario.conf` attribute.
 
 
 Configuration nodes

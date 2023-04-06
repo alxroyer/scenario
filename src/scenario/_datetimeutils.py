@@ -30,18 +30,10 @@ import time
 import typing
 
 
-__doc__ += """
-.. py:attribute:: DURATION_REGEX
-
-    Regular expression matching a duration as displayed by `scenario` (i.e. last part of ISO8601).
-"""
+#: Regular expression matching a duration as displayed by `scenario` (i.e. last part of ISO8601).
 DURATION_REGEX = r"[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3,}"  # type: str
 
-__doc__ += """
-.. py:attribute:: ISO8601_REGEX
-
-    Regular expression matching ISO8601 date/times.
-"""
+#: Regular expression matching ISO8601 date/times.
 ISO8601_REGEX = r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3,}[+-][0-9]{2}:[0-9]{2}"  # type: str
 
 

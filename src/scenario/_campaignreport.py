@@ -681,9 +681,5 @@ class CampaignReport(Logger):
                 self.warning(f"Mismatching @{attr_name} counts between <{xml_node.tag_name}/> (count={_top_count}) and {_object_type}sub-objects (sum={_sum})")
 
 
-__doc__ += """
-.. py:attribute:: CAMPAIGN_REPORT
-
-    Main instance of :class:`CampaignReport`.
-"""
+#: Main instance of :class:`CampaignReport`.
 CAMPAIGN_REPORT = CampaignReport()  # type: CampaignReport

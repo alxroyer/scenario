@@ -337,7 +337,7 @@ class AutodocHandlers:
         Ensures Python items are documented.
         If not, prints a warning in the console and generates a warning in the output documentation.
         """
-        from ._documenteditems import DOCUMENTED_ITEMS, DocumentedItem, TRACKED_ITEMS, trackmoduleitems
+        from ._documenteditems import savedocumenteditem, trackmoduleitems
         from ._logging import Logger
         from ._reflection import isspecialfunction
 
@@ -357,7 +357,9 @@ class AutodocHandlers:
             # Do not check the `lines` parameters for enums,
             # in as much as `sphinx-build` automatically fills this parameter with the defaut :class:`enum.Enum`'s docstring.
             _is_documented = (lines != ["An enumeration.", ""])
-        if not _is_documented:
+        if _is_documented:
+            savedocumenteditem(fq_name, what, obj, lines)
+        else:
             # If not:
             # - Display a warning in the console during the build.
             _logger.warning(f"Undocumented {what} `{fq_name}`")
@@ -367,13 +369,3 @@ class AutodocHandlers:
         # Identify the items to track when applicable.
         if inspect.ismodule(obj):
             trackmoduleitems(obj)
-
-        # Remove this item from the tracked item list.
-        if fq_name in TRACKED_ITEMS:
-            _logger.debug("Tracked %s `%s` found", what, fq_name)
-            _item_type = TRACKED_ITEMS.pop(fq_name)  # type: str
-            if _item_type != what:
-                _logger.warning(f"Unexpected type {what} for {_item_type} `{fq_name}`")
-
-        # Memorize the documented item.
-        DOCUMENTED_ITEMS[fq_name] = DocumentedItem(what, obj, lines)

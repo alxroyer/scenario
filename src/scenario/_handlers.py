@@ -182,9 +182,5 @@ class Handlers(Logger):
                         self._handlers[event].remove(_handler)
 
 
-__doc__ += """
-.. py:attribute:: HANDLERS
-
-    Main instance of :class:`Handlers`.
-"""
+#: Main instance of :class:`Handlers`.
 HANDLERS = Handlers()  # type: Handlers

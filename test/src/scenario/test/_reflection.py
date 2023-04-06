@@ -38,7 +38,7 @@ PACKAGE_BLACK_LIST = []  # type: typing.List[str]
 #:   the :meth:`scenario.test.SubProcess.run()` override uses the 'test/tools/package-black-list-starter.py' as an intermediate script
 #:   with a ``--config-value`` option set with this configuration key.
 #: - The 'package-black-list-starter.py' script catches and drops the related ``--config-value`` options,
-#:   and feeds the :attr:`PACKAGE_BLACK_LIST`.
+#:   and feeds the :data:`PACKAGE_BLACK_LIST`.
 #: - The 'package-black-list-starter.py' script eventually executes the final launcher script
 #:   with the given package black list being configured.
 PACKAGE_BLACK_LIST_CONF_KEY = "scenario.test.package-black-list"  # type: str

@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import inspect
-import re
 import sphinx.pycode
 import types
 import typing
@@ -37,36 +36,39 @@ def trackmoduleitems(
     """
     from ._logging import Logger
 
-    _logger = Logger.getinstance(Logger.Id.TRACK_MODULE_ITEMS)  # type: Logger
+    _logger = Logger.getinstance(Logger.Id.TRACK_DOCUMENTED_ITEMS)  # type: Logger
     _logger.debug("trackmoduleitems(module=%r)", module)
 
     assert inspect.ismodule(module), f"Not a module {module!r}"
     _parser = sphinx.pycode.Parser(inspect.getsource(module))  # type: sphinx.pycode.Parser
     _parser.parse()
-    for _class_name, _attr_name in _parser.annotations:  # type: str, str
-        _track_item = True  # type: bool
-
+    for _class_name, _obj_name in _parser.annotations:  # type: str, str
         # Do not track private attributes.
-        if _attr_name.startswith("__"):
+        if _obj_name.startswith("__"):
             continue
-        if _class_name:
-            _fq_name = f"{module.__name__}.{_class_name}.{_attr_name}"  # type: str
-            _item_type = "attribute"  # type: str
-        else:
-            _fq_name = f"{module.__name__}.{_attr_name}"
-            _item_type = "data"
-            if module.__doc__:
-                for _line in module.__doc__.splitlines():  # type: str
-                    if re.match(r"\.\. py:attribute:: %s" % _attr_name, _line):
-                        _logger.debug("Attribute '%s' already described in the '%s' module docstring. No need to track it.", _attr_name, module.__name__)
-                        _track_item = False
-                        break
-            if _track_item:
-                _logger.warning(f"Missing `.. py:attribute::` directive for attribute '{_attr_name}' in module '{module.__name__}'")
 
-        if _track_item:
-            _logger.debug("Tracking %s `%s`", _item_type, _fq_name)
-            TRACKED_ITEMS[_fq_name] = _item_type
+        # Compute fqname and item type.
+        if _class_name:
+            _fq_name = f"{module.__name__}.{_class_name}.{_obj_name}"  # type: str
+            _obj_type = "attribute"  # type: str
+        else:
+            _fq_name = f"{module.__name__}.{_obj_name}"  # Type already declared above
+            _obj_type = "data"  # Type already declared above
+
+        # Memorize the tracked item.
+        if _fq_name not in TRACKED_ITEMS:
+            _logger.debug("Tracking %s `%s`", _obj_type, _fq_name)
+            TRACKED_ITEMS[_fq_name] = _obj_type
+        else:
+            _logger.debug("Already tracked %s `%s`", _obj_type, _fq_name)
+            if TRACKED_ITEMS[_fq_name] != _obj_type:
+                _logger.warning(f"Unexpected type {_obj_type} for {TRACKED_ITEMS[_fq_name]} `{_fq_name}`")
+
+        # Check consistency with `DOCUMENTED_ITEMS`.
+        if _fq_name in DOCUMENTED_ITEMS:
+            _logger.debug("Documented %s `%s` found", _obj_type, _fq_name)
+            if DOCUMENTED_ITEMS[_fq_name].type != _obj_type:
+                _logger.warning(f"Unexpected type {_obj_type} for {DOCUMENTED_ITEMS[_fq_name].type} `{_fq_name}`")
 
 
 class DocumentedItem:
@@ -85,15 +87,38 @@ class DocumentedItem:
 DOCUMENTED_ITEMS = {}  # type: typing.Dict[str, DocumentedItem]
 
 
+def savedocumenteditem(
+        fq_name,  # type: str
+        obj_type,  # type: str
+        obj,  # type: object
+        lines,  # type: typing.List[str]
+):  # type: (...) -> None
+    from ._logging import Logger
+
+    _logger = Logger.getinstance(Logger.Id.TRACK_DOCUMENTED_ITEMS)  # type: Logger
+
+    # Memorize the documented item.
+    if fq_name not in DOCUMENTED_ITEMS:
+        _logger.debug("Documented %s `%s`", obj_type, fq_name)
+        DOCUMENTED_ITEMS[fq_name] = DocumentedItem(obj_type, obj, lines)
+    else:
+        _logger.debug("Already documented %s `%s`", obj_type, fq_name)
+        if DOCUMENTED_ITEMS[fq_name].type != obj_type:
+            _logger.warning(f"Unexpected type {obj_type} for {DOCUMENTED_ITEMS[fq_name].type} `{fq_name}`")
+
+    # Check consistency with `TRACKED_ITEMS`.
+    if fq_name in TRACKED_ITEMS:
+        _logger.debug("Tracked %s `%s` found", obj_type, fq_name)
+        if TRACKED_ITEMS[fq_name] != obj_type:
+            _logger.warning(f"Unexpected type {obj_type} for {TRACKED_ITEMS[fq_name]} `{fq_name}`")
+
+
 def warnundocitems():  # type: (...) -> None
     from ._logging import Logger
 
-    _logger = Logger.getinstance(Logger.Id.WARN_UNDOC_ITEMS)  # type: Logger
+    _logger = Logger.getinstance(Logger.Id.TRACK_DOCUMENTED_ITEMS)  # type: Logger
 
     # Print out console warnings for non documented tracked items.
-    for _undoc_fq_name in TRACKED_ITEMS:  # type: str
-        _logger.warning(f"Undocumented {TRACKED_ITEMS[_undoc_fq_name]} `{_undoc_fq_name}`")
-
-    # Reset the documented and tracked item lists.
-    DOCUMENTED_ITEMS.clear()
-    TRACKED_ITEMS.clear()
+    for _fq_name in TRACKED_ITEMS:  # type: str
+        if _fq_name not in DOCUMENTED_ITEMS:
+            _logger.warning(f"Undocumented {TRACKED_ITEMS[_fq_name]} `{_fq_name}`")

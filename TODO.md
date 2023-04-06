@@ -19,13 +19,9 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Can we use `:data:` or `:const:` directives, or even `:obj:`, for cross-referencing module attributes?
-        - Choose between `#:` or docstrings placed after attributes and types.
         - Avoid expanding types in output documentation.
             - See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_type_aliases
-        - Check whether there are still missing references if we don't generate documentation for private modules.
         - Remove `scenario.logging` timestamps from `sphinxapidoc()` logs.
-        - Change from `#:` Sphinx comments to `"""` doctrings?
         - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
       Check whether an exception is caught and re-thrown, not just `pass`.

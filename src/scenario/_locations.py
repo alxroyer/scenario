@@ -291,9 +291,5 @@ class ExecutionLocations(Logger):
         return _locations
 
 
-__doc__ += """
-.. py:attribute:: EXECUTION_LOCATIONS
-
-    Main instance of :class:`ExecutionLocations`.
-"""
+#: Main instance of :class:`ExecutionLocations`.
 EXECUTION_LOCATIONS = ExecutionLocations()  # type: ExecutionLocations

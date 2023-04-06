@@ -35,7 +35,7 @@ First of all, declare your handler function:
     :end-at: scenario.logging.debug
 
 Then the handlers may be installed by calling the :py:meth:`scenario._handlers.Handlers.install()` method
-on the :py:attr:`scenario.handlers` manager:
+on the :py:data:`scenario.handlers` manager:
 
 .. scenario.Event.ERROR handler installation
 .. literalinclude:: ../../demo/handlers.py

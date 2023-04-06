@@ -45,9 +45,5 @@ class PackageInfo:
         return 0, 2, 2
 
 
-__doc__ += """
-.. py:attribute:: PKG_INFO
-
-    Main :class:`PackageInfo` instance.
-"""
+#: Main :class:`PackageInfo` instance.
 PKG_INFO = PackageInfo()  # type: PackageInfo

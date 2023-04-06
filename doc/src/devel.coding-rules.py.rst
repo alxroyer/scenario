@@ -121,7 +121,7 @@ If only modules and/or attributes must be renamed, intermediate private instance
 .. admonition:: Memo - No renamed attribute or module exports with a single ``from ... import ... as ...`` statement
     :class: note
 
-    If we declare :py:attr:`scenario.logging` as following:
+    If we declare :py:data:`scenario.logging` as following:
 
     .. code-block:: python
 
@@ -130,7 +130,7 @@ If only modules and/or attributes must be renamed, intermediate private instance
 
     mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
 
-    Same with :py:attr:`scenario.tools.data.scenarios`, the following in 'test/src/scenario/test/data.py':
+    Same with :py:data:`scenario.tools.data.scenarios`, the following in 'test/src/scenario/test/data.py':
 
     .. code-block:: python
 

@@ -195,9 +195,5 @@ class CampaignLogging:
         self._calls.append(CampaignLogging._Call.END_CAMPAIGN)
 
 
-__doc__ += """
-.. py:attribute:: CAMPAIGN_LOGGING
-
-    Main instance of :class:`CampaignLogging`.
-"""
+#: Main instance of :class:`CampaignLogging`.
 CAMPAIGN_LOGGING = CampaignLogging()  # type: CampaignLogging

@@ -90,41 +90,10 @@ Docstrings
 Python docstrings follow the *ReStructured Text* format.
 
 
-Module attributes & types
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. todo:: Check which is the most convenient way to document a constant / attribute / type.
-
-    ``.. py:attribute::`` pragma, ``#:`` sphinx comment, or docstring placed after the constant / attribute / type?
-
-Module attributes should be documented using the ``.. py:attribute::`` pragma,
-extending the ``__doc__`` variable.
-
-.. code-block:: python
-
-    __doc__ += """
-    .. py:attribute:: MY_CONST
-
-        Attribute description.
-    """
-    MY_CONST = 0  # type: int
-
-Otherwise, they may not be cross-referenced from other modules.
-
-
-Types can be documented with ``#:`` sphinx comments.
-
-
 Classes
 ^^^^^^^
 
-Leading doctring, at the beginning of the class definition.
-
-
-Class members
-^^^^^^^^^^^^^
-
-Class attributes should be documented using ``#:`` sphinx comments.
+Use a leading doctring, at the beginning of the class definition.
 
 
 Functions and methods
@@ -179,6 +148,30 @@ The exception type can be specified:
   (same syntax as within a ``:class:`MyException``` syntax).
 
 
+Attributes & types
+^^^^^^^^^^^^^^^^^^
+
+Types and attributes shall be documented with ``#:`` Sphinx comments.
+
+.. code-block:: python
+
+    #: Docstring.
+    ATTR = ...  # type: ...
+
+.. note::
+
+    Types and attributes could be documented with docstrings following them.
+
+    .. code-block:: python
+
+        ATTR = ...  # type: ...
+        """
+        Docstring placed after.
+        """
+
+    But we consider this is less readable than using ``#:`` sphinx comments.
+
+
 Cross references
 ----------------
 
@@ -196,6 +189,7 @@ use double backquotes to highlight them.
     From the `documentation of the python domain <https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#cross-referencing-python-objects>`_,
     the best existing directive would be ``:obj:`` but it is not really clear
     (``:attr:`` is for data attributes of objects).
+    Let's reserve ``:data:`` for module attributes.
 
     Other useful resources on that topic:
 

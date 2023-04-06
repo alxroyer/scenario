@@ -280,7 +280,7 @@ if __pkg_def:
 
         Main logger instance.
 
-        .. seealso:: :attr:`._loggermain.MAIN_LOGGER` implementation.
+        .. seealso:: :data:`._loggermain.MAIN_LOGGER` implementation.
     """
     from ._loggermain import MAIN_LOGGER as logging  # noqa  ## Constant variable imported as non-constant
     __all__.append("logging")

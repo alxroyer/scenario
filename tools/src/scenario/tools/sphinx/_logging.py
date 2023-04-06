@@ -73,8 +73,7 @@ class Logger:
         # Reflection.
         TYPE_CHECKING_RELOAD = "type-checking-reload"
         # Documented items.
-        TRACK_MODULE_ITEMS = "track-module-items"
-        WARN_UNDOC_ITEMS = "warn-undoc-items"
+        TRACK_DOCUMENTED_ITEMS = "track-documented-items"
         # References.
         SIMPLIFY_REFERENCES = "simplify-references"
 

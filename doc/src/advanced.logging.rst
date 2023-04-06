@@ -61,7 +61,7 @@ Main logger
 The `scenario` framework defines a main logger.
 It uses a regular ``logging.Logger`` instance with ``'scenario'`` for name [#logging-instance-attribute]_.
 
-It is accessible through the :py:attr:`scenario.logging` variable.
+It is accessible through the :py:data:`scenario.logging` variable.
 
 Debugging is enabled by default with this main logger.
 

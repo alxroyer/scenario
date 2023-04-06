@@ -468,9 +468,5 @@ class ScenarioStack(Logger):
         raise ScenarioStack.ContextError()
 
 
-__doc__ += """
-.. py:attribute:: SCENARIO_STACK
-
-    Main instance of :class:`ScenarioStack`.
-"""
+#: Main instance of :class:`ScenarioStack`.
 SCENARIO_STACK = ScenarioStack()  # type: ScenarioStack

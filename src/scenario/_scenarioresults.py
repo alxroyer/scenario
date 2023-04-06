@@ -200,9 +200,5 @@ class ScenarioResults(Logger):
             error.logerror(logger=MAIN_LOGGER, level=log_level, indent="  ")
 
 
-__doc__ += """
-.. py:attribute:: SCENARIO_RESULTS
-
-    Main instance of :class:`ScenarioResults`.
-"""
+#: Main instance of :class:`ScenarioResults`.
 SCENARIO_RESULTS = ScenarioResults()  # type: ScenarioResults

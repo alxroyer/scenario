@@ -490,9 +490,5 @@ class ScenarioReport(Logger):
         return _action_result_definition
 
 
-__doc__ += """
-.. py:attribute:: SCENARIO_REPORT
-
-    Main instance of :class:`ScenarioReport`.
-"""
+#: Main instance of :class:`ScenarioReport`.
 SCENARIO_REPORT = ScenarioReport()  # type: ScenarioReport

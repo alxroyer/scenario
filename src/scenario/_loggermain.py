@@ -16,7 +16,7 @@
 
 """
 :class:`MainLogger` class definition
-with :attr:`MAIN_LOGGER` singleton.
+with :data:`MAIN_LOGGER` singleton.
 """
 
 import logging
@@ -85,9 +85,5 @@ class MainLogger(Logger):
         )
 
 
-__doc__ += """
-.. py:attribute:: MAIN_LOGGER
-
-    Main logger instance.
-"""
+#: Main logger instance.
 MAIN_LOGGER = MainLogger()  # type: MainLogger

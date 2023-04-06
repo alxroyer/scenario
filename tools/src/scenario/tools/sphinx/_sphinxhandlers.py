@@ -304,7 +304,7 @@ class SphinxHandlers:
                 ("DemoArgs", "class"),
                 ("scenario.test", "mod"),
                 ("scenario.tools", "mod"),
-                ("scenario.tools.data.scenarios", "attr"),
+                ("scenario.tools.data.scenarios", "data"),
             ):
                 # Simple debug line.
                 _logger.debug(f"{node.source}:{node.line}: {_ref_type} reference missing {_ref_target}")

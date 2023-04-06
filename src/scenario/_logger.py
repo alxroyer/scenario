@@ -28,14 +28,10 @@ if typing.TYPE_CHECKING:
     from ._logextradata import LogExtraData as _LogExtraDataType
 
 
-__doc__ += """
-.. py:attribute:: _main_loggers
-
-    Number of main loggers already created.
-
-    Constitutes a guard against the creation of several main loggers,
-    i.e. loggers without a *log class*.
-"""
+#: Number of main loggers already created.
+#:
+#: Constitutes a guard against the creation of several main loggers,
+#: i.e. loggers without a *log class*.
 _main_loggers = 0  # type: int
 
 
@@ -134,7 +130,7 @@ class Logger:
         from ._args import Args
         from ._scenarioconfig import SCENARIO_CONFIG
 
-        # Try to update :attr:`self._debug_enabled` if not already set.
+        # Try to update `self._debug_enabled` if not already set.
         if (self._debug_enabled is None) and Args.getinstance().parsed:
             self._debug_enabled = (self.log_class in SCENARIO_CONFIG.debugclasses())
 

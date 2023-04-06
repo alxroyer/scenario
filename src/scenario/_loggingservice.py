@@ -60,9 +60,5 @@ class LoggingService:
             LogHandler.file_handler = None
 
 
-__doc__ += """
-.. py:attribute:: LOGGING_SERVICE
-
-    Main instance of :class:`LoggingService`.
-"""
+#: Main instance of :class:`LoggingService`.
 LOGGING_SERVICE = LoggingService()  # type: LoggingService

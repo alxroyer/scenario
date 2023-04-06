@@ -66,11 +66,7 @@ if typing.TYPE_CHECKING:
     StepExecutionSpecificationType = typing.Union[StepSpecificationType, StepExecutionType]
 
 
-__doc__ += """
-.. py:attribute:: unittest
-
-    ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.
-"""
+#: ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.
 unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 
 

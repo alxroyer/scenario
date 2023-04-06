@@ -18,7 +18,7 @@
 Scenario stack
 ==============
 
-.. todo:: Documentation needed for :py:attr:`scenario.stack`.
+.. todo:: Documentation needed for :py:data:`scenario.stack`.
 
     - Current test case, step... being built / executed.
     - Inspection facility.

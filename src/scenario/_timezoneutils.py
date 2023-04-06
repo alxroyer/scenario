@@ -24,16 +24,12 @@ import sys
 import typing
 
 
-__doc__ += """
-.. py:attribute:: UTC
-
-    UTC timezone constant.
-"""
 # Inspired from https://stackoverflow.com/questions/2720319/python-figure-out-local-timezone#39079819
-if sys.version_info >= (3, 6):
-    UTC = datetime.timezone.utc  # type: datetime.tzinfo
-else:
-    UTC = datetime.timezone(datetime.timedelta(0))
+#: UTC timezone constant.
+UTC = (
+    datetime.timezone.utc if sys.version_info >= (3, 6)
+    else datetime.timezone(datetime.timedelta(0))
+)  # type: datetime.tzinfo
 
 
 def local(

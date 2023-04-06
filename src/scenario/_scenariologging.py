@@ -291,9 +291,5 @@ class ScenarioLogging:
         MAIN_LOGGER.rawoutput("")
 
 
-__doc__ += """
-.. py:attribute:: SCENARIO_LOGGING
-
-    Main instance of :class:`ScenarioLogging`.
-"""
+#: Main instance of :class:`ScenarioLogging`.
 SCENARIO_LOGGING = ScenarioLogging()  # type: ScenarioLogging

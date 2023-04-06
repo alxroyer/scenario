@@ -32,11 +32,7 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType
 
 
-__doc__ += """
-.. py:attribute:: REFLECTION_LOGGER
-
-    Logger instance for reflective programming.
-"""
+#: Logger instance for reflective programming.
 REFLECTION_LOGGER = Logger(log_class=DebugClass.REFLECTION)
 
 
