@@ -99,13 +99,14 @@ class SphinxHandlers:
         savesphinxverbosity(app.verbosity)
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_CONFIG_INITED)  # type: Logger
-        _logger.debug("configinited()")
+        _logger.debug("SphinxHandlers.configinited()")
 
-        _logger.debug("app.verbosity=%r", app.verbosity)
-        _logger.debug("app.confdir=%r", app.confdir)
-        _logger.debug("app.doctreedir=%r", app.doctreedir)
-        _logger.debug("app.outdir=%r", app.outdir)
-        _logger.debug("app.srcdir=%r", app.srcdir)
+        _logger.debug("app:")
+        for _var_name in vars(app):  # type: str
+            _logger.debug("  %s = %r", _var_name, getattr(app, _var_name))
+        _logger.debug("app.config:")
+        for _var_name in vars(app.config):  # Type already declared above.
+            _logger.debug("  %s = %r", _var_name, getattr(app.config, _var_name))
 
         # Fix 'doc/src/' path if needed.
         # Particularly useful when buiding on 'readthedocs.io'.
@@ -132,7 +133,7 @@ class SphinxHandlers:
         from ._logging import Logger
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_BUILDER_INITED)  # type: Logger
-        _logger.debug("SphinxHendlers.builderinited()")
+        _logger.debug("SphinxHandlers.builderinited()")
 
     def envbeforereaddocs(
             self,
@@ -152,13 +153,19 @@ class SphinxHandlers:
             You can also remove document names; do this with caution since it will make Sphinx treat changed files as unchanged.
         """
         from ._logging import Logger
-        from ._reflection import reloadscenariowithtypechecking
+        from ._typehints import configuretypealiases
 
         _logger = Logger(Logger.Id.SPHINX_ENV_BEFORE_READ_DOCS)  # type: Logger
-        _logger.debug("envbeforereaddocs(env=%r, docnames=%r)", env, docnames)
+        _logger.debug("SphinxHandlers.envbeforereaddocs(env=%r, docnames=%r)", env, docnames)
 
-        _logger.debug("Reloading `scenario` modules with `typing.TYPE_CHECKING` enabled")
-        reloadscenariowithtypechecking()
+        # Configure type aliases before reading the docs.
+        #
+        # Type aliases configuration must be done before *autodoc* processing needs it.
+        # Too late if done through any of the following handlers: `source-read`, `doctree-read`, or any of the *autodoc* handlers.
+        # We can't trap an event for every module with them, before each is *autodoc*-processed one after the other.
+        # By the way, we can't guarantee the modules are processed respecting typing inter-dependency order.
+        _logger.debug("Configuring type aliases")
+        configuretypealiases(app, env)
 
     def sourceread(
             self,
@@ -182,7 +189,7 @@ class SphinxHandlers:
         from ._logging import Logger
 
         _logger = Logger(Logger.Id.SPHINX_SOURCE_READ)  # type: Logger
-        _logger.debug("sourceread(docname=%r, source=%r)", docname, source)
+        _logger.debug("SphinxHandlers.sourceread(docname=%r, source=%r)", docname, source)
 
     def doctreeread(
             self,
@@ -201,7 +208,7 @@ class SphinxHandlers:
         from ._logging import Logger
 
         _logger = Logger(Logger.Id.SPHINX_DOCTREE_READ)  # type: Logger
-        _logger.debug("doctreeread(doctree=%r)", doctree)
+        _logger.debug("SphinxHandlers.doctreeread(doctree=%r)", doctree)
 
     def envupdated(
             self,
@@ -223,7 +230,7 @@ class SphinxHandlers:
         from ._logging import Logger
 
         _logger = Logger(Logger.Id.SPHINX_ENV_UPDATED)  # type: Logger
-        _logger.debug("envupdated(env=%r)", env)
+        _logger.debug("SphinxHandlers.envupdated(env=%r)", env)
 
         warnundocitems()
 
@@ -261,7 +268,7 @@ class SphinxHandlers:
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_MISSING_REFERENCE)  # type: Logger
         # Memo: '%s' gives better info for nodes.
-        _logger.debug("missingreference(env=%r, node=%s, contnode=%s)", env, node, contnode)
+        _logger.debug("SphinxHandlers.missingreference(env=%r, node=%s, contnode=%s)", env, node, contnode)
 
         if (
             isinstance(node, docutils.nodes.Element)
@@ -335,7 +342,7 @@ class SphinxHandlers:
         from ._references import simplifyreferences
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_DOCTREE_RESOLVED)  # type: Logger
-        _logger.debug("SphincHandlers.doctreeresolved(doctree=%r, docname=%r)", doctree, docname)
+        _logger.debug("SphinxHandlers.doctreeresolved(doctree=%r, docname=%r)", doctree, docname)
 
         simplifyreferences(docname, doctree)
 

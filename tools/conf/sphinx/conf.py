@@ -197,3 +197,12 @@ autodoc_warningiserror = True
 #                    If set to True the docstring for classes or methods, if not explicitly set, is inherited from parents."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_inherit_docstrings
 autodoc_inherit_docstrings = True
+
+# [SPHINX_AUTODOC]: "A dictionary for users defined type aliases that maps a type name to the full-qualified object name.
+#                    It is used to keep type aliases not evaluated in the document. Defaults to empty ({})."
+# See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_type_aliases
+#
+# Memo: fed by `scenario.tools.sphinx`.
+# autodoc_type_aliases = {
+#     ...
+# }  # type: typing.Dict[str, str]

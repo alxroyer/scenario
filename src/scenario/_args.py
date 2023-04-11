@@ -411,4 +411,7 @@ class ArgInfo:
 
 
 if typing.TYPE_CHECKING:
+    #: Variable `Args` type.
+    #:
+    #: Makes it possible to define class methods that return an instance of subclasses.
     VarArgsType = typing.TypeVar("VarArgsType", bound=Args)

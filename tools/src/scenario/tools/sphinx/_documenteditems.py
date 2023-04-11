@@ -39,7 +39,10 @@ def trackmoduleitems(
     _logger = Logger.getinstance(Logger.Id.TRACK_DOCUMENTED_ITEMS)  # type: Logger
     _logger.debug("trackmoduleitems(module=%r)", module)
 
-    assert inspect.ismodule(module), f"Not a module {module!r}"
+    # Use `sphinx.pycode.Parser.annotations` to find out typed items in the module.
+    # Don't use `vars()`, otherwise all neighbour modules that import an original item will be tracked as well.
+    # Such imported items are not the ones we are interested in here.
+    # Note: It means that untyped items won't be tracked by the way. So much the worse!
     _parser = sphinx.pycode.Parser(inspect.getsource(module))  # type: sphinx.pycode.Parser
     _parser.parse()
     for _class_name, _obj_name in _parser.annotations:  # type: str, str

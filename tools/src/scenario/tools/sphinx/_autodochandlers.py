@@ -35,8 +35,6 @@ class AutodocHandlers:
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
         app.connect("autodoc-skip-member", self.skipmember)
-        # Hack *autodoc* so that it does not display attribute values (see [sphinx#904](https://github.com/sphinx-doc/sphinx/issues/904)).
-        sphinx.ext.autodoc.object_description = self.objectdescription
         app.connect("autodoc-process-signature", self.processsignature)
         app.connect("autodoc-process-docstring", self.processdocstring)
 
@@ -106,8 +104,11 @@ class AutodocHandlers:
         from ._reflection import isspecialfunction, fqname
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_SKIP_MEMBER)  # type: Logger
-        _logger.debug("skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",
+        _logger.debug("AutodocHandlers.skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",
                       owner_type, nfq_name, obj, would_skip, options)
+        _logger.debug(f"app.env.ref_context = {app.env.ref_context!r}")
+        _logger.debug(f"app.env.ref_context.get('py:module') = {app.env.ref_context.get('py:module')!r}")
+        _logger.debug(f"app.env.ref_context.get('py:class') = {app.env.ref_context.get('py:class')!r}")
 
         # When overriding `enum.Enum`, an undocumented function warning is displayed for '_generate_next_value_'.
         if obj == enum.Enum._generate_next_value_:  # noqa  ## Access to protected member
@@ -203,7 +204,7 @@ class AutodocHandlers:
         from ._logging import Logger
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_SIGNATURE)  # type: Logger
-        _logger.debug("processsignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
+        _logger.debug("AutodocHandlers.processsignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
                       what, fq_name, obj, options, signature, return_annotation)
 
         # Useful local functions.
@@ -259,32 +260,6 @@ class AutodocHandlers:
             return signature, return_annotation
 
         return None
-
-    def objectdescription(
-            self,
-            object,  # type: typing.Any  # noqa  ## Shadows built-in name 'object'
-    ):  # type: (...) -> str
-        """
-        Replacement hack for ``sphinx.ext.autodoc.object_description()``.
-
-        :param object: Caution! may be ``None``.
-        :raise ValueError:
-            When ``object`` is ``None``,
-            so that *autodoc* does not print out erroneous attribute values,
-            especially for instance attribute.
-
-        .. note::
-            The signature follows strictly the one of ``sphinx.util.inspect.object_description()``
-            in order to avoid typing errors when setting this method as a replacement for ``sphinx.ext.autodoc.object_description()``.
-
-        .. warning::
-            Unfortunately, it seems we have no way to differenciate class and instance attributes when the value is ``None``
-            (see `sphinx#904 <https://github.com/sphinx-doc/sphinx/issues/904>`_).
-        """
-        if object is None:
-            raise ValueError("No value for data/attributes")
-        from sphinx.util.inspect import object_description
-        return object_description(object)
 
     def processdocstring(
             self,
@@ -342,7 +317,7 @@ class AutodocHandlers:
         from ._reflection import isspecialfunction
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_DOCSTRING)  # type: Logger
-        _logger.debug("processdocstring(what=%r, fq_name=%r, obj=%r, options=%r, lines=%r)",
+        _logger.debug("AutodocHandlers.processdocstring(what=%r, fq_name=%r, obj=%r, options=%r, lines=%r)",
                       what, fq_name, obj, options, lines)
 
         # Check whether the item is documented.

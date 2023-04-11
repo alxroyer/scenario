@@ -24,14 +24,14 @@ import typing
 import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
-    from ._debugutils import DelayedStr as DelayedStrType
+    from ._debugutils import DelayedStr as _DelayedStrType
     from ._stepdefinition import StepSpecificationType
-    from ._stepexecution import StepExecution as StepExecutionType
+    from ._stepexecution import StepExecution as _StepExecutionType
 
 
 if typing.TYPE_CHECKING:
     #: Optional error parameter type.
-    ErrParamType = typing.Optional[typing.Union[str, DelayedStrType]]
+    ErrParamType = typing.Optional[typing.Union[str, _DelayedStrType]]
 
     #: Evidence parameter type.
     EvidenceParamType = typing.Optional[typing.Union[bool, str]]
@@ -52,18 +52,20 @@ if typing.TYPE_CHECKING:
     #: Step execution specification.
     #:
     #: Either:
+    #:
     #: - a string representation (see :obj:`._stepdefinition.StepSpecificationType`),
     #: - a step definition class (see :obj:`._stepdefinition.StepSpecificationType` as well),
     #: - or the step execution instance directly.
     #:
     #: When the specification is a string or a step class, the step execution is determined the following way:
+    #:
     #: 1. Use the current scenario.
     #: 2. Find the step definition corresponding to the specification.
-    #: 3: Retrieve its last execution.
+    #: 3. Retrieve its last execution.
     #:
     #: If a string or step class only is not enough to find out the expected step execution,
     #: the step execution instance may be passed on directly.
-    StepExecutionSpecificationType = typing.Union[StepSpecificationType, StepExecutionType]
+    StepExecutionSpecificationType = typing.Union[StepSpecificationType, _StepExecutionType]
 
 
 #: ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.
@@ -94,7 +96,7 @@ def safecontainer(
 
 def errmsg(
         optional,  # type: ErrParamType
-        standard,  # type: typing.Union[str, DelayedStrType]
+        standard,  # type: typing.Union[str, _DelayedStrType]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -123,7 +125,7 @@ def errmsg(
 
 def ctxmsg(
         context,  # type: str
-        err,  # type: typing.Union[str, DelayedStrType]
+        err,  # type: typing.Union[str, _DelayedStrType]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -162,7 +164,7 @@ def isnonemsg(
 
 def evidence(
         evidence_enabled,  # type: EvidenceParamType
-        regular,  # type: typing.Union[str, DelayedStrType]
+        regular,  # type: typing.Union[str, _DelayedStrType]
         *args,  # type: typing.Any
 ):  # type: (...) -> None
     """
@@ -194,7 +196,7 @@ def evidence(
 
 def getstepexecution(
         step_execution_specification,  # type: StepExecutionSpecificationType
-):  # type: (...) -> StepExecutionType
+):  # type: (...) -> _StepExecutionType
     """
     Retrieves the (last) :class:`._stepexecution.StepExecution` instance corresponding to the given specification.
 

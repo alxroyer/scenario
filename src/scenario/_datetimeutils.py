@@ -50,7 +50,7 @@ def toiso8601(
     :raise ValueError: When the operation could not be completed.
     """
     from ._scenarioconfig import SCENARIO_CONFIG
-    from ._timezoneutils import fromstr as tzfromstr
+    from ._timezoneutils import fromstr as _tzfromstr
 
     # Create a `datetime.datetime` instance from the timestamp.
     _dt = datetime.datetime.fromtimestamp(timestamp)  # type: datetime.datetime
@@ -62,7 +62,7 @@ def toiso8601(
     if isinstance(timezone, datetime.tzinfo):
         _tz = timezone
     elif isinstance(timezone, str):
-        _tz = tzfromstr(timezone)
+        _tz = _tzfromstr(timezone)
     if _tz is None:
         # Local timezone.
         _dt = _dt.astimezone()

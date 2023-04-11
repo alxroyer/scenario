@@ -16,7 +16,7 @@
 scenario:
   debug_classes:
     # Sphinx handlers.
-    # - "scenario.tools.sphinx:sphinx:conf-inited"
+    # - "scenario.tools.sphinx:sphinx:config-inited"
     # - "scenario.tools.sphinx:sphinx:builder-inited"
     # - "scenario.tools.sphinx:sphinx:env-before-read-docs"
     # - "scenario.tools.sphinx:sphinx:source-read"
@@ -29,8 +29,14 @@ scenario:
     # - "scenario.tools.sphinx:autodoc:skip-member"
     # - "scenario.tools.sphinx:autodoc:process-signature"
     # - "scenario.tools.sphinx:autodoc:process-docstring"
-    # Reflection.
+    # Sphinx hacking.
+    # - "scenario.tools.sphinx:parse-reftarget-hack"
+    # - "scenario.tools.sphinx:object-description-hack"
+
+    # Type hints.
     # - "scenario.tools.sphinx:type-checking-reload"
+    # - "scenario.tools.sphinx:track-scenario-types"
+    # - "scenario.tools.sphinx:configure-type-aliases"
     # Documented items.
     # - "scenario.tools.sphinx:track-documented-items"
     # References.

@@ -70,8 +70,14 @@ class Logger:
         AUTODOC_SKIP_MEMBER = "autodoc:skip-member"
         AUTODOC_PROCESS_SIGNATURE = "autodoc:process-signature"
         AUTODOC_PROCESS_DOCSTRING = "autodoc:process-docstring"
-        # Reflection.
+        # Sphinx hacking.
+        PARSE_REFTARGET_HACK = "parse-reftarget-hack"
+        OBJECT_DESCRIPTION_HACK = "object-description-hack"
+
+        # Type hints.
         TYPE_CHECKING_RELOAD = "type-checking-reload"
+        TRACK_SCENARIO_TYPES = "track-scenario-types"
+        CONFIGURE_TYPE_ALIASES = "configure-type-aliases"
         # Documented items.
         TRACK_DOCUMENTED_ITEMS = "track-documented-items"
         # References.

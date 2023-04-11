@@ -27,9 +27,12 @@ def setup(
     """
     from ._autodochandlers import AutodocHandlers
     from ._logging import loggingsetup
+    from ._sphinxhacking import SphinxHacking
     from ._sphinxhandlers import SphinxHandlers
 
     loggingsetup()
+    _sphinx_hacking = SphinxHacking()  # type: SphinxHacking
+    _sphinx_hacking.setup(app)
     _sphinx_handlers = SphinxHandlers()  # type: SphinxHandlers
     _sphinx_handlers.setup(app)
     _autodoc_handlers = AutodocHandlers()  # type: AutodocHandlers
