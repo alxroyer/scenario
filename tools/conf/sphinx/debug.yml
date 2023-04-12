@@ -33,6 +33,8 @@ scenario:
     # - "scenario.tools.sphinx:parse-reftarget-hack"
     # - "scenario.tools.sphinx:object-description-hack"
 
+    # sphinx-apidoc execution.
+    # - "scenario.tools.sphinx:apidoc"
     # Type hints.
     # - "scenario.tools.sphinx:type-checking-reload"
     # - "scenario.tools.sphinx:track-scenario-types"

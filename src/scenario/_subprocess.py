@@ -423,6 +423,7 @@ class SubProcess:
         if self._stderr_reader:
             self._stderr_reader.join()
 
+        self._log(logging.DEBUG, "%s returned %r", self.tolongstring(), self.returncode)
         if self.returncode != 0:
             self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, saferepr(self.stderr))
 

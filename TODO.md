@@ -19,7 +19,6 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Remove `scenario.logging` timestamps from `sphinxapidoc()` logs.
         - Avoid `Optional[ErrParamType]`,
           `Optional` is redundant with `ErrParamType` definition.
         - Avoid *suppress_prefix*:

@@ -40,7 +40,10 @@ def loggingsetup():  # type: (...) -> None
 
     # Load 'tools/conf/sphinx/debug.yml' debug configurations.
     scenario.Args.setinstance(scenario.Args(class_debugging=True))
-    scenario.Args.getinstance().parse(["--config-file", str(TOOLS_CONF_PATH / "sphinx" / "debug.yml")])
+    scenario.Args.getinstance().parse([
+        "--config-value", str(scenario.ConfigKey.LOG_DATETIME), "0",
+        "--config-file", str(TOOLS_CONF_PATH / "sphinx" / "debug.yml"),
+    ])
 
 
 def savesphinxverbosity(
@@ -74,6 +77,8 @@ class Logger:
         PARSE_REFTARGET_HACK = "parse-reftarget-hack"
         OBJECT_DESCRIPTION_HACK = "object-description-hack"
 
+        # sphinx-apidoc execution.
+        API_DOC = "apidoc"
         # Type hints.
         TYPE_CHECKING_RELOAD = "type-checking-reload"
         TRACK_SCENARIO_TYPES = "track-scenario-types"

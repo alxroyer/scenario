@@ -34,19 +34,25 @@ def sphinxapidoc():  # type: (...) -> None
     Sphinx-apidoc execution: build .rst source files from the python sources.
 
     See [SPHINX_APIDOC_HELP]: `sphinx-apidoc --help`
+
+    Executed in the context of the `sphinx-build` execution.
+    Use `scenario.tools.sphinx` logging.
     """
     from .._paths import DOC_SRC_PATH, MAIN_PATH, SRC_PATH
     from .._subprocess import SubProcess
+    from ._logging import Logger
+
+    _logger = Logger.getinstance(Logger.Id.API_DOC)  # type: Logger
 
     # First remove the previous 'doc/src/py/' directory with its .rst generated files.
     # Useful in case source modules have been renamed.
     _doc_src_py_path = DOC_SRC_PATH / "py"  # type: scenario.Path
     if _doc_src_py_path.is_dir():
-        scenario.logging.info(f"Removing {_doc_src_py_path}")
+        _logger.info(f"Removing {_doc_src_py_path}")
         shutil.rmtree(_doc_src_py_path)
 
     # Execute sphinx-apidoc.
-    scenario.logging.info("Executing sphinx-apidoc...")
+    _logger.info("Executing sphinx-apidoc...")
 
     _subprocess = SubProcess(*PY_SPHINX_APIDOC_CMD)  # type: SubProcess
     # [SPHINX_APIDOC_HELP]:
@@ -86,11 +92,14 @@ def sphinxapidoc():  # type: (...) -> None
     # ]))
 
     _subprocess.setcwd(MAIN_PATH)
+    _subprocess.setlogger(_logger.scenario_logger)
+    _subprocess.onstdoutline(lambda line: _logger.info(line.decode("utf-8")))
+    _subprocess.onstderrline(lambda line: _logger.error(line.decode("utf-8")))
     _subprocess.run()
 
     # Fix 'scenario.rst'.
     _scenario_rst_path = _doc_src_py_path / "scenario.rst"  # type: scenario.Path
-    scenario.logging.info(f"Fixing {_scenario_rst_path}")
+    _logger.info(f"Fixing {_scenario_rst_path}")
     _scenario_rst_lines = _scenario_rst_path.read_bytes().splitlines()  # type: typing.List[bytes]
     _line_index = 0  # type: int
     while _line_index < len(_scenario_rst_lines):
@@ -101,13 +110,13 @@ def sphinxapidoc():  # type: (...) -> None
             # otherwise Sphinx repeats documentation for each exported symbol at the end of the module.
             # This causes "more than one target found for cross-reference" errors,
             # and is moreover contradictory with the `--private` and `--separate` *apidoc* options used above.
-            scenario.logging.debug("Disabling autodoc `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
+            _logger.debug("Disabling autodoc `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
             _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*):(no-|)(.*members):(.*)$', rb'\1:no-\3:\4', _line)
         if b':maxdepth:' in _line:
             # Limit private module TOC depth to 1,
             # otherwise all symbols contained in each are displayed with this TOC,
             # which is heavy and useless.
-            scenario.logging.debug("Fixing submodule toc depth to 1")
+            _logger.debug("Fixing submodule toc depth to 1")
             _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*:maxdepth:) *(\d+)$', rb'\1 1', _line)
         _line_index += 1
     _scenario_rst_path.write_bytes(b'\n'.join(_scenario_rst_lines))
@@ -118,6 +127,9 @@ def sphinxbuild():  # type: (...) -> None
     Sphinx-build execution: build the sphinx documentation.
 
     See [SPHINX_BUILD_HELP]: `sphinx-build --help`
+
+    Executed in the context of the main 'mkdoc.py' execution.
+    Use `scenario.logging` directly.
     """
     from .._paths import DOC_OUT_PATH, DOC_SRC_PATH, MAIN_PATH, TOOLS_CONF_PATH
     from .._subprocess import SubProcess
