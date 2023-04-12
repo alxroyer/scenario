@@ -191,6 +191,9 @@ class SphinxHandlers:
         _logger = Logger(Logger.Id.SPHINX_SOURCE_READ)  # type: Logger
         _logger.debug("SphinxHandlers.sourceread(docname=%r, source=%r)", docname, source)
 
+        # The following ensures a progression line is displayed for each source read, in the 'mkdoc.py' output.
+        _logger.info("")
+
     def doctreeread(
             self,
             app,  # type: sphinx.application.Sphinx
