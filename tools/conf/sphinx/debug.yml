@@ -39,6 +39,7 @@ scenario:
     # - "scenario.tools.sphinx:type-checking-reload"
     # - "scenario.tools.sphinx:track-scenario-types"
     # - "scenario.tools.sphinx:configure-type-aliases"
+    # - "scenario.tools.sphinx:check-redundant-optional-type"
     # Documented items.
     # - "scenario.tools.sphinx:track-documented-items"
     # References.

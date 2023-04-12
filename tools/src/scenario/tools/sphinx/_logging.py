@@ -83,6 +83,7 @@ class Logger:
         TYPE_CHECKING_RELOAD = "type-checking-reload"
         TRACK_SCENARIO_TYPES = "track-scenario-types"
         CONFIGURE_TYPE_ALIASES = "configure-type-aliases"
+        CHECK_REDUNDANT_OPTIONAL_TYPE = "check-redundant-optional-type"
         # Documented items.
         TRACK_DOCUMENTED_ITEMS = "track-documented-items"
         # References.

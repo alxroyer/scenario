@@ -202,6 +202,7 @@ class AutodocHandlers:
                 to change what Sphinx puts into the output.
         """
         from ._logging import Logger
+        from ._typehints import checkredundantoptionaltype
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_SIGNATURE)  # type: Logger
         _logger.debug("AutodocHandlers.processsignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
@@ -226,7 +227,7 @@ class AutodocHandlers:
             assert signature.startswith("(") and signature.endswith(")")
             _args = signature[1:-1].split(", ")  # type: typing.List[str]
 
-            # Restore commas which were not to seperate arguments.
+            # Restore commas which were not to separate arguments.
             _index = 0  # type: int
             while _index < len(_args):
                 # Check whether the argument line actually starts with a typed argument name.
@@ -254,12 +255,17 @@ class AutodocHandlers:
                     _args[_index] = _match.group(1).rstrip() + _match.group(3)
                     _logger.debug("     %r", _args[_index])
 
-            # Rebuild and return the signature.
+            # Rebuild the signature.
             signature = f"({', '.join(_args)})"
-            _logger.debug("Final signature: %r", signature)
-            return signature, return_annotation
 
-        return None
+        # Fix redundant optional types.
+        if signature:
+            signature = checkredundantoptionaltype(signature)
+        if return_annotation:
+            return_annotation = checkredundantoptionaltype(return_annotation)
+
+        _logger.debug("Final signature: %r -> %r", signature, return_annotation)
+        return signature, return_annotation
 
     def processdocstring(
             self,

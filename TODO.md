@@ -19,8 +19,6 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Avoid `Optional[ErrParamType]`,
-          `Optional` is redundant with `ErrParamType` definition.
         - Avoid *suppress_prefix*:
             - Apparently nothing to do with the `suppress_prefix` parameter, wich is set statically.
             - Rather due to the `~` starting character.

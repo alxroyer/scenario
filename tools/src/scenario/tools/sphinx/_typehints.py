@@ -256,3 +256,37 @@ def configuretypealiases(
         else:
             env.config.autodoc_type_aliases[_short_name] = f"~{_fq_name}"
             _logger.info("Aliasing %r with %r", _short_name, env.config.autodoc_type_aliases[_short_name])
+
+
+def checkredundantoptionaltype(
+        annotation,  # type: str
+):  # type: (...) -> str
+    from ._logging import Logger
+
+    _logger = Logger.getinstance(Logger.Id.CHECK_REDUNDANT_OPTIONAL_TYPE)  # type: Logger
+    _logger.debug("checkredundantoptionaltype(annotation=%r)", annotation)
+
+    for _fq_name in SCENARIO_TYPES:  # type: str
+        _type = SCENARIO_TYPES[_fq_name]  # type: typing.Any
+
+        # Process only if a potential redundant optional typehint exists.
+        _redundant_annotation = f"~typing.Optional[~{_fq_name}]"
+        _simple_annotation = f"~{_fq_name}"
+        if _redundant_annotation in annotation:
+            # Find out whether the type already describes something optional.
+            _repr = repr(_type)  # type: str
+            _logger.debug("repr(%s) = %r", _fq_name, _repr)
+            _is_optional_type = (
+                _repr.startswith("typing.Optional[")
+                or (_repr.startswith("typing.Union[") and _repr.endswith(", NoneType]"))
+            )  # type: bool
+
+            # If so, `typing.Optional[]` onto it is redundant.
+            if _is_optional_type:
+                _logger.debug("Simplifying %r into %r", _redundant_annotation, _simple_annotation)
+                annotation = annotation.replace(_redundant_annotation, _simple_annotation)
+                _logger.debug("New annotation: %r", annotation)
+            else:
+                _logger.debug("(%s not an optional type)", _fq_name)
+
+    return annotation
