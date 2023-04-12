@@ -95,6 +95,7 @@ class SphinxHandlers:
         from .._paths import DOC_SRC_PATH
         from ._commands import sphinxapidoc
         from ._logging import Logger, savesphinxverbosity
+        from ._platform import Platform
 
         savesphinxverbosity(app.verbosity)
 
@@ -104,15 +105,24 @@ class SphinxHandlers:
         _logger.debug("app:")
         for _var_name in vars(app):  # type: str
             _logger.debug("  %s = %r", _var_name, getattr(app, _var_name))
-        _logger.debug("app.config:")
-        for _var_name in vars(app.config):  # Type already declared above.
-            _logger.debug("  %s = %r", _var_name, getattr(app.config, _var_name))
+        assert config is app.config
+        _logger.debug("config:")
+        for _var_name in vars(config):  # Type already declared above.
+            _logger.debug("  %s = %r", _var_name, getattr(config, _var_name))
+
+        # Find out from loaded extensions whether we are running on the readthedocs platform.
+        for _extension_name in app.extensions:
+            if "readthedocs" in _extension_name:
+                Platform.savereadthedocs()
 
         # Fix 'doc/src/' path if needed.
-        # Particularly useful when buiding on 'readthedocs.io'.
+        # Particularly useful when building on the readthedocs platform.
         if pathlib.Path(app.srcdir) != DOC_SRC_PATH:
             _logger.info(f"Fixing source directory from {app.srcdir!r} to {DOC_SRC_PATH.abspath!r}")
             app.srcdir = DOC_SRC_PATH.abspath
+
+            # Another chance to identify when we are running on the readthedocs platform.
+            Platform.savereadthedocs()
 
         # Update 'doc/src/py/' files.
         sphinxapidoc()
@@ -187,12 +197,15 @@ class SphinxHandlers:
             you can use a regular expression to replace ``$...$`` by ``:math:`...```.
         """
         from ._logging import Logger
+        from ._platform import Platform
 
         _logger = Logger(Logger.Id.SPHINX_SOURCE_READ)  # type: Logger
         _logger.debug("SphinxHandlers.sourceread(docname=%r, source=%r)", docname, source)
 
-        # The following ensures a progression line is displayed for each source read, in the 'mkdoc.py' output.
-        _logger.info("")
+        if not Platform.isreadthedocs():
+            # The following ensures a progression line is displayed for each source read, in the 'mkdoc.py' output.
+            # Useless on readthedocs.
+            _logger.info("")
 
     def doctreeread(
             self,
@@ -342,12 +355,18 @@ class SphinxHandlers:
             so that they don’t cause errors when the writers encounter them.
         """
         from ._logging import Logger
+        from ._platform import Platform
         from ._references import simplifyreferences
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_DOCTREE_RESOLVED)  # type: Logger
         _logger.debug("SphinxHandlers.doctreeresolved(doctree=%r, docname=%r)", doctree, docname)
 
         simplifyreferences(docname, doctree)
+
+        if not Platform.isreadthedocs():
+            # The following ensures a progression line is displayed for each page written, in the 'mkdoc.py' output.
+            # Useless on readthedocs.
+            _logger.info("")
 
     def buildfinished(
             self,
