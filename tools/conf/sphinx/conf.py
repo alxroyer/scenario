@@ -193,6 +193,18 @@ autodoc_default_options = {
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_docstring_signature
 autodoc_docstring_signature = False  # type: bool
 
+# [SPHINX_AUTODOC]: "This value controls how to represent typehints. The setting takes the following values:
+#                    - 'signature' - Show typehints in the signature (default)
+#                    - 'description' - Show typehints as content of the function or method.
+#                      The typehints of overloaded functions or methods will still be represented in the signature.
+#                    - 'none' - Do not show typehints
+#                    - 'both' - Show typehints in the signature and as content of the function or method
+#
+#                    Overloaded functions or methods will not have typehints included in the description
+#                    because it is impossible to accurately represent all possible overloads as a list of parameters."
+# See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_typehints
+autodoc_typehints = "signature"
+
 # [SPHINX_AUTODOC]: "A dictionary for users defined type aliases that maps a type name to the full-qualified object name.
 #                    It is used to keep type aliases not evaluated in the document. Defaults to empty ({})."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_type_aliases
