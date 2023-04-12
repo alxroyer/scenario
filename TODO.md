@@ -19,18 +19,7 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Avoid *suppress_prefix*:
-            - Apparently nothing to do with the `suppress_prefix` parameter, wich is set statically.
-            - Rather due to the `~` starting character.
-            - 'sphinx/util/typing.py':
-              ```python
-              if mode == 'smart':
-                  modprefix = '~'
-              ```
-              in `def restify()` (line 120).
-            - https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_typehints_format
-            - But possibly better to rely on our `missing-reference` handler
-              to restore the fully qualified name for well known system names.
+        - Enable types on readthedocs.
         - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
       Check whether an exception is caught and re-thrown, not just `pass`.

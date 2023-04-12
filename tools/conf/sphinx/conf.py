@@ -25,7 +25,9 @@
 # =======
 
 import pathlib
+import sphinx.application
 import sys
+import typing
 
 # Path management.
 MAIN_PATH = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
@@ -38,20 +40,20 @@ sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
 # [SPHINX_CONF]: "The documented project's name."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-project
-project = "scenario"
+project = "scenario"  # type: str
 
 # [SPHINX_CONF]: "The author name(s) of the document."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-author
-author = "Alexis Royer <alexis.royer@gmail.com>"
+author = "Alexis Royer <alexis.royer@gmail.com>"  # type: str
 
 # [SPHINX_CONF]: "A copyright statement in the style '2008, Author Name'."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-copyright
-copyright = "2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>"  # noqa  ## Shadows built-in name 'copyright'
+copyright = "2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>"  # type: str  # noqa  ## Shadows built-in name 'copyright'
 
 # [SPHINX_CONF]: "The major project version, used as the replacement for |version|.
 #                 For example, for the Python documentation, this may be something like 2.6."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-version
-version = "0.2.2"
+version = "0.2.2"  # type: str
 
 
 # General configuration
@@ -61,11 +63,13 @@ version = "0.2.2"
 # [SPHINX_CONF]: "A list of strings that are module names of extensions.
 #                 These can be extensions coming with Sphinx (named sphinx.ext.*) or custom ones."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-extensions
-extensions = []  # Will be extended later in this script.
+#
+# Will be extended later in this script.
+extensions = []  # type: typing.List[str]
 
 # [SPHINX_CONF]: "If true, the reST sources are included in the HTML build as ``_sources/name``. The default is ``True``."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_copy_source
-html_copy_source = False
+html_copy_source = False  # type: bool
 
 # [SPHINX_CONF]: "A list of glob-style patterns that should be excluded when looking for source files.
 #                 They are matched against the source file names relative to the source directory, using slashes as directory separators on all platforms."
@@ -74,12 +78,14 @@ exclude_patterns = [
     # The `modules.rst` output file is of little value.
     # The `scenario.rst` file is referenced directly.
     "py/modules.rst",
-]
+]  # type: typing.List[str]
 
 # [SPHINX_CONF]: "A boolean that decides whether module names are prepended to all object names (for object types where a “module” of some kind is defined),
 #                 e.g. for py:function directives. Default is True."
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-add_module_names
-add_module_names = False  # Inspired from https://stackoverflow.com/questions/20864406/remove-package-and-module-name-from-sphinx-function
+#
+# Inspired from https://stackoverflow.com/questions/20864406/remove-package-and-module-name-from-sphinx-function
+add_module_names = False  # type: bool
 
 
 # Options for internationalization
@@ -101,8 +107,8 @@ add_module_names = False  # Inspired from https://stackoverflow.com/questions/20
 # See https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-html_theme
 # See https://www.sphinx-doc.org/en/master/usage/theming.html#builtin-themes
 # Define no template. Let the default template take place on https://readthedocs.org/.
-# html_theme = "bizstyle"
-# html_theme = "pyramid"  # Warning: Does not display admonition titles.
+# html_theme = "bizstyle"  # type: str
+# html_theme = "pyramid"  # type: str  # Warning: Does not display admonition titles.
 
 # [SPHINX_CONF]: "A dictionary of options that influence the look and feel of the selected theme.
 #                 These are theme-specific."
@@ -110,7 +116,7 @@ add_module_names = False  # Inspired from https://stackoverflow.com/questions/20
 html_theme_options = {
     # Inspired from https://stackoverflow.com/questions/23211695/modifying-content-width-of-the-sphinx-theme-read-the-docs#54379799
     "body_max_width": "80%",
-}
+}  # type: typing.Dict[str, str]
 
 
 # TODOs
@@ -121,11 +127,11 @@ extensions.append("sphinx.ext.todo")
 
 # [SPHINX_TODO]: "If this is True, todo and todolist produce output, else they produce nothing."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/todo.html#confval-todo_include_todos
-todo_include_todos = True
+todo_include_todos = True  # type: bool
 
 # [SPHINX_TODO]: "If this is True, todo emits a warning for each TODO entries."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/todo.html#confval-todo_emit_warnings
-todo_emit_warnings = True
+todo_emit_warnings = True  # type: bool
 
 
 # Graphs
@@ -141,7 +147,7 @@ todo_emit_warnings = True
 
 # Make `scenario.tools.sphinx.setup()` be called automatically by Sphinx.
 import scenario.tools.sphinx  # noqa: E402  ## Module level import not at top of file
-setup = scenario.tools.sphinx.setup
+setup = scenario.tools.sphinx.setup  # type: typing.Callable[[sphinx.application.Sphinx], None]
 
 
 # Python documentation
@@ -160,13 +166,13 @@ sys.path.insert(0, str(MAIN_PATH / "src"))
 #                    "class" Only the class’ docstring is inserted. This is the default.
 #                    You can still document __init__ as a separate method using automethod or the members option to autoclass."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autoclass_content
-autoclass_content = "class"
+autoclass_content = "class"  # type: str
 
 # [SPHINX_AUTODOC]: "This value selects if automatically documented members are sorted alphabetical (value 'alphabetical'),
 #                    by member type (value 'groupwise') or by source order (value 'bysource').
 #                    The default is alphabetical."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_member_order
-autodoc_member_order = "bysource"
+autodoc_member_order = "bysource"  # type: str
 
 # [SPHINX_AUTODOC]: "The default options for autodoc directives.
 #                    They are applied to all autodoc directives automatically.
@@ -178,31 +184,36 @@ autodoc_member_order = "bysource"
 #
 # Probably useless when the `SPHINX_APIDOC_OPTIONS` environment variable is set when executing `sphinx-apidoc`,
 # in as much as this configuration describes *default behaviours* when nothing already specified.
-# autodoc_default_options = {
-#    ...
-# }  # type: typing.Dict[str, typing.Any]
+autodoc_default_options = {
+}  # type: typing.Dict[str, typing.Any]
 
 # [SPHINX_AUTODOC]: "If this boolean value is set to True (which is the default), autodoc will look at the first line of the docstring
 #                    for functions and methods, and if it looks like a signature, use the line as the signature
 #                    and remove it from the docstring content."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_docstring_signature
-autodoc_docstring_signature = False
-
-# [SPHINX_AUTODOC]: "This value controls the behavior of sphinx-build -W during importing modules.
-#                    If False is given, autodoc forcedly suppresses the error if the imported module emits warnings."
-# See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_warningiserror
-autodoc_warningiserror = True
-
-# [SPHINX_AUTODOC]: "This value controls the docstrings inheritance.
-#                    If set to True the docstring for classes or methods, if not explicitly set, is inherited from parents."
-# See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_inherit_docstrings
-autodoc_inherit_docstrings = True
+autodoc_docstring_signature = False  # type: bool
 
 # [SPHINX_AUTODOC]: "A dictionary for users defined type aliases that maps a type name to the full-qualified object name.
 #                    It is used to keep type aliases not evaluated in the document. Defaults to empty ({})."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_type_aliases
+autodoc_type_aliases = {
+    # Fed by `scenario.tools.sphinx`.
+}  # type: typing.Dict[str, str]
+
+# [SPHINX_AUTODOC]: "This value controls the format of typehints. The setting takes the following values:
+#                    - 'fully-qualified' - Show the module name and its name of typehints
+#                    - 'short' - Suppress the leading module names of the typehints (ex. `io.StringIO` -> `StringIO`) (default)
 #
-# Memo: fed by `scenario.tools.sphinx`.
-# autodoc_type_aliases = {
-#     ...
-# }  # type: typing.Dict[str, str]
+#                    Changed in version 5.0: The default setting was changed to 'short'"
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_typehints_format
+autodoc_typehints_format = "fully-qualified"  # type: str
+
+# [SPHINX_AUTODOC]: "This value controls the behavior of sphinx-build -W during importing modules.
+#                    If False is given, autodoc forcedly suppresses the error if the imported module emits warnings."
+# See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_warningiserror
+autodoc_warningiserror = True  # type: bool
+
+# [SPHINX_AUTODOC]: "This value controls the docstrings inheritance.
+#                    If set to True the docstring for classes or methods, if not explicitly set, is inherited from parents."
+# See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_inherit_docstrings
+autodoc_inherit_docstrings = True  # type: bool
