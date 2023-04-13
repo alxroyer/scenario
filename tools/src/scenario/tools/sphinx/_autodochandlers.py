@@ -205,8 +205,8 @@ class AutodocHandlers:
         from ._typehints import checkredundantoptionaltypes
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_SIGNATURE)  # type: Logger
-        _logger.debug("AutodocHandlers.processsignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
-                      what, fq_name, obj, options, signature, return_annotation)
+        _logger.debug("AutodocHandlers.processsignature(what=%r, fq_name=%r, obj=%r, signature=%r, return_annotation=%r, options=%r)",
+                      what, fq_name, obj, signature, return_annotation, options)
 
         # Useful local functions.
         def _errmsg(message):  # type: (str) -> str
@@ -323,8 +323,8 @@ class AutodocHandlers:
         from ._reflection import isspecialfunction
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_DOCSTRING)  # type: Logger
-        _logger.debug("AutodocHandlers.processdocstring(what=%r, fq_name=%r, obj=%r, options=%r, lines=%r)",
-                      what, fq_name, obj, options, lines)
+        _logger.debug("AutodocHandlers.processdocstring(what=%r, fq_name=%r, obj=%r, lines=%r, options=%r)",
+                      what, fq_name, obj, lines, options)
 
         # Check whether the item is documented.
         # Inspired from: https://stackoverflow.com/questions/14141170/how-can-i-just-list-undocumented-members-with-sphinx-autodoc
