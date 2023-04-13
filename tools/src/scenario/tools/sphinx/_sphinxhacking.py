@@ -14,14 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import docutils.nodes
+import docutils.parsers.rst.states
 import sphinx.application
 import sphinx.domains.python
 import sphinx.ext.autodoc
+import sphinx.util.typing
 import typing
 
 
 class SphinxHacking:
 
+    _make_xrefs_origin = sphinx.domains.python.PyXrefMixin.make_xrefs
     _parse_reftarget_origin = sphinx.domains.python.parse_reftarget
     _object_description_origin = sphinx.ext.autodoc.object_description
 
@@ -29,13 +33,66 @@ class SphinxHacking:
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
+        # Hack `sphinx.domains.python.PyXrefMixin.make_xrefs()` to fix redundant optional types.
+        # Use `setattr()` to avoid a "Cannot assign to a method [assignment]" typing error.
+        setattr(sphinx.domains.python.PyXrefMixin, "make_xrefs", SphinxHacking._makexrefs)
         # Hack `sphinx.domains.python.parse_reftarget()` to fix `scenario` type cross-references.
-        sphinx.domains.python.parse_reftarget = self._parsereftarget
+        sphinx.domains.python.parse_reftarget = SphinxHacking._parsereftarget
         # Hack `sphinx.ext.autodoc.object_description()` (see [sphinx#904](https://github.com/sphinx-doc/sphinx/issues/904)).
-        sphinx.ext.autodoc.object_description = self._objectdescription
+        sphinx.ext.autodoc.object_description = SphinxHacking._objectdescription
 
-    def _parsereftarget(
+    @staticmethod
+    def _makexrefs(
+            self,  # type: sphinx.domains.python.PyXrefMixin
+            rolename,  # type: str
+            domain,  # type: str
+            target,  # type: str
+            innernode=docutils.nodes.emphasis,  # type: typing.Type[sphinx.util.typing.TextlikeNode]
+            contnode=None,  # type: docutils.nodes.Node
+            env=None,  # type: sphinx.application.BuildEnvironment
+            inliner=None,  # type: docutils.parsers.rst.states.Inliner
+            location=None,  # type: docutils.nodes.Node
+    ):  # type: (...) -> typing.List[docutils.nodes.Node]
+        """
+        Replacement hack for ``sphinx.domains.python.PyXrefMixin.make_xrefs()``.
+
+        Fixes redundant optional types in parameter typehints,
+        when ``autodoc_typehints`` is set to ``description`` or ``both``.
+
+        Calls :func:`._typehints.checkredundantoptionaltypes()`
+        prior to calling the actual ``sphinx.domains.python.PyXrefMixin.make_xrefs()`` implementation.
+
+        .. note::
+            In order to serve this goal, we could have tried to hacking the call stack earlier in ``sphinx.util.docfields``.
+            But it seemed a bit more tricky in the end.
+            Hacking the single ``make_xrefs()`` implementation in ``sphinx.domains.python`` ensures the job will be done for the python domain.
+        """
+        from ._logging import Logger
+        from ._typehints import checkredundantoptionaltypes
+
+        _logger = Logger(Logger.Id.MAKE_XREFS_HACK)  # type: Logger
+        _logger.debug("SphinxHacking._makexrefs(self=%r, rolename=%r, domain=%r, target=%r, innernode=%r, contnode=%r, env=%r, inliner=%r, location=%r)",
+                      self, rolename, domain, target, innernode, contnode, env, inliner, location)
+
+        _short_target = checkredundantoptionaltypes(target)  # type: str
+        if _short_target != target:
+            _logger.debug("%r fixed into %r", target, _short_target)
+            target = _short_target
+
+        return SphinxHacking._make_xrefs_origin(
             self,
+            rolename=rolename,
+            domain=domain,
+            target=target,
+            innernode=innernode,
+            contnode=contnode,
+            env=env,
+            inliner=inliner,
+            location=location,
+        )
+
+    @staticmethod
+    def _parsereftarget(
             reftarget,  # type: str
             suppress_prefix=False,  # type: bool
     ):  # type: (...) -> typing.Tuple[str, str, str, bool]
@@ -67,8 +124,8 @@ class SphinxHacking:
 
         return _reftype, _reftarget, _title, _refspecific
 
+    @staticmethod
     def _objectdescription(
-            self,
             object,  # type: typing.Any  # noqa  ## Shadows built-in name 'object'
     ):  # type: (...) -> str
         """

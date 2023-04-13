@@ -203,7 +203,9 @@ autodoc_docstring_signature = False  # type: bool
 #                    Overloaded functions or methods will not have typehints included in the description
 #                    because it is impossible to accurately represent all possible overloads as a list of parameters."
 # See https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_typehints
-autodoc_typehints = "signature"
+#
+# Memo: The 'signature' configuration does not activate typehints on readthedocs...
+autodoc_typehints = "description"
 
 # [SPHINX_AUTODOC]: "A dictionary for users defined type aliases that maps a type name to the full-qualified object name.
 #                    It is used to keep type aliases not evaluated in the document. Defaults to empty ({})."

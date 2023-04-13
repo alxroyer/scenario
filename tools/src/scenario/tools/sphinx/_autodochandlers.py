@@ -202,7 +202,7 @@ class AutodocHandlers:
                 to change what Sphinx puts into the output.
         """
         from ._logging import Logger
-        from ._typehints import checkredundantoptionaltype
+        from ._typehints import checkredundantoptionaltypes
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_PROCESS_SIGNATURE)  # type: Logger
         _logger.debug("AutodocHandlers.processsignature(what=%r, fq_name=%r, obj=%r, options=%r, signature=%r, return_annotation=%r)",
@@ -260,9 +260,9 @@ class AutodocHandlers:
 
         # Fix redundant optional types.
         if signature:
-            signature = checkredundantoptionaltype(signature)
+            signature = checkredundantoptionaltypes(signature)
         if return_annotation:
-            return_annotation = checkredundantoptionaltype(return_annotation)
+            return_annotation = checkredundantoptionaltypes(return_annotation)
 
         _logger.debug("Final signature: %r -> %r", signature, return_annotation)
         return signature, return_annotation

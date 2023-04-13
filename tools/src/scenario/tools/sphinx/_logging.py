@@ -74,6 +74,7 @@ class Logger:
         AUTODOC_PROCESS_SIGNATURE = "autodoc:process-signature"
         AUTODOC_PROCESS_DOCSTRING = "autodoc:process-docstring"
         # Sphinx hacking.
+        MAKE_XREFS_HACK = "make-xrefs-hack"
         PARSE_REFTARGET_HACK = "parse-reftarget-hack"
         OBJECT_DESCRIPTION_HACK = "object-description-hack"
 

@@ -258,7 +258,7 @@ def configuretypealiases(
             _logger.info("Aliasing %r with %r", _short_name, env.config.autodoc_type_aliases[_short_name])
 
 
-def checkredundantoptionaltype(
+def checkredundantoptionaltypes(
         annotation,  # type: str
 ):  # type: (...) -> str
     from ._logging import Logger
@@ -270,7 +270,8 @@ def checkredundantoptionaltype(
         _type = SCENARIO_TYPES[_fq_name]  # type: typing.Any
 
         # Process only if a potential redundant optional typehint exists.
-        _redundant_annotation = f"~typing.Optional[~{_fq_name}]"
+        # Note: a '~' character may precede 'typing.Optional', whatever... the following covers both situations: with or without a leading '~'.
+        _redundant_annotation = f"typing.Optional[~{_fq_name}]"
         _simple_annotation = f"~{_fq_name}"
         if _redundant_annotation in annotation:
             # Find out whether the type already describes something optional.
