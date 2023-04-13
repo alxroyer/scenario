@@ -20,6 +20,8 @@
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
         - Enable types on readthedocs.
+            - [readthedocs/sphinx-autoapi#273](https://github.com/readthedocs/sphinx-autoapi/issues/273)
+            - https://stackoverflow.com/questions/68353686/sphinx-extensions-on-readthedocs
         - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
       Check whether an exception is caught and re-thrown, not just `pass`.
@@ -53,6 +55,7 @@
     - See https://www.alpharithms.com/noqa-python-501210/.
     - Codes seem to be checker specific (`flake8` among others).
     - Don't use codes, prefer an explanatory comment after a double `##`.
+    - Pop stash "Remove E402 PEP8 warning codes" (from enhancement/#77/private-modules)
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
