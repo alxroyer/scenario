@@ -43,7 +43,7 @@ Documentation generation (optional):
 
 - Sphinx (https://pypi.org/project/Sphinx/)
 
-  - Tested with version 4.4.0 (Python 3.6.8) and 5.3.0 (Python 3.7.9).
+  - Tested with version 4.4.0 (Python 3.6.8) and 5.3.0 (Python 3.7.9, version used on readthedocs as of 2023-04-13).
 
 - Java
 
