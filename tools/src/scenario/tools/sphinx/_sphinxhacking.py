@@ -131,19 +131,18 @@ class SphinxHacking:
         """
         Replacement hack for ``sphinx.ext.autodoc.object_description()``.
 
+        Called for data/attribute value description.
+
         :param object: Caution! may be ``None``.
-        :raise ValueError:
-            When ``object`` is ``None``,
-            so that *autodoc* does not print out erroneous attribute values,
-            especially for instance attribute.
+        :raise ValueError: When ``object`` should not be described, i.e. not a basic type in this implementation.
 
         .. note::
             The signature follows strictly the one of ``sphinx.util.inspect.object_description()``
             in order to avoid typing errors when setting this method as a replacement for ``sphinx.ext.autodoc.object_description()``.
             The name of the  parameter ``object`` must remain as is (not ``obj``)!
 
-        .. warning::
-            Unfortunately, it seems we have no way to differenciate class and instance attributes when the value is ``None``
+        .. note::
+            For the memo: it seems we have no way to differenciate class and instance attributes when the value is ``None``
             (see `sphinx#904 <https://github.com/sphinx-doc/sphinx/issues/904>`_).
         """
         from ._logging import Logger
@@ -151,6 +150,18 @@ class SphinxHacking:
         _logger = Logger.getinstance(Logger.Id.OBJECT_DESCRIPTION_HACK)  # type: Logger
         _logger.debug("SphinxHacking._objectdescription(object=%r)", object)
 
-        if object is None:
-            raise ValueError("No value for data/attributes")
-        return SphinxHacking._object_description_origin(object)
+        # Retrieve the result from the original function at first.
+        _object_description = SphinxHacking._object_description_origin(object)  # type: str
+
+        # Display data/attribute description for non-empty basic types only.
+        if (
+            isinstance(object, (int, float))
+            or (isinstance(object, (str, bytes)) and object)
+        ):
+            _logger.debug("Returning %r", _object_description)
+            return _object_description
+
+        # Discard the description for any other kind of object (`None` among others).
+        _err = ValueError(f"Object description {_object_description!r} for data/attribute discarded")
+        _logger.debug("Discarding %r (%r raised)", _object_description, _err)
+        raise _err

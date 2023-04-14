@@ -19,10 +19,10 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
+        - Avoid enum.Enum members documentation production.
         - Enable types on readthedocs.
             - [readthedocs/sphinx-autoapi#273](https://github.com/readthedocs/sphinx-autoapi/issues/273)
             - https://stackoverflow.com/questions/68353686/sphinx-extensions-on-readthedocs
-        - Check whether `sphinx.ext.autodoc.object_description` hack can be removed.
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
       Check whether an exception is caught and re-thrown, not just `pass`.
     - Search for "`.[^_]" patterns.
