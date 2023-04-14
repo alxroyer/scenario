@@ -19,7 +19,21 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Avoid enum.Enum members documentation production.
+        - Find out why `StrEnum.__str__()` is not notified through the 'skip-member' handler.
+            - All other `__str__()` functions are notified:
+                - `ActionResultDefinition.__str__()`
+                - `DelayedStr.__str__()`
+                - `KnownIssue.__str__()`
+                - `Path.__str__()`
+                - `ScenarioDefinition.__str__()`
+                - `TimeStats.__str__()`
+                - `ExecTotalStats.__str__()`
+                - `StepDefinition.__str__()`
+                - `SubProcess.__str__()`
+                - `TestError.__str__()`
+                - `ExceptionError.__str__()`
+            - But not `StrEnum.__str__()`
+            - Possibly because `StrEnum` inherits from `str`?
         - Enable types on readthedocs.
             - [readthedocs/sphinx-autoapi#273](https://github.com/readthedocs/sphinx-autoapi/issues/273)
             - https://stackoverflow.com/questions/68353686/sphinx-extensions-on-readthedocs

@@ -100,6 +100,7 @@ class AutodocHandlers:
                 autodoc will use the first non-None value returned by a handler.
                 Handlers should return None to fall back to the skipping behavior of autodoc and other enabled extensions.
         """
+        from scenario._enumutils import StrEnum  # noqa  ## Access to a protected member.
         from ._logging import Logger
         from ._reflection import isspecialfunction, fqname
 
@@ -110,10 +111,13 @@ class AutodocHandlers:
         _logger.debug(f"app.env.ref_context.get('py:module') = {app.env.ref_context.get('py:module')!r}")
         _logger.debug(f"app.env.ref_context.get('py:class') = {app.env.ref_context.get('py:class')!r}")
 
-        # When overriding `enum.Enum`, an undocumented function warning is displayed for '_generate_next_value_'.
-        if obj == enum.Enum._generate_next_value_:  # noqa  ## Access to protected member
-            _logger.debug("`%s` should be skipped!", fqname(obj))
-            return True
+        # When overriding `enum.Enum`, non-relevant inherited attributes come to be documented.
+        # Skip `StrEnum` members which names can be found in the base `enum.Enum` class.
+        if (not nfq_name.startswith("__")) and hasattr(enum.Enum, nfq_name):
+            if obj is getattr(StrEnum, nfq_name):
+                # Memo: `fqname()` may fail on `enum.Enum` members.
+                _logger.debug("`%s.%s` skipped!", fqname(StrEnum), nfq_name)
+                return True
 
         if would_skip:
             if inspect.isclass(obj) and (nfq_name != "__metaclass__"):
