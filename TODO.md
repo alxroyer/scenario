@@ -37,8 +37,6 @@
         - Enable types on readthedocs.
             - [readthedocs/sphinx-autoapi#273](https://github.com/readthedocs/sphinx-autoapi/issues/273)
             - https://stackoverflow.com/questions/68353686/sphinx-extensions-on-readthedocs
-    - Search for "`.[^_]" patterns.
-    - Search for "from \. import [^_]"
     - Update coding rules.
         - Module names.
         - Package definition and export strategy:
