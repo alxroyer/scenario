@@ -15,7 +15,7 @@
 # limitations under the License.
 
 
-# The following `try` block avoids IDEs folding the following import lines.
+# The `try` block below avoids IDEs folding the following import lines.
 try:
     from . import _paths as paths
     from ._subprocess import SubProcess as SubProcess
