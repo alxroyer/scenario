@@ -37,6 +37,10 @@
         - Enable types on readthedocs.
             - [readthedocs/sphinx-autoapi#273](https://github.com/readthedocs/sphinx-autoapi/issues/273)
             - https://stackoverflow.com/questions/68353686/sphinx-extensions-on-readthedocs
+            - Track `sphinx.ext.autodoc.type_comment.update_annotations_using_type_comments()` execution:
+              `type_sig` probably receives `None`...
+            - Track `sphinx.ext.autodoc.type_comment.get_type_comment()` execution:
+              "It requires py38+ or typed_ast module."
     - Ensure "# The following `try` block avoids IDEs folding the following import lines." comments in '__init__.py' files when appropriate.
       Check whether an exception is caught and re-thrown, not just `pass`.
     - Search for "`.[^_]" patterns.
