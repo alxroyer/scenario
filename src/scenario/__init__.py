@@ -44,7 +44,7 @@ import typing
 # Explicit export declarations (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
 __all__ = []  # type: typing.List[str]
 
-# Used to avoid PEP8 E402 warnings: "Module level import not at top of file" for re-exports below.
+# Used to avoid "Module level import not at top of file" PEP8 warnings for re-exports below.
 __pkg_def = True  # type: bool
 
 

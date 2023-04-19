@@ -5,7 +5,7 @@ import scenario
 import sys
 
 sys.path.append(str(pathlib.Path(__file__).parent))
-from htmltestlib import body, getbutton, getedit  # noqa: E402
+from htmltestlib import body, getbutton, getedit  # noqa  ## Module level import not at top of file
 
 
 class TestLoginPage(scenario.Scenario):

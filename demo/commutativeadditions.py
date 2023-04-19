@@ -5,7 +5,7 @@ import scenario
 import sys
 
 sys.path.append(str(pathlib.Path(__file__).parent))
-from commutativeaddition import CommutativeAddition  # noqa: E402
+from commutativeaddition import CommutativeAddition  # noqa  ## Module level import not at top of file
 
 
 class CommutativeAdditions(scenario.Scenario):
