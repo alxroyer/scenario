@@ -51,15 +51,17 @@ on the :py:data:`scenario.handlers` manager:
 
 The :py:meth:`scenario._handlers.Handlers.install()` method has a couple of parameters that specialize the way the handlers live and are triggered:
 
-:scenario:
+:``scenario``:
     Related scenario, if any.
 
     When this reference is set, the handler will be triggered only if the current scenario is the given scenario.
-:once:
+
+:``once``:
     *Once* flag.
 
     Makes this scenario be triggered once, and then uninstalled.
-:first:
+
+:``first``:
     Make this handler be called prior to other handlers when the event is met,
     otherwise the handler is called after the other handlers already registered for the given event.
 

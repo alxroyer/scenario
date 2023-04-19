@@ -42,16 +42,92 @@ Strings
 Namings
 -------
 
-.. todo:: Documentation needed for namings:
+Python namings follow `PEP 8 <https://peps.python.org/pep-0008/#descriptive-naming-styles>`_ recommandations.
+Let's remind them below:
 
-    - PEP8 compatible
-    - Packages
-    - Modules
-    - Classes
-    - Attributes
-    - Methods & functions
-    - Getters (properties) and setters, same as attributes
-    - Constants
+.. _coding-rules.py.namings.packages:
+.. _coding-rules.py.namings.modules:
+
+:Packages and modules:
+    Lowercase, without underscores.
+
+    .. note::
+        As stated in `PEP 8 - Package and module names <https://peps.python.org/pep-0008/#package-and-module-names>`_
+        "the use of underscores is discouraged".
+
+    Leading underscore for internal packages and modules.
+
+    .. note::
+        Makes it possible to set :ref:`design a package <coding-rules.py.packages>` with protected modules,
+        and explicitely select the symbols exported from them in the '__init__.py' module.
+
+.. _coding-rules.py.namings.classes:
+.. _coding-rules.py.namings.exceptions:
+.. _coding-rules.py.namings.enum-classes:
+
+:Classes:
+    CamelCase, without underscores.
+
+    Leading underscore for internal classes.
+
+    Applicable to exceptions and enum classes.
+
+.. _coding-rules.py.namings.types:
+
+:Types:
+    CamelCase, without underscores.
+
+    Leading underscore for internal types.
+
+.. _coding-rules.py.namings.functions:
+.. _coding-rules.py.namings.methods:
+
+:Functions and methods:
+    Lowercase, without underscores.
+
+    .. note::
+        `PEP 8 - Function and variable names <https://peps.python.org/pep-0008/#function-and-variable-names>`_
+        apparently makes no difference between function and variable namings.
+        This is a `scenario`-specific refinement.
+
+    Leading underscore for internal functions and methods:
+
+    - non-exported functions (i.e. not supposed to be visible from other modules / packages),
+    - inner functions (functions defined inside another function / method),
+    - protected class and instance methods.
+
+.. _coding-rules.py.namings.variables:
+.. _coding-rules.py.namings.members:
+.. _coding-rules.py.namings.parameters:
+
+:Variables, members and parameters:
+    Lowercase, with underscores.
+
+    Leading underscore for internal variables, or protected members:
+
+    - non-exported module attributes (i.e. not supposed to be visible from other modules / packages),
+    - protected class and instance members,
+    - variables defined inside functions and methods.
+
+    On the opposite, the following items may not start with a leading underscore:
+
+    - exported module attributes,
+    - public class and instance members,
+    - function and method parameters.
+
+    Applicable to getters (i.e. properties) and setters.
+
+.. _coding-rules.py.namings.constants:
+.. _coding-rules.py.namings.enum-items:
+
+:Constants:
+    Capital letters, with underscores.
+
+    Leading underscore for internal constants.
+
+    Applicable to enum items.
+
+    Singletons shall be considered as constants (better for *qa* checkings).
 
 
 .. _coding-rules.py.presentation:
@@ -79,15 +155,30 @@ Presentation
 Packages
 --------
 
-.. todo:: Documentation needed for packages, file names:
+Even though Python3 automatically defines packages from directories,
+every package should contain a dedicated '__init__.py' file in order to explicitize the way the package is defined:
 
-    - :py:mod:`scenario` package
-    - '__init__.py' that exports symbols from the given package
+1. If it exports nothing by default,
+   but just holds public modules or subpackages (without a leading underscore) to load explicitely,
+   this shall be mentioned in the docstring of the package, in the '__init__.py' file.
 
-.. note::
+2. Otherwise, the '__init__.py' file declares the symbols it officially exports:
 
-    :py:mod:`scenario.test`, :py:mod:`scenario.tools` subpackages are implemented at different locations,
-    out of the main 'src/' directory.
+   - The package shall be implemented with :ref:`private modules <coding-rules.py.namings.modules>` (with a leading underscore).
+   - Re-exports should follow the :ref:`re-export rules <coding-rules.py.re-exports>` described just after.
+
+.. admonition:: Packages and subpackages defined from different directories
+    :class: tip
+
+    For the memo, ``pkgutil.extend_path()`` helps defining packages and subpackages of the same package at different locations.
+
+    For instance:
+
+    - The base :py:mod:`scenario` package is defined in the main 'src/' directory.
+    - :py:mod:`scenario.test` comes as a subpackage of the latter, but is defined in 'test/src/'.
+    - Same with :py:mod:`scenario.tools`, defined in 'tools/src/'.
+
+    This avoids mixing test and tools sources with the core :py:mod:`scenario` implementation.
 
 
 .. _coding-rules.py.re-exports:
@@ -98,15 +189,22 @@ Re-exports
 '__init__.py' files usually declare the set of public symbols for the package they define,
 by re-exporting those symbols from the neighbour modules in the given package.
 
-In order to keep it simple, as long as the package does not rename exported items, use the explicit export pattern
-(see `PEP 0848 <https://peps.python.org/pep-0484/#stub-files>`_ reexport rules):
+In order to keep it simple,
+as long as the package does not rename exported items (but only modules),
+use the explicit re-export pattern (inherited from `PEP 484 - Stub files <https://peps.python.org/pep-0484/#stub-files>`_ specifications):
 
 .. code-block:: python
 
     # Non-renamed explicit export.
     from ._privatemodule import MyClass as MyClass
 
-If only modules and/or attributes must be renamed, intermediate private instances may be used:
+.. note::
+    Our `mypy` configuration makes use of this syntax
+    by disabling `implicit re-exports <https://mypy.readthedocs.io/en/stable/config_file.html#confval-implicit_reexport>`_.
+
+If only attributes must be renamed,
+or renamed modules in non-'__init__.py' modules fail,
+intermediate private instances may be used:
 
 .. code-block:: python
 
@@ -118,10 +216,10 @@ If only modules and/or attributes must be renamed, intermediate private instance
     from . import _privatemodule
     renamedmodule = _privatemodule
 
-.. admonition:: Memo - No renamed attribute or module exports with a single ``from ... import ... as ...`` statement
+.. admonition:: Memo - No renamed attribute exports with a single ``from ... import ... as ...`` statement
     :class: note
 
-    If we declare :py:data:`scenario.logging` as following:
+    If we declare :py:data:`scenario.logging` as following in 'src/scenario/__init__.py':
 
     .. code-block:: python
 
@@ -130,6 +228,9 @@ If only modules and/or attributes must be renamed, intermediate private instance
 
     mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
 
+.. admonition:: Memo - Renamed module exports with a single ``from ... import ... as ...`` statement only in '__init__.py' files
+    :class: note
+
     Same with :py:data:`scenario.tools.data.scenarios`, the following in 'test/src/scenario/test/data.py':
 
     .. code-block:: python
@@ -137,6 +238,12 @@ If only modules and/or attributes must be renamed, intermediate private instance
         from . import _datascenarios as scenarios
 
     makes mypy fail with '"Module scenario.test._data" does not explicitly export attribute "scenarios"  [attr-defined]' errors.
+
+    But the following works in 'test/src/scenario/test/__init__.py'!
+
+    .. code-block:: python
+
+        from . import _data as data
 
 If exported classes are renamed, use explicit ``__all__`` declarations
 (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
