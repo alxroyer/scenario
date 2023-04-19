@@ -24,7 +24,7 @@ import sphinx.events
 import sphinx.ext.autodoc
 import sphinx.ext.autodoc.type_comment
 import sphinx.ext.autodoc.typehints
-# import sphinx.pycode.ast
+import sphinx.pycode.ast
 import sphinx.util.docfields
 import sphinx.util.inspect
 import sphinx.util.typing
@@ -73,15 +73,15 @@ class SphinxHacking:
                     if _event_listener.handler is _handler_origin:
                         app.events.listeners[_event_name][_event_listener_index] = sphinx.events.EventListener(
                             _event_listener.id,
-                            _handler_hack,
+                            _handler_hack,  # type: ignore[arg-type]
                             _event_listener.priority,
                         )
 
     @staticmethod
     def _updateannotationsusingtypecomments(
-            app: sphinx.application.Sphinx,
-            obj: typing.Any,
-            bound_method: bool,
+            app,  # type: sphinx.application.Sphinx
+            obj,  # type: typing.Any
+            bound_method,  # type: bool
     ):  # type: (...) -> None
         def _print(message):  # type: (str) -> None
             if "assertequal" in repr(obj):
@@ -132,10 +132,34 @@ class SphinxHacking:
                 print(message)
         _print(f"SphinxHacking._gettypecomment(obj={obj!r}, bound_method={bound_method!r})")
 
-        _res = SphinxHacking._get_type_comment_origin(obj, bound_method=bound_method)
+        # _res = SphinxHacking._get_type_comment_origin(obj, bound_method=bound_method)
+
+        try:
+            source = inspect.getsource(obj)
+            if source.startswith((' ', r'\t')):
+                # subject is placed inside class or block.  To read its docstring,
+                # this adds if-block before the declaration.
+                module = sphinx.pycode.ast.parse('if True:\n' + source)
+                subject = typing.cast(sphinx.pycode.ast.ast.FunctionDef, module.body[0].body[0])
+            else:
+                module = sphinx.pycode.ast.parse(source)
+                subject = typing.cast(sphinx.pycode.ast.ast.FunctionDef, module.body[0])
+
+            if getattr(subject, "type_comment", None):
+                function = sphinx.pycode.ast.parse(subject.type_comment, mode='func_type')
+                _res = sphinx.ext.autodoc.type_comment.signature_from_ast(subject, bound_method, function)
+            else:
+                _print(f"No 'type_comment' attribute in subject={subject!r}")
+                _res = None
+        except (OSError, TypeError) as _err:  # failed to load source code
+            _print(f"{_err!r}")
+            _res = None
+        except SyntaxError as _err:  # failed to parse type_comments
+            _print(f"{_err!r}")
+            _res = None
 
         _print(f"SphinxHacking._gettypecomment() -> {_res!r}")
-        return _res
+        return typing.cast(inspect.Signature, _res)
 
     @staticmethod
     def _inspectsignature(
