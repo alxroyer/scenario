@@ -34,6 +34,7 @@ import typing
 class SphinxHacking:
 
     _update_annotations_using_type_comments_origin = sphinx.ext.autodoc.type_comment.update_annotations_using_type_comments
+    _get_type_comment_origin = sphinx.ext.autodoc.type_comment.get_type_comment
     _inspect_signature_origin = sphinx.util.inspect.signature
     _filter_meta_fields_origin = sphinx.domains.python.filter_meta_fields
     _merge_typehints_origin = sphinx.ext.autodoc.typehints.merge_typehints
@@ -47,6 +48,7 @@ class SphinxHacking:
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
         sphinx.ext.autodoc.type_comment.update_annotations_using_type_comments = SphinxHacking._updateannotationsusingtypecomments
+        sphinx.ext.autodoc.type_comment.get_type_comment = SphinxHacking._gettypecomment
         sphinx.util.inspect.signature = SphinxHacking._inspectsignature
         sphinx.domains.python.filter_meta_fields = SphinxHacking._filtermetafields
         sphinx.ext.autodoc.typehints.merge_typehints = SphinxHacking._mergetypehints
@@ -119,6 +121,21 @@ class SphinxHacking:
 
         _print(f"SphinxHacking._updateannotationsusingtypecomments(): (after) "
                f"obj.__annotations__={obj.__annotations__ if hasattr(obj, '__annotations__') else '(none)'!r}")
+
+    @staticmethod
+    def _gettypecomment(
+            obj,  # type: typing.Any
+            bound_method=False,  # type: bool
+    ):  # type: (...) -> inspect.Signature
+        def _print(message):  # type: (str) -> None
+            if "assertequal" in repr(obj):
+                print(message)
+        _print(f"SphinxHacking._gettypecomment(obj={obj!r}, bound_method={bound_method!r})")
+
+        _res = SphinxHacking._get_type_comment_origin(obj, bound_method=bound_method)
+
+        _print(f"SphinxHacking._gettypecomment() -> {_res!r}")
+        return _res
 
     @staticmethod
     def _inspectsignature(
