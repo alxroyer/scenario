@@ -33,7 +33,7 @@ import typing
 
 class SphinxHacking:
 
-    # _update_annotations_using_type_comments_origin = sphinx.ext.autodoc.type_comment.update_annotations_using_type_comments
+    _update_annotations_using_type_comments_origin = sphinx.ext.autodoc.type_comment.update_annotations_using_type_comments
     _inspect_signature_origin = sphinx.util.inspect.signature
     _filter_meta_fields_origin = sphinx.domains.python.filter_meta_fields
     _merge_typehints_origin = sphinx.ext.autodoc.typehints.merge_typehints
@@ -46,7 +46,7 @@ class SphinxHacking:
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
-        # sphinx.ext.autodoc.type_comment.update_annotations_using_type_comments = SphinxHacking._updateannotationsusingtypecomments
+        sphinx.ext.autodoc.type_comment.update_annotations_using_type_comments = SphinxHacking._updateannotationsusingtypecomments
         sphinx.util.inspect.signature = SphinxHacking._inspectsignature
         sphinx.domains.python.filter_meta_fields = SphinxHacking._filtermetafields
         sphinx.ext.autodoc.typehints.merge_typehints = SphinxHacking._mergetypehints
@@ -64,7 +64,7 @@ class SphinxHacking:
         for _event_name in ("autodoc-before-process-signature", "object-description-transform"):  # type: str
             for _event_listener_index, _event_listener in enumerate(app.events.listeners[_event_name]):  # type: int, sphinx.events.EventListener
                 for _handler_origin, _handler_hack in [
-                    # (SphinxHacking._update_annotations_using_type_comments_origin, SphinxHacking._updateannotationsusingtypecomments),
+                    (SphinxHacking._update_annotations_using_type_comments_origin, SphinxHacking._updateannotationsusingtypecomments),
                     (SphinxHacking._filter_meta_fields_origin, SphinxHacking._filtermetafields),
                     (SphinxHacking._merge_typehints_origin, SphinxHacking._mergetypehints),
                 ]:
@@ -75,50 +75,50 @@ class SphinxHacking:
                             _event_listener.priority,
                         )
 
-    # @staticmethod
-    # def _updateannotationsusingtypecomments(
-    #         app: sphinx.application.Sphinx,
-    #         obj: typing.Any,
-    #         bound_method: bool,
-    # ):  # type: (...) -> None
-    #     def _print(message):  # type: (str) -> None
-    #         if "assertequal" in repr(obj):
-    #             print(message)
-    #     _print(f"SphinxHacking._updateannotationsusingtypecomments(obj={obj!r}, bound_method={bound_method!r})")
-    #
-    #     _print(f"SphinxHacking._updateannotationsusingtypecomments(): (before) "
-    #            f"obj.__annotations__={obj.__annotations__ if hasattr(obj, '__annotations__') else '(none)'!r}")
-    #
-    #     # SphinxHacking._update_annotations_using_type_comments_origin(app, obj, bound_method)
-    #
-    #     try:
-    #         type_sig = sphinx.ext.autodoc.type_comment.get_type_comment(obj, bound_method)
-    #         _print(f"SphinxHacking._updateannotationsusingtypecomments(): type_sig={type_sig!r}")
-    #         if type_sig:  # type: ignore[truthy-bool]
-    #             sig = sphinx.util.inspect.signature(obj, bound_method)
-    #             _print(f"SphinxHacking._updateannotationsusingtypecomments(): sig={sig!r}")
-    #             for param in sig.parameters.values():
-    #                 _print(f"SphinxHacking._updateannotationsusingtypecomments(): param={param!r}")
-    #                 if param.name not in obj.__annotations__:
-    #                     annotation = type_sig.parameters[param.name].annotation
-    #                     if annotation is not inspect.Parameter.empty:
-    #                         obj.__annotations__[param.name] = sphinx.pycode.ast.unparse(annotation)
-    #
-    #             if 'return' not in obj.__annotations__:
-    #                 obj.__annotations__['return'] = type_sig.return_annotation
-    #     except KeyError as exc:
-    #         sphinx.ext.autodoc.type_comment.logger.warning(
-    #             sphinx.ext.autodoc.type_comment.__("Failed to update signature for %r: parameter not found: %s"),
-    #             obj, exc,
-    #         )
-    #     except NotImplementedError as exc:  # failed to ast.unparse()
-    #         sphinx.ext.autodoc.type_comment.logger.warning(
-    #             sphinx.ext.autodoc.type_comment.__("Failed to parse type_comment for %r: %s"),
-    #             obj, exc,
-    #         )
-    #
-    #     _print(f"SphinxHacking._updateannotationsusingtypecomments(): (after) "
-    #            f"obj.__annotations__={obj.__annotations__ if hasattr(obj, '__annotations__') else '(none)'!r}")
+    @staticmethod
+    def _updateannotationsusingtypecomments(
+            app: sphinx.application.Sphinx,
+            obj: typing.Any,
+            bound_method: bool,
+    ):  # type: (...) -> None
+        def _print(message):  # type: (str) -> None
+            if "assertequal" in repr(obj):
+                print(message)
+        _print(f"SphinxHacking._updateannotationsusingtypecomments(obj={obj!r}, bound_method={bound_method!r})")
+
+        _print(f"SphinxHacking._updateannotationsusingtypecomments(): (before) "
+               f"obj.__annotations__={obj.__annotations__ if hasattr(obj, '__annotations__') else '(none)'!r}")
+
+        # SphinxHacking._update_annotations_using_type_comments_origin(app, obj, bound_method)
+
+        try:
+            type_sig = sphinx.ext.autodoc.type_comment.get_type_comment(obj, bound_method)
+            _print(f"SphinxHacking._updateannotationsusingtypecomments(): type_sig={type_sig!r}")
+            if type_sig:  # type: ignore[truthy-bool]
+                sig = sphinx.util.inspect.signature(obj, bound_method)
+                _print(f"SphinxHacking._updateannotationsusingtypecomments(): sig={sig!r}")
+                for param in sig.parameters.values():
+                    _print(f"SphinxHacking._updateannotationsusingtypecomments(): param={param!r}")
+                    if param.name not in obj.__annotations__:
+                        annotation = type_sig.parameters[param.name].annotation
+                        if annotation is not inspect.Parameter.empty:
+                            obj.__annotations__[param.name] = sphinx.pycode.ast.unparse(annotation)
+
+                if 'return' not in obj.__annotations__:
+                    obj.__annotations__['return'] = type_sig.return_annotation
+        except KeyError as exc:
+            sphinx.ext.autodoc.type_comment.logger.warning(
+                sphinx.ext.autodoc.type_comment.__("Failed to update signature for %r: parameter not found: %s"),
+                obj, exc,
+            )
+        except NotImplementedError as exc:  # failed to ast.unparse()
+            sphinx.ext.autodoc.type_comment.logger.warning(
+                sphinx.ext.autodoc.type_comment.__("Failed to parse type_comment for %r: %s"),
+                obj, exc,
+            )
+
+        _print(f"SphinxHacking._updateannotationsusingtypecomments(): (after) "
+               f"obj.__annotations__={obj.__annotations__ if hasattr(obj, '__annotations__') else '(none)'!r}")
 
     @staticmethod
     def _inspectsignature(
