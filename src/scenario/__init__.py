@@ -46,7 +46,7 @@ __path__ = extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be un
 import typing
 
 
-# Used to avoid PEP8 E402 warnings: "Module level import not at top of file".
+# Used to avoid "Module level import not at top of file" PEP8 warnings for re-exports below.
 # Named with double leading underscores in order to avoid 'mkdoc.py' list it as an undocumented attribute.
 __pkg_def = True  # type: bool
 
