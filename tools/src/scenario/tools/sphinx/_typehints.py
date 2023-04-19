@@ -266,6 +266,9 @@ def checkredundantoptionaltypes(
     _logger = Logger.getinstance(Logger.Id.CHECK_REDUNDANT_OPTIONAL_TYPE)  # type: Logger
     _logger.debug("checkredundantoptionaltype(annotation=%r)", annotation)
 
+    if "ErrParamType" in annotation:
+        print(f"checkredundantoptionaltypes(annotation={annotation!r})")
+
     for _fq_name in SCENARIO_TYPES:  # type: str
         _type = SCENARIO_TYPES[_fq_name]  # type: typing.Any
 
