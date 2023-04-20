@@ -13,7 +13,7 @@ import sys
 MAIN_PATH = pathlib.Path(__file__).parents[1]
 sys.path.append(str(MAIN_PATH / "src"))
 
-import scenario  # noqa: E402
+import scenario  # noqa  ## Module level import not at top of file
 
 
 class DemoArgs(scenario.ScenarioArgs):

@@ -24,7 +24,7 @@ from steps.logprocessing import LogProcessor  # `LogProcessor` used for inherita
 
 class LogParserStep(scenario.test.VerificationStep, LogProcessor, metaclass=abc.ABCMeta):
     """
-    Base class for steps which purpose is to parse a :class:`.executions.ExecutionStep` log output.
+    Base class for steps which purpose is to parse a :class:`scenario.test.ExecutionStep` log output.
     """
 
     def __init__(

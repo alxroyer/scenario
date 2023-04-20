@@ -39,14 +39,14 @@ All assertion methods generally have the following parameters:
 
 .. _assertions.err-param:
 
-``err``
+:``err``:
     The ``err`` message is the same as the optional message of ``unittest`` assertion methods.
 
     It gives the opportunity to explicitize the error message when the assertion fails.
 
 .. _assertions.evidence-param:
 
-``evidence``
+:``evidence``:
     The ``evidence`` parameter may be either a boolean or a string value.
 
     When this parameter is set with a ``True``-like value,

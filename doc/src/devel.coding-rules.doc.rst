@@ -18,6 +18,8 @@
 Documentation
 =============
 
+.. _coding-rules.documentation.admonitions:
+
 Admonitions: notes, warnings...
 -------------------------------
 
@@ -59,6 +61,8 @@ Eg:
          which may be continued on the next line.
 
 
+.. _coding-rules.documentation.indentation:
+
 ReStructured Text indentation
 -----------------------------
 
@@ -67,6 +71,10 @@ ReStructured Text directives could lead to use indentations of 3 spaces.
 Considering that this is hard to maintain with regular configurations of editors,
 4 space indentations shall be preferred in docstrings and `.rst` files.
 
+Exception for unordered and numbered lists that require the sub-content to be aligned with the bullet or item number.
+
+
+.. _coding-rules.documentation.domains:
 
 Domains
 -------
@@ -84,17 +92,24 @@ However, we use the ``:py`` domain specification in `.rst` files in order to be 
 <https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#cross-referencing-python-objects>`_.
 
 
+.. _coding-rules.documentation.docstrings:
+
 Docstrings
 ----------
 
 Python docstrings follow the *ReStructured Text* format.
 
 
+.. _coding-rules.documentation.docstrings.classes:
+
 Classes
 ^^^^^^^
 
 Use a leading doctring, at the beginning of the class definition.
 
+
+.. _coding-rules.documentation.docstrings.functions:
+.. _coding-rules.documentation.docstrings.methods:
 
 Functions and methods
 ^^^^^^^^^^^^^^^^^^^^^
@@ -148,6 +163,9 @@ The exception type can be specified:
   (same syntax as within a ``:class:`MyException``` syntax).
 
 
+.. _coding-rules.documentation.docstrings.attributes:
+.. _coding-rules.documentation.docstrings.types:
+
 Attributes & types
 ^^^^^^^^^^^^^^^^^^
 
@@ -171,6 +189,8 @@ Types and attributes shall be documented with ``#:`` Sphinx comments.
 
     But we consider this is less readable than using ``#:`` sphinx comments.
 
+
+.. _coding-rules.documentation.cross-references:
 
 Cross references
 ----------------
@@ -200,6 +220,8 @@ Sphinx does not provide a dedicated directive to cross-reference types, ``:class
 Use the default ``:obj:`` directive instead (see https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#role-py-obj).
 
 
+.. _coding-rules.documentation.property-return-type:
+
 Property return type hint
 -------------------------
 
@@ -210,6 +232,8 @@ which would be redundant with the return type hint already set.
 The `sphinx#7837 <https://github.com/sphinx-doc/sphinx/issues/7837>`_ enhancement request
 has been opened for that purpose.
 
+
+.. _coding-rules.documentation.reexports:
 
 Re-exports
 ----------

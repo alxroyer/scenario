@@ -93,9 +93,9 @@ def scenarioexpectations(
         config_values=None,  # type: ConfigValuesType
 ):  # type: (...) -> _ScenarioExpectationsType
     """
-    Builds a :class:`.expectations.ScenarioExpectations` instance for the given scenario.
+    Builds a :class:`._expectations.ScenarioExpectations` instance for the given scenario.
 
-    :param script_path: Scenario to build a :class:`.expectations.ScenarioExpectations` instance for.
+    :param script_path: Scenario to build a :class:`._expectations.ScenarioExpectations` instance for.
     :param doc_only: ``True`` when the scenario is executed in *doc-only* mode.
     :param continue_on_error: ``True`` to generate expectations in *continue_on_error* mode.
     :param attributes: ``True`` to build attribute expectations.
@@ -104,7 +104,7 @@ def scenarioexpectations(
     :param error_details: ``True`` to set error expectations.
     :param stats: ``True`` to build statistics expectations.
     :param config_values: Extra configurations.
-    :return: :class:`.expectations.ScenarioExpectations` instance
+    :return: :class:`._expectations.ScenarioExpectations` instance.
     """
     from . import _configvalues as _configvalues
     from ._expectations import ErrorExpectations, NOT_SET, ScenarioExpectations

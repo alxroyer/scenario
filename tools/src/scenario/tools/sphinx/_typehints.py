@@ -266,17 +266,12 @@ def checkredundantoptionaltypes(
     _logger = Logger.getinstance(Logger.Id.CHECK_REDUNDANT_OPTIONAL_TYPE)  # type: Logger
     _logger.debug("checkredundantoptionaltype(annotation=%r)", annotation)
 
-    if "ErrParamType" in annotation:
-        print(f"checkredundantoptionaltypes(annotation={annotation!r})")
-
     for _fq_name in SCENARIO_TYPES:  # type: str
         _type = SCENARIO_TYPES[_fq_name]  # type: typing.Any
 
         # Find out whether the type already describes something optional.
         _repr = repr(_type)  # type: str
         _logger.debug("repr(%s) = %r", _fq_name, _repr)
-        if "ErrParamType" in annotation:
-            print(f"checkredundantoptionaltypes(): _repr={_repr!r}")
         if (
             # Python <= 3.7
             _repr.startswith("typing.Optional[")
@@ -287,7 +282,7 @@ def checkredundantoptionaltypes(
             _logger.debug("Optional type %s", _fq_name)
         else:
             _logger.debug("(%s not an optional type)", _fq_name)
-            # Switch to next `scenario` type.
+            # Switch to next type definition.
             continue
 
         # Search for redundant optional patterns in the given annotation.
