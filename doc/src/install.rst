@@ -54,17 +54,6 @@ Documentation generation (optional):
     - 5.3.0 (Python 3.7.9, `typed_ast` installed)
     - 6.1.3 (Python 3.8.15, on readthedocs)
 
-- readthedocs:
-
-  - ``pip install sphinx-rtd-theme``
-  - ``pip install "readthedocs-sphinx-ext<2.3"``
-  - ``pip install "mock==1.0.1"``
-  - ``pip install "commonmark==0.9.1"``
-  - ``pip install "recommonmark==0.5.0"``
-  - ``pip install pillow``
-  - in 'scenario/': ``python -m sphinx -T -E -b html -D language=en ./tools/conf/sphinx/ ./doc/html/``
-    or ``./sphinx-rtd.sh 2>&1 > sphinx-rtd.log``
-
 - Java
 
   - Tested with version 11.0.14.
