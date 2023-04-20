@@ -155,7 +155,7 @@ Presentation
 Packages
 --------
 
-Even though Python3 automatically defines packages from directories,
+Even though Python 3 automatically defines packages from directories,
 every package should contain a dedicated '__init__.py' file in order to explicitize the way the package is defined:
 
 1. If it exports nothing by default,

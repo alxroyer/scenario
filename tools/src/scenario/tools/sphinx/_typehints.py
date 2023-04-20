@@ -269,25 +269,35 @@ def checkredundantoptionaltypes(
     for _fq_name in SCENARIO_TYPES:  # type: str
         _type = SCENARIO_TYPES[_fq_name]  # type: typing.Any
 
-        # Process only if a potential redundant optional typehint exists.
-        # Note: a '~' character may precede 'typing.Optional', whatever... the following covers both situations: with or without a leading '~'.
-        _redundant_annotation = f"typing.Optional[~{_fq_name}]"
-        _simple_annotation = f"~{_fq_name}"
-        if _redundant_annotation in annotation:
-            # Find out whether the type already describes something optional.
-            _repr = repr(_type)  # type: str
-            _logger.debug("repr(%s) = %r", _fq_name, _repr)
-            _is_optional_type = (
-                _repr.startswith("typing.Optional[")
-                or (_repr.startswith("typing.Union[") and _repr.endswith(", NoneType]"))
-            )  # type: bool
+        # Find out whether the type already describes something optional.
+        _repr = repr(_type)  # type: str
+        _logger.debug("repr(%s) = %r", _fq_name, _repr)
+        if (
+            # Python <= 3.7
+            _repr.startswith("typing.Optional[")
+            or (_repr.startswith("typing.Union[") and _repr.endswith(", NoneType]"))
+            # Python >= 3.8
+            or _repr.endswith(" | None")
+        ):
+            _logger.debug("Optional type %s", _fq_name)
+        else:
+            _logger.debug("(%s not an optional type)", _fq_name)
+            # Switch to next type definition.
+            continue
 
-            # If so, `typing.Optional[]` onto it is redundant.
-            if _is_optional_type:
+        # Search for redundant optional patterns in the given annotation.
+        for _redundant_annotation in (
+            # Python <= 3.7
+            f"~typing.Optional[~{_fq_name}]",
+            f"typing.Optional[~{_fq_name}]",
+            # Python >= 3.8
+            f"~{_fq_name} | None",
+        ):  # type: str
+            if _redundant_annotation in annotation:
+                # If found, simplify the annotation.
+                _simple_annotation = f"~{_fq_name}"  # type: str
                 _logger.debug("Simplifying %r into %r", _redundant_annotation, _simple_annotation)
                 annotation = annotation.replace(_redundant_annotation, _simple_annotation)
                 _logger.debug("New annotation: %r", annotation)
-            else:
-                _logger.debug("(%s not an optional type)", _fq_name)
 
     return annotation

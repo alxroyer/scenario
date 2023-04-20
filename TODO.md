@@ -34,9 +34,7 @@
                 - `ExceptionError.__str__()`
             - But not `StrEnum.__str__()`
             - Possibly because `StrEnum` inherits from `str`?
-        - Enable types on readthedocs.
-            - [readthedocs/sphinx-autoapi#273](https://github.com/readthedocs/sphinx-autoapi/issues/273)
-            - https://stackoverflow.com/questions/68353686/sphinx-extensions-on-readthedocs
+    - Workaround property return type issue [sphinx#7837](https://github.com/sphinx-doc/sphinx/issues/7837).
     - Use docstrings after module attribute instead of `.. py:attribute:` directives.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
