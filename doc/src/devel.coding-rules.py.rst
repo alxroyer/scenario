@@ -59,7 +59,7 @@ Let's remind them below:
 
     .. note::
         Makes it possible to set :ref:`design a package <coding-rules.py.packages>` with protected modules,
-        and explicitely select the symbols exported from them in the '__init__.py' module.
+        and explicitly select the symbols exported from them in the '__init__.py' module.
 
 .. _coding-rules.py.namings.classes:
 .. _coding-rules.py.namings.exceptions:
@@ -159,7 +159,7 @@ Even though Python 3 automatically defines packages from directories,
 every package should contain a dedicated '__init__.py' file in order to explicitize the way the package is defined:
 
 1. If it exports nothing by default,
-   but just holds public modules or subpackages (without a leading underscore) to load explicitely,
+   but just holds public modules or subpackages (without a leading underscore) to load explicitly,
    this shall be mentioned in the docstring of the package, in the '__init__.py' file.
 
 2. Otherwise, the '__init__.py' file declares the symbols it officially exports:

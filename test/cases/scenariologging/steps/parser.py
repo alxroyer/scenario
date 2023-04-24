@@ -61,7 +61,7 @@ class ParseScenarioLog(LogParserStep):
 
         # Check the current stack in order to determine whether it is a subscenario.
         if self._json_scenario_stack:
-            # Subscenario do not give explicitely their status.
+            # Subscenario do not give explicitly their status.
             # Consider it is SUCCESS by default.
             _json_new_scenario["status"] = "SUCCESS"
             # Register the scenario in the current action/result.

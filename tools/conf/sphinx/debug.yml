@@ -30,6 +30,7 @@ scenario:
     # - "scenario.tools.sphinx:autodoc:process-signature"
     # - "scenario.tools.sphinx:autodoc:process-docstring"
     # Sphinx hacking.
+    # - "scenario.tools.sphinx:get-class-members"
     # - "scenario.tools.sphinx:make-xrefs-hack"
     # - "scenario.tools.sphinx:parse-reftarget-hack"
     # - "scenario.tools.sphinx:object-description-hack"

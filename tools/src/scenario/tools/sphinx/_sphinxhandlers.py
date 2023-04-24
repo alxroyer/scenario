@@ -355,7 +355,6 @@ class SphinxHandlers:
             so that they don’t cause errors when the writers encounter them.
         """
         from ._logging import Logger
-        from ._platform import Platform
         from ._references import simplifyreferences
 
         _logger = Logger.getinstance(Logger.Id.SPHINX_DOCTREE_RESOLVED)  # type: Logger
@@ -363,10 +362,11 @@ class SphinxHandlers:
 
         simplifyreferences(docname, doctree)
 
-        if not Platform.isreadthedocs():
-            # The following ensures a progression line is displayed for each page written, in the 'mkdoc.py' output.
-            # Useless on readthedocs.
-            _logger.info("")
+        # The following would ensure a progression line is displayed for each page written, in the 'mkdoc.py' output.
+        # But this is of little value in the end,
+        # and even hides error messages that are more relevant.
+        # if not Platform.isreadthedocs():
+        #     _logger.info("")
 
     def buildfinished(
             self,

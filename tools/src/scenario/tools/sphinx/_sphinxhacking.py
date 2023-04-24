@@ -14,17 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import typing
+
+# Sphinx imports.
 import docutils.nodes
 import docutils.parsers.rst.states
 import sphinx.application
 import sphinx.domains.python
 import sphinx.ext.autodoc
+import sphinx.ext.autodoc.importer
+import sphinx.util.inspect
 import sphinx.util.typing
-import typing
 
 
 class SphinxHacking:
 
+    _get_class_members_origin = sphinx.ext.autodoc.importer.get_class_members
     _make_xrefs_origin = sphinx.domains.python.PyXrefMixin.make_xrefs
     _parse_reftarget_origin = sphinx.domains.python.parse_reftarget
     _object_description_origin = sphinx.ext.autodoc.object_description
@@ -33,6 +38,11 @@ class SphinxHacking:
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
+        # Hack `sphinx.ext.autodoc.importer.get_class_members()`
+        # both in `sphinx.ext.autodoc.importer` and `sphinx.ext.autodoc` (function imported at the module level)
+        # to fix a bug with enum classes.
+        sphinx.ext.autodoc.importer.get_class_members = SphinxHacking._getclassmembers
+        sphinx.ext.autodoc.get_class_members = SphinxHacking._getclassmembers
         # Hack `sphinx.domains.python.PyXrefMixin.make_xrefs()` to fix redundant optional types.
         # Use `setattr()` to avoid a "Cannot assign to a method [assignment]" typing error.
         setattr(sphinx.domains.python.PyXrefMixin, "make_xrefs", SphinxHacking._makexrefs)
@@ -40,6 +50,89 @@ class SphinxHacking:
         sphinx.domains.python.parse_reftarget = SphinxHacking._parsereftarget
         # Hack `sphinx.ext.autodoc.object_description()` (see [sphinx#904](https://github.com/sphinx-doc/sphinx/issues/904)).
         sphinx.ext.autodoc.object_description = SphinxHacking._objectdescription
+
+    @staticmethod
+    def _getclassmembers(
+            subject,  # type: typing.Any
+            objpath,  # type: typing.List[str]
+            attrgetter,  # type: typing.Callable[..., typing.Any]
+            inherit_docstrings=True,  # type: bool
+    ):  # type: (...) -> typing.Dict[str, sphinx.ext.autodoc.ObjectMember]
+        """
+        Replacement hack for ``sphinx.ext.autodoc.importer.get_class_members()``.
+
+        The base ``sphinx.ext.autodoc.importer.get_class_members()`` implementation
+        has a bug when analyzing an enum class that does not just inherit from ``enum.Enum`` or a derivate.
+        In that case ``superclass = subject.__mro__[1]`` does not necessarily retrieve the ``enum.Enum`` super-class.
+        In the case of :class:`scenario._enumutils.StrEnum`, it retrieves ``str`` for instance.
+
+        Bug reported as [sphinx#11353](https://github.com/sphinx-doc/sphinx/issues/11353).
+        """
+        from scenario._debugutils import SafeRepr  # noqa  ## Access to a protected member.
+        from ._logging import Logger
+        from ._reflection import fqname
+
+        _logger = Logger(Logger.Id.GET_CLASS_MEMBERS)  # type: Logger
+        _logger.debug("SphinxHacking._getclassmembers(subject=%r, objpath=%r, attrgetter=%r, inherit_docstrings=%r)",
+                      subject, objpath, attrgetter, inherit_docstrings)
+
+        # Call the base `sphinx.ext.autodoc.importer.get_class_members()` at first.
+        _members = SphinxHacking._get_class_members_origin(
+            subject, objpath, attrgetter,
+            inherit_docstrings=inherit_docstrings,
+        )  # type: typing.Dict[str, sphinx.ext.autodoc.ObjectMember]
+        _logger.debug("_members = %s", SafeRepr(_members))
+
+        if sphinx.util.inspect.isenumclass(subject):
+            # Checking identification of the `enum.Enum` super-class:
+            # - as computed in in `sphinx.ext.autodoc.importer.get_class_members()`:
+            _possibly_wrong_enum_superclass = subject.__mro__[1]  # type: type
+            _logger.debug("_possibly_wrong_enum_superclass = %r", _possibly_wrong_enum_superclass)
+            # - as it had better be computed:
+            _enum_superclass = list(filter(sphinx.util.inspect.isenumclass, subject.__mro__))[1]  # type: type
+            _logger.debug("_enum_superclass = %r", _enum_superclass)
+
+            if _possibly_wrong_enum_superclass is _enum_superclass:
+                _logger.debug("No need to fix members for %r", subject)
+            else:
+                _logger.info("Fixing %r members due to Sphinx autodoc bug with multiple inheritance enums", fqname(subject))
+                _logger.debug("_members (before) = %r", _members)
+
+                # Call `attrgetter()` as done in `sphinx.ext.autodoc.importer.get_class_members()`.
+                _obj_dict = attrgetter(subject, '__dict__', {})  # type: typing.Mapping[str, typing.Any]
+                _logger.debug("_obj_dict = %r", _obj_dict)
+
+                # Scan the `_obj_dict` `attrgetter()` result as done in `sphinx.ext.autodoc.importer.get_class_members()`.
+                for _obj_name in _obj_dict:  # type: str
+                    _obj = _obj_dict[_obj_name]  # type: typing.Any
+                    _obj_desc = sphinx.ext.autodoc.ObjectMember(_obj_name, _obj, class_=subject)  # type: sphinx.ext.autodoc.ObjectMember
+
+                    # Determine whether the object should be kept in the member list.
+                    _save_member = True  # type: bool
+                    if _obj_name == "_member_type_":
+                        _logger.debug("'_member_type_' explicitly filtered-out")
+                        _save_member = False
+                    elif hasattr(_enum_superclass, _obj_name) and (_obj.__doc__ == getattr(_enum_superclass, _obj_name).__doc__):
+                        _logger.debug("%r inherited from %r", _obj_name, _enum_superclass)
+                        _save_member = False
+
+                    # Depending on the decision above, restore, remove, or keep as is the member.
+                    if _save_member:
+                        if _obj_name in _members:
+                            _logger.debug("Keeping %r in members", _obj_desc)
+                        else:
+                            _logger.debug("Restoring %r into members", _obj_desc)
+                            _members[_obj_name] = _obj_desc
+                    else:
+                        if _obj_name in _members:
+                            _logger.debug("Removing %r from members", _obj_desc)
+                            del _members[_obj_name]
+                        else:
+                            _logger.debug("Keep avoiding %r from members", _obj_desc)
+
+                _logger.debug("_members (modified) = %r", _members)
+
+        return _members
 
     @staticmethod
     def _makexrefs(

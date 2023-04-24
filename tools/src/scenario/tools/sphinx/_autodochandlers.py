@@ -107,17 +107,6 @@ class AutodocHandlers:
         _logger = Logger.getinstance(Logger.Id.AUTODOC_SKIP_MEMBER)  # type: Logger
         _logger.debug("AutodocHandlers.skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",
                       owner_type, nfq_name, obj, would_skip, options)
-        _logger.debug(f"app.env.ref_context = {app.env.ref_context!r}")
-        _logger.debug(f"app.env.ref_context.get('py:module') = {app.env.ref_context.get('py:module')!r}")
-        _logger.debug(f"app.env.ref_context.get('py:class') = {app.env.ref_context.get('py:class')!r}")
-
-        # When overriding `enum.Enum`, non-relevant inherited attributes come to be documented.
-        # Skip `StrEnum` members which names can be found in the base `enum.Enum` class.
-        if (not nfq_name.startswith("__")) and hasattr(enum.Enum, nfq_name):
-            if obj is getattr(StrEnum, nfq_name):
-                # Memo: `fqname()` may fail on `enum.Enum` members.
-                _logger.debug("`%s.%s` skipped!", fqname(StrEnum), nfq_name)
-                return True
 
         if would_skip:
             if inspect.isclass(obj) and (nfq_name != "__metaclass__"):
