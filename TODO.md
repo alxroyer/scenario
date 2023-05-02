@@ -19,7 +19,6 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Avoid parameter signature at the end of class docstrings.
         - Work around property return type issue [sphinx#7837](https://github.com/sphinx-doc/sphinx/issues/7837).
     - Use docstrings after module attribute instead of `.. py:attribute:` directives.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.

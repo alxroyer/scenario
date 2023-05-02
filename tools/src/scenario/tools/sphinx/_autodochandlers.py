@@ -205,10 +205,13 @@ class AutodocHandlers:
         def _errmsg(message):  # type: (str) -> str
             return f"autodoc-process-signature(fq_name={fq_name!r}): {message}"
 
+        # Do not show `__init__()` arguments in the class signature.
+        # `__init__()` documentation is generated separately.
+        #
+        # Memo: This signature adjustment is not enough when `autodoc_typehints` is `'description'`.
+        # See `SphinxHacking._classdocumentergetsignature()` for more information on this point.
         if what == "class":
-            # Do not show `__init__()` arguments in the class signature.
-            # `__init__()` documentation is generated separately.
-            _logger.debug("Class %s signature set from %r to None", fq_name, signature)
+            _logger.debug("Class %s signature set from %r to (None, None)", fq_name, signature)
             return None, None
 
         if signature and ("#" in signature):

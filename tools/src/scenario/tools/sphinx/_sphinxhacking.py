@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
 import typing
 
 # Sphinx imports.
@@ -39,18 +40,37 @@ class SphinxHacking:
             self,
             app,  # type: sphinx.application.Sphinx
     ):  # type: (...) -> None
+        # Hack `sphinx.ext.autodoc.ClassDocumenter.format_args()`.
+        # Use `setattr()` to avoid a "Cannot assign to a method [assignment]" typing error.
+        setattr(sphinx.ext.autodoc.ClassDocumenter, "_get_signature", SphinxHacking._classdocumentergetsignature)
         # Hack `sphinx.ext.autodoc.importer.get_class_members()`
-        # both in `sphinx.ext.autodoc.importer` and `sphinx.ext.autodoc` (function imported at the module level)
-        # to fix a bug with enum classes.
+        # both in `sphinx.ext.autodoc.importer` and `sphinx.ext.autodoc` (function imported at the module level).
         sphinx.ext.autodoc.importer.get_class_members = SphinxHacking._getclassmembers
         sphinx.ext.autodoc.get_class_members = SphinxHacking._getclassmembers
-        # Hack `sphinx.domains.python.PyXrefMixin.make_xrefs()` to fix redundant optional types.
+        # Hack `sphinx.domains.python.PyXrefMixin.make_xrefs()`.
         # Use `setattr()` to avoid a "Cannot assign to a method [assignment]" typing error.
         setattr(sphinx.domains.python.PyXrefMixin, "make_xrefs", SphinxHacking._makexrefs)
-        # Hack `sphinx.domains.python.parse_reftarget()` to fix `scenario` type cross-references.
+        # Hack `sphinx.domains.python.parse_reftarget()`.
         sphinx.domains.python.parse_reftarget = SphinxHacking._parsereftarget
-        # Hack `sphinx.ext.autodoc.object_description()` (see [sphinx#904](https://github.com/sphinx-doc/sphinx/issues/904)).
+        # Hack `sphinx.ext.autodoc.object_description()`.
         sphinx.ext.autodoc.object_description = SphinxHacking._objectdescription
+
+    @staticmethod
+    def _classdocumentergetsignature(
+            self,  # type: sphinx.ext.autodoc.ClassDocumenter
+            **kwargs  # type: typing.Any
+    ):  # type: (...) -> typing.Tuple[typing.Optional[typing.Any], typing.Optional[str], typing.Optional[inspect.Signature]]
+        """
+        Replacement hack for ``sphinx.ext.autodoc.ClassDocumenter._get_signature()``.
+
+        Avoids documenting ``__init__()`` signatures in class documentations when ``autodoc_typehints`` is ``'description'``.
+        """
+        from ._logging import Logger
+
+        _logger = Logger(Logger.Id.CLASS_DOCUMENTER_FORMAT_ARGS)  # type: Logger
+        _logger.debug("SphinxHacking._classdocumentergetsignature(): self.object=%r => returning (None, None, None)", self.object)
+
+        return None, None, None
 
     @staticmethod
     def _getclassmembers(
@@ -290,5 +310,5 @@ class SphinxHacking:
 
         # Discard the description for `None` or any other kind of object.
         _err = ValueError(f"Object description {_object_description!r} for data/attribute discarded")
-        _logger.debug("Discarding %r (%r raised)", _object_description, _err)
+        _logger.debug("[sphinx#904] Discarding %r (%r raised)", _object_description, _err)
         raise _err
