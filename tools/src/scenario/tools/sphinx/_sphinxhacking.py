@@ -96,9 +96,12 @@ class SphinxHacking:
                       subject, objpath, attrgetter, inherit_docstrings)
 
         # Call the base `sphinx.ext.autodoc.importer.get_class_members()` at first.
+        _kwargs = {}  # type: typing.Dict[str, typing.Any]
+        if sphinx.version_info >= (5, 0):
+            _kwargs["inherit_docstrings"] = inherit_docstrings
         _members = SphinxHacking._get_class_members_origin(
             subject, objpath, attrgetter,
-            inherit_docstrings=inherit_docstrings,
+            **_kwargs,
         )  # type: typing.Dict[str, sphinx.ext.autodoc.ObjectMember]
         _logger.debug("_members = %s", SafeRepr(_members))
 

@@ -18,8 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #77: Avoid exporting implementation modules.
-    - Fix documentation generation:
-        - Work around property return type issue [sphinx#7837](https://github.com/sphinx-doc/sphinx/issues/7837).
     - Use docstrings after module attribute instead of `.. py:attribute:` directives.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
