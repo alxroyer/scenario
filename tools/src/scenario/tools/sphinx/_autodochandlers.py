@@ -134,7 +134,7 @@ class AutodocHandlers:
                         _logger.debug("class attribute `%s` not skipped!", nfq_name)
                         return False
 
-        _logger.debug("skipmember(nfq_name=%r) => default would_skip=%r", nfq_name, would_skip)
+        _logger.debug("skipmember(nfq_name=%r) => default would_skip=%r (returning `None`)", nfq_name, would_skip)
         return None
 
     def processsignature(

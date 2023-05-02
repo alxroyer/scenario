@@ -53,7 +53,11 @@ class StepSectionDescription(StepDefinition):
         self.description = description
 
     def step(self):  # type: (...) -> None
-        # Do nothing.
+        """
+        Hides :meth:`._stepdefinition.StepDefinition.step()` default implementation.
+
+        Ensures nothing happens when this description step is *executed*.
+        """
         # Do not call the method of the mother class.
         pass
 
@@ -156,4 +160,9 @@ class StepSectionEnd(StepDefinition):
         self.begin = begin  # type: StepSectionBegin
 
     def step(self):  # type: (...) -> None
+        """
+        Hides :meth:`._stepdefinition.StepDefinition.step()` default implementation.
+
+        Ensures nothing happens when this final section step is *executed*.
+        """
         self.STEP(f"End of section {self.begin} -> {self}")

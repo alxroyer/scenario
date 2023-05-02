@@ -26,10 +26,14 @@ def fqname(
 
     .. todo:: Check whether :func:`fqname()` could be factorized with :func:`scenario._reflection.qualname()`.
     """
-    assert type(obj).__module__ != "typing", "fqname() can't be called on types!"
+    assert type(obj).__module__ != "typing", "fqname() shouldn't be called on types!"
 
+    if obj is None:
+        return repr(obj)
     if inspect.ismodule(obj):
-        return str(obj.__name__)
+        return obj.__name__
+    if hasattr(obj, "__qualname__"):
+        return f"{fqname(inspect.getmodule(obj))}.{obj.__qualname__}"
     return f"{fqname(inspect.getmodule(obj))}.{obj.__name__}"
 
 

@@ -23,6 +23,7 @@ import sphinx.application
 import sphinx.domains.python
 import sphinx.ext.autodoc
 import sphinx.ext.autodoc.importer
+import sphinx.pycode
 import sphinx.util.inspect
 import sphinx.util.typing
 
@@ -61,12 +62,10 @@ class SphinxHacking:
         """
         Replacement hack for ``sphinx.ext.autodoc.importer.get_class_members()``.
 
-        The base ``sphinx.ext.autodoc.importer.get_class_members()`` implementation
-        has a bug when analyzing an enum class that does not just inherit from ``enum.Enum`` or a derivate.
-        In that case ``superclass = subject.__mro__[1]`` does not necessarily retrieve the ``enum.Enum`` super-class.
-        In the case of :class:`scenario._enumutils.StrEnum`, it retrieves ``str`` for instance.
+        Workarounds for ``sphinx.ext.autodoc.importer.get_class_members()`` bugs:
 
-        Bug reported as [sphinx#11353](https://github.com/sphinx-doc/sphinx/issues/11353).
+        - `sphinx#11353 <https://github.com/sphinx-doc/sphinx/issues/11353>`_
+        - `sphinx#11387 <https://github.com/sphinx-doc/sphinx/issues/11387>`_
         """
         from scenario._debugutils import SafeRepr  # noqa  ## Access to a protected member.
         from ._logging import Logger
@@ -83,19 +82,24 @@ class SphinxHacking:
         )  # type: typing.Dict[str, sphinx.ext.autodoc.ObjectMember]
         _logger.debug("_members = %s", SafeRepr(_members))
 
-        if sphinx.util.inspect.isenumclass(subject):
+        # [sphinx#11353](https://github.com/sphinx-doc/sphinx/issues/11353)
+        #
+        # When analyzing an enum class that does not just inherit from `enum.Enum` or a derivate,
+        # `superclass = subject.__mro__[1]` does not necessarily retrieve the `enum.Enum` super-class.
+        # In the case of `StrEnum`, it retrieves `str` for instance.
+        def _fixenumclassmembers():  # type: (...) -> None
             # Checking identification of the `enum.Enum` super-class:
             # - as computed in in `sphinx.ext.autodoc.importer.get_class_members()`:
             _possibly_wrong_enum_superclass = subject.__mro__[1]  # type: type
             _logger.debug("_possibly_wrong_enum_superclass = %r", _possibly_wrong_enum_superclass)
             # - as it had better be computed:
-            _enum_superclass = list(filter(sphinx.util.inspect.isenumclass, subject.__mro__))[1]  # type: type
+            _enum_superclass = list(filter(sphinx.util.inspect.isenumclass, subject.__mro__))[-1]  # type: type
             _logger.debug("_enum_superclass = %r", _enum_superclass)
 
             if _possibly_wrong_enum_superclass is _enum_superclass:
                 _logger.debug("No need to fix members for %r", subject)
             else:
-                _logger.info("Fixing %r members due to Sphinx autodoc bug with multiple inheritance enums", fqname(subject))
+                _logger.debug("[sphinx#11353] Fixing %s enum members", fqname(subject))
                 _logger.debug("_members (before) = %r", _members)
 
                 # Call `attrgetter()` as done in `sphinx.ext.autodoc.importer.get_class_members()`.
@@ -131,6 +135,36 @@ class SphinxHacking:
                             _logger.debug("Keep avoiding %r from members", _obj_desc)
 
                 _logger.debug("_members (modified) = %r", _members)
+        if sphinx.util.inspect.isenumclass(subject):
+            _fixenumclassmembers()
+
+        # [sphinx#11387](https://github.com/sphinx-doc/sphinx/issues/11387)
+        #
+        # Things are messed up for inherited members when using annotations.
+        def _fixobjectmembersdefclass():  # type: (...) -> None
+            for _mro_class in sphinx.util.inspect.getmro(subject):  # type: type
+                # Don't proceed with builtin superclasses.
+                if _mro_class.__module__ == "builtins":
+                    continue
+
+                # Inspired from `sphinx.ext.autodoc.importer.get_class_members()`.
+                _analyzer = sphinx.pycode.ModuleAnalyzer.for_module(_mro_class.__module__)  # type: sphinx.pycode.ModuleAnalyzer
+                _analyzer.analyze()
+                for (_ns, _name), _docstring in _analyzer.attr_docs.items():  # type: typing.Tuple[str, str], typing.List[str]
+                    if (
+                        # Is the attribute name of those described in `_members`?
+                        (_name in _members)
+                        # Is the given attribute actually part of `_mro_class`?
+                        and (_ns == _mro_class.__name__)
+                        # Is it the same docstring? If not, the attribute may have been redefined, with a different documentation normally.
+                        and (_members[_name].docstring == "\n".join(_docstring))
+                        # Is it really new information? If not, no need to log anything.
+                        and (_members[_name].class_ is not _mro_class)
+                    ):
+                        _logger.debug("[sphinx#11387] Fixing definition class for %s.%s from %s to %s",
+                                      fqname(subject), _name, fqname(_members[_name].class_), fqname(_mro_class))
+                        _members[_name].class_ = _mro_class
+        _fixobjectmembersdefclass()
 
         return _members
 
@@ -254,7 +288,7 @@ class SphinxHacking:
             _logger.debug("Returning %r", _object_description)
             return _object_description
 
-        # Discard the description for any other kind of object (`None` among others).
+        # Discard the description for `None` or any other kind of object.
         _err = ValueError(f"Object description {_object_description!r} for data/attribute discarded")
         _logger.debug("Discarding %r (%r raised)", _object_description, _err)
         raise _err

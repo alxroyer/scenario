@@ -61,7 +61,7 @@ def _reloadscenariomoduleswithtypechecking():  # type: (...) -> None
 
     # Reload scenario modules with `typing.TYPE_CHECKING` enabled.
     for _module_name in _scenariodocumentedmodulenames():  # type: str
-        _logger.info(f"Reloading {_module_name!r} with `typing.TYPE_CHECKING` enabled")
+        _logger.debug(f"Reloading {_module_name!r} with `typing.TYPE_CHECKING` enabled")
         try:
             _reloadmodulewithtypechecking(_module_name)
         except Exception as _err:
@@ -255,7 +255,7 @@ def configuretypealiases(
             _logger.warning(f"Duplicate type name {_short_name!r}, already aliased with {env.config.autodoc_type_aliases[_short_name]!r}")
         else:
             env.config.autodoc_type_aliases[_short_name] = f"~{_fq_name}"
-            _logger.info("Aliasing %r with %r", _short_name, env.config.autodoc_type_aliases[_short_name])
+            _logger.debug("Aliasing %r with %r", _short_name, env.config.autodoc_type_aliases[_short_name])
 
 
 def checkredundantoptionaltypes(

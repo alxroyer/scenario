@@ -198,7 +198,7 @@ class ExceptionError(TestError):
         if exception:
             self.exception_type = exception.exc_type.__name__
 
-        # Redefine the type of :attr:`TestError.location` in order to explicitize it cannot be ``None`` for :class:`ExceptionError` instances.
+        #: Redefinition of :attr:`TestError.location`'s type, in order to explicitize it cannot be ``None`` for :class:`ExceptionError` instances.
         self.location = self.location  # type: _CodeLocationType
 
     def __str__(self):  # type: () -> str

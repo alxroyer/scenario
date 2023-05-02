@@ -19,13 +19,8 @@
 
 - Issue #77: Avoid exporting implementation modules.
     - Fix documentation generation:
-        - Issue #81: Hide inherited attributes
-            - Memo of useful resources on the subject:
-                - [sphinx#8587](https://github.com/sphinx-doc/sphinx/pull/8587/files#diff-e43bdd6f8f37a12d2536e09e57c5e8999cb8de18b9c7ba49126f90576c4328acL670)
-                  pull-request, line 670, inner function `is_filtered_inherited_member()`.
-                - [sphinx#741](https://github.com/sphinx-doc/sphinx/issues/741)
-                  "autodoc inherited-members won't work for inherited attributes (data members)"
-    - Workaround property return type issue [sphinx#7837](https://github.com/sphinx-doc/sphinx/issues/7837).
+        - Avoid parameter signature at the end of class docstrings.
+        - Work around property return type issue [sphinx#7837](https://github.com/sphinx-doc/sphinx/issues/7837).
     - Use docstrings after module attribute instead of `.. py:attribute:` directives.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
