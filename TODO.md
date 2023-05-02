@@ -17,8 +17,6 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #77: Avoid exporting implementation modules.
-    - Use docstrings after module attribute instead of `.. py:attribute:` directives.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
 - Issue #80: Provide a subscenario step class.
