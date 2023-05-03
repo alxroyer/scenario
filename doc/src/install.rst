@@ -26,14 +26,19 @@ Mandatory:
 - Python 3.6 or later (https://www.python.org/downloads/)
 
   - Python >= 3.7 recommended (for compatibility with mypy v1.0.0).
-  - Tested with versions 3.6.8 and 3.7.9.
+  - Tested versions:
+
+    - 3.6.8
+    - 3.7.9
 
 Recommended:
 
 - mypy (https://pypi.org/project/mypy/)
 
   - Versions prior to 1.0.0 not supported anymore.
-  - Tested with version 1.0.1 (Python 3.7.9).
+  - Tested versions:
+
+    - 1.0.1 (Python 3.7.9).
 
 - pytz (https://pypi.org/project/pytz/)
 
@@ -43,7 +48,11 @@ Documentation generation (optional):
 
 - Sphinx (https://pypi.org/project/Sphinx/)
 
-  - Tested with version 4.4.0 (Python 3.6.8) and 5.3.0 (Python 3.7.9).
+  - Tested versions:
+
+    - 4.4.0 (Python 3.6.8, `typed_ast` installed, cross-references to typehints may not work)
+    - 5.3.0 (Python 3.7.9, `typed_ast` installed)
+    - 6.1.3 (Python 3.8.15, on readthedocs)
 
 - Java
 

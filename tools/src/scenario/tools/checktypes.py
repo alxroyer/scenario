@@ -54,8 +54,8 @@ class CheckTypes:
         self.max_errors = max_errors  # type: int
 
     def run(self):  # type: (...) -> scenario.ErrorCode
-        from .subprocess import SubProcess
-        from .thirdparty import checkthirdpartytoolversion
+        from ._subprocess import SubProcess
+        from .tracking import tracktoolversion
 
         # Command line arguments.
         if not scenario.Args.isset():
@@ -67,8 +67,8 @@ class CheckTypes:
         scenario.Path.setmainpath(self.main_path)
 
         # Mypy version verification.
-        checkthirdpartytoolversion("python", [sys.executable, "--version"])
-        checkthirdpartytoolversion("mypy", [*CheckTypes.PY_MYPY, "--version"])
+        tracktoolversion("python", [sys.executable, "--version"])
+        tracktoolversion("mypy", [*CheckTypes.PY_MYPY, "--version"])
 
         # Mypy execution.
         scenario.logging.info(f"Executing mypy with '{self.mypy_conf_path}'...")

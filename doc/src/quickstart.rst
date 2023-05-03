@@ -44,7 +44,7 @@ Within your module, declare a class that extends the base :py:class:`scenario.Sc
     :lines: 1
 
 Depending on your configuration
-(see :py:meth:`scenario.scenarioconfig.ScenarioConfig.expectedscenarioattributes()`),
+(see :py:meth:`scenario._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`),
 define your scenario attributes:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
@@ -93,7 +93,7 @@ The steps are executed in their alphabetical order.
 That's the reason why regular steps are usually numbered.
 
 Give the step descriptions at the beginning of each step method
-by calling the :py:meth:`scenario.stepuserapi.StepUserApi.STEP()` method:
+by calling the :py:meth:`scenario._stepuserapi.StepUserApi.STEP()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
@@ -101,7 +101,7 @@ by calling the :py:meth:`scenario.stepuserapi.StepUserApi.STEP()` method:
     :lines: 1
     :dedent:
 
-Define actions by calling the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()` method:
+Define actions by calling the :py:meth:`scenario._stepuserapi.StepUserApi.ACTION()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
@@ -109,7 +109,7 @@ Define actions by calling the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION(
     :lines: 1
     :dedent:
 
-Define expected results by calling the :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` method:
+Define expected results by calling the :py:meth:`scenario._stepuserapi.StepUserApi.RESULT()` method:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
@@ -129,8 +129,8 @@ The related test script should be placed below these ``if`` statements:
 This makes it possible for the `scenario` library to call the step methods for different purposes:
 
 1. to peak all the action and expected result descriptions, without executing the test script:
-    in that case, the :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()`
-    and :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` methods
+    in that case, the :py:meth:`scenario._stepuserapi.StepUserApi.ACTION()`
+    and :py:meth:`scenario._stepuserapi.StepUserApi.RESULT()` methods
     return ``False``,
     which prevents the test script from being executed.
 2. to execute the test script:
@@ -146,7 +146,7 @@ provided by the :py:class:`scenario.Assertions` class:
     :end-at: self.assertequal
     :dedent:
 
-Eventually, the :py:meth:`scenario.stepuserapi.StepUserApi.evidence()` calls register :ref:`test evidence <evidence>` with the test results.
+Eventually, the :py:meth:`scenario._stepuserapi.StepUserApi.evidence()` calls register :ref:`test evidence <evidence>` with the test results.
 This kind of call may be used under an action or expected result ``if`` statement.
 
 .. literalinclude:: ../../demo/commutativeaddition.py

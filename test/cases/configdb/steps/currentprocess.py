@@ -206,7 +206,7 @@ class CheckConfigValue(scenario.test.Step):
         self.value_read = None  # type: typing.Any
 
     def step(self):  # type: (...) -> None
-        from scenario.reflex import qualname
+        from scenario._reflection import qualname  # noqa  ## Access to protected module
 
         self.STEP(f"Read {self.key!r}{f' as `{qualname(self.read_as)}`' if self.read_as is not None else ''}")
 

@@ -21,6 +21,6 @@ Step sections
 .. todo:: Documentation needed for step sections.
 
     - Step section descriptions:
-        - :py:class:`scenario.stepsections.StepSectionDescription`
-        - :py:meth:`scenario.stepdefinition.StepDefinition.section()`
-    - Step section begin / end (:py:class:`scenario.stepsections.StepSectionBegin` and :py:class:`scenario.stepsections.StepSectionEnd`).
+        - :py:class:`scenario._stepsection.StepSectionDescription`
+        - :py:meth:`scenario._scenariodefinition.ScenarioDefinition.section()`
+    - Step section begin / end (:py:class:`scenario._stepsection.StepSectionBegin` and :py:class:`scenario._stepsection.StepSectionEnd`).

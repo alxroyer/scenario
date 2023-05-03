@@ -23,24 +23,24 @@ Architecture
 Scenario execution
 ------------------
 
-The :py:class:`scenario.scenariodefinition.ScenarioDefinition`, :py:class:`scenario.stepdefinition.StepDefinition`
-and :py:class:`scenario.actionresultdefinition.ActionResultDefinition` classes
+The :py:class:`scenario._scenariodefinition.ScenarioDefinition`, :py:class:`scenario._stepdefinition.StepDefinition`
+and :py:class:`scenario._actionresultdefinition.ActionResultDefinition` classes
 are the base classes for the definition of scenarios, steps, actions and expected results respectively.
 
-The :py:class:`scenario.scenariorunner.ScenarioRunner` instance handles the execution of them.
+The :py:class:`scenario._scenariorunner.ScenarioRunner` instance handles the execution of them.
 
-Its :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method is the entry point
+Its :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` method is the entry point
 that a :ref:`launcher script <launcher>` should call.
 This method:
 
 1. analyzes the command line arguments and loads the configuration files (see the :ref:`related design section <arch.configuration>`),
-2. builds a scenario instance from the given scenario script, with reflexive programming,
+2. builds a scenario instance from the given scenario script, with reflective programming,
 3. proceeds with the scenario execution.
 
-The :py:class:`scenario.scenariorunner.ScenarioRunner` class works with a couple of helper classes.
+The :py:class:`scenario._scenariorunner.ScenarioRunner` class works with a couple of helper classes.
 
-The :py:class:`scenario.scenarioexecution.ScenarioExecution`, :py:class:`scenario.stepexecution.StepExecution`
-and :py:class:`scenario.actionresultexecution.ActionResultExecution` classes
+The :py:class:`scenario._scenarioexecution.ScenarioExecution`, :py:class:`scenario._stepexecution.StepExecution`
+and :py:class:`scenario._actionresultexecution.ActionResultExecution` classes
 store the execution information related to definition classes cited above.
 
 .. list-table:: Definition v/s execution classes
@@ -54,108 +54,108 @@ store the execution information related to definition classes cited above.
 
     * - Scenario level
 
-      - :py:class:`scenario.scenariodefinition.ScenarioDefinition`
+      - :py:class:`scenario._scenariodefinition.ScenarioDefinition`
 
-        - Describes the list of :py:class:`scenario.stepdefinition.StepDefinition` that define the scenario.
-        - Gives the related :py:class:`scenario.scenarioexecution.ScenarioExecution` instance when executed.
+        - Describes the list of :py:class:`scenario._stepdefinition.StepDefinition` that define the scenario.
+        - Gives the related :py:class:`scenario._scenarioexecution.ScenarioExecution` instance when executed.
 
-      - :py:class:`scenario.scenarioexecution.ScenarioExecution`
+      - :py:class:`scenario._scenarioexecution.ScenarioExecution`
 
         - Tells which step is currently being executed.
         - Stores the execution error, if any.
         - Stores execution statistics.
-        - Gives access to the related :py:class:`scenario.scenariodefinition.ScenarioDefinition` instance.
+        - Gives access to the related :py:class:`scenario._scenariodefinition.ScenarioDefinition` instance.
 
     * - Step level
 
-      - :py:class:`scenario.stepdefinition.StepDefinition`
+      - :py:class:`scenario._stepdefinition.StepDefinition`
 
-        - Describes the list of :py:class:`scenario.actionresultdefinition.ActionResultDefinition` that define the step.
-        - Gives the related :py:class:`scenario.stepexecution.StepExecution` instances when executed.
+        - Describes the list of :py:class:`scenario._actionresultdefinition.ActionResultDefinition` that define the step.
+        - Gives the related :py:class:`scenario._stepexecution.StepExecution` instances when executed.
 
-      - :py:class:`scenario.stepexecution.StepExecution`
+      - :py:class:`scenario._stepexecution.StepExecution`
 
         - Tells wich action or expected result is currently being executed.
         - Stores the execution error, if any.
         - Stores execution statistics.
-        - Gives access to the related :py:class:`scenario.stepdefinition.StepDefinition` instance.
+        - Gives access to the related :py:class:`scenario._stepdefinition.StepDefinition` instance.
 
     * - Action and expected result level
 
-      - :py:class:`scenario.actionresultdefinition.ActionResultDefinition`
+      - :py:class:`scenario._actionresultdefinition.ActionResultDefinition`
 
         - Describes an action or an expected result, with its text.
-        - Gives the related :py:class:`scenario.actionresultexecution.ActionResultExecution` instances when executed.
+        - Gives the related :py:class:`scenario._actionresultexecution.ActionResultExecution` instances when executed.
 
-      - :py:class:`scenario.actionresultexecution.ActionResultExecution`
+      - :py:class:`scenario._actionresultexecution.ActionResultExecution`
 
         - Stores :ref:`evidence <evidence>`.
         - Stores the execution error, if any.
         - Stores execution statistics.
-        - Gives access to the related :py:class:`scenario.actionresultdefinition.ActionResultDefinition` instance.
+        - Gives access to the related :py:class:`scenario._actionresultdefinition.ActionResultDefinition` instance.
 
 .. note::
     Due to the :ref:`goto <goto>` feature, steps, actions and expected results may be executed several times
     within a single scenario execution.
 
-The :py:class:`scenario.scenariostack.ScenarioStack` also is a helper class for :py:class:`scenario.scenariorunner.ScenarioRunner`:
+The :py:class:`scenario._scenariostack.ScenarioStack` also is a helper class for :py:class:`scenario._scenariorunner.ScenarioRunner`:
 
 - It stores the current stack of scenarios being executed (see :ref:`subscenarios <arch.subscenario-execution>`.
 - It also provides a couple of accessors to the current step, action or expected result being executed.
 
-The :py:class:`scenario.scenariorunner.ScenarioRunner` class remains the conductor of all:
+The :py:class:`scenario._scenariorunner.ScenarioRunner` class remains the conductor of all:
 
-#. The :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method is called.
+#. The :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` method is called.
 #. For each script path given in the command line:
 
-   #. A main :py:class:`scenario.scenariodefinition.ScenarioDefinition` instance is created [#meth-executepath]_
+   #. A main :py:class:`scenario._scenariodefinition.ScenarioDefinition` instance is created [#meth-executepath]_
       from the scenario class in the script [#class-ScenarioDefinitionHelper]_.
-      A :py:class:`scenario.scenarioexecution.ScenarioExecution` instance is created as well,
-      and pushed to the :py:class:`scenario.scenariostack.ScenarioStack` instance [#meth-beginscenario]_.
-   #. :py:attr:`scenario.scenariorunner.ScenarioRunner._execution_mode`
-      is set to :py:attr:`scenario.scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS`:
+      A :py:class:`scenario._scenarioexecution.ScenarioExecution` instance is created as well,
+      and pushed to the :py:class:`scenario._scenariostack.ScenarioStack` instance [#meth-beginscenario]_.
+   #. :py:attr:`scenario._scenariorunner.ScenarioRunner._execution_mode`
+      is set to :py:attr:`scenario._scenariorunner.ScenarioRunner.ExecutionMode.BUILD_OBJECTS`:
 
       #. In case the steps are defined with ``step...()`` methods,
-         the :py:class:`scenario.scenariodefinition.ScenarioDefinition` is fed using reflexive programmation
+         the :py:class:`scenario._scenariodefinition.ScenarioDefinition` is fed using reflective programming
          (the same for scenario attributes defined with class members)
          [#meth-beginscenario]_ [#class-ScenarioDefinitionHelper]_.
       #. Each step is executed a first time [#meth-beginscenario]_ [#meth-execstep]_ in order to build
-         its :py:class:`scenario.actionresultdefinition.ActionResultDefinition` instances
-         for each :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()` and :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` call [#meth-onactionresult]_.
+         its :py:class:`scenario._actionresultdefinition.ActionResultDefinition` instances
+         for each :py:meth:`scenario._stepuserapi.StepUserApi.ACTION()` and :py:meth:`scenario._stepuserapi.StepUserApi.RESULT()` call [#meth-onactionresult]_.
          During this first execution of the step, the two latter methods return ``False`` [#attr-execution_mode]_,
          which prevents the test from being executed at this point.
 
-   #. :py:attr:`scenario.scenariorunner.ScenarioRunner._execution_mode`
-      is set to :py:attr:`scenario.scenariorunner.ScenarioRunner.ExecutionMode.EXECUTE`
-      or :py:attr:`scenario.scenariorunner.ScenarioRunner.ExecutionMode.DOC_ONLY` [#meth-executescenario]_.
+   #. :py:attr:`scenario._scenariorunner.ScenarioRunner._execution_mode`
+      is set to :py:attr:`scenario._scenariorunner.ScenarioRunner.ExecutionMode.EXECUTE`
+      or :py:attr:`scenario._scenariorunner.ScenarioRunner.ExecutionMode.DOC_ONLY` [#meth-executescenario]_.
       For each step [#meth-executescenario]_ [#meth-execstep]_:
 
-      #. A :py:class:`scenario.stepexecution.StepExecution` instance is created [#meth-execstep]_.
+      #. A :py:class:`scenario._stepexecution.StepExecution` instance is created [#meth-execstep]_.
       #. The user test code is called [#meth-execstep]_.
-      #. For each :py:meth:`scenario.stepuserapi.StepUserApi.ACTION()`
-         and :py:meth:`scenario.stepuserapi.StepUserApi.RESULT()` call [#meth-onactionresult]_:
+      #. For each :py:meth:`scenario._stepuserapi.StepUserApi.ACTION()`
+         and :py:meth:`scenario._stepuserapi.StepUserApi.RESULT()` call [#meth-onactionresult]_:
 
-         #. A :py:class:`scenario.actionresultexecution.ActionResultExecution` instance is created [#meth-onactionresult]_.
-         #. If a subscenario is executed, then it is pushed to the :py:class:`scenario.scenariostack.ScenarioStack` instance [#meth-beginscenario]_,
+         #. A :py:class:`scenario._actionresultexecution.ActionResultExecution` instance is created [#meth-onactionresult]_.
+         #. If a subscenario is executed, then it is pushed to the :py:class:`scenario._scenariostack.ScenarioStack` instance [#meth-beginscenario]_,
             built [#meth-beginscenario]_ [#class-ScenarioDefinitionHelper]_ [#meth-execstep]_,
             executed [#meth-executescenario]_ [#meth-execstep]_,
-            and eventually popped from the :py:class:`scenario.scenariostack.ScenarioStack` instance [#meth-endscenario]_.
+            and eventually popped from the :py:class:`scenario._scenariostack.ScenarioStack` instance [#meth-endscenario]_.
 
-   #. The main scenario is eventually popped from the :py:class:`scenario.scenariostack.ScenarioStack` instance [#meth-endscenario]_.
+   #. The main scenario is eventually popped from the :py:class:`scenario._scenariostack.ScenarioStack` instance [#meth-endscenario]_.
 
 #. If there were several scenarios executed, the final results are displayed [#class-ScenarioResults]_.
 
 ---
 
-.. [#attr-execution_mode] See :py:attr:`scenario.scenariorunner.ScenarioRunner._execution_mode`.
-.. [#meth-executepath] See :py:meth:`scenario.scenariorunner.ScenarioRunner.executepath()`.
-.. [#meth-executescenario] See :py:meth:`scenario.scenariorunner.ScenarioRunner.executescenario()`.
-.. [#meth-beginscenario] See :py:meth:`scenario.scenariorunner.ScenarioRunner._beginscenario()`.
-.. [#meth-execstep] See :py:meth:`scenario.scenariorunner.ScenarioRunner._execstep()`.
-.. [#meth-onactionresult] See :py:meth:`scenario.scenariorunner.ScenarioRunner.onactionresult()`.
-.. [#meth-endscenario] See :py:meth:`scenario.scenariorunner.ScenarioRunner._endscenario()`.
-.. [#class-ScenarioDefinitionHelper] See :py:class:`scenario.scenariodefinition.ScenarioDefinitionHelper`.
-.. [#class-ScenarioResults] See :py:class:`scenario.scenarioresults.ScenarioResults`.
+.. [#attr-execution_mode] See :py:attr:`scenario._scenariorunner.ScenarioRunner._execution_mode`.
+.. [#meth-executepath] See :py:meth:`scenario._scenariorunner.ScenarioRunner.executepath()`.
+.. [#meth-executescenario] See :py:meth:`scenario._scenariorunner.ScenarioRunner.executescenario()`.
+.. [#meth-beginscenario] See :py:meth:`scenario._scenariorunner.ScenarioRunner._beginscenario()`.
+.. [#meth-execstep] See :py:meth:`scenario._scenariorunner.ScenarioRunner._execstep()`.
+.. [#meth-onactionresult] See :py:meth:`scenario._scenariorunner.ScenarioRunner.onactionresult()`.
+.. [#meth-endscenario] See :py:meth:`scenario._scenariorunner.ScenarioRunner._endscenario()`.
+.. [#class-ScenarioDefinitionHelper] See :py:class:`scenario._scenariodefinition.ScenarioDefinitionHelper`.
+.. [#class-ScenarioResults] See :py:class:`scenario._scenarioresults.ScenarioResults`.
 
 
 .. _arch.subscenario-execution:

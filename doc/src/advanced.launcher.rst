@@ -35,10 +35,10 @@ Command line argument extension
 
 About configurable features, :ref:`configuration files <config-db>` come as a straight forward solution.
 Nevertheless, it is sometimes faster in use to provide command line options to the test launcher script also.
-To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario.scenarioargs.ScenarioArgs` class:
+To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario._scenarioargs.ScenarioArgs` class:
 
-- The final program description is set with the :py:meth:`scenario.args.Args.setdescription()` method.
-- Extra arguments may be defined thanks to the :py:meth:`scenario.args.Args.addarg()` then :py:meth:`scenario.args.ArgInfo.define()` methods.
+- The final program description is set with the :py:meth:`scenario._args.Args.setdescription()` method.
+- Extra arguments may be defined thanks to the :py:meth:`scenario._args.Args.addarg()` then :py:meth:`scenario._args.ArgInfo.define()` methods.
 
 .. Class declaration with constructor.
 .. literalinclude:: ../../demo/run-demo.py
@@ -46,10 +46,10 @@ To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario.scenari
     :start-at: class DemoArgs
     :end-before: def _checkargs
 
-The :py:meth:`scenario.args.Args._checkargs()` method may be overloaded in order to check additional constraints,
-after the arguments have been parsed, and the :py:class:`scenario.args.Args` attributes have been updated:
+The :py:meth:`scenario._args.Args._checkargs()` method may be overloaded in order to check additional constraints,
+after the arguments have been parsed, and the :py:class:`scenario._args.Args` attributes have been updated:
 
-- Start or finish with calling the mother class's :py:meth:`scenario.scenarioargs.ScenarioArgs._checkargs()` method.
+- Start or finish with calling the mother class's :py:meth:`scenario._scenarioargs.ScenarioArgs._checkargs()` method.
 - This method is expected to return ``True`` or ``False`` whether an error has been detected or not.
 
 .. Overload of the `_checkargs()` method.
@@ -58,10 +58,10 @@ after the arguments have been parsed, and the :py:class:`scenario.args.Args` att
     :start-at: def _checkargs
     :end-at: return True
 
-Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method:
+Then, in the *main* part, prior to calling the :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` method:
 
-- Set an instance of our :py:class:`DemoArgs` class with the :py:meth:`scenario.args.Args.setinstance()` method.
-- Call the :py:meth:`scenario.args.Args.parse()` method to parse the command line arguments.
+- Set an instance of our :py:class:`DemoArgs` class with the :py:meth:`scenario._args.Args.setinstance()` method.
+- Call the :py:meth:`scenario._args.Args.parse()` method to parse the command line arguments.
 
 .. Argument parsing.
 .. literalinclude:: ../../demo/run-demo.py
@@ -82,7 +82,7 @@ but regular arguments as well.
 
 Using the ``--help`` option displays both:
 
-- the usual :py:class:`scenario.scenarioargs.ScenarioArgs` options,
+- the usual :py:class:`scenario._scenarioargs.ScenarioArgs` options,
 - and the extra options added by the :py:class:`DemoArgs` class.
 
 .. code-block:: bash
@@ -146,7 +146,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 Base launcher execution
 -----------------------
 
-The call to the :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method will not analyze command line arguments twice,
+The call to the :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` method will not analyze command line arguments twice,
 and use the values given by our :py:class:`DemoArgs` instance already set.
 
 .. Scenario execution.
@@ -162,7 +162,7 @@ and use the values given by our :py:class:`DemoArgs` instance already set.
 Return code
 -----------
 
-Eventually, convert the enum value returned by :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` into a simple integer value,
+Eventually, convert the enum value returned by :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` into a simple integer value,
 so that the error can be handled in the shell that launched the command line.
 
 .. Error code.
@@ -180,8 +180,8 @@ Campaign launcher script extension
 
 Extending the campaign launcher script works the same, except that:
 
-- the :py:class:`scenario.campaignargs.CampaignArgs` class may be overloaded to add extra command line arguments,
-- the :py:meth:`scenario.campaignrunner.CampaignRunner.main()` must be called in the end.
+- the :py:class:`scenario._campaignargs.CampaignArgs` class may be overloaded to add extra command line arguments,
+- the :py:meth:`scenario._campaignrunner.CampaignRunner.main()` must be called in the end.
 
 
 .. _launcher.main-path:
@@ -190,12 +190,12 @@ Setting the main path (optional)
 --------------------------------
 
 Another thing that a launcher script may do is to set the *main path*
-(see :py:meth:`scenario.path.Path.setmainpath()`).
+(see :py:meth:`scenario._path.Path.setmainpath()`).
 
 A *main path* shall be set for the current test projet.
 This way, all paths displayed during the tests may be nicely displayed as *pretty path* from this *main path*,
 whatever the current working directory
-(see :py:attr:`scenario.path.Path.prettypath`).
+(see :py:attr:`scenario._path.Path.prettypath`).
 
 .. Setting the main path.
 .. literalinclude:: ../../demo/run-demo.py

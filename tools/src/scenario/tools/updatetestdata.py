@@ -183,11 +183,11 @@ class DataExpectationsUpdater(FileUpdater):
             self,
             test_data,  # type: TestData
     ):  # type: (...) -> None
-        from . import paths
+        from ._paths import TEST_SRC_DATA_PATH
 
         FileUpdater.__init__(
             self,
-            paths.TEST_SRC_DATA_PATH, test_data,
+            TEST_SRC_DATA_PATH, test_data,
             lambda _, line: self.matchmodifyline(
                 rb'^(.*location=.*:)\d+(:.*, {2}# location: (.*)/(.*))$', line,
                 filter_match=lambda match: self._filtermatch(match, 3),

@@ -1,0 +1,44 @@
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# Read the Docs configuration file.
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details.
+
+# Note: Apparently, paths start from the root directory of the repository.
+
+version: 2
+
+build:
+  # Apparently, the OS specification below is required.
+  os: ubuntu-22.04
+  tools:
+    # Use Python 3.8 in order to make `sphinx.ext.autodoc.type_comment.get_type_comment()` succeed in collecting function and method typehints:
+    # > "It requires py38+ or typed_ast module." from the function doctsring.
+    #
+    # It could also work with Python 3.7 and `typed_ast` installed,
+    # but typehints are better displayed with Python 3.8.
+    python: "3.8"
+python:
+   install:
+     - requirements: tools/conf/sphinx/rtd-pip-requirements.txt
+
+sphinx:
+  # Path to the sphinx configuration file.
+  configuration: tools/conf/sphinx/conf.py
+
+formats:
+  - pdf
+  - htmlzip
+  - epub

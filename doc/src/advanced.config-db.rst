@@ -20,7 +20,7 @@ Configuration database
 
 The `scenario` framework provides a general configuration database.
 
-It is available through the :py:attr:`scenario.conf` attribute.
+It is available through the :py:data:`scenario.conf` attribute.
 
 
 Configuration nodes
@@ -28,7 +28,7 @@ Configuration nodes
 
 The database configuration is a tree of sections, sub-sections, sub-sub-sections, ... ending with final values.
 
-The :py:class:`scenario.confignode.ConfigNode` class describes a node in the resulting configuration tree,
+The :py:class:`scenario._confignode.ConfigNode` class describes a node in the resulting configuration tree,
 either a section or a final value.
 
 
@@ -105,8 +105,8 @@ Then, the single values set by the ``--config-value`` options finally update the
 Manipulating configurations from the code
 -----------------------------------------
 
-The code can then access configuration values (resp. :py:class:`scenario.confignode.ConfigNode` instances)
-through the :py:meth:`scenario.configdb.ConfigDatabase.get()` method (resp. :py:meth:`scenario.configdb.ConfigDatabase.getnode()`).
+The code can then access configuration values (resp. :py:class:`scenario._confignode.ConfigNode` instances)
+through the :py:meth:`scenario._configdb.ConfigDatabase.get()` method (resp. :py:meth:`scenario._configdb.ConfigDatabase.getnode()`).
 
 .. code-block:: python
 
@@ -121,16 +121,16 @@ through the :py:meth:`scenario.configdb.ConfigDatabase.get()` method (resp. :py:
     # Access a whole list as a JSON list (`None` if the list does not exist).
     _list = scenario.conf.get("x.y", type=list)  # type: typing.Optional[typing.List[typing.Any]]
 
-The configuration keys available can be listed with the :py:meth:`scenario.configdb.ConfigDatabase.getkeys()` method.
+The configuration keys available can be listed with the :py:meth:`scenario._configdb.ConfigDatabase.getkeys()` method.
 
-Configuration files can be loaded from the code (see :py:meth:`scenario.configdb.ConfigDatabase.loadfile()`).
+Configuration files can be loaded from the code (see :py:meth:`scenario._configdb.ConfigDatabase.loadfile()`).
 
 .. code-block:: python
 
     # Load a configuration file.
     scenario.conf.loadfile("demo/conf.yml")
 
-Configuration data can also be set (either sections or lists or single values, see :py:meth:`scenario.configdb.ConfigDatabase.set()`).
+Configuration data can also be set (either sections or lists or single values, see :py:meth:`scenario._configdb.ConfigDatabase.set()`).
 
 .. code-block:: python
 
@@ -162,7 +162,7 @@ Configuration data can also be set (either sections or lists or single values, s
           - ``str`` form of the enum value
 
 Configuration nodes can be accessed directly from the code, and provide an API that can be used from the user code
-(see :py:class:`scenario.confignode.ConfigNode`).
+(see :py:class:`scenario._confignode.ConfigNode`).
 
 .. code-block:: python
 
@@ -175,14 +175,14 @@ Configuration origins
 
 In case configurations lead to some erroneous situation,
 the configuration database keeps memory of *configuration origins*
-(see :py:attr:`scenario.confignode.ConfigNode.origins` and :py:attr:`scenario.confignode.ConfigNode.origin`).
+(see :py:attr:`scenario._confignode.ConfigNode.origins` and :py:attr:`scenario._confignode.ConfigNode.origin`).
 
 This information can help a user fix his/her configuration files when something goes wrong.
 
-For the purpose, the :py:meth:`scenario.confignode.ConfigNode.errmsg()` method
+For the purpose, the :py:meth:`scenario._confignode.ConfigNode.errmsg()` method
 builds error messages giving the representative origin of the given configuration node.
 
-The :py:meth:`scenario.configdb.ConfigDatabase.show()` and :meth:`scenario.confignode.ConfigNode.show()` methods
+The :py:meth:`scenario._configdb.ConfigDatabase.show()` and :meth:`scenario._confignode.ConfigNode.show()` methods
 also display the configuration tree with origins.
 
 .. code-block:: bash
@@ -203,7 +203,7 @@ The following table describes the `scenario` configurable keys & values.
 
 .. tip::
 
-    Use the :py:class:`scenario.ConfigKey` shortcut to the internal :py:class:`scenario.scenarioconfig.ScenarioConfig.Key` enum
+    Use the :py:class:`scenario.ConfigKey` shortcut to the internal :py:class:`scenario._scenarioconfig.ScenarioConfig.Key` enum
     from `scenario` user code.
 
 .. list-table:: Scenario configurable keys and values
@@ -219,7 +219,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.timezone:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.TIMEZONE`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.TIMEZONE`
       - ``scenario.timezone``
       - String
       - Timezone specification.
@@ -242,7 +242,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.log_date_time:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_DATETIME`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.LOG_DATETIME`
       - ``scenario.log_date_time``
       - Boolean
       - Should the log lines include a timestamp?
@@ -250,7 +250,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.log_console:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE`
       - ``scenario.log_console``
       - Boolean
       - Should the log lines be displayed in the console?
@@ -258,7 +258,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.log_color:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR_ENABLED`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.LOG_COLOR_ENABLED`
       - ``scenario.log_color``
       - Boolean
       - Should the log lines be colored?
@@ -266,12 +266,12 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.log_level_color:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_COLOR`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.LOG_COLOR`
       - ``scenario.log_%(level)_color``,
         ``%(level)`` being one of (``error``, ``warning``, ``info``, ``debug``)
       - Integer
       - Console color code per log level.
-        See :py:class:`scenario.console.Console.Color` for a list useful color codes.
+        See :py:class:`scenario._console.Console.Color` for a list useful color codes.
       - scenario.log_error_color: red(91),
         scenario.log_warning_color: yellow(33),
         scenario.log_info_color: white(1),
@@ -279,7 +279,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.log_file:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.LOG_FILE`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.LOG_FILE`
       - ``scenario.log_file``
       - File path string
       - Should the log lines be written in a log file?
@@ -287,7 +287,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.debug_classes:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.DEBUG_CLASSES`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.DEBUG_CLASSES`
       - ``scenario.debug_classes``
       - List of strings (or comma-separated string)
       - Which debug classes to display?
@@ -295,7 +295,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.expected_attributes:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.EXPECTED_ATTRIBUTES`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.EXPECTED_ATTRIBUTES`
       - ``scenario.expected_attributes``
       - List of strings (or comma-separated string)
       - Expected scenario attributes.
@@ -303,18 +303,18 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.continue_on_error:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
       - ``scenario.continue_on_error``
       - Boolean
       - Should the scenarios continue on error?
         If set to ``True``, an error ends the current step, but following steps are still executed.
         The same behaviour may also be activated scenario by scenario
-        by setting the :py:attr:`scenario.scenariodefinition.ScenarioDefinition.continue_on_error` attribute.
+        by setting the :py:attr:`scenario._scenariodefinition.ScenarioDefinition.continue_on_error` attribute.
       - Disabled
 
     * - .. _config-db.scenario.delay_between_steps:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.DELAY_BETWEEN_STEPS`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.DELAY_BETWEEN_STEPS`
       - ``scenario.delay_between_steps``
       - Float (in seconds)
       - Should we wait between two step executions?
@@ -322,7 +322,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.runner_script_path:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.RUNNER_SCRIPT_PATH`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.RUNNER_SCRIPT_PATH`
       - ``scenario.runner_script_path``
       - File path string
       - Path of the scenario runner script.
@@ -331,7 +331,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.scenario_timeout:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.SCENARIO_TIMEOUT`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.SCENARIO_TIMEOUT`
       - ``scenario.scenario_timeout``
       - Float (in seconds)
       - Maximum time for a scenario execution. Useful when executing campaigns.
@@ -339,7 +339,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.results_extra_info:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.RESULTS_EXTRA_INFO`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.RESULTS_EXTRA_INFO`
       - ``scenario.results_extra_info``
       - List of strings (or comma-separated string)
       - Scenario attributes to display for extra info when displaying scenario results,
@@ -348,7 +348,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.issue_levels:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_NAMES`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_NAMES`
       - ``scenario.issue_levels``
       - ``{str: int}`` dictionary
       - Dictionary of names associated with issue level integer values.
@@ -367,7 +367,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.issue_level_error:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_ERROR`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_ERROR`
       - ``scenario.issue_level_error``
       - String or integer.
       - Issue level from and above which known issues should be considered as errors.
@@ -377,7 +377,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.issue_level_ignored:
 
-        :py:attr:`scenario.scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_IGNORED`
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.ISSUE_LEVEL_IGNORED`
       - ``scenario.issue_level_ignored``
       - String or integer.
       - Issue level from and under which known issues should be ignored.

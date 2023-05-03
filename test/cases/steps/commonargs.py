@@ -80,7 +80,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
                 else:
                     _action_description1 += ", with log colorization disabled"
             else:
-                _action_description1 += f", with {scenario.enumutils.enum2str(_config_key)}={_config_value!r}"
+                _action_description1 += f", with {scenario.enum.enum2str(_config_key)}={_config_value!r}"
 
             if self.doexecute():
                 self.subprocess.unsetconfigvalue(_config_key)
@@ -88,13 +88,13 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
                     self.subprocess.setconfigvalue(_config_key, scenario.test.configvalues.tostr(_config_value))
 
         # Configuration files.
-        _config_files_mentionned = 0  # type: int
+        _config_files_mentioned = 0  # type: int
         for _config_file_path in self.config_file_paths:  # type: scenario.Path
-            if _config_files_mentionned == 0:
+            if _config_files_mentioned == 0:
                 _action_description1 += f", with configuration file '{_config_file_path}'"
             else:
                 _action_description1 += f", then '{_config_file_path}'"
-            _config_files_mentionned += 1
+            _config_files_mentioned += 1
 
             if self.doexecute():
                 self.subprocess.addargs("--config-file", _config_file_path)

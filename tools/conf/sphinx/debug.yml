@@ -1,0 +1,49 @@
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+scenario:
+  debug_classes:
+    # Sphinx handlers.
+    # - "scenario.tools.sphinx:sphinx:config-inited"
+    # - "scenario.tools.sphinx:sphinx:builder-inited"
+    # - "scenario.tools.sphinx:sphinx:env-before-read-docs"
+    # - "scenario.tools.sphinx:sphinx:source-read"
+    # - "scenario.tools.sphinx:sphinx:doctree-read"
+    # - "scenario.tools.sphinx:sphinx:env-updated"
+    # - "scenario.tools.sphinx:sphinx:missing-reference"
+    # - "scenario.tools.sphinx:sphinx:doctreee-resolved"
+    # - "scenario.tools.sphinx:sphinx:build-finished"
+    # Autodoc handler.
+    # - "scenario.tools.sphinx:autodoc:skip-member"
+    # - "scenario.tools.sphinx:autodoc:process-signature"
+    # - "scenario.tools.sphinx:autodoc:process-docstring"
+    # Sphinx hacking.
+    # - "scenario.tools.sphinx:class-documenter-get-signature"
+    # - "scenario.tools.sphinx:get-class-members"
+    # - "scenario.tools.sphinx:make-xrefs-hack"
+    # - "scenario.tools.sphinx:parse-reftarget-hack"
+    # - "scenario.tools.sphinx:object-description-hack"
+
+    # sphinx-apidoc execution.
+    # - "scenario.tools.sphinx:apidoc"
+    # Type hints.
+    # - "scenario.tools.sphinx:type-checking-reload"
+    # - "scenario.tools.sphinx:track-scenario-types"
+    # - "scenario.tools.sphinx:configure-type-aliases"
+    # - "scenario.tools.sphinx:check-redundant-optional-type"
+    # Documented items.
+    # - "scenario.tools.sphinx:track-documented-items"
+    # References.
+    # - "scenario.tools.sphinx:simplify-references"
