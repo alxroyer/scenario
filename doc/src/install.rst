@@ -50,7 +50,7 @@ Documentation generation (optional):
 
   - Tested versions:
 
-    - 4.4.0 (Python 3.6.8, `typed_ast` installed)
+    - 4.4.0 (Python 3.6.8, `typed_ast` installed, cross-references to typehints may not work)
     - 5.3.0 (Python 3.7.9, `typed_ast` installed)
     - 6.1.3 (Python 3.8.15, on readthedocs)
 
