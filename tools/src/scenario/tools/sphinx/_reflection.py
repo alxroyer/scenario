@@ -18,25 +18,6 @@ import inspect
 import typing
 
 
-def fqname(
-        obj,  # type: typing.Any
-):  # type: (...) -> str
-    """
-    .. warning:: Fails when called on types.
-
-    .. todo:: Check whether :func:`fqname()` could be factorized with :func:`scenario._reflection.qualname()`.
-    """
-    assert type(obj).__module__ != "typing", "fqname() shouldn't be called on types!"
-
-    if obj is None:
-        return repr(obj)
-    if inspect.ismodule(obj):
-        return obj.__name__
-    if hasattr(obj, "__qualname__"):
-        return f"{fqname(inspect.getmodule(obj))}.{obj.__qualname__}"
-    return f"{fqname(inspect.getmodule(obj))}.{obj.__name__}"
-
-
 def isspecialfunction(
         obj,  # type: typing.Any
 ):  # type: (...) -> bool

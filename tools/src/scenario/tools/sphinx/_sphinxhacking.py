@@ -88,8 +88,8 @@ class SphinxHacking:
         - `sphinx#11387 <https://github.com/sphinx-doc/sphinx/issues/11387>`_
         """
         from scenario._debugutils import SafeRepr  # noqa  ## Access to a protected member.
+        from scenario._reflection import fqname  # noqa  ## Access to a protected member.
         from ._logging import Logger
-        from ._reflection import fqname
 
         _logger = Logger(Logger.Id.GET_CLASS_MEMBERS)  # type: Logger
         _logger.debug("SphinxHacking._getclassmembers(subject=%r, objpath=%r, attrgetter=%r, inherit_docstrings=%r)",

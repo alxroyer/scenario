@@ -101,8 +101,9 @@ class AutodocHandlers:
                 Handlers should return None to fall back to the skipping behavior of autodoc and other enabled extensions.
         """
         from scenario._enumutils import StrEnum  # noqa  ## Access to a protected member.
+        from scenario._reflection import fqname  # noqa  ## Access to a protected member.
         from ._logging import Logger
-        from ._reflection import isspecialfunction, fqname
+        from ._reflection import isspecialfunction
 
         _logger = Logger.getinstance(Logger.Id.AUTODOC_SKIP_MEMBER)  # type: Logger
         _logger.debug("AutodocHandlers.skipmember(owner_type=%r, nfq_name=%r, obj=%r, would_skip=%r, options=%r)",

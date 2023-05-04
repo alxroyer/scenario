@@ -40,21 +40,44 @@ def qualname(
         obj,  # type: typing.Any
 ):  # type: (...) -> str
     """
-    Returns the qualified name of an object.
+    Returns the qualified name of an object,
+    i.e. its name from its definition module.
 
-    :param obj: Object to retrieve the qualified name for.
-    :return: Qualified name.
-
-    .. note:: Accessing directly the `__qualname__` attribute makes mypy generate errors like '"..." has no attribute "__qualname__"'.
+    :param obj:
+        Object to retrieve the qualified name for.
+        No types.
+    :return:
+        Qualified name.
     """
+    if obj is None:
+        return repr(obj)
+    if type(obj).__module__ == "typing":
+        raise ValueError(f"qualname() shouldn't be called on types. Cannot find name for {obj}")
     if hasattr(obj, "__qualname__"):
-        _qualname = obj.__qualname__  # type: str
-    elif hasattr(obj, "__name__"):
-        _qualname = obj.__name__
-    else:
-        # Should never occur... whatever, let's fallback on calling `repr()`.
-        _qualname = repr(obj)
-    return _qualname
+        return str(obj.__qualname__)
+    if hasattr(obj, "__name__"):
+        return str(obj.__name__)
+    raise ValueError(f"Cannot evaluate qualified name from {obj!r}")
+
+
+def fqname(
+        obj,  # type: typing.Any
+):  # type: (...) -> str
+    """
+    Returns the fully qualified name of an object,
+    i.e. its name with its definition module.
+
+    :param obj:
+        Object to retrieve the fully qualified name for.
+        No types.
+    :return:
+        Fully qualified name.
+    """
+    if obj is None:
+        return qualname(obj)
+    if inspect.ismodule(obj):
+        return qualname(obj)
+    return f"{qualname(inspect.getmodule(obj))}.{qualname(obj)}"
 
 
 def isiterable(
