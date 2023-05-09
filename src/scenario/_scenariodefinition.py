@@ -317,53 +317,58 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
     def getstep(
             self,
-            step_specification=None,  # type: StepSpecificationType
-            index=None,  # type: int
+            step_specification,  # type: StepSpecificationType
     ):  # type: (...) -> typing.Optional[_StepDefinitionType]
         """
         Finds a step definition.
 
-        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`), or ``None``.
-        :param index: Step index in the matching list. Last item when not specified.
-        :return: Step definition found, if any.
+        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`).
+        :return: Step definition found, if any. ``None`` otherwise.
         """
         from ._stepdefinition import StepDefinitionHelper
 
+        # Identify matching steps.
         _matching_step_definitions = []  # type: typing.List[_StepDefinitionType]
         for _step_definition in self.__step_definitions:  # type: _StepDefinitionType
-            if step_specification is None:
-                _matching_step_definitions.append(_step_definition)
-            elif StepDefinitionHelper(_step_definition).matchspecification(step_specification):
+            if StepDefinitionHelper(_step_definition).matchspecification(step_specification):
                 _matching_step_definitions.append(_step_definition)
 
+        # Determine `_index` from `step_specification`.
+        _index = -1  # type: int
+        if isinstance(step_specification, tuple):
+            _index = step_specification[1]
+            if _index < 0:
+                raise KeyError(f"Index should not be negative. Index given: {_index!r}")
+
+        # Avoid `_index` being unspecified when several steps match in *execution mode*.
+        if (_index < 0) and (len(_matching_step_definitions) > 1) and self.doexecute():
+            raise KeyError(f"Index missing while several matching steps in execution mode. Matching steps: {_matching_step_definitions!r}")
+
+        # Return the step from the matching steps.
         try:
-            if index is None:
-                index = -1
-            return _matching_step_definitions[index]
+            return _matching_step_definitions[_index]
         except IndexError:
             # Default to None.
             return None
 
     def expectstep(
             self,
-            step_specification=None,  # type: StepSpecificationType
-            index=None,  # type: int
+            step_specification,  # type: StepSpecificationType
     ):  # type: (...) -> _StepDefinitionType
         """
         Expects a step definition.
 
         When the step cannot be found, an exception is raised.
 
-        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`), or ``None``.
-        :param index: Step index in the matching list. Last item when not specified.
+        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`).
         :return: Expected step.
         :raise KeyError: When the step definition could not be found.
         """
         from ._stepdefinition import StepDefinitionHelper
 
-        _step_definition = self.getstep(step_specification, index)  # type: typing.Optional[_StepDefinitionType]
+        _step_definition = self.getstep(step_specification)  # type: typing.Optional[_StepDefinitionType]
         if _step_definition is None:
-            raise KeyError(f"No such step {StepDefinitionHelper.specificationdescription(step_specification)} (index: {index!r})")
+            raise KeyError(f"No such step {StepDefinitionHelper.specificationdescription(step_specification)}")
         return _step_definition
 
     @property

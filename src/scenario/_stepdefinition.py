@@ -61,12 +61,13 @@ class StepDefinition(StepUserApi, Assertions, Logger):
             _step_definition = typing.cast(typing.Any, step_definition)  # type: VarStepDefinitionType  # noqa  ## Shadows name '_step_definition' from outer scope
             return _step_definition
 
+        _step_specification = cls if index is None else (cls, index)  # type: StepSpecificationType
         if SCENARIO_STACK.building.scenario_definition:
-            _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(cls, index)  # type: typing.Optional[StepDefinition]
+            _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(_step_specification)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
         if SCENARIO_STACK.current_scenario_definition:
-            _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(cls, index)  # Type already defined above.
+            _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(_step_specification)  # Type already defined above.
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
         if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
@@ -240,21 +241,28 @@ class StepDefinitionHelper:
         """
         Determines whether the given step specification matches the related step definition.
 
-        :param step_specification: Step specification to check.
-        :return: ``True`` when the specification matches the related step definition.
+        :param step_specification:
+            Step specification to check.
+
+            When ``step_specification`` is a tuple, only the first member is taken into account.
+        :return:
+            ``True`` when the specification matches the related step definition.
         """
         if isinstance(step_specification, StepDefinition):
-            if step_specification is self.definition:
+            if self.definition is step_specification:
                 return True
-        if isinstance(step_specification, int):
+        elif isinstance(step_specification, int):
             if self.definition.number == step_specification:
                 return True
-        if isinstance(step_specification, str):
+        elif isinstance(step_specification, tuple):
+            return self.matchspecification(step_specification[0])
+        elif isinstance(step_specification, str):
             if self.definition.name.endswith(step_specification):
                 return True
-        if isinstance(step_specification, type):
+        elif isinstance(step_specification, type):
             if isinstance(self.definition, step_specification):
                 return True
+        # Memo: The tests above are written this way in order to avoid mypy (as of version 1.0.1) notifying the next line to be unreachable.
         return False
 
     @staticmethod
@@ -270,11 +278,16 @@ class StepDefinitionHelper:
         from ._reflection import qualname
 
         if isinstance(step_specification, StepDefinition):
-            return f"[instance is {step_specification}]"
+            return f"<{step_specification} instance>"
+        if isinstance(step_specification, int):
+            return f"<{step_specification} number>"
+        if isinstance(step_specification, tuple):
+            return f"{StepDefinitionHelper.specificationdescription(step_specification[0])}[{step_specification[1]}]"
         if isinstance(step_specification, str):
-            return f"[{step_specification!r}]"
+            return f"<{step_specification!r} string>"
         if isinstance(step_specification, type):
-            return f"[class is {qualname(step_specification)}]"
+            return f"<{qualname(step_specification)} class>"
+        # Memo: Contrary to the `matchspecification()` method above, mypy (as of version 1.0.1) requires here a default return line as below (mypy bug?).
         return repr(step_specification)
 
     def saveinitknownissues(self):  # type: (...) -> None
@@ -413,9 +426,22 @@ if typing.TYPE_CHECKING:
     #: Either:
     #:
     #: 1. a step definition instance directly,
-    #: 2. or a step definition class,
-    #: 3. a string representation, being the qualified name of the class or method (right part),
-    #: 4. an integer specifying the step definition number in its scenario.
+    #: 2. an integer specifying the step definition number in its scenario,
+    #: 3. a step definition class,
+    #: 4. a string representation, matching with the qualified name of the class or method (right part),
+    #: 5. a tuple of options 2 or 3, refined with a non-negative number giving the index to consider in case of several matches.
     #:
     #: The :meth:`StepDefinitionHelper.matchspecification()` checks whether a step definition matches such step specification.
-    StepSpecificationType = typing.Union[StepDefinition, typing.Type[StepDefinition], str, int]
+    StepSpecificationType = typing.Union[
+        # Exact matches.
+        StepDefinition,
+        int,
+        # Possibly several matches.
+        typing.Type[StepDefinition],
+        str,
+        # Several matches with index.
+        typing.Tuple[typing.Union[
+            typing.Type[StepDefinition],
+            str,
+        ], int],
+    ]
