@@ -56,17 +56,31 @@ class CheckDeps:
             if _src_path.is_file() and _src_path.name.endswith(".py"):
                 _current_module = ModuleDeps.get(_src_path.name)  # type: ModuleDeps
                 scenario.logging.debug("  Reading %s:", _src_path)
+                _is_scenario_init = (_src_path == scenario.tools.paths.SRC_PATH / "scenario" / "__init__.py")  # type: bool
                 for _line in _src_path.read_bytes().splitlines():  # type: bytes
-                    # Memo: In 'scenario/__init__.py', imports are maid in blocks in order to avoid PEP8 E402 import warnings.
-                    if _src_path == scenario.tools.paths.SRC_PATH / "scenario" / "__init__.py":
+                    # Memo: In 'scenario/__init__.py', imports are made in blocks in order to avoid "Module level import not at top of file" PEP8 warnings.
+                    if _is_scenario_init:
                         # Strip leading spaces, for 'scenario/__init__.py' only!
                         _line = _line.lstrip()
-                    if not _line.startswith(b'from .'):
+                    if (
+                        # Regular relative import.
+                        (not _line.startswith(b'from .'))
+                        # Module reexports form.
+                        and (not _line.startswith(b'import scenario.'))
+                    ):
                         continue
                     _words = _line.split()  # type: typing.List[bytes]
                     assert len(_words) >= 4
-                    assert _words[0] == b'from'
-                    assert _words[2] == b'import'
+                    assert (
+                        # Regular relative import.
+                        ((_words[0] == b'from') and (_words[2] == b'import'))
+                        # Module reexports form: should systematically contain the `as` keyword.
+                        or ((_words[0] == b'import') and (_words[2] == b'as'))
+                    )
+                    if _words[1].startswith(b'scenario.'):
+                        scenario.logging.warning(f"Python 3.6 incompatible import form {_line!r}")
+                        # Module reexports: Transform 'scenario.xxx' into '.xxx'.
+                        _words[1] = _words[1][len(b'scenario'):]
                     if _words[1] != b'.':
                         # Regular ``from <module> import ...`` pattern.
                         # The 2nd word is the module name.
@@ -75,16 +89,17 @@ class CheckDeps:
                         scenario.logging.debug("    %s => %s", _src_path.name, _module_name.decode("utf-8") + ".py")
                         _current_module.adddep(ModuleDeps.get(_module_name.decode("utf-8") + ".py"))
                     else:
-                        # ``from . import <module>`` pattern (usually in '__init__.py' files).
-                        # The module name(s) is(are) after the ``import`` keyword.
+                        # ``from . import <module>`` pattern.
+
+                        # The module name(s) was(were) after the ``import`` keyword.
                         _line = _line[_line.find(b'import') + len(b'import'):]
                         # Get rid of the trailing comment if any.
                         if b'#' in _line:
                             _line = _line[:_line.find(b'#')]
-                        # Consider that several modules may be imported in a row:
+                        # Consider that several modules could be imported in a row:
                         # `from . import <module1>, <module2>, ...`
                         for _module_name in _line.split(b','):  # Type already declared above.
-                            # Modules may be aliases with the ``as`` keyword:
+                            # Modules could be aliased with the ``as`` keyword:
                             # ``from . import <module> as <alias>``
                             _module_name = _module_name.split()[0]
 

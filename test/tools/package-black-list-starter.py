@@ -52,14 +52,14 @@ _logger.debug("sys.argv = %r", sys.argv)
 _logger.debug("Searching for package black list arguments...")
 _i = 0  # type: int
 while _i + 2 < len(sys.argv):
-    if (sys.argv[_i + 0] == "--config-value") and (sys.argv[_i + 1] == scenario.test.reflex.PACKAGE_BLACK_LIST_CONF_KEY):
+    if (sys.argv[_i + 0] == "--config-value") and (sys.argv[_i + 1] == scenario.test.reflection.PACKAGE_BLACK_LIST_CONF_KEY):
         _logger.debug("Package black list arguments detected: %r", sys.argv[_i:_i + 3])
 
         # Feed the black list from the given comma-separated package names.
         for _package_name in sys.argv[_i + 2].split(","):  # type: str
             _logger.debug("=> %r", _package_name.strip())
-            scenario.test.reflex.PACKAGE_BLACK_LIST.append(_package_name.strip())
-        _logger.debug("Package black list: %r", scenario.test.reflex.PACKAGE_BLACK_LIST)
+            scenario.test.reflection.PACKAGE_BLACK_LIST.append(_package_name.strip())
+        _logger.debug("Package black list: %r", scenario.test.reflection.PACKAGE_BLACK_LIST)
 
         # Remove the 3 arguments just processed.
         _logger.debug("Removing 3 arguments: %r", sys.argv[_i:_i + 3])

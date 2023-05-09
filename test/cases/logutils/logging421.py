@@ -21,7 +21,7 @@ import scenario.test
 class Logging421(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from scenario.scenariologging import ScenarioLogging
+        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
 
         from logutils.logging420 import CheckUserIndentation, ExecUserIndentation
 

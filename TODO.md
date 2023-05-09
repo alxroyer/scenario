@@ -17,7 +17,10 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #77: Avoid exporting implementation modules.
+- Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
+- Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
+- Issue #80: Provide a subscenario step class.
+    - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
@@ -27,6 +30,7 @@
     - `--repeat` or `--loop` option: loops over a test execution, in order to evaluate a failure/succes ratio.
     - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
     - `--stop-success` option: makes a campaign / test loop stop as soon as a test succeeds.
+- Issue #78: Contribute to sphinx-autodoc-typehints#22, replying to https://github.com/tox-dev/sphinx-autodoc-typehints/issues/22#issuecomment-423289499
 
 
 ## Roadmap to v0.3.0

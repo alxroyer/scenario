@@ -14,8 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Merged package definition for :mod:`scenario.tools`.
+"""
+
 
 # Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
 # Define this package as a namespace: we are currently extending it with the :mod:`scenario.tools` subpackage.
-from pkgutil import extend_path
-__path__ = extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+import pkgutil
+__path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined

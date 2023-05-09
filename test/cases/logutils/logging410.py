@@ -56,7 +56,7 @@ class CheckMainScenario(LogVerificationStep):
         self.result_indentation = 0  # type: int
 
     def step(self):  # type: (...) -> None
-        from scenario.scenariologging import ScenarioLogging
+        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
 
         self.STEP("Main scenario indentation")
 
@@ -124,7 +124,7 @@ class CheckMainScenario(LogVerificationStep):
 class CheckSubScenario(LogVerificationStep):
 
     def step(self):  # type: (...) -> None
-        from scenario.scenariologging import ScenarioLogging
+        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
 
         self.STEP("Subscenario indentation")
 

@@ -15,8 +15,12 @@
 # limitations under the License.
 
 
-from .lists import commalist as commalist
-from .numbers import adverbial as adverbial
-from .numbers import ordinal as ordinal
-from .plural import Countable as Countable
-from .plural import pluralize as pluralize
+# The `try` block below avoids IDEs folding the following import lines.
+try:
+    from ._lists import commalist as commalist
+    from ._numbers import adverbial as adverbial
+    from ._numbers import ordinal as ordinal
+    from ._plural import Countable as Countable
+    from ._plural import pluralize as pluralize
+finally:
+    pass

@@ -39,7 +39,7 @@ Encodings
 
 Encoding is utf-8 for all files.
 
-The encoding is explicitely specified in the first lines of Python scripts through:
+The encoding is explicitly specified in the first lines of Python scripts through:
 
 .. code-block:: python
 

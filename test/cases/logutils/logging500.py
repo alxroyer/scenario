@@ -34,7 +34,7 @@ class Logging500(scenario.test.TestCase):
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_CONSOLE: None}))
         self.addstep(CheckConsoleLogging(ExecScenario.getinstance(0)))
 
-        self.section("Console output explicitely enabled")
+        self.section("Console output explicitly enabled")
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, config_values={scenario.ConfigKey.LOG_CONSOLE: True}))
         self.addstep(CheckConsoleLogging(ExecScenario.getinstance(1)))
 

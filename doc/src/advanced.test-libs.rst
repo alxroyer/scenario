@@ -20,7 +20,7 @@ User test libraries
 
 .. todo:: Documentation needed for user test libraries.
 
-    Create test libraries by inheriting both :py:class:`scenario.assertions.Assertions` and :py:class:`scenario.logger.Logger`.
+    Create test libraries by inheriting both :py:class:`scenario._assertions.Assertions` and :py:class:`scenario._logger.Logger`.
 
     .. Inheriting from `scenario.Logger`.
     .. literalinclude:: ../../demo/loggingdemo.py

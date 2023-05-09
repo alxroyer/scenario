@@ -21,7 +21,7 @@ import scenario
 import scenario.test
 import scenario.text
 if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
+    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
 
 from jsonreport.steps.reportfile import JsonReportFileVerificationStep  # `JsonReportFileVerificationStep` used for inheritance.
 if typing.TYPE_CHECKING:

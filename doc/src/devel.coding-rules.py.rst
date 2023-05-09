@@ -42,16 +42,92 @@ Strings
 Namings
 -------
 
-.. todo:: Documentation needed for namings:
+Python namings follow `PEP 8 <https://peps.python.org/pep-0008/#descriptive-naming-styles>`_ recommandations.
+Let's remind them below:
 
-    - PEP8 compatible
-    - Packages
-    - Modules
-    - Classes
-    - Attributes
-    - Methods & functions
-    - Getters (properties) and setters, same as attributes
-    - Constants
+.. _coding-rules.py.namings.packages:
+.. _coding-rules.py.namings.modules:
+
+:Packages and modules:
+    Lowercase, without underscores.
+
+    .. note::
+        As stated in `PEP 8 - Package and module names <https://peps.python.org/pep-0008/#package-and-module-names>`_
+        "the use of underscores is discouraged".
+
+    Leading underscore for internal packages and modules.
+
+    .. note::
+        Makes it possible to set :ref:`design a package <coding-rules.py.packages>` with protected modules,
+        and explicitly select the symbols exported from them in the '__init__.py' module.
+
+.. _coding-rules.py.namings.classes:
+.. _coding-rules.py.namings.exceptions:
+.. _coding-rules.py.namings.enum-classes:
+
+:Classes:
+    CamelCase, without underscores.
+
+    Leading underscore for internal classes.
+
+    Applicable to exceptions and enum classes.
+
+.. _coding-rules.py.namings.types:
+
+:Types:
+    CamelCase, without underscores.
+
+    Leading underscore for internal types.
+
+.. _coding-rules.py.namings.functions:
+.. _coding-rules.py.namings.methods:
+
+:Functions and methods:
+    Lowercase, without underscores.
+
+    .. note::
+        `PEP 8 - Function and variable names <https://peps.python.org/pep-0008/#function-and-variable-names>`_
+        apparently makes no difference between function and variable namings.
+        This is a `scenario`-specific refinement.
+
+    Leading underscore for internal functions and methods:
+
+    - non-exported functions (i.e. not supposed to be visible from other modules / packages),
+    - inner functions (functions defined inside another function / method),
+    - protected class and instance methods.
+
+.. _coding-rules.py.namings.variables:
+.. _coding-rules.py.namings.members:
+.. _coding-rules.py.namings.parameters:
+
+:Variables, members and parameters:
+    Lowercase, with underscores.
+
+    Leading underscore for internal variables, or protected members:
+
+    - non-exported module attributes (i.e. not supposed to be visible from other modules / packages),
+    - protected class and instance members,
+    - variables defined inside functions and methods.
+
+    On the opposite, the following items may not start with a leading underscore:
+
+    - exported module attributes,
+    - public class and instance members,
+    - function and method parameters.
+
+    Applicable to getters (i.e. properties) and setters.
+
+.. _coding-rules.py.namings.constants:
+.. _coding-rules.py.namings.enum-items:
+
+:Constants:
+    Capital letters, with underscores.
+
+    Leading underscore for internal constants.
+
+    Applicable to enum items.
+
+    Singletons shall be considered as constants (better for *qa* checkings).
 
 
 .. _coding-rules.py.presentation:
@@ -79,15 +155,131 @@ Presentation
 Packages
 --------
 
-.. todo:: Documentation needed for packages, file names:
+Even though Python 3 automatically defines packages from directories,
+every package should contain a dedicated '__init__.py' file in order to explicitize the way the package is defined:
 
-    - :py:mod:`scenario` package
-    - '__init__.py' that exports symbols from the given package
+1. If it exports nothing by default,
+   but just holds public modules or subpackages (without a leading underscore) to load explicitly,
+   this shall be mentioned in the docstring of the package, in the '__init__.py' file.
+
+2. Otherwise, the '__init__.py' file declares the symbols it officially exports:
+
+   - The package shall be implemented with :ref:`private modules <coding-rules.py.namings.modules>` (with a leading underscore).
+   - Re-exports should follow the :ref:`re-export rules <coding-rules.py.re-exports>` described just after.
+
+.. admonition:: Packages and subpackages defined from different directories
+    :class: tip
+
+    For the memo, ``pkgutil.extend_path()`` helps defining packages and subpackages of the same package at different locations.
+
+    For instance:
+
+    - The base :py:mod:`scenario` package is defined in the main 'src/' directory.
+    - :py:mod:`scenario.test` comes as a subpackage of the latter, but is defined in 'test/src/'.
+    - Same with :py:mod:`scenario.tools`, defined in 'tools/src/'.
+
+    This avoids mixing test and tools sources with the core :py:mod:`scenario` implementation.
+
+
+.. _coding-rules.py.re-exports:
+
+Re-exports
+----------
+
+'__init__.py' files usually declare the set of public symbols for the package they define,
+by re-exporting those symbols from the neighbour modules in the given package.
+
+In order to keep it simple,
+as long as the package does not rename exported items (but only modules),
+use the explicit re-export pattern (inherited from `PEP 484 - Stub files <https://peps.python.org/pep-0484/#stub-files>`_ specifications):
+
+.. code-block:: python
+
+    # Non-renamed explicit export.
+    from ._privatemodule import MyClass as MyClass
 
 .. note::
+    Our `mypy` configuration makes use of this syntax
+    by disabling `implicit re-exports <https://mypy.readthedocs.io/en/stable/config_file.html#confval-implicit_reexport>`_.
 
-    :py:mod:`scenario.test`, :py:mod:`scenario.tools` subpackages are implemented at different locations,
-    out of the main 'src/' directory.
+If only attributes must be renamed,
+or renamed modules in non-'__init__.py' modules fail,
+intermediate private instances may be used:
+
+.. code-block:: python
+
+    # Renamed attribute export.
+    from ._privatemodule import original_attr as _private_attr
+    exported_attr = _private_attr
+
+    # Renamed module export.
+    from . import _privatemodule
+    renamedmodule = _privatemodule
+
+.. admonition:: Memo - No renamed attribute exports with a single ``from ... import ... as ...`` statement
+    :class: note
+
+    If we declare :py:data:`scenario.logging` as following in 'src/scenario/__init__.py':
+
+    .. code-block:: python
+
+        from ._loggermain import MAIN_LOGGER as logging
+        # No `__all__` declaration afterwards.
+
+    mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
+
+.. admonition:: Memo - Renamed module exports with a single ``from ... import ... as ...`` statement only in '__init__.py' files
+    :class: note
+
+    Same with :py:data:`scenario.tools.data.scenarios`, the following in 'test/src/scenario/test/data.py':
+
+    .. code-block:: python
+
+        from . import _datascenarios as scenarios
+
+    makes mypy fail with '"Module scenario.test._data" does not explicitly export attribute "scenarios"  [attr-defined]' errors.
+
+    But the following works in 'test/src/scenario/test/__init__.py'!
+
+    .. code-block:: python
+
+        from . import _data as data
+
+If exported classes are renamed, use explicit ``__all__`` declarations
+(see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
+For consistency reasons, back every export of such module with an ``__all__`` declaration,
+even though non renamed exports don't really need it.
+
+.. code-block:: python
+
+    # `__all__` export declaration.
+    __all__ = []
+
+    # Renamed attribute export.
+    from ._privatemodule import original_attr as exported_attr
+    __all__.append("exported_attr")
+
+    # Renamed module export.
+    from . import _originalmodule as exportedmodule
+    __all__.append("exportedmodule")
+
+    # Renamed class export.
+    from ._privatemodule import OriginalClass as ExportedClass
+    __all__.append("ExportedClass")
+
+.. admonition:: Memo - No renamed class exports with alias instanciations
+    :class: note
+
+    Renamed class exports don't work well with every type checker or IDE when exported through alias instanciations.
+
+    For instance, if we declare :py:class:`scenario.Scenario` as following:
+
+    .. code-block:: python
+
+        from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
+        Scenario = ScenarioDefinition
+
+    mypy succeeds, but IDEs get confused.
 
 
 .. _coding-rules.py.static:
@@ -339,8 +531,8 @@ Which is what we call the `type checking dilemma`.
 
     Let's illustrate that point with an example.
 
-    Let the ``a.py`` module define a super class :py:class:`A`
-    with a :py:meth:`getb()` method returning a :py:class:`B` instance or ``None``:
+    Let the ``a.py`` module define a super class ``A``
+    with a ``getb()`` method returning a ``B`` instance or ``None``:
 
     .. code-block:: python
 
@@ -354,7 +546,7 @@ Which is what we call the `type checking dilemma`.
                         return _item
                 return None
 
-    Let the ``b.py`` module define :py:class:`B`, a subclass of :py:class:`A`:
+    Let the ``b.py`` module define ``B``, a subclass of ``A``:
 
     .. code-block:: python
 
@@ -364,19 +556,19 @@ Which is what we call the `type checking dilemma`.
             def __init__(self):
                 A.__init__(self)
 
-    The :py:class:`B` class depends on the :py:class:`A` class for type hints *and* execution.
+    The ``B`` class depends on the ``A`` class for type hints *and* execution.
     So the ``from .a import A`` import statement must be set at the top of the ``b.py`` module.
 
-    The :py:class:`A` class needs the :py:class:`B` class
-    for the signature of its :py:meth:`A.getb()` method only.
+    The ``A`` class needs the ``B`` class
+    for the signature of its ``A.getb()`` method only.
     Thus, the ``from .b import B`` import statement is set at the top of the ``a.py`` module,
     but under a ``if typing.TYPE_CHECKING:`` condition.
 
-    This makes type checking pass, but fails when the :py:meth:`A.getb()` method is executed.
-    Indeed, in ``a.py``, as the :py:class:`B` class is imported for type checking only,
+    This makes type checking pass, but fails when the ``A.getb()`` method is executed.
+    Indeed, in ``a.py``, as the ``B`` class is imported for type checking only,
     the class is not defined when the ``isinstance()`` call is made.
     By the way, the import statement must be repeated as a local import
-    when the :py:class:`B` class is actually used in the :py:meth:`A.getb()` method:
+    when the ``B`` class is actually used in the ``A.getb()`` method:
 
     .. code-block:: python
 
@@ -440,3 +632,31 @@ The 'tools/checktypes.py' scripts checks code amongst Python 3.6.
 
     As of 2021/09, Python 3.6's end-of-life has not been declared yet (see `<https://devguide.python.org/devcycle/#end-of-life-branches>`_),
     while Python 3.5's end-of-life was set on 2020-09-30 (see `PEP 478 <https://www.python.org/dev/peps/pep-0478/>`_).
+
+
+.. _coding-rules.py.inspection-warnings:
+
+Inspection warnings
+-------------------
+
+In order to avoid non-relevant inspection warnings,
+the ``# noqa`` pragma shall be used (after typehints if any).
+
+In order to explicitize the reason why this pragma is used,
+no code shall be given, just an explanatory comment after a double ``##``, as below:
+
+.. code-block::
+
+    def myfunction(
+        type,  # type: typing.Any  # noqa  ## Shadows built-in name 'type'
+    ):  # type: (...) -> typing.Any
+        # ...
+
+.. admonition:: No ``noqa`` codes
+    :class: note
+
+    ``noqa`` codes (like `E402` for "Module level import not at top of file" PEP8 warnings for instance)
+    seem to be checker specific: `flake8`, IDEs, ...
+    See https://www.alpharithms.com/noqa-python-501210/ for the history of this pragma.
+
+    That's the reason why we choose to give no codes with ``# noqa`` pragmas.

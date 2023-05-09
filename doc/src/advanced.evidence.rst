@@ -28,11 +28,11 @@ Doing so reinforces the credibility of the results,
 in as much as a human could check manually that the automatic test script did the right thing.
 
 As introduced in the :ref:`quickstart guide <quickstart.first-scenario>`,
-the :py:meth:`scenario.stepuserapi.StepUserApi.evidence()` method,
-available in :py:class:`scenario.scenariodefinition.ScenarioDefinition` and :py:class:`scenario.stepdefinition.StepDefinition` classes,
+the :py:meth:`scenario._stepuserapi.StepUserApi.evidence()` method,
+available in :py:class:`scenario._scenariodefinition.ScenarioDefinition` and :py:class:`scenario._stepdefinition.StepDefinition` classes,
 lets you save evidence while the test is executed.
 
-:ref:`Assertion routines <assertions.evidence-param>` defined in the :py:class:`scenario.assertions.Assertions` class
+:ref:`Assertion routines <assertions.evidence-param>` defined in the :py:class:`scenario._assertions.Assertions` class
 can be used to collect evidence as well.
 Set the optional ``evidence`` parameter to either ``True`` or a string describing what is being checked.
 

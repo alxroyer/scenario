@@ -17,29 +17,33 @@
 import typing
 
 
-from .attributes import ScenarioAttribute as ScenarioAttribute
-from . import configvalues as configvalues
-from . import data as data
-from .expectations import ActionResultExpectations as ActionResultExpectations
-from .expectations import CampaignExpectations as CampaignExpectations
-from .expectations import ErrorExpectations as ErrorExpectations
-from .expectations import NOT_SET as NOT_SET
-if typing.TYPE_CHECKING:
-    from .expectations import NotSetType as NotSetType
-from .expectations import ScenarioExpectations as ScenarioExpectations
-from .expectations import StatExpectations as StatExpectations
-from .expectations import StepExpectations as StepExpectations
-from .expectations import TestSuiteExpectations as TestSuiteExpectations
-from . import features as features
-from .knownissues import IssueLevel as IssueLevel
-from . import paths as paths
-from . import reflex as reflex
-if typing.TYPE_CHECKING:
-    from .steps import AnyExecutionStepType as AnyExecutionStepType
-from .steps import ExecutionStep as ExecutionStep
-from .steps import Step as Step
-from .steps import VerificationStep as VerificationStep
-from .subprocess import CampaignSubProcess as CampaignSubProcess
-from .subprocess import ScenarioSubProcess as ScenarioSubProcess
-from .subprocess import SubProcess as SubProcess
-from .testcase import TestCase as TestCase
+# The `try` block below avoids IDEs folding the following import lines.
+try:
+    from ._attributes import ScenarioAttribute as ScenarioAttribute
+    from . import _configvalues as configvalues
+    from . import _data as data
+    from ._expectations import ActionResultExpectations as ActionResultExpectations
+    from ._expectations import CampaignExpectations as CampaignExpectations
+    from ._expectations import ErrorExpectations as ErrorExpectations
+    from ._expectations import NOT_SET as NOT_SET
+    if typing.TYPE_CHECKING:
+        from ._expectations import NotSetType as NotSetType
+    from ._expectations import ScenarioExpectations as ScenarioExpectations
+    from ._expectations import StatExpectations as StatExpectations
+    from ._expectations import StepExpectations as StepExpectations
+    from ._expectations import TestSuiteExpectations as TestSuiteExpectations
+    from . import _features as features
+    from ._knownissues import IssueLevel as IssueLevel
+    from . import _paths as paths
+    from . import _reflection as reflection
+    if typing.TYPE_CHECKING:
+        from ._steps import AnyExecutionStepType as AnyExecutionStepType
+    from ._steps import ExecutionStep as ExecutionStep
+    from ._steps import Step as Step
+    from ._steps import VerificationStep as VerificationStep
+    from ._subprocess import CampaignSubProcess as CampaignSubProcess
+    from ._subprocess import ScenarioSubProcess as ScenarioSubProcess
+    from ._subprocess import SubProcess as SubProcess
+    from ._testcase import TestCase as TestCase
+finally:
+    pass

@@ -23,17 +23,12 @@ MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
-# `scenario` imports.
-try:
-    # Avoid "Module level import not at top of file" PEP8 warnings.
-    import scenario
-    import scenario.tools
-finally:
-    pass
-
 
 if __name__ == "__main__":
-    _res = scenario.tools.CheckTypes(
+    import scenario
+    from scenario.tools.checktypes import CheckTypes
+
+    _res = CheckTypes(
         main_path=scenario.tools.paths.MAIN_PATH,
         mypy_conf_path=scenario.tools.paths.TOOLS_CONF_PATH / "mypy.ini",
     ).run()  # type: scenario.ErrorCode

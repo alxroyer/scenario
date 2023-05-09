@@ -35,7 +35,7 @@ Command line argument extension
 
 About configurable features, :ref:`configuration files <config-db>` come as a straight forward solution.
 Nevertheless, it is sometimes faster in use to provide command line options to the test launcher script also.
-To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario.scenarioargs.ScenarioArgs` class:
+To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario._scenarioargs.ScenarioArgs` class:
 
 .. Class declaration with beginning of constructor, up to the call of the base class constructor.
 .. literalinclude:: ../../demo/run-demo.py
@@ -43,7 +43,7 @@ To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario.scenari
     :start-at: class DemoArgs
     :end-before: self.setdescription
 
-The final program description is set with the :py:meth:`scenario.args.Args.setdescription()` method.
+The final program description is set with the :py:meth:`scenario._args.Args.setdescription()` method.
 
 .. Args.setdescription() call.
 .. literalinclude:: ../../demo/run-demo.py
@@ -51,10 +51,10 @@ The final program description is set with the :py:meth:`scenario.args.Args.setde
     :start-at: self.setdescription
     :lines: 1
 
-Extra arguments may be defined thanks to the protected :py:attr:`scenario.args.Args._arg_parser` member of type ``argparse.ArgumentParser``.
+Extra arguments may be defined thanks to the protected :py:attr:`scenario._args.Args._arg_parser` member of type ``argparse.ArgumentParser``.
 
 In as much as base :py:mod:`scenario` arguments are organized in groups,
-it is a good practice in :class:`scenario.args.Args` subclasses to use argument groups as well.
+it is a good practice in :class:`scenario._args.Args` subclasses to use argument groups as well.
 
 .. Demo argument group with --welcome option.
 .. literalinclude:: ../../demo/run-demo.py
@@ -64,11 +64,11 @@ it is a good practice in :class:`scenario.args.Args` subclasses to use argument 
 
 Base :py:mod:`scenario` argument groups are also available to you through protected members:
 
-- :py:attr:`scenario.args.Args._help_group`: Help arguments.
-- :py:attr:`scenario.loggingargs.CommonLoggingArgs._logging_group`: Logging arguments.
-- :py:attr:`scenario.configargs.CommonConfigArgs._config_group`: Configuration arguments.
-- :py:attr:`scenario.scenarioargs.CommonExecArgs._test_exec_group`: Test (scenario) execution arguments.
-- :py:attr:`scenario.campaignargs.CampaignArgs._campaign_group`: Campaign arguments.
+- :py:attr:`scenario._args.Args._help_group`: Help arguments.
+- :py:attr:`scenario._loggingargs.CommonLoggingArgs._logging_group`: Logging arguments.
+- :py:attr:`scenario._configargs.CommonConfigArgs._config_group`: Configuration arguments.
+- :py:attr:`scenario._scenarioargs.CommonExecArgs._test_exec_group`: Test (scenario) execution arguments.
+- :py:attr:`scenario._campaignargs.CampaignArgs._campaign_group`: Campaign arguments.
 
 .. Configuration arguments extension.
 .. literalinclude:: ../../demo/run-demo.py
@@ -77,8 +77,8 @@ Base :py:mod:`scenario` argument groups are also available to you through protec
     :end-before: # Define scenario paths as optional.
 
 When ``def_scenario_paths_arg`` (resp. ``def_test_suite_paths_arg``) is set to ``False``
-when calling the base :py:class:`scenario.scenarioargs.ScenarioArgs` (resp. :py:class:`scenario.campaignargs.CampaignArgs`) constructor,
-the :py:meth:`scenario.scenarioargs.ScenarioArgs._defscenariopathsarg()` (resp. :py:meth:`scenario.campaignargs.CampaignArgs._deftestsuitepathsarg()`)
+when calling the base :py:class:`scenario._scenarioargs.ScenarioArgs` (resp. :py:class:`scenario._campaignargs.CampaignArgs`) constructor,
+the :py:meth:`scenario._scenarioargs.ScenarioArgs._defscenariopathsarg()` (resp. :py:meth:`scenario._campaignargs.CampaignArgs._deftestsuitepathsarg()`)
 provide a way to change cardinality and help for the positional arguments.
 
 .. Positional arguments redefinition.
@@ -92,11 +92,11 @@ provide a way to change cardinality and help for the positional arguments.
     :start-at: self._defscenariopathsarg
     :end-before: def _checkargs
 
-The :py:meth:`scenario.args.Args._checkargs()` method may be overloaded in order to check additional constraints,
+The :py:meth:`scenario._args.Args._checkargs()` method may be overloaded in order to check additional constraints,
 after the arguments have been parsed,
-the ``argparse`` result being saved as the :py:attr:`scenario.args.Args._args` opaque member:
+the ``argparse`` result being saved as the :py:attr:`scenario._args.Args._args` opaque member:
 
-- Start or finish with calling the mother class's :py:meth:`scenario.scenarioargs.ScenarioArgs._checkargs()` method.
+- Start or finish with calling the mother class's :py:meth:`scenario._scenarioargs.ScenarioArgs._checkargs()` method.
 - This method is expected to return ``True`` or ``False`` whether an error has been detected or not.
 
 .. Overload of the `_checkargs()` method.
@@ -108,7 +108,7 @@ the ``argparse`` result being saved as the :py:attr:`scenario.args.Args._args` o
 
 Eventually, properties are defined in order to:
 
-- Ease access to the ``argparse`` resulting data from the opaque :py:attr:`scenario.args.Args._args` member.
+- Ease access to the ``argparse`` resulting data from the opaque :py:attr:`scenario._args.Args._args` member.
 - Provide type hints for the argument data.
 
 .. Argument data properties.
@@ -118,10 +118,10 @@ Eventually, properties are defined in order to:
     :end-at: return self._args.show_config_db
     :dedent:
 
-Then, in the *main* part, prior to calling the :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method:
+Then, in the *main* part, prior to calling the :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` method:
 
-- Set an instance of our :py:class:`DemoArgs` class with the :py:meth:`scenario.args.Args.setinstance()` method.
-- Call the :py:meth:`scenario.args.Args.parse()` method to parse the command line arguments.
+- Set an instance of our :py:class:`DemoArgs` class with the :py:meth:`scenario._args.Args.setinstance()` method.
+- Call the :py:meth:`scenario._args.Args.parse()` method to parse the command line arguments.
 
 .. Argument parsing.
 .. literalinclude:: ../../demo/run-demo.py
@@ -142,7 +142,7 @@ but regular arguments as well.
 
 Using the ``--help`` option displays both:
 
-- the usual :py:class:`scenario.scenarioargs.ScenarioArgs` options,
+- the usual :py:class:`scenario._scenarioargs.ScenarioArgs` options,
 - and the extra options added by the :py:class:`DemoArgs` class.
 
 .. code-block:: bash
@@ -206,7 +206,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 Base launcher execution
 -----------------------
 
-The call to the :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` method will not analyze command line arguments twice,
+The call to the :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` method will not analyze command line arguments twice,
 and use the values given by our :py:class:`DemoArgs` instance already set.
 
 .. Scenario execution.
@@ -222,7 +222,7 @@ and use the values given by our :py:class:`DemoArgs` instance already set.
 Return code
 -----------
 
-Eventually, convert the enum value returned by :py:meth:`scenario.scenariorunner.ScenarioRunner.main()` into a simple integer value,
+Eventually, convert the enum value returned by :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` into a simple integer value,
 so that the error can be handled in the shell that launched the command line.
 
 .. Error code.
@@ -240,8 +240,8 @@ Campaign launcher script extension
 
 Extending the campaign launcher script works the same, except that:
 
-- the :py:class:`scenario.campaignargs.CampaignArgs` class may be overloaded to add extra command line arguments,
-- the :py:meth:`scenario.campaignrunner.CampaignRunner.main()` must be called in the end.
+- the :py:class:`scenario._campaignargs.CampaignArgs` class may be overloaded to add extra command line arguments,
+- the :py:meth:`scenario._campaignrunner.CampaignRunner.main()` must be called in the end.
 
 
 .. _launcher.main-path:
@@ -250,12 +250,12 @@ Setting the main path (optional)
 --------------------------------
 
 Another thing that a launcher script may do is to set the *main path*
-(see :py:meth:`scenario.path.Path.setmainpath()`).
+(see :py:meth:`scenario._path.Path.setmainpath()`).
 
 A *main path* shall be set for the current test projet.
 This way, all paths displayed during the tests may be nicely displayed as *pretty path* from this *main path*,
 whatever the current working directory
-(see :py:attr:`scenario.path.Path.prettypath`).
+(see :py:attr:`scenario._path.Path.prettypath`).
 
 .. Setting the main path.
 .. literalinclude:: ../../demo/run-demo.py

@@ -21,7 +21,7 @@ import scenario
 import scenario.test
 import scenario.text
 if typing.TYPE_CHECKING:
-    from scenario.typing import JsonDictType
+    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
 
 from steps.logparsing import LogParserStep  # `LogParserStep` used for inheritance.
 
@@ -61,7 +61,7 @@ class ParseScenarioLog(LogParserStep):
 
         # Check the current stack in order to determine whether it is a subscenario.
         if self._json_scenario_stack:
-            # Subscenario do not give explicitely their status.
+            # Subscenario do not give explicitly their status.
             # Consider it is SUCCESS by default.
             _json_new_scenario["status"] = "SUCCESS"
             # Register the scenario in the current action/result.
@@ -117,7 +117,7 @@ class ParseScenarioLog(LogParserStep):
             return self._match.group(1)
 
         def indentationlevel(self):  # type: (...) -> int
-            from scenario.scenariologging import ScenarioLogging
+            from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
 
             return self.indentation().count(self.step.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN))
 
@@ -150,7 +150,7 @@ class ParseScenarioLog(LogParserStep):
             regex,  # type: bytes
             line,  # type: bytes
     ):  # type: (...) -> typing.Optional[ParseScenarioLog._Match]
-        from scenario.scenariologging import ScenarioLogging
+        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
 
         _match = re.search(
             rb''.join([
@@ -169,7 +169,7 @@ class ParseScenarioLog(LogParserStep):
             self,
             line,  # type: bytes
     ):  # type: (...) -> bool
-        from scenario.scenariologging import ScenarioLogging
+        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
 
         # Useful typed variables.
         _match = None  # type: typing.Optional[ParseScenarioLog._Match]

@@ -34,7 +34,7 @@ class CampaignOutdirFilesManager:
                 campaign_execution,  # type: _ExecCampaignType
                 scenario_path,  # type: scenario.Path
         ):  # type: (...) -> None
-            from scenario.campaignexecution import JsonReportReader, LogFileReader
+            from scenario._campaignexecution import JsonReportReader, LogFileReader  # noqa  ## Access to protected module
 
             self.scenario_path = scenario_path  # type: scenario.Path
             self.log = LogFileReader()  # type: LogFileReader

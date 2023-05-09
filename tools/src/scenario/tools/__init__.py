@@ -15,9 +15,9 @@
 # limitations under the License.
 
 
-from .checktypes import CheckTypes as CheckTypes
-from .deps import shouldupdate as shouldupdate
-from .mkdoc import MkDoc as MkDoc
-from . import paths as paths
-from .subprocess import SubProcess as SubProcess
-from .thirdparty import checkthirdpartytoolversion as checkthirdpartytoolversion
+# The `try` block below avoids IDEs folding the following import lines.
+try:
+    from . import _paths as paths
+    from ._subprocess import SubProcess as SubProcess
+finally:
+    pass

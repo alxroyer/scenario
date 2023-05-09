@@ -14,50 +14,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-# Imported members, i.e. exported members are not documented by default.
-#
-# For the purpose, it seems that we should add manually the `:imported-members:` option in the `scenario.rst` output files, which is not convenient
-# (see: https://github.com/sphinx-doc/sphinx/issues/4372):
-# ```rst
-# .. automodule:: scenario
-#    :members:
-#    :imported-members:
-#    :undoc-members:
-#    :show-inheritance:
-# ```
-# For the memo, this resource: https://stackoverflow.com/questions/38765577/overriding-sphinx-autodoc-alias-of-for-import-of-private-class
-# also seems to deal with the subject.
-#
-# That's the reason why we manually document the exported symbols with explicit ReStructuredText as aliases to the inner classes,
-# which lets us define documentation sections by the way.
-
 """
 :mod:`scenario` package definition.
 """
 
+# Package management
+# ==================
+
 # Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
-# Define this package as a namespace, so that it can be extended later on (with tools, tests, ...).
-# In as much as this code is python 2/3 compatible, we use *pkgutil-style namespace packages*.
-from pkgutil import extend_path
-__path__ = extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+# Define this package as a namespace, so that it can be extended later on (with `scenario.tools`, `scenario.test`, ...).
+#
+# Memo:
+# Don't try to fix `__path__` prior to making the `pkgutil.extend_path()` call below, nor catch a potential `NameError`,
+# otherwise IDEs may get confused with `scenario.test`, `scenario.tools`, ... extensions.
+import pkgutil
+__path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+
+
+# System imports
+# ==============
 
 # Make system imports after the namespace definition above.
 import typing
 
 
-# Used to avoid PEP8 E402 warnings: "Module level import not at top of file".
-# Named with double leading underscores in order to avoid 'mkdoc.py' list it as an undocumented attribute.
+# Export management
+# =================
+
+# Explicit export declarations (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
+__all__ = []  # type: typing.List[str]
+
+# Used to avoid "Module level import not at top of file" PEP8 warnings for re-exports below.
 __pkg_def = True  # type: bool
 
-# A couple of symbols are exported by using an intermediate private symbol.
-# For instance, if we declare `logging` as following:
-# ```python
-# from .loggermain import MAIN_LOGGER as logging
-# ```
-# mypy fails with '"Module scenario" does not explicitly export attribute "logging"  [attr-defined]' errors.
-# Mypy seems not to support reexports with renamings.
-# Possibly something to do with [PEP 0848](https://peps.python.org/pep-0484/#stub-files) reexport rules for stub files...
+
+# Documentation management
+# ========================
+
+# Private constants in this modules are named with double leading underscores
+# in order to avoid 'mkdoc.py' list them as an undocumented attribute.
+
+# As introduced in 'doc/src/devel.coding-rules.doc.rst',
+# we choose to disable member documentation for this module ('doc/src/py/scenario.rst' fixed after `sphinx-apidoc` execution),
+# and document exported symbols with explicit `.. py:attribute::` directives in the docstring of this module.
 
 
 __doc__ += """
@@ -65,585 +64,699 @@ Package information
 ===================
 """
 
-__doc__ += """
-.. py:attribute:: info
-
-    Alias of :attr:`.pkginfo.PKG_INFO`.
-
-    Gives the package information: version, ...
-"""
 if __pkg_def:
-    from .pkginfo import PKG_INFO as _PKG_INFO
-    info = _PKG_INFO
+    __doc__ += """
+    .. py:attribute:: info
+
+        Gives the package information: version, ...
+
+        .. seealso:: :class:`._pkginfo.PackageInfo` implementation.
+    """
+    from ._pkginfo import PKG_INFO as info  # noqa  ## Constant variable imported as non-constant
+    __all__.append("info")
 
 
 __doc__ += """
 Base classes
 ============
 
-Classes to inherit from in order to describe test scenarios and libraries.
+Classes that define a test scenario.
 """
 
-__doc__ += """
-.. py:attribute:: Scenario
-
-    Alias of :class:`.scenariodefinition.ScenarioDefinition`.
-
-    Base class to inherit from in order to define a test scenario.
-
-.. py:attribute:: ScenarioDefinition
-
-    Full class name of :class:`Scenario`.
-"""
 if __pkg_def:
-    from .scenariodefinition import ScenarioDefinition as ScenarioDefinition
-    Scenario = ScenarioDefinition
+    __doc__ += """
+    .. py:attribute:: Scenario
 
-__doc__ += """
-.. py:attribute:: Step
+        Base class to inherit from in order to define a test scenario.
 
-    Alias of :class:`.stepdefinition.StepDefinition`.
+        .. seealso:: :class:`._scenariodefinition.ScenarioDefinition` implementation.
+    """
+    from ._scenariodefinition import ScenarioDefinition as Scenario
+    __all__.append("Scenario")
 
-    Base class to inherit from in order to define a test step.
+    __doc__ += """
+    .. py:attribute:: ScenarioDefinition
 
-.. py:attribute:: StepDefinition
+        Full class name of :class:`Scenario`.
+    """
+    from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
+    __all__.append("ScenarioDefinition")
 
-    Full class name of :class:`Step`.
-"""
 if __pkg_def:
-    from .stepdefinition import StepDefinition as StepDefinition
-    Step = StepDefinition
+    __doc__ += """
+    .. py:attribute:: Step
 
-__doc__ += """
-.. py:attribute:: ActionResult
+        Base class to inherit from in order to define a test step
+        (see :ref:`step objects <step-objects>`).
 
-    Alias of :class:`.actionresultdefinition.ActionResultDefinition`.
+        .. seealso:: :class:`._stepdefinition.StepDefinition` implementation.
+    """
+    from ._stepdefinition import StepDefinition as Step
+    __all__.append("Step")
 
-.. py:attribute:: ActionResultDefinition
+    __doc__ += """
+    .. py:attribute:: StepDefinition
 
-    Full class name of :class:`ActionResult`.
-"""
+        Full class name of :class:`Step`.
+    """
+    from ._stepdefinition import StepDefinition as StepDefinition
+    __all__.append("StepDefinition")
+
 if __pkg_def:
-    from .actionresultdefinition import ActionResultDefinition as ActionResultDefinition
-    ActionResult = ActionResultDefinition
+    __doc__ += """
+    .. py:attribute:: ActionResult
+
+        Each action / expected result creates an instance of this class
+        (you should not inherit from it normally).
+
+        .. seealso:: :class:`._actionresultdefinition.ActionResultDefinition` implementation.
+    """
+    from ._actionresultdefinition import ActionResultDefinition as ActionResult
+    __all__.append("ActionResult")
+
+    __doc__ += """
+    .. py:attribute:: ActionResultDefinition
+
+        Full class name of :class:`ActionResult`.
+    """
+    from ._actionresultdefinition import ActionResultDefinition as ActionResultDefinition
+    __all__.append("ActionResultDefinition")
 
 
 __doc__ += """
 Step sections
 =============
 
-Classes that can be used to define step sections.
+Once you have opted for :ref:`step objects <step-objects>`,
+classes that can be used to define :ref:`step sections <step-sections>`.
 """
 
-__doc__ += """
-.. py:attribute:: StepSectionDescription
-
-    Alias of :class:`.stepsection.StepSectionDescription`.
-
-    Step class that holds a description for a section of steps.
-    Automatically instanciated by :meth:`.scenariodefinition.ScenarioDefinition.section()`.
-"""
 if __pkg_def:
-    from .stepsection import StepSectionDescription as StepSectionDescription
+    __doc__ += """
+    .. py:attribute:: StepSectionDescription
 
-__doc__ += """
-.. py:attribute:: StepSectionBegin
+        Step class that holds a description for a section of steps.
+        Automatically instanciated by :meth:`._scenariodefinition.ScenarioDefinition.section()`.
 
-    Alias of :class:`.stepsection.StepSectionBegin`.
+        .. seealso:: :class:`._stepsection.StepSectionDescription` implementation.
+    """
+    from ._stepsection import StepSectionDescription as StepSectionDescription
+    __all__.append("StepSectionDescription")
 
-    Step class to inherit from, then add in a scenario, in order to define the beginning of a step section.
-"""
 if __pkg_def:
-    from .stepsection import StepSectionBegin as StepSectionBegin
+    __doc__ += """
+    .. py:attribute:: StepSectionBegin
 
-__doc__ += """
-.. py:attribute:: StepSectionEnd
+        Step class to inherit from, then add in a scenario, in order to define the beginning of a step section.
 
-    Alias of :class:`.stepsection.StepSectionEnd`.
+        .. seealso:: :class:`._stepsection.StepSectionBegin` implementation.
+    """
+    from ._stepsection import StepSectionBegin as StepSectionBegin
+    __all__.append("StepSectionBegin")
 
-    Type of the :attr:`.stepsection.StepSectionBegin.end` step to add at the end of a step section.
-"""
-if __pkg_def:
-    from .stepsection import StepSectionEnd as StepSectionEnd
+    __doc__ += """
+    .. py:attribute:: StepSectionEnd
+
+        Type of the :attr:`._stepsection.StepSectionBegin.end` step to add at the end of a step section.
+
+        .. seealso:: :class:`._stepsection.StepSectionEnd` implementation.
+    """
+    from ._stepsection import StepSectionEnd as StepSectionEnd
+    __all__.append("StepSectionEnd")
 
 
 __doc__ += """
 Assertions
 ==========
 
-Make verifications on data.
+:ref:`Assertions` can be used from :class:`Scenario` and :class:`Step` classes,
+or in :ref:`test libraries <test-libs>`.
+
+Assertion routines also provide an easy way to collect :ref:`evidence <evidence>`.
 """
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: Assertions
+
+        Library of static assertion methods.
+
+        Can be sub-classed.
+        :class:`Scenario` and :class:`Step` inherit from this class.
+
+        .. seealso:: :class:`._assertions.Assertions` implementation.
+    """
+    from ._assertions import Assertions as Assertions
+    __all__.append("Assertions")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: assertionhelpers
+
+        Helper functions and types when you want to write your own assertion routines.
+
+        .. seealso:: :mod:`._assertionhelpers` implementation.
+    """
+    # Note:
+    # It seems we can't reexport `assertionhelpers` from the '_assertions.py' module, otherwise it causes failures with mypy...
+    # Let's reexport `assertionhelpers` directly from the '_assertions.py' source module.
+    from . import _assertionhelpers as assertionhelpers
+    __all__.append("assertionhelpers")
+
 
 __doc__ += """
-.. py:attribute:: Assertions
+Known issues
+============
 
-    Alias of :class:`.assertions.Assertions`.
-
-    Library of static assertion methods.
-
-    Can be subclassed.
-    :class:`Scenario` and :class:`Step` inherit from this class.
+Track :ref:`known issues <known-issues>` instead of letting tests fail with unqualified errors.
 """
+
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: AnyIssueLevelType
+
+        ``int`` or ``enum.Enum`` that describes an issue level.
+
+        .. seealso:: :obj:`._issuelevels.AnyIssueLevelType` implementation.
+    """
+    from ._issuelevels import AnyIssueLevelType as AnyIssueLevelType
+    __all__.append("AnyIssueLevelType")
+
 if __pkg_def:
-    from .assertions import Assertions as Assertions
+    __doc__ += """
+    .. py:attribute:: IssueLevel
 
-__doc__ += """
-.. py:attribute:: assertionhelpers
+        Abstract class that provides methods to define named issue levels.
 
-    Alias of :mod:`.assertionhelpers`.
-
-    Helper functions and types when you want to write your own assertion routines.
-"""
-if __pkg_def:
-    from . import assertionhelpers as assertionhelpers
+        .. seealso:: :class:`._issuelevels.IssueLevel` implementation.
+    """
+    from ._issuelevels import IssueLevel as IssueLevel
+    __all__.append("IssueLevel")
 
 
 __doc__ += """
 Logging
 =======
 
-Logging management.
+Use `scenario` :ref:`logging facilities <logging>` to facilitate test execution analyses.
 """
 
-__doc__ += """
-.. py:attribute:: Logger
-
-    Alias of :class:`.logger.Logger`.
-
-    Object with logging capabilities.
-
-    :class:`Scenario` and :class:`Step` inherit from this class.
-"""
 if __pkg_def:
-    from .logger import Logger as Logger
+    __doc__ += """
+    .. py:attribute:: Logger
 
-__doc__ += """
-.. py:attribute:: logging
+        Object with logging capabilities.
 
-    Main logger instance.
-"""
+        :class:`Scenario` and :class:`Step` inherit from this class.
+
+        .. seealso:: :class:`._logger.Logger` implementation.
+    """
+    from ._logger import Logger as Logger
+    __all__.append("Logger")
+
 if __pkg_def:
-    from .loggermain import MAIN_LOGGER as _MAIN_LOGGER
-    logging = _MAIN_LOGGER
+    __doc__ += """
+    .. py:attribute:: logging
 
-__doc__ += """
-.. py:attribute:: Console
+        Main logger instance.
 
-    Alias of :class:`.console.Console`.
+        .. seealso:: :data:`._loggermain.MAIN_LOGGER` implementation.
+    """
+    from ._loggermain import MAIN_LOGGER as logging  # noqa  ## Constant variable imported as non-constant
+    __all__.append("logging")
 
-    Console colors.
-"""
 if __pkg_def:
-    from .console import Console as Console
+    __doc__ += """
+    .. py:attribute:: Console
 
-__doc__ += """
-.. py:attribute:: LogExtraData
+        Console colors.
 
-    Alias of :class:`.logextradata.LogExtraData`.
+        .. seealso:: :class:`._console.Console` implementation.
+    """
+    from ._console import Console as Console
+    __all__.append("Console")
 
-    Logging extra data management.
-"""
 if __pkg_def:
-    from .logextradata import LogExtraData as LogExtraData
+    __doc__ += """
+    .. py:attribute:: LogExtraData
 
-__doc__ += """
-.. py:attribute:: debug
+        Logging extra data management.
 
-    Alias of :mod:`.debugutils`.
+        .. seealso:: :class:`._logextradata.LogExtraData` implementation.
+    """
+    from ._logextradata import LogExtraData as LogExtraData
+    __all__.append("LogExtraData")
 
-    Helper functions and types for debugging.
-"""
 if __pkg_def:
-    from . import debugutils as debug
+    __doc__ += """
+    .. py:attribute:: debug
+
+        Helper functions and types for debugging.
+
+        .. seealso:: :mod:`._debugutils` implementation.
+    """
+    from . import _debugutils as debug
+    __all__.append("debug")
 
 
 __doc__ += """
 Configuration
 =============
 
-Configuration management.
+Modulate test executions thanks to the `scenario` :ref:`open configuration database <config-db>`.
 """
 
-__doc__ += """
-.. py:attribute:: conf
-
-    Configuration manager instance.
-"""
 if __pkg_def:
-    from .configdb import CONFIG_DB as _CONFIG_DB
-    conf = _CONFIG_DB
+    __doc__ += """
+    .. py:attribute:: conf
 
-__doc__ += """
-.. py:attribute:: ConfigNode
+        Configuration manager instance.
 
-    Alias of :class:`.confignode.ConfigNode`.
-"""
+        .. seealso:: :class:`._configdb.ConfigDatabase` implementation.
+    """
+    from ._configdb import CONFIG_DB as conf  # noqa  ## Constant variable imported as non-constant
+    __all__.append("conf")
+
 if __pkg_def:
-    from .confignode import ConfigNode as ConfigNode
+    __doc__ += """
+    .. py:attribute:: ConfigNode
 
-__doc__ += """
-.. py:attribute:: ConfigKey
+        .. seealso:: :class:`._confignode.ConfigNode` implementation.
+    """
+    from ._confignode import ConfigNode as ConfigNode
+    __all__.append("ConfigNode")
 
-    Alias of :class:`.scenarioconfig.ScenarioConfig.Key`.
-
-    `scenario` configuration keys.
-"""
 if __pkg_def:
-    from .scenarioconfig import ScenarioConfig as _ScenarioConfig
+    __doc__ += """
+    .. py:attribute:: ConfigKey
+
+        `scenario` configuration keys.
+
+        .. seealso:: :class:`._scenarioconfig.ScenarioConfig.Key` implementation.
+    """
+    # Note: Can't re-export `ScenarioConfig.Key` as `ConfigKey` with a single `import` statement. Use an intermediate private instance.
+    from ._scenarioconfig import ScenarioConfig as _ScenarioConfig
     ConfigKey = _ScenarioConfig.Key
+    __all__.append("ConfigKey")
 
 
 __doc__ += """
 Launchers
 =========
 
-Classes to launch the test scenarios and campaigns from custom launcher scripts.
+Classes for launching test scenarios and campaigns from :ref:`custom launcher scripts <launcher>`.
 """
 
-__doc__ += """
-.. py:attribute:: runner
-
-    Scenario runner instance.
-
-    Call from your own scenario launcher script with:
-
-    .. code-block:: python
-
-        scenario.runner.main()
-"""
 if __pkg_def:
-    from .scenariorunner import SCENARIO_RUNNER as _SCENARIO_RUNNER
-    runner = _SCENARIO_RUNNER
+    __doc__ += """
+    .. py:attribute: runner
 
-__doc__ += """
-.. py:attribute:: campaign_runner
+        Scenario runner instance.
 
-    Campaign runner instance.
+        Call from your own scenario launcher script with:
 
-    Call from your own campaign launcher script with:
+        .. code-block:: python
 
-    .. code-block:: python
+            scenario.runner.main()
 
-        scenario.campaign_runner.main()
-"""
+        .. seealso:: :class:`._scenariorunner.ScenarioRunner` implementation.
+    """
+    from ._scenariorunner import SCENARIO_RUNNER as runner  # noqa  ## Constant variable imported as non-constant
+    __all__.append("runner")
+
 if __pkg_def:
-    from .campaignrunner import CAMPAIGN_RUNNER as _CAMPAIGN_RUNNER
-    campaign_runner = _CAMPAIGN_RUNNER
+    __doc__ += """
+    .. py:attribute:: campaign_runner
 
-__doc__ += """
-.. py:attribute:: Args
+        Campaign runner instance.
 
-    Alias of :class:`.args.Args`.
+        Call from your own campaign launcher script with:
 
-    Base class for :class:`ScenarioArgs` and :class:`CampaignArgs`.
-"""
+        .. code-block:: python
+
+            scenario.campaign_runner.main()
+
+        .. seealso:: :class:`._campaignrunner.CampaignRunner` implementation.
+    """
+    from ._campaignrunner import CAMPAIGN_RUNNER as campaign_runner  # noqa  ## Constant variable imported as non-constant
+    __all__.append("campaign_runner")
+
 if __pkg_def:
-    from .args import Args as Args
+    __doc__ += """
+    .. py:attribute:: Args
 
-__doc__ += """
-.. py:attribute:: ScenarioArgs
+        Base class for :class:`ScenarioArgs` and :class:`CampaignArgs`.
 
-    Alias of :class:`.scenarioargs.ScenarioArgs`.
+        .. seealso:: :class:`._args.Args` implementation.
+    """
+    from ._args import Args as Args
+    __all__.append("Args")
 
-    Inherit from this class in order to extend :class:`.scenariorunner.ScenarioRunner` arguments with your own launcher script ones.
-"""
 if __pkg_def:
-    from .scenarioargs import ScenarioArgs as ScenarioArgs
+    __doc__ += """
+    .. py:attribute:: ScenarioArgs
 
-__doc__ += """
-.. py:attribute:: CampaignArgs
+        Inherit from this class in order to extend :class:`._scenariorunner.ScenarioRunner` arguments with your own launcher script ones.
 
-    Alias of :class:`.campaignargs.CampaignArgs`.
+        .. seealso:: :class:`._scenarioargs.ScenarioArgs` implementation.
+    """
+    from ._scenarioargs import ScenarioArgs as ScenarioArgs
+    __all__.append("ScenarioArgs")
 
-    Inherit from this class in order to extend :class:`.campaignrunner.CampaignRunner` arguments with your own launcher script ones.
-"""
 if __pkg_def:
-    from .campaignargs import CampaignArgs as CampaignArgs
+    __doc__ += """
+    .. py:attribute:: CampaignArgs
 
-__doc__ += """
-.. py:attribute:: ErrorCode
+        Inherit from this class in order to extend :class:`._campaignrunner.CampaignRunner` arguments with your own launcher script ones.
 
-    Alias of :class:`.errcodes.ErrorCode`.
+        .. seealso:: :class:`._campaignargs.CampaignArgs` implementation.
+    """
+    from ._campaignargs import CampaignArgs as CampaignArgs
+    __all__.append("CampaignArgs")
 
-    Error codes returned by the :meth:`main()` methods of :class:`.scenariorunner.ScenarioRunner` and :class:`.campaignrunner.CampaignRunner`.
-"""
 if __pkg_def:
-    from .errcodes import ErrorCode as ErrorCode
+    __doc__ += """
+    .. py:attribute:: ErrorCode
+
+        Error codes returned by :meth:`._scenariorunner.ScenarioRunner.main()` and :meth:`._campaignrunner.CampaignRunner.main()`.
+
+        .. seealso:: :class:`._errcodes.ErrorCode` implementation.
+    """
+    from ._errcodes import ErrorCode as ErrorCode
+    __all__.append("ErrorCode")
 
 
 __doc__ += """
 Handlers (advanced)
 ===================
 
-Add reactive code.
+Register :ref:`handlers <handlers>` for reactive code to be called on events.
 """
 
-__doc__ += """
-.. py:attribute:: handlers
-
-    Handler manager instance.
-"""
 if __pkg_def:
-    from .handlers import HANDLERS as _HANDLERS
-    handlers = _HANDLERS
+    __doc__ += """
+    .. py:attribute:: handlers
 
-__doc__ += """
-.. py:attribute:: Event
+        Handler manager instance.
 
-    Alias of :class:`.scenarioevents.ScenarioEvent`.
-"""
+        .. seealso:: :class:`._handlers.Handlers` implementation.
+    """
+    from ._handlers import HANDLERS as handlers  # noqa  ## Constant variable imported as non-constant
+    __all__.append("handlers")
+
 if __pkg_def:
-    from .scenarioevents import ScenarioEvent as _ScenarioEvent
-    Event = _ScenarioEvent
+    __doc__ += """
+    .. py:attribute:: Event
 
-__doc__ += """
-.. py:attribute:: EventData
+        `scenario` events that can be triggered.
 
-    Alias of :class:`.scenarioevents.ScenarioEventData`.
-"""
+        .. seealso:: :class:`._scenarioevents.ScenarioEvent` implementation.
+    """
+    from ._scenarioevents import ScenarioEvent as Event
+    __all__.append("Event")
+
 if __pkg_def:
-    from .scenarioevents import ScenarioEventData as _ScenarioEventData
-    EventData = _ScenarioEventData
+    __doc__ += """
+    .. py:attribute:: EventData
+
+        Data classes associated with `scenario` events.
+
+        .. seealso:: :class:`._scenarioevents.ScenarioEventData` implementation.
+    """
+    from ._scenarioevents import ScenarioEventData as EventData
+    __all__.append("EventData")
 
 
 __doc__ += """
-Execution result classes (advanced)
-===================================
+Execution (advanced)
+====================
 
-Sometimes, you may need to access information about the test execution itself.
+In certain circumstances (:ref:`launcher scripts <launcher>`, :ref:`handlers <handlers>`, ...),
+you may need to access information about test execution.
 """
 
-__doc__ += """
-.. py:attribute:: ExecutionStatus
-
-    Alias of :class:`.executionstatus.ExecutionStatus`.
-
-    Describes the final status of a scenario or campaign execution.
-"""
 if __pkg_def:
-    from .executionstatus import ExecutionStatus as ExecutionStatus
+    __doc__ += """
+    .. py:attribute:: stack
+
+        :ref:`Scenario stack <scenario-stack>` instance.
+
+        .. seealso:: :class:`._scenariostack.ScenarioStack` implementation.
+    """
+    from ._scenariostack import SCENARIO_STACK as stack  # noqa  ## Constant variable imported as non-constant
+    __all__.append("stack")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: ExecutionStatus
+
+        Describes the final status of a scenario or campaign execution.
+
+        .. seealso:: :class:`._executionstatus.ExecutionStatus` implementation.
+    """
+    from ._executionstatus import ExecutionStatus as ExecutionStatus
+    __all__.append("ExecutionStatus")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: ScenarioExecution
+
+        .. seealso:: :class:`._scenarioexecution.ScenarioExecution` implementation.
+    """
+    from ._scenarioexecution import ScenarioExecution as ScenarioExecution
+    __all__.append("ScenarioExecution")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: StepExecution
+
+        .. seealso:: :class:`._stepexecution.StepExecution` implementation.
+    """
+    from ._stepexecution import StepExecution as StepExecution
+    __all__.append("StepExecution")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: ActionResultExecution
+
+        .. seealso:: :class:`._actionresultexecution.ActionResultExecution` implementation.
+    """
+    from ._actionresultexecution import ActionResultExecution as ActionResultExecution
+    __all__.append("ActionResultExecution")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: CampaignExecution
+
+        .. seealso:: :class:`._campaignexecution.CampaignExecution` implementation.
+    """
+    from ._campaignexecution import CampaignExecution as CampaignExecution
+    __all__.append("CampaignExecution")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: TestSuiteExecution
+
+        .. seealso:: :class:`._campaignexecution.TestSuiteExecution` implementation.
+    """
+    from ._campaignexecution import TestSuiteExecution as TestSuiteExecution
+    __all__.append("TestSuiteExecution")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: TestCaseExecution
+
+        .. seealso:: :class:`._campaignexecution.TestCaseExecution` implementation.
+    """
+    from ._campaignexecution import TestCaseExecution as TestCaseExecution
+    __all__.append("TestCaseExecution")
+
 
 __doc__ += """
-.. py:attribute:: ScenarioExecution
-
-    Alias of :class:`.scenarioexecution.ScenarioExecution`.
+:ref:`Error management <errors>`:
 """
+
 if __pkg_def:
-    from .scenarioexecution import ScenarioExecution as ScenarioExecution
+    __doc__ += """
+    .. py:attribute:: TestError
+
+        Base class that describes an error that occurred during the tests.
+
+        .. seealso:: :class:`._testerrors.TestError` implementation.
+    """
+    from ._testerrors import TestError as TestError
+    __all__.append("TestError")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: ExceptionError
+
+        Subclass of :class:`TestError` that describes an error due to an exception that occurred during the tests.
+
+        .. seealso:: :class:`._testerrors.ExceptionError` implementation.
+    """
+    from ._testerrors import ExceptionError as ExceptionError
+    __all__.append("ExceptionError")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: KnownIssue
+
+        Subclass of :class:`TestError` that describes a known issue.
+
+        .. seealso:: :class:`._knownissues.KnownIssue` implementation.
+    """
+    from ._knownissues import KnownIssue as KnownIssue
+    __all__.append("KnownIssue")
+
 
 __doc__ += """
-.. py:attribute:: StepExecution
-
-    Alias of :class:`.stepexecution.StepExecution`.
+Statistics:
 """
+
 if __pkg_def:
-    from .stepexecution import StepExecution as StepExecution
+    __doc__ += """
+    .. py:attribute:: TimeStats
 
-__doc__ += """
-.. py:attribute:: ActionResultExecution
+        Describes execution time statistics.
 
-    Alias of :class:`.actionresultexecution.ActionResultExecution`.
-"""
+        .. seealso:: :class:`._stats.TimeStats` implementation.
+    """
+    from ._stats import TimeStats as TimeStats
+    __all__.append("TimeStats")
+
 if __pkg_def:
-    from .actionresultexecution import ActionResultExecution as ActionResultExecution
+    __doc__ += """
+    .. py:attribute:: ExecTotalStats
 
-__doc__ += """
-.. py::attribute:: CampaignExecution
+        Describes count statistics: number of items executed, out of the total number of items.
 
-    Alias of :class:`.campaignexecutions.CampaignExecution`.
-"""
-if __pkg_def:
-    from .campaignexecution import CampaignExecution as CampaignExecution
-
-__doc__ += """
-.. py::attribute:: TestSuiteExecution
-
-    Alias of :class:`.campaignexecutions.TestSuiteExecution`.
-"""
-if __pkg_def:
-    from .campaignexecution import TestSuiteExecution as TestSuiteExecution
-
-__doc__ += """
-.. py::attribute:: TestCaseExecution
-
-    Alias of :class:`.campaignexecutions.TestCaseExecution`.
-"""
-if __pkg_def:
-    from .campaignexecution import TestCaseExecution as TestCaseExecution
-
-__doc__ += """
-.. py:attribute:: TestError
-
-    Alias of :class:`.testerrors.TestError`.
-
-    Describes an error that occurred during the tests.
-"""
-if __pkg_def:
-    from .testerrors import TestError as TestError
-
-__doc__ += """
-.. py:attribute:: ExceptionError
-
-    Alias of :class:`.testerrors.ExceptionError`.
-
-    Describes an error due to an exception that occurred during the tests.
-"""
-if __pkg_def:
-    from .testerrors import ExceptionError as ExceptionError
-
-__doc__ += """
-.. py:attribute:: KnownIssue
-
-    Alias of :class:`.knownissues.KnownIssue`.
-
-    Describes an error due to an exception that occurred during the tests.
-"""
-if __pkg_def:
-    from .knownissues import KnownIssue as KnownIssue
-
-__doc__ += """
-.. py:attribute:: IssueLevel
-
-    Alias of :class:`.issuelevels.IssueLevel`.
-
-    Provides methods to define named issue levels.
-
-.. py:attribute:: AnyIssueLevelType
-
-    Alias of :class:`.issuelevels.AnyIssueLevelType`.
-"""
-if __pkg_def:
-    from .issuelevels import IssueLevel as IssueLevel
-if typing.TYPE_CHECKING:
-    from .issuelevels import AnyIssueLevelType as AnyIssueLevelType
-
-__doc__ += """
-.. py:attribute:: TimeStats
-
-    Alias of :class:`.stats.TimeStats`.
-
-    Describes execution time statistics.
-"""
-if __pkg_def:
-    from .stats import TimeStats as TimeStats
-
-__doc__ += """
-.. py:attribute:: ExecTotalStats
-
-    Alias of :class:`.stats.ExecTotalStats`.
-
-    Describes count statistics: number of items executed, out of the total number of items.
-"""
-if __pkg_def:
-    from .stats import ExecTotalStats as ExecTotalStats
-
-__doc__ += """
-.. py:attribute:: stack
-
-    Scenario stack instance.
-"""
-if __pkg_def:
-    from .scenariostack import SCENARIO_STACK as _SCENARIO_STACK
-    stack = _SCENARIO_STACK
+        .. seealso:: :class:`._stats.ExecTotalStats` implementation.
+    """
+    from ._stats import ExecTotalStats as ExecTotalStats
+    __all__.append("ExecTotalStats")
 
 
 __doc__ += """
 Reports (advanced)
 ==================
 
-The following objects give you the opportunity to read and write scenario and campaign reports.
+The following objects give you the opportunity to read and write :ref:`scenario and campaign reports <reports>`.
 """
 
-__doc__ += """
-.. py:attribute:: report
-
-    Scenario report manager.
-"""
 if __pkg_def:
-    from .scenarioreport import SCENARIO_REPORT as _SCENARIO_REPORT
-    report = _SCENARIO_REPORT
+    __doc__ += """
+    .. py:attribute:: report
 
-__doc__ += """
-.. py:attribute:: campaign_report
+        Scenario report manager.
 
-    Campaign report manager.
-"""
+        .. seealso:: :class:`._scenarioreport.ScenarioReport` implementation.
+    """
+    from ._scenarioreport import SCENARIO_REPORT as report  # noqa  ## Constant variable imported as non-constant
+    __all__.append("report")
+
 if __pkg_def:
-    from .campaignreport import CAMPAIGN_REPORT as _CAMPAIGN_REPORT
-    campaign_report = _CAMPAIGN_REPORT
+    __doc__ += """
+    .. py:attribute:: campaign_report
+
+        Campaign report manager.
+
+        .. seealso:: :class:`._campaignreport.CampaignReport` implementation.
+    """
+    from ._campaignreport import CAMPAIGN_REPORT as campaign_report  # noqa  ## Constant variable imported as non-constant
+    __all__.append("campaign_report")
 
 
 __doc__ += """
 Miscellaneous
 =============
+
+The `scenario` framework also exposes a couple of useful classes and types that may be used.
 """
 
-__doc__ += """
-.. py:attribute:: Path
-
-    Alias of :class:`.path.Path`.
-
-
-.. py:attribute:: AnyPathType
-
-    Alias of :class:`.path.AnyPathType`.
-"""
 if __pkg_def:
-    from .path import Path as Path
+    __doc__ += """
+    .. py:attribute:: Path
+
+        ``pathlib.Path`` augmentation:
+
+        - absolute / relative paths disambiguation,
+        - pretty displays inside a project root path.
+
+        .. seealso:: :class:`._path.Path` implementation.
+    """
+    from ._path import Path as Path
+    __all__.append("Path")
 if typing.TYPE_CHECKING:
-    from .path import AnyPathType as AnyPathType
+    __doc__ += """
+    .. py:attribute:: AnyPathType
 
-__doc__ += """
-.. py:attribute:: SubProcess
+        Any kind of path, :class:`Path` included.
 
-    Alias of :class:`.subprocess.SubProcess`.
+        .. seealso:: :obj:`._path.AnyPathType` implementation.
+    """
+    from ._path import AnyPathType as AnyPathType
+    __all__.append("AnyPathType")
 
-    Eases the way to prepare a sub-process, execute it, and then retrieve its results.
-
-
-.. py:attribute:: VarSubProcessType
-
-    Alias of :class:`.subprocess.VarSubProcessType`.
-"""
 if __pkg_def:
-    from .subprocess import SubProcess as SubProcess
+    __doc__ += """
+    .. py:attribute:: SubProcess
+
+        Eases the way to prepare a sub-process, execute it, and retrieve its results.
+
+        .. seealso:: :class:`._subprocess.SubProcess` implementation.
+    """
+    from ._subprocess import SubProcess as SubProcess
+    __all__.append("SubProcess")
 if typing.TYPE_CHECKING:
-    from .subprocess import VarSubProcessType as VarSubProcessType
+    __doc__ += """
+    .. py:attribute:: VarSubProcessType
 
-__doc__ += """
-.. py:attribute:: CodeLocation
+        Variable subprocess type, :class:`SubProcess` and subclasses.
 
-    Alias of :class:`.locations.CodeLocation`.
-"""
+        .. seealso:: :obj:`._subprocess.VarSubProcessType` implementation.
+    """
+    from ._subprocess import VarSubProcessType as VarSubProcessType
+    __all__.append("VarSubProcessType")
+
 if __pkg_def:
-    from .locations import CodeLocation as CodeLocation
+    __doc__ += """
+    .. py:attribute:: CodeLocation
 
-__doc__ += """
-.. py:attribute:: datetime
+        .. seealso:: :class:`._locations.CodeLocation` implementation.
+    """
+    from ._locations import CodeLocation as CodeLocation
+    __all__.append("CodeLocation")
 
-    Alias of :mod:`.datetimeutils`.
-
-    Date/time utils.
-"""
 if __pkg_def:
-    from . import datetimeutils as datetime
+    __doc__ += """
+    .. py:attribute:: datetime
 
-__doc__ += """
-.. py:attribute:: tz
+        Date/time utils.
 
-    Alias of :mod:`.timezoneutils`.
+        .. seealso:: :mod:`._datetimeutils` implementation.
+    """
+    from . import _datetimeutils as datetime
+    __all__.append("datetime")
 
-    Timezone utils.
-"""
 if __pkg_def:
-    from . import timezoneutils as timezone
+    __doc__ += """
+    .. py:attribute:: timezone
 
-__doc__ += """
-.. py:attribute:: enum
+        Timezone utils.
 
-    Alias of :mod:`.enumutils`.
+        .. seealso:: :mod:`._timezoneutils` implementation.
+    """
+    from . import _timezoneutils as timezone
+    __all__.append("timezone")
 
-    Enum utils.
-"""
 if __pkg_def:
-    from . import enumutils as enum
+    __doc__ += """
+    .. py:attribute:: enum
+
+        Enum utils.
+
+        .. seealso:: :mod:`._enumutils` implementation.
+    """
+    from . import _enumutils as enum
+    __all__.append("enum")

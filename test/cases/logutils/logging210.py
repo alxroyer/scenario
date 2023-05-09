@@ -43,7 +43,7 @@ class Logging210(scenario.test.TestCase):
         self.section("Class logger debugging activated")
         self.addstep(ExecScenario(
             scenario.test.paths.LOGGER_SCENARIO,
-            # 'sample-log' explicitely not activated.
+            # 'sample-log' explicitly not activated.
             debug_classes=[scenario.test.data.scenarios.LoggerScenario.LOGGER_DEBUG_CLASS],
             # Explicitely disable log date/time for verification purposes in `CheckClassLoggerLogLevels`.
             config_values={scenario.ConfigKey.LOG_DATETIME: False},
