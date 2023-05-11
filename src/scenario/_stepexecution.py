@@ -23,7 +23,6 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
-    from ._stats import ExecTotalStats as _ExecTotalStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
@@ -62,7 +61,7 @@ class StepExecution:
 
         #: Current action or expected result under execution.
         #:
-        #: Differs from :attr:`__current_action_result_definition_index` in that this reference can be set to ``None``
+        #: Differs from :attr:`StepExecutionHelper.current_action_result_definition_index` in that this reference can be set to ``None``
         #: when the action / expected result execution is done.
         self.current_action_result_definition = None  # type: typing.Optional[_ActionResultDefinitionType]
         #: Time statistics.
@@ -71,9 +70,6 @@ class StepExecution:
         self.errors = []  # type: typing.List[TestError]
         #: Warnings.
         self.warnings = []  # type: typing.List[TestError]
-
-        #: Current action or expected result index under execution.
-        self.__current_action_result_definition_index = -1  # type: int
 
         self.time.setstarttime()
 
@@ -84,22 +80,6 @@ class StepExecution:
         from ._reflection import qualname
 
         return f"<{qualname(type(self))}#{self.number} of {self.definition!r}>"
-
-    def getnextactionresultdefinition(self):  # type: (...) -> _ActionResultDefinitionType
-        """
-        Retrieves the next action/result definition to execute.
-
-        :return: Next :class:`._actionresultdefinition.ActionResultDefinition` instance to execute.
-
-        Sets the :attr:`current_action_result_definition` reference by the way.
-        """
-        # Increment the current action/result definition index.
-        self.__current_action_result_definition_index += 1
-
-        # Set the `current_action_result_definition` reference.
-        self.current_action_result_definition = self.definition.getactionresult(self.__current_action_result_definition_index)
-
-        return self.current_action_result_definition
 
     def getstarttime(self):  # type: (...) -> float
         """
@@ -127,42 +107,58 @@ class StepExecution:
         else:
             return time.time()
 
-    @staticmethod
-    def actionstats(
-            definition,  # type: _StepDefinitionType
-    ):  # type: (...) -> _ExecTotalStatsType
+
+class StepExecutionHelper:
+    """
+    Step execution helper methods.
+
+    Avoids the public exposition of methods for internal implementation only.
+    """
+
+    def __init__(
+            self,
+            execution,  # type: StepExecution
+    ):  # type: (...) -> None
         """
-        Computes action statistics for the given step definition.
+        Instanciates a helper for the given step execution.
 
-        :param definition: Step definition to compute action statistics for.
-        :return: Action statistics of the step.
+        :param execution: Step execution instance this helper works for.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-        from ._stats import ExecTotalStats
+        #: Step execution instance this helper works for.
+        self.execution = execution
 
-        _stats = ExecTotalStats()  # type: ExecTotalStats
-        for _action_result_definition in definition.actions_results:  # type: ActionResultDefinition
-            if _action_result_definition.type == ActionResultDefinition.Type.ACTION:
-                _stats.total += 1
-                _stats.executed += len(_action_result_definition.executions)
-        return _stats
-
-    @staticmethod
-    def resultstats(
-            definition,  # type: _StepDefinitionType
-    ):  # type: (...) -> _ExecTotalStatsType
+    @property
+    def current_action_result_definition_index(self):  # type: () -> int
         """
-        Computes expected result statistics for the given step definition.
+        Current action or expected result index under execution.
 
-        :param definition: Step definition to compute expected result statistics for.
-        :return: Expected result statistics of the step.
+        Retrieves the information stored with :attr:`execution`.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-        from ._stats import ExecTotalStats
+        if not hasattr(self.execution, "__current_action_result_definition_index"):
+            setattr(self.execution, "__current_action_result_definition_index", -1)
+        return int(getattr(self.execution, "__current_action_result_definition_index"))
 
-        _stats = ExecTotalStats()  # type: ExecTotalStats
-        for _action_result_definition in definition.actions_results:  # type: _ActionResultDefinitionType
-            if _action_result_definition.type == ActionResultDefinition.Type.RESULT:
-                _stats.total += 1
-                _stats.executed += len(_action_result_definition.executions)
-        return _stats
+    @current_action_result_definition_index.setter
+    def current_action_result_definition_index(self, value):  # type: (int) -> None
+        """
+        Current action or expected result index under execution.
+
+        Stores the information with :attr:`execution`.
+        """
+        setattr(self.execution, "__current_action_result_definition_index", value)
+
+    def getnextactionresultdefinition(self):  # type: (...) -> _ActionResultDefinitionType
+        """
+        Retrieves the next action/result definition to execute.
+
+        :return: Next :class:`._actionresultdefinition.ActionResultDefinition` instance to execute.
+
+        Sets the :attr:`StepExecution.current_action_result_definition` reference by the way.
+        """
+        # Increment the current action/result definition index.
+        self.current_action_result_definition_index += 1
+
+        # Set the `current_action_result_definition` reference.
+        self.execution.current_action_result_definition = self.execution.definition.getactionresult(self.current_action_result_definition_index)
+
+        return self.execution.current_action_result_definition

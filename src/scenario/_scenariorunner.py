@@ -639,6 +639,7 @@ class ScenarioRunner(Logger):
         from ._actionresultexecution import ActionResultExecution
         from ._scenariologging import SCENARIO_LOGGING
         from ._scenariostack import SCENARIO_STACK
+        from ._stepexecution import StepExecutionHelper
 
         self.debug("onactionresult(action_result_type=%s, description=%r)", action_result_type, description)
 
@@ -662,7 +663,8 @@ class ScenarioRunner(Logger):
             self._endcurrentactionresult()
 
             # Switch to this action/result.
-            _action_result_definition = SCENARIO_STACK.current_step_execution.getnextactionresultdefinition()  # type: ActionResultDefinition
+            _step_execution_helper = StepExecutionHelper(SCENARIO_STACK.current_step_execution)  # type: StepExecutionHelper
+            _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
             if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != description):
                 SCENARIO_STACK.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
 
