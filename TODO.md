@@ -18,6 +18,9 @@
 ## Roadmap to v0.2.3
 
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
+    - Issue #77: Avoid implicitly reexporting imported items at module level.
+    - Export step specifications with the `scenario` package.
+    - Check documentation.
     - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
