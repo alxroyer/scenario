@@ -32,7 +32,8 @@ if typing.TYPE_CHECKING:
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._path import AnyPathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._stepdefinition import StepDefinition as _StepDefinitionType, StepSpecificationType
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepspecifications import AnyStepDefinitionSpecificationType
     from ._stepuserapi import StepUserApi as _StepUserApiType
     from ._testerrors import TestError as _TestErrorType
 
@@ -849,7 +850,7 @@ class ScenarioRunner(Logger):
 
     def goto(
             self,
-            to_step_specification,  # type: StepSpecificationType
+            to_step_specification,  # type: AnyStepDefinitionSpecificationType
     ):  # type: (...) -> None
         """
         Call redirection from :meth:`._stepuserapi.StepUserApi.goto()`.
@@ -857,11 +858,17 @@ class ScenarioRunner(Logger):
         :param to_step_specification: Specification of the next step to execute.
         """
         from ._scenariostack import SCENARIO_STACK
+        from ._stepspecifications import StepDefinitionSpecification
 
-        self.debug("Jumping to step %r.", to_step_specification)
+        self.debug("Jumping to step %s", to_step_specification)
 
-        if SCENARIO_STACK.current_scenario_definition and SCENARIO_STACK.current_scenario_execution:
-            _next_step_definition = SCENARIO_STACK.current_scenario_definition.expectstep(to_step_specification)  # type: _StepDefinitionType
+        # Resolve the *to-step* specification.
+        if not isinstance(to_step_specification, StepDefinitionSpecification):
+            to_step_specification = StepDefinitionSpecification(to_step_specification)
+        _next_step_definition = to_step_specification.expect()  # type: _StepDefinitionType
+
+        # Set it as the next step for execution, then break the current step execution by raising a `GotoException`.
+        if SCENARIO_STACK.current_scenario_execution:
             SCENARIO_STACK.current_scenario_execution.setnextstep(_next_step_definition)
             raise GotoException()
         else:
