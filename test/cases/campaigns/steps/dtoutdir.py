@@ -86,7 +86,7 @@ class CheckCampaignDtOutdir(scenario.test.VerificationStep):
             #     _timestamp, step_name,
             #     evidence="Timestamp",
             # )
-            _step_execution = self.exec_step.executions[-1]  # type: scenario.StepExecution
+            _step_execution = scenario.StepExecutionSpecification(self.exec_step).expect()  # type: scenario.StepExecution
             _start = math.floor(_step_execution.getstarttime())  # type: float
             _end = math.ceil(_step_execution.getendtime(expect=True))  # type: float
             self.assertbetweenorequal(

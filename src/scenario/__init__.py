@@ -186,6 +186,59 @@ if __pkg_def:
 
 
 __doc__ += """
+Step specifications
+===================
+
+Step specifications may be useful to refer to a given step
+when using the :ref:`goto feature <goto>` or :ref:`assertions routines <assertions>` about step execution times.
+"""
+
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: AnyStepDefinitionSpecificationType
+
+        Various ways to refer to a step definition.
+
+        .. seealso:: :obj:`._stepspecifications.AnyStepDefinitionSpecificationType` implementation.
+    """
+    from ._stepspecifications import AnyStepDefinitionSpecificationType as AnyStepDefinitionSpecificationType
+    __all__.append("AnyStepDefinitionSpecificationType")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: StepDefinitionSpecification
+
+        Implementation class for :obj:`AnyStepDefinitionSpecificationType`.
+
+        .. seealso:: :class:`._stepspecifications.StepDefinitionSpecification` implementation.
+    """
+    from ._stepspecifications import StepDefinitionSpecification as StepDefinitionSpecification
+    __all__.append("StepDefinitionSpecification")
+
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: AnyStepExecutionSpecificationType
+
+        Various ways to refer to a step execution.
+
+        .. seealso:: :obj:`._stepspecifications.AnyStepExecutionSpecificationType` implementation.
+    """
+    from ._stepspecifications import AnyStepExecutionSpecificationType as AnyStepExecutionSpecificationType
+    __all__.append("AnyStepExecutionSpecificationType")
+
+if __pkg_def:
+    __doc__ += """
+    .. py:attribute:: StepExecutionSpecification
+
+        Implementation class for :obj:`AnyStepExecutionSpecificationType`.
+
+        .. seealso:: :class:`._stepspecifications.StepExecutionSpecification` implementation.
+    """
+    from ._stepspecifications import StepExecutionSpecification as StepExecutionSpecification
+    __all__.append("StepExecutionSpecification")
+
+
+__doc__ += """
 Assertions
 ==========
 
@@ -447,8 +500,8 @@ if __pkg_def:
 
 
 __doc__ += """
-Handlers (advanced)
-===================
+Handlers
+========
 
 Register :ref:`handlers <handlers>` for reactive code to be called on events.
 """
@@ -488,8 +541,8 @@ if __pkg_def:
 
 
 __doc__ += """
-Execution (advanced)
-====================
+Execution
+=========
 
 In certain circumstances (:ref:`launcher scripts <launcher>`, :ref:`handlers <handlers>`, ...),
 you may need to access information about test execution.
@@ -638,8 +691,8 @@ if __pkg_def:
 
 
 __doc__ += """
-Reports (advanced)
-==================
+Reports
+=======
 
 The following objects give you the opportunity to read and write :ref:`scenario and campaign reports <reports>`.
 """

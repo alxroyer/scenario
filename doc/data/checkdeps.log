@@ -6,8 +6,8 @@ INFO                                         _executionstatus.py, _handlers.py, 
 INFO                                         _logextradata.py, _logger.py, _loggermain.py, _path.py, _pkginfo.py,
 INFO                                         _scenarioargs.py, _scenarioconfig.py, _scenariodefinition.py, _scenarioevents.py,
 INFO                                         _scenarioexecution.py, _scenarioreport.py, _scenariorunner.py, _scenariostack.py,
-INFO                                         _stats.py, _stepdefinition.py, _stepexecution.py, _stepsection.py, _subprocess.py,
-INFO                                         _testerrors.py, _timezoneutils.py]
+INFO                                         _stats.py, _stepdefinition.py, _stepexecution.py, _stepsection.py,
+INFO                                         _stepspecifications.py, _subprocess.py, _testerrors.py, _timezoneutils.py]
 INFO     <04>           _campaignargs.py => [_args.py, _scenarioargs.py]
 INFO     <04>            _stepsection.py => [_stepdefinition.py]
 INFO     <03>             _reflection.py => [_debugclasses.py, _logger.py]
