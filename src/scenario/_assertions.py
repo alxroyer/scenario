@@ -24,24 +24,18 @@ import builtins
 import re
 import typing
 
-from . import _assertionhelpers  # `_assertionhelpers` used for global instanciation.
-
+if True:
+    from . import _assertionhelpers as _assertionhelpers  # `_assertionhelpers` used for global instanciation.
 if typing.TYPE_CHECKING:
-    from ._assertionhelpers import ErrParamType, EvidenceParamType, StepExecutionSpecificationType, TypeOrTypesType, VarComparableType, VarItemType
-    from ._path import AnyPathType
+    from ._assertionhelpers import ErrParamType as _ErrParamType
+    from ._assertionhelpers import EvidenceParamType as _EvidenceParamType
+    from ._assertionhelpers import StepExecutionSpecificationType as _StepExecutionSpecificationType
+    from ._assertionhelpers import TypeOrTypesType as _TypeOrTypesType
+    from ._assertionhelpers import VarComparableType as _VarComparableType
+    from ._assertionhelpers import VarItemType as _VarItemType
+    from ._path import AnyPathType as _AnyPathType
     from ._stepexecution import StepExecution as _StepExecutionType
-    from ._typing import JsonDictType
-
-
-if typing.TYPE_CHECKING:
-    #: Variable object type.
-    #:
-    #: Used in assertion routine signatures.
-    VarObjType = typing.TypeVar("VarObjType", bound=object)
-
-
-#: Shortcut to :mod:`._assertionhelpers`.
-assertionhelpers = _assertionhelpers
+    from ._typing import JsonDictType as _JsonDictType
 
 
 class Assertions:
@@ -65,7 +59,7 @@ class Assertions:
 
         :param err: Error message.
         """
-        assertionhelpers.unittest.fail(err)
+        _assertionhelpers.unittest.fail(err)
 
     @staticmethod
     def todo(
@@ -76,7 +70,7 @@ class Assertions:
 
         :param err: Error message.
         """
-        assertionhelpers.unittest.fail(f"TODO: {err}")
+        _assertionhelpers.unittest.fail(f"TODO: {err}")
 
     # General equality.
 
@@ -84,8 +78,8 @@ class Assertions:
     def assertequal(
             obj1,  # type: typing.Any
             obj2,  # type: typing.Any
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks member equality.
@@ -97,8 +91,8 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assertionhelpers.unittest.assertEqual(obj1, obj2, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertEqual(obj1, obj2, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s == %s", saferepr(obj1), saferepr(obj2),
         )
@@ -107,8 +101,8 @@ class Assertions:
     def assertnotequal(
             obj1,  # type: typing.Any
             obj2,  # type: typing.Any
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks member inequality.
@@ -120,8 +114,8 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assertionhelpers.unittest.assertNotEqual(obj1, obj2, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertNotEqual(obj1, obj2, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s != %s", saferepr(obj1), saferepr(obj2),
         )
@@ -131,8 +125,8 @@ class Assertions:
     @staticmethod
     def assertisnone(
             obj,  # type: typing.Any
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a given value is ``None``.
@@ -141,18 +135,18 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        assertionhelpers.unittest.assertIsNone(obj, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertIsNone(obj, err)
+        _assertionhelpers.evidence(
             evidence,
             "None as expected",
         )
 
     @staticmethod
     def assertisnotnone(
-            obj,  # type: typing.Optional[VarObjType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
-    ):  # type: (...) -> VarObjType
+            obj,  # type: typing.Optional[_VarItemType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
+    ):  # type: (...) -> _VarItemType
         """
         Checks a given value is not ``None``.
 
@@ -163,8 +157,8 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assertionhelpers.unittest.assertIsNotNone(obj, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertIsNotNone(obj, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s is not None", saferepr(obj),
         )
@@ -172,11 +166,11 @@ class Assertions:
 
     @staticmethod
     def assertisinstance(
-            obj,  # type: typing.Optional[VarObjType]
-            type,  # type: TypeOrTypesType  # noqa  ## Shadows built-in name 'type'
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
-    ):  # type: (...) -> VarObjType
+            obj,  # type: typing.Optional[_VarItemType]
+            type,  # type: _TypeOrTypesType  # noqa  ## Shadows built-in name 'type'
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
+    ):  # type: (...) -> _VarItemType
         """
         Checks whether the object is of the given type, or one of the given types.
 
@@ -190,12 +184,12 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert type is not None, assertionhelpers.isnonemsg("assertisinstance()", "type")
+        assert type is not None, _assertionhelpers.isnonemsg("assertisinstance()", "type")
         if not isinstance(type, builtins.type):
             type = tuple(type)  # noqa  ## Shadows built-in name 'type'
 
-        assertionhelpers.unittest.assertIsInstance(obj, type, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertIsInstance(obj, type, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s is an instance of %s", saferepr(obj), saferepr(type),
         )
@@ -203,11 +197,11 @@ class Assertions:
 
     @staticmethod
     def assertisnotinstance(
-            obj,  # type: typing.Optional[VarObjType]
-            type,  # type: TypeOrTypesType  # noqa  ## Shadows built-in name 'type'
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
-    ):  # type: (...) -> VarObjType
+            obj,  # type: typing.Optional[_VarItemType]
+            type,  # type: _TypeOrTypesType  # noqa  ## Shadows built-in name 'type'
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
+    ):  # type: (...) -> _VarItemType
         """
         Checks whether the object is not of the given type, or none of the given types.
 
@@ -220,12 +214,12 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert type is not None, assertionhelpers.isnonemsg("assertisnotinstance()", "type")
+        assert type is not None, _assertionhelpers.isnonemsg("assertisnotinstance()", "type")
         if not isinstance(type, builtins.type):
             type = tuple(type)  # noqa  ## Shadows built-in name 'type'
 
-        assertionhelpers.unittest.assertNotIsInstance(obj, type, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertNotIsInstance(obj, type, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s is not an instance of %s", saferepr(obj), saferepr(type),
         )
@@ -235,8 +229,8 @@ class Assertions:
     def assertsameinstances(
             obj1,  # type: typing.Optional[object]
             obj2,  # type: typing.Optional[object]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks two Python instances are the same.
@@ -248,14 +242,14 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertsameinstances()", "obj1")
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertsameinstances()", "obj2")
+        assert obj1 is not None, _assertionhelpers.isnonemsg("assertsameinstances()", "obj1")
+        assert obj2 is not None, _assertionhelpers.isnonemsg("assertsameinstances()", "obj2")
 
-        assert obj1 is obj2, assertionhelpers.errmsg(
+        assert obj1 is obj2, _assertionhelpers.errmsg(
             err,
             "instances %s and %s are not the same", saferepr(obj1), saferepr(obj2),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s and %s are same instances", saferepr(obj1), saferepr(obj2),
         )
@@ -264,8 +258,8 @@ class Assertions:
     def assertnotsameinstances(
             obj1,  # type: typing.Optional[object]
             obj2,  # type: typing.Optional[object]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks two Python instances are not the same.
@@ -277,14 +271,14 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertdifferentinstances()", "obj1")
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertdifferentinstances()", "obj2")
+        assert obj1 is not None, _assertionhelpers.isnonemsg("assertdifferentinstances()", "obj1")
+        assert obj2 is not None, _assertionhelpers.isnonemsg("assertdifferentinstances()", "obj2")
 
-        assert obj1 is not obj2, assertionhelpers.errmsg(
+        assert obj1 is not obj2, _assertionhelpers.errmsg(
             err,
             "%s and %s should be different instances", saferepr(obj1), saferepr(obj2),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s and %s - different instances", saferepr(obj1), saferepr(obj2),
         )
@@ -294,8 +288,8 @@ class Assertions:
     @staticmethod
     def asserttrue(
             value,  # type: typing.Optional[typing.Any]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is ``True``.
@@ -304,8 +298,8 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        assertionhelpers.unittest.assertTrue(value, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertTrue(value, err)
+        _assertionhelpers.evidence(
             evidence,
             "True as expected",
         )
@@ -313,8 +307,8 @@ class Assertions:
     @staticmethod
     def assertfalse(
             value,  # type: typing.Optional[typing.Any]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is ``False``.
@@ -323,8 +317,8 @@ class Assertions:
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        assertionhelpers.unittest.assertFalse(value, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertFalse(value, err)
+        _assertionhelpers.evidence(
             evidence,
             "False as expected",
         )
@@ -333,10 +327,10 @@ class Assertions:
 
     @staticmethod
     def assertless(
-            obj1,  # type: typing.Optional[VarComparableType]
-            obj2,  # type: typing.Optional[VarComparableType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            obj1,  # type: typing.Optional[_VarComparableType]
+            obj2,  # type: typing.Optional[_VarComparableType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is strictly less than another.
@@ -348,21 +342,21 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertless()", "obj1")
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertless()", "obj2")
+        assert obj1 is not None, _assertionhelpers.isnonemsg("assertless()", "obj1")
+        assert obj2 is not None, _assertionhelpers.isnonemsg("assertless()", "obj2")
 
-        assertionhelpers.unittest.assertLess(obj1, obj2, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertLess(obj1, obj2, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s < %s", saferepr(obj1), saferepr(obj2),
         )
 
     @staticmethod
     def assertlessequal(
-            obj1,  # type: typing.Optional[VarComparableType]
-            obj2,  # type: typing.Optional[VarComparableType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            obj1,  # type: typing.Optional[_VarComparableType]
+            obj2,  # type: typing.Optional[_VarComparableType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is less than or equal to another.
@@ -374,21 +368,21 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertlessequal()", "obj1")
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertlessequal()", "obj2")
+        assert obj1 is not None, _assertionhelpers.isnonemsg("assertlessequal()", "obj1")
+        assert obj2 is not None, _assertionhelpers.isnonemsg("assertlessequal()", "obj2")
 
-        assertionhelpers.unittest.assertLessEqual(obj1, obj2, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertLessEqual(obj1, obj2, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s <= %s", saferepr(obj1), saferepr(obj2),
         )
 
     @staticmethod
     def assertgreater(
-            obj1,  # type: typing.Optional[VarComparableType]
-            obj2,  # type: typing.Optional[VarComparableType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            obj1,  # type: typing.Optional[_VarComparableType]
+            obj2,  # type: typing.Optional[_VarComparableType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is strictly greater than another.
@@ -400,21 +394,21 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertgreater()", "obj1")
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertgreater()", "obj2")
+        assert obj1 is not None, _assertionhelpers.isnonemsg("assertgreater()", "obj1")
+        assert obj2 is not None, _assertionhelpers.isnonemsg("assertgreater()", "obj2")
 
-        assertionhelpers.unittest.assertGreater(obj1, obj2, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertGreater(obj1, obj2, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s > %s", saferepr(obj1), saferepr(obj2),
         )
 
     @staticmethod
     def assertgreaterequal(
-            obj1,  # type: typing.Optional[VarComparableType]
-            obj2,  # type: typing.Optional[VarComparableType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            obj1,  # type: typing.Optional[_VarComparableType]
+            obj2,  # type: typing.Optional[_VarComparableType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is greater than or equal to another.
@@ -426,22 +420,22 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertgreaterequal()", "obj1")
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertgreaterequal()", "obj2")
+        assert obj1 is not None, _assertionhelpers.isnonemsg("assertgreaterequal()", "obj1")
+        assert obj2 is not None, _assertionhelpers.isnonemsg("assertgreaterequal()", "obj2")
 
-        assertionhelpers.unittest.assertGreaterEqual(obj1, obj2, err)
-        assertionhelpers.evidence(
+        _assertionhelpers.unittest.assertGreaterEqual(obj1, obj2, err)
+        _assertionhelpers.evidence(
             evidence,
             "%s >= %s", saferepr(obj1), saferepr(obj2),
         )
 
     @staticmethod
     def assertstrictlybetween(
-            between,  # type: typing.Optional[VarComparableType]
-            low,  # type: typing.Optional[VarComparableType]
-            high,  # type: typing.Optional[VarComparableType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            between,  # type: typing.Optional[_VarComparableType]
+            low,  # type: typing.Optional[_VarComparableType]
+            high,  # type: typing.Optional[_VarComparableType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is strictly between two others.
@@ -454,26 +448,26 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert between is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "between")
-        assert low is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "low")
-        assert high is not None, assertionhelpers.isnonemsg("assertstrictlybetween()", "high")
+        assert between is not None, _assertionhelpers.isnonemsg("assertstrictlybetween()", "between")
+        assert low is not None, _assertionhelpers.isnonemsg("assertstrictlybetween()", "low")
+        assert high is not None, _assertionhelpers.isnonemsg("assertstrictlybetween()", "high")
 
-        assert (between > low) and (between < high), assertionhelpers.errmsg(
+        assert (between > low) and (between < high), _assertionhelpers.errmsg(
             err,
             "%s is not strictly between %s and %s", saferepr(between), saferepr(low), saferepr(high),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s in ]%s; %s[", saferepr(between), saferepr(low), saferepr(high),
         )
 
     @staticmethod
     def assertbetweenorequal(
-            between,  # type: typing.Optional[VarComparableType]
-            low,  # type: typing.Optional[VarComparableType]
-            high,  # type: typing.Optional[VarComparableType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            between,  # type: typing.Optional[_VarComparableType]
+            low,  # type: typing.Optional[_VarComparableType]
+            high,  # type: typing.Optional[_VarComparableType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is between or equal to two others.
@@ -486,26 +480,26 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert between is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "between")
-        assert low is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "low")
-        assert high is not None, assertionhelpers.isnonemsg("assertbetweenorequal()", "high")
+        assert between is not None, _assertionhelpers.isnonemsg("assertbetweenorequal()", "between")
+        assert low is not None, _assertionhelpers.isnonemsg("assertbetweenorequal()", "low")
+        assert high is not None, _assertionhelpers.isnonemsg("assertbetweenorequal()", "high")
 
-        assert (between >= low) and (between <= high), assertionhelpers.errmsg(
+        assert (between >= low) and (between <= high), _assertionhelpers.errmsg(
             err,
             "%s is not between %s and %s", saferepr(between), saferepr(low), saferepr(high),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s in [%s; %s]", saferepr(between), saferepr(low), saferepr(high),
         )
 
     @staticmethod
     def assertnear(
-            obj1,  # type: typing.Optional[VarComparableType]
-            obj2,  # type: typing.Optional[VarComparableType]
-            margin,  # type: typing.Optional[VarComparableType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            obj1,  # type: typing.Optional[_VarComparableType]
+            obj2,  # type: typing.Optional[_VarComparableType]
+            margin,  # type: typing.Optional[_VarComparableType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a value is near another oe.
@@ -519,21 +513,21 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert obj1 is not None, assertionhelpers.isnonemsg("assertnear()", "obj1")
-        assert not isinstance(obj1, str), assertionhelpers.ctxmsg("assertnear()", "obj1 should not be a string")
+        assert obj1 is not None, _assertionhelpers.isnonemsg("assertnear()", "obj1")
+        assert not isinstance(obj1, str), _assertionhelpers.ctxmsg("assertnear()", "obj1 should not be a string")
         assert isinstance(obj1, (int, float))  # Should be obvious... Whatever, let's help the type checker.
-        assert obj2 is not None, assertionhelpers.isnonemsg("assertnear()", "obj2")
-        assert not isinstance(obj2, str), assertionhelpers.ctxmsg("assertnear()", "obj2 should not be a string")
+        assert obj2 is not None, _assertionhelpers.isnonemsg("assertnear()", "obj2")
+        assert not isinstance(obj2, str), _assertionhelpers.ctxmsg("assertnear()", "obj2 should not be a string")
         assert isinstance(obj2, (int, float))  # Should be obvious... Whatever, let's help the type checker.
-        assert margin is not None, assertionhelpers.isnonemsg("assertnear()", "margin")
-        assert not isinstance(margin, str), assertionhelpers.ctxmsg("assertnear()", "margin should not be a string")
+        assert margin is not None, _assertionhelpers.isnonemsg("assertnear()", "margin")
+        assert not isinstance(margin, str), _assertionhelpers.ctxmsg("assertnear()", "margin should not be a string")
         assert isinstance(margin, (int, float))  # Should be obvious... Whatever, let's help the type checker.
-        assert float(margin) >= 0.0, assertionhelpers.ctxmsg("assertnear()", "margin should not be negative")
+        assert float(margin) >= 0.0, _assertionhelpers.ctxmsg("assertnear()", "margin should not be negative")
 
         _margin_rate = (margin / obj2) * 100.0  # type: float
         Assertions.assertbetweenorequal(
             between=obj1, low=obj2 - margin, high=obj2 + margin,
-            err=assertionhelpers.errmsg(
+            err=_assertionhelpers.errmsg(
                 err,
                 "%s is not near %s (margin: %.1f%% i.e. %s)",
                 saferepr(obj1), saferepr(obj2),
@@ -541,7 +535,7 @@ class Assertions:
             ),
             evidence=False,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s is near %s (margin: %.1f%% i.e. %s)",
             saferepr(obj1), saferepr(obj2),
@@ -554,8 +548,8 @@ class Assertions:
     def assertstartswith(
             string,  # type: typing.Optional[typing.AnyStr]
             start,  # type: typing.Optional[typing.AnyStr]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a string (or bytes) starts with a given pattern
@@ -567,14 +561,14 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert string is not None, assertionhelpers.isnonemsg("assertstartswith()", "string")
-        assert start is not None, assertionhelpers.isnonemsg("assertstartswith()", "pattern")
+        assert string is not None, _assertionhelpers.isnonemsg("assertstartswith()", "string")
+        assert start is not None, _assertionhelpers.isnonemsg("assertstartswith()", "pattern")
 
-        assert string.startswith(start), assertionhelpers.errmsg(
+        assert string.startswith(start), _assertionhelpers.errmsg(
             err,
             "%s does not start with %s", saferepr(string), saferepr(start),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s starts with %s", saferepr(string), saferepr(start),
         )
@@ -583,8 +577,8 @@ class Assertions:
     def assertnotstartswith(
             string,  # type: typing.Optional[typing.AnyStr]
             start,  # type: typing.Optional[typing.AnyStr]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a string (or bytes) does not start with a given pattern.
@@ -596,14 +590,14 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert string is not None, assertionhelpers.isnonemsg("assertnotstartswith()", "string")
-        assert start is not None, assertionhelpers.isnonemsg("assertnotstartswith()", "pattern")
+        assert string is not None, _assertionhelpers.isnonemsg("assertnotstartswith()", "string")
+        assert start is not None, _assertionhelpers.isnonemsg("assertnotstartswith()", "pattern")
 
-        assert not string.startswith(start), assertionhelpers.errmsg(
+        assert not string.startswith(start), _assertionhelpers.errmsg(
             err,
             "%s should not start with %s", saferepr(string), saferepr(start),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s does not start with %s", saferepr(string), saferepr(start),
         )
@@ -612,8 +606,8 @@ class Assertions:
     def assertendswith(
             string,  # type: typing.Optional[typing.AnyStr]
             end,  # type: typing.Optional[typing.AnyStr]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a string (or bytes) ends with a given pattern.
@@ -625,14 +619,14 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert string is not None, assertionhelpers.isnonemsg("assertendswith()", "string")
-        assert end is not None, assertionhelpers.isnonemsg("assertendswith()", "pattern")
+        assert string is not None, _assertionhelpers.isnonemsg("assertendswith()", "string")
+        assert end is not None, _assertionhelpers.isnonemsg("assertendswith()", "pattern")
 
-        assert string.endswith(end), assertionhelpers.errmsg(
+        assert string.endswith(end), _assertionhelpers.errmsg(
             err,
             "%s does not end with %s", saferepr(string), saferepr(end),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s ends with %s", saferepr(string), saferepr(end),
         )
@@ -641,8 +635,8 @@ class Assertions:
     def assertnotendswith(
             string,  # type: typing.Optional[typing.AnyStr]
             end,  # type: typing.Optional[typing.AnyStr]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a string (or bytes) does not end with a given pattern.
@@ -654,14 +648,14 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert string is not None, assertionhelpers.isnonemsg("assertnotendswith()", "string")
-        assert end is not None, assertionhelpers.isnonemsg("assertnotendswith()", "pattern")
+        assert string is not None, _assertionhelpers.isnonemsg("assertnotendswith()", "string")
+        assert end is not None, _assertionhelpers.isnonemsg("assertnotendswith()", "pattern")
 
-        assert not string.endswith(end), assertionhelpers.errmsg(
+        assert not string.endswith(end), _assertionhelpers.errmsg(
             err,
             "%s should not end with %s", saferepr(string), saferepr(end),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s does not end with %s", saferepr(string), saferepr(end),
         )
@@ -670,8 +664,8 @@ class Assertions:
     def assertregex(
             regex,  # type: typing.Optional[typing.AnyStr]
             string,  # type: typing.Optional[typing.AnyStr]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> typing.Match[typing.AnyStr]
         """
         Checks a string (or bytes) matches a regular expression.
@@ -688,22 +682,22 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert regex is not None, assertionhelpers.isnonemsg("assertregex()", "regex")
-        assert string is not None, assertionhelpers.isnonemsg("assertregex()", "string")
+        assert regex is not None, _assertionhelpers.isnonemsg("assertregex()", "regex")
+        assert string is not None, _assertionhelpers.isnonemsg("assertregex()", "string")
 
         _match = re.search(regex, string)  # type: typing.Optional[typing.Match[typing.AnyStr]]
-        assert _match, assertionhelpers.errmsg(
+        assert _match, _assertionhelpers.errmsg(
             err,
             "Regex did not match: %s not found in %s", saferepr(regex), saferepr(string),
         )
         _matched = string[_match.start():_match.end()]  # type: typing.AnyStr
         if _matched != string:
-            assertionhelpers.evidence(
+            _assertionhelpers.evidence(
                 evidence,
                 "%s matches %s in %s", saferepr(_matched), saferepr(regex), saferepr(string, focus=_matched),
             )
         else:
-            assertionhelpers.evidence(
+            _assertionhelpers.evidence(
                 evidence,
                 "%s matches %s", saferepr(string), saferepr(regex),
             )
@@ -713,8 +707,8 @@ class Assertions:
     def assertnotregex(
             regex,  # type: typing.Optional[typing.AnyStr]
             string,  # type: typing.Optional[typing.AnyStr]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a string (or bytes) does not match a regular expression.
@@ -730,17 +724,17 @@ class Assertions:
         """
         from ._debugutils import saferepr
 
-        assert regex is not None, assertionhelpers.isnonemsg("assertnotregex()", "regex")
-        assert string is not None, assertionhelpers.isnonemsg("assertnotregex()", "string")
+        assert regex is not None, _assertionhelpers.isnonemsg("assertnotregex()", "regex")
+        assert string is not None, _assertionhelpers.isnonemsg("assertnotregex()", "string")
 
         _match = re.search(regex, string)  # type: typing.Optional[typing.Match[typing.AnyStr]]
         if _match:
             _matched = string[_match.start():_match.end()]  # type: typing.AnyStr
-            assert False, assertionhelpers.errmsg(
+            assert False, _assertionhelpers.errmsg(
                 err,
                 "Regex did match: %s matches %s in %s", saferepr(_matched), saferepr(regex), saferepr(string, focus=_matched),
             )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s not found in %s", saferepr(regex), saferepr(string),
         )
@@ -750,9 +744,9 @@ class Assertions:
     @staticmethod
     def asserttimeinstep(
             time,  # type: typing.Optional[float]
-            step,  # type: typing.Optional[StepExecutionSpecificationType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            step,  # type: typing.Optional[_StepExecutionSpecificationType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
             expect_end_time=True,  # type: bool
     ):  # type: (...) -> _StepExecutionType
         """
@@ -769,22 +763,22 @@ class Assertions:
         from ._debugutils import callback
         from ._stepexecution import StepExecution
 
-        assert time is not None, assertionhelpers.isnonemsg("asserttimeinstep()", "time")
-        assert step is not None, assertionhelpers.isnonemsg("asserttimeinstep()", "step specification")
+        assert time is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "time")
+        assert step is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "step specification")
 
-        _step_execution = assertionhelpers.getstepexecution(step)  # type: StepExecution
+        _step_execution = _assertionhelpers.getstepexecution(step)  # type: StepExecution
         _step_desc = str(_step_execution.definition)  # type: str
         _start = _step_execution.getstarttime()  # type: float
         _end = _step_execution.getendtime(expect=expect_end_time)  # type: float
-        assert time >= _start, assertionhelpers.errmsg(
+        assert time >= _start, _assertionhelpers.errmsg(
             err,
             "%s not in %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
-        assert time <= _end, assertionhelpers.errmsg(
+        assert time <= _end, _assertionhelpers.errmsg(
             err,
             "%s not in %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s in %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
@@ -794,10 +788,10 @@ class Assertions:
     @staticmethod
     def asserttimeinsteps(
             time,  # type: typing.Optional[float]
-            start,  # type: typing.Optional[StepExecutionSpecificationType]
-            end,  # type: typing.Optional[StepExecutionSpecificationType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            start,  # type: typing.Optional[_StepExecutionSpecificationType]
+            end,  # type: typing.Optional[_StepExecutionSpecificationType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
             expect_end_time=True,  # type: bool
     ):  # type: (...) -> typing.Tuple[_StepExecutionType, _StepExecutionType]
         """
@@ -815,34 +809,34 @@ class Assertions:
         from ._debugutils import callback
         from ._stats import TimeStats
 
-        assert time is not None, assertionhelpers.isnonemsg("asserttimeinsteps()", "time")
-        assert start is not None, assertionhelpers.isnonemsg("asserttimeinsteps()", "start step specification")
-        assert end is not None, assertionhelpers.isnonemsg("asserttimeinsteps()", "end step specification")
+        assert time is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "time")
+        assert start is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "start step specification")
+        assert end is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "end step specification")
 
-        _step_execution1 = assertionhelpers.getstepexecution(start)  # type: _StepExecutionType
+        _step_execution1 = _assertionhelpers.getstepexecution(start)  # type: _StepExecutionType
         _step_desc1 = str(_step_execution1.definition)  # type: str
         _start1 = _step_execution1.getstarttime()  # type: float
         _end1 = _step_execution1.getendtime(expect=True)  # type: float
-        _step_execution2 = assertionhelpers.getstepexecution(end)  # type: _StepExecutionType
+        _step_execution2 = _assertionhelpers.getstepexecution(end)  # type: _StepExecutionType
         _step_desc2 = str(_step_execution2.definition)  # type: str
         _start2 = _step_execution2.getstarttime()  # type: float
         _end2 = _step_execution2.getendtime(expect=expect_end_time)  # type: float
         _all = TimeStats()  # type: TimeStats
         _all.start = _start1
         _all.end = _end2
-        assert _end1 < _start2, assertionhelpers.ctxmsg(
+        assert _end1 < _start2, _assertionhelpers.ctxmsg(
             "asserttimeinsteps()",
             "%s %s should precede %s %s", _step_desc1, _step_execution1.time, _step_desc2, _step_execution2.time,
         )
-        assert time >= _start1, assertionhelpers.errmsg(
+        assert time >= _start1, _assertionhelpers.errmsg(
             err,
             "%s not in %s->%s %s", callback(f2strtime, time), _step_desc1, _step_desc2, _all,
         )
-        assert time <= _end2, assertionhelpers.errmsg(
+        assert time <= _end2, _assertionhelpers.errmsg(
             err,
             "%s not in %s->%s %s", callback(f2strtime, time), _step_desc1, _step_desc2, _all,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s in %s->%s %s", callback(f2strtime, time), _step_desc1, _step_desc2, _all,
         )
@@ -852,9 +846,9 @@ class Assertions:
     @staticmethod
     def asserttimebeforestep(
             time,  # type: typing.Optional[float]
-            step,  # type: typing.Optional[StepExecutionSpecificationType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            step,  # type: typing.Optional[_StepExecutionSpecificationType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> _StepExecutionType
         """
         Checks the date/time is (strictly) before a given step executime time.
@@ -868,17 +862,17 @@ class Assertions:
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
 
-        assert time is not None, assertionhelpers.isnonemsg("asserttimebeforestep()", "time")
-        assert step is not None, assertionhelpers.isnonemsg("asserttimebeforestep()", "step specification")
+        assert time is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "time")
+        assert step is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "step specification")
 
-        _step_execution = assertionhelpers.getstepexecution(step)  # type: _StepExecutionType
+        _step_execution = _assertionhelpers.getstepexecution(step)  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
         _start = _step_execution.getstarttime()  # type: float
-        assert time < _start, assertionhelpers.errmsg(
+        assert time < _start, _assertionhelpers.errmsg(
             err,
             "%s is not before %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s before %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
@@ -888,9 +882,9 @@ class Assertions:
     @staticmethod
     def asserttimeafterstep(
             time,  # type: typing.Optional[float]
-            step,  # type: typing.Optional[StepExecutionSpecificationType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            step,  # type: typing.Optional[_StepExecutionSpecificationType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> _StepExecutionType
         """
         Checks the date/time is (strictly) after a given step executime time.
@@ -904,17 +898,17 @@ class Assertions:
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
 
-        assert time is not None, assertionhelpers.isnonemsg("asserttimeafterstep()", "time")
-        assert step is not None, assertionhelpers.isnonemsg("asserttimeafterstep()", "step specification")
+        assert time is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "time")
+        assert step is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "step specification")
 
-        _step_execution = assertionhelpers.getstepexecution(step)  # type: _StepExecutionType
+        _step_execution = _assertionhelpers.getstepexecution(step)  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
         _end = _step_execution.getendtime(expect=True)  # type: float
-        assert time > _end, assertionhelpers.errmsg(
+        assert time > _end, _assertionhelpers.errmsg(
             err,
             "%s is not after %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s after %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
@@ -925,10 +919,10 @@ class Assertions:
 
     @staticmethod
     def assertisempty(
-            obj,  # type: typing.Optional[typing.Iterable[VarItemType]]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
-    ):  # type: (...) -> typing.Iterable[VarItemType]
+            obj,  # type: typing.Optional[typing.Iterable[_VarItemType]]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
+    ):  # type: (...) -> typing.Iterable[_VarItemType]
         """
         Checks that a container object (string, bytes, list, dictionary, set, ...) is empty.
 
@@ -939,14 +933,14 @@ class Assertions:
         from ._debugutils import saferepr
         from ._reflection import isiterable
 
-        assert obj is not None, assertionhelpers.isnonemsg("assertisempty()", "obj")
-        assert isiterable(obj), assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", saferepr(obj))
+        assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
+        assert isiterable(obj), _assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", saferepr(obj))
 
-        assert not assertionhelpers.safecontainer(obj), assertionhelpers.errmsg(
+        assert not _assertionhelpers.safecontainer(obj), _assertionhelpers.errmsg(
             err,
             "%s is not empty", saferepr(obj),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s is empty", saferepr(obj),
         )
@@ -954,10 +948,10 @@ class Assertions:
 
     @staticmethod
     def assertisnotempty(
-            obj,  # type: typing.Optional[typing.Iterable[VarItemType]]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
-    ):  # type: (...) -> typing.Iterable[VarItemType]
+            obj,  # type: typing.Optional[typing.Iterable[_VarItemType]]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
+    ):  # type: (...) -> typing.Iterable[_VarItemType]
         """
         Checks that a container object (string, bytes, list, dictionary, set, ...) is not empty.
 
@@ -968,14 +962,14 @@ class Assertions:
         from ._debugutils import saferepr
         from ._reflection import isiterable
 
-        assert obj is not None, assertionhelpers.isnonemsg("assertisempty()", "obj")
-        assert isiterable(obj), assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", saferepr(obj))
+        assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
+        assert isiterable(obj), _assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", saferepr(obj))
 
-        assert assertionhelpers.safecontainer(obj), assertionhelpers.errmsg(
+        assert _assertionhelpers.safecontainer(obj), _assertionhelpers.errmsg(
             err,
             "%s is empty", saferepr(obj),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s is not empty", saferepr(obj),
         )
@@ -983,10 +977,10 @@ class Assertions:
 
     @staticmethod
     def assertlen(
-            obj,  # type: typing.Optional[typing.Iterable[VarItemType]]
+            obj,  # type: typing.Optional[typing.Iterable[_VarItemType]]
             length,  # type: typing.Optional[int]  # noqa
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks the length of a container object (string, bytes, list, dictionary, set, ...).
@@ -999,26 +993,26 @@ class Assertions:
         from ._debugutils import saferepr
         from ._reflection import isiterable
 
-        assert obj is not None, assertionhelpers.isnonemsg("assertlen()", "obj")
-        assert isiterable(obj), assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", saferepr(obj))
-        assert length is not None, assertionhelpers.isnonemsg("assertlen()", "length")
+        assert obj is not None, _assertionhelpers.isnonemsg("assertlen()", "obj")
+        assert isiterable(obj), _assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", saferepr(obj))
+        assert length is not None, _assertionhelpers.isnonemsg("assertlen()", "length")
 
-        _len = len(assertionhelpers.safecontainer(obj))  # type: int
-        assert _len == length, assertionhelpers.errmsg(
+        _len = len(_assertionhelpers.safecontainer(obj))  # type: int
+        assert _len == length, _assertionhelpers.errmsg(
             err,
             "len(%s) is %d, not %d", saferepr(obj), _len, length,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "Length of %s is %d", saferepr(obj), length,
         )
 
     @staticmethod
     def assertin(
-            obj,  # type: typing.Optional[VarItemType]
-            container,  # type: typing.Optional[typing.Iterable[VarItemType]]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            obj,  # type: typing.Optional[_VarItemType]
+            container,  # type: typing.Optional[typing.Iterable[_VarItemType]]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a pattern or item is in a container object (string, bytes, list, dictionary, set, ...).
@@ -1032,28 +1026,28 @@ class Assertions:
         from ._reflection import isiterable
 
         if isinstance(container, (str, bytes)):
-            assert obj is not None, assertionhelpers.isnonemsg("assertin()", "obj")
-        assert container is not None, assertionhelpers.isnonemsg("assertin()", "container")
-        assert isiterable(container), assertionhelpers.ctxmsg("assertin()", "invalid container type %s", saferepr(container))
+            assert obj is not None, _assertionhelpers.isnonemsg("assertin()", "obj")
+        assert container is not None, _assertionhelpers.isnonemsg("assertin()", "container")
+        assert isiterable(container), _assertionhelpers.ctxmsg("assertin()", "invalid container type %s", saferepr(container))
 
         # Note 1: The error display proposed by unittest does not truncate the strings, which makes the reading hard.
         # assertionhelpers.unittest.assertIn(obj, container, err)
         # Note 2: Hard to make typings work with the `in` operator below and the variety of types. Use a `typing.cast(Any)` for the purpose.
-        assert obj in typing.cast(typing.Any, container), assertionhelpers.errmsg(
+        assert obj in typing.cast(typing.Any, container), _assertionhelpers.errmsg(
             err,
             "%s not in %s", saferepr(obj), saferepr(container, focus=obj),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s in %s", saferepr(obj), saferepr(container, focus=obj),
         )
 
     @staticmethod
     def assertnotin(
-            obj,  # type: typing.Optional[VarItemType]
-            container,  # type: typing.Optional[typing.Iterable[VarItemType]]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            obj,  # type: typing.Optional[_VarItemType]
+            container,  # type: typing.Optional[typing.Iterable[_VarItemType]]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a pattern or item is not in a container object (string, bytes, list, dictionary, set, ...).
@@ -1067,29 +1061,29 @@ class Assertions:
         from ._reflection import isiterable
 
         if isinstance(container, (str, bytes)):
-            assert obj is not None, assertionhelpers.isnonemsg("assertnotin()", "obj")
-        assert container is not None, assertionhelpers.isnonemsg("assertnotin()", "container")
-        assert isiterable(container), assertionhelpers.ctxmsg("assertnotin()", "invalid container type %s", saferepr(container))
+            assert obj is not None, _assertionhelpers.isnonemsg("assertnotin()", "obj")
+        assert container is not None, _assertionhelpers.isnonemsg("assertnotin()", "container")
+        assert isiterable(container), _assertionhelpers.ctxmsg("assertnotin()", "invalid container type %s", saferepr(container))
 
         # Note 1: The error display proposed by unittest does not truncate the strings (for assertIn() at least), which makes the reading hard.
         # assertionhelpers.unittest.assertNotIn(obj, container, err)
         # Note 2: Hard to make typings work with the `not in` operator below and the variety of types. Use a `typing.cast(Any)` for the purpose.
-        assert obj not in typing.cast(typing.Any, container), assertionhelpers.errmsg(
+        assert obj not in typing.cast(typing.Any, container), _assertionhelpers.errmsg(
             err,
             "%s in %s", saferepr(obj), saferepr(container, focus=obj),
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s not in %s", saferepr(obj), saferepr(container, focus=obj),
         )
 
     @staticmethod
     def assertcount(
-            container,  # type: typing.Optional[typing.Iterable[VarItemType]]
-            obj,  # type: typing.Optional[VarItemType]
+            container,  # type: typing.Optional[typing.Iterable[_VarItemType]]
+            obj,  # type: typing.Optional[_VarItemType]
             count,  # type: typing.Optional[int]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks a string (or bytes), contains the expected number of patterns,
@@ -1104,18 +1098,18 @@ class Assertions:
         from ._debugutils import saferepr
         from ._reflection import isiterable
 
-        assert container is not None, assertionhelpers.isnonemsg("assertcount()", "container")
-        assert isiterable(container), assertionhelpers.ctxmsg("assertcount()", "invalid container type %s", saferepr(container))
-        assert obj is not None, assertionhelpers.isnonemsg("assertcount()", "obj")
-        assert count is not None, assertionhelpers.isnonemsg("assertcount()", "count")
+        assert container is not None, _assertionhelpers.isnonemsg("assertcount()", "container")
+        assert isiterable(container), _assertionhelpers.ctxmsg("assertcount()", "invalid container type %s", saferepr(container))
+        assert obj is not None, _assertionhelpers.isnonemsg("assertcount()", "obj")
+        assert count is not None, _assertionhelpers.isnonemsg("assertcount()", "count")
 
         # Note 2: Hard to make typings work with the `count()` method and the type of `obj`. Use a `typing.cast(Any)` for the purpose.
-        _found = assertionhelpers.safecontainer(container).count(typing.cast(typing.Any, obj))  # type: int
-        assert _found == count, assertionhelpers.errmsg(
+        _found = _assertionhelpers.safecontainer(container).count(typing.cast(typing.Any, obj))  # type: int
+        assert _found == count, _assertionhelpers.errmsg(
             err,
             "%s should contain %d count of %s (%d found)", saferepr(container), count, saferepr(obj), _found,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "%s %d time(s) in %s", saferepr(obj), _found, saferepr(container, focus=obj),
         )
@@ -1124,13 +1118,13 @@ class Assertions:
 
     @staticmethod
     def assertjson(
-            json_data,  # type: typing.Optional[JsonDictType]
+            json_data,  # type: typing.Optional[_JsonDictType]
             jsonpath,  # type: typing.Optional[str]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
             value=None,  # type: typing.Union[int, str]
-            ref=None,  # type: JsonDictType
+            ref=None,  # type: _JsonDictType
             count=1,  # type: typing.Optional[int]
             len=None,  # type: int  # noqa  ## Shadows built-in name 'len'
     ):  # type: (...) -> typing.Any
@@ -1170,15 +1164,15 @@ class Assertions:
         _json_safe_repr_max_length = 32  # type: int
 
         def _errormsg(fmt, *args):  # type: (str, typing.Any) -> str
-            return assertionhelpers.errmsg(
+            return _assertionhelpers.errmsg(
                 err,
                 f"JSON %s | %s => {fmt}",
                 saferepr(json_data, max_length=_json_safe_repr_max_length), saferepr(jsonpath), *args,
             )
 
         # Check input parameters.
-        assert json_data is not None, assertionhelpers.isnonemsg("assertjson()", "json_data")
-        assert jsonpath is not None, assertionhelpers.isnonemsg("assertjson()", "jsonpath")
+        assert json_data is not None, _assertionhelpers.isnonemsg("assertjson()", "json_data")
+        assert jsonpath is not None, _assertionhelpers.isnonemsg("assertjson()", "jsonpath")
         if (ref is not None) and (value is None):
             # Compute ``value`` from ``ref``: make a recursive call without parameters in order to retrieve the value pointed by ``jsonpath``.
             value = Assertions.assertjson(ref, jsonpath)
@@ -1214,7 +1208,7 @@ class Assertions:
                 _items.append(_json_data)
 
         # Check types and values.
-        for _item in _items:  # type: typing.Union[JsonDictType, int, str]
+        for _item in _items:  # type: typing.Union[_JsonDictType, int, str]
             if type is not None:
                 assert isinstance(_item, type), _errormsg("Wrong type %r, %s expected", _item, qualname(type))
             if value is not None:
@@ -1255,16 +1249,16 @@ class Assertions:
         _evidence_message.push("%s", saferepr(_res))
         if len is not None:
             _evidence_message.push(") = %d", len)
-        assertionhelpers.evidence(evidence, _evidence_message)
+        _assertionhelpers.evidence(evidence, _evidence_message)
         return _res
 
     # Files.
 
     @staticmethod
     def assertexists(
-            path,  # type: typing.Optional[AnyPathType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            path,  # type: typing.Optional[_AnyPathType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks whether a path exists.
@@ -1275,24 +1269,24 @@ class Assertions:
         """
         from ._path import Path
 
-        assert path is not None, assertionhelpers.isnonemsg("assertexists()", "path")
+        assert path is not None, _assertionhelpers.isnonemsg("assertexists()", "path")
         if not isinstance(path, Path):
             path = Path(path)
 
-        assert path.exists(), assertionhelpers.errmsg(
+        assert path.exists(), _assertionhelpers.errmsg(
             err,
             "'%s' does not exist", path,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "'%s' exists", path,
         )
 
     @staticmethod
     def assertnotexists(
-            path,  # type: typing.Optional[AnyPathType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            path,  # type: typing.Optional[_AnyPathType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks whether a path does not exist.
@@ -1303,24 +1297,24 @@ class Assertions:
         """
         from ._path import Path
 
-        assert path is not None, assertionhelpers.isnonemsg("assertnotexists()", "path")
+        assert path is not None, _assertionhelpers.isnonemsg("assertnotexists()", "path")
         if not isinstance(path, Path):
             path = Path(path)
 
-        assert not path.exists(), assertionhelpers.errmsg(
+        assert not path.exists(), _assertionhelpers.errmsg(
             err,
             "'%s' exists", path,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "'%s' does not exist", path,
         )
 
     @staticmethod
     def assertisfile(
-            path,  # type: typing.Optional[AnyPathType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            path,  # type: typing.Optional[_AnyPathType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks whether a path is a regular file.
@@ -1331,24 +1325,24 @@ class Assertions:
         """
         from ._path import Path
 
-        assert path is not None, assertionhelpers.isnonemsg("assertisfile()", "path")
+        assert path is not None, _assertionhelpers.isnonemsg("assertisfile()", "path")
         if not isinstance(path, Path):
             path = Path(path)
 
-        assert path.is_file(), assertionhelpers.errmsg(
+        assert path.is_file(), _assertionhelpers.errmsg(
             err,
             "'%s' is not a file", path,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "'%s' is a file", path,
         )
 
     @staticmethod
     def assertisdir(
-            path,  # type: typing.Optional[AnyPathType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            path,  # type: typing.Optional[_AnyPathType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks whether a path is a directory.
@@ -1359,25 +1353,25 @@ class Assertions:
         """
         from ._path import Path
 
-        assert path is not None, assertionhelpers.isnonemsg("assertisdir()", "path")
+        assert path is not None, _assertionhelpers.isnonemsg("assertisdir()", "path")
         if not isinstance(path, Path):
             path = Path(path)
 
-        assert path.is_dir(), assertionhelpers.errmsg(
+        assert path.is_dir(), _assertionhelpers.errmsg(
             err,
             "'%s' is not a directory", path,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "'%s' is a directory", path,
         )
 
     @staticmethod
     def assertsamepaths(
-            path1,  # type: typing.Optional[AnyPathType]
-            path2,  # type: typing.Optional[AnyPathType]
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            path1,  # type: typing.Optional[_AnyPathType]
+            path2,  # type: typing.Optional[_AnyPathType]
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks whether two paths are actually the same, even though they may be absolute or relative, or accessed through a symbolic link...
@@ -1389,28 +1383,28 @@ class Assertions:
         """
         from ._path import Path
 
-        assert path1 is not None, assertionhelpers.isnonemsg("assertsamepaths()", "path1")
-        assert path2 is not None, assertionhelpers.isnonemsg("assertsamepaths()", "path2")
+        assert path1 is not None, _assertionhelpers.isnonemsg("assertsamepaths()", "path1")
+        assert path2 is not None, _assertionhelpers.isnonemsg("assertsamepaths()", "path2")
         if not isinstance(path1, Path):
             path1 = Path(path1)
         if not isinstance(path2, Path):
             path2 = Path(path2)
 
-        assert path1.samefile(path2), assertionhelpers.errmsg(
+        assert path1.samefile(path2), _assertionhelpers.errmsg(
             err,
             "'%s' and '%s' are not the same", path1, path2,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "'%s' and '%s' are the same", path1, path2,
         )
 
     @staticmethod
     def assertisrelativeto(
-            path,  # type: typing.Optional[AnyPathType]
-            dir,  # type: typing.Optional[AnyPathType]  # noqa  ## Shadows built-in name 'dir'
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            path,  # type: typing.Optional[_AnyPathType]
+            dir,  # type: typing.Optional[_AnyPathType]  # noqa  ## Shadows built-in name 'dir'
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks whether a path is a sub-path of a directory.
@@ -1422,28 +1416,28 @@ class Assertions:
         """
         from ._path import Path
 
-        assert path is not None, assertionhelpers.isnonemsg("assertisrelativeto()", "path")
-        assert dir is not None, assertionhelpers.isnonemsg("assertisrelativeto()", "dir")
+        assert path is not None, _assertionhelpers.isnonemsg("assertisrelativeto()", "path")
+        assert dir is not None, _assertionhelpers.isnonemsg("assertisrelativeto()", "dir")
         if not isinstance(path, Path):
             path = Path(path)
         if not isinstance(dir, Path):
             dir = Path(dir)  # noqa  ## Shadows built-in name 'dir'
 
-        assert path.is_relative_to(dir), assertionhelpers.errmsg(
+        assert path.is_relative_to(dir), _assertionhelpers.errmsg(
             err,
             "'%s' is not a sub-path of '%s'", path, dir,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "'%s' is a sub-path of '%s'", path, dir,
         )
 
     @staticmethod
     def assertisnotrelativeto(
-            path,  # type: typing.Optional[AnyPathType]
-            dir,  # type: typing.Optional[AnyPathType]  # noqa  ## Shadows built-in name 'dir'
-            err=None,  # type: ErrParamType
-            evidence=False,  # type: EvidenceParamType
+            path,  # type: typing.Optional[_AnyPathType]
+            dir,  # type: typing.Optional[_AnyPathType]  # noqa  ## Shadows built-in name 'dir'
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> None
         """
         Checks whether a path is not a sub-path of a directory.
@@ -1455,18 +1449,18 @@ class Assertions:
         """
         from ._path import Path
 
-        assert path is not None, assertionhelpers.isnonemsg("assertisnotrelativeto()", "path")
-        assert dir is not None, assertionhelpers.isnonemsg("assertisnotrelativeto()", "dir")
+        assert path is not None, _assertionhelpers.isnonemsg("assertisnotrelativeto()", "path")
+        assert dir is not None, _assertionhelpers.isnonemsg("assertisnotrelativeto()", "dir")
         if not isinstance(path, Path):
             path = Path(path)
         if not isinstance(dir, Path):
             dir = Path(dir)  # noqa  ## Shadows built-in name 'dir'
 
-        assert not path.is_relative_to(dir), assertionhelpers.errmsg(
+        assert not path.is_relative_to(dir), _assertionhelpers.errmsg(
             err,
             "'%s' is a sub-path of '%s'", path, dir,
         )
-        assertionhelpers.evidence(
+        _assertionhelpers.evidence(
             evidence,
             "'%s' is not a sub-path of '%s'", path, dir,
         )

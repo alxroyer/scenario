@@ -23,16 +23,18 @@ import logging
 import os
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
-
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
-    from ._configtypes import KeyType, OriginType, VarDataType
-    from ._path import AnyPathType
+    from ._configtypes import KeyType as _KeyType
+    from ._configtypes import OriginType as _OriginType
+    from ._configtypes import VarDataType as _VarDataType
+    from ._path import AnyPathType as _AnyPathType
 
 
-class ConfigDatabase(Logger):
+class ConfigDatabase(_LoggerImpl):
     """
     Configuration management.
 
@@ -42,7 +44,7 @@ class ConfigDatabase(Logger):
     See the :ref:`configuration database <config-db>` documentation.
     """
 
-    class FileFormat(StrEnum):
+    class FileFormat(_StrEnumImpl):
         """
         Configuration file formats.
         """
@@ -60,16 +62,16 @@ class ConfigDatabase(Logger):
         from ._confignode import ConfigNode
         from ._debugclasses import DebugClass
 
-        Logger.__init__(self, log_class=DebugClass.CONFIG_DATABASE)
+        _LoggerImpl.__init__(self, log_class=DebugClass.CONFIG_DATABASE)
 
         #: Configuration tree.
         self._root = ConfigNode(parent=None, key="")  # type: ConfigNode
 
     def loadfile(
             self,
-            path,  # type: AnyPathType
+            path,  # type: _AnyPathType
             format=None,  # type: ConfigDatabase.FileFormat  # noqa  ## Shadows built-in name 'format'
-            root="",  # type: KeyType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Loads a configuration file.
@@ -110,9 +112,9 @@ class ConfigDatabase(Logger):
 
     def savefile(
             self,
-            path,  # type: AnyPathType
+            path,  # type: _AnyPathType
             format=None,  # type: ConfigDatabase.FileFormat  # noqa  ## Shadows built-in name 'format'
-            root="",  # type: KeyType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Saves a configuration file.
@@ -153,9 +155,9 @@ class ConfigDatabase(Logger):
 
     def set(
             self,
-            key,  # type: KeyType
+            key,  # type: _KeyType
             data,  # type: typing.Any
-            origin=None,  # type: OriginType
+            origin=None,  # type: _OriginType
     ):  # type: (...) -> None
         """
         Sets a configuration value of any type.
@@ -183,7 +185,7 @@ class ConfigDatabase(Logger):
 
     def remove(
             self,
-            key,  # type: KeyType
+            key,  # type: _KeyType
     ):  # type: (...) -> None
         """
         Removes a configuration key (if exists).
@@ -222,7 +224,7 @@ class ConfigDatabase(Logger):
 
     def getnode(
             self,
-            key,  # type: KeyType
+            key,  # type: _KeyType
     ):  # type: (...) -> typing.Optional[_ConfigNodeType]
         """
         Retrieves the configuration node for the given key.
@@ -233,24 +235,24 @@ class ConfigDatabase(Logger):
         return self._root.get(key)
 
     @typing.overload
-    def get(self, key):  # type: (KeyType) -> typing.Optional[typing.Any]
+    def get(self, key):  # type: (_KeyType) -> typing.Optional[typing.Any]
         ...
 
     @typing.overload
-    def get(self, key, type):  # type: (KeyType, typing.Type[VarDataType]) -> typing.Optional[VarDataType]  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type):  # type: (_KeyType, typing.Type[_VarDataType]) -> typing.Optional[_VarDataType]  # noqa  ## Shadows built-in name 'type'
         ...
 
     @typing.overload
-    def get(self, key, type, default):  # type: (KeyType, typing.Type[VarDataType], None) -> typing.Optional[VarDataType]  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type, default):  # type: (_KeyType, typing.Type[_VarDataType], None) -> typing.Optional[_VarDataType]  # noqa  ## Shadows built-in name 'type'
         ...
 
     @typing.overload
-    def get(self, key, type, default):  # type: (KeyType, typing.Type[VarDataType], typing.Union[str, os.PathLike[str], bool, int, float]) -> VarDataType  # noqa  ## Shadows built-in name 'type'
+    def get(self, key, type, default):  # type: (_KeyType, typing.Type[_VarDataType], typing.Union[str, os.PathLike[str], bool, int, float]) -> _VarDataType  # noqa  ## Shadows built-in name 'type'
         ...
 
     def get(
             self,
-            key,  # type: KeyType
+            key,  # type: _KeyType
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
             default=None,  # type: typing.Any
     ):  # type: (...) -> typing.Any

@@ -21,8 +21,8 @@ Scenario logging.
 import logging
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
-
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
@@ -42,7 +42,7 @@ class ScenarioLogging:
     #: The scenario stack indentation pattern ensures that the '|' lines are presented the 'ACTION: ' or 'RESULT: ' pattern they relate to.
     SCENARIO_STACK_INDENTATION_PATTERN = "      | "  # type: str
 
-    class _Call(StrEnum):
+    class _Call(_StrEnumImpl):
         """
         :class:`ScenarioLogging` call identifiers.
         """

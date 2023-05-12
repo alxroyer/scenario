@@ -26,12 +26,13 @@ import argparse
 import inspect
 import typing
 
-from ._configargs import CommonConfigArgs  # `CommonConfigArgs` used for inheritance.
-from ._logger import Logger  # `Logger` used for inheritance.
-from ._loggingargs import CommonLoggingArgs  # `CommonLoggingArgs` used for inheritance.
+if True:
+    from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # `CommonConfigArgs` used for inheritance.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # `CommonLoggingArgs` used for inheritance.
 
 
-class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
+class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
     """
     Common program arguments management.
 
@@ -107,7 +108,7 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
         from ._debugclasses import DebugClass
         from ._errcodes import ErrorCode
 
-        Logger.__init__(self, log_class=DebugClass.ARGS)
+        _LoggerImpl.__init__(self, log_class=DebugClass.ARGS)
 
         # Initialize parsing members.
 
@@ -130,8 +131,8 @@ class Args(Logger, CommonConfigArgs, CommonLoggingArgs):
             action="help",
             help="Show this help message and exit.",
         )
-        CommonConfigArgs.__init__(self)
-        CommonLoggingArgs.__init__(self, class_debugging=class_debugging)
+        _CommonConfigArgsImpl.__init__(self)
+        _CommonLoggingArgsImpl.__init__(self, class_debugging=class_debugging)
 
     def setprog(
             self,

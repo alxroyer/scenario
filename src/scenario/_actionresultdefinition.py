@@ -20,7 +20,8 @@ Action / expected result definition.
 
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` use for inheritance.
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` use for inheritance.
 
 
 class ActionResultDefinition:
@@ -28,7 +29,7 @@ class ActionResultDefinition:
     This class describes both an action or an expected result.
     """
 
-    class Type(StrEnum):
+    class Type(_StrEnumImpl):
         """
         Enum that tells whether a user text defines an action or an expected result.
         """

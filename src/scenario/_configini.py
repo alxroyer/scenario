@@ -23,8 +23,8 @@ import os
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._configtypes import KeyType
-    from ._path import AnyPathType
+    from ._configtypes import KeyType as _KeyType
+    from ._path import AnyPathType as _AnyPathType
 
 
 class ConfigIni:
@@ -34,8 +34,8 @@ class ConfigIni:
 
     @staticmethod
     def loadfile(
-            path,  # type: AnyPathType
-            root="",  # type: KeyType
+            path,  # type: _AnyPathType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Loads a INI configuration file.
@@ -73,8 +73,8 @@ class ConfigIni:
 
     @staticmethod
     def savefile(
-            path,  # type: AnyPathType
-            root="",  # type: KeyType
+            path,  # type: _AnyPathType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Saves a INI configuration file.

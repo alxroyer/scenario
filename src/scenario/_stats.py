@@ -22,7 +22,7 @@ import time
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._typing import JsonDictType
+    from ._typing import JsonDictType as _JsonDictType
 
 
 class TimeStats:
@@ -144,7 +144,7 @@ class TimeStats:
         # In any, let's use the :attr:`end` setter this time in order to ensure everything is consistent whatever.
         self.end = time.time()
 
-    def tojson(self):  # type: (...) -> JsonDictType
+    def tojson(self):  # type: (...) -> _JsonDictType
         """
         Converts the :class:`TimeStats` instance into a JSON dictionary.
 
@@ -152,7 +152,7 @@ class TimeStats:
         """
         from ._datetimeutils import toiso8601
 
-        _json = {"start": None, "end": None, "elapsed": None}  # type: JsonDictType
+        _json = {"start": None, "end": None, "elapsed": None}  # type: _JsonDictType
         if self.start is not None:
             _json["start"] = toiso8601(self.start)
         if self.end is not None:
@@ -163,7 +163,7 @@ class TimeStats:
 
     @staticmethod
     def fromjson(
-            json_data,  # type: JsonDictType
+            json_data,  # type: _JsonDictType
     ):  # type: (...) -> TimeStats
         """
         Builds a :class:`TimeStats` instance from its JSON representation.
@@ -237,7 +237,7 @@ class ExecTotalStats:
         self.executed += stats.executed
         return self
 
-    def tojson(self):  # type: (...) -> JsonDictType
+    def tojson(self):  # type: (...) -> _JsonDictType
         """
         Converts the :class:`ExecTotalStats` instance into a JSON dictionary.
 
@@ -250,7 +250,7 @@ class ExecTotalStats:
 
     @staticmethod
     def fromjson(
-            json_data,  # type: JsonDictType
+            json_data,  # type: _JsonDictType
     ):  # type: (...) -> ExecTotalStats
         """
         Builds a :class:`ExecTotalStats` instance from its JSON representation.

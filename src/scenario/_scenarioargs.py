@@ -20,8 +20,8 @@ Scenario runner program arguments.
 
 import typing
 
-from ._args import Args  # `Args` used for inheritance.
-
+if True:
+    from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._subprocess import SubProcess as _SubProcessType
 
@@ -39,7 +39,7 @@ class CommonExecArgs:
         if typing.TYPE_CHECKING:
             from ._issuelevels import AnyIssueLevelType
 
-        assert isinstance(self, Args)
+        assert isinstance(self, _ArgsImpl)
 
         #: ``True`` when the test(s) is(are) executed for documentation generation only,
         #: i.e. the test script(s) for actions and verifications should not be executed.
@@ -109,7 +109,7 @@ class CommonExecArgs:
             subprocess.addargs("--issue-level-ignored", str(int(args.issue_level_ignored)))
 
 
-class ScenarioArgs(Args, CommonExecArgs):
+class ScenarioArgs(_ArgsImpl, CommonExecArgs):
     """
     Scenario runner program argument management.
 
@@ -133,8 +133,7 @@ class ScenarioArgs(Args, CommonExecArgs):
         """
         from ._path import Path
 
-        Args.__init__(self, class_debugging=True)
-
+        _ArgsImpl.__init__(self, class_debugging=True)
         self.setdescription("Scenario test execution.")
 
         CommonExecArgs.__init__(self)
@@ -181,7 +180,7 @@ class ScenarioArgs(Args, CommonExecArgs):
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
 
-        if not Args._checkargs(self, args):
+        if not _ArgsImpl._checkargs(self, args):
             return False
         if not CommonExecArgs._checkargs(self, args):
             return False

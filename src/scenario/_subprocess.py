@@ -29,7 +29,7 @@ import typing
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._logger import Logger as _LoggerType
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
 class SubProcess:
@@ -38,7 +38,7 @@ class SubProcess:
     """
     def __init__(
             self,
-            *args  # type: typing.Union[str, AnyPathType]
+            *args  # type: typing.Union[str, _AnyPathType]
     ):  # type: (...) -> None
         """
         :param args:
@@ -51,9 +51,9 @@ class SubProcess:
         #: Sub-process command line arguments.
         #:
         #: See :meth:`addargs()`.
-        self.cmd_line = list(args)  # type: typing.List[typing.Union[str, AnyPathType]]
+        self.cmd_line = list(args)  # type: typing.List[typing.Union[str, _AnyPathType]]
         #: See :meth:`setenv()`.
-        self.env = {}  # type: typing.Dict[str, typing.Union[str, AnyPathType]]
+        self.env = {}  # type: typing.Dict[str, typing.Union[str, _AnyPathType]]
         #: See :meth:`setcwd()`.
         self.cwd = None  # type: typing.Optional[Path]
 
@@ -116,7 +116,7 @@ class SubProcess:
 
     def addargs(
             self,  # type: VarSubProcessType
-            *args  # type: typing.Union[str, AnyPathType]
+            *args  # type: typing.Union[str, _AnyPathType]
     ):  # type: (...) -> VarSubProcessType
         """
         Extra arguments addition.
@@ -129,7 +129,7 @@ class SubProcess:
 
     def hasargs(
             self,
-            *args  # type: typing.Union[str, AnyPathType]
+            *args  # type: typing.Union[str, _AnyPathType]
     ):  # type: (...) -> bool
         """
         Determines whether the command line contains the given sequence of consecutive arguments.
@@ -152,7 +152,7 @@ class SubProcess:
 
     def setenv(
             self,  # type: VarSubProcessType
-            **kwargs  # type: typing.Union[str, AnyPathType]
+            **kwargs  # type: typing.Union[str, _AnyPathType]
     ):  # type: (...) -> VarSubProcessType
         """
         Sets extra environment variables.
@@ -165,7 +165,7 @@ class SubProcess:
 
     def setcwd(
             self,  # type: VarSubProcessType
-            cwd,  # type: AnyPathType
+            cwd,  # type: _AnyPathType
     ):  # type: (...) -> VarSubProcessType
         """
         Sets the current working directory.
@@ -259,14 +259,14 @@ class SubProcess:
             self._log(logging.DEBUG, "Executing %s", self.tolongstring())
 
         # Prepare the current working directory.
-        _cwd = pathlib.Path.cwd()  # type: AnyPathType
+        _cwd = pathlib.Path.cwd()  # type: _AnyPathType
         if self.cwd:
             self._log(logging.DEBUG, "  cwd: '%s'", self.cwd)
             _cwd = self.cwd
 
         # Prepare the command line arguments.
         _cmd_line = []  # type: typing.List[str]
-        for _arg in self.cmd_line:  # type: typing.Union[str, AnyPathType]
+        for _arg in self.cmd_line:  # type: typing.Union[str, _AnyPathType]
             if isinstance(_arg, os.PathLike):
                 # Use relative paths to ``_cwd`` when applicable.
                 _path = pathlib.Path(_arg)  # type: pathlib.Path

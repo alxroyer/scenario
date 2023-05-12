@@ -25,15 +25,15 @@ import sys
 import types
 import typing
 
-from ._debugclasses import DebugClass  # `DebugClass` used to instanciate global variable.
-from ._logger import Logger  # `Logger` used to instanciate global variable.
-
+if True:
+    from ._debugclasses import DebugClass as _DebugClassImpl  # `DebugClass` used to instanciate global variable.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used to instanciate global variable.
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
 #: Logger instance for reflective programming.
-REFLECTION_LOGGER = Logger(log_class=DebugClass.REFLECTION)
+REFLECTION_LOGGER = _LoggerImpl(log_class=_DebugClassImpl.REFLECTION)  # type: _LoggerImpl
 
 
 def qualname(
@@ -99,7 +99,7 @@ def isiterable(
 
 
 def importmodulefrompath(
-        script_path,  # type: AnyPathType
+        script_path,  # type: _AnyPathType
         sys_modules_cache=True,  # type: bool
 ):  # type: (...) -> types.ModuleType
     """
@@ -171,7 +171,7 @@ def importmodulefrompath(
 
 
 def getloadedmodulefrompath(
-        script_path,  # type: AnyPathType
+        script_path,  # type: _AnyPathType
 ):  # type: (...) -> typing.Optional[types.ModuleType]
     """
     Retrieves a module already loaded corresponding to the given path.
@@ -192,7 +192,7 @@ def getloadedmodulefrompath(
 
 
 def checkfuncqualname(
-        file,  # type: AnyPathType
+        file,  # type: _AnyPathType
         line,  # type: int
         func_name,  # type: str
 ):  # type: (...) -> str

@@ -21,8 +21,8 @@ Campaign execution logging.
 import logging
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
-
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -34,7 +34,7 @@ class CampaignLogging:
     Campaign execution logging management.
     """
 
-    class _Call(StrEnum):
+    class _Call(_StrEnumImpl):
         """
         :class:`CampaignLogging` call identifiers.
         """

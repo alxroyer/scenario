@@ -23,21 +23,22 @@ import sys
 import time
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._knownissues import KnownIssue as _KnownIssueType
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._stepdefinition import StepDefinition as _StepDefinitionType, StepSpecificationType
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepdefinition import StepSpecificationType as _StepSpecificationType
     from ._stepuserapi import StepUserApi as _StepUserApiType
     from ._testerrors import TestError as _TestErrorType
 
 
-class ScenarioRunner(Logger):
+class ScenarioRunner(_LoggerImpl):
     """
     Test execution engine: runs scenarios, i.e. instances derived from the :class:`._scenariodefinition.ScenarioDefinition` class.
 
@@ -54,7 +55,7 @@ class ScenarioRunner(Logger):
     - :class:`._scenarioreport.ScenarioReport`: scenario report generation.
     """
 
-    class ExecutionMode(StrEnum):
+    class ExecutionMode(_StrEnumImpl):
         """
         Execution mode enum.
 
@@ -78,7 +79,7 @@ class ScenarioRunner(Logger):
         from ._debugclasses import DebugClass
         from ._logextradata import LogExtraData
 
-        Logger.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
+        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
         self.setextraflag(LogExtraData.ACTION_RESULT_MARGIN, False)
 
     def main(self):  # type: (...) -> _ErrorCodeType
@@ -189,7 +190,7 @@ class ScenarioRunner(Logger):
 
     def executepath(
             self,
-            scenario_path,  # type: AnyPathType
+            scenario_path,  # type: _AnyPathType
     ):  # type: (...) -> _ErrorCodeType
         """
         Executes a scenario from its script path.
@@ -849,7 +850,7 @@ class ScenarioRunner(Logger):
 
     def goto(
             self,
-            to_step_specification,  # type: StepSpecificationType
+            to_step_specification,  # type: _StepSpecificationType
     ):  # type: (...) -> None
         """
         Call redirection from :meth:`._stepuserapi.StepUserApi.goto()`.
