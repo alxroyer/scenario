@@ -26,12 +26,8 @@ sys.path.append(str(MAIN_PATH / "test" / "cases"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 
 # `scenario` imports.
-try:
-    # Avoid "Module level import not at top of file" PEP8 warnings.
-    import scenario
-    import scenario.test
-finally:
-    pass
+import scenario  # noqa  ## PEP8: Module level import not at top of file
+import scenario.test  # noqa  ## PEP8: Module level import not at top of file
 
 
 # Command line arguments.

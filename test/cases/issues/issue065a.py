@@ -20,7 +20,8 @@ import typing
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 if typing.TYPE_CHECKING:
     from steps.common import ExecScenario as _ExecScenarioType, ParseScenarioLog as _ParseScenarioLogType
 
@@ -48,7 +49,7 @@ class Issue65a(scenario.test.TestCase):
         self.addstep(CheckTimes(ExecScenario.getinstance(), ParseScenarioLog.getinstance()))
 
 
-class CheckTimeLostStep(LogVerificationStep, abc.ABC):
+class CheckTimeLostStep(_LogVerificationStepImpl, abc.ABC):
     """
     Memo: This abstract step inherits from ``LogVerificationStep`` for the needs of 'issue065b.py'.
     """

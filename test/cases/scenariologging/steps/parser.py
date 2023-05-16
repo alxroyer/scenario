@@ -23,10 +23,13 @@ import scenario.text
 if typing.TYPE_CHECKING:
     from scenario._typing import JsonDictType  # noqa  ## Access to protected module
 
-from steps.logparsing import LogParserStep  # `LogParserStep` used for inheritance.
+if True:
+    from steps.logparsing import LogParserStep as _LogParserStepImpl  # `LogParserStep` used for inheritance.
+if typing.TYPE_CHECKING:
+    from steps.logparsing import LogParserStep as _LogParserStepType
 
 
-class ParseScenarioLog(LogParserStep):
+class ParseScenarioLog(_LogParserStepImpl):
 
     PARSE_STATE = "<parse-state>"  # type: str
 
@@ -34,7 +37,7 @@ class ParseScenarioLog(LogParserStep):
             self,
             exec_step,  # type: scenario.test.AnyExecutionStepType
     ):  # type: (...) -> None
-        LogParserStep.__init__(self, exec_step)
+        _LogParserStepImpl.__init__(self, exec_step)
         self.description = "Scenario log output parsing"
 
         # Initialize the scenario stack.
@@ -104,10 +107,10 @@ class ParseScenarioLog(LogParserStep):
     class _Match:
         def __init__(
                 self,
-                step,  # type: LogParserStep
+                step,  # type: _LogParserStepType
                 match,  # type: typing.Match[bytes]
         ):  # type: (...) -> None
-            self.step = step  # type: LogParserStep
+            self.step = step  # type: _LogParserStepType
             self._match = match  # type: typing.Match[bytes]
 
         def __repr__(self):  # type: () -> str

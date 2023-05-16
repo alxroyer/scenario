@@ -19,7 +19,8 @@ import typing
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class KnownIssues110(scenario.test.TestCase):
@@ -197,13 +198,13 @@ class KnownIssues110(scenario.test.TestCase):
         self.addstep(CheckJsonReportExpectations(_1, _scenario_expectations))
 
 
-class CheckLogDetails(LogVerificationStep):
+class CheckLogDetails(_LogVerificationStepImpl):
     def __init__(
             self,
             exec_step,  # type: scenario.test.AnyExecutionStepType
             count,  # type: int
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.count = count  # type: int
 

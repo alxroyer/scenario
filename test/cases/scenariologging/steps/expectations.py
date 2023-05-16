@@ -21,7 +21,7 @@ import scenario
 import scenario.test
 import scenario.text
 if typing.TYPE_CHECKING:
-    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
+    from scenario._typing import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if typing.TYPE_CHECKING:
     from scenariologging.steps.parser import ParseScenarioLog as _ParseScenarioLogType
@@ -52,7 +52,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkscenario(
             self,
-            json_scenario,  # type: JsonDictType
+            json_scenario,  # type: _JsonDictType
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
         from scenarioexecution.steps.execution import ExecScenario
@@ -134,7 +134,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkscenarioerrors(
             self,
-            json_scenario,  # type: JsonDictType
+            json_scenario,  # type: _JsonDictType
             jsonpath,  # type: str
             error_expectation_list,  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
     ):  # type: (...) -> None
@@ -227,7 +227,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkstep(
             self,
-            json_step,  # type: JsonDictType
+            json_step,  # type: _JsonDictType
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
         if step_expectations.name:
@@ -263,7 +263,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkactionresult(
             self,
-            json_action_result,  # type: JsonDictType
+            json_action_result,  # type: _JsonDictType
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
         _type_desc = "action" if action_result_expectations.type == scenario.ActionResult.Type.ACTION else "expected result"  # type: str

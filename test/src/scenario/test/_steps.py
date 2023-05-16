@@ -18,7 +18,7 @@ import typing
 
 import scenario
 if typing.TYPE_CHECKING:
-    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
+    from scenario._typing import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if typing.TYPE_CHECKING:
     from ._subprocess import SubProcess as _SubProcessType
@@ -71,7 +71,7 @@ class Step(scenario.Step):
 
     def testdatafromjson(
             self,
-            json_data,  # type: typing.Optional[JsonDictType]
+            json_data,  # type: typing.Optional[_JsonDictType]
             jsonpath,  # type: typing.Optional[str]
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
     ):  # type: (...) -> typing.Any

@@ -19,10 +19,10 @@ import typing
 
 import scenario
 
-from . import _datascenarios  # `_datascenarios` used for global instanciation.
-
+if True:
+    from . import _datascenarios  # `_datascenarios` used for global instanciation.
 if typing.TYPE_CHECKING:
-    from ._configvalues import ConfigValuesType
+    from ._configvalues import ConfigValuesType as _ConfigValuesType
     from ._expectations import CampaignExpectations as _CampaignExpectationsType
     from ._expectations import ScenarioExpectations as _ScenarioExpectationsType
     from ._expectations import TestSuiteExpectations as _TestTestSuiteExpectationsType
@@ -90,7 +90,7 @@ def scenarioexpectations(
         actions_results=False,  # type: bool
         error_details=False,  # type: bool
         stats=False,  # type: bool
-        config_values=None,  # type: ConfigValuesType
+        config_values=None,  # type: _ConfigValuesType
 ):  # type: (...) -> _ScenarioExpectationsType
     """
     Builds a :class:`._expectations.ScenarioExpectations` instance for the given scenario.
@@ -524,7 +524,7 @@ def testsuiteexpectations(
         actions_results=False,  # type: bool
         error_details=False,  # type: bool
         stats=False,  # type: bool
-        config_values=None,  # type: ConfigValuesType
+        config_values=None,  # type: _ConfigValuesType
 ):  # type: (...) -> _TestTestSuiteExpectationsType
     from . import _paths as _paths
 

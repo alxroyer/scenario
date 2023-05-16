@@ -19,7 +19,8 @@ import typing
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 if typing.TYPE_CHECKING:
     from steps.common import ExecScenario as _ExecScenarioType
 
@@ -47,13 +48,13 @@ class Logging400(scenario.test.TestCase):
         self.addstep(CheckEvidence(ExecScenario.getinstance()))
 
 
-class CheckStepIndentation(LogVerificationStep):
+class CheckStepIndentation(_LogVerificationStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.step_indentation = 0  # type: int
 
@@ -69,7 +70,7 @@ class CheckStepIndentation(LogVerificationStep):
             self.evidence(f"Step indentation: {self.step_indentation}")
 
 
-class CheckLoggingOutOfActionResult(LogVerificationStep):
+class CheckLoggingOutOfActionResult(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Log lines indentation out of action / result blocks")
@@ -111,13 +112,13 @@ class CheckLoggingOutOfActionResult(LogVerificationStep):
                 )
 
 
-class CheckActionResult(LogVerificationStep):
+class CheckActionResult(_LogVerificationStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.action_text_indentation = 0  # type: int
         self.result_text_indentation = 0  # type: int
@@ -167,7 +168,7 @@ class CheckActionResult(LogVerificationStep):
             )
 
 
-class CheckActionResultLogging(LogVerificationStep):
+class CheckActionResultLogging(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Action / result logging indentation")
@@ -203,7 +204,7 @@ class CheckActionResultLogging(LogVerificationStep):
             )
 
 
-class CheckEvidence(LogVerificationStep):
+class CheckEvidence(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Evidence indentation")

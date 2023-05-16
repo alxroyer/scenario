@@ -16,10 +16,11 @@
 
 import scenario.test
 
-from steps.logverifications import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
-class CheckConfigValueScenarioLog(LogVerificationStep):
+class CheckConfigValueScenarioLog(_LogVerificationStepImpl):
 
     def __init__(
             self,
@@ -28,7 +29,7 @@ class CheckConfigValueScenarioLog(LogVerificationStep):
             origin,  # type: str
             value,  # type: str
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.key = key  # type: str
         self.origin = origin  # type: str
