@@ -14,14 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Merged package definition for :mod:`scenario.tools`.
 
-.. note:: This module is just for namespace definition, it seems it's not executed after all.
-"""
+def checkpkgdeps():  # type: (...) -> None
+    from ._paths import MAIN_PATH
 
-
-# Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
-# Define this package as a namespace: we are currently extending it with the :mod:`scenario.tools` subpackage.
-import pkgutil
-__path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+    # Ensure `scenario.text` can be loaded.
+    try:
+        import scenario.text
+    except ImportError:
+        # If not, extend the `scenario` namespace path list.
+        import scenario
+        scenario.__path__.append((MAIN_PATH / "utils" / "src" / "scenario").abspath)
+        import scenario.text

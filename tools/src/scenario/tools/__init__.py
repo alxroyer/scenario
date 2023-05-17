@@ -17,6 +17,11 @@
 
 # The `try` block below avoids IDEs folding the following import lines.
 try:
+    # Package dependencies.
+    from ._pkgdeps import checkpkgdeps as _checkpkgdeps
+    _checkpkgdeps()
+
+    # Re-exports.
     from . import _paths as paths
     from ._subprocess import SubProcess as SubProcess
 finally:

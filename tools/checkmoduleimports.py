@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
@@ -14,14 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Merged package definition for :mod:`scenario.tools`.
+import pathlib
+import sys
 
-.. note:: This module is just for namespace definition, it seems it's not executed after all.
-"""
+# Path management.
+MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
+sys.path.append(str(MAIN_PATH / "src"))
+sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
 
-# Inspired from https://packaging.python.org/guides/packaging-namespace-packages/#creating-a-namespace-package
-# Define this package as a namespace: we are currently extending it with the :mod:`scenario.tools` subpackage.
-import pkgutil
-__path__ = pkgutil.extend_path(__path__, __name__)  # noqa  ## Name '__path__' can be undefined
+if __name__ == "__main__":
+    import scenario
+    from scenario.tools.imports import CheckModuleImports
+
+    _res = CheckModuleImports().run()  # type: scenario.ErrorCode
+    sys.exit(int(_res))

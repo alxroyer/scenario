@@ -15,9 +15,7 @@
 # limitations under the License.
 
 """
-Merged package definition for :mod:`scenario.tools`.
-
-.. note:: This module is just for namespace definition, it seems it's not executed after all.
+Merged package definition for :mod:`scenario.text`, ...
 """
 
 

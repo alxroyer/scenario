@@ -19,6 +19,11 @@ import typing
 
 # The `try` block below avoids IDEs folding the following import lines.
 try:
+    # Package dependencies.
+    from ._pkgdeps import checkpkgdeps as _checkpkgdeps
+    _checkpkgdeps()
+
+    # Re-exports.
     from ._attributes import ScenarioAttribute as ScenarioAttribute
     from . import _configvalues as configvalues
     from . import _data as data
