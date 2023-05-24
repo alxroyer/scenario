@@ -23,7 +23,8 @@ import scenario.test
 if True:
     from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 if typing.TYPE_CHECKING:
-    from steps.common import ExecScenario as _ExecScenarioType, ParseScenarioLog as _ParseScenarioLogType
+    from steps.common import ExecScenario as _ExecScenarioType
+    from steps.common import ParseScenarioLog as _ParseScenarioLogType
 
 
 class Issue65a(scenario.test.TestCase):

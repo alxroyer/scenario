@@ -21,7 +21,8 @@ import typing
 
 import scenario
 
-from . import _paths  # `_paths` used for class member instanciation.
+if True:
+    from . import _paths as _paths  # `_paths` used for class member instanciation.
 
 
 class MkDoc:

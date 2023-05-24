@@ -18,15 +18,16 @@
 ## Roadmap to v0.2.3
 
 - Issue #77: Clarify project imports.
-    - Add a checker script.
-    - Check 'tools/'.
+    - Refactor 'checkdeps.py' with `scenario.tools.imports.ModuleParser`.
     - Check documentation.
+        - Add 'checkmoduleimports.py' in the guidelines.
         - All module imports prefixed with '_': those required for execution, as well as types defined in neighbour modules.
         - Project imports required for execution:
             - Indented in `if True:` blocks.
             - One line per import.
             - Suffixed with 'Impl' (except for modules).
         - Reexports in `try: ... except: pass`, not `itTrue:` otherwise the symbols are noted are unused.
+- Issue #76: Rename 'test/tools/package-black-list-starter.py' into 'test/tools/packageblackliststarter.py'.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
 - Issue #80: Provide a subscenario step class.

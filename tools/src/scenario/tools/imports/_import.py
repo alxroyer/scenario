@@ -121,6 +121,7 @@ class Import(_ErrorTrackerLoggerImpl):
         else:
             # `scenario` source root directories.
             for _scenario_root_name, _scenario_root_path in (
+                # The first match will break the loop.
                 ("scenario.test", _paths.TEST_SRC_PATH / "scenario" / "test"),
                 ("scenario.tools", _paths.TOOLS_SRC_PATH / "scenario" / "tools"),
                 ("scenario.text", _paths.UTILS_SRC_PATH / "scenario" / "text"),
@@ -133,7 +134,8 @@ class Import(_ErrorTrackerLoggerImpl):
                 ):
                     self.imported_module_path = _scenario_root_path
                     # Remove the root name, with the following '.' character if any.
-                    _module_name = _module_name[len(f"{_scenario_root_name}."):]
+                    _module_name = self.imported_module_original_name[len(f"{_scenario_root_name}."):]
+                    break
 
         # Follow remaining import names.
         if self.imported_module_path and _module_name:

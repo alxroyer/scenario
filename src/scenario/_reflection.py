@@ -191,6 +191,35 @@ def getloadedmodulefrompath(
     return _module
 
 
+def extendnamespacepackagepath(
+        namespace_package,  # type: types.ModuleType
+        root_src_path,  # type: _AnyPathType
+):  # type: (...) -> None
+    """
+    Extends the list of paths that define a namespace package.
+
+    See:
+    - [PEP 382](https://peps.python.org/pep-0382/): Namespace Packages
+    - [PEP 420](https://peps.python.org/pep-0420/): Implicit Namespace Packages
+
+    :param namespace_package: Namespace package which path to extend.
+    :param root_src_path: New root source path.
+    :raise ImportError: If the namespace package already includes the given path.
+    """
+    # Determine the new path from `root_src_path` and the namespace package name.
+    _new_path = pathlib.Path(root_src_path).resolve()  # type: pathlib.Path
+    for _part in qualname(namespace_package).split("."):  # type: str
+        _new_path = _new_path / _part
+
+    # Check the namespace package does not already include the path.
+    for _path in namespace_package.__path__:  # type: str
+        if pathlib.Path(_path).samefile(_new_path):
+            raise ImportError(f"{namespace_package} already includes {_new_path}")
+
+    # Extend the namespace package with the new path.
+    namespace_package.__path__.append(str(_new_path))
+
+
 def checkfuncqualname(
         file,  # type: _AnyPathType
         line,  # type: int

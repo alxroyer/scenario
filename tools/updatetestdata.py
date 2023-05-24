@@ -24,16 +24,6 @@ sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
-# `scenario` imports.
-try:
-    # Avoid "Module level import not at top of file" PEP8 warnings.
-    import scenario
-    import scenario.test
-    import scenario.tools
-    from scenario.tools.updatetestdata import TestData, updatedataexpectations, updatefile, updatejson, updatelog
-finally:
-    pass
-
 
 class UpdateTestData:
 
@@ -56,6 +46,8 @@ class UpdateTestData:
         self._updatesyntaxerrorscenario()
 
     def _updateconfigdbscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatefile
+
         _test_data = TestData(scenario.test.paths.CONFIG_DB_SCENARIO, {
             "set": "ConfigDbScenario.step000",
         })  # type: TestData
@@ -69,6 +61,8 @@ class UpdateTestData:
         )
 
     def _updatefailingscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatedataexpectations, updatejson
+
         _test_data = TestData(scenario.test.paths.FAILING_SCENARIO, {
             "step010": "FailingScenario.step010",
             "step010-exception": "FailingScenario.step010",
@@ -88,6 +82,8 @@ class UpdateTestData:
         ])
 
     def _updategotoscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatejson
+
         _test_data = TestData(scenario.test.paths.GOTO_SCENARIO, {
             "step000": "GotoScenario.step000",
             "step010": "GotoScenario.step010",
@@ -105,6 +101,8 @@ class UpdateTestData:
         ])
 
     def _updateknownissuesscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatedataexpectations, updatejson
+
         _test_data = TestData(scenario.test.paths.KNOWN_ISSUES_SCENARIO, {
             "#---": "KnownIssuesScenario.__init__",
             "KnownIssuesStep": "KnownIssuesScenario.KnownIssuesStep",
@@ -163,6 +161,8 @@ class UpdateTestData:
         ])
 
     def _updatesimplescenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatejson, updatelog
+
         _test_data = TestData(scenario.test.paths.SIMPLE_SCENARIO, {
             "step010": "SimpleScenario.step010",
             "step020": "SimpleScenario.step020",
@@ -190,6 +190,8 @@ class UpdateTestData:
         ])
 
     def _updatesuperscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatejson
+
         _test_data = TestData(scenario.test.paths.SUPERSCENARIO_SCENARIO, {
             "step001": "SuperScenario.step001",
         })  # type: TestData
@@ -203,6 +205,8 @@ class UpdateTestData:
         ])
 
     def _updatesyntaxerrorscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatefile
+
         _test_data = TestData(scenario.test.paths.SYNTAX_ERROR_SCENARIO, {
             "syntax-error": "InvalidScenario.step010",
         })  # type: TestData
@@ -217,4 +221,8 @@ class UpdateTestData:
 
 
 if __name__ == "__main__":
+    import scenario
+    import scenario.test
+    import scenario.tools
+
     UpdateTestData().run()

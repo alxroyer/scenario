@@ -20,7 +20,7 @@ import typing
 import scenario
 
 if True:
-    from . import _datascenarios  # `_datascenarios` used for global instanciation.
+    from . import _datascenarios as _datascenarios  # `_datascenarios` used for global instanciation.
 if typing.TYPE_CHECKING:
     from ._configvalues import ConfigValuesType as _ConfigValuesType
     from ._expectations import CampaignExpectations as _CampaignExpectationsType
