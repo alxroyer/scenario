@@ -27,7 +27,8 @@
             - One line per import.
             - Suffixed with 'Impl' (except for modules).
         - Reexports in `try: ... except: pass`, not `itTrue:` otherwise the symbols are noted are unused.
-- Issue #76: Rename 'test/tools/package-black-list-starter.py' into 'test/tools/packageblackliststarter.py'.
+- Rename 'tools/' executable scripts with '-' characters.
+    - Update module naming coding rules.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
 - Issue #80: Provide a subscenario step class.

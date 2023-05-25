@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import logging
+import re
 import sys
 import typing
 
@@ -167,6 +168,12 @@ class CheckModuleImports:
                         _import.debug("System import without symbols: %r", _import.src)
                 else:
                     _import.error("Only system imports at pure module level: %r", _import.src)
+
+            # ---
+            # RULE: Avoid `# noqa` on module level imports.
+            # ---
+            if re.search(rb'# *noqa', _import.src):
+                _import.error("Avoid `# noqa` on module level imports: %r", _import.src)
 
             # ---
             # RULE: Avoid unqualified `if` blocks.

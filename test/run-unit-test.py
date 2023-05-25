@@ -24,9 +24,9 @@ sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "test" / "cases"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 
-# `scenario` imports.
-import scenario  # noqa  ## PEP8: Module level import not at top of file
-import scenario.test  # noqa  ## PEP8: Module level import not at top of file
+if True:
+    import scenario
+    import scenario.test
 
 
 # Command line arguments.
