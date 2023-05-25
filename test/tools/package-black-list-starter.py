@@ -42,7 +42,8 @@ def _main():  # type: (...) -> None
 
     # First of all, remove the first argument (this script actually).
     _logger.debug("sys.argv = %r", sys.argv)
-    assert scenario.Path(sys.argv[0]) == _this_script_path, f"Unexpected first argument {sys.argv[0]!r}, should be '{_this_script_path}'"
+    if scenario.Path(sys.argv[0]) != _this_script_path:
+        raise RuntimeError(f"Unexpected first argument {sys.argv[0]!r}, should be '{_this_script_path}'")
     _logger.debug("Removing first argument: %r", sys.argv[0])
     del sys.argv[0]
     _logger.debug("sys.argv = %r", sys.argv)
