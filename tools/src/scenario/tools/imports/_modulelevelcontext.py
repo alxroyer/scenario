@@ -63,6 +63,7 @@ class ModuleLevelContext:
             (
                 " if-block-impl" if self.isifblockimpl()
                 else " if-block-type" if self.isifblocktype()
+                else " if-block-main" if self.isifblockmain()
                 else f" if-block {self.src!r}" if self.isifblock()
                 else ""
             ),
@@ -77,6 +78,8 @@ class ModuleLevelContext:
             self.istryblock(),
             self.isifblockimpl(),
             self.isifblocktype(),
+            self.isifblockmain(),
+            self.isifblock(),
         ])
 
     def ispuremodulelevel(self):  # type: (...) -> bool
@@ -97,6 +100,16 @@ class ModuleLevelContext:
 
     def isifblocktype(self):  # type: (...) -> bool
         return self._checkregex(rb'^if +typing *\. *TYPE_CHECKING *:$')
+
+    def isifblockmain(self):  # type: (...) -> bool
+        return self._checkregex(rb'^if +__name__ *== *"__main__" *:$')
+
+    def isunqualifiedifblock(self):  # type: (...) -> bool
+        return self.isifblock() and (not any([
+            self.isifblockimpl(),
+            self.isifblocktype(),
+            self.isifblockmain(),
+        ]))
 
     def isfunction(self):  # type: (...) -> bool
         # Memo: Don't search for a final '):' pattern.

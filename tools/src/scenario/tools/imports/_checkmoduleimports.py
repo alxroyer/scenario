@@ -107,10 +107,13 @@ class CheckModuleImports:
         # Check module imports.
         _module_parser.debug("%d module level import(s)", len(_module_parser.module_level_imports))
         for _import in _module_parser.module_level_imports:  # type: Import
+
+            # === Import context ===
+
+            # ---
+            # RULE: Only system imports at pure module level.
+            # ---
             if _import.context.ispuremodulelevel():
-                # ---
-                # RULE: Only system imports at pure module level.
-                # ---
                 if any([
                     # Pure system import.
                     _import.issystemimport(),
@@ -166,6 +169,14 @@ class CheckModuleImports:
                     _import.error("Only system imports at pure module level: %r", _import.src)
 
             # ---
+            # RULE: Avoid unqualified `if` blocks.
+            # ---
+            if _import.context.isunqualifiedifblock():
+                _import.error("Import made from an unqualified `if` block: %r", _import.src)
+
+            # === Import syntax ===
+
+            # ---
             # RULE: Only one symbol per import line.
             # ---
             if len(_import.imported_symbols) == 0:
@@ -175,46 +186,51 @@ class CheckModuleImports:
             else:
                 _import.error("Several symbols imported in a single line: %r", _import.src)
 
-            # Check imported symbols.
-            for _imported_symbol in _import.imported_symbols:  # type: Import.ImportedSymbol
-                if not _imported_symbol.local_name:
-                    # ---
-                    # RULE: Module level imports should be renamed.
-                    # ---
-                    _import.error("Imported symbol %r should be renamed: %r", _imported_symbol.original_name, _import.src)
-                elif _imported_symbol.local_name == _imported_symbol.original_name:
-                    # Regular re-export.
-                    _import.debug("Regular re-export for %r: %r", _imported_symbol.original_name, _import.src)
-                elif path.name == "__init__.py":
-                    # Renamed re-export.
-                    _import.debug("Renamed re-export for %r: %r", _imported_symbol.original_name, _import.src)
-                else:
-                    # ---
-                    # RULE: Symbols imported at module level should renamed as private.
-                    # ---
-                    if _imported_symbol.local_name.startswith("_"):
-                        _import.debug("Symbol %r imported as private %r: %r", _imported_symbol.original_name, _imported_symbol.local_name, _import.src)
+            # === Imported symbols ===
+
+            if _import.context.isifblockmain():
+                # Don't check renames, privates or re-exports in main blocks.
+                _import.debug("Main block import %r")
+            else:
+                for _imported_symbol in _import.imported_symbols:  # type: Import.ImportedSymbol
+                    if not _imported_symbol.local_name:
+                        # ---
+                        # RULE: Module level imports should be renamed.
+                        # ---
+                        _import.error("Imported symbol %r should be renamed: %r", _imported_symbol.original_name, _import.src)
+                    elif _imported_symbol.local_name == _imported_symbol.original_name:
+                        # Regular re-export.
+                        _import.debug("Regular re-export for %r: %r", _imported_symbol.original_name, _import.src)
+                    elif path.name == "__init__.py":
+                        # Renamed re-export.
+                        _import.debug("Renamed re-export for %r: %r", _imported_symbol.original_name, _import.src)
                     else:
-                        _import.error("Imported symbol %r should be prefixed with '_': %r", _imported_symbol.original_name, _import.src)
-
-                    # ---
-                    # RULE: Symbols imported at module level for execution should suffixed with 'Impl'.
-                    # ---
-                    if not _import.context.isifblocktype():
-                        if _imported_symbol.ismodule():
-                            _import.debug("%r module import does not require a suffix: %r", _imported_symbol.original_name, _import.src)
-                        elif _imported_symbol.isconstant():
-                            _import.debug("%r constant import does not require a suffix: %r", _imported_symbol.original_name, _import.src)
-                        elif _imported_symbol.local_name.endswith("Impl"):
-                            _import.debug("%r suffixed with 'Impl' as expected: %r", _imported_symbol.original_name, _import.src)
+                        # ---
+                        # RULE: Symbols imported at module level should renamed as private.
+                        # ---
+                        if _imported_symbol.local_name.startswith("_"):
+                            _import.debug("Symbol %r imported as private %r: %r", _imported_symbol.original_name, _imported_symbol.local_name, _import.src)
                         else:
-                            _import.error("%r should be suffixed with 'Impl': %r", _imported_symbol.original_name, _import.src)
+                            _import.error("Imported symbol %r should be prefixed with '_': %r", _imported_symbol.original_name, _import.src)
 
-                    # ---
-                    # RULE: Symbols imported at module level for typings should suffixed with 'Type' (if not already named so).
-                    # ---
-                    if _import.context.isifblocktype():
-                        if _imported_symbol.local_name.endswith("Type"):
-                            _import.debug("%r suffixed with 'Type as expected: %r", _imported_symbol.original_name, _import.src)
-                        else:
-                            _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.src)
+                        # ---
+                        # RULE: Symbols imported at module level for execution should suffixed with 'Impl'.
+                        # ---
+                        if not _import.context.isifblocktype():
+                            if _imported_symbol.ismodule():
+                                _import.debug("%r module import does not require a suffix: %r", _imported_symbol.original_name, _import.src)
+                            elif _imported_symbol.isconstant():
+                                _import.debug("%r constant import does not require a suffix: %r", _imported_symbol.original_name, _import.src)
+                            elif _imported_symbol.local_name.endswith("Impl"):
+                                _import.debug("%r suffixed with 'Impl' as expected: %r", _imported_symbol.original_name, _import.src)
+                            else:
+                                _import.error("%r should be suffixed with 'Impl': %r", _imported_symbol.original_name, _import.src)
+
+                        # ---
+                        # RULE: Symbols imported at module level for typings should suffixed with 'Type' (if not already named so).
+                        # ---
+                        if _import.context.isifblocktype():
+                            if _imported_symbol.local_name.endswith("Type"):
+                                _import.debug("%r suffixed with 'Type as expected: %r", _imported_symbol.original_name, _import.src)
+                            else:
+                                _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.src)
