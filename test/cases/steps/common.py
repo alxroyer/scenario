@@ -20,8 +20,9 @@ This module intends to provide shortcuts to common steps for test cases.
 .. warning:: Do not import this module from other step modules, otherwise it could end in cyclic module dependencies.
 """
 
-# Common steps:
+# The `try` block below avoids IDEs folding the following import lines.
 try:
+    # Common steps:
     from jsonreport.steps.expectations import CheckJsonReportExpectations as CheckJsonReportExpectations
     from multiplescenarios.steps.expectations import CheckFinalResultsLogExpectations as CheckFinalResultsLogExpectations
     from multiplescenarios.steps.parser import ParseFinalResultsLog as ParseFinalResultsLog

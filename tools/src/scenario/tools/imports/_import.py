@@ -42,6 +42,12 @@ class Import(_ErrorTrackerLoggerImpl):
         def isconstant(self):  # type: (...) -> bool
             return re.match(r"^[_A-Z]+$", self.original_name) is not None
 
+        def isreexport(self):  # type: (...) -> bool
+            return all([
+                self.local_name,
+                not self.local_name.startswith("_"),
+            ])
+
     def __init__(
             self,
             importer_module_path,  # type: scenario.Path
@@ -155,3 +161,9 @@ class Import(_ErrorTrackerLoggerImpl):
 
     def isscenarioimport(self):  # type: (...) -> bool
         return self.imported_module_path is not None
+
+    def isreexport(self):  # type: (...) -> bool
+        return all([
+            self.imported_symbols,
+            all([_symbol.isreexport() for _symbol in self.imported_symbols]),
+        ])

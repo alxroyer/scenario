@@ -24,6 +24,11 @@ sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
+if True:
+    import scenario
+    import scenario.test
+    import scenario.tools
+
 
 class UpdateTestData:
 
@@ -221,8 +226,4 @@ class UpdateTestData:
 
 
 if __name__ == "__main__":
-    import scenario
-    import scenario.test
-    import scenario.tools
-
     UpdateTestData().run()

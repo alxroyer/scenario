@@ -174,6 +174,15 @@ class CheckModuleImports:
             if _import.context.isunqualifiedifblock():
                 _import.error("Import made from an unqualified `if` block: %r", _import.src)
 
+            # ---
+            # RULE: Avoid `try` blocks, except for re-exports.
+            # ---
+            if _import.context.istryblock():
+                if _import.isreexport():
+                    _import.debug("Reexport in a `try` block: %r", _import.src)
+                else:
+                    _import.error("Avoid `try` blocks, except for re-exports: %r", _import.src)
+
             # === Import syntax ===
 
             # ---

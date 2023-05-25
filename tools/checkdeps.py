@@ -25,13 +25,9 @@ MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
-# `scenario` imports.
-try:
-    # Avoid "Module level import not at top of file" PEP8 warnings.
+if True:
     import scenario
     import scenario.tools
-finally:
-    pass
 
 
 class CheckDeps:
