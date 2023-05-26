@@ -100,7 +100,7 @@ class CheckModuleImports:
         _module_parser = ModuleParser(path)
         self.modules.append(_module_parser)
         try:
-            _module_parser.parse(resolve_imports=True)
+            _module_parser.parse()
         except Exception as _err:
             _module_parser.error(f"{_err}")
             return

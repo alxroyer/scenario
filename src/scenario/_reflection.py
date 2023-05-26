@@ -219,6 +219,10 @@ def extendnamespacepackagepath(
     # Extend the namespace package with the new path.
     namespace_package.__path__.append(str(_new_path))
 
+    # Eventually add the source root path in `sys.path` (if not already in).
+    if not any([pathlib.Path(_sys_path).exists() and pathlib.Path(_sys_path).samefile(root_src_path) for _sys_path in sys.path]):
+        sys.path.append(str(pathlib.Path(root_src_path)))
+
 
 def checkfuncqualname(
         file,  # type: _AnyPathType

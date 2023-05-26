@@ -39,7 +39,7 @@ Type checking
 
 .. todo:: Documentation needed for type checking:
 
-    - ``./tools/checktypes.py``
+    - ``./tools/check-types.py``
     - Adjust ``files`` and ``namespace_packages`` configurations in ``mypy.conf`` depending on mypy#9393 returns.
 
 

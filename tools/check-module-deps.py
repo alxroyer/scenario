@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
@@ -14,10 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pathlib
+import sys
 
-# The `try` block below avoids IDEs folding the following import lines.
-try:
-    from ._checkmoduledeps import CheckModuleDeps as CheckModuleDeps
-    from ._checkmoduleimports import CheckModuleImports as CheckModuleImports
-finally:
-    pass
+# Path management.
+MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
+sys.path.append(str(MAIN_PATH / "src"))
+sys.path.append(str(MAIN_PATH / "tools" / "src"))
+
+
+if __name__ == "__main__":
+    import scenario
+    from scenario.tools.imports import CheckModuleDeps
+
+    _res = CheckModuleDeps().run()  # type: scenario.ErrorCode
+    sys.exit(int(_res))

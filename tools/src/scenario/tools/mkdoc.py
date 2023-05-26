@@ -256,15 +256,15 @@ class MkDoc:
             suffix=".campaign", summary=True, xml_report=True,
         )
 
-        # Import dependencies.
-        _generatelog(_paths.MAIN_PATH / "tools" / "checkdeps.py")
+        # Module dependencies.
+        _generatelog(_paths.MAIN_PATH / "tools" / "check-module-deps.py")
 
     def builddiagrams(self):  # type: (...) -> None
         """
         Builds the documentation diagrams.
         """
         from ._subprocess import SubProcess
-        from .deps import shouldupdate
+        from .filedeps import shouldupdate
 
         _cfg_path = _paths.TOOLS_CONF_PATH / "umlconf.uml"  # type: scenario.Path
         for _path in (_paths.DOC_SRC_PATH / "uml").iterdir():  # type: scenario.Path

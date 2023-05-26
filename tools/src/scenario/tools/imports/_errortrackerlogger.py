@@ -29,9 +29,7 @@ class ErrorTrackerLogger(scenario.Logger):
             self,
             location,  # type: str
     ):  # type: (...) -> None
-        scenario.Logger.__init__(self, location)
-
-        self.__location = location  # type: str
+        scenario.Logger.__init__(self, log_class=location)
 
     def _log(
             self,
@@ -44,8 +42,16 @@ class ErrorTrackerLogger(scenario.Logger):
         Redirect logging to `scenario.logging`.
         Count error messages by the way.
         """
-        _fmt = self.__location + ("" if msg.startswith(("%s:", "%d:")) else " ") + msg  # type: str
+        _fmt = self.log_class + ("" if msg.startswith(("%s:", "%d:")) else " ") + msg  # type: str
         scenario.logging.log(level, _fmt, *args, **kwargs)
 
         if level >= logging.ERROR:
             ErrorTrackerLogger.errors.append(_fmt % args)
+
+    def raiseerror(
+            self,
+            error_type,  # type: typing.Type[Exception]
+            error_message,  # type: str
+    ):  # type: (...) -> typing.NoReturn
+        ErrorTrackerLogger.errors.append(f"{self.log_class} {error_message}")
+        raise error_type(ErrorTrackerLogger.errors[-1])

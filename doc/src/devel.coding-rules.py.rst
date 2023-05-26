@@ -484,13 +484,13 @@ In the end, only a few top level project imports should remain:
 - Classes used for global instanciations,
 - (and that's probably all...)
 
-The 'tools/checkdeps.py' script helps visualizing `scenario` module dependencies:
+The 'tools/check-module-deps.py' script helps visualizing `scenario` module dependencies:
 
 .. code-block:: bash
 
-    $ ./tools/checkdeps.py
+    $ ./tools/check-module-deps.py
 
-.. literalinclude:: ../data/checkdeps.log
+.. literalinclude:: ../data/check-module-deps.log
     :language: none
 
 
@@ -622,7 +622,7 @@ Python compatibility
 
 The code supports Python versions from 3.6.
 
-The 'tools/checktypes.py' scripts checks code amongst Python 3.6.
+The 'tools/check-types.py' scripts checks code amongst Python 3.6.
 
 .. admonition:: Python versions
     :class: note

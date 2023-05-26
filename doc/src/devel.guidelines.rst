@@ -42,7 +42,7 @@ Deliver on an integration branch
 
    .. code-block:: bash
 
-       ./tools/checktypes.py
+       ./tools/check-types.py
 
    There should be no error.
    Fix things if needed.
