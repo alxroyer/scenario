@@ -41,7 +41,7 @@ To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario._scenar
 - Extra arguments may be defined thanks to the :py:meth:`scenario._args.Args.addarg()` then :py:meth:`scenario._args.ArgInfo.define()` methods.
 
 .. Class declaration with constructor.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: class DemoArgs
     :end-before: def _checkargs
@@ -53,7 +53,7 @@ after the arguments have been parsed, and the :py:class:`scenario._args.Args` at
 - This method is expected to return ``True`` or ``False`` whether an error has been detected or not.
 
 .. Overload of the `_checkargs()` method.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: def _checkargs
     :end-at: return True
@@ -64,7 +64,7 @@ Then, in the *main* part, prior to calling the :py:meth:`scenario._scenariorunne
 - Call the :py:meth:`scenario._args.Args.parse()` method to parse the command line arguments.
 
 .. Argument parsing.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # Command line arguments.
     :end-at: sys.exit
@@ -74,7 +74,7 @@ At this point, the user test environment can use the extra arguments added with 
 but regular arguments as well.
 
 .. Use of arguments.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # --show-configs option.
     :end-at: Test log saved
@@ -89,7 +89,7 @@ Using the ``--help`` option displays both:
 
     $ ./demo/run-demo.py --help
 
-.. literalinclude:: ../data/run-demo.help.log
+.. literalinclude:: ../../data/run-demo.help.log
     :language: none
 
 
@@ -107,7 +107,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 - a welcome message displayed before the test is executed:
 
 .. Welcome message.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # Welcome message.
     :end-at: scenario.logging.info
@@ -116,7 +116,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 - a bye message displayed just before the command line ends:
 
 .. Bye message.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # Bye message.
     :end-at: scenario.logging.info
@@ -125,7 +125,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 - optional display of the configuration database:
 
 .. Configuration database display.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # --show-configs option.
     :end-at: sys.exit
@@ -134,7 +134,7 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 - :ref:`configuration value settings <config-db.scenario>` that enable :ref:`file logging <logging.outfile>`:
 
 .. File logging
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # File logging:
     :end-at: scenario.logging.info
@@ -150,7 +150,7 @@ The call to the :py:meth:`scenario._scenariorunner.ScenarioRunner.main()` method
 and use the values given by our :py:class:`DemoArgs` instance already set.
 
 .. Scenario execution.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # Scenario execution.
     :end-at: scenario.runner.main()
@@ -166,7 +166,7 @@ Eventually, convert the enum value returned by :py:meth:`scenario._scenariorunne
 so that the error can be handled in the shell that launched the command line.
 
 .. Error code.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # Error code.
     :end-at: sys.exit
@@ -198,7 +198,7 @@ whatever the current working directory
 (see :py:attr:`scenario._path.Path.prettypath`).
 
 .. Setting the main path.
-.. literalinclude:: ../../demo/run-demo.py
+.. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # Main path.
     :end-at: scenario.Path.setmainpath

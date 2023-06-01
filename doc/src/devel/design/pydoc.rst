@@ -13,22 +13,12 @@
 .. limitations under the License.
 
 
-`scenario` testing framework
-============================
+Source documentation
+====================
+
+The detailed documentation extracted from the Python sources.
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Contents:
+    :maxdepth: 3
 
-    purpose
-    install
-    quickstart
-    advanced/index
-    devel/index
-
-Indices and tables
-==================
-
-- :ref:`genindex`
-- :ref:`modindex`
-- :ref:`search`
+    ../../py/scenario

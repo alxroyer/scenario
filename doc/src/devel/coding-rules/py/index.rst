@@ -13,22 +13,21 @@
 .. limitations under the License.
 
 
-`scenario` testing framework
-============================
+.. _coding-rules.py:
+
+Python coding rules
+===================
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
 
-    purpose
-    install
-    quickstart
-    advanced/index
-    devel/index
-
-Indices and tables
-==================
-
-- :ref:`genindex`
-- :ref:`modindex`
-- :ref:`search`
+    strings
+    namings
+    presentation
+    packages
+    reexports
+    static
+    typings
+    imports
+    compatibility
+    inspection-warnings

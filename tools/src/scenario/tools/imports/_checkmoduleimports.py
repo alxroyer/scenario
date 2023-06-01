@@ -182,13 +182,13 @@ class CheckModuleImports:
                 _import.error("Import made from an unqualified `if` block: %r", _import.src)
 
             # ---
-            # RULE: Avoid `try` blocks, except for re-exports.
+            # RULE: Avoid `try` blocks, except for reexports.
             # ---
             if _import.context.istryblock():
                 if _import.isreexport():
                     _import.debug("Reexport in a `try` block: %r", _import.src)
                 else:
-                    _import.error("Avoid `try` blocks, except for re-exports: %r", _import.src)
+                    _import.error("Avoid `try` blocks, except for reexports: %r", _import.src)
 
             # === Import syntax ===
 
@@ -205,7 +205,7 @@ class CheckModuleImports:
             # === Imported symbols ===
 
             if _import.context.isifblockmain():
-                # Don't check renames, privates or re-exports in main blocks.
+                # Don't check renames, privates or reexports in main blocks.
                 _import.debug("Main block import %r")
             else:
                 for _imported_symbol in _import.imported_symbols:  # type: Import.ImportedSymbol
@@ -215,11 +215,11 @@ class CheckModuleImports:
                         # ---
                         _import.error("Imported symbol %r should be renamed: %r", _imported_symbol.original_name, _import.src)
                     elif _imported_symbol.local_name == _imported_symbol.original_name:
-                        # Regular re-export.
-                        _import.debug("Regular re-export for %r: %r", _imported_symbol.original_name, _import.src)
+                        # Regular reexport.
+                        _import.debug("Regular reexport for %r: %r", _imported_symbol.original_name, _import.src)
                     elif path.name == "__init__.py":
-                        # Renamed re-export.
-                        _import.debug("Renamed re-export for %r: %r", _imported_symbol.original_name, _import.src)
+                        # Renamed reexport.
+                        _import.debug("Renamed reexport for %r: %r", _imported_symbol.original_name, _import.src)
                     else:
                         # ---
                         # RULE: Symbols imported at module level should renamed as private.

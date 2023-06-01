@@ -15,8 +15,8 @@
 
 .. _coding-rules.git:
 
-Git
-===
+Git coding rules
+================
 
 .. _coding-rules.git.branches:
 

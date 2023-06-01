@@ -29,7 +29,7 @@ Handler registration
 First of all, declare your handler function:
 
 .. scenario.Event.ERROR handler definition
-.. literalinclude:: ../../demo/handlers.py
+.. literalinclude:: ../../../demo/handlers.py
     :language: python
     :start-at: def _error
     :end-at: scenario.logging.debug
@@ -38,7 +38,7 @@ Then the handlers may be installed by calling the :py:meth:`scenario._handlers.H
 on the :py:data:`scenario.handlers` manager:
 
 .. scenario.Event.ERROR handler installation
-.. literalinclude:: ../../demo/handlers.py
+.. literalinclude:: ../../../demo/handlers.py
     :language: python
     :start-at: scenario.handlers.install(scenario.Event.ERROR, _error)
     :lines: 1
@@ -148,7 +148,7 @@ In order to do so, a good practice is to define your set of events with an enum,
 so that they can be type checked.
 
 .. UserEvent enum definition.
-.. literalinclude:: ../../demo/handlers.py
+.. literalinclude:: ../../../demo/handlers.py
     :language: python
     :start-at: class UserEvent
     :end-at: FOO
@@ -158,7 +158,7 @@ to make the registered handlers (matching their additional conditions in option)
 Pass on event data as a single objet, which can be whatever you want.
 
 .. Call of UserEvent.FOO handlers.
-.. literalinclude:: ../../demo/handlers.py
+.. literalinclude:: ../../../demo/handlers.py
     :language: python
     :start-at: scenario.handlers.callhandlers(UserEvent.FOO,
     :lines: 1

@@ -65,12 +65,12 @@ It is accessible through the :py:data:`scenario.logging` variable.
 
 Debugging is enabled by default with this main logger.
 
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: def step010
     :end-at: This is debug.
 
-.. literalinclude:: ../data/loggingdemo.log
+.. literalinclude:: ../../data/loggingdemo.log
     :language: none
     :start-at: STEP#1:
     :end-at: This is debug.
@@ -109,7 +109,7 @@ among others:
 - :py:class:`scenario.Step`.
 
 .. Inheriting from `scenario.Scenario`.
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: class LoggingScenario
     :end-at: scenario.Scenario.__init__(self)
@@ -124,14 +124,14 @@ A :py:class:`scenario.Step` instance takes the fully qualified name of the class
 Debugging is enabled by default for such user-defined scenario and step instances:
 
 .. Step `LoggingScenario.step020()` python implementation.
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: class LoggingScenario
     :end-at: self.debug("This is debug.")
     :lines: 1, 19-
 
 .. Step `LoggingScenario.step020()` console output.
-.. literalinclude:: ../data/loggingdemo.log
+.. literalinclude:: ../../data/loggingdemo.log
     :language: none
     :start-at: STEP#2:
     :end-before: This is debug.
@@ -140,14 +140,14 @@ Otherwise, debugging is disabled by default for class loggers.
 
 .. Scenario `LoggingScenario` with `class_logger` member instance creation,
    and `LoggingScenario.step020()` python implementation.
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: class LoggingScenario
     :end-at: self.class_logger.debug("This is debug.")
     :lines: 1, 5-8, 28-
 
 .. Step `LoggingScenario.step030()` console output.
-.. literalinclude:: ../data/loggingdemo.log
+.. literalinclude:: ../../data/loggingdemo.log
     :language: none
     :start-at: STEP#3:
     :end-before: Activate debugging for the class logger instance.
@@ -155,14 +155,14 @@ Otherwise, debugging is disabled by default for class loggers.
 Class logger debugging can be activated on-demand, either 1) programmatically, ...:
 
 .. Programmatic debug enabling.
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: Activate debugging for the class logger instance.
     :end-at: This is debug again.
     :dedent:
 
 .. Related console output.
-.. literalinclude:: ../data/loggingdemo.log
+.. literalinclude:: ../../data/loggingdemo.log
     :language: none
     :start-at: Activate debugging for the class logger instance.
     :end-at: This is debug again.
@@ -225,7 +225,7 @@ Log colors may also be applied for every log line of a given *log class*,
 which is particularly useful when different class loggers generate interleaved log lines:
 
 .. Call to `scenario.Logger.setlogcolor()`.
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: setlogcolor
     :lines: 1
@@ -252,7 +252,7 @@ When :ref:`subscenarios <subscenarios>` are executed, lines of '|' characters hi
 Example of output from the `commutativeadditions.py <https://github.com/alxroyer/scenario/blob/master/demo/commutativeadditions.py>`_ sample test.
 
 .. Subscenario output log example: 'commutativeadditions.py'.
-.. literalinclude:: ../data/commutativeadditions.log
+.. literalinclude:: ../../data/commutativeadditions.log
     :language: none
     :end-at: EVIDENCE:   -> result1 = 2
 
@@ -278,14 +278,14 @@ When these calls are made on a class logger,
 the logging lines of this class logger are indented the way below.
 
 .. Step `LoggingScenario.step110()` python implementation.
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: def step110
     :end-before: def step120
     :dedent:
 
 .. Step `LoggingScenario.step110()` console output.
-.. literalinclude:: ../data/loggingdemo.log
+.. literalinclude:: ../../data/loggingdemo.log
     :language: none
     :start-at: STEP#4:
     :end-before: STEP#5:
@@ -321,13 +321,13 @@ it takes effect on every log lines:
 - but also actions, expected results and evidence texts.
 
 .. Step `LoggingScenario.step120()` python implementation.
-.. literalinclude:: ../../demo/loggingdemo.py
+.. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: def step120
     :dedent:
 
 .. Step `LoggingScenario.step120()` console output.
-.. literalinclude:: ../data/loggingdemo.log
+.. literalinclude:: ../../data/loggingdemo.log
     :language: none
     :start-at: STEP#5:
     :end-before: END OF 'demo/loggingdemo.py'
@@ -506,7 +506,7 @@ but saves it into the 'doc/data/commutativeaddition.log' file
         ./demo/commutativeaddition.py
     $ cat ./doc/data/commutativeaddition.log
 
-.. literalinclude:: ../data/commutativeaddition.log
+.. literalinclude:: ../../data/commutativeaddition.log
     :language: none
 
 .. tip::

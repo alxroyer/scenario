@@ -40,7 +40,7 @@ they are dot-separated strings, with the ability to index a single list item wit
 
 With the following sample data:
 
-.. literalinclude:: ../../demo/conf.yml
+.. literalinclude:: ../../../demo/conf.yml
     :language: yaml
 
 - `"a.b.c"` points to the 55 value,
@@ -58,7 +58,7 @@ Loading and setting configurations through the command line
 Configuration values are basically set through the command line,
 with the ``--config-file`` and/or ``--config-value`` options of test and campaign launchers.
 
-.. literalinclude:: ../data/run-test.help.log
+.. literalinclude:: ../../data/run-test.help.log
     :language: none
 
 Configuration files can be in one of the following formats:
@@ -190,7 +190,7 @@ also display the configuration tree with origins.
     $ ./demo/run-demo.py --config-file demo/conf.json --config-value x.y[0].z 0 --show-configs demo/htmllogin.py
 
 .. Skip the 'scenario' section.
-.. literalinclude:: ../data/run-demo.show-configs.log
+.. literalinclude:: ../../data/run-demo.show-configs.log
     :lines: -4, 8-
 
 

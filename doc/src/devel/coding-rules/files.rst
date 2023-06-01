@@ -15,13 +15,13 @@
 
 .. _coding-rules.files:
 
-Files
------
+File conventions
+================
 
 .. _coding-rules.files.permissions:
 
 File permissions
-^^^^^^^^^^^^^^^^
+----------------
 
 File permissions are stored apropriately in the git database, so that:
 
@@ -35,7 +35,7 @@ the ``tools/checkrepo.py`` script checks this rule over the files of the git rep
 .. _coding-rules.files.encodings:
 
 Encodings
-^^^^^^^^^
+---------
 
 Encoding is utf-8 for all files.
 

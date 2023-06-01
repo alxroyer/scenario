@@ -20,7 +20,7 @@ Campaigns
 
 Campaigns shall be launched with the 'run-campaign.py' script.
 
-.. literalinclude:: ../data/run-campaign.help.log
+.. literalinclude:: ../../data/run-campaign.help.log
     :language: none
 
 
@@ -33,7 +33,7 @@ Test suite files are text files that describe the scenario files to execute, or 
 
 Example from the `demo.suite <https://github.com/alxroyer/scenario/blob/master/demo/demo.suite>`_ test suite file:
 
-.. literalinclude:: ../../demo/demo.suite
+.. literalinclude:: ../../../demo/demo.suite
     :language: none
 
 .. list-table:: Test suite files syntax
@@ -76,7 +76,7 @@ A summary of the tests executed is displayed in the end.
 
     $ ./bin/run-campaign.py demo/demo.suite
 
-.. literalinclude:: ../data/demo.campaign.log
+.. literalinclude:: ../../data/demo.campaign.log
     :language: none
 
 
@@ -98,7 +98,7 @@ For each scenario executed, a :ref:`JSON report <reports>` is stored in the outp
 
 Eventually, a campaign report is generated in the XML JUnit format.
 
-.. literalinclude:: ../data/demo.campaign.xml
+.. literalinclude:: ../../data/demo.campaign.xml
     :language: xml
 
 .. admonition:: XML JUnit format

@@ -13,17 +13,17 @@
 .. limitations under the License.
 
 
-.. _devel:
+.. _coding-rules:
 
-Development
-===========
+Coding rules
+============
 
-This page describes how to develop the `scenario` library.
+The following coding rules are defined for the project.
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
 
-    devel.env
-    devel.design
-    devel.coding-rules
-    devel.guidelines
+    files
+    git
+    py/index
+    doc/index

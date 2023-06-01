@@ -13,22 +13,22 @@
 .. limitations under the License.
 
 
-`scenario` testing framework
-============================
+.. _test-libs:
 
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
+User test libraries
+===================
 
-    purpose
-    install
-    quickstart
-    advanced/index
-    devel/index
+.. todo:: Documentation needed for user test libraries.
 
-Indices and tables
-==================
+    Create test libraries by inheriting both :py:class:`scenario._assertions.Assertions` and :py:class:`scenario._logger.Logger`.
 
-- :ref:`genindex`
-- :ref:`modindex`
-- :ref:`search`
+    .. Inheriting from `scenario.Logger`.
+    .. literalinclude:: ../../../demo/loggingdemo.py
+        :language: python
+        :start-at: class MyLogger
+        :end-at: scenario.Logger.__init__
+
+    .. Inheriting from both `scenario.Assertions` and `scenario.Logger`.
+    .. literalinclude:: ../../../demo/htmltestlib.py
+
+    Memo: Debugging is disabled by default for class loggers.

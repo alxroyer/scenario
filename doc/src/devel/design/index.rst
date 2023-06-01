@@ -23,5 +23,5 @@ This page describes the design of the `scenario` library.
 .. toctree::
     :maxdepth: 2
 
-    devel.design.arch
-    devel.design.pydoc
+    arch
+    pydoc

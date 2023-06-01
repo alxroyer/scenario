@@ -52,13 +52,13 @@ defined :ref:`previously <quickstart.first-scenario>`.
 The ``CommutativeAddition`` scenario can be called multiple times, with different inputs,
 in a super ``CommutativeAdditions`` scenario:
 
-.. literalinclude:: ../../demo/commutativeadditions.py
+.. literalinclude:: ../../../demo/commutativeadditions.py
     :language: python
     :linenos:
 
 To do so, start with loading your base scenario with a regular ``import`` statement:
 
-.. literalinclude:: ../../demo/commutativeadditions.py
+.. literalinclude:: ../../../demo/commutativeadditions.py
     :language: python
     :start-at: import CommutativeAddition
     :lines: 1
@@ -66,7 +66,7 @@ To do so, start with loading your base scenario with a regular ``import`` statem
 
 Instanciate it with the appropriate values:
 
-.. literalinclude:: ../../demo/commutativeadditions.py
+.. literalinclude:: ../../../demo/commutativeadditions.py
     :language: python
     :start-at: _scenario = CommutativeAddition(4, 5)
     :lines: 1
@@ -74,7 +74,7 @@ Instanciate it with the appropriate values:
 
 And execute it as a subscenario:
 
-.. literalinclude:: ../../demo/commutativeadditions.py
+.. literalinclude:: ../../../demo/commutativeadditions.py
     :language: python
     :start-after: _scenario = CommutativeAddition(4, 5)
     :lines: 1
@@ -86,7 +86,7 @@ Executing this super scenario produces the following output:
 
     $ ./bin/run-test.py ./demo/commutativeadditions.py
 
-.. literalinclude:: ../data/commutativeadditions.log
+.. literalinclude:: ../../data/commutativeadditions.log
     :language: none
 
 Each subscenario execution appears indented with a pipe character.

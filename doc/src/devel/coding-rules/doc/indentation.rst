@@ -13,30 +13,14 @@
 .. limitations under the License.
 
 
-.. _advanced:
+.. _coding-rules.documentation.indentation:
 
-Advanced usage
-==============
+ReStructured Text indentation
+=============================
 
-.. toctree::
-    :maxdepth: 2
+ReStructured Text directives could lead to use indentations of 3 spaces.
 
-    advanced.assertions
-    advanced.logging
-    advanced.evidence
-    advanced.error-management
-    advanced.stability
-    advanced.known-issues
-    advanced.test-libs
-    advanced.handlers
-    advanced.config-db
-    advanced.step-objects
-    advanced.step-sections
-    advanced.subscenarios
-    advanced.goto
-    advanced.multiple-executions
-    advanced.campaigns
-    advanced.reports
-    advanced.scenario-attributes
-    advanced.launcher
-    advanced.scenario-stack
+Considering that this is hard to maintain with regular configurations of editors,
+4 space indentations shall be preferred in docstrings and `.rst` files.
+
+Exception for unordered and numbered lists that require the sub-content to be aligned with the bullet or item number.

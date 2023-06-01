@@ -13,17 +13,21 @@
 .. limitations under the License.
 
 
-.. _coding-rules:
+.. _coding-rules.py.presentation:
 
-Coding rules
+Presentation
 ============
 
-A few coding rules are defined for the project.
+.. todo:: Documentation needed for code presentation
 
-.. toctree::
-    :maxdepth: 2
+    - Indentation:
 
-    devel.coding-rules.files
-    devel.coding-rules.git
-    devel.coding-rules.py
-    devel.coding-rules.doc
+      - Avoid right-aligned comments (hard to maintain when the names change)
+      - Functions and methods (same purpose):
+
+        - New line for the first parameter
+        - Parameters indented with 2 tabs (as proposed by PyCharm by default).
+          Makes it more readable by differenciating the parameters from the function / body.
+
+    - Trailing commas (refer to PEP8 `<https://www.python.org/dev/peps/pep-0008/#when-to-use-trailing-commas>`_)
+    - New line after the opening parenthesis of the function declarations

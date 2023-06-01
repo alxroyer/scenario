@@ -13,22 +13,30 @@
 .. limitations under the License.
 
 
-.. _test-libs:
+.. _advanced:
 
-User test libraries
-===================
+Advanced usage
+==============
 
-.. todo:: Documentation needed for user test libraries.
+.. toctree::
+    :maxdepth: 2
 
-    Create test libraries by inheriting both :py:class:`scenario._assertions.Assertions` and :py:class:`scenario._logger.Logger`.
-
-    .. Inheriting from `scenario.Logger`.
-    .. literalinclude:: ../../demo/loggingdemo.py
-        :language: python
-        :start-at: class MyLogger
-        :end-at: scenario.Logger.__init__
-
-    .. Inheriting from both `scenario.Assertions` and `scenario.Logger`.
-    .. literalinclude:: ../../demo/htmltestlib.py
-
-    Memo: Debugging is disabled by default for class loggers.
+    assertions
+    logging
+    evidence
+    error-management
+    stability
+    known-issues
+    test-libs
+    handlers
+    config-db
+    step-objects
+    step-sections
+    subscenarios
+    goto
+    multiple-executions
+    campaigns
+    reports
+    scenario-attributes
+    launcher
+    scenario-stack

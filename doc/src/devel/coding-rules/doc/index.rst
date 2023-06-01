@@ -13,22 +13,18 @@
 .. limitations under the License.
 
 
-`scenario` testing framework
-============================
+.. _coding-rules.documentation:
+
+Documentation conventions
+=========================
 
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
 
-    purpose
-    install
-    quickstart
-    advanced/index
-    devel/index
-
-Indices and tables
-==================
-
-- :ref:`genindex`
-- :ref:`modindex`
-- :ref:`search`
+    admonitions
+    indentation
+    domains
+    docstrings
+    cross-references
+    property-return-typehint
+    reexports

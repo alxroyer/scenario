@@ -21,7 +21,7 @@ Multiple scenario executions
 As described by the scenario launcher help message,
 several scenarios may be executed with a single command line.
 
-.. literalinclude:: ../data/run-test.help.log
+.. literalinclude:: ../../data/run-test.help.log
     :language: none
 
 For example:
@@ -41,5 +41,5 @@ The tests are executed one after the other, in the order given by the command li
 
 A summary of the scenario executions is given in the end.
 
-.. literalinclude:: ../data/commutativeaddition+loggingdemo.summary.log
+.. literalinclude:: ../../data/commutativeaddition+loggingdemo.summary.log
     :language: none

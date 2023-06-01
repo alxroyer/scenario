@@ -22,7 +22,7 @@ if True:
 
 # The `try` block below avoids IDEs folding the following import lines.
 try:
-    # Re-exports.
+    # Reexports.
     from . import _paths as paths
     from ._subprocess import SubProcess as SubProcess
 finally:

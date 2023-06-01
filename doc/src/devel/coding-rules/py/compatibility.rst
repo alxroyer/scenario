@@ -13,12 +13,20 @@
 .. limitations under the License.
 
 
-Source documentation
+.. _coding-rules.py.compatibility:
+
+Python compatibility
 ====================
 
-The detailed documentation extracted from the Python sources.
+The code supports Python versions from 3.6.
 
-.. toctree::
-    :maxdepth: 3
+The 'tools/check-types.py' scripts checks code amongst Python 3.6.
 
-    py/scenario
+.. admonition:: Python versions
+    :class: note
+
+    No need to handle Python 2 anymore, as long as its end-of-line was set on 2020-01-01
+    (see `PEP 373 <https://www.python.org/dev/peps/pep-0373/>`_).
+
+    As of 2021/09, Python 3.6's end-of-life has not been declared yet (see `<https://devguide.python.org/devcycle/#end-of-life-branches>`_),
+    while Python 3.5's end-of-life was set on 2020-09-30 (see `PEP 478 <https://www.python.org/dev/peps/pep-0478/>`_).

@@ -20,11 +20,13 @@
 - Issue #77: Clarify project imports.
     - Check what happens for `if typing.TYPE_CHECKING:` import in 'scenario/test/_expectations/__init__.py'.
     - Check documentation.
+        - Add references to imports in `coding-rules.py.namings` regarding leading underscores for imported classes and types.
+        - Add reference to imports in `coding-rules.py.namings` regarding "Type" suffixes for types and imported classes.
         - Add 'checkmoduleimports.py' in the guidelines.
         - All module imports prefixed with '_': those required for execution, as well as types defined in neighbour modules.
         - Project imports required for execution:
             - Indented in `if True:` blocks: in order to avoid editors folding implementation imports with the system imports.
-            - Or in `try:` blocks for re-exports: otherwise we may get "unused" warnings.
+            - Or in `try:` blocks for reexports: otherwise we may get "unused" warnings.
             - One line per import.
             - Suffixed with 'Impl' (except for modules).
         - Reexports in `try: ... except: pass`, not `itTrue:` otherwise the symbols are noted are unused.

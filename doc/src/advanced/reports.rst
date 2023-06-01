@@ -26,7 +26,7 @@ Reports may be generated when executing a single scenario, with the ``--json-rep
 
 Below, the JSON output file for the :ref:`quickstart <quickstart.first-scenario>` ``CommutativeAddition`` sample scenario:
 
-.. literalinclude:: ../data/commutativeaddition.json
+.. literalinclude:: ../../data/commutativeaddition.json
     :language: javascript
 
 .. note:: Dates are ISO-8601 encoded, and elapsed times are given in seconds.

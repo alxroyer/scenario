@@ -13,22 +13,14 @@
 .. limitations under the License.
 
 
-`scenario` testing framework
-============================
+.. _coding-rules.documentation.property-return-type:
 
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
+Property return type hint
+=========================
 
-    purpose
-    install
-    quickstart
-    advanced/index
-    devel/index
+`sphinx.ext.autodoc` does not make use of property return type hints in the output documentation.
 
-Indices and tables
-==================
-
-- :ref:`genindex`
-- :ref:`modindex`
-- :ref:`search`
+Nevertheless, we do not make use of the ``:type:`` directive,
+which would be redundant with the return type hint already set.
+The `sphinx#7837 <https://github.com/sphinx-doc/sphinx/issues/7837>`_ enhancement request
+has been opened for that purpose.
