@@ -26,7 +26,7 @@ sys.path.append(str(MAIN_PATH / "tools" / "src"))
 
 if __name__ == "__main__":
     import scenario
-    from scenario.tools.imports import CheckModuleImports
+    from scenario.tools.imports import CheckImports
 
-    _res = CheckModuleImports().run()  # type: scenario.ErrorCode
+    _res = CheckImports().run()  # type: scenario.ErrorCode
     sys.exit(int(_res))

@@ -28,8 +28,7 @@ File permissions are stored apropriately in the git database, so that:
 - regular files remain with 644 permissions,
 - executable scripts and binaries get the 755 permissions.
 
-As long as the ``chmod`` command is available in the development environment,
-the ``tools/checkrepo.py`` script checks this rule over the files of the git repository.
+The '.repo/checkfiles.yml' file describes the permissions applicable to each file of the repository.
 
 
 .. _coding-rules.files.encodings:
@@ -45,4 +44,4 @@ The encoding is explicitly specified in the first lines of Python scripts throug
 
     # -*- coding: utf-8 -*-
 
-The ``tools/checkrepo.py`` script checks this rule over the files of the git repository.
+The '.repo/checkfiles.yml' file describes the encoding applicable to each file of the repository.

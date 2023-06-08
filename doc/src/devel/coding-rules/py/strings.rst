@@ -22,7 +22,7 @@ Strings
 
     - Differenciate strings and byte-strings:
         - Use of ``""`` / ``r""`` / ``f""`` (double quote) to enclose ``str`` strings
-            - Except for strings in f-string {}-blocks.
+            - Except for strings in f-string {}-blocks => simple quotes
         - Use of ``b''`` / ``rb''`` (simple quotes) to enclose ``bytes`` strings
     - Use f-strings
         - Except for debugging (for optimization concerns)

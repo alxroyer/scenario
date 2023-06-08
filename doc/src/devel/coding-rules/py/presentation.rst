@@ -22,12 +22,12 @@ Presentation
 
     - Indentation:
 
-      - Avoid right-aligned comments (hard to maintain when the names change)
+      - 4 spaces (no tabulations)
+      - Avoid right-aligned comments (avoids git diffs)
       - Functions and methods (same purpose):
 
-        - New line for the first parameter
-        - Parameters indented with 2 tabs (as proposed by PyCharm by default).
+        - New line for the first parameter (avoids git diffs).
+        - Parameters indented with 8 spaces (common behaviour of well-known Python IDEs).
           Makes it more readable by differenciating the parameters from the function / body.
 
-    - Trailing commas (refer to PEP8 `<https://www.python.org/dev/peps/pep-0008/#when-to-use-trailing-commas>`_)
-    - New line after the opening parenthesis of the function declarations
+    - Trailing commas (refer to PEP8 `<https://www.python.org/dev/peps/pep-0008/#when-to-use-trailing-commas>`_, avoids git diffs)

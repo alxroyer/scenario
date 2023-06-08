@@ -21,7 +21,12 @@ Static & class methods
 Do not use the ``@staticmethod`` or ``@classmethod`` decorator whenever a method could be converted so.
 It is preferrable to rely on the meaning at first, in order to make the code more stable along the time.
 
-By default, IDEs (like PyCharm for instance) "detects any methods which may safely be made static".
-This coding rule goes against these suggestions.
-By the way, we do not want to set ``# noinspection PyMethodMayBeStatic`` pragmas everywhere a method could "be made static" in the code.
-Thus, please disable the "Method may be static" inspection rule in your IDE settings.
+By default, Python IDEs may detect any methods which could safely be made static.
+Such inspection warnings go against the statement above.
+Please disable such inspection rule in your IDE settings if any.
+
+.. admonition:: PyCharm inspection configuration
+    :class: tip
+
+    As of PyCharm 2021.2, uncheck the following option:
+    "File" > "Settings" > "Editor" > "Inspections" > (select profile) > "Python" > "Method is not declared static".

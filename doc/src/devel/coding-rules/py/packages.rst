@@ -28,7 +28,7 @@ every package should contain a dedicated '__init__.py' file in order to explicit
 2. Otherwise, the '__init__.py' file declares the symbols it officially exports:
 
    - The package shall be implemented with :ref:`private modules <coding-rules.py.namings.modules>` (with a leading underscore).
-   - Reexports should follow the :ref:`reexport rules <coding-rules.py.reexports>` described just after.
+   - Reexports should follow the :ref:`reexport rules <coding-rules.py.reexports>`.
 
 .. admonition:: Packages and subpackages defined from different directories
     :class: tip
@@ -40,5 +40,8 @@ every package should contain a dedicated '__init__.py' file in order to explicit
     - The base :py:mod:`scenario` package is defined in the main 'src/' directory.
     - :py:mod:`scenario.test` comes as a subpackage of the latter, but is defined in 'test/src/'.
     - Same with :py:mod:`scenario.tools`, defined in 'tools/src/'.
+    - :py:mod:`scenario.text`, defined in 'utils/src/',
+      comes as a dependency for :py:mod:`scenario.test` and :py:mod:`scenario.tools`
+      (dynamically loaded thanks to :py:func:`scenario._reflection.extendnamespacepackagepath()`).
 
     This avoids mixing test and tools sources with the core :py:mod:`scenario` implementation.

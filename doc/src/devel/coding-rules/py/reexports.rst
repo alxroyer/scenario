@@ -18,8 +18,21 @@
 Reexports
 =========
 
+Contrary to :ref:`module purpose imports <coding-rules.py.imports>`,
+reexports are imports made at the module level
+in order to make a symbol from a neighbour module or package (usually protected) available out of the module or package being defined.
+
+A common design pattern:
 '__init__.py' files usually declare the set of public symbols for the package they define,
-by reexporting those symbols from the neighbour modules in the given package.
+by reexporting those symbols from the neighbour private modules in the given package.
+
+These kind of imports for reexports must follow a couple of rules depending on the situation.
+
+
+.. _coding-rules.py.reexports.explicit:
+
+Explicit reexport pattern
+-------------------------
 
 In order to keep it simple,
 as long as the package does not rename exported items (but only modules),
@@ -33,6 +46,12 @@ use the explicit reexport pattern (inherited from `PEP 484 - Stub files <https:/
 .. note::
     Our `mypy` configuration makes use of this syntax
     by disabling `implicit reexports <https://mypy.readthedocs.io/en/stable/config_file.html#confval-implicit_reexport>`_.
+
+
+.. _coding-rules.py.reexports.intermediate-protected:
+
+Intermediate protected symbol
+-----------------------------
 
 If only attributes must be renamed,
 or renamed modules in non-'__init__.py' modules fail,
@@ -77,6 +96,12 @@ intermediate private instances may be used:
 
         from . import _data as data
 
+
+.. _coding-rules.py.reexports.all-declaration:
+
+Explicit ``__all__`` declaration
+--------------------------------
+
 If exported classes are renamed, use explicit ``__all__`` declarations
 (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
 For consistency reasons, back every export of such module with an ``__all__`` declaration,
@@ -112,3 +137,26 @@ even though non renamed exports don't really need it.
         Scenario = ScenarioDefinition
 
     mypy succeeds, but IDEs get confused.
+
+
+.. _coding-rules.py.reexports.no-folding:
+
+Avoid folding: ``try ... finally pass`` blocks
+----------------------------------------------
+
+Same as for :ref:`module purpose imports <coding-rules.py.imports.impl.no-folding>`,
+reexports shall be placed in a ``try: ... finally: pass`` block to avoid IDEs folding reexport lines.
+
+.. admonition:: ``try: ... finally: pass`` v/s ``if True:``
+    ``try: ... finally: pass`` blocks are an equivalent for regular ``if True:`` import blocks.
+
+    ``if True:`` blocks are a bit shorter in the syntax, since they don't need the ``finally: pass`` lines.
+    That's the reason why they are the preferred syntax for regular imports.
+
+    But they are imperfect for reexports.
+    ``if True:`` blocks lead to PEP8 warnings with reexports,
+    indicating that the reexported symbols are not used in the current module,
+    which is usually normal in as much as the module usually only aims at exporting symbols, not using them.
+
+    Such PEP8 warnings don't come up with ``try: ... finally: pass`` blocks.
+    That's the reason why we use this pattern in reexport modules.

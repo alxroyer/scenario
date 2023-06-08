@@ -23,13 +23,13 @@ import scenario
 import scenario.text
 
 
-class CheckModuleImports:
+class CheckImports:
 
     class Args(scenario.Args):
         def __init__(self):  # type: (...) -> None
             scenario.Args.__init__(self, class_debugging=False)
 
-            self.setdescription("Module import checker.")
+            self.setdescription("Import checker.")
 
             self.paths = []  # type: typing.List[scenario.Path]
             self.addarg("Path(s)", "paths", scenario.Path).define(
@@ -48,7 +48,7 @@ class CheckModuleImports:
         from ._errortrackerlogger import ErrorTrackerLogger
 
         # Command line arguments.
-        scenario.Args.setinstance(CheckModuleImports.Args())
+        scenario.Args.setinstance(CheckImports.Args())
         if not scenario.Args.getinstance().parse(sys.argv[1:]):
             sys.exit(int(scenario.Args.getinstance().error_code))
 
@@ -56,7 +56,7 @@ class CheckModuleImports:
         scenario.Path.setmainpath(_paths.MAIN_PATH, log_level=logging.INFO)
 
         # Process paths.
-        for _start_path in (CheckModuleImports.Args.getinstance().paths or (
+        for _start_path in (CheckImports.Args.getinstance().paths or (
             _paths.BIN_PATH,
             # _paths.DEMO_PATH,  # Don't process 'demo/' scripts.
             _paths.SRC_PATH,
@@ -67,7 +67,7 @@ class CheckModuleImports:
 
         # Final result.
         _modules = scenario.text.Countable("module", self.modules)  # type: scenario.text.Countable
-        _errors = scenario.text.Countable("module import error", ErrorTrackerLogger.errors)  # type: scenario.text.Countable
+        _errors = scenario.text.Countable("import error", ErrorTrackerLogger.errors)  # type: scenario.text.Countable
         if not ErrorTrackerLogger.errors:
             scenario.logging.info(f"Success: no {_errors} in {len(_modules)} {_modules}")
             return scenario.ErrorCode.SUCCESS

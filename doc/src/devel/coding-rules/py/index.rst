@@ -21,13 +21,13 @@ Python coding rules
 .. toctree::
     :maxdepth: 2
 
+    compatibility
     strings
     namings
     presentation
-    packages
-    reexports
     static
-    typings
     imports
-    compatibility
+    reexports
+    packages
+    typings
     inspection-warnings

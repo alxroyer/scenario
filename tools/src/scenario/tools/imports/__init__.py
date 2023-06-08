@@ -17,7 +17,7 @@
 
 # The `try` block below avoids IDEs folding the following import lines.
 try:
+    from ._checkimports import CheckImports as CheckImports
     from ._checkmoduledeps import CheckModuleDeps as CheckModuleDeps
-    from ._checkmoduleimports import CheckModuleImports as CheckModuleImports
 finally:
     pass

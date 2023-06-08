@@ -18,8 +18,20 @@
 Namings
 =======
 
-Python namings follow `PEP 8 <https://peps.python.org/pep-0008/#descriptive-naming-styles>`_ recommandations.
-Let's remind them below:
+Python namings follow `PEP 8 <https://peps.python.org/pep-0008/#descriptive-naming-styles>`_ recommendations.
+
+.. admonition:: Module level imported symbols and leading underscores
+    :class: note
+
+    For the memo, imported symbols at the module level shall be renamed with a leading undescore
+    (see :ref:`coding-rules.py.imports.no-reexports`).
+
+    This is first of all applicable to :ref:`classes <coding-rules.py.namings.classes>` and :ref:`types <coding-rules.py.namings.types>`,
+    but also to any kind of item described in this section:
+    :ref:`packages <coding-rules.py.namings.packages>` and :ref:`modules <coding-rules.py.namings.modules>`,
+    :ref:`functions <coding-rules.py.namings.functions>`,
+    :ref:`constants <coding-rules.py.namings.constants>`,
+    ...
 
 
 .. _coding-rules.py.namings.packages:
@@ -38,7 +50,9 @@ Leading underscore for internal packages and modules.
 
 .. note::
     Makes it possible to set :ref:`design a package <coding-rules.py.packages>` with protected modules,
-    and explicitly select the symbols exported from them in the '__init__.py' module.
+    and explicitly select the symbols :ref:`reexported <coding-rules.py.reexports>` from them in the '__init__.py' module.
+
+Hyphens for executable scripts.
 
 
 .. _coding-rules.py.namings.classes:
@@ -61,6 +75,9 @@ Types
 -----
 
 CamelCase, without underscores.
+
+Finish with the `Type` suffix.
+Eg: ``AnyPathPath``.
 
 Leading underscore for internal types.
 

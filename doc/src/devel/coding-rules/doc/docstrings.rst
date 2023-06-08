@@ -20,6 +20,12 @@ Docstrings
 
 Python docstrings follow the *ReStructured Text* format.
 
+.. admonition:: PyCharm docstring configuration
+    :class: tip
+
+    As of PyCharm 2021.2:
+    "File" > "Settings" > "Tools" > "Python Integrated Tools" > "Docstrings" > "Docstring format" > select "reStructured Text".
+
 
 .. _coding-rules.documentation.docstrings.classes:
 
@@ -34,15 +40,6 @@ Use a leading doctring, at the beginning of the class definition.
 
 Functions and methods
 ---------------------
-
-.. admonition:: PyCharm configuration
-    :class: tip
-
-    In order to make PyCharm use the *ReStructured Text* format for docstrings, go through:
-    "File" > "Settings" > "Tools" > "Python Integrated Tools" > "Docstrings" > "Docstring format"
-    (as of PyCharm 2021.1.1)
-
-    Select the "reStructured Text" option.
 
 The 'Initializer' word in ``__init__()`` docstrings should be avoided.
 ``__init__()`` docstrings should be more specific on what the initializers do for the object.
