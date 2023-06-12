@@ -22,7 +22,6 @@ if True:
     sys.path.append(str(_DATA_PATH))
 
 
-# The following `try` block avoids IDEs folding the following import lines.
 try:
     from actionresultloopscenario import ActionResultLoopScenario as ActionResultLoopScenario
     from configdbscenario import ConfigDbScenario as ConfigDbScenario

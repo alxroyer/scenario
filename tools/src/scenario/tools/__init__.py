@@ -15,14 +15,14 @@
 # limitations under the License.
 
 
+# Package dependencies.
 if True:
-    # Package dependencies.
     from ._pkgdeps import checkpkgdeps as _checkpkgdeps
     _checkpkgdeps()
 
-# The `try` block below avoids IDEs folding the following import lines.
+
+# Reexports.
 try:
-    # Reexports.
     from . import _paths as paths
     from ._subprocess import SubProcess as SubProcess
 finally:
