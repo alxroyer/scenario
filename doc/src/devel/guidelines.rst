@@ -64,7 +64,7 @@ Deliver on an integration branch
 
    .. code-block:: bash
 
-       ./tools/updatetestdata.py
+       ./tools/update-test-data.py
 
    Then launch the test campaign:
 
