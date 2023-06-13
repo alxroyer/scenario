@@ -26,6 +26,7 @@ class ModuleLevelContext:
             path,  # type: scenario.Path
             line_number,  # type: int
             src,  # type: typing.Optional[bytes]
+            upper_context,  # type: typing.Optional[ModuleLevelContext]
     ):  # type: (...) -> None
         if line_number <= 0:
             raise ValueError(f"Invalid line number {line_number!r}")
@@ -40,19 +41,29 @@ class ModuleLevelContext:
         #: May differ from :attr:`.line_number2`, especially for docstrings and function definitions.
         #: Not set until the context is fully defined.
         self._ending_line_number = None  # type: typing.Optional[int]
+        if not src:
+            # Automatically consider pure module level contexts as fully defined.
+            self._ending_line_number = line_number
 
         #: Code context source.
         #:
         #: ``None`` for pure module level contexts.
         #: Initialized otherwise with :meth:`__init__()`, then possibly continued with :meth:`feed()`.
         self.src = None  # type: typing.Optional[bytes]
-
         if src:
             # Use `feed()` in order to determine whether this is a one-line definition or not.
             self.feed(line_number, src)
-        else:
-            # Automatically consider pure module level contexts as fully defined.
-            self._ending_line_number = line_number
+
+        #: Indentation.
+        self.indentation = b''  # type: bytes
+        if src:
+            _match = re.match(rb'^([ \t]*)[^ \t].*$', src)  # type: typing.Optional[typing.Match[bytes]]
+            if not _match:
+                raise SyntaxError(f"Invalid line {src!r}")
+            self.indentation = _match.group(1)
+
+        #: Upper context, if any.
+        self.upper_context = upper_context  # type: typing.Optional[ModuleLevelContext]
 
     def __repr__(self):  # type: () -> str
         return "".join([
@@ -156,3 +167,28 @@ class ModuleLevelContext:
                     self._ending_line_number = line_number
             else:
                 self._ending_line_number = line_number
+
+    def isbrokenby(
+            self,
+            line,  # type: bytes
+    ):  # type: (...) -> bool
+        # Empty lines and comments don't break the context.
+        if (not line.strip()) or line.strip().startswith(b'#'):
+            return False
+
+        # Check the line contains the context indentation at least.
+        if not line.startswith(self.indentation):
+            return True
+
+        # For block contexts, expect some more indentation.
+        if any([
+            self.istryblock(),
+            self.isifblock(),
+            self.isfunction(),
+            self.isclass(),
+        ]):
+            if not line[len(self.indentation):].startswith((b' ', b'\t')):
+                return True
+
+        # Context not broken by default.
+        return False

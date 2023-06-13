@@ -17,8 +17,6 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #77: Clarify project imports.
-    - Check what happens for `if typing.TYPE_CHECKING:` import in 'scenario/test/_expectations/__init__.py'.
 - Move `getstepexecution()` from '_assertionhelpers.py' to `StepExecution`.
 - Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
 - Issue #80: Provide a subscenario step class.

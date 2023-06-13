@@ -40,7 +40,10 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
         from ._import import Import
         from ._modulelevelcontext import ModuleLevelContext
 
-        _context = ModuleLevelContext(self.path, 1, None)  # type: ModuleLevelContext
+        _context = ModuleLevelContext(
+            path=self.path, line_number=1, src=None,
+            upper_context=None,
+        )  # type: ModuleLevelContext
 
         for _line_number, _line in enumerate(self.path.read_bytes().splitlines()):  # type: int, bytes
             # Line numbers start from 1.
@@ -54,15 +57,20 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
                 if _context.isfullydefined():
                     self.debug("%d: %r fully defined", _line_number, _context)
                     if _context.isdocstring():
-                        _context = ModuleLevelContext(self.path, _line_number + 1, None)
+                        _context = ModuleLevelContext(
+                            path=self.path, line_number=_line_number + 1, src=None,
+                            upper_context=None,
+                        )
                         self.debug("%d: New context: %r", _line_number, _context)
+                continue
+
+            # Back to upper context(s) when applicable.
+            while _context.isbrokenby(_line) and _context.upper_context:
+                _context = _context.upper_context
+                self.debug("%d: Back to upper context: %r", _line_number, _context)
 
             # Import line, at any level.
-            elif re.match(rb'^import +.+$', _line.strip()) or re.match(rb'^from +[^ ]+ +import +.*$', _line.strip()):
-                # Possibly reset the current context.
-                if not _line.startswith((b' ', b'\t')):
-                    _context = ModuleLevelContext(self.path, _line_number, None)
-
+            if re.match(rb'^import +.+$', _line.strip()) or re.match(rb'^from +[^ ]+ +import +.*$', _line.strip()):
                 _import = Import(self.path, _line_number, _context, _line)  # type: Import
 
                 # Save or ignore the import.
@@ -72,8 +80,10 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
                 else:
                     _import.debug("Import ignored: %r", _import)
 
-            # Module level line.
-            elif _line and (not _line.startswith((b' ', b'\t', b'#'))):
+                continue
+
+            # Module level lines.
+            if _line and (not _line.startswith((b' ', b'\t', b'#'))):
                 # New contexts.
                 if any([
                     re.match(rb'^(__doc__ *\+= *)?"""$', _line),
@@ -82,11 +92,15 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
                     re.match(rb'^def .*\(.*$', _line),
                     re.match(rb'^class .*:$', _line),
                 ]):
-                    _context = ModuleLevelContext(self.path, _line_number, _line)
+                    _context = ModuleLevelContext(
+                        path=self.path, line_number=_line_number, src=_line,
+                        upper_context=_context,
+                    )
                     self.debug("%d: New context: %r", _line_number, _context)
+                    continue
 
                 # Skipped lines.
-                elif any([
+                if any([
                     # `try` blocks.
                     re.match(rb'^except.*:.*$', _line),
                     re.match(rb'^finally *:.*$', _line),
@@ -97,10 +111,23 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
                     re.search(rb'\. *(append|debug|exit|insert) *\(', _line),
                 ]):
                     self.debug("%d: Line skipped", _line_number)
+                    continue
 
                 # Unexpected lines.
-                else:
-                    raise SyntaxError(f"Unexpected line {_line_number} at module level: {_line!r}")
+                raise SyntaxError(f"Unexpected line {_line_number} at module level: {_line!r}")
+
+            # Type checking blocks, inside other block.
+            _candidate_context = ModuleLevelContext(
+                path=self.path, line_number=_line_number, src=_line,
+                upper_context=_context,
+            )  # type: ModuleLevelContext
+            if _candidate_context.isifblocktype() and not any([
+                _context.isfunction(),
+                _context.isclass(),
+            ]):
+                _context = _candidate_context
+                self.debug("%d: New context: %r", _line_number, _context)
+                continue
 
     @staticmethod
     def stripsrc(
