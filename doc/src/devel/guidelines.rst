@@ -38,7 +38,17 @@ Deliver on an integration branch
    Fix headers if needed.
    If files have been modified, commit them (probably with the ``--amend`` option).
 
-2. Check typings:
+2. Check imports:
+
+   .. code-block:: bash
+
+       . ./tools/check-imports.py
+
+   There should be no error.
+   Fix things if needed.
+   If files have been modified, commit them (probably with the ``--amend`` option).
+
+3. Check typings:
 
    .. code-block:: bash
 
@@ -48,7 +58,7 @@ Deliver on an integration branch
    Fix things if needed.
    If files have been modified, commit them (probably with the ``--amend`` option).
 
-3. Check tests:
+4. Check tests:
 
    Check test data is up-to-date:
 
@@ -56,13 +66,15 @@ Deliver on an integration branch
 
        ./tools/updatetestdata.py
 
+   Then launch the test campaign:
+
    .. code-block:: bash
 
        ./test/run-unit-campaign.py
 
-   There may be warnings, but no errors.
+   There may be warnings, but no error.
 
-4. Check documentation:
+5. Check documentation:
 
    a. Generation the documentation:
 
@@ -86,7 +98,7 @@ Deliver on an integration branch
       - advanced.config-db.html (depending on 'doc/data/run-demo.show-configs.log')
       - advanced.logging.html (depending on 'demo/loggingdemo.py', 3 times)
 
-5. Check files encoding:
+6. Check files encoding:
 
    Check all files use utf-8 encoding and unix end-of-line characters, and have the appropriate permissions:
 
