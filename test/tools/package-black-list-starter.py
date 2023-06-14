@@ -85,8 +85,12 @@ def _main():  # type: (...) -> None
     _logger.debug("Executing script %r with arguments %r...", _script_path, sys.argv[1:])
     exec(
         _script_content,
-        # Fix the `__file__` constant with the path of the actual script, otherwise the path of this script would remain!
-        {"__file__": _script_path.abspath},
+        {
+            # Fix the `__file__` constant with the path of the actual script, otherwise the path of this script would remain!
+            "__file__": _script_path.abspath,
+            # Ensure `__name__` is set to `"__main__"`.
+            "__name__": "__main__",
+        },
     )
 
 
