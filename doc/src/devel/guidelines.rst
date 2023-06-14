@@ -92,11 +92,21 @@ Deliver on an integration branch
 
    b. Check the HTML output in 'doc/html/':
 
-      Check the pages that use the ``.. literalinclude::`` directive with the ``:lines:`` option
+      If included content has changed,
+      check related pages that use the ``.. literalinclude::`` directive with a non-trivious ``:lines:`` option
       (following list established on the 'int/v0.2.2+' branch):
 
-      - advanced.config-db.html (depending on 'doc/data/run-demo.show-configs.log')
-      - advanced.logging.html (depending on 'demo/loggingdemo.py', 3 times)
+      - advanced.config-db.html: depending on 'doc/data/run-demo.show-configs.log',
+      - advanced.logging.html: depending on 'demo/loggingdemo.py'.
+
+      .. tip::
+
+          In order to check that included data has changed:
+
+          .. code-block:: bash
+
+              git diff <base-rev> -- doc/data/run-demo.show-configs.log
+              git diff <base-rev> -- demo/loggingdemo.py
 
 6. Check files encoding:
 
