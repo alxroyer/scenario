@@ -20,9 +20,11 @@ import typing
 import scenario.test
 import scenario.text
 if typing.TYPE_CHECKING:
-    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
+    from scenario._typing import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
-from jsonreport.steps.reportfile import JsonReportFileVerificationStep  # `JsonReportFileVerificationStep` used for inheritance.
+if True:
+    # `JsonReportFileVerificationStep` used for inheritance.
+    from jsonreport.steps.reportfile import JsonReportFileVerificationStep as _JsonReportFileVerificationStepImpl
 
 
 class Issue33(scenario.test.TestCase):
@@ -59,7 +61,7 @@ class Issue33(scenario.test.TestCase):
         self.addstep(CheckKnownIssueLocation(ExecScenario.getinstance(1), 9, "KnownIssuesScenario.step010"))
 
 
-class CheckExceptionLocation(JsonReportFileVerificationStep):
+class CheckExceptionLocation(_JsonReportFileVerificationStepImpl):
 
     def __init__(
             self,
@@ -67,7 +69,7 @@ class CheckExceptionLocation(JsonReportFileVerificationStep):
             index,  # type: int
             expected_fqn,  # type: str
     ):  # type: (...) -> None
-        JsonReportFileVerificationStep.__init__(self, exec_step)
+        _JsonReportFileVerificationStepImpl.__init__(self, exec_step)
 
         self.index = index  # type: int
         self.expected_fqn = expected_fqn  # type: str
@@ -75,7 +77,7 @@ class CheckExceptionLocation(JsonReportFileVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Exception location")
 
-        _json_error = {}  # type: JsonDictType
+        _json_error = {}  # type: _JsonDictType
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} error info from the JSON report"):
             _json_error = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"errors[{self.index}]", type=dict,
@@ -89,7 +91,7 @@ class CheckExceptionLocation(JsonReportFileVerificationStep):
             )
 
 
-class CheckKnownIssueLocation(JsonReportFileVerificationStep):
+class CheckKnownIssueLocation(_JsonReportFileVerificationStepImpl):
 
     def __init__(
             self,
@@ -97,7 +99,7 @@ class CheckKnownIssueLocation(JsonReportFileVerificationStep):
             index,  # type: int
             expected_fqn,  # type: str
     ):  # type: (...) -> None
-        JsonReportFileVerificationStep.__init__(self, exec_step)
+        _JsonReportFileVerificationStepImpl.__init__(self, exec_step)
 
         self.index = index  # type: int
         self.expected_fqn = expected_fqn  # type: str
@@ -105,7 +107,7 @@ class CheckKnownIssueLocation(JsonReportFileVerificationStep):
     def step(self):  # type: (...) -> None
         self.STEP("Known issue location")
 
-        _json_known_issue = {}  # type: JsonDictType
+        _json_known_issue = {}  # type: _JsonDictType
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} known issue info from the JSON report"):
             _json_known_issue = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"warnings[{self.index}]", type=dict,

@@ -21,8 +21,8 @@ Handler management.
 import enum
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
@@ -68,7 +68,7 @@ class Handler:
         self.once = once  # type: bool
 
 
-class Handlers(Logger):
+class Handlers(_LoggerImpl):
     """
     Handler manager.
     """
@@ -79,7 +79,7 @@ class Handlers(Logger):
         """
         from ._debugclasses import DebugClass
 
-        Logger.__init__(self, log_class=DebugClass.HANDLERS)
+        _LoggerImpl.__init__(self, log_class=DebugClass.HANDLERS)
 
         #: Installed handlers.
         #:

@@ -21,8 +21,8 @@ YAML configuration file management.
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._configtypes import KeyType
-    from ._path import AnyPathType
+    from ._configtypes import KeyType as _KeyType
+    from ._path import AnyPathType as _AnyPathType
 
 
 class ConfigYaml:
@@ -32,8 +32,8 @@ class ConfigYaml:
 
     @staticmethod
     def loadfile(
-            path,  # type: AnyPathType
-            root="",  # type: KeyType
+            path,  # type: _AnyPathType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Loads a YAML configuration file.
@@ -65,8 +65,8 @@ class ConfigYaml:
 
     @staticmethod
     def savefile(
-            path,  # type: AnyPathType
-            root="",  # type: KeyType
+            path,  # type: _AnyPathType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Saves a YAML configuration file.

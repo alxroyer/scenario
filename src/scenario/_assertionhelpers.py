@@ -25,7 +25,7 @@ import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
-    from ._stepdefinition import StepSpecificationType
+    from ._stepdefinition import StepSpecificationType as _StepSpecificationType
     from ._stepexecution import StepExecution as _StepExecutionType
 
 
@@ -65,7 +65,7 @@ if typing.TYPE_CHECKING:
     #:
     #: If a string or step class only is not enough to find out the expected step execution,
     #: the step execution instance may be passed on directly.
-    StepExecutionSpecificationType = typing.Union[StepSpecificationType, _StepExecutionType]
+    StepExecutionSpecificationType = typing.Union[_StepSpecificationType, _StepExecutionType]
 
 
 #: ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.

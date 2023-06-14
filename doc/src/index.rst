@@ -23,8 +23,8 @@
     purpose
     install
     quickstart
-    advanced
-    devel
+    advanced/index
+    devel/index
 
 Indices and tables
 ==================

@@ -21,10 +21,11 @@ Logging extra data handling.
 import logging
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 
 
-class LogExtraData(StrEnum):
+class LogExtraData(_StrEnumImpl):
     """
     Keys to can be used in the dictionary passed on in the ``extra`` parameter of the standard ``logging`` functions.
     """

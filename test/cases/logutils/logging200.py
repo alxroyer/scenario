@@ -17,7 +17,8 @@
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` for inheritance.
 
 
 class Logging200(scenario.test.TestCase):
@@ -43,7 +44,7 @@ class Logging200(scenario.test.TestCase):
         self.addstep(CheckClassLoggerLogLevels(ExecScenario.getinstance()))
 
 
-class CheckMainLoggerLogLevels(LogVerificationStep):
+class CheckMainLoggerLogLevels(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Main logger log levels")
@@ -65,7 +66,7 @@ class CheckMainLoggerLogLevels(LogVerificationStep):
             self.assertregex("^ *DEBUG ", _debug_line, evidence=True)
 
 
-class CheckClassLoggerLogLevels(LogVerificationStep):
+class CheckClassLoggerLogLevels(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         from steps.common import ExecScenario

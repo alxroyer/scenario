@@ -24,13 +24,16 @@ import inspect
 import types
 import typing
 
-from ._assertions import Assertions  # `Assertions` used for inheritance.
-from ._logger import Logger  # `Logger` used for inheritance.
-from ._stepuserapi import StepUserApi  # `StepUserApi` used for inheritance.
-
+if True:
+    from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
-    from ._stepdefinition import StepDefinition as _StepDefinitionType, StepSpecificationType, VarStepDefinitionType
+    from ._logger import Logger as _LoggerType
+    from ._path import AnyPathType as _AnyPathType
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepdefinition import StepSpecificationType as _StepSpecificationType
+    from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
 
 
@@ -152,7 +155,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
                 SCENARIO_STACK.building.popscenariodefinition(_scenario_definition)
 
 
-class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenarioDefinition):
+class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, metaclass=MetaScenarioDefinition):
     """
     Base class for any final test scenario.
 
@@ -200,9 +203,9 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
         #: Scenario name: i.e. script pretty path.
         self.name = self.script_path.prettypath  # type: str
 
-        StepUserApi.__init__(self)
-        Assertions.__init__(self)
-        Logger.__init__(self, log_class=self.name)
+        _StepUserApiImpl.__init__(self)
+        _AssertionsImpl.__init__(self)
+        _LoggerImpl.__init__(self, log_class=self.name)
 
         # Activate debugging by default for scenario definitions.
         self.enabledebug(True)
@@ -303,8 +306,8 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
     def addstep(
             self,
-            step_definition,  # type: VarStepDefinitionType
-    ):  # type: (...) -> VarStepDefinitionType
+            step_definition,  # type: _VarStepDefinitionType
+    ):  # type: (...) -> _VarStepDefinitionType
         """
         Adds steps to the step list defining the scenario.
 
@@ -317,7 +320,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
     def getstep(
             self,
-            step_specification=None,  # type: StepSpecificationType
+            step_specification=None,  # type: _StepSpecificationType
             index=None,  # type: int
     ):  # type: (...) -> typing.Optional[_StepDefinitionType]
         """
@@ -346,7 +349,7 @@ class ScenarioDefinition(StepUserApi, Assertions, Logger, metaclass=MetaScenario
 
     def expectstep(
             self,
-            step_specification=None,  # type: StepSpecificationType
+            step_specification=None,  # type: _StepSpecificationType
             index=None,  # type: int
     ):  # type: (...) -> _StepDefinitionType
         """
@@ -388,7 +391,7 @@ class ScenarioDefinitionHelper:
 
     @staticmethod
     def getscenariodefinitionclassfromscript(
-            script_path,  # type: AnyPathType
+            script_path,  # type: _AnyPathType
     ):  # type: (...) -> typing.Type[ScenarioDefinition]
         """
         Retrieves the scenario definitions classes from a Python script.
@@ -430,7 +433,7 @@ class ScenarioDefinitionHelper:
         self.definition = definition  # type: ScenarioDefinition
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
-        self._logger = SCENARIO_RUNNER  # type: Logger
+        self._logger = SCENARIO_RUNNER  # type: _LoggerType
 
     def buildsteps(self):  # type: (...) -> None
         """

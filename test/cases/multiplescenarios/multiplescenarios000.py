@@ -19,7 +19,8 @@ import typing
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 if typing.TYPE_CHECKING:
     from steps.common import ExecScenario as _ExecScenarioType
 
@@ -56,14 +57,14 @@ class MultipleScenarios000(scenario.test.TestCase):
         self.addstep(CheckMultipleScenariosIncompatibleOption(ExecScenario.getinstance(1), option="--json-report"))
 
 
-class CheckMultipleScenariosIncompatibleOption(LogVerificationStep):
+class CheckMultipleScenariosIncompatibleOption(_LogVerificationStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: _ExecScenarioType
             option,  # type: str
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.option = option  # type: str
 

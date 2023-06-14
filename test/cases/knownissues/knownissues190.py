@@ -19,13 +19,15 @@ import typing
 import scenario
 import scenario.test
 
-from campaigns.steps.execution import ExecCampaign  # `ExecCampaign` used for inheritance.
-from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils  # `KnownIssueLevelUtils` used for inheritance.
+if True:
+    from campaigns.steps.execution import ExecCampaign as _ExecCampaignImpl  # `ExecCampaign` used for inheritance.
+    from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils as _KnownIssueLevelUtilsImpl  # `KnownIssueLevelUtils` used for inheritance.
 
 
-class KnownIssues190(scenario.test.TestCase, KnownIssueLevelUtils):
+class KnownIssues190(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
         from campaigns.steps.log import CheckCampaignLogExpectations
         from knownissues.steps.knownissuelevelutils import CheckFinalResultsAscendingIssueLevelOrder
         from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
@@ -65,13 +67,13 @@ class KnownIssues190(scenario.test.TestCase, KnownIssueLevelUtils):
         self.addstep(CheckFinalResultsAscendingIssueLevelOrder(ParseFinalResultsLog.getinstance()))
 
 
-class ExecKnownIssueLevelCampaign(ExecCampaign, KnownIssueLevelUtils):
+class ExecKnownIssueLevelCampaign(_ExecCampaignImpl, _KnownIssueLevelUtilsImpl):
 
     def __init__(
             self,
             config_values,  # type: scenario.test.configvalues.ConfigValuesType
     ):  # type: (...) -> None
-        ExecCampaign.__init__(
+        _ExecCampaignImpl.__init__(
             self,
             # Prepare a tmp path for the test suite file.
             [self.test_case.mktmppath(suffix=".suite")],

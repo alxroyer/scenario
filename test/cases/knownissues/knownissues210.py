@@ -18,7 +18,8 @@ import scenario
 import scenario.test
 import scenario.text
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class KnownIssues210(scenario.test.TestCase):
@@ -43,7 +44,7 @@ class KnownIssues210(scenario.test.TestCase):
         self.addstep(CheckNamedIssueLevel(ExecScenario.getinstance(), name="foo", value=10, count=2))
 
 
-class CheckNamedIssueLevel(LogVerificationStep):
+class CheckNamedIssueLevel(_LogVerificationStepImpl):
 
     def __init__(
             self,
@@ -52,7 +53,7 @@ class CheckNamedIssueLevel(LogVerificationStep):
             value,  # type: int
             count,  # type: int
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.issue_level_name = name  # type: str
         self.issue_level_value = value  # type: int

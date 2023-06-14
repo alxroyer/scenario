@@ -20,10 +20,11 @@ import scenario
 import scenario.test
 import scenario.text
 
-from steps.commonargs import ExecCommonArgs  # `ExecCommonArgs` used for inheritance.
+if True:
+    from steps.commonargs import ExecCommonArgs as _ExecCommonArgsImpl  # `ExecCommonArgs` used for inheritance.
 
 
-class ExecScenario(ExecCommonArgs):
+class ExecScenario(_ExecCommonArgsImpl):
 
     def __init__(
             self,
@@ -38,7 +39,7 @@ class ExecScenario(ExecCommonArgs):
             doc_only=None,  # type: bool
             expected_return_code=None,  # type: scenario.ErrorCode
     ):  # type: (...) -> None
-        ExecCommonArgs.__init__(
+        _ExecCommonArgsImpl.__init__(
             self,
             config_values=config_values, config_files=config_files,
             debug_classes=debug_classes,

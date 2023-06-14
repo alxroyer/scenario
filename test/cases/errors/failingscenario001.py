@@ -19,7 +19,8 @@ import pathlib
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class FailingScenario001(scenario.test.TestCase):
@@ -61,7 +62,7 @@ class FailingScenario001(scenario.test.TestCase):
         return scenario.CodeLocation.fromlongstring(self.scenario_expectations.errors[0].location)
 
 
-class CheckLogOutputExceptionDisplay(LogVerificationStep):
+class CheckLogOutputExceptionDisplay(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Log output error display")

@@ -26,7 +26,8 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
-    from ._path import AnyPathType, Path as _PathType
+    from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
     from ._testerrors import TestError as _TestErrorType
@@ -39,7 +40,7 @@ class CampaignExecution:
 
     def __init__(
             self,
-            outdir,  # type: typing.Optional[AnyPathType]
+            outdir,  # type: typing.Optional[_AnyPathType]
     ):  # type: (...) -> None
         """
         :param outdir:
@@ -134,7 +135,7 @@ class TestSuiteExecution:
     def __init__(
             self,
             campaign_execution,  # type: CampaignExecution
-            test_suite_path,  # type: typing.Optional[AnyPathType]
+            test_suite_path,  # type: typing.Optional[_AnyPathType]
     ):  # type: (...) -> None
         """
         :param campaign_execution:
@@ -231,7 +232,7 @@ class TestCaseExecution:
     def __init__(
             self,
             test_suite_execution,  # type: TestSuiteExecution
-            script_path,  # type: typing.Optional[AnyPathType]
+            script_path,  # type: typing.Optional[_AnyPathType]
     ):  # type: (...) -> None
         """
         :param test_suite_execution:

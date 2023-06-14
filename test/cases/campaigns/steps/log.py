@@ -20,19 +20,20 @@ import scenario
 import scenario.test
 import scenario.text
 
-from steps.logverifications import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
 
 
-class CheckCampaignLogExpectations(LogVerificationStep):
+class CheckCampaignLogExpectations(_LogVerificationStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: _ExecCampaignType
             campaign_expectations,  # type: scenario.test.CampaignExpectations
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
 

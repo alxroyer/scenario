@@ -24,16 +24,11 @@ MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
 sys.path.append(str(MAIN_PATH / "src"))
 sys.path.append(str(MAIN_PATH / "test" / "src"))
 
-# `scenario` imports.
-try:
-    # Avoid "Module level import not at top of file" PEP8 warnings.
-    import scenario
-    import scenario.test
-finally:
-    pass
-
 
 if __name__ == "__main__":
+    import scenario
+    import scenario.test
+
     scenario.Args.setinstance(scenario.Args(class_debugging=False))
     if not scenario.Args.getinstance().parse(sys.argv[1:]):
         sys.exit(int(scenario.Args.getinstance().error_code))

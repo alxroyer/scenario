@@ -15,7 +15,13 @@
 # limitations under the License.
 
 
-# The `try` block below avoids IDEs folding the following import lines.
+# Package dependencies.
+if True:
+    from ._pkgdeps import checkpkgdeps as _checkpkgdeps  # `checkpkgdeps()` executed in the module level context.
+    _checkpkgdeps()
+
+
+# Reexports.
 try:
     from . import _paths as paths
     from ._subprocess import SubProcess as SubProcess

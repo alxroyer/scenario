@@ -21,13 +21,13 @@ Step section management.
 import abc
 import typing
 
-from ._stepdefinition import StepDefinition  # `StepDefinition` used for inheritance.
-
+if True:
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._issuelevels import AnyIssueLevelType
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
 
 
-class StepSectionDescription(StepDefinition):
+class StepSectionDescription(_StepDefinitionImpl):
     """
     Step section description.
 
@@ -47,7 +47,7 @@ class StepSectionDescription(StepDefinition):
         """
         :param description: Step section description.
         """
-        StepDefinition.__init__(self)
+        _StepDefinitionImpl.__init__(self)
 
         #: Step section description.
         self.description = description
@@ -62,7 +62,7 @@ class StepSectionDescription(StepDefinition):
         pass
 
 
-class StepSectionBegin(StepDefinition):
+class StepSectionBegin(_StepDefinitionImpl):
     """
     Beginning of a step section.
 
@@ -82,7 +82,7 @@ class StepSectionBegin(StepDefinition):
         """
         Instanciantes a :class:`StepSectionEnd` available with the :attr:`end` attribute.
         """
-        StepDefinition.__init__(self)
+        _StepDefinitionImpl.__init__(self)
 
         #: Final section step pre-created with this starter step.
         #:
@@ -101,7 +101,7 @@ class StepSectionBegin(StepDefinition):
     def skipsection(
             self,
             message,  # type: str
-            issue_level=None,  # type: AnyIssueLevelType
+            issue_level=None,  # type: _AnyIssueLevelType
             issue_id=None,  # type: str
     ):  # type: (...) -> None
         """
@@ -140,7 +140,7 @@ class StepSectionBegin(StepDefinition):
         self.goto(self.end)
 
 
-class StepSectionEnd(StepDefinition):
+class StepSectionEnd(_StepDefinitionImpl):
     """
     End of a step section.
 
@@ -154,7 +154,7 @@ class StepSectionEnd(StepDefinition):
         """
         :param begin: Reference to the beginning step of the step section.
         """
-        StepDefinition.__init__(self)
+        _StepDefinitionImpl.__init__(self)
 
         #: Reference to the beginning step of the step section.
         self.begin = begin  # type: StepSectionBegin

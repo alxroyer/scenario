@@ -23,7 +23,7 @@ import re
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
 class TextFile:
@@ -35,7 +35,7 @@ class TextFile:
 
     def __init__(
             self,
-            path,  # type: AnyPathType
+            path,  # type: _AnyPathType
             mode,  # type: str
             encoding=None,  # type: str
     ):  # type: (...) -> None
@@ -125,7 +125,7 @@ class TextFile:
 
 
 def guessencoding(
-        path,  # type: AnyPathType
+        path,  # type: _AnyPathType
 ):  # type: (...) -> str
     """
     Return the encoding guessed from a text file.

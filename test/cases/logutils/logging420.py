@@ -17,7 +17,9 @@
 import scenario
 import scenario.test
 
-from steps.common import ExecScenario, LogVerificationStep  # `ExecScenario` and `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import ExecScenario as _ExecScenarioImpl  # `ExecScenario`` used for inheritance.
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class Logging420(scenario.test.TestCase):
@@ -34,7 +36,7 @@ class Logging420(scenario.test.TestCase):
         self.addstep(CheckUserIndentation(ExecUserIndentation.getinstance()))
 
 
-class ExecUserIndentation(ExecScenario):
+class ExecUserIndentation(_ExecScenarioImpl):
     """
     .. note:: Step reused in 'logging421.py'.
     """
@@ -46,12 +48,12 @@ class ExecUserIndentation(ExecScenario):
             subscenario=None,  # type: scenario.Path
             scenario_stack_indentation="",  # type: str
     ):  # type: (...) -> None
-        ExecScenario.__init__(self, scenario_path, subscenario=subscenario, config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: False})
+        _ExecScenarioImpl.__init__(self, scenario_path, subscenario=subscenario, config_values={scenario.ConfigKey.LOG_COLOR_ENABLED: False})
 
         self.scenario_stack_indentation = scenario_stack_indentation  # type: str
 
 
-class CheckUserIndentation(LogVerificationStep):
+class CheckUserIndentation(_LogVerificationStepImpl):
     """
     .. note:: Step reused in 'logging421.py'.
     """
@@ -60,7 +62,7 @@ class CheckUserIndentation(LogVerificationStep):
             self,
             exec_step,  # type: ExecUserIndentation
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self._action_result_margin = -1  # type: int
         self._evidence_margin = -1  # type: int
@@ -152,15 +154,14 @@ class CheckUserIndentation(LogVerificationStep):
                         self._logging_margin = _line.find("INFO") - len(self.exec_step.scenario_stack_indentation) - main_indentation
                         self.evidence(f"Logging margin: {self._logging_margin}")
                     if self._log_level_len < 0:
-                        _non_stripped = _line[
+                        _non_stripped = _line[(
                             # Starting position computation.
                             len(self.exec_step.scenario_stack_indentation)
                             + main_indentation
                             + self._logging_margin
                             + len("INFO")
                             # Keep the end of the line from the position computed above.
-                            :
-                        ]  # type: str
+                        ):]  # type: str
                         self._log_level_len = len("INFO") + len(_non_stripped) - len(_non_stripped.lstrip())
                         self.evidence(f"Log level field length: {self._log_level_len}")
 

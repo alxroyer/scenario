@@ -20,12 +20,12 @@ Scenario execution stack.
 
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
-    from ._issuelevels import AnyIssueLevelType
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -155,7 +155,7 @@ class BuildingContext:
         return originator
 
 
-class ScenarioStack(Logger):
+class ScenarioStack(_LoggerImpl):
     """
     Scenario execution stack management.
 
@@ -185,7 +185,7 @@ class ScenarioStack(Logger):
         from ._debugclasses import DebugClass
         from ._logextradata import LogExtraData
 
-        Logger.__init__(self, log_class=DebugClass.SCENARIO_STACK)
+        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_STACK)
         self.setextraflag(LogExtraData.ACTION_RESULT_MARGIN, False)
 
         #: Instances under construction.
@@ -417,7 +417,7 @@ class ScenarioStack(Logger):
     def knownissue(
             self,
             message,  # type: str
-            level=None,  # type: AnyIssueLevelType
+            level=None,  # type: _AnyIssueLevelType
             id=None,  # type: str  # noqa  ## Shadows built-in name 'id'
     ):  # type: (...) -> None
         """

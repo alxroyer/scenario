@@ -20,20 +20,20 @@ Test suite file management.
 
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
-class TestSuiteFile(Logger):
+class TestSuiteFile(_LoggerImpl):
     """
     Test suite file reader.
     """
 
     def __init__(
             self,
-            path,  # type: AnyPathType
+            path,  # type: _AnyPathType
     ):  # type: (...) -> None
         """
         Initializes a test suite file reader from its path.
@@ -43,7 +43,7 @@ class TestSuiteFile(Logger):
         from ._debugclasses import DebugClass
         from ._path import Path
 
-        Logger.__init__(self, log_class=DebugClass.TEST_SUITE_FILE)
+        _LoggerImpl.__init__(self, log_class=DebugClass.TEST_SUITE_FILE)
 
         #: Test suite file path.
         self.path = Path(path)  # type: Path
