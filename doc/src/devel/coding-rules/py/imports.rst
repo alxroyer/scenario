@@ -411,7 +411,7 @@ the fewer project imports shall be placed at the module level:
 
       - Classes used for inheritance,
       - Classes used for global instanciations,
-      - (and that's probably all...)
+      - Functions executed in the module level context.
 
   :Typing imports [typing-proj]:
       As for implementation imports, we will not to define more type checking imports than necessary.

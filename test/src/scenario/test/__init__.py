@@ -19,7 +19,7 @@ import typing
 
 # Package dependencies.
 if True:
-    from ._pkgdeps import checkpkgdeps as _checkpkgdeps
+    from ._pkgdeps import checkpkgdeps as _checkpkgdeps  # `checkpkgdeps()` executed in the module level context.
     _checkpkgdeps()
 
 
