@@ -54,6 +54,8 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl):
         """
         from ._reflection import qualname
         from ._scenariostack import SCENARIO_STACK
+        if typing.TYPE_CHECKING:
+            from ._stepspecifications import AnyStepDefinitionSpecificationType
 
         def _ensurereturntype(step_definition):  # type: (StepDefinition) -> VarStepDefinitionType
             """
@@ -62,12 +64,13 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl):
             _step_definition = typing.cast(typing.Any, step_definition)  # type: VarStepDefinitionType  # noqa  ## Shadows name '_step_definition' from outer scope
             return _step_definition
 
+        _step_specification = cls if (index is None) else (cls, index)  # type: AnyStepDefinitionSpecificationType
         if SCENARIO_STACK.building.scenario_definition:
-            _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(cls, index)  # type: typing.Optional[StepDefinition]
+            _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(_step_specification)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
         if SCENARIO_STACK.current_scenario_definition:
-            _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(cls, index)  # Type already defined above.
+            _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(_step_specification)  # Type already defined above.
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
         if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
@@ -232,51 +235,8 @@ class StepDefinitionHelper:
 
         :param definition: Step definition instance this helper works for.
         """
+        #: Step definition instance this helper works for.
         self.definition = definition
-
-    def matchspecification(
-            self,
-            step_specification,  # type: StepSpecificationType
-    ):  # type: (...) -> bool
-        """
-        Determines whether the given step specification matches the related step definition.
-
-        :param step_specification: Step specification to check.
-        :return: ``True`` when the specification matches the related step definition.
-        """
-        if isinstance(step_specification, StepDefinition):
-            if step_specification is self.definition:
-                return True
-        if isinstance(step_specification, int):
-            if self.definition.number == step_specification:
-                return True
-        if isinstance(step_specification, str):
-            if self.definition.name.endswith(step_specification):
-                return True
-        if isinstance(step_specification, type):
-            if isinstance(self.definition, step_specification):
-                return True
-        return False
-
-    @staticmethod
-    def specificationdescription(
-            step_specification,  # type: typing.Optional[StepSpecificationType]
-    ):  # type: (...) -> str
-        """
-        Returns a human readable representation of the step specification.
-
-        :param step_specification: Step specification to compute a string representation for.
-        :return: String representation.
-        """
-        from ._reflection import qualname
-
-        if isinstance(step_specification, StepDefinition):
-            return f"[instance is {step_specification}]"
-        if isinstance(step_specification, str):
-            return f"[{step_specification!r}]"
-        if isinstance(step_specification, type):
-            return f"[class is {qualname(step_specification)}]"
-        return repr(step_specification)
 
     def saveinitknownissues(self):  # type: (...) -> None
         """
@@ -304,7 +264,7 @@ class StepDefinitionHelper:
 
 class StepMethods:
     """
-    Collection of static methods to help manipulating methods.
+    Collection of static methods to help manipulating step methods.
     """
 
     @staticmethod
@@ -406,17 +366,3 @@ class StepMethods:
         # Do not negate the result of :meth:`StepMethods._hierarchycount()` in order to sort the lower class methods at the beginning of the list.
         methods.sort(key=lambda method: (StepMethods._hierarchycount(logger, method), method.__name__))
         logger.debug("                                         -> %s", StepMethods._dispmethodlist(methods))
-
-
-if typing.TYPE_CHECKING:
-    #: Step specification.
-    #:
-    #: Either:
-    #:
-    #: 1. a step definition instance directly,
-    #: 2. or a step definition class,
-    #: 3. a string representation, being the qualified name of the class or method (right part),
-    #: 4. an integer specifying the step definition number in its scenario.
-    #:
-    #: The :meth:`StepDefinitionHelper.matchspecification()` checks whether a step definition matches such step specification.
-    StepSpecificationType = typing.Union[StepDefinition, typing.Type[StepDefinition], str, int]

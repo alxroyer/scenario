@@ -321,6 +321,7 @@ class SphinxHandlers:
                 ("typing.Dict", "class"),
                 ("typing.Iterable", "class"),
                 ("typing.Optional", "obj"),
+                ("typing.Tuple", "class"),
                 ("typing.Type", "class"),
                 ("typing.Union", "obj"),
                 # `scenario` undocumented items.

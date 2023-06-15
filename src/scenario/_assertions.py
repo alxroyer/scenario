@@ -29,12 +29,12 @@ if True:
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType as _ErrParamType
     from ._assertionhelpers import EvidenceParamType as _EvidenceParamType
-    from ._assertionhelpers import StepExecutionSpecificationType as _StepExecutionSpecificationType
     from ._assertionhelpers import TypeOrTypesType as _TypeOrTypesType
     from ._assertionhelpers import VarComparableType as _VarComparableType
     from ._assertionhelpers import VarItemType as _VarItemType
     from ._path import AnyPathType as _AnyPathType
     from ._stepexecution import StepExecution as _StepExecutionType
+    from ._stepspecifications import AnyStepExecutionSpecificationType as _AnyStepExecutionSpecificationType
     from ._typing import JsonDictType as _JsonDictType
 
 
@@ -162,7 +162,7 @@ class Assertions:
             evidence,
             "%s is not None", saferepr(obj),
         )
-        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
+        return obj  # type: ignore[return-value]  ## "Optional[VarItemType]", expected "VarItemType"
 
     @staticmethod
     def assertisinstance(
@@ -193,7 +193,7 @@ class Assertions:
             evidence,
             "%s is an instance of %s", saferepr(obj), saferepr(type),
         )
-        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
+        return obj  # type: ignore[return-value]  ## "Optional[VarItemType]", expected "VarItemType"
 
     @staticmethod
     def assertisnotinstance(
@@ -223,7 +223,7 @@ class Assertions:
             evidence,
             "%s is not an instance of %s", saferepr(obj), saferepr(type),
         )
-        return obj  # type: ignore[return-value]  ## "Optional[VarObjType]", expected "VarObjType"
+        return obj  # type: ignore[return-value]  ## "Optional[VarItemType]", expected "VarItemType"
 
     @staticmethod
     def assertsameinstances(
@@ -744,7 +744,7 @@ class Assertions:
     @staticmethod
     def asserttimeinstep(
             time,  # type: typing.Optional[float]
-            step,  # type: typing.Optional[_StepExecutionSpecificationType]
+            step,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
             expect_end_time=True,  # type: bool
@@ -753,7 +753,7 @@ class Assertions:
         Checks the date/time is within the given step execution times.
 
         :param time: Date/time to check.
-        :param step: Step specification (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
+        :param step: Step specification (see :obj:`._stepspecifications.AnyStepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :param expect_end_time: ``True`` when the step execution is expected to be terminated.
@@ -761,20 +761,18 @@ class Assertions:
         """
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
-        from ._stepexecution import StepExecution
+        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "step specification")
+        if not isinstance(step, StepExecutionSpecification):
+            step = StepExecutionSpecification(step)
 
-        _step_execution = _assertionhelpers.getstepexecution(step)  # type: StepExecution
+        _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
         _start = _step_execution.getstarttime()  # type: float
         _end = _step_execution.getendtime(expect=expect_end_time)  # type: float
-        assert time >= _start, _assertionhelpers.errmsg(
-            err,
-            "%s not in %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
-        )
-        assert time <= _end, _assertionhelpers.errmsg(
+        assert _start <= time <= _end, _assertionhelpers.errmsg(
             err,
             "%s not in %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
         )
@@ -788,8 +786,8 @@ class Assertions:
     @staticmethod
     def asserttimeinsteps(
             time,  # type: typing.Optional[float]
-            start,  # type: typing.Optional[_StepExecutionSpecificationType]
-            end,  # type: typing.Optional[_StepExecutionSpecificationType]
+            start,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
+            end,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
             expect_end_time=True,  # type: bool
@@ -798,8 +796,8 @@ class Assertions:
         Checks the date/time is in the execution times of a given range of steps.
 
         :param time: Date/time to check.
-        :param start: Specification of the first step of the range (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
-        :param end: Specification of the last step of the range (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
+        :param start: Specification of the first step of the range (see :obj:`._stepspecifications.AnyStepExecutionSpecificationType`).
+        :param end: Specification of the last step of the range (see :obj:`._stepspecifications.AnyStepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :param expect_end_time: ``True`` when the ``end`` step execution is expected to be terminated.
@@ -808,16 +806,21 @@ class Assertions:
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
         from ._stats import TimeStats
+        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "time")
         assert start is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "start step specification")
+        if not isinstance(start, StepExecutionSpecification):
+            start = StepExecutionSpecification(start)
         assert end is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "end step specification")
+        if not isinstance(end, StepExecutionSpecification):
+            end = StepExecutionSpecification(end)
 
-        _step_execution1 = _assertionhelpers.getstepexecution(start)  # type: _StepExecutionType
+        _step_execution1 = start.expect()  # type: _StepExecutionType
         _step_desc1 = str(_step_execution1.definition)  # type: str
         _start1 = _step_execution1.getstarttime()  # type: float
         _end1 = _step_execution1.getendtime(expect=True)  # type: float
-        _step_execution2 = _assertionhelpers.getstepexecution(end)  # type: _StepExecutionType
+        _step_execution2 = end.expect()  # type: _StepExecutionType
         _step_desc2 = str(_step_execution2.definition)  # type: str
         _start2 = _step_execution2.getstarttime()  # type: float
         _end2 = _step_execution2.getendtime(expect=expect_end_time)  # type: float
@@ -828,11 +831,7 @@ class Assertions:
             "asserttimeinsteps()",
             "%s %s should precede %s %s", _step_desc1, _step_execution1.time, _step_desc2, _step_execution2.time,
         )
-        assert time >= _start1, _assertionhelpers.errmsg(
-            err,
-            "%s not in %s->%s %s", callback(f2strtime, time), _step_desc1, _step_desc2, _all,
-        )
-        assert time <= _end2, _assertionhelpers.errmsg(
+        assert _start1 <= time <= _end2, _assertionhelpers.errmsg(
             err,
             "%s not in %s->%s %s", callback(f2strtime, time), _step_desc1, _step_desc2, _all,
         )
@@ -846,7 +845,7 @@ class Assertions:
     @staticmethod
     def asserttimebeforestep(
             time,  # type: typing.Optional[float]
-            step,  # type: typing.Optional[_StepExecutionSpecificationType]
+            step,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> _StepExecutionType
@@ -854,18 +853,21 @@ class Assertions:
         Checks the date/time is (strictly) before a given step executime time.
 
         :param time: Date/time to check.
-        :param step: Step specification (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
+        :param step: Step specification (see :obj:`._stepspecifications.AnyStepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.
         """
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
+        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "step specification")
+        if not isinstance(step, StepExecutionSpecification):
+            step = StepExecutionSpecification(step)
 
-        _step_execution = _assertionhelpers.getstepexecution(step)  # type: _StepExecutionType
+        _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
         _start = _step_execution.getstarttime()  # type: float
         assert time < _start, _assertionhelpers.errmsg(
@@ -882,7 +884,7 @@ class Assertions:
     @staticmethod
     def asserttimeafterstep(
             time,  # type: typing.Optional[float]
-            step,  # type: typing.Optional[_StepExecutionSpecificationType]
+            step,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> _StepExecutionType
@@ -890,18 +892,21 @@ class Assertions:
         Checks the date/time is (strictly) after a given step executime time.
 
         :param time: Date/time to check.
-        :param step: Step specification (see :obj:`._assertionhelpers.StepExecutionSpecificationType`).
+        :param step: Step specification (see :obj:`._stepspecifications.AnyStepExecutionSpecificationType`).
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.
         """
         from ._datetimeutils import f2strtime
         from ._debugutils import callback
+        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "step specification")
+        if not isinstance(step, StepExecutionSpecification):
+            step = StepExecutionSpecification(step)
 
-        _step_execution = _assertionhelpers.getstepexecution(step)  # type: _StepExecutionType
+        _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
         _end = _step_execution.getendtime(expect=True)  # type: float
         assert time > _end, _assertionhelpers.errmsg(

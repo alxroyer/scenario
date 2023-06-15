@@ -19,3 +19,5 @@ Goto
 ====
 
 .. todo:: Documentation needed for the goto feature.
+
+    - Possible to use step specifications. See :py:obj:`scenario._stepspecifications.AnyStepDefinitionSpecificationType`.

@@ -29,12 +29,11 @@ if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
-    from ._stepdefinition import StepSpecificationType as _StepSpecificationType
     from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
+    from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
 
 
 class MetaScenarioDefinition(abc.ABCMeta):
@@ -320,54 +319,38 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, metacla
 
     def getstep(
             self,
-            step_specification=None,  # type: _StepSpecificationType
-            index=None,  # type: int
+            step_specification,  # type: _AnyStepDefinitionSpecificationType
     ):  # type: (...) -> typing.Optional[_StepDefinitionType]
         """
         Finds a step definition.
 
-        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`), or ``None``.
-        :param index: Step index in the matching list. Last item when not specified.
-        :return: Step definition found, if any.
+        :param step_specification: Step specification (see :obj:`._stepspecifications.AnyStepDefinitionSpecificationType`).
+        :return: Step definition found, if any. ``None`` otherwise.
         """
-        from ._stepdefinition import StepDefinitionHelper
+        from ._stepspecifications import StepDefinitionSpecification
 
-        _matching_step_definitions = []  # type: typing.List[_StepDefinitionType]
-        for _step_definition in self.__step_definitions:  # type: _StepDefinitionType
-            if step_specification is None:
-                _matching_step_definitions.append(_step_definition)
-            elif StepDefinitionHelper(_step_definition).matchspecification(step_specification):
-                _matching_step_definitions.append(_step_definition)
-
-        try:
-            if index is None:
-                index = -1
-            return _matching_step_definitions[index]
-        except IndexError:
-            # Default to None.
-            return None
+        if not isinstance(step_specification, StepDefinitionSpecification):
+            step_specification = StepDefinitionSpecification(step_specification)
+        return step_specification.resolve()
 
     def expectstep(
             self,
-            step_specification=None,  # type: _StepSpecificationType
-            index=None,  # type: int
+            step_specification,  # type: _AnyStepDefinitionSpecificationType
     ):  # type: (...) -> _StepDefinitionType
         """
         Expects a step definition.
 
         When the step cannot be found, an exception is raised.
 
-        :param step_specification: Step specification (see :obj:`._stepdefinition.StepSpecificationType`), or ``None``.
-        :param index: Step index in the matching list. Last item when not specified.
-        :return: Expected step.
-        :raise KeyError: When the step definition could not be found.
+        :param step_specification: Step specification (see :obj:`._stepspecifications.AnyStepDefinitionSpecificationType`).
+        :return: Expected step definition.
+        :raise LookupError: When the step definition could not be found.
         """
-        from ._stepdefinition import StepDefinitionHelper
+        from ._stepspecifications import StepDefinitionSpecification
 
-        _step_definition = self.getstep(step_specification, index)  # type: typing.Optional[_StepDefinitionType]
-        if _step_definition is None:
-            raise KeyError(f"No such step {StepDefinitionHelper.specificationdescription(step_specification)} (index: {index!r})")
-        return _step_definition
+        if not isinstance(step_specification, StepDefinitionSpecification):
+            step_specification = StepDefinitionSpecification(step_specification)
+        return step_specification.expect()
 
     @property
     def steps(self):  # type: () -> typing.List[_StepDefinitionType]
@@ -427,13 +410,14 @@ class ScenarioDefinitionHelper:
 
         :param definition: Scenario definition instance this helper works for.
         """
+        from ._logger import Logger
         from ._scenariorunner import SCENARIO_RUNNER
 
         #: Related scenario definition.
         self.definition = definition  # type: ScenarioDefinition
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
-        self._logger = SCENARIO_RUNNER  # type: _LoggerType
+        self._logger = SCENARIO_RUNNER  # type: Logger
 
     def buildsteps(self):  # type: (...) -> None
         """

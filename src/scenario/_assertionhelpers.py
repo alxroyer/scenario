@@ -25,8 +25,6 @@ import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
-    from ._stepdefinition import StepSpecificationType as _StepSpecificationType
-    from ._stepexecution import StepExecution as _StepExecutionType
 
 
 if typing.TYPE_CHECKING:
@@ -48,24 +46,6 @@ if typing.TYPE_CHECKING:
     #:
     #: Declared as a ``typing.TypeVar`` so that item and iterable parameters within the same function call are set with consistent types.
     VarItemType = typing.TypeVar("VarItemType")
-
-    #: Step execution specification.
-    #:
-    #: Either:
-    #:
-    #: - a string representation (see :obj:`._stepdefinition.StepSpecificationType`),
-    #: - a step definition class (see :obj:`._stepdefinition.StepSpecificationType` as well),
-    #: - or the step execution instance directly.
-    #:
-    #: When the specification is a string or a step class, the step execution is determined the following way:
-    #:
-    #: 1. Use the current scenario.
-    #: 2. Find the step definition corresponding to the specification.
-    #: 3. Retrieve its last execution.
-    #:
-    #: If a string or step class only is not enough to find out the expected step execution,
-    #: the step execution instance may be passed on directly.
-    StepExecutionSpecificationType = typing.Union[_StepSpecificationType, _StepExecutionType]
 
 
 #: ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.
@@ -192,26 +172,3 @@ def evidence(
 
             # Save it.
             SCENARIO_STACK.current_scenario_definition.evidence(str(_evidence_message))
-
-
-def getstepexecution(
-        step_execution_specification,  # type: StepExecutionSpecificationType
-):  # type: (...) -> _StepExecutionType
-    """
-    Retrieves the (last) :class:`._stepexecution.StepExecution` instance corresponding to the given specification.
-
-    :param step_execution_specification: Step execution specification (see :obj:`StepExecutionSpecificationType`).
-    :return: Step execution corresponding to the given specification.
-    :raise: Exception when the step execution could not be found.
-    """
-    from ._scenariostack import SCENARIO_STACK
-    from ._stepdefinition import StepDefinition
-    from ._stepexecution import StepExecution
-
-    if isinstance(step_execution_specification, StepExecution):
-        return step_execution_specification
-
-    assert SCENARIO_STACK.current_scenario_definition, "No current scenario"
-    _step_definition = SCENARIO_STACK.current_scenario_definition.expectstep(step_execution_specification)  # type: StepDefinition
-    assert _step_definition.executions, f"No execution for {_step_definition}"
-    return _step_definition.executions[-1]

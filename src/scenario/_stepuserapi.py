@@ -23,7 +23,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
-    from ._stepdefinition import StepSpecificationType as _StepSpecificationType
+    from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
 
 
 class StepUserApi(abc.ABC):
@@ -128,12 +128,12 @@ class StepUserApi(abc.ABC):
 
     def goto(
             self,
-            to_step_specification,  # type: _StepSpecificationType
+            to_step_specification,  # type: _AnyStepDefinitionSpecificationType
     ):  # type: (...) -> None
         """
         Makes the execution jump to the given step.
 
-        :param to_step_specification: Step specification of the step to jump to (see :obj:`._stepdefinition.StepSpecificationType`).
+        :param to_step_specification: Step specification of the step to jump to (see :obj:`._stepspecifications.AnyStepDefinitionSpecificationType`).
         """
         from ._scenariorunner import SCENARIO_RUNNER
 
