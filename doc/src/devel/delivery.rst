@@ -13,22 +13,26 @@
 .. limitations under the License.
 
 
-.. _guidelines:
+.. _delivery:
 
-Guidelines
-==========
+Delivery guidelines
+===================
 
 This section describes guidelines that shall be followed.
 
 Bash commands are assumed to be executed from the root directory of the repository.
 
 
-.. _guidelines.deliver:
+.. _delivery.int:
 
 Deliver on an integration branch
 --------------------------------
 
+On the ``feature/xxx``, ``enhancement/xxx``, ``bugfix/xxx`` branch:
+
 1. Check licence headers:
+
+   When `repo-utils` is available:
 
    .. code-block:: bash
 
@@ -42,7 +46,7 @@ Deliver on an integration branch
 
    .. code-block:: bash
 
-       . ./tools/check-imports.py
+       ./tools/check-imports.py
 
    There should be no error.
    Fix things if needed.
@@ -66,17 +70,19 @@ Deliver on an integration branch
 
        ./tools/update-test-data.py
 
+   If files have been modified, commit them (probably with the ``--amend`` option).
+
    Then launch the test campaign:
 
    .. code-block:: bash
 
        ./test/run-unit-campaign.py
 
-   There may be warnings, but no error.
+   There may be warnings (with known issue references), but no error.
 
 5. Check documentation:
 
-   a. Generation the documentation:
+   a. Generate the documentation:
 
       .. code-block:: bash
 
@@ -89,6 +95,8 @@ Deliver on an integration branch
       - There may be warnings for "duplicate object" (see issue #25)
 
       There shall be no other errors.
+
+      If files have been modified, commit them (probably with the ``--amend`` option).
 
    b. Check the HTML output in 'doc/html/':
 
@@ -110,7 +118,9 @@ Deliver on an integration branch
 
 6. Check files encoding:
 
-   Check all files use utf-8 encoding and unix end-of-line characters, and have the appropriate permissions:
+   Check all files use utf-8 encoding and unix end-of-line characters, and have the appropriate permissions.
+
+   When `repo-utils` is available:
 
    .. code-block:: bash
 
@@ -120,34 +130,30 @@ Deliver on an integration branch
    Check line encoding modifications with ``git diff -b``.
    Commit the modifications (probably with the ``--amend`` option).
 
+7. Deliver into the integration branch:
 
-.. _guidelines.new-version:
+   See :ref:`coding-rules.git.deliver`.
+
+
+.. _delivery.master:
 
 Deliver a new version
 ---------------------
 
-0. Merge on the master branch:
+1. Merge on the master branch:
 
-   .. code-block:: bash
+   See :ref:`coding-rules.git.deliver`,
+   considering the following operations before tagging the reference version.
 
-       git checkout master
-       git merge --squash --ff-only int/vX.Y.Z+
-
-   Update the commit message, then:
-
-   .. code-block:: bash
-
-       git commit
-
-1. Check the scenario version stored in the code:
+2. Check the scenario version stored in the code:
 
    Check the version tuple defined in 'src/pkginfo.py'.
 
    If files have been modified, commit them (probably with the ``--amend`` option).
 
-2. Apply :ref:`delivery checking <guidelines.deliver>` as described before.
+3. Apply :ref:`integration delivery checking <delivery.int>`.
 
-3. Update the documentation:
+4. Update the documentation:
 
    Check the ``copyright`` and ``version`` variables in 'tools/conf/sphinx/conf.py'.
 
@@ -160,20 +166,20 @@ Deliver a new version
 
    Commit modifications (with the ``--amend`` option).
 
-4. Add a tag on the final node:
+5. Add a tag on the final node:
 
    .. code-block:: bash
 
        git tag vX.Y.Z
 
-5. Push on the github repository:
+6. Push on the github repository:
 
    .. code-block:: bash
 
        git push
        git push vX.Y.Z
 
-6. Configure readthedocs:
+7. Configure readthedocs:
 
    Go to the `readthedocs project page <https://readthedocs.org/projects/scenario-testing-framework/>`_.
 

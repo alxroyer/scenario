@@ -26,4 +26,4 @@ This page describes how to develop the `scenario` library.
     env
     design/index
     coding-rules/index
-    guidelines
+    delivery
