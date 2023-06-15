@@ -21,8 +21,8 @@ Scenario events.
 import abc
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
-
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -32,7 +32,7 @@ if typing.TYPE_CHECKING:
     from ._testerrors import TestError as _TestErrorType
 
 
-class ScenarioEvent(StrEnum):
+class ScenarioEvent(_StrEnumImpl):
     """
     Events described by the `scenario` framework.
 

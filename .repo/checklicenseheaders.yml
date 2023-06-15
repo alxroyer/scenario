@@ -31,6 +31,7 @@ paths:
   # Apache 2.0.
   "/.gitignore": "apache-2.0"
   "/README.md": "apache-2.0-no-max-skipped-lines"
+  "/tools/conf/sphinx/rtd-pip-requirements.txt": "apache-2.0"
   "*.conf": "apache-2.0"
   "*.ini": "apache-2.0"
   "*.json": "apache-2.0"
@@ -39,4 +40,5 @@ paths:
   "*.rst": "apache-2.0"
   "*.suite": "apache-2.0"
   "*.uml": "apache-2.0"
+  "*.yaml": "apache-2.0"
   "*.yml": "apache-2.0"

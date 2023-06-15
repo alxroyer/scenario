@@ -18,10 +18,11 @@
 Execution status management.
 """
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 
 
-class ExecutionStatus(StrEnum):
+class ExecutionStatus(_StrEnumImpl):
     """
     Scenario & campaign execution status.
     """

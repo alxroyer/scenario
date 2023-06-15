@@ -141,7 +141,7 @@ SCENARIO_LOGGING = Feature(
         - The known issues registered (see KNOWN_ISSUES),
         - The final status of the test execution.
     """,
-)
+)  # type: Feature
 
 SCENARIO_REPORT = Feature(
     id="SCENARIO_REPORT",
@@ -182,7 +182,7 @@ STEP_PICKING = Feature(
     text="""
         A scenario shall be constituted by picking steps already defined.
     """,
-)
+)  # type: Feature
 
 SUBSCENARIOS = Feature(
     id="SUBSCENARIOS",

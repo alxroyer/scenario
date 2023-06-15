@@ -22,16 +22,17 @@ import inspect
 import types
 import typing
 
-from ._assertions import Assertions  # `Assertions` used for inheritance.
-from ._logger import Logger  # `Logger` used for inheritance.
-from ._stepuserapi import StepUserApi  # `StepUserApi` used for inheritance.
-
+if True:
+    from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType
+    from ._logger import Logger as _LoggerType
 
 
-class StepDefinition(StepUserApi, Assertions, Logger):
+class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl):
     """
     Step definition management.
     """
@@ -102,9 +103,9 @@ class StepDefinition(StepUserApi, Assertions, Logger):
         if self.method:
             self.location = CodeLocation.frommethod(self.method)
 
-        StepUserApi.__init__(self)
-        Assertions.__init__(self)
-        Logger.__init__(self, log_class=self.name)
+        _StepUserApiImpl.__init__(self)
+        _AssertionsImpl.__init__(self)
+        _LoggerImpl.__init__(self, log_class=self.name)
 
         # Activate debugging by default for step definitions.
         self.enabledebug(True)
@@ -268,7 +269,7 @@ class StepMethods:
 
     @staticmethod
     def _hierarchycount(
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
             method,  # type: types.MethodType
     ):  # type: (...) -> int
         """
@@ -307,7 +308,7 @@ class StepMethods:
 
     @staticmethod
     def sortbynames(
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
             methods,  # type: typing.List[types.MethodType]
     ):  # type: (...) -> None
         """
@@ -322,7 +323,7 @@ class StepMethods:
 
     @staticmethod
     def sortbyhierarchythennames(
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
             methods,  # type: typing.List[types.MethodType]
     ):  # type: (...) -> None
         """
@@ -345,7 +346,7 @@ class StepMethods:
 
     @staticmethod
     def sortbyreversehierarchythennames(
-            logger,  # type: Logger
+            logger,  # type: _LoggerType
             methods,  # type: typing.List[types.MethodType]
     ):  # type: (...) -> None
         """

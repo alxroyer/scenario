@@ -25,15 +25,15 @@ import sys
 import types
 import typing
 
-from ._debugclasses import DebugClass  # `DebugClass` used to instanciate global variable.
-from ._logger import Logger  # `Logger` used to instanciate global variable.
-
+if True:
+    from ._debugclasses import DebugClass as _DebugClassImpl  # `DebugClass` used to instanciate global variable.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used to instanciate global variable.
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
 #: Logger instance for reflective programming.
-REFLECTION_LOGGER = Logger(log_class=DebugClass.REFLECTION)
+REFLECTION_LOGGER = _LoggerImpl(log_class=_DebugClassImpl.REFLECTION)  # type: _LoggerImpl
 
 
 def qualname(
@@ -99,7 +99,7 @@ def isiterable(
 
 
 def importmodulefrompath(
-        script_path,  # type: AnyPathType
+        script_path,  # type: _AnyPathType
         sys_modules_cache=True,  # type: bool
 ):  # type: (...) -> types.ModuleType
     """
@@ -171,7 +171,7 @@ def importmodulefrompath(
 
 
 def getloadedmodulefrompath(
-        script_path,  # type: AnyPathType
+        script_path,  # type: _AnyPathType
 ):  # type: (...) -> typing.Optional[types.ModuleType]
     """
     Retrieves a module already loaded corresponding to the given path.
@@ -191,8 +191,41 @@ def getloadedmodulefrompath(
     return _module
 
 
+def extendnamespacepackagepath(
+        namespace_package,  # type: types.ModuleType
+        root_src_path,  # type: _AnyPathType
+):  # type: (...) -> None
+    """
+    Extends the list of paths that define a namespace package.
+
+    See:
+    - [PEP 382](https://peps.python.org/pep-0382/): Namespace Packages
+    - [PEP 420](https://peps.python.org/pep-0420/): Implicit Namespace Packages
+
+    :param namespace_package: Namespace package which path to extend.
+    :param root_src_path: New root source path.
+    :raise ImportError: If the namespace package already includes the given path.
+    """
+    # Determine the new path from `root_src_path` and the namespace package name.
+    _new_path = pathlib.Path(root_src_path).resolve()  # type: pathlib.Path
+    for _part in qualname(namespace_package).split("."):  # type: str
+        _new_path = _new_path / _part
+
+    # Check the namespace package does not already include the path.
+    for _path in namespace_package.__path__:  # type: str
+        if pathlib.Path(_path).samefile(_new_path):
+            raise ImportError(f"{namespace_package} already includes {_new_path}")
+
+    # Extend the namespace package with the new path.
+    namespace_package.__path__.append(str(_new_path))
+
+    # Eventually add the source root path in `sys.path` (if not already in).
+    if not any([pathlib.Path(_sys_path).exists() and pathlib.Path(_sys_path).samefile(root_src_path) for _sys_path in sys.path]):
+        sys.path.append(str(pathlib.Path(root_src_path)))
+
+
 def checkfuncqualname(
-        file,  # type: AnyPathType
+        file,  # type: _AnyPathType
         line,  # type: int
         func_name,  # type: str
 ):  # type: (...) -> str

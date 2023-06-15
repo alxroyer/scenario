@@ -44,9 +44,6 @@ import typing
 # Explicit export declarations (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
 __all__ = []  # type: typing.List[str]
 
-# Used to avoid "Module level import not at top of file" PEP8 warnings for re-exports below.
-__pkg_def = True  # type: bool
-
 
 # Documentation management
 # ========================
@@ -64,7 +61,7 @@ Package information
 ===================
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: info
 
@@ -83,7 +80,7 @@ Base classes
 Classes that define a test scenario.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Scenario
 
@@ -102,7 +99,7 @@ if __pkg_def:
     from ._scenariodefinition import ScenarioDefinition as ScenarioDefinition
     __all__.append("ScenarioDefinition")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Step
 
@@ -122,7 +119,7 @@ if __pkg_def:
     from ._stepdefinition import StepDefinition as StepDefinition
     __all__.append("StepDefinition")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ActionResult
 
@@ -151,7 +148,7 @@ Once you have opted for :ref:`step objects <step-objects>`,
 classes that can be used to define :ref:`step sections <step-sections>`.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: StepSectionDescription
 
@@ -163,7 +160,7 @@ if __pkg_def:
     from ._stepsection import StepSectionDescription as StepSectionDescription
     __all__.append("StepSectionDescription")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: StepSectionBegin
 
@@ -204,7 +201,7 @@ if typing.TYPE_CHECKING:
     from ._stepspecifications import AnyStepDefinitionSpecificationType as AnyStepDefinitionSpecificationType
     __all__.append("AnyStepDefinitionSpecificationType")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: StepDefinitionSpecification
 
@@ -226,7 +223,7 @@ if typing.TYPE_CHECKING:
     from ._stepspecifications import AnyStepExecutionSpecificationType as AnyStepExecutionSpecificationType
     __all__.append("AnyStepExecutionSpecificationType")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: StepExecutionSpecification
 
@@ -248,7 +245,7 @@ or in :ref:`test libraries <test-libs>`.
 Assertion routines also provide an easy way to collect :ref:`evidence <evidence>`.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Assertions
 
@@ -262,7 +259,7 @@ if __pkg_def:
     from ._assertions import Assertions as Assertions
     __all__.append("Assertions")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: assertionhelpers
 
@@ -295,7 +292,7 @@ if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as AnyIssueLevelType
     __all__.append("AnyIssueLevelType")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: IssueLevel
 
@@ -314,7 +311,7 @@ Logging
 Use `scenario` :ref:`logging facilities <logging>` to facilitate test execution analyses.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Logger
 
@@ -327,7 +324,7 @@ if __pkg_def:
     from ._logger import Logger as Logger
     __all__.append("Logger")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: logging
 
@@ -338,7 +335,7 @@ if __pkg_def:
     from ._loggermain import MAIN_LOGGER as logging  # noqa  ## Constant variable imported as non-constant
     __all__.append("logging")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Console
 
@@ -349,7 +346,7 @@ if __pkg_def:
     from ._console import Console as Console
     __all__.append("Console")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: LogExtraData
 
@@ -360,7 +357,7 @@ if __pkg_def:
     from ._logextradata import LogExtraData as LogExtraData
     __all__.append("LogExtraData")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: debug
 
@@ -379,7 +376,7 @@ Configuration
 Modulate test executions thanks to the `scenario` :ref:`open configuration database <config-db>`.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: conf
 
@@ -390,7 +387,7 @@ if __pkg_def:
     from ._configdb import CONFIG_DB as conf  # noqa  ## Constant variable imported as non-constant
     __all__.append("conf")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ConfigNode
 
@@ -399,7 +396,7 @@ if __pkg_def:
     from ._confignode import ConfigNode as ConfigNode
     __all__.append("ConfigNode")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ConfigKey
 
@@ -407,7 +404,7 @@ if __pkg_def:
 
         .. seealso:: :class:`._scenarioconfig.ScenarioConfig.Key` implementation.
     """
-    # Note: Can't re-export `ScenarioConfig.Key` as `ConfigKey` with a single `import` statement. Use an intermediate private instance.
+    # Note: Can't reexport `ScenarioConfig.Key` as `ConfigKey` with a single `import` statement. Use an intermediate private instance.
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfig
     ConfigKey = _ScenarioConfig.Key
     __all__.append("ConfigKey")
@@ -420,7 +417,7 @@ Launchers
 Classes for launching test scenarios and campaigns from :ref:`custom launcher scripts <launcher>`.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute: runner
 
@@ -437,7 +434,7 @@ if __pkg_def:
     from ._scenariorunner import SCENARIO_RUNNER as runner  # noqa  ## Constant variable imported as non-constant
     __all__.append("runner")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: campaign_runner
 
@@ -454,7 +451,7 @@ if __pkg_def:
     from ._campaignrunner import CAMPAIGN_RUNNER as campaign_runner  # noqa  ## Constant variable imported as non-constant
     __all__.append("campaign_runner")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Args
 
@@ -465,7 +462,7 @@ if __pkg_def:
     from ._args import Args as Args
     __all__.append("Args")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ScenarioArgs
 
@@ -476,7 +473,7 @@ if __pkg_def:
     from ._scenarioargs import ScenarioArgs as ScenarioArgs
     __all__.append("ScenarioArgs")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: CampaignArgs
 
@@ -487,7 +484,7 @@ if __pkg_def:
     from ._campaignargs import CampaignArgs as CampaignArgs
     __all__.append("CampaignArgs")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ErrorCode
 
@@ -506,7 +503,7 @@ Handlers
 Register :ref:`handlers <handlers>` for reactive code to be called on events.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: handlers
 
@@ -517,7 +514,7 @@ if __pkg_def:
     from ._handlers import HANDLERS as handlers  # noqa  ## Constant variable imported as non-constant
     __all__.append("handlers")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Event
 
@@ -528,7 +525,7 @@ if __pkg_def:
     from ._scenarioevents import ScenarioEvent as Event
     __all__.append("Event")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: EventData
 
@@ -548,7 +545,7 @@ In certain circumstances (:ref:`launcher scripts <launcher>`, :ref:`handlers <ha
 you may need to access information about test execution.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: stack
 
@@ -559,7 +556,7 @@ if __pkg_def:
     from ._scenariostack import SCENARIO_STACK as stack  # noqa  ## Constant variable imported as non-constant
     __all__.append("stack")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ExecutionStatus
 
@@ -570,7 +567,7 @@ if __pkg_def:
     from ._executionstatus import ExecutionStatus as ExecutionStatus
     __all__.append("ExecutionStatus")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ScenarioExecution
 
@@ -579,7 +576,7 @@ if __pkg_def:
     from ._scenarioexecution import ScenarioExecution as ScenarioExecution
     __all__.append("ScenarioExecution")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: StepExecution
 
@@ -588,7 +585,7 @@ if __pkg_def:
     from ._stepexecution import StepExecution as StepExecution
     __all__.append("StepExecution")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ActionResultExecution
 
@@ -597,7 +594,7 @@ if __pkg_def:
     from ._actionresultexecution import ActionResultExecution as ActionResultExecution
     __all__.append("ActionResultExecution")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: CampaignExecution
 
@@ -606,7 +603,7 @@ if __pkg_def:
     from ._campaignexecution import CampaignExecution as CampaignExecution
     __all__.append("CampaignExecution")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: TestSuiteExecution
 
@@ -615,7 +612,7 @@ if __pkg_def:
     from ._campaignexecution import TestSuiteExecution as TestSuiteExecution
     __all__.append("TestSuiteExecution")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: TestCaseExecution
 
@@ -629,7 +626,7 @@ __doc__ += """
 :ref:`Error management <errors>`:
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: TestError
 
@@ -640,7 +637,7 @@ if __pkg_def:
     from ._testerrors import TestError as TestError
     __all__.append("TestError")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ExceptionError
 
@@ -651,7 +648,7 @@ if __pkg_def:
     from ._testerrors import ExceptionError as ExceptionError
     __all__.append("ExceptionError")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: KnownIssue
 
@@ -667,7 +664,7 @@ __doc__ += """
 Statistics:
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: TimeStats
 
@@ -678,7 +675,7 @@ if __pkg_def:
     from ._stats import TimeStats as TimeStats
     __all__.append("TimeStats")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: ExecTotalStats
 
@@ -697,7 +694,7 @@ Reports
 The following objects give you the opportunity to read and write :ref:`scenario and campaign reports <reports>`.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: report
 
@@ -708,7 +705,7 @@ if __pkg_def:
     from ._scenarioreport import SCENARIO_REPORT as report  # noqa  ## Constant variable imported as non-constant
     __all__.append("report")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: campaign_report
 
@@ -727,7 +724,7 @@ Miscellaneous
 The `scenario` framework also exposes a couple of useful classes and types that may be used.
 """
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: Path
 
@@ -751,7 +748,7 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType as AnyPathType
     __all__.append("AnyPathType")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: SubProcess
 
@@ -772,7 +769,7 @@ if typing.TYPE_CHECKING:
     from ._subprocess import VarSubProcessType as VarSubProcessType
     __all__.append("VarSubProcessType")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: CodeLocation
 
@@ -781,7 +778,7 @@ if __pkg_def:
     from ._locations import CodeLocation as CodeLocation
     __all__.append("CodeLocation")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: datetime
 
@@ -792,7 +789,7 @@ if __pkg_def:
     from . import _datetimeutils as datetime
     __all__.append("datetime")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: timezone
 
@@ -803,7 +800,7 @@ if __pkg_def:
     from . import _timezoneutils as timezone
     __all__.append("timezone")
 
-if __pkg_def:
+if True:
     __doc__ += """
     .. py:attribute:: enum
 

@@ -20,12 +20,12 @@
 
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
-
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._console import Console as _ConsoleType
-    from ._issuelevels import AnyIssueLevelType
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
 
 
@@ -38,7 +38,7 @@ class ScenarioConfig:
     and the configuration database (see: :class:`._configdb.ConfigDatabase`).
     """
 
-    class Key(StrEnum):
+    class Key(_StrEnumImpl):
         """
         `scenario` configuration keys.
         """
@@ -320,7 +320,7 @@ class ScenarioConfig:
                 # Save the association between the new issue level name and value.
                 IssueLevel.addname(_name, _value)
 
-    def issuelevelerror(self):  # type: (...) -> typing.Optional[AnyIssueLevelType]
+    def issuelevelerror(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
         """
         Retrieves the issue level from and above which known issues should be considered as errors.
 
@@ -338,7 +338,7 @@ class ScenarioConfig:
 
         return IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_ERROR, type=int))
 
-    def issuelevelignored(self):  # type: (...) -> typing.Optional[AnyIssueLevelType]
+    def issuelevelignored(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
         """
         Retrieves the issue level from and under which known issues should be ignored.
 

@@ -15,7 +15,6 @@
 # limitations under the License.
 
 
-# The `try` block below avoids IDEs folding the following import lines.
 try:
     from ._commands import PY_SPHINX_APIDOC_CMD as PY_SPHINX_APIDOC_CMD
     from ._commands import PY_SPHINX_BUILD_CMD as PY_SPHINX_BUILD_CMD

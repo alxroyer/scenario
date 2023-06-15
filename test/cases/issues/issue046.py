@@ -21,7 +21,8 @@ import scenario
 import scenario.test
 import scenario.text
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
 
@@ -54,7 +55,7 @@ class Issue46(scenario.test.TestCase):
         }))
 
 
-class CheckErrorDisplay(LogVerificationStep):
+class CheckErrorDisplay(_LogVerificationStepImpl):
 
     def __init__(
             self,
@@ -62,7 +63,7 @@ class CheckErrorDisplay(LogVerificationStep):
             script_path,  # type: scenario.Path
             error_messages,  # type: typing.Dict[str, int]
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
         self.script_path = script_path  # type: scenario.Path
         self.error_messages = error_messages  # type: typing.Dict[str, int]

@@ -20,7 +20,7 @@ import typing
 import scenario
 
 if typing.TYPE_CHECKING:
-    from ._notset import NotSetType
+    from ._notset import NotSetType as _NotSetType
 
 
 class ErrorExpectations:
@@ -29,9 +29,9 @@ class ErrorExpectations:
             message,  # type: str
             cls=None,  # type: typing.Optional[typing.Union[typing.Type[scenario.ExceptionError], typing.Type[scenario.KnownIssue]]]
             exception_type=None,  # type: typing.Optional[str]
-            level=None,  # type: typing.Optional[typing.Union[scenario.AnyIssueLevelType, NotSetType]]
-            id=None,  # type: typing.Optional[typing.Union[str, NotSetType]]  # noqa  ## Shadows built-in name 'id'
-            url=None,  # type: typing.Optional[typing.Union[str, NotSetType]]
+            level=None,  # type: typing.Optional[typing.Union[scenario.AnyIssueLevelType, _NotSetType]]
+            id=None,  # type: typing.Optional[typing.Union[str, _NotSetType]]  # noqa  ## Shadows built-in name 'id'
+            url=None,  # type: typing.Optional[typing.Union[str, _NotSetType]]
             location=None,  # type: typing.Optional[str]
     ):  # type: (...) -> None
         assert (exception_type is None) or (cls is scenario.ExceptionError)
@@ -41,9 +41,9 @@ class ErrorExpectations:
         self.error_type = exception_type  # type: typing.Optional[str]
         if (self.error_type is None) and (self.cls is scenario.KnownIssue):
             self.error_type = "known-issue"
-        self.level = level  # type: typing.Optional[typing.Union[scenario.AnyIssueLevelType, NotSetType]]
-        self.id = id  # type: typing.Optional[typing.Union[str, NotSetType]]
-        self.url = url  # type: typing.Optional[typing.Union[str, NotSetType]]
+        self.level = level  # type: typing.Optional[typing.Union[scenario.AnyIssueLevelType, _NotSetType]]
+        self.id = id  # type: typing.Optional[typing.Union[str, _NotSetType]]
+        self.url = url  # type: typing.Optional[typing.Union[str, _NotSetType]]
         self.message = message  # type: str
         self.location = location  # type: typing.Optional[str]
 

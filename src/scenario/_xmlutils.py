@@ -23,7 +23,7 @@ import typing
 import xml.dom.minidom
 
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
 class Xml:
@@ -70,7 +70,7 @@ class Xml:
 
         @staticmethod
         def read(
-                path,  # type: AnyPathType
+                path,  # type: _AnyPathType
         ):  # type: (...) -> Xml.Document
             """
             Reads from an XML file.
@@ -86,7 +86,7 @@ class Xml:
 
         def write(
                 self,
-                path,  # type: AnyPathType
+                path,  # type: _AnyPathType
         ):  # type: (...) -> None
             """
             Writes the document into a file.

@@ -20,10 +20,11 @@ import scenario
 import scenario.test
 import scenario.text
 
-from steps.logprocessing import LogProcessor  # `LogProcessor` used for inheritance.
+if True:
+    from steps.logprocessing import LogProcessor as _LogProcessorImpl  # `LogProcessor` used for inheritance.
 
 
-class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
+class LogVerificationStep(scenario.test.VerificationStep, _LogProcessorImpl):
     """
     Base step that facilitates analyses of the log output.
     """
@@ -34,7 +35,7 @@ class LogVerificationStep(scenario.test.VerificationStep, LogProcessor):
             encoding=None,  # type: str
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
-        LogProcessor.__init__(self, encoding)
+        _LogProcessorImpl.__init__(self, encoding)
 
     def _findlines(
             self,

@@ -16,7 +16,8 @@
 
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class KnownIssues020(scenario.test.TestCase):
@@ -60,7 +61,7 @@ class KnownIssues020(scenario.test.TestCase):
         self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), _scenario_expectations))
 
 
-class CheckKnownIssuesLogOutput(LogVerificationStep):
+class CheckKnownIssuesLogOutput(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Known issues logging output")

@@ -22,12 +22,13 @@ import logging
 import re
 import typing
 
-from ._testerrors import TestError  # `TestError` used for inheritance.
-
+if True:
+    from ._testerrors import TestError as _TestErrorImpl  # `TestError` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._issuelevels import AnyIssueLevelType
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._logger import Logger as _LoggerType
-    from ._typing import JsonDictType
+    from ._testerrors import TestError as _TestErrorType
+    from ._typing import JsonDictType as _JsonDictType
 
 
 if typing.TYPE_CHECKING:
@@ -41,7 +42,7 @@ if typing.TYPE_CHECKING:
     IssueUrlBuilderType = typing.Callable[[str], typing.Optional[str]]
 
 
-class KnownIssue(TestError):
+class KnownIssue(_TestErrorImpl):
     """
     Known issue object.
 
@@ -73,7 +74,7 @@ class KnownIssue(TestError):
     def __init__(
             self,
             message,  # type: str
-            level=None,  # type: AnyIssueLevelType
+            level=None,  # type: _AnyIssueLevelType
             id=None,  # type: str  # noqa  ## Shadows built-in name 'id'
             url=None,  # type: str
     ):  # type: (...) -> None
@@ -88,14 +89,14 @@ class KnownIssue(TestError):
         from ._issuelevels import IssueLevel
         from ._locations import CodeLocation, EXECUTION_LOCATIONS
 
-        TestError.__init__(
+        _TestErrorImpl.__init__(
             self,
             message=message,
             location=EXECUTION_LOCATIONS.fromcurrentstack(limit=1, fqn=True)[-1],
         )
 
         #: Issue level.
-        self.level = level  # type: typing.Optional[AnyIssueLevelType]
+        self.level = level  # type: typing.Optional[_AnyIssueLevelType]
         if isinstance(self.level, int):
             # Try to match with a named issue level.
             self.level = IssueLevel.parse(self.level)
@@ -247,7 +248,7 @@ class KnownIssue(TestError):
         if self.url:
             logger.log(level, f"%s  %s", indent, self.url)
 
-    def tojson(self):  # type: (...) -> JsonDictType
+    def tojson(self):  # type: (...) -> _JsonDictType
         """
         Converts the :class:`._testerrors.TestError` instance into a JSON dictionary.
 
@@ -258,7 +259,7 @@ class KnownIssue(TestError):
             "type": "known-issue",
             "message": self.message,
             "location": self.location.tolongstring(),
-        }  # type: JsonDictType
+        }  # type: _JsonDictType
 
         # Optional fields.
         if self.level is not None:
@@ -272,8 +273,8 @@ class KnownIssue(TestError):
 
     @staticmethod
     def fromjson(
-            json_data,  # type: JsonDictType
-    ):  # type: (...) -> TestError
+            json_data,  # type: _JsonDictType
+    ):  # type: (...) -> _TestErrorType
         """
         Builds a :class:`KnownIssue` instance from its JSON representation.
 

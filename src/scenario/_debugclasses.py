@@ -20,10 +20,11 @@
 The :class:`DebugClass` enum defines the `scenario` debug classes (see: :class:`._logger.Logger`).
 """
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 
 
-class DebugClass(StrEnum):
+class DebugClass(_StrEnumImpl):
     """
     `scenario` debug classes.
     """

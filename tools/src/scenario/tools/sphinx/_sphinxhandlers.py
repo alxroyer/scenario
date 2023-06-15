@@ -327,6 +327,7 @@ class SphinxHandlers:
                 # `scenario` undocumented items.
                 ("DemoArgs", "class"),
                 ("scenario.test", "mod"),
+                ("scenario.text", "mod"),
                 ("scenario.tools", "mod"),
                 ("scenario.tools.data.scenarios", "data"),
             ):

@@ -20,14 +20,14 @@ Campaign runner program arguments.
 
 import typing
 
-from ._args import Args  # `Args` used for inheritance.
-from ._scenarioargs import CommonExecArgs  # `CommonExecArgs` used for inheritance.
-
+if True:
+    from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._scenarioargs import CommonExecArgs as _CommonExecArgsImpl  # `CommonExecArgs` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
 
 
-class CampaignArgs(Args, CommonExecArgs):
+class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
     """
     Campaign runner program arguments.
     """
@@ -48,11 +48,11 @@ class CampaignArgs(Args, CommonExecArgs):
         """
         from ._path import Path
 
-        Args.__init__(self, class_debugging=True)
+        _ArgsImpl.__init__(self, class_debugging=True)
 
         self.setdescription("Scenario campaign execution.")
 
-        CommonExecArgs.__init__(self)
+        _CommonExecArgsImpl.__init__(self)
 
         #: Current directory as the default output directory flag.
         self._default_outdir_cwd = default_outdir_cwd
@@ -116,9 +116,9 @@ class CampaignArgs(Args, CommonExecArgs):
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
 
-        if not Args._checkargs(self, args):
+        if not _ArgsImpl._checkargs(self, args):
             return False
-        if not CommonExecArgs._checkargs(self, args):
+        if not _CommonExecArgsImpl._checkargs(self, args):
             return False
 
         if self._outdir is None:

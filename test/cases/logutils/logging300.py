@@ -20,7 +20,8 @@ import typing
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class Logging300(scenario.test.TestCase):
@@ -61,7 +62,7 @@ class Logging300(scenario.test.TestCase):
         self.addstep(CheckLogColors(ExecScenario.getinstance(2)))
 
 
-class CheckLogColors(LogVerificationStep):
+class CheckLogColors(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         from steps.common import ExecScenario

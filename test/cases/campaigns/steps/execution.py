@@ -21,10 +21,11 @@ import scenario
 import scenario.test
 import scenario.text
 
-from steps.commonargs import ExecCommonArgs  # `ExecCommonArgs` used for inheritance.
+if True:
+    from steps.commonargs import ExecCommonArgs as _ExecCommonArgsImpl  # `ExecCommonArgs` used for inheritance.
 
 
-class ExecCampaign(ExecCommonArgs):
+class ExecCampaign(_ExecCommonArgsImpl):
 
     def __init__(
             self,
@@ -37,7 +38,7 @@ class ExecCampaign(ExecCommonArgs):
             dt_subdir=None,  # type: bool
             doc_only=None,  # type: bool
     ):  # type: (...) -> None
-        ExecCommonArgs.__init__(
+        _ExecCommonArgsImpl.__init__(
             self,
             config_values=config_values,
             config_files=config_files,

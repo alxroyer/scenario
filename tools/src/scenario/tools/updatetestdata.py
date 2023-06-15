@@ -18,7 +18,6 @@ import re
 import typing
 
 import scenario
-import scenario.test
 
 
 class TestData:
@@ -41,7 +40,19 @@ class TestData:
 
     @property
     def const_name(self):  # type: () -> str
+        import scenario
+        from scenario._reflection import extendnamespacepackagepath  # noqa  ## Access to protected member
+        from ._paths import TEST_SRC_PATH
+
         if not self.__const_name:
+            # Local import in order to avoid a `scenario.tools` -> `scenario.test` dependency.
+            # Extend the `scenario` namespace package paths if needed.
+            try:
+                import scenario.test
+            except ImportError:
+                extendnamespacepackagepath(namespace_package=scenario, root_src_path=TEST_SRC_PATH)
+                import scenario.test  # Local import in order to avoid a `scenario.tools` -> `scenario.test` dependency.
+
             # Search for the test data constant name in the `scenario.test.paths` module.
             _vars = vars(scenario.test.paths)  # type: typing.Dict[str, typing.Any]
             for _var_name in _vars:  # type: str

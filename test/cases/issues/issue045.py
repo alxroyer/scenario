@@ -17,7 +17,8 @@
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class Issue45(scenario.test.TestCase):
@@ -37,7 +38,7 @@ class Issue45(scenario.test.TestCase):
         self.addstep(CheckLocalImport(ExecScenario.getinstance()))
 
 
-class CheckModuleName(LogVerificationStep):
+class CheckModuleName(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Module name")
@@ -49,7 +50,7 @@ class CheckModuleName(LogVerificationStep):
             )
 
 
-class CheckLocalImport(LogVerificationStep):
+class CheckLocalImport(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Local import")

@@ -19,15 +19,16 @@ import typing
 import scenario
 import scenario.test
 
-from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils  # `KnownIssueLevelUtils` used for inheritance.
-from steps.common import ExecScenario  # `ExecScenario` used for inheritance.
+if True:
+    from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils as _KnownIssueLevelUtilsImpl  # `KnownIssueLevelUtils` used for inheritance.
+    from steps.common import ExecScenario as _ExecScenarioImpl  # `ExecScenario` used for inheritance.
 
 
-class KnownIssues180(scenario.test.TestCase, KnownIssueLevelUtils):
+class KnownIssues180(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):
 
     def __init__(self):  # type: (...) -> None
         from knownissues.steps.knownissuelevelutils import CheckFinalResultsAscendingIssueLevelOrder
-        from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
+        from steps.common import CheckFinalResultsLogExpectations, ExecScenario, ParseFinalResultsLog
 
         scenario.test.TestCase.__init__(
             self,
@@ -58,13 +59,13 @@ class KnownIssues180(scenario.test.TestCase, KnownIssueLevelUtils):
         self.addstep(CheckFinalResultsAscendingIssueLevelOrder(ParseFinalResultsLog.getinstance()))
 
 
-class ExecKnownIssueLevelScenarios(ExecScenario, KnownIssueLevelUtils):
+class ExecKnownIssueLevelScenarios(_ExecScenarioImpl, _KnownIssueLevelUtilsImpl):
 
     def __init__(
             self,
             config_values,  # type: scenario.test.configvalues.ConfigValuesType
     ):  # type: (...) -> None
-        ExecScenario.__init__(
+        _ExecScenarioImpl.__init__(
             self,
             # Prepare a tmp script path for each issue level.
             scenario_paths=self._mktmppaths(),
