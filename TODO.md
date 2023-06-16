@@ -17,7 +17,6 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #79: Hazardous behaviour of `ScenarioDefinition.getstep()`.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
