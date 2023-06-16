@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from simplescenario import SimpleScenario  # `SimpleScenario` used for inheritance.
+if True:
+    from simplescenario import SimpleScenario as _SimpleScenarioImpl  # `SimpleScenario` used for inheritance.
 
 
-class InheritingScenario(SimpleScenario):
+class InheritingScenario(_SimpleScenarioImpl):
 
     def __init__(self):  # type: (...) -> None
-        SimpleScenario.__init__(self)
+        _SimpleScenarioImpl.__init__(self)
 
         self.setattribute("TITLE", "Inheriting scenario sample")
 

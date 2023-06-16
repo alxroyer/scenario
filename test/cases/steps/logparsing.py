@@ -19,10 +19,11 @@ import typing
 
 import scenario.test
 
-from steps.logprocessing import LogProcessor  # `LogProcessor` used for inheritance.
+if True:
+    from steps.logprocessing import LogProcessor as _LogProcessorImpl  # `LogProcessor` used for inheritance.
 
 
-class LogParserStep(scenario.test.VerificationStep, LogProcessor, metaclass=abc.ABCMeta):
+class LogParserStep(scenario.test.VerificationStep, _LogProcessorImpl, metaclass=abc.ABCMeta):
     """
     Base class for steps which purpose is to parse a :class:`scenario.test.ExecutionStep` log output.
     """
@@ -33,7 +34,7 @@ class LogParserStep(scenario.test.VerificationStep, LogProcessor, metaclass=abc.
             encoding=None,  # type: str
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
-        LogProcessor.__init__(self, encoding)
+        _LogProcessorImpl.__init__(self, encoding)
 
     def step(self):  # type: (...) -> None
         # Let the child class set the step description by setting the :attr:`scenario.scenariodefinition.ScenarioDefinition.description` attribute.

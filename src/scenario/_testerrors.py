@@ -25,7 +25,7 @@ import typing
 if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
-    from ._typing import JsonDictType
+    from ._typing import JsonDictType as _JsonDictType
 
 
 class TestError(Exception):
@@ -119,7 +119,7 @@ class TestError(Exception):
         else:
             logger.log(level, "%s%s", indent, str(self))
 
-    def tojson(self):  # type: (...) -> JsonDictType
+    def tojson(self):  # type: (...) -> _JsonDictType
         """
         Converts the :class:`TestError` instance into a JSON dictionary.
 
@@ -127,14 +127,14 @@ class TestError(Exception):
         """
         _json = {
             "message": self.message,
-        }  # type: JsonDictType
+        }  # type: _JsonDictType
         if self.location:
             _json["location"] = self.location.tolongstring()
         return _json
 
     @staticmethod
     def fromjson(
-            json_data,  # type: JsonDictType
+            json_data,  # type: _JsonDictType
     ):  # type: (...) -> TestError
         """
         Builds a :class:`TestError` instance from its JSON representation.
@@ -228,17 +228,17 @@ class ExceptionError(TestError):
         else:
             super().logerror(logger, level=level, indent=indent)
 
-    def tojson(self):  # type: (...) -> JsonDictType
+    def tojson(self):  # type: (...) -> _JsonDictType
         _json = {
             "type": self.exception_type,
             "message": self.message,
             "location": self.location.tolongstring(),
-        }  # type: JsonDictType
+        }  # type: _JsonDictType
         return _json
 
     @staticmethod
     def fromjson(
-            json_data,  # type: JsonDictType
+            json_data,  # type: _JsonDictType
     ):  # type: (...) -> ExceptionError
         """
         Builds a :class:`ExceptionError` instance from its JSON representation.

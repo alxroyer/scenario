@@ -23,10 +23,11 @@ import logging
 import sys
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 
 
-class MainLogger(Logger):
+class MainLogger(_LoggerImpl):
     """
     Main logger augmentation of :class:`._logger.Logger`.
     """
@@ -40,7 +41,7 @@ class MainLogger(Logger):
         from ._logformatter import LogFormatter
         from ._loghandler import LogHandler
 
-        Logger.__init__(self, log_class="")
+        _LoggerImpl.__init__(self, log_class="")
 
         # Enable main logger debugging by default.
         self.enabledebug(True)

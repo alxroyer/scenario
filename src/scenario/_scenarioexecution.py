@@ -202,8 +202,8 @@ class ScenarioExecution:
 
         :return: Number of actions executed over the number of actions defined.
         """
+        from ._actionresultdefinition import ActionResultDefinition
         from ._stats import ExecTotalStats
-        from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
 
         _action_stats = ExecTotalStats()  # type: ExecTotalStats
@@ -212,7 +212,11 @@ class ScenarioExecution:
             if isinstance(_step_definition, StepSectionDescription):
                 continue
 
-            _action_stats.add(StepExecution.actionstats(_step_definition))
+            for _action_result_definition in _step_definition.actions_results:  # type: ActionResultDefinition
+                if _action_result_definition.type == ActionResultDefinition.Type.ACTION:
+                    _action_stats.total += 1
+                    _action_stats.executed += len(_action_result_definition.executions)
+
         return _action_stats
 
     @property
@@ -222,8 +226,8 @@ class ScenarioExecution:
 
         :return: Number of expected results executed over the number of expected results defined.
         """
+        from ._actionresultdefinition import ActionResultDefinition
         from ._stats import ExecTotalStats
-        from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
 
         _result_stats = ExecTotalStats()  # type: ExecTotalStats
@@ -232,7 +236,11 @@ class ScenarioExecution:
             if isinstance(_step_definition, StepSectionDescription):
                 continue
 
-            _result_stats.add(StepExecution.resultstats(_step_definition))
+            for _action_result_definition in _step_definition.actions_results:  # type: ActionResultDefinition
+                if _action_result_definition.type == ActionResultDefinition.Type.RESULT:
+                    _result_stats.total += 1
+                    _result_stats.executed += len(_action_result_definition.executions)
+
         return _result_stats
 
     # Comparison.

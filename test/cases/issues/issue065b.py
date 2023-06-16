@@ -19,7 +19,8 @@ import typing
 import scenario
 import scenario.test
 
-from issues.issue065a import CheckTimeLostStep  # `CheckTimeLostStep` used for inheritance.
+if True:
+    from issues.issue065a import CheckTimeLostStep as _CheckTimeLostStepImpl  # `CheckTimeLostStep` used for inheritance.
 if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
     from steps.common import ParseFinalResultsLog as _ParseFinalResultsLogType
@@ -52,14 +53,14 @@ class Issue65b(scenario.test.TestCase):
         ))
 
 
-class CheckTimes(CheckTimeLostStep):
+class CheckTimes(_CheckTimeLostStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: _ExecCampaignType
             final_results,  # type: _ParseFinalResultsLogType
     ):  # type: (...) -> None
-        CheckTimeLostStep.__init__(self, exec_step)
+        _CheckTimeLostStepImpl.__init__(self, exec_step)
 
         self.final_results = final_results  # type: _ParseFinalResultsLogType
 

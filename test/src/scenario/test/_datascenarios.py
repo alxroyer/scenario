@@ -16,13 +16,12 @@
 
 import sys
 
-from ._paths import DATA_PATH  # `DATA_PATH` used for path management.
-
 # Path management.
-sys.path.append(str(DATA_PATH))
+if True:
+    from ._paths import DATA_PATH as _DATA_PATH  # `DATA_PATH` used for path management.
+    sys.path.append(str(_DATA_PATH))
 
 
-# The following `try` block avoids IDEs folding the following import lines.
 try:
     from actionresultloopscenario import ActionResultLoopScenario as ActionResultLoopScenario
     from configdbscenario import ConfigDbScenario as ConfigDbScenario

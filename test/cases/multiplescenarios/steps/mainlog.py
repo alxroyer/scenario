@@ -16,16 +16,17 @@
 
 import scenario.test
 
-from steps.logverifications import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
-class CheckMultipleScenariosMainLog(LogVerificationStep):
+class CheckMultipleScenariosMainLog(_LogVerificationStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: scenario.test.AnyExecutionStepType
     ):  # type: (...) -> None
-        LogVerificationStep.__init__(self, exec_step)
+        _LogVerificationStepImpl.__init__(self, exec_step)
 
     def step(self):  # type: (...) -> None
         self.STEP("Multiple scenario log output")

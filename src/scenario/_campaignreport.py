@@ -21,17 +21,18 @@ Campaign reports.
 import sys
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
-    from ._path import AnyPathType, Path as _PathType
+    from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._xmlutils import Xml as _XmlType
 
 
-class CampaignReport(Logger):
+class CampaignReport(_LoggerImpl):
     """
     Campaign report management.
 
@@ -48,7 +49,7 @@ class CampaignReport(Logger):
         from ._debugclasses import DebugClass
         from ._path import Path
 
-        Logger.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
+        _LoggerImpl.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
 
         #: JUnit report path being written or read.
         self._junit_path = Path()  # type: Path
@@ -56,7 +57,7 @@ class CampaignReport(Logger):
     def writejunitreport(
             self,
             campaign_execution,  # type: _CampaignExecutionType
-            junit_path,  # type: AnyPathType
+            junit_path,  # type: _AnyPathType
     ):  # type: (...) -> bool
         """
         Generates a JUnit XML report output file.
@@ -92,7 +93,7 @@ class CampaignReport(Logger):
 
     def readjunitreport(
             self,
-            junit_path,  # type: AnyPathType
+            junit_path,  # type: _AnyPathType
     ):  # type: (...) -> typing.Optional[_CampaignExecutionType]
         """
         Reads the JUnit report.

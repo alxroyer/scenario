@@ -20,7 +20,7 @@ import typing
 import scenario
 import scenario.test
 if typing.TYPE_CHECKING:
-    from scenario._typing import JsonDictType  # noqa  ## Access to protected module
+    from scenario._typing import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
@@ -55,7 +55,7 @@ class CheckCampaignJsonReports(scenario.test.VerificationStep):
             for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: scenario.test.ScenarioExpectations
 
                 # Read the JSON report file.
-                _json = {}  # type: JsonDictType
+                _json = {}  # type: _JsonDictType
                 assert _test_case_expectations.script_path is not None
                 if self.ACTION(f"Read the JSON report file for '{_test_case_expectations.script_path}'."):
                     _json_path = self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path  # type: typing.Optional[scenario.Path]

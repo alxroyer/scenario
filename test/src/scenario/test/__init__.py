@@ -17,7 +17,13 @@
 import typing
 
 
-# The `try` block below avoids IDEs folding the following import lines.
+# Package dependencies.
+if True:
+    from ._pkgdeps import checkpkgdeps as _checkpkgdeps  # `checkpkgdeps()` executed in the module level context.
+    _checkpkgdeps()
+
+
+# Reexports.
 try:
     from ._attributes import ScenarioAttribute as ScenarioAttribute
     from . import _configvalues as configvalues

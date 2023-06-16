@@ -24,7 +24,9 @@ import re
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._configtypes import KeyType, OriginType, VarDataType
+    from ._configtypes import KeyType as _KeyType
+    from ._configtypes import OriginType as _OriginType
+    from ._configtypes import VarDataType as _VarDataType
 
 
 class ConfigNode:
@@ -65,7 +67,7 @@ class ConfigNode:
         self._data = None  # type: typing.Any
 
         #: Origins of the configuration value: either a string or the path of the configuration file it was defined in.
-        self.origins = []  # type: typing.List[OriginType]
+        self.origins = []  # type: typing.List[_OriginType]
 
     def __repr__(self):  # type: () -> str
         """
@@ -89,8 +91,8 @@ class ConfigNode:
     def set(
             self,
             data,  # type: typing.Any
-            subkey=None,  # type: KeyType
-            origin=None,  # type: OriginType
+            subkey=None,  # type: _KeyType
+            origin=None,  # type: _OriginType
     ):  # type: (...) -> None
         """
         Sets configuration data.
@@ -295,7 +297,7 @@ class ConfigNode:
 
     def get(
             self,
-            subkey,  # type: KeyType
+            subkey,  # type: _KeyType
     ):  # type: (...) -> typing.Optional[ConfigNode]
         """
         Finds a sub-node from this node.
@@ -307,9 +309,9 @@ class ConfigNode:
 
     def _getsubnode(
             self,
-            subkey,  # type: KeyType
+            subkey,  # type: _KeyType
             create_missing=False,  # type: bool
-            origin=None,  # type: OriginType
+            origin=None,  # type: _OriginType
     ):  # type: (...) -> typing.Optional[ConfigNode]
         """
         Finds or creates a sub-node from this node.
@@ -427,8 +429,8 @@ class ConfigNode:
 
     def cast(
             self,
-            type,  # type: typing.Type[VarDataType]  # noqa  ## Shadows built-in name 'type'
-    ):  # type: (...) -> VarDataType
+            type,  # type: typing.Type[_VarDataType]  # noqa  ## Shadows built-in name 'type'
+    ):  # type: (...) -> _VarDataType
         """
         Ensures the retrieval of the node data with the expected type.
 
@@ -439,11 +441,11 @@ class ConfigNode:
         """
         from ._reflection import qualname
 
-        def _castreturntype(value):  # type: (typing.Any) -> VarDataType
+        def _castreturntype(value):  # type: (typing.Any) -> _VarDataType
             """
             Avoids using ``# type: ignore`` pragmas every time this :meth:`ConfigNode.cast()` method returns a value.
             """
-            _value = value  # type: VarDataType
+            _value = value  # type: _VarDataType
             return _value
 
         # Dictionary.
@@ -489,7 +491,7 @@ class ConfigNode:
             raise ValueError(self.errmsg(f"{self._data!r} not a valid {qualname(type)} value"))
 
     @property
-    def origin(self):  # type: () -> OriginType
+    def origin(self):  # type: () -> _OriginType
         """
         Representative origin for the current node.
         """
@@ -500,7 +502,7 @@ class ConfigNode:
     def errmsg(
             self,
             msg,  # type: str
-            origin=None,  # type: OriginType
+            origin=None,  # type: _OriginType
     ):  # type: (...) -> str
         """
         Builds an error message giving the context of the current node.

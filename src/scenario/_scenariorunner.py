@@ -23,21 +23,22 @@ import sys
 import time
 import typing
 
-from ._enumutils import StrEnum  # `StrEnum` used for inheritance.
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._knownissues import KnownIssue as _KnownIssueType
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._stepdefinition import StepDefinition as _StepDefinitionType, StepSpecificationType
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
     from ._stepuserapi import StepUserApi as _StepUserApiType
     from ._testerrors import TestError as _TestErrorType
 
 
-class ScenarioRunner(Logger):
+class ScenarioRunner(_LoggerImpl):
     """
     Test execution engine: runs scenarios, i.e. instances derived from the :class:`._scenariodefinition.ScenarioDefinition` class.
 
@@ -54,7 +55,7 @@ class ScenarioRunner(Logger):
     - :class:`._scenarioreport.ScenarioReport`: scenario report generation.
     """
 
-    class ExecutionMode(StrEnum):
+    class ExecutionMode(_StrEnumImpl):
         """
         Execution mode enum.
 
@@ -78,7 +79,7 @@ class ScenarioRunner(Logger):
         from ._debugclasses import DebugClass
         from ._logextradata import LogExtraData
 
-        Logger.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
+        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
         self.setextraflag(LogExtraData.ACTION_RESULT_MARGIN, False)
 
     def main(self):  # type: (...) -> _ErrorCodeType
@@ -189,7 +190,7 @@ class ScenarioRunner(Logger):
 
     def executepath(
             self,
-            scenario_path,  # type: AnyPathType
+            scenario_path,  # type: _AnyPathType
     ):  # type: (...) -> _ErrorCodeType
         """
         Executes a scenario from its script path.
@@ -638,6 +639,7 @@ class ScenarioRunner(Logger):
         from ._actionresultexecution import ActionResultExecution
         from ._scenariologging import SCENARIO_LOGGING
         from ._scenariostack import SCENARIO_STACK
+        from ._stepexecution import StepExecutionHelper
 
         self.debug("onactionresult(action_result_type=%s, description=%r)", action_result_type, description)
 
@@ -661,7 +663,8 @@ class ScenarioRunner(Logger):
             self._endcurrentactionresult()
 
             # Switch to this action/result.
-            _action_result_definition = SCENARIO_STACK.current_step_execution.getnextactionresultdefinition()  # type: ActionResultDefinition
+            _step_execution_helper = StepExecutionHelper(SCENARIO_STACK.current_step_execution)  # type: StepExecutionHelper
+            _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
             if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != description):
                 SCENARIO_STACK.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
 
@@ -849,7 +852,7 @@ class ScenarioRunner(Logger):
 
     def goto(
             self,
-            to_step_specification,  # type: StepSpecificationType
+            to_step_specification,  # type: _AnyStepDefinitionSpecificationType
     ):  # type: (...) -> None
         """
         Call redirection from :meth:`._stepuserapi.StepUserApi.goto()`.
@@ -857,11 +860,17 @@ class ScenarioRunner(Logger):
         :param to_step_specification: Specification of the next step to execute.
         """
         from ._scenariostack import SCENARIO_STACK
+        from ._stepspecifications import StepDefinitionSpecification
 
-        self.debug("Jumping to step %r.", to_step_specification)
+        self.debug("Jumping to step %s", to_step_specification)
 
-        if SCENARIO_STACK.current_scenario_definition and SCENARIO_STACK.current_scenario_execution:
-            _next_step_definition = SCENARIO_STACK.current_scenario_definition.expectstep(to_step_specification)  # type: _StepDefinitionType
+        # Resolve the *to-step* specification.
+        if not isinstance(to_step_specification, StepDefinitionSpecification):
+            to_step_specification = StepDefinitionSpecification(to_step_specification)
+        _next_step_definition = to_step_specification.expect()  # type: _StepDefinitionType
+
+        # Set it as the next step for execution, then break the current step execution by raising a `GotoException`.
+        if SCENARIO_STACK.current_scenario_execution:
             SCENARIO_STACK.current_scenario_execution.setnextstep(_next_step_definition)
             raise GotoException()
         else:

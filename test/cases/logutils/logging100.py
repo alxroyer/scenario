@@ -17,7 +17,8 @@
 import scenario
 import scenario.test
 
-from steps.common import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
 class Logging100(scenario.test.TestCase):
@@ -45,7 +46,7 @@ class Logging100(scenario.test.TestCase):
         self.addstep(CheckNoLoggingDateTime(ExecScenario.getinstance(2)))
 
 
-class CheckLoggingDateTime(LogVerificationStep):
+class CheckLoggingDateTime(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Logging date/time enabled")
@@ -58,7 +59,7 @@ class CheckLoggingDateTime(LogVerificationStep):
             self.assertgreater(_lines, 0, evidence=f"Number of lines starting with {scenario.datetime.ISO8601_REGEX!r}")
 
 
-class CheckNoLoggingDateTime(LogVerificationStep):
+class CheckNoLoggingDateTime(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("Logging date/time disabled")

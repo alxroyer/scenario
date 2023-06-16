@@ -17,13 +17,14 @@
 import scenario
 import scenario.test
 
-from steps.common import ExecScenario  # `ExecScenario` used for inheritance.
+if True:
+    from steps.common import ExecScenario as _ExecScenarioImpl  # `ExecScenario` used for inheritance.
 
 
 class FailingScenario002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckScenarioLogExpectations, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
@@ -55,13 +56,13 @@ class FailingScenario002(scenario.test.TestCase):
         )))
 
 
-class ExecFailingScenario(ExecScenario):
+class ExecFailingScenario(_ExecScenarioImpl):
 
     def __init__(
             self,
             continue_on_error,  # type: bool
     ):  # type: (...) -> None
-        ExecScenario.__init__(self, scenario.test.paths.FAILING_SCENARIO)
+        _ExecScenarioImpl.__init__(self, scenario.test.paths.FAILING_SCENARIO)
 
         self.continue_on_error = continue_on_error  # type: bool
 

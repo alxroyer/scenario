@@ -30,10 +30,10 @@ import traceback
 import types
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
 class CodeLocation:
@@ -105,7 +105,7 @@ class CodeLocation:
 
     def __init__(
             self,
-            file,  # type: AnyPathType
+            file,  # type: _AnyPathType
             line,  # type: int
             qualname,  # type: str
     ):  # type: (...) -> None
@@ -176,7 +176,7 @@ class CodeLocation:
         )
 
 
-class ExecutionLocations(Logger):
+class ExecutionLocations(_LoggerImpl):
     """
     Methods to build execution location stacks.
     """
@@ -187,7 +187,7 @@ class ExecutionLocations(Logger):
         """
         from ._debugclasses import DebugClass
 
-        Logger.__init__(self, log_class=DebugClass.EXECUTION_LOCATIONS)
+        _LoggerImpl.__init__(self, log_class=DebugClass.EXECUTION_LOCATIONS)
 
     def fromcurrentstack(
             self,

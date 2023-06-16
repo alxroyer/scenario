@@ -21,13 +21,13 @@ Extra debugging loggers.
 import time
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
 
 
-class ExecTimesLogger(Logger):
+class ExecTimesLogger(_LoggerImpl):
     """
     Issue #65 logger.
     """
@@ -43,7 +43,7 @@ class ExecTimesLogger(Logger):
         """
         from ._debugclasses import DebugClass
 
-        Logger.__init__(self, DebugClass.EXECUTION_TIMES)
+        _LoggerImpl.__init__(self, DebugClass.EXECUTION_TIMES)
 
         #: Debug logger context. Usually a function/method name.
         self.context = context  # type: str

@@ -321,11 +321,13 @@ class SphinxHandlers:
                 ("typing.Dict", "class"),
                 ("typing.Iterable", "class"),
                 ("typing.Optional", "obj"),
+                ("typing.Tuple", "class"),
                 ("typing.Type", "class"),
                 ("typing.Union", "obj"),
                 # `scenario` undocumented items.
                 ("DemoArgs", "class"),
                 ("scenario.test", "mod"),
+                ("scenario.text", "mod"),
                 ("scenario.tools", "mod"),
                 ("scenario.tools.data.scenarios", "data"),
             ):

@@ -22,8 +22,8 @@ import abc
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._issuelevels import AnyIssueLevelType
-    from ._stepdefinition import StepSpecificationType
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
+    from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
 
 
 class StepUserApi(abc.ABC):
@@ -128,12 +128,12 @@ class StepUserApi(abc.ABC):
 
     def goto(
             self,
-            to_step_specification,  # type: StepSpecificationType
+            to_step_specification,  # type: _AnyStepDefinitionSpecificationType
     ):  # type: (...) -> None
         """
         Makes the execution jump to the given step.
 
-        :param to_step_specification: Step specification of the step to jump to (see :obj:`._stepdefinition.StepSpecificationType`).
+        :param to_step_specification: Step specification of the step to jump to (see :obj:`._stepspecifications.AnyStepDefinitionSpecificationType`).
         """
         from ._scenariorunner import SCENARIO_RUNNER
 
@@ -161,7 +161,7 @@ class StepUserApi(abc.ABC):
     def knownissue(
             self,
             message,  # type: str
-            level=None,  # type: AnyIssueLevelType
+            level=None,  # type: _AnyIssueLevelType
             id=None,  # type: str  # noqa  ## Shadows built-in name 'id'
     ):  # type: (...) -> None
         """

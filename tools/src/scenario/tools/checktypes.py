@@ -31,7 +31,7 @@ class CheckTypes:
         ):  # type: (...) -> None
             scenario.Args.__init__(self, class_debugging=False)
 
-            self.setdescription("Typehints checker.")
+            self.setdescription("Python code type checker.")
 
             self._typing_group = self._arg_parser.add_argument_group("Type checking")  # Type `argparse._ArgumentGroup` not available, let default typing.
 

@@ -17,7 +17,6 @@
 import typing
 
 
-# The `try` block below avoids IDEs folding the following import lines.
 try:
     from ._actionresult import ActionResultExpectations as ActionResultExpectations
     from ._campaign import CampaignExpectations as CampaignExpectations

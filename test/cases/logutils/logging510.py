@@ -16,7 +16,8 @@
 
 import scenario.test
 
-from logutils.steps.logoutfile import LogOutfileVerificationStep  # `LogOutfileVerificationStep` for inheritance.
+if True:
+    from logutils.steps.logoutfile import LogOutfileVerificationStep as _LogOutfileVerificationStepImpl  # `LogOutfileVerificationStep` for inheritance.
 
 
 class Logging510(scenario.test.TestCase):
@@ -59,7 +60,7 @@ class Logging510(scenario.test.TestCase):
         self.addstep(CheckFileLogging(ExecScenario.getinstance(1)))
 
 
-class CheckFileLogging(LogOutfileVerificationStep):
+class CheckFileLogging(_LogOutfileVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("File logging")
@@ -89,7 +90,7 @@ class CheckFileLogging(LogOutfileVerificationStep):
                 )
 
 
-class CheckSameOutputs(LogOutfileVerificationStep):
+class CheckSameOutputs(_LogOutfileVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
         self.STEP("File v/s console output comparison")

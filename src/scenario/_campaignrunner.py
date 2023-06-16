@@ -24,17 +24,17 @@ import sys
 import time
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
     from ._errcodes import ErrorCode as _ErrorCodeType
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
-class CampaignRunner(Logger):
+class CampaignRunner(_LoggerImpl):
     """
     Campaign execution engine: runs test scenarios from input files.
 
@@ -54,7 +54,7 @@ class CampaignRunner(Logger):
         """
         from ._debugclasses import DebugClass
 
-        Logger.__init__(self, log_class=DebugClass.CAMPAIGN_RUNNER)
+        _LoggerImpl.__init__(self, log_class=DebugClass.CAMPAIGN_RUNNER)
 
     def main(self):  # type: (...) -> _ErrorCodeType
         """
@@ -126,7 +126,7 @@ class CampaignRunner(Logger):
     def _exectestsuitefile(
             self,
             campaign_execution,  # type: _CampaignExecutionType
-            test_suite_path,  # type: AnyPathType
+            test_suite_path,  # type: _AnyPathType
     ):  # type: (...) -> _ErrorCodeType
         """
         Executes a test suite file.

@@ -22,7 +22,7 @@ import enum
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._path import AnyPathType
+    from ._path import AnyPathType as _AnyPathType
 
 
 if typing.TYPE_CHECKING:
@@ -33,4 +33,4 @@ if typing.TYPE_CHECKING:
     KeyType = typing.Union[str, enum.Enum]
 
     #: Origin type.
-    OriginType = typing.Union[str, AnyPathType]
+    OriginType = typing.Union[str, _AnyPathType]

@@ -21,14 +21,14 @@ Scenario results management.
 import logging
 import typing
 
-from ._logger import Logger  # `Logger` used for inheritance.
-
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._testerrors import TestError as _TestErrorType
 
 
-class ScenarioResults(Logger):
+class ScenarioResults(_LoggerImpl):
     """
     List of scenario execution results.
     """
@@ -39,7 +39,7 @@ class ScenarioResults(Logger):
         """
         from ._debugclasses import DebugClass
 
-        Logger.__init__(self, DebugClass.SCENARIO_RESULTS)
+        _LoggerImpl.__init__(self, DebugClass.SCENARIO_RESULTS)
 
         #: List of :class:`._scenarioexecution.ScenarioExecution` instances.
         self._results = []  # type: typing.List[_ScenarioExecutionType]

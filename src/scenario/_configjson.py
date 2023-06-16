@@ -22,8 +22,8 @@ import json
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._configtypes import KeyType
-    from ._path import AnyPathType
+    from ._configtypes import KeyType as _KeyType
+    from ._path import AnyPathType as _AnyPathType
 
 
 class ConfigJson:
@@ -33,8 +33,8 @@ class ConfigJson:
 
     @staticmethod
     def loadfile(
-            path,  # type: AnyPathType
-            root="",  # type: KeyType
+            path,  # type: _AnyPathType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Loads a JSON configuration file.
@@ -60,8 +60,8 @@ class ConfigJson:
 
     @staticmethod
     def savefile(
-            path,  # type: AnyPathType
-            root="",  # type: KeyType
+            path,  # type: _AnyPathType
+            root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
         Saves a JSON configuration file.

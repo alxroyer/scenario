@@ -19,10 +19,11 @@ import typing
 if typing.TYPE_CHECKING:
     import scenario
 
-from steps.logverifications import LogVerificationStep  # `LogVerificationStep` used for inheritance.
+if True:
+    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
 
 
-class LogOutfileVerificationStep(LogVerificationStep):
+class LogOutfileVerificationStep(_LogVerificationStepImpl):
 
     @property
     def log_path(self):  # type: () -> scenario.Path

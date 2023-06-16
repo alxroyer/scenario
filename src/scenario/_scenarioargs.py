@@ -20,10 +20,10 @@ Scenario runner program arguments.
 
 import typing
 
-from ._args import Args  # `Args` used for inheritance.
-
+if True:
+    from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._issuelevels import AnyIssueLevelType
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
     from ._subprocess import SubProcess as _SubProcessType
 
@@ -42,7 +42,7 @@ class CommonExecArgs:
         # Let typings know this class is actually a subclass of the base `Args` class.
         assert (
             isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
-            and isinstance(self, Args)
+            and isinstance(self, _ArgsImpl)
         )
 
         #: Test execution argument group.
@@ -96,13 +96,13 @@ class CommonExecArgs:
         # Let typings know this class is actually a subclass of the base `Args` class.
         assert (
             isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
-            and isinstance(self, Args)
+            and isinstance(self, _ArgsImpl)
         )
 
         return bool(self._args.doc_only)
 
     @property
-    def issue_level_error(self):  # type: () -> typing.Optional[AnyIssueLevelType]
+    def issue_level_error(self):  # type: () -> typing.Optional[_AnyIssueLevelType]
         """
         Error issue level.
         """
@@ -111,13 +111,13 @@ class CommonExecArgs:
         # Let typings know this class is actually a subclass of the base `Args` class.
         assert (
             isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
-            and isinstance(self, Args)
+            and isinstance(self, _ArgsImpl)
         )
 
         return IssueLevel.parse(self._args.issue_level_error)
 
     @property
-    def issue_level_ignored(self):  # type: () -> typing.Optional[AnyIssueLevelType]
+    def issue_level_ignored(self):  # type: () -> typing.Optional[_AnyIssueLevelType]
         """
         Ignored issue level.
         """
@@ -126,7 +126,7 @@ class CommonExecArgs:
         # Let typings know this class is actually a subclass of the base `Args` class.
         assert (
             isinstance(self, CommonExecArgs)  # type: ignore[redundant-expr]  ## Left operand of "and" is always true
-            and isinstance(self, Args)
+            and isinstance(self, _ArgsImpl)
         )
 
         return IssueLevel.parse(self._args.issue_level_ignored)
@@ -150,7 +150,7 @@ class CommonExecArgs:
             subprocess.addargs("--issue-level-ignored", str(int(args.issue_level_ignored)))
 
 
-class ScenarioArgs(Args, CommonExecArgs):
+class ScenarioArgs(_ArgsImpl, CommonExecArgs):
     """
     Scenario runner program argument management.
 
@@ -173,7 +173,7 @@ class ScenarioArgs(Args, CommonExecArgs):
             Useful for user programs that wish to redefine it.
             Use :meth:`_defscenariopathsarg()` in that case.
         """
-        Args.__init__(self, class_debugging=True)
+        _ArgsImpl.__init__(self, class_debugging=True)
 
         self.setdescription("Scenario test execution.")
 
@@ -230,7 +230,7 @@ class ScenarioArgs(Args, CommonExecArgs):
         """
         from ._loggermain import MAIN_LOGGER
 
-        if not Args._checkargs(self):
+        if not _ArgsImpl._checkargs(self):
             return False
         if not CommonExecArgs._checkargs(self):
             return False
