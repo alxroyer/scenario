@@ -24,6 +24,7 @@
     - Add a `explain()` method.
         - Use in knownissues110.
     - Use a type field with `StepSectionDescription`.
+- Issue #83: Add the ability to track requirements.
 - Issue #69: Add stability tracking options
     - `--repeat` or `--loop` option: loops over a test execution, in order to evaluate a failure/succes ratio.
     - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
