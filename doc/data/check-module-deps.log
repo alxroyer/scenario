@@ -3,17 +3,18 @@ INFO                                         _assertionhelpers.py, _assertions.p
 INFO                                         _campaignreport.py, _campaignrunner.py, _configdb.py, _confignode.py, _console.py,
 INFO                                         _datetimeutils.py, _debugutils.py, _enumutils.py, _errcodes.py,
 INFO                                         _executionstatus.py, _handlers.py, _issuelevels.py, _knownissues.py, _locations.py,
-INFO                                         _logextradata.py, _logger.py, _loggermain.py, _path.py, _pkginfo.py,
-INFO                                         _scenarioargs.py, _scenarioconfig.py, _scenariodefinition.py, _scenarioevents.py,
-INFO                                         _scenarioexecution.py, _scenarioreport.py, _scenariorunner.py, _scenariostack.py,
-INFO                                         _stats.py, _stepdefinition.py, _stepexecution.py, _stepsection.py,
-INFO                                         _stepspecifications.py, _subprocess.py, _testerrors.py, _timezoneutils.py]
+INFO                                         _logextradata.py, _logger.py, _loggermain.py, _path.py, _pkginfo.py, _reqdb.py,
+INFO                                         _reqlink.py, _reqtracker.py, _scenarioargs.py, _scenarioconfig.py,
+INFO                                         _scenariodefinition.py, _scenarioevents.py, _scenarioexecution.py,
+INFO                                         _scenarioreport.py, _scenariorunner.py, _scenariostack.py, _stats.py,
+INFO                                         _stepdefinition.py, _stepexecution.py, _stepsection.py, _stepspecifications.py,
+INFO                                         _subprocess.py, _testerrors.py, _timezoneutils.py]
 INFO     <04>           _campaignargs.py => [_args.py, _scenarioargs.py]
 INFO     <04>            _stepsection.py => [_stepdefinition.py]
 INFO     <03>             _reflection.py => [_debugclasses.py, _logger.py]
 INFO     <03>           _scenarioargs.py => [_args.py]
-INFO     <03>     _scenariodefinition.py => [_assertions.py, _logger.py, _stepuserapi.py]
-INFO     <03>         _stepdefinition.py => [_assertions.py, _logger.py, _stepuserapi.py]
+INFO     <03>     _scenariodefinition.py => [_assertions.py, _logger.py, _reqtracker.py, _stepuserapi.py]
+INFO     <03>         _stepdefinition.py => [_assertions.py, _logger.py, _reqtracker.py, _stepuserapi.py]
 INFO     <02> _actionresultdefinition.py => [_enumutils.py]
 INFO     <02>                   _args.py => [_configargs.py, _logger.py, _loggingargs.py]
 INFO     <02>             _assertions.py => [_assertionhelpers.py]
@@ -61,6 +62,10 @@ INFO     <01>         _loggingservice.py => []
 INFO     <01>             _loghandler.py => []
 INFO     <01>                   _path.py => []
 INFO     <01>                _pkginfo.py => []
+INFO     <01>                  _reqdb.py => []
+INFO     <01>                _reqlink.py => []
+INFO     <01>             _reqtracker.py => []
+INFO     <01>               _reqtypes.py => []
 INFO     <01>      _scenarioexecution.py => []
 INFO     <01>                  _stats.py => []
 INFO     <01>          _stepexecution.py => []
@@ -69,6 +74,7 @@ INFO     <01>            _stepuserapi.py => []
 INFO     <01>             _subprocess.py => []
 INFO     <01>             _testerrors.py => []
 INFO     <01>               _textfile.py => []
+INFO     <01>              _textutils.py => []
 INFO     <01>          _timezoneutils.py => []
 INFO     <01>                 _typing.py => []
 INFO     <01>               _xmlutils.py => []

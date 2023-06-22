@@ -25,6 +25,7 @@ import typing
 if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._reqtracker import ReqTracker as _ReqTrackerImpl  # `ReqTracker` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
@@ -32,7 +33,7 @@ if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
 
-class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl):
+class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTrackerImpl):
     """
     Step definition management.
     """
@@ -106,6 +107,7 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl):
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
         _LoggerImpl.__init__(self, log_class=self.name)
+        _ReqTrackerImpl.__init__(self)
 
         # Activate debugging by default for step definitions.
         self.enabledebug(True)

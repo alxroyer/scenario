@@ -27,6 +27,7 @@ import typing
 if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._reqtracker import ReqTracker as _ReqTrackerImpl  # `ReqTracker` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
@@ -154,7 +155,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
                 SCENARIO_STACK.building.popscenariodefinition(_scenario_definition)
 
 
-class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, metaclass=MetaScenarioDefinition):
+class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTrackerImpl, metaclass=MetaScenarioDefinition):
     """
     Base class for any final test scenario.
 
@@ -205,6 +206,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, metacla
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
         _LoggerImpl.__init__(self, log_class=self.name)
+        _ReqTrackerImpl.__init__(self)
 
         # Activate debugging by default for scenario definitions.
         self.enabledebug(True)
@@ -221,6 +223,9 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, metacla
 
         #: Scenario attributes (see :meth:`._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`).
         self.__attributes = {}  # type: typing.Dict[str, typing.Any]
+
+        #: Check step coverage option.
+        self.check_step_coverage = None  # type: typing.Optional[bool]
 
         #: List of steps that define the scenario.
         self.__step_definitions = []  # type: typing.List[_StepDefinitionType]

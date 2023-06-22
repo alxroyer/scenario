@@ -718,6 +718,71 @@ if True:
 
 
 __doc__ += """
+Requirement management
+======================
+
+TODO: :ref:`todo`
+"""
+
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: AnyReqIdType
+
+        Requirement identifier type.
+
+        .. seealso:: :obj:`._reqtypes.AnyReqIdType` implementation.
+    """
+    from ._reqtypes import AnyReqIdType as AnyReqIdType
+    __all__.append("AnyReqIdType")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: reqs
+
+        Requirement database.
+
+        .. seealso:: :class:`._reqdb.ReqDatabase` implementation.
+    """
+    from ._reqdb import REQ_DB as reqs  # noqa  ## Constant variable imported as non-constant
+    __all__.append("reqs")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqTracker
+
+        Requirement tracker class.
+
+        .. note::
+            Only :class:`Scenario` and :class:`Step` may track / cover requirements.
+
+        .. seealso:: :class:`._reqtracker.ReqTracker` implementation.
+    """
+    from ._reqtracker import ReqTracker as ReqTracker
+    __all__.append("ReqTracker")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqLink
+
+        Requirement link between a :obj:`AnyReqIdType` and a :class:`ReqTracker`.
+
+        .. seealso:: :class:`._reqlink.ReqLink` implementation.
+    """
+    from ._reqlink import ReqLink as ReqLink
+    __all__.append("ReqLink")
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: AnyReqLinkType
+
+        Any kind of requirement link, :class:`ReqLink` included.
+
+        .. seealso:: :obj:`._reqtypes.AnyReqLinkType` implementation.
+    """
+    from ._reqtypes import AnyReqLinkType as AnyReqLinkType
+    __all__.append("AnyReqLinkType")
+
+
+__doc__ += """
 Miscellaneous
 =============
 

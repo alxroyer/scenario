@@ -17,6 +17,22 @@
 
 ## Roadmap to v0.2.3
 
+- Issue #83: Add the ability to track requirements.
+    - Make `ReqDatabase.reqid2xxx()` handle requirement subkeys.
+    - Make `ReqDatabase` inherit from `scenario.Logger`.
+    - Save title with `ScenarioDefinition`.
+    - Make `covers()` (resp. `coveredby()`) take directly a requirement object (resp. a requirement tracker).
+    - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls.
+    - Formalize better the abilty to define requirement subitems.
+    - Add a 'check-test-coverage.py' tool that displays requirement test coverage.
+    - Add the ability to make the test check that its scenario links are detailed by step links.
+    - Complete scenario001 with SCENARIO_LOGGING testing.
+    - Implement tests.
+    - Add documentation.
+    - Limitation when using step methods => use scenario stack.
+    - Implement *check_step_coverage* option.
+    - `covers()` and `coveredby()` in execution mode should do nothing.
+    - Check docstrings.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
@@ -24,7 +40,6 @@
     - Add a `explain()` method.
         - Use in knownissues110.
     - Use a type field with `StepSectionDescription`.
-- Issue #83: Add the ability to track requirements.
 - Issue #69: Add stability tracking options
     - `--repeat` or `--loop` option: loops over a test execution, in order to evaluate a failure/succes ratio.
     - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
