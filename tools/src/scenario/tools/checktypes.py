@@ -33,9 +33,9 @@ class CheckTypes:
 
             self.setdescription("Python code type checker.")
 
-            self.all = False  # type: bool
-            self.addarg("All", "all", bool).define(
-                "--all",
+            self.all_errors = False  # type: bool
+            self.addarg("All errors", "all_errors", bool).define(
+                "--all-errors",
                 action="store_true", default=False,
                 help=f"Show all errors. Only the {check_types.max_errors} first errors otherwise.",
             )
@@ -82,9 +82,9 @@ class CheckTypes:
         _errors = 0  # type: int
         for _line in _subprocess.stdout.splitlines():  # type: bytes
             if b'error:' in _line:
-                if CheckTypes.Args.getinstance().all or (_errors < self.max_errors):
+                if CheckTypes.Args.getinstance().all_errors or (_errors < self.max_errors):
                     scenario.logging.error(_line.decode("utf-8"))
-                elif (not CheckTypes.Args.getinstance().all) and (_errors == self.max_errors):
+                elif (not CheckTypes.Args.getinstance().all_errors) and (_errors == self.max_errors):
                     scenario.logging.error("...")
                 _errors += 1
             else:
