@@ -28,7 +28,9 @@ class Campaign003(scenario.test.TestCase):
             self,
             title="Campaign --dt-subdir option",
             objective="Check the creation of date/time subdirectory for campaign results when the --dt-subdir option is used.",
-            features=[scenario.test.features.CAMPAIGNS],
+            features=[
+                scenario.test.features.CAMPAIGNS,
+            ],
         )
 
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations

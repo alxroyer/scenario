@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario
+
 
 class Feature:
     def __init__(
@@ -25,6 +27,9 @@ class Feature:
         self.id = id  # type: str
         self.title = title  # type: str
         self.text = text  # type: str
+
+        # Ensure the feature is known as a requirement.
+        scenario.reqs.push(self)
 
     def __repr__(self):  # type: () -> str
         return f"<Feature id={self.id!r} title={self.title!r}>"
@@ -242,7 +247,7 @@ CAMPAIGNS = Feature(
         A campaign is the execution of a set of test suites, each being a set of test cases, i.e. scenarios.
         Whether the tests succeed or fail, the campaign keeps going on.
 
-        Test results (see SCENARIO_REPORT) are stored in the output directory.
+        Test results (see SCENARIO_LOGGING and SCENARIO_REPORT files) are stored in the output directory.
         A JUnit XML campaign report is also saved in the output directory.
 
         The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).

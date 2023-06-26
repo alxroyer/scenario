@@ -29,7 +29,9 @@ class ConfigDb300(scenario.test.TestCase):
             self,
             title="Load YAML configuration file",
             objective="Check that a YAML configuration file can be loaded (when 'pyyaml' is installed).",
-            features=[scenario.test.features.CONFIG_DB],
+            features=[
+                scenario.test.features.CONFIG_DB,
+            ],
         )
 
         _pyyaml_section = self.addstep(PythonPackageBegin("pyyaml", "yaml", True))  # type: scenario.StepSectionBegin

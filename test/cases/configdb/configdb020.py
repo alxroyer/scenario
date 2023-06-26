@@ -28,7 +28,9 @@ class ConfigDb020(scenario.test.TestCase):
             self,
             title="Configuration value from code",
             objective="Check that a configuration value can be set from the code.",
-            features=[scenario.test.features.CONFIG_DB],
+            features=[
+                scenario.test.features.CONFIG_DB,
+            ],
         )
 
         self.addstep(ExecScenario(scenario.test.paths.CONFIG_DB_SCENARIO))

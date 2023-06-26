@@ -20,9 +20,6 @@ import typing
 
 import scenario
 
-if typing.TYPE_CHECKING:
-    from ._features import Feature as _FeatureType
-
 
 class TestCase(scenario.Scenario):
     """
@@ -33,7 +30,7 @@ class TestCase(scenario.Scenario):
             self,
             title,  # type: str
             objective,  # type: str
-            features,  # type: typing.List[_FeatureType]
+            features,  # type: typing.Sequence[scenario.AnyReqLinkType]
     ):  # type: (...) -> None
         from ._attributes import ScenarioAttribute
         from ._paths import MAIN_PATH
@@ -45,8 +42,9 @@ class TestCase(scenario.Scenario):
         self.setattribute(ScenarioAttribute.TEST_TITLE, title)
         self.objective = objective  # type: str
         self.setattribute(ScenarioAttribute.TEST_OBJECTIVE, objective)
-        self.features = features  # type: typing.List[_FeatureType]
-        self.setattribute(ScenarioAttribute.FEATURES, ", ".join([str(_feature) for _feature in features]))
+
+        # Requirement management.
+        self.covers(*features)
 
         #: Temporary paths registry.
         self._tmp_paths = []  # type: typing.List[scenario.Path]

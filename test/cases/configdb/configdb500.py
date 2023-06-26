@@ -31,7 +31,9 @@ class ConfigDb500(scenario.test.TestCase):
                 "Check several configuration files can be loaded from the command line. "
                 "Check the one loaded in the end overloads the ones loaded before."
             ),
-            features=[scenario.test.features.CONFIG_DB],
+            features=[
+                scenario.test.features.CONFIG_DB,
+            ],
         )
 
         self.section("Conf1 then Conf2")

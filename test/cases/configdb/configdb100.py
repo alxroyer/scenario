@@ -28,7 +28,9 @@ class ConfigDb100(scenario.test.TestCase):
             self,
             title="Load INI configuration file",
             objective="Check that a INI configuration file can be loaded.",
-            features=[scenario.test.features.CONFIG_DB],
+            features=[
+                scenario.test.features.CONFIG_DB,
+            ],
         )
 
         _conf_file = scenario.test.paths.datapath("conf.ini")  # type: scenario.Path

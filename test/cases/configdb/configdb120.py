@@ -28,7 +28,9 @@ class ConfigDb120(scenario.test.TestCase):
             self,
             title="INI default values & sub-sections",
             objective="Check the way sub-sections are emulated in INI files, and default values are propagated along sections.",
-            features=[scenario.test.features.CONFIG_DB],
+            features=[
+                scenario.test.features.CONFIG_DB,
+            ],
         )
 
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.

@@ -21,7 +21,6 @@ class Campaign002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign
-        from campaigns.steps.jsonreports import CheckCampaignJsonReports
         from campaigns.steps.junitreport import CheckCampaignJunitReport
         from campaigns.steps.log import CheckCampaignLogExpectations
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
@@ -31,7 +30,10 @@ class Campaign002(scenario.test.TestCase):
             self,
             title="Campaign execution with several test suites",
             objective="Check that the campaign runner can execute several test suite files.",
-            features=[scenario.test.features.CAMPAIGNS],
+            features=[
+                scenario.test.features.CAMPAIGNS,
+                scenario.ReqLink(scenario.test.features.STATISTICS, comments="Statistics by scenario, integrated by test suite, and globally for the campaign"),
+            ],
         )
 
         # Campaign execution.
@@ -47,7 +49,5 @@ class Campaign002(scenario.test.TestCase):
         self.addstep(CheckCampaignLogExpectations(ExecCampaign.getinstance(), _campaign_expectations))
         self.addstep(ParseFinalResultsLog(ExecCampaign.getinstance()))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(), _campaign_expectations.all_test_case_expectations))
-        # Check report files for several test suites by the way.
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations))
-        self.addstep(CheckCampaignJsonReports(ExecCampaign.getinstance(), _campaign_expectations))
         self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations))

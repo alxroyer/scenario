@@ -28,8 +28,8 @@ class Campaign004(scenario.test.TestCase):
             title="Campaign & extra info",
             objective="Check extra info display with campaign results.",
             features=[
-                # Main features:
-                scenario.test.features.CAMPAIGNS, scenario.test.features.ATTRIBUTES,
+                scenario.test.features.CAMPAIGNS,
+                scenario.ReqLink(scenario.test.features.ATTRIBUTES, comments="Display with campaign final results"),
             ],
         )
 

@@ -28,11 +28,12 @@
     - Add the ability to make the test check that its scenario links are detailed by step links.
     - Complete scenario001 with SCENARIO_LOGGING testing.
     - Implement tests.
-    - Add documentation.
+    - Add documentation with demo.
     - Limitation when using step methods => use scenario stack.
     - Implement *check_step_coverage* option.
     - `covers()` and `coveredby()` in execution mode should do nothing.
     - Check docstrings.
+    - Add a HTTP server that displays pages on requirement management.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.

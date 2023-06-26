@@ -26,7 +26,10 @@ class Stats010(scenario.test.TestCase):
             self,
             title="Statistics goto scenario",
             objective="Check scenario execution statistics for a scenario with goto jumps.",
-            features=[scenario.test.features.STATISTICS, scenario.test.features.GOTO],
+            features=[
+                scenario.test.features.STATISTICS,
+                scenario.test.features.GOTO,
+            ],
         )
 
         # Scenario execution.

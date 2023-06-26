@@ -26,7 +26,11 @@ class Stats021(scenario.test.TestCase):
             self,
             title="Statistics failing scenario --doc-only",
             objective="Check scenario execution statistics for a failing scenario executed with the --doc-only option set.",
-            features=[scenario.test.features.STATISTICS, scenario.test.features.ERROR_HANDLING, scenario.test.features.DOC_ONLY],
+            features=[
+                scenario.test.features.STATISTICS,
+                scenario.test.features.ERROR_HANDLING,
+                scenario.test.features.DOC_ONLY,
+            ],
         )
 
         # Scenario execution.
