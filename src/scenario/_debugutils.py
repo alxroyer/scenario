@@ -177,10 +177,9 @@ class SafeRepr(DelayedStr):
             return repr(_anystr)
 
         # ``focus`` parameter not set.
-        # noinspection PyBroadException
         try:
             _repr = repr(self.obj)
-        except Exception:
+        except Exception:  # noqa  ## Too broad exception clause
             _repr = object.__repr__(self.obj)
         if len(_repr) <= self.max_length:
             return _repr
@@ -251,7 +250,7 @@ class CallbackStr(DelayedStr):
 
     def __init__(
             self,
-            callback,  # type: typing.Callable[..., str]  # noqa  ## Shadows name 'callback' from outer scope.
+            callback,  # type: typing.Callable[..., str]  # noqa  ## Shadows name 'callback' from outer scope
             *args,  # type: typing.Any
             **kwargs,  # type: typing.Any
     ):  # type: (...) -> None
@@ -276,7 +275,7 @@ class CallbackStr(DelayedStr):
 
 
 def callback(
-        callback,  # type: typing.Callable[..., str]  # noqa  ## Shadows name 'callback' from outer scope.
+        callback,  # type: typing.Callable[..., str]  # noqa  ## Shadows name 'callback' from outer scope
         *args,  # type: typing.Any
         **kwargs,  # type: typing.Any
 ):  # type: (...) -> CallbackStr

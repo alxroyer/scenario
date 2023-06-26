@@ -99,8 +99,7 @@ def errmsg(
     if args:
         standard = str(FmtAndArgs(standard, *args))
 
-    # noinspection PyProtectedMember
-    return unittest._formatMessage(optional, standard)
+    return unittest._formatMessage(optional, standard)  # noqa  ## Access to a protected member
 
 
 def ctxmsg(

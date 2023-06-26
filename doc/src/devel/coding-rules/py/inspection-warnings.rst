@@ -22,7 +22,7 @@ In order to avoid non-relevant inspection warnings,
 the ``# noqa`` pragma shall be used (after typehints if any).
 
 In order to explicitize the reason why this pragma is used,
-no code shall be given, just an explanatory comment after a double ``##``, as below:
+no code shall be given, just an explanatory comment after a double ``##`` with no final dot, as below:
 
 .. code-block::
 
@@ -39,3 +39,12 @@ no code shall be given, just an explanatory comment after a double ``##``, as be
     See https://www.alpharithms.com/noqa-python-501210/ for the history of this pragma.
 
     That's the reason why we choose to give no codes with ``# noqa`` pragmas.
+
+.. admonition:: No final dot
+    :class: note
+
+    There are quite few reasons for the convention of not using final dots on ``# noqa`` explanations, but:
+
+    - The explanation may be just a part of a warning taken from a tier tool, not a full sentence.
+    - It makes the comment 1 character shorter, which may reduce the risk of having `too long lines` warnings.
+    - Last but not least: many ``#noqa`` comments are already set without a final dot, so let's take it as the convention.

@@ -41,8 +41,7 @@ class StepUserApi(abc.ABC):
         #: Known issues at the definition level.
         self.known_issues = []  # type: typing.List[KnownIssue]
 
-    # noinspection PyPep8Naming
-    def STEP(
+    def STEP(  # noqa  ## PEP8: Function name should be lower case
             self,
             description,  # type: str
     ):  # type: (...) -> None
@@ -57,8 +56,7 @@ class StepUserApi(abc.ABC):
 
         SCENARIO_RUNNER.onstepdescription(description)
 
-    # noinspection PyPep8Naming
-    def ACTION(
+    def ACTION(  # noqa  ## PEP8: Function name should be lower case
             self,
             action,  # type: str
     ):  # type: (...) -> bool
@@ -77,8 +75,7 @@ class StepUserApi(abc.ABC):
 
         return self.doexecute()
 
-    # noinspection PyPep8Naming
-    def RESULT(
+    def RESULT(  # noqa  ## PEP8: Function name should be lower case
             self,
             result,  # type: str
     ):  # type: (...) -> bool

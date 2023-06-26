@@ -71,7 +71,7 @@ def _reloadscenariomoduleswithtypechecking():  # type: (...) -> None
 def _reloadmodulewithtypechecking(
         module_name,  # type: str
 ):  # type: (...) -> None
-    from scenario._reflection import fqname, importmodulefrompath  # noqa  ## Access to a protected member.
+    from scenario._reflection import fqname, importmodulefrompath  # noqa  ## Access to a protected member
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TYPE_CHECKING_RELOAD)  # type: Logger
@@ -198,7 +198,7 @@ def _reloadmodulewithtypechecking(
 
 
 def _trackscenariotypes():  # type: (...) -> None
-    from scenario._reflection import fqname  # noqa  ## Access to a protected member.
+    from scenario._reflection import fqname  # noqa  ## Access to a protected member
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TRACK_SCENARIO_TYPES)  # type: Logger

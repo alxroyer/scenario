@@ -100,8 +100,8 @@ class AutodocHandlers:
                 autodoc will use the first non-None value returned by a handler.
                 Handlers should return None to fall back to the skipping behavior of autodoc and other enabled extensions.
         """
-        from scenario._enumutils import StrEnum  # noqa  ## Access to a protected member.
-        from scenario._reflection import fqname  # noqa  ## Access to a protected member.
+        from scenario._enumutils import StrEnum  # noqa  ## Access to a protected member
+        from scenario._reflection import fqname  # noqa  ## Access to a protected member
         from ._logging import Logger
         from ._reflection import isspecialfunction
 

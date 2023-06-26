@@ -360,8 +360,7 @@ class Logger:
         :param kwargs: Named parameter arguments.
         """
         # Propagate the call to the :class:`logging.Logger` member instance.
-        # noinspection PyProtectedMember
-        logging.Logger._log(self._logger, level, msg, args, **kwargs)
+        logging.Logger._log(self._logger, level, msg, args, **kwargs)  # noqa  ## Access to a protected member
 
     def longtext(
             self,

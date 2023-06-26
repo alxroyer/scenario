@@ -45,3 +45,20 @@ The encoding is explicitly specified in the first lines of Python scripts throug
     # -*- coding: utf-8 -*-
 
 The '.repo/checkfiles.yml' file describes the encoding applicable to each file of the repository.
+
+
+.. _coding-rules.files.max-line-length
+
+Maximum line length
+-------------------
+
+The maximum line length is 160 (any kind of language).
+
+.. admonition:: PyCharm configuration for maximum line length
+    :class: tip
+
+    Memo for PyCharm related configurations:
+
+    - Editor > Code Style > Hard wrap at: Set 160
+    - Editor > Code Style: Enable "Wrap on typing"
+    - Editor > General > Appearance: Enable "Show hard wrap and visual guides"
