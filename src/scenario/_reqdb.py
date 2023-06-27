@@ -20,6 +20,8 @@ Requirement database.
 
 import typing
 
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqtracker import ReqTracker as _ReqTrackerType
@@ -27,7 +29,7 @@ if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
-class ReqDatabase:
+class ReqDatabase(_LoggerImpl):
     """
     Requirement database.
 
@@ -47,6 +49,10 @@ class ReqDatabase:
         """
         Initializes a empty database.
         """
+        from ._debugclasses import DebugClass
+
+        _LoggerImpl.__init__(self, DebugClass.REQ_DATABASE)
+
         self._req_ids = {}  # type: typing.Dict[_AnyReqIdType, typing.Set[_ReqLinkType]]
 
     def push(
@@ -68,6 +74,7 @@ class ReqDatabase:
 
             # Ensure a set of links exists for the requirement.
             if _req_id not in self._req_ids:
+                self.debug("New requirement %s", _req_id)
                 self._req_ids[_req_id] = set()
 
         else:
@@ -77,7 +84,9 @@ class ReqDatabase:
             self.push(_req_link.req_id)
 
             # Save the link if not known yet.
-            self._req_ids[_req_link.req_id].add(_req_link)
+            if _req_link not in self._req_ids[_req_link.req_id]:
+                self.debug("New link %s", _req_link)
+                self._req_ids[_req_link.req_id].add(_req_link)
 
     def allreqids(self):  # type: (...) -> typing.Set[_AnyReqIdType]
         """

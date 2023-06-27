@@ -63,6 +63,27 @@ class ReqLink:
         if comments:
             self.comments = anylongtext2str(comments)
 
+    def __repr__(self):  # type: () -> str
+        from ._reflection import qualname
+
+        return "".join([
+            f"<{qualname(type(self))}",
+            f" req_id={self.req_id!r}",
+            f" sub_req_item={self.sub_req_item}" if self.sub_req_item else "",
+            f" req_trackers={self.req_trackers!r}",
+            f" comments={self.comments}" if self.comments else "",
+            ">",
+        ])
+
+    def __str__(self):  # type: () -> str
+        return "".join([
+            str(self.req_id),
+            f"/{self.sub_req_item}" if self.sub_req_item else "",
+            " <- ",
+            "{", ", ".join([str(_req_tracker) for _req_tracker in self.req_trackers]), "}",
+            f" | {self.comments}" if self.comments else "",
+        ])
+
     def matches(
             self,
             req_id,  # type: _AnyReqIdType

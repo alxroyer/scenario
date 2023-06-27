@@ -19,7 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Make `ReqDatabase.reqid2xxx()` handle requirement subkeys.
-    - Make `ReqDatabase` inherit from `scenario.Logger`.
     - Save title with `ScenarioDefinition`.
     - Make `covers()` (resp. `coveredby()`) take directly a requirement object (resp. a requirement tracker).
     - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls.
