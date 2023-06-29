@@ -42,6 +42,22 @@ Type checking
     - ``./tools/check-types.py``
     - Adjust ``files`` and ``namespace_packages`` configurations in ``mypy.conf`` depending on mypy#9393 returns.
 
+.. admonition:: ``tools/check-types.py`` integration in PyCharm
+
+    - 'check-types.py' execution configurations:
+
+      - Disbale "Add content roots to PYTHONPATH"
+      - Disable "Add source roots to PYTHONPATH"
+      - Disable "Run with Python Console"
+      - Set Parameters with "--config-value scenario.log_date_time 0"
+
+    - Execution:
+
+      - First execution: Right-click on 'tools/check-types.py' > Run 'check-types'
+      - Re-run: CTRL+F5
+
+    - In the console, click on errors to directly get to the location of errors.
+
 
 .. _env.encodings-and-perms:
 

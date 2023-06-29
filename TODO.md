@@ -19,6 +19,7 @@
 
 - Issue #83: Add the ability to track requirements.
     - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
+    - Cherry-pick integration note of 'check-types.py' in PyCharm.
     - Make `ReqDatabase.reqid2xxx()` handle requirement subkeys.
     - Save title with `ScenarioDefinition`.
     - Make `covers()` (resp. `coveredby()`) take directly a requirement object (resp. a requirement tracker).
