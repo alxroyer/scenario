@@ -22,14 +22,14 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
-    from ._confignode import ConfigNode as _ConfigNodeType
     from ._console import Console as _ConsoleType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
 
 
-class ScenarioConfig:
+class ScenarioConfig(_LoggerImpl):
     """
     `scenario` configuration management.
 
@@ -88,8 +88,12 @@ class ScenarioConfig:
 
     def __init__(self):  # type: (...) -> None
         """
-        Initializes the timezone cache information.
+        Initializes the instance as a logger, and the timezone cache information.
         """
+        from ._debugclasses import DebugClass
+
+        _LoggerImpl.__init__(self, DebugClass.SCENARIO_CONFIG)
+
         #: Timezone cache information.
         self.__timezone = None  # type: typing.Optional[str]
 
@@ -107,14 +111,20 @@ class ScenarioConfig:
         if self.__timezone is None:
             # Set the cache member with an empty string if no configuration is set.
             self.__timezone = (CONFIG_DB.get(self.Key.TIMEZONE, type=str) or "").strip()
-        # Convert empty string to `None`.
-        return self.__timezone or None
+            # Convert empty string to `None`.
+            self.__timezone = self.__timezone or None
+
+        # Don't debug `timezone()`, otherwise it may cause infinite recursions when logging.
+        # self.debug("timezone() -> %r", self.__timezone)
+        return self.__timezone
 
     def invalidatetimezonecache(self):  # type: (...) -> None
         """
         Invalidates the timezone cache information.
         """
         self.__timezone = None
+        # Don't debug `invalidatetimezonecache()`, otherwise it may cause infinite recursions when logging (tbc).
+        # self.debug("Timezone invalidated!")
 
     def logdatetimeenabled(self):  # type: (...) -> bool
         """
@@ -124,7 +134,10 @@ class ScenarioConfig:
         """
         from ._configdb import CONFIG_DB
 
-        return CONFIG_DB.get(self.Key.LOG_DATETIME, type=bool, default=True)
+        _log_datetime_enabled = CONFIG_DB.get(self.Key.LOG_DATETIME, type=bool, default=True)  # type: bool
+        # Don't debug `logdatetimeenabled()`, otherwise it may cause infinite recursions when logging.
+        # self.debug("logdatetimeenabled() -> %r", _log_datetime_enabled)
+        return _log_datetime_enabled
 
     def logconsoleenabled(self):  # type: (...) -> bool
         """
@@ -134,7 +147,10 @@ class ScenarioConfig:
         """
         from ._configdb import CONFIG_DB
 
-        return CONFIG_DB.get(self.Key.LOG_CONSOLE, type=bool, default=True)
+        _log_console_enabled = CONFIG_DB.get(self.Key.LOG_CONSOLE, type=bool, default=True)  # type: bool
+        # Don't debug `logconsoleenabled()`, otherwise it may cause infinite recursions when logging.
+        # self.debug("logconsoleenabled() -> %r", _log_console_enabled)
+        return _log_console_enabled
 
     def logoutpath(self):  # type: (...) -> typing.Optional[_PathType]
         """
@@ -151,6 +167,9 @@ class ScenarioConfig:
         _config = CONFIG_DB.get(self.Key.LOG_FILE, type=str)  # type: typing.Optional[str]
         if _config is not None:
             _log_outpath = Path(_config)
+
+        # Don't debug `logoutpath()`, otherwise it may cause infinite recursions when logging (tbc).
+        # self.debug("logoutpath() -> %r", _log_outpath)
         return _log_outpath
 
     def logcolorenabled(self):  # type: (...) -> bool
@@ -161,7 +180,10 @@ class ScenarioConfig:
         """
         from ._configdb import CONFIG_DB
 
-        return CONFIG_DB.get(self.Key.LOG_COLOR_ENABLED, type=bool, default=True)
+        _log_color_enabled = CONFIG_DB.get(self.Key.LOG_COLOR_ENABLED, type=bool, default=True)  # type: bool
+        # Don't debug `logcolorenabled()`, otherwise it may cause infinite recursions when logging.
+        # self.debug("logcolorenabled() -> %r", _log_color_enabled)
+        return _log_color_enabled
 
     def logcolor(
             self,
@@ -187,9 +209,13 @@ class ScenarioConfig:
             _color_number = _config_node.cast(type=int)  # type: int
             if _color_number is not None:
                 try:
+                    # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
+                    # self.debug("logcolor(level=%r, default=%r) -> %r", level, default, Console.Color(_color_number))
                     return Console.Color(_color_number)
                 except ValueError:
-                    self._warning(_config_node, f"Invalid color number {_color_number!r}")
+                    self.warning(_config_node.errmsg(f"Invalid color number {_color_number!r}"))
+        # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
+        # self.debug("logcolor(level=%r, default=%r) -> %r (default)", level, default, default)
         return default
 
     def debugclasses(self):  # type: (...) -> typing.List[str]
@@ -211,6 +237,8 @@ class ScenarioConfig:
                 _debug_classes.append(_debug_class)
         # ...and configuration database.
         self._readstringlistfromconf(self.Key.DEBUG_CLASSES, _debug_classes)
+        # Don't debug `debugclasses()`, otherwise it may cause infinite recursions when logging.
+        # self.debug("debugclasses() -> %r", _debug_classes)
         return _debug_classes
 
     def expectedscenarioattributes(self):  # type: (...) -> typing.List[str]
@@ -221,6 +249,7 @@ class ScenarioConfig:
         """
         _attribute_names = []  # type: typing.List[str]
         self._readstringlistfromconf(self.Key.EXPECTED_ATTRIBUTES, _attribute_names)
+        self.debug("expectedscenarioattributes() -> %r", _attribute_names)
         return _attribute_names
 
     def continueonerror(self):  # type: (...) -> bool
@@ -231,7 +260,9 @@ class ScenarioConfig:
         """
         from ._configdb import CONFIG_DB
 
-        return CONFIG_DB.get(self.Key.CONTINUE_ON_ERROR, type=bool, default=False)
+        _continue_on_error = CONFIG_DB.get(self.Key.CONTINUE_ON_ERROR, type=bool, default=False)  # type: bool
+        self.debug("continueonerror() -> %r", _continue_on_error)
+        return _continue_on_error
 
     def delaybetweensteps(self):  # type: (...) -> float
         """
@@ -241,7 +272,9 @@ class ScenarioConfig:
         """
         from ._configdb import CONFIG_DB
 
-        return CONFIG_DB.get(self.Key.DELAY_BETWEEN_STEPS, type=float, default=0.001)
+        _delay_between_steps = CONFIG_DB.get(self.Key.DELAY_BETWEEN_STEPS, type=float, default=0.001)  # type: float
+        self.debug("delaybetweensteps() -> %r", _delay_between_steps)
+        return _delay_between_steps
 
     def runnerscriptpath(self):  # type: (...) -> _PathType
         """
@@ -253,6 +286,7 @@ class ScenarioConfig:
         from ._path import Path
 
         _abspath = CONFIG_DB.get(self.Key.RUNNER_SCRIPT_PATH, type=str, default=Path(__file__).parents[2] / "bin" / "run-test.py")  # type: str
+        self.debug("runnerscriptpath() -> %r", Path(_abspath))
         return Path(_abspath)
 
     def scenariotimeout(self):  # type: (...) -> float
@@ -265,7 +299,9 @@ class ScenarioConfig:
         """
         from ._configdb import CONFIG_DB
 
-        return CONFIG_DB.get(self.Key.SCENARIO_TIMEOUT, type=float, default=600.0)
+        _scenario_timeout = CONFIG_DB.get(self.Key.SCENARIO_TIMEOUT, type=float, default=600.0)  # type: float
+        self.debug("scenariotimeout() -> %r", _scenario_timeout)
+        return _scenario_timeout
 
     def resultsextrainfo(self):  # type: (...) -> typing.List[str]
         """
@@ -290,6 +326,7 @@ class ScenarioConfig:
                     _attribute_names.append(_attribute_name)
         # ...and configuration database.
         self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO, _attribute_names)
+        self.debug("resultsextrainfo() -> %r", _attribute_names)
         return _attribute_names
 
     def loadissuelevelnames(self):  # type: (...) -> None
@@ -297,27 +334,31 @@ class ScenarioConfig:
         Loads the issue level names configured through configuration files.
         """
         from ._configdb import CONFIG_DB
+        from ._confignode import ConfigNode
         from ._issuelevels import IssueLevel
 
-        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[_ConfigNodeType]
+        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[ConfigNode]
         if _root_node:
             for _name in _root_node.getsubkeys():  # type: str
                 # Retrieve the `int` value configured with the issue level name.
-                _subnode = _root_node.get(_name)  # type: typing.Optional[_ConfigNodeType]
+                _subnode = _root_node.get(_name)  # type: typing.Optional[ConfigNode]
                 assert _subnode, "Internal error"
                 try:
                     _value = _subnode.cast(int)  # type: int
                 except ValueError as _err:
-                    self._warning(_subnode, f"Not an integer value {_subnode.data!r}, issue level name ignored")
+                    self.warning(_subnode.errmsg(f"Not an integer value {_subnode.data!r}, issue level name ignored"))
                     continue
 
                 # Check value consistency when the issue level name is already known.
                 if _name in IssueLevel.getnamed():
                     if _value != IssueLevel.parse(_name):
-                        self._warning(_subnode, f"Name already set {IssueLevel.getdesc(IssueLevel.parse(_name))}, issue level name {_name}={_value!r} ignored")
+                        self.warning(_subnode.errmsg(
+                            f"Name already set {IssueLevel.getdesc(IssueLevel.parse(_name))}, issue level name {_name}={_value!r} ignored"
+                        ))
                     continue
 
                 # Save the association between the new issue level name and value.
+                self.debug("loadissuelevelnames(): %r = %r", _name, _value)
                 IssueLevel.addname(_name, _value)
 
     def issuelevelerror(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
@@ -334,9 +375,12 @@ class ScenarioConfig:
         _args = Args.getinstance()  # type: Args
         if isinstance(_args, CommonExecArgs):
             if _args.issue_level_error is not None:
+                self.debug("issuelevelerror() -> %r (from args)", _args.issue_level_error)
                 return _args.issue_level_error
 
-        return IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_ERROR, type=int))
+        _issue_level_error = IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_ERROR, type=int))  # type: typing.Optional[_AnyIssueLevelType]
+        self.debug("issuelevelerror() -> %r (from config-db)", _issue_level_error)
+        return _issue_level_error
 
     def issuelevelignored(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
         """
@@ -352,9 +396,12 @@ class ScenarioConfig:
         _args = Args.getinstance()  # type: Args
         if isinstance(_args, CommonExecArgs):
             if _args.issue_level_ignored is not None:
+                self.debug("issuelevelignored() -> %r (from args)", _args.issue_level_ignored)
                 return _args.issue_level_ignored
 
-        return IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_IGNORED, type=int))
+        _issue_level_ignored = IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_IGNORED, type=int))  # type: typing.Optional[_AnyIssueLevelType]
+        self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
+        return _issue_level_ignored
 
     def _readstringlistfromconf(
             self,
@@ -374,8 +421,9 @@ class ScenarioConfig:
             Values are prevented in case of duplicates.
         """
         from ._configdb import CONFIG_DB
+        from ._confignode import ConfigNode
 
-        _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[_ConfigNodeType]
+        _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[ConfigNode]
         if _conf_node:
             _data = _conf_node.data  # type: typing.Any
             if isinstance(_data, list):
@@ -388,22 +436,7 @@ class ScenarioConfig:
                     if _part and (_part not in outlist):
                         outlist.append(_part)
             else:
-                self._warning(_conf_node, f"Invalid type {type(_data)}")
-
-    def _warning(
-            self,
-            node,  # type: _ConfigNodeType
-            msg,  # type: str
-    ):  # type: (...) -> None
-        """
-        Logs a warning message for the given configuration node.
-
-        :param node: Configuration node related to the warning.
-        :param msg: Warning message.
-        """
-        from ._configdb import CONFIG_DB
-
-        CONFIG_DB.warning(node.errmsg(msg))
+                self.warning(_conf_node.errmsg(f"Invalid type {type(_data)}"))
 
 
 #: Main instance of :class:`ScenarioConfig`.

@@ -46,6 +46,8 @@ class DebugClass(_StrEnumImpl):
     REFLECTION = "scenario.reflection"
     #: Requirement database debugging.
     REQ_DATABASE = "scenario.ReqDatabase"
+    #: Scenario configuration debugging.
+    SCENARIO_CONFIG = "scenario.ScenarioConfig"
     #: Scenario report debugging.
     SCENARIO_REPORT = "scenario.ScenarioReport"
     #: Scenario results debugging.
