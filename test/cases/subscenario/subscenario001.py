@@ -25,7 +25,7 @@ class SubScenario001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Subscenario execution",
-            objective="Check log output and JSON report of a scenario that executes another scenario as a subscenario.",
+            description="Check log output and JSON report of a scenario that executes another scenario as a subscenario.",
             features=[
                 scenario.test.features.SUBSCENARIOS,
             ],

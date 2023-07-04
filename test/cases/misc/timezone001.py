@@ -28,8 +28,10 @@ class Timezone001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Timezones with ISO8601 datetimes and DST",
-            objective="Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()` functions handle timezone specifications, "
-                      "with or without DST (Daylight Saving Time) shifts.",
+            description=(
+                "Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()` functions handle timezone specifications, "
+                "with or without DST (Daylight Saving Time) shifts."
+            ),
             features=[],  # No specific feature.
         )
 

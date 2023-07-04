@@ -20,9 +20,10 @@ import scenario
 class ActionResultLoopScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Action/result loop sample scenario")
+        scenario.Scenario.__init__(
+            self,
+            title="Action/result loop sample scenario",
+        )
 
     def step010(self):  # type: (...) -> None
         self.STEP("Actions & expected results lopp")

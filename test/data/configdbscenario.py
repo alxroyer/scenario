@@ -23,9 +23,10 @@ import scenario
 class ConfigDbScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Configuration database sample scenario")
+        scenario.Scenario.__init__(
+            self,
+            title="Configuration database sample scenario",
+        )
 
     def step000(self):  # type: (...) -> None
         self.STEP("Set configuration value from code")

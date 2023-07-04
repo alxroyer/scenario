@@ -20,9 +20,10 @@ import scenario
 class PackageScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Package scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Package scenario sample",
+        )
 
     def step010(self):  # type: (...) -> None
         self.STEP("`__package__` variable")

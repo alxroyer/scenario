@@ -25,7 +25,7 @@ class Stats010(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Statistics simple scenario",
-            objective="Check scenario execution statistics for a simple scenario.",
+            description="Check scenario execution statistics for a simple scenario.",
             features=[
                 scenario.test.features.STATISTICS,
             ],

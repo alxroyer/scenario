@@ -27,7 +27,7 @@ class Goto002(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Goto scenario reports",
-            objective="Check scenario report generation for goto scenarios.",
+            description="Check scenario report generation for goto scenarios.",
             features=[scenario.test.features.GOTO, scenario.test.features.SCENARIO_REPORT],
         )
 

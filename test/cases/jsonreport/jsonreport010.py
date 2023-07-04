@@ -26,7 +26,7 @@ class JsonReport010(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="JSON report simple scenario",
-            objective="Check the JSON report is generated as expected for a simple scenario.",
+            description="Check the JSON report is generated as expected for a simple scenario.",
             features=[scenario.test.features.SCENARIO_REPORT],
         )
 

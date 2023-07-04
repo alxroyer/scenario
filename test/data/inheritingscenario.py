@@ -21,9 +21,10 @@ if True:
 class InheritingScenario(_SimpleScenarioImpl):
 
     def __init__(self):  # type: (...) -> None
-        _SimpleScenarioImpl.__init__(self)
-
-        self.setattribute("TITLE", "Inheriting scenario sample")
+        _SimpleScenarioImpl.__init__(
+            self,
+            title="Inheriting scenario sample",
+        )
 
     def step015(self):  # type: (...) -> None
         self.STEP("InheritingScenario.step#15")

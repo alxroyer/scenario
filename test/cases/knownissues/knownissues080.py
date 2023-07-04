@@ -27,7 +27,7 @@ class KnownIssues080(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Known issues & multiple scenarios",
-            objective="Check that known issues are displayed in multiple scenario results.",
+            description="Check that known issues are displayed in multiple scenario results.",
             features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.MULTIPLE_SCENARIO_EXECUTION],
         )
 

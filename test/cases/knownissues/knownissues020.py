@@ -28,8 +28,10 @@ class KnownIssues020(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Known issue persistence v/s test errors",
-            objective="Check that known issues declared at the definition level persist when a test error occurs. "
-                      "Check the way things are displayed in the console are saved in the JSON report.",
+            description=(
+                "Check that known issues declared at the definition level persist when a test error occurs. "
+                "Check the way things are displayed in the console are saved in the JSON report."
+            ),
             features=[
                 scenario.test.features.KNOWN_ISSUES, scenario.test.features.ERROR_HANDLING,
                 scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT,

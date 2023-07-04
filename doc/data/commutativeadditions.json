@@ -2,10 +2,13 @@
   "$schema": "https://github.com/alxroyer/scenario/blob/master/schema/scenario-report-v1.schema.json",
   "name": "demo/commutativeadditions.py",
   "href": "demo/commutativeadditions.py",
-  "attributes": {},
+  "attributes": {
+    "TITLE": "Commutative additions",
+    "DESCRIPTION": "Call the CommutativeAddition scenario with different inputs."
+  },
   "steps": [
     {
-      "location": "demo/commutativeadditions.py:16:CommutativeAdditions.step010",
+      "location": "demo/commutativeadditions.py:20:CommutativeAdditions.step010",
       "description": "Both positive members",
       "executions": [
         {
@@ -37,10 +40,13 @@
                 {
                   "name": "demo/commutativeaddition.py",
                   "href": "demo/commutativeaddition.py",
-                  "attributes": {},
+                  "attributes": {
+                    "TITLE": "Commutative addition",
+                    "DESCRIPTION": "Addition of two members, swapping orders."
+                  },
                   "steps": [
                     {
-                      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+                      "location": "demo/commutativeaddition.py:20:CommutativeAddition.step000",
                       "description": "Initial conditions",
                       "executions": [
                         {
@@ -78,7 +84,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
                       "description": "a + b",
                       "executions": [
                         {
@@ -115,7 +121,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
                       "description": "b + a",
                       "executions": [
                         {
@@ -152,7 +158,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
                       "description": "Check",
                       "executions": [
                         {
@@ -222,7 +228,7 @@
       ]
     },
     {
-      "location": "demo/commutativeadditions.py:23:CommutativeAdditions.step020",
+      "location": "demo/commutativeadditions.py:27:CommutativeAdditions.step020",
       "description": "Positive and negative members",
       "executions": [
         {
@@ -254,10 +260,13 @@
                 {
                   "name": "demo/commutativeaddition.py",
                   "href": "demo/commutativeaddition.py",
-                  "attributes": {},
+                  "attributes": {
+                    "TITLE": "Commutative addition",
+                    "DESCRIPTION": "Addition of two members, swapping orders."
+                  },
                   "steps": [
                     {
-                      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+                      "location": "demo/commutativeaddition.py:20:CommutativeAddition.step000",
                       "description": "Initial conditions",
                       "executions": [
                         {
@@ -295,7 +304,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
                       "description": "a + b",
                       "executions": [
                         {
@@ -332,7 +341,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
                       "description": "b + a",
                       "executions": [
                         {
@@ -369,7 +378,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
                       "description": "Check",
                       "executions": [
                         {
@@ -439,7 +448,7 @@
       ]
     },
     {
-      "location": "demo/commutativeadditions.py:30:CommutativeAdditions.step030",
+      "location": "demo/commutativeadditions.py:34:CommutativeAdditions.step030",
       "description": "Both negative members",
       "executions": [
         {
@@ -471,10 +480,13 @@
                 {
                   "name": "demo/commutativeaddition.py",
                   "href": "demo/commutativeaddition.py",
-                  "attributes": {},
+                  "attributes": {
+                    "TITLE": "Commutative addition",
+                    "DESCRIPTION": "Addition of two members, swapping orders."
+                  },
                   "steps": [
                     {
-                      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+                      "location": "demo/commutativeaddition.py:20:CommutativeAddition.step000",
                       "description": "Initial conditions",
                       "executions": [
                         {
@@ -512,7 +524,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
                       "description": "a + b",
                       "executions": [
                         {
@@ -549,7 +561,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
                       "description": "b + a",
                       "executions": [
                         {
@@ -586,7 +598,7 @@
                       ]
                     },
                     {
-                      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
                       "description": "Check",
                       "executions": [
                         {

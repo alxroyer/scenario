@@ -20,9 +20,10 @@ import scenario
 class GotoScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Goto scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Goto scenario sample",
+        )
 
         self.a = 0  # type: int
         self.b = 0  # type: int

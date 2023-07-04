@@ -19,10 +19,14 @@ import scenario
 
 class SimpleScenario(scenario.Scenario):
 
-    def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Simple scenario sample")
+    def __init__(
+            self,
+            title="",  # type: str
+    ):  # type: (...) -> None
+        scenario.Scenario.__init__(
+            self,
+            title=title or "Simple scenario sample",
+        )
 
     def step010(self):  # type: (...) -> None  # location: step010
         self.STEP("step#10")

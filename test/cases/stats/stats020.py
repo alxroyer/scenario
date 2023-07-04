@@ -26,7 +26,7 @@ class Stats020(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Statistics failing scenario",
-            objective="Check scenario execution statistics for a failing scenario, with the display of the error information.",
+            description="Check scenario execution statistics for a failing scenario, with the display of the error information.",
             features=[
                 scenario.test.features.STATISTICS,
                 scenario.test.features.ERROR_HANDLING,

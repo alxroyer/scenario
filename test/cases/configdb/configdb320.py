@@ -27,7 +27,7 @@ class ConfigDb320(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="'pyyaml' environment error",
-            objective="Check that an environment error is raised when 'pyyaml' is not installed.",
+            description="Check that an environment error is raised when 'pyyaml' is not installed.",
             features=[
                 scenario.test.features.CONFIG_DB,
             ],

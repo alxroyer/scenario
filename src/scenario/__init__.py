@@ -718,10 +718,31 @@ if True:
 
 
 __doc__ += """
+Scenario attributes
+===================
+"""
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ScenarioAttributes
+
+        Core scenario attributes.
+
+        .. seealso:: :class:`._scenarioattributes.CoreScenarioAttributes` implementation.
+    """
+    from ._scenarioattributes import CoreScenarioAttributes as ScenarioAttributes
+    __all__.append("ScenarioAttributes")
+
+__doc__ += """
+.. seealso:: :meth:`._scenariodefinition.ScenarioDefinition.setattribute()` for user scenario attributes.
+"""
+
+
+__doc__ += """
 Requirement management
 ======================
 
-TODO: :ref:`todo`
+.. todo:: :ref:`todo`
 """
 
 if typing.TYPE_CHECKING:

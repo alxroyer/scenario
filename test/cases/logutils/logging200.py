@@ -29,7 +29,7 @@ class Logging200(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Log levels and classes",
-            objective="Check log lines are tagged with a log level between DEBUG, INFO, WARNING and ERROR, and an optional log class.",
+            description="Check log lines are tagged with a log level between DEBUG, INFO, WARNING and ERROR, and an optional log class.",
             features=[scenario.test.features.LOGGING],
         )
 

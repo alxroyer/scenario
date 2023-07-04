@@ -29,7 +29,7 @@ class MultipleScenarios002(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Multiple scenarios --doc-only",
-            objective="Check that several scenarios can be executed with a single scenario launcher invocation with the --doc-only option set.",
+            description="Check that several scenarios can be executed with a single scenario launcher invocation with the --doc-only option set.",
             features=[scenario.test.features.MULTIPLE_SCENARIO_EXECUTION, scenario.test.features.DOC_ONLY],
         )
 

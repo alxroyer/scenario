@@ -26,7 +26,7 @@ class KnownIssues290(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue level names & campaigns",
-            objective="Check that issue level names are displayed in campaign logs and in final results.",
+            description="Check that issue level names are displayed in campaign logs and in final results.",
             features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.CAMPAIGNS],
         )
 

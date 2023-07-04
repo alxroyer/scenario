@@ -2,10 +2,13 @@
   "$schema": "https://github.com/alxroyer/scenario/blob/master/schema/scenario-report-v1.schema.json",
   "name": "demo/loggingdemo.py",
   "href": "demo/loggingdemo.py",
-  "attributes": {},
+  "attributes": {
+    "TITLE": "Logging demo",
+    "DESCRIPTION": "Demonstrate logging facilities."
+  },
   "steps": [
     {
-      "location": "demo/loggingdemo.py:22:LoggingScenario.step010",
+      "location": "demo/loggingdemo.py:24:LoggingScenario.step010",
       "description": "Logging with the main logger",
       "executions": [
         {
@@ -40,7 +43,7 @@
       ]
     },
     {
-      "location": "demo/loggingdemo.py:31:LoggingScenario.step020",
+      "location": "demo/loggingdemo.py:33:LoggingScenario.step020",
       "description": "Logging with the scenario instance",
       "executions": [
         {
@@ -75,7 +78,7 @@
       ]
     },
     {
-      "location": "demo/loggingdemo.py:40:LoggingScenario.step030",
+      "location": "demo/loggingdemo.py:42:LoggingScenario.step030",
       "description": "Logging with a class logger",
       "executions": [
         {
@@ -144,7 +147,7 @@
       ]
     },
     {
-      "location": "demo/loggingdemo.py:55:LoggingScenario.step110",
+      "location": "demo/loggingdemo.py:57:LoggingScenario.step110",
       "description": "Class logger indentation",
       "executions": [
         {
@@ -349,7 +352,7 @@
       ]
     },
     {
-      "location": "demo/loggingdemo.py:76:LoggingScenario.step120",
+      "location": "demo/loggingdemo.py:78:LoggingScenario.step120",
       "description": "Main logger indentation",
       "executions": [
         {

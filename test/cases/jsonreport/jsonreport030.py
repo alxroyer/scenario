@@ -26,7 +26,7 @@ class JsonReport030(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="JSON report goto scenario",
-            objective="Check the JSON report is generated as expected for a scenario with goto jumps.",
+            description="Check the JSON report is generated as expected for a scenario with goto jumps.",
             features=[scenario.test.features.SCENARIO_REPORT, scenario.test.features.GOTO],
         )
 

@@ -39,11 +39,13 @@ def _foo(event, data):
 
 class Handlers(scenario.Scenario):
 
-    SHORT_TITLE = "Handler demonstration"
-    TEST_GOAL = "Register handlers and show their effect."
-
     def __init__(self):
-        scenario.Scenario.__init__(self)
+        scenario.Scenario.__init__(
+            self,
+            title="Handler demonstration",
+            description="Register handlers and show their effect.",
+        )
+
         scenario.handlers.install(scenario.Event.BEFORE_TEST, _beforetest)
         scenario.handlers.install(scenario.Event.BEFORE_STEP, _beforestep)
         scenario.handlers.install(scenario.Event.ERROR, _error)

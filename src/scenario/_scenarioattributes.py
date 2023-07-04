@@ -14,18 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import scenario
+"""
+`scenario` core scenario attributes definition.
+"""
+
+if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 
 
-class ScenarioAttribute(scenario.enum.StrEnum):
-
-    # Test title: Short description of the test.
-    # As short as possible: usually couple of words only, in the nominal form.
-    TEST_TITLE = "TEST_TITLE"
-
-    # Test objective: More detailed sentence detailing the objective(s) of the test.
-    TEST_OBJECTIVE = "TEST_OBJECTIVE"
-
-    # Requirements: Features that the test covers.
-    # Handled directly by the `scenario` framework.
-    # FEATURES = "FEATURES"
+class CoreScenarioAttributes(_StrEnumImpl):
+    """
+    Core scenario attributes.
+    """
+    TITLE = "TITLE"
+    DESCRIPTION = "DESCRIPTION"

@@ -35,7 +35,7 @@ class Issue33(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue #33! Fully qualified name for code locations",
-            objective="Check that code locations for errors and known issues give the fully qualified names of the methods they occur in.",
+            description="Check that code locations for errors and known issues give the fully qualified names of the methods they occur in.",
             features=[scenario.test.features.ERROR_HANDLING, scenario.test.features.KNOWN_ISSUES],
         )
 

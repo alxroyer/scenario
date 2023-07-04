@@ -25,7 +25,6 @@ if True:
 
 # Reexports.
 try:
-    from ._attributes import ScenarioAttribute as ScenarioAttribute
     from . import _configvalues as configvalues
     from . import _data as data
     from ._expectations import ActionResultExpectations as ActionResultExpectations

@@ -20,9 +20,10 @@ import scenario
 class InvalidScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Invalid scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Invalid scenario sample",
+        )
 
     def step010(self):  # type: (...) -> None
         self.STEP("step#10")

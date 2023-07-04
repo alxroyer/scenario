@@ -25,8 +25,10 @@ class Issue003(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue #3! Actions / Results differenciation even at the same location",
-            objective="Check that actions and expected resulted are differenciated even if they have the same location, "
-                      "especially in JSON reports.",
+            description=(
+                "Check that actions and expected resulted are differenciated even if they have the same location, "
+                "especially in JSON reports."
+            ),
             features=[scenario.test.features.SCENARIO_EXECUTION, scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT],
         )
 

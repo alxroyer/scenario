@@ -131,6 +131,7 @@ class ScenarioReport(_LoggerImpl):
         """
         from ._debugutils import jsondump
         from ._path import Path
+        from ._scenarioattributes import CoreScenarioAttributes
         from ._testerrors import TestError
 
         self.debug("Generating JSON report for scenario %r", scenario_definition)
@@ -156,6 +157,9 @@ class ScenarioReport(_LoggerImpl):
         # Attributes.
         _json_scenario["attributes"] = {}
         for _attribute_name in scenario_definition.getattributenames():  # type: str
+            # Skip empty core attributes.
+            if (_attribute_name in CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                continue
             _json_scenario["attributes"][_attribute_name] = str(scenario_definition.getattribute(_attribute_name))
 
         # Steps.

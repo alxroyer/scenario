@@ -26,7 +26,7 @@ class Goto001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Goto jumps",
-            objective="Check the capacity the make the scenario execution jump to backward or forward steps.",
+            description="Check the capacity the make the scenario execution jump to backward or forward steps.",
             features=[scenario.test.features.GOTO],
         )
 

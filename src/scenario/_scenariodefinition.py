@@ -184,15 +184,36 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             return SCENARIO_STACK.current_scenario_definition
         SCENARIO_STACK.raisecontexterror(f"Current scenario definition not of type {qualname(cls)}")
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            title=None,  # type: typing.Optional[str]
+            description=None,  # type: typing.Optional[str]
+    ):  # type: (...) -> None
         """
-        Activates debugging by default.
+        Initializes a scenario instance with optional title and description.
+
+        :param title: Short scenario title.
+        :param description: Longer scenario description.
 
         Determines the scenario name and *log class* by the way from the scenario script path.
+
+        Activates debugging by default.
         """
         from ._locations import CodeLocation
         from ._path import Path
         from ._scenarioexecution import ScenarioExecution
+
+        #: Scenario title, optional.
+        #:
+        #: As short as possible.
+        #: Usually a couple of words, in the nominal form.
+        self.title = title or ""  # type: str
+
+        #: Scenario description, optional.
+        #:
+        #: More detailed explanation about the scenario than :attr:`title`.
+        #: Commonly describes the purpose or objectives of the test.
+        self.description = description or ""  # type: str
 
         #: Definition location.
         self.location = CodeLocation.fromclass(type(self))  # type: CodeLocation
@@ -221,8 +242,10 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         #: Not set by default.
         self.continue_on_error = None  # type: typing.Optional[bool]
 
-        #: Scenario attributes (see :meth:`._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`).
-        self.__attributes = {}  # type: typing.Dict[str, typing.Any]
+        #: User scenario attributes (see :meth:`._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`).
+        #:
+        #: .. seealso:: :class:`._scenarioattributes.CoreScenarioAttributes` for core scenario attributes.
+        self.__user_attributes = {}  # type: typing.Dict[str, typing.Any]
 
         #: Check step coverage option.
         self.check_step_coverage = None  # type: typing.Optional[bool]
@@ -235,7 +258,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
 
     def __repr__(self):  # type: () -> str
         """
-        Canonical string representation.
+        Canonical string representation of the scenario definition.
         """
         from ._reflection import qualname
 
@@ -257,15 +280,31 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             value,  # type: typing.Any
     ):  # type: (...) -> ScenarioDefinition
         """
-        Defines an attribute for the scenario.
+        Defines a user attribute, or sets a core attribute, for the scenario.
 
         :param name: Attribute name.
         :param value: Attribute value.
         :return: ``self``
         """
         from ._enumutils import enum2str
+        from ._scenarioattributes import CoreScenarioAttributes
 
-        self.__attributes[enum2str(name)] = value
+        # Core scenario attributes.
+        if name == CoreScenarioAttributes.TITLE:
+            if not isinstance(value, str):
+                raise ValueError(f"Invalid scenario title {value!r}")
+            self.title = value
+            return self
+        if name == CoreScenarioAttributes.DESCRIPTION:
+            if not isinstance(value, str):
+                raise ValueError(f"Invalid scenario description {value!r}")
+            self.description = value
+            return self
+        if name in CoreScenarioAttributes:
+            raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
+
+        # User scenario attributes.
+        self.__user_attributes[enum2str(name)] = value
         return self
 
     def getattribute(
@@ -280,16 +319,33 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         :raise KeyError: When the attribute name is not defined.
         """
         from ._enumutils import enum2str
+        from ._scenarioattributes import CoreScenarioAttributes
 
-        return self.__attributes[enum2str(name)]
+        # Core scenario attributes.
+        if name == CoreScenarioAttributes.TITLE:
+            return self.title
+        if name == CoreScenarioAttributes.DESCRIPTION:
+            return self.description
+        if name in CoreScenarioAttributes:
+            raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
 
-    def getattributenames(self):  # type: (...) -> typing.List[str]
+        # User scenario attributes.
+        return self.__user_attributes[enum2str(name)]
+
+    def getattributenames(self):  # type: (...) -> typing.Sequence[str]
         """
         Retrieves all attribute names defined with the scenario.
 
-        :return: List of attribute names, sorted in alphabetical order.
+        :return: List of attribute names.
         """
-        return sorted([_name for _name in self.__attributes])
+        from ._scenarioattributes import CoreScenarioAttributes
+
+        return [
+            # Core scenario attributes first.
+            *[str(_core_scenario_attribute) for _core_scenario_attribute in CoreScenarioAttributes],
+            # User scenario attributes after.
+            *[_name for _name in self.__user_attributes],
+        ]
 
     def section(
             self,

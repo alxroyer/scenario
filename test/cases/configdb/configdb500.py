@@ -27,7 +27,7 @@ class ConfigDb500(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Configuration files overloading",
-            objective=(
+            description=(
                 "Check several configuration files can be loaded from the command line. "
                 "Check the one loaded in the end overloads the ones loaded before."
             ),

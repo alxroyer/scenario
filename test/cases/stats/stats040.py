@@ -25,7 +25,7 @@ class Stats040(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Statistics subscenario",
-            objective="Check scenario execution statistics for a super scenario executing a subscenario.",
+            description="Check scenario execution statistics for a super scenario executing a subscenario.",
             features=[
                 scenario.test.features.STATISTICS,
                 scenario.test.features.SUBSCENARIOS,

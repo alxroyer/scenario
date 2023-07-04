@@ -29,19 +29,12 @@ class TestCase(scenario.Scenario):
     def __init__(
             self,
             title,  # type: str
-            objective,  # type: str
+            description,  # type: str
             features,  # type: typing.Sequence[scenario.AnyReqLinkType]
     ):  # type: (...) -> None
-        from ._attributes import ScenarioAttribute
         from ._paths import MAIN_PATH
 
-        scenario.Scenario.__init__(self)
-
-        # Scenario attributes.
-        self.title = title  # type: str
-        self.setattribute(ScenarioAttribute.TEST_TITLE, title)
-        self.objective = objective  # type: str
-        self.setattribute(ScenarioAttribute.TEST_OBJECTIVE, objective)
+        scenario.Scenario.__init__(self, title=title, description=description)
 
         # Requirement management.
         self.covers(*features)

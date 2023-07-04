@@ -26,7 +26,7 @@ class ScenarioLogging010(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario logging simple scenario",
-            objective="Check the scenario logging output is generated as expected for a simple scenario.",
+            description="Check the scenario logging output is generated as expected for a simple scenario.",
             features=[
                 # Main features:
                 scenario.test.features.SCENARIO_LOGGING,

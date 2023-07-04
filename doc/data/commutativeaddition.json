@@ -2,10 +2,13 @@
   "$schema": "https://github.com/alxroyer/scenario/blob/master/schema/scenario-report-v1.schema.json",
   "name": "demo/commutativeaddition.py",
   "href": "demo/commutativeaddition.py",
-  "attributes": {},
+  "attributes": {
+    "TITLE": "Commutative addition",
+    "DESCRIPTION": "Addition of two members, swapping orders."
+  },
   "steps": [
     {
-      "location": "demo/commutativeaddition.py:18:CommutativeAddition.step000",
+      "location": "demo/commutativeaddition.py:20:CommutativeAddition.step000",
       "description": "Initial conditions",
       "executions": [
         {
@@ -43,7 +46,7 @@
       ]
     },
     {
-      "location": "demo/commutativeaddition.py:25:CommutativeAddition.step010",
+      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
       "description": "a + b",
       "executions": [
         {
@@ -80,7 +83,7 @@
       ]
     },
     {
-      "location": "demo/commutativeaddition.py:32:CommutativeAddition.step020",
+      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
       "description": "b + a",
       "executions": [
         {
@@ -117,7 +120,7 @@
       ]
     },
     {
-      "location": "demo/commutativeaddition.py:39:CommutativeAddition.step030",
+      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
       "description": "Check",
       "executions": [
         {

@@ -293,10 +293,10 @@ The following table describes the `scenario` configurable keys & values.
       - Which debug classes to display?
       - Not set
 
-    * - .. _config-db.scenario.expected_attributes:
+    * - .. _config-db.scenario.expected_scenario_attributes:
 
-        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.EXPECTED_ATTRIBUTES`
-      - ``scenario.expected_attributes``
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.EXPECTED_SCENARIO_ATTRIBUTES`
+      - ``scenario.expected_scenario_attributes``
       - List of strings (or comma-separated string)
       - Expected scenario attributes.
       - Not set

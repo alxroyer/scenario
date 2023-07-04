@@ -25,7 +25,7 @@ class KnownIssues010(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Known issues",
-            objective="Check known issues generate warnings by default, and that the status of the test is WARNINGS.",
+            description="Check known issues generate warnings by default, and that the status of the test is WARNINGS.",
             features=[scenario.test.features.KNOWN_ISSUES],
         )
 

@@ -1,24 +1,26 @@
 SCENARIO 'demo/commutativeaddition.py'
 ------------------------------------------------
+  TITLE: Commutative addition
+  DESCRIPTION: Addition of two members, swapping orders.
 
 
-STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+STEP#1: Initial conditions (demo/commutativeaddition.py:20:CommutativeAddition.step000)
 ------------------------------------------------
     ACTION: Let a = 1, and b = 3
   EVIDENCE:   -> a = 1
   EVIDENCE:   -> b = 3
 
-STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+STEP#2: a + b (demo/commutativeaddition.py:27:CommutativeAddition.step010)
 ------------------------------------------------
     ACTION: Compute (a + b) and store the result as result1.
   EVIDENCE:   -> result1 = 4
 
-STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+STEP#3: b + a (demo/commutativeaddition.py:34:CommutativeAddition.step020)
 ------------------------------------------------
     ACTION: Compute (b + a) and store the result as result2.
   EVIDENCE:   -> result2 = 4
 
-STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+STEP#4: Check (demo/commutativeaddition.py:41:CommutativeAddition.step030)
 ------------------------------------------------
     ACTION: Compare result1 and result2.
     RESULT: result1 and result2 are the same.

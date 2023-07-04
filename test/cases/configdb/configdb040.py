@@ -28,7 +28,7 @@ class ConfigDb040(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Configuration value unset",
-            objective="Check that a configuration value can be unset.",
+            description="Check that a configuration value can be unset.",
             features=[
                 scenario.test.features.CONFIG_DB,
             ],

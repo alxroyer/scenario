@@ -29,9 +29,11 @@ class KnownIssues110(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Known issue levels & ignored and error issue levels",
-            objective="Check that known issues can be declared with an issue level making them behave as errors or be ignored "
-                      "depending on the --issue-level-error and --issue-level-ignored options. "
-                      "Check the way things are logged in the console and saved in scenario reports.",
+            description=(
+                "Check that known issues can be declared with an issue level making them behave as errors or be ignored "
+                "depending on the --issue-level-error and --issue-level-ignored options. "
+                "Check the way things are logged in the console and saved in scenario reports."
+            ),
             features=[
                 scenario.test.features.KNOWN_ISSUES, scenario.test.features.ERROR_HANDLING,
                 scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT,

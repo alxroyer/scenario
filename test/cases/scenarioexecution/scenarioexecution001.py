@@ -27,7 +27,7 @@ class ScenarioExecution001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario execution",
-            objective="Check test steps are executed one after the other.",
+            description="Check test steps are executed one after the other.",
             features=[scenario.test.features.SCENARIO_EXECUTION],
         )
 

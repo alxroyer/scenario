@@ -27,8 +27,8 @@ class ConfigDb110(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Save INI configuration file",
-            objective=(
-                "Check that a INI configuration file can be loaded with a given root configuration key,"
+            description=(
+                "Check that a INI configuration file can be loaded with a given root configuration key, "
                 "then saved as a new INI file."
             ),
             features=[

@@ -27,7 +27,7 @@ class ConfigDb010(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Configuration value from command line",
-            objective="Check that a configuration value can be set from the command line.",
+            description="Check that a configuration value can be set from the command line.",
             features=[
                 scenario.test.features.CONFIG_DB,
             ],

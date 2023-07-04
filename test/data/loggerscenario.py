@@ -22,9 +22,10 @@ class LoggerScenario(scenario.Scenario):
     LOGGER_DEBUG_CLASS = "sample-log"  # type: str
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Logger scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Logger scenario sample",
+        )
 
         self.sample_logger = scenario.Logger(log_class=LoggerScenario.LOGGER_DEBUG_CLASS)
         self.sample_logger.setlogcolor(scenario.Console.Color.LIGHTBLUE36)

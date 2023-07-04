@@ -20,6 +20,9 @@ Scenario attributes
 
 .. todo:: Documentation needed for scenario attributes:
 
+    - Core & user attributes.
+    - Core attributes: short title and requirements.
+    - Convention: attribute names in capital letters.
     - May commonly be used to manage additional info like: test title, test objective, names of features tested.
     - Expected scenario attributes.
     - Best practice: use of enums.

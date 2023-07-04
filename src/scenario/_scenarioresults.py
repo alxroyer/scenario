@@ -73,6 +73,7 @@ class ScenarioResults(_LoggerImpl):
         """
         from ._datetimeutils import f2strduration
         from ._loggermain import MAIN_LOGGER
+        from ._scenarioconfig import SCENARIO_CONFIG
         from ._stats import ExecTotalStats
 
         _total_step_stats = ExecTotalStats()  # type: ExecTotalStats
@@ -123,7 +124,8 @@ class ScenarioResults(_LoggerImpl):
         MAIN_LOGGER.info(_fmt % (
             "TOTAL", "Status",
             "Steps", "Actions", "Results",
-            "Time", "",  # Note: No title for the *extra info* column.
+            "Time",
+            ", ".join(SCENARIO_CONFIG.resultsextrainfo()).capitalize(),
         ))
         MAIN_LOGGER.info(_fmt % (
             _total_name_field, "",
@@ -139,9 +141,8 @@ class ScenarioResults(_LoggerImpl):
         for _scenario_execution in _errors:
             self._displayscenarioline(logging.ERROR, _fmt, _scenario_execution)
 
-    @classmethod
     def _displayscenarioline(
-            cls,
+            self,
             log_level,  # type: int
             fmt,  # type: str
             scenario_execution,  # type: _ScenarioExecutionType
@@ -154,7 +155,6 @@ class ScenarioResults(_LoggerImpl):
         :param scenario_execution: Scenario to display.
         """
         from ._datetimeutils import f2strduration
-        from ._debugutils import callback
         from ._loggermain import MAIN_LOGGER
         from ._scenarioconfig import SCENARIO_CONFIG
 
@@ -163,23 +163,24 @@ class ScenarioResults(_LoggerImpl):
         for _attribute_name in SCENARIO_CONFIG.resultsextrainfo():  # type: str
             if _attribute_name in scenario_execution.definition.getattributenames():
                 _extra_info.append(str(scenario_execution.definition.getattribute(_attribute_name)))
+        self.debug("Extra info configuration: %r", _extra_info)
 
         # Log the scenario line.
         MAIN_LOGGER.log(log_level, fmt % (
             scenario_execution.definition.name, scenario_execution.status,
             scenario_execution.step_stats, scenario_execution.action_stats, scenario_execution.result_stats,
-            callback(f2strduration, scenario_execution.time.elapsed), callback(lambda: ", ".join(_extra_info)),
+            f2strduration(scenario_execution.time.elapsed),
+            ", ".join(_extra_info),
         ))
 
         # Display warnings, then errors.
         for _warning in scenario_execution.warnings:  # type: _TestErrorType
-            cls._displayerror(logging.WARNING, _warning)
+            self._displayerror(logging.WARNING, _warning)
         for _error in scenario_execution.errors:  # type: _TestErrorType
-            cls._displayerror(logging.ERROR, _error)
+            self._displayerror(logging.ERROR, _error)
 
-    @classmethod
     def _displayerror(
-            cls,
+            self,
             log_level,  # type: int
             error,  # type: _TestErrorType
     ):  # type: (...) -> None

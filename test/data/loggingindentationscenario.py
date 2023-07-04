@@ -20,9 +20,10 @@ import scenario
 class LoggingIndentationScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Logging indentation scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Logging indentation scenario sample",
+        )
 
     def step200(self):  # type: (...) -> None
         self.STEP("Logging indentation")

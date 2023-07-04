@@ -20,9 +20,10 @@ import scenario
 class ScenarioLoggingScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Scenario logging scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Scenario logging scenario sample",
+        )
 
     def step000(self):  # type: (...) -> None
         self.STEP("Scenario logging")

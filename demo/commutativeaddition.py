@@ -5,11 +5,13 @@ import scenario
 
 class CommutativeAddition(scenario.Scenario):
 
-    SHORT_TITLE = "Commutative addition"
-    TEST_GOAL = "Addition of two members, swapping orders."
-
     def __init__(self, a=1, b=3):
-        scenario.Scenario.__init__(self)
+        scenario.Scenario.__init__(
+            self,
+            title="Commutative addition",
+            description="Addition of two members, swapping orders.",
+        )
+
         self.a = a
         self.b = b
         self.result1 = 0

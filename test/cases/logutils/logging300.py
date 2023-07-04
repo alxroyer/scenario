@@ -32,7 +32,7 @@ class Logging300(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Log colors",
-            objective=(
+            description=(
                 "Check log lines are colored by default regarding their log level in the console, "
                 "that class logger message colors can be parameterized, "
                 "and that log colors can be disabled."

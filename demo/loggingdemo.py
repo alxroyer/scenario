@@ -11,11 +11,13 @@ class MyLogger(scenario.Logger):
 
 class LoggingScenario(scenario.Scenario):
 
-    SHORT_TITLE = "Logging demo"
-    TEST_GOAL = "Demonstrate logging facilities."
-
     def __init__(self):
-        scenario.Scenario.__init__(self)
+        scenario.Scenario.__init__(
+            self,
+            title="Logging demo",
+            description="Demonstrate logging facilities.",
+        )
+
         self.class_logger = MyLogger()
         self.class_logger.setlogcolor(scenario.Console.Color.LIGHTBLUE36)
 

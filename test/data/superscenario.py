@@ -26,9 +26,10 @@ class SuperScenario(scenario.Scenario):
         SUBSCENARIO_PATH = "scenario.test.SuperScenario.subscenario_path"
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Subscenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Subscenario sample",
+        )
 
         self.subscenario_path = scenario.Path(
             scenario.conf.get(SuperScenario.ConfigKey.SUBSCENARIO_PATH, type=str, default=scenario.test.paths.SIMPLE_SCENARIO),

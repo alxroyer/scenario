@@ -30,7 +30,7 @@ class KnownIssues210(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue level names",
-            objective="Check that issue levels can be configured with meaningful names, and that these names are displayed in the console.",
+            description="Check that issue levels can be configured with meaningful names, and that these names are displayed in the console.",
             features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.SCENARIO_LOGGING],
         )
 

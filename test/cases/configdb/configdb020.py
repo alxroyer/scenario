@@ -27,7 +27,7 @@ class ConfigDb020(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Configuration value from code",
-            objective="Check that a configuration value can be set from the code.",
+            description="Check that a configuration value can be set from the code.",
             features=[
                 scenario.test.features.CONFIG_DB,
             ],

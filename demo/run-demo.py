@@ -74,6 +74,12 @@ if __name__ == "__main__":
     scenario.conf.set("scenario.log_file", _outpath)
     scenario.logging.info(f"Test log saved in '{_outpath}'")
 
+    # Configure the list of expected scenario attributes.
+    scenario.conf.set(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES, [
+        scenario.ScenarioAttributes.TITLE,
+        scenario.ScenarioAttributes.DESCRIPTION,
+    ])
+
     # Scenario execution.
     _res = scenario.runner.main()
 

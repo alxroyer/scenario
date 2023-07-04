@@ -29,7 +29,7 @@ class Logging100(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Logging timestamps",
-            objective="Check log lines are displayed with timestamps (by default), and the ability to avoid them.",
+            description="Check log lines are displayed with timestamps (by default), and the ability to avoid them.",
             features=[scenario.test.features.LOGGING],
         )
 

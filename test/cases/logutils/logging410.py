@@ -33,7 +33,7 @@ class Logging410(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario stack indentation",
-            objective="Check that indentation is shifted for each subscenario being executed.",
+            description="Check that indentation is shifted for each subscenario being executed.",
             features=[scenario.test.features.LOGGING],
         )
 

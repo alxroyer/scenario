@@ -28,7 +28,7 @@ class MultipleScenarios004(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Multiple scenarios & extra info",
-            objective="Check extra info display when executing multiple scenarios.",
+            description="Check extra info display when executing multiple scenarios.",
             features=[
                 # Main features:
                 scenario.test.features.MULTIPLE_SCENARIO_EXECUTION, scenario.test.features.ATTRIBUTES,

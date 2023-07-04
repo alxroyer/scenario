@@ -27,9 +27,10 @@ class KnownIssueDetailsScenario(scenario.Scenario):
         URL_BASE = "scenario.test.KnownIssue.url_base"
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Known issue details scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Known issue details scenario sample",
+        )
 
     def step010(self):  # type: (...) -> None
         from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to protected module

@@ -35,7 +35,7 @@ class Issue46(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue #46! Campaign halts on errors",
-            objective="Check that a campaign does not halt on errors due the scenario scripts being tested.",
+            description="Check that a campaign does not halt on errors due the scenario scripts being tested.",
             features=[scenario.test.features.CAMPAIGNS, scenario.test.features.ERROR_HANDLING],
         )
 

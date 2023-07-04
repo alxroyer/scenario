@@ -29,7 +29,7 @@ class FailingScenario002(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Continue on error",
-            objective="Check steps following an error step continue being executed when the *continue_on_error* option is enabled.",
+            description="Check steps following an error step continue being executed when the *continue_on_error* option is enabled.",
             features=[scenario.test.features.ERROR_HANDLING],
         )
 

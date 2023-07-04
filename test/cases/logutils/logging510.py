@@ -29,7 +29,7 @@ class Logging510(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="File logging",
-            objective="Check that logging can be saved into a file, even though console logging is turned off.",
+            description="Check that logging can be saved into a file, even though console logging is turned off.",
             features=[scenario.test.features.LOGGING],
         )
 

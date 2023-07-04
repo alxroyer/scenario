@@ -26,7 +26,7 @@ class Timezone002(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Timezone configuration",
-            objective=f"Check the `scenario.datetime.toiso8601()` takes into account the '{scenario.ConfigKey.TIMEZONE}' configuration.",
+            description=f"Check the `scenario.datetime.toiso8601()` takes into account the '{scenario.ConfigKey.TIMEZONE}' configuration.",
             features=[],  # No specific feature.
         )
 

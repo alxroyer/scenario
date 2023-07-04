@@ -35,7 +35,7 @@ class Issue65a(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue #65! Scenario execution lost time",
-            objective="Avoid untracked time when executing a scenario.",
+            description="Avoid untracked time when executing a scenario.",
             features=[scenario.test.features.STATISTICS],
         )
 

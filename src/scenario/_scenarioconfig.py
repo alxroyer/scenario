@@ -63,7 +63,7 @@ class ScenarioConfig(_LoggerImpl):
         # Test execution & results.
 
         #: Expected scenario attributes. List of strings, or comma-separated string.
-        EXPECTED_ATTRIBUTES = "scenario.expected_attributes"
+        EXPECTED_SCENARIO_ATTRIBUTES = "scenario.expected_scenario_attributes"
         #: Should the scenario continue on error? Boolean value.
         CONTINUE_ON_ERROR = "scenario.continue_on_error"
         #: Should we wait between two step executions? Float value.
@@ -245,10 +245,10 @@ class ScenarioConfig(_LoggerImpl):
         """
         Retrieves the user scenario expected attributes.
 
-        Configurable through :attr:`Key.EXPECTED_ATTRIBUTES`.
+        Configurable through :attr:`Key.EXPECTED_SCENARIO_ATTRIBUTES`.
         """
         _attribute_names = []  # type: typing.List[str]
-        self._readstringlistfromconf(self.Key.EXPECTED_ATTRIBUTES, _attribute_names)
+        self._readstringlistfromconf(self.Key.EXPECTED_SCENARIO_ATTRIBUTES, _attribute_names)
         self.debug("expectedscenarioattributes() -> %r", _attribute_names)
         return _attribute_names
 
@@ -311,10 +311,14 @@ class ScenarioConfig(_LoggerImpl):
 
         Applicable when displaying campaign results
         or the result of several tests executed in a single command line.
+
+        Returns a 1-item list with :const:`._scenarioattributes.CoreScenarioAttributes.TITLE`
+        by default in case nothing is configured.
         """
         from ._args import Args
         from ._campaignargs import CampaignArgs
         from ._scenarioargs import ScenarioArgs
+        from ._scenarioattributes import CoreScenarioAttributes
 
         # Merge attribute names from...
         _attribute_names = []  # type: typing.List[str]
@@ -326,6 +330,11 @@ class ScenarioConfig(_LoggerImpl):
                     _attribute_names.append(_attribute_name)
         # ...and configuration database.
         self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO, _attribute_names)
+
+        # Default to titles.
+        if not _attribute_names:
+            _attribute_names.append(CoreScenarioAttributes.TITLE)
+
         self.debug("resultsextrainfo() -> %r", _attribute_names)
         return _attribute_names
 

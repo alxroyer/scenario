@@ -26,7 +26,7 @@ class Logging210(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Class logger debugging enabling",
-            objective="Check that debugging is disabled by default for class loggers, and that it can be enabled.",
+            description="Check that debugging is disabled by default for class loggers, and that it can be enabled.",
             features=[scenario.test.features.DEBUG_LOGGING],
         )
 

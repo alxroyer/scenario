@@ -22,9 +22,10 @@ import scenario
 class FailingScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Failing scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Failing scenario sample",
+        )
 
         self.last_checkpoint = None  # type: typing.Optional[str]
 

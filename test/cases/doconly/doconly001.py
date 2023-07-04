@@ -25,7 +25,7 @@ class DocOnly001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="--doc-only execution",
-            objective="Check the --doc-only execution succeeds even for a failing scenario.",
+            description="Check the --doc-only execution succeeds even for a failing scenario.",
             features=[scenario.test.features.DOC_ONLY],
         )
 

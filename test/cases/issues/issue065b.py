@@ -35,7 +35,7 @@ class Issue65b(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue #65! Campaign execution lost time",
-            objective="Avoid untracked time when executing a campaign.",
+            description="Avoid untracked time when executing a campaign.",
             features=[scenario.test.features.CAMPAIGNS, scenario.test.features.SCENARIO_REPORT, scenario.test.features.STATISTICS],
         )
 

@@ -112,8 +112,7 @@ among others:
 .. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: class LoggingScenario
-    :end-at: scenario.Scenario.__init__(self)
-    :lines: 1-2, 6-
+    :end-at: scenario.Scenario.__init__
 
 .. todo:: Example needed for inheriting :py:class:`scenario.Step`.
 
@@ -126,9 +125,9 @@ Debugging is enabled by default for such user-defined scenario and step instance
 .. Step `LoggingScenario.step020()` python implementation.
 .. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
-    :start-at: class LoggingScenario
+    :start-at: def step020(self):
     :end-at: self.debug("This is debug.")
-    :lines: 1, 19-
+    :dedent:
 
 .. Step `LoggingScenario.step020()` console output.
 .. literalinclude:: ../../data/loggingdemo.log
@@ -138,13 +137,19 @@ Debugging is enabled by default for such user-defined scenario and step instance
 
 Otherwise, debugging is disabled by default for class loggers.
 
-.. Scenario `LoggingScenario` with `class_logger` member instance creation,
-   and `LoggingScenario.step020()` python implementation.
+.. Scenario `LoggingScenario` with `class_logger` member instance creation.
 .. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
-    :start-at: class LoggingScenario
-    :end-at: self.class_logger.debug("This is debug.")
-    :lines: 1, 5-8, 28-
+    :start-at: self.class_logger = MyLogger()
+    :end-at: self.class_logger.setlogcolor(scenario.Console.Color.LIGHTBLUE36)
+    :dedent:
+
+.. Step `LoggingScenario.step030()` python implementation.
+.. literalinclude:: ../../../demo/loggingdemo.py
+    :language: python
+    :start-at: def step030(self):
+    :end-before: Activate debugging for the class logger instance.
+    :dedent:
 
 .. Step `LoggingScenario.step030()` console output.
 .. literalinclude:: ../../data/loggingdemo.log
@@ -166,7 +171,6 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
     :language: none
     :start-at: Activate debugging for the class logger instance.
     :end-at: This is debug again.
-    :dedent:
 
 ... 2) through the ``--debug-class`` command line option, ...:
 
@@ -183,7 +187,7 @@ Class logger debugging can be activated on-demand, either 1) programmatically, .
 
     .. [#logging-instance-attribute]
 
-        In case you need to manipulate ``logging`` instance directly,
+        In case you need to manipulate ``logging`` instances directly,
         the ``logging.Logger`` instances are available through the :py:attr:`scenario._logger.Logger.logging_instance` property.
 
         The :py:attr:`scenario._logger.Logger.logging_instance` property is available to both main logger and class loggers.
@@ -332,7 +336,7 @@ it takes effect on every log lines:
     :start-at: STEP#5:
     :end-before: END OF 'demo/loggingdemo.py'
 
-.. admonition:: Scenario stack v/s user identation
+.. admonition:: Scenario stack v/s user indentation
     :class: note
 
     Even though main logger indentation applies to every log lines,

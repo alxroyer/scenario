@@ -36,7 +36,7 @@ class ConfigDb030(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Configuration value types and conversions",
-            objective="Check the way configuration values are converted at use.",
+            description="Check the way configuration values are converted at use.",
             features=[
                 scenario.test.features.CONFIG_DB,
             ],

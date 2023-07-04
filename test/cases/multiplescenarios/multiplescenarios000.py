@@ -33,7 +33,7 @@ class MultipleScenarios000(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Multiple scenarios & incompatible options",
-            objective="Check that a couple of options are incompatible with multiple scenario executions.",
+            description="Check that a couple of options are incompatible with multiple scenario executions.",
             features=[scenario.test.features.MULTIPLE_SCENARIO_EXECUTION],
         )
 

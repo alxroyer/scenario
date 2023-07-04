@@ -26,7 +26,7 @@ class Campaign004(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Campaign & extra info",
-            objective="Check extra info display with campaign results.",
+            description="Check extra info display with campaign results.",
             features=[
                 scenario.test.features.CAMPAIGNS,
                 scenario.ReqLink(scenario.test.features.ATTRIBUTES, comments="Display with campaign final results"),

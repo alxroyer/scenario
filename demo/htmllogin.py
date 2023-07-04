@@ -10,6 +10,13 @@ from htmltestlib import body, getbutton, getedit  # noqa  ## Module level import
 
 class TestLoginPage(scenario.Scenario):
 
+    def __init__(self):
+        scenario.Scenario.__init__(
+            self,
+            title="Login page",
+            description="Check the login procedure.",
+        )
+
     def step010_loginscreen(self):
         self.STEP("Login screen")
 

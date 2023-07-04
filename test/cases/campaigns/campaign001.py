@@ -30,7 +30,7 @@ class Campaign001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Campaign execution & reports",
-            objective=(
+            description=(
                 "Check that the campaign runner can execute a test suite file (CAMPAIGNS), "
                 "gather the test case log files (LOGGING), reports (SCENARIO_REPORT) and statistics (STATISTICS), "
                 "and produce the campaign report (CAMPAIGNS). "

@@ -26,7 +26,7 @@ class DocOnly002(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="--doc-only JSON report",
-            objective="Check the JSON report for a --doc-only execution.",
+            description="Check the JSON report for a --doc-only execution.",
             features=[scenario.test.features.DOC_ONLY, scenario.test.features.SCENARIO_REPORT],
         )
 

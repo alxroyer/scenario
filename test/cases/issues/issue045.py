@@ -29,7 +29,7 @@ class Issue45(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Issue #45! Test scripts in packages",
-            objective="Check that test scripts are loaded respecting their package belonging.",
+            description="Check that test scripts are loaded respecting their package belonging.",
             features=[],
         )
 

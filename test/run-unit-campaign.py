@@ -97,9 +97,9 @@ if __name__ == "__main__":
     # Campaign execution:
     # - Have the neighbour `UNIT_TEST_LAUNCHER` script be used as the scenario runner script.
     scenario.conf.set(scenario.ConfigKey.RUNNER_SCRIPT_PATH, scenario.test.paths.UNIT_TEST_LAUNCHER)
-    # - Make test titles be displayed as extra info (if nothing already configured).
-    if not SCENARIO_CONFIG.resultsextrainfo():
-        scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.test.ScenarioAttribute.TEST_TITLE])
+    # - No need to make test titles be displayed as extra info, this is the default.
+    # if not SCENARIO_CONFIG.resultsextrainfo():
+    #     scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.ScenarioAttributes.TEST_TITLE])
     # - Eventually launch the campaign execution.
     _res = scenario.campaign_runner.main()  # Type already defined above.
     sys.exit(int(_res))

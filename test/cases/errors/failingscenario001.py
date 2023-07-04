@@ -31,7 +31,7 @@ class FailingScenario001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Failing scenario execution",
-            objective=(
+            description=(
                 "Check a scenario ends in error as soon as an exception is thrown. "
                 "Check the error is displayed and stored appropriately."
             ),

@@ -47,7 +47,7 @@ The encoding is explicitly specified in the first lines of Python scripts throug
 The '.repo/checkfiles.yml' file describes the encoding applicable to each file of the repository.
 
 
-.. _coding-rules.files.max-line-length
+.. _coding-rules.files.max-line-length:
 
 Maximum line length
 -------------------

@@ -26,7 +26,7 @@ class Inheritance001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Inheritance & step order",
-            objective="Check step order when a scenario inherits from another one.",
+            description="Check step order when a scenario inherits from another one.",
             features=[scenario.test.features.ALTERNATIVE_SCENARIOS, scenario.test.features.SCENARIO_EXECUTION],
         )
 

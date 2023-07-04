@@ -25,7 +25,7 @@ class Stats041(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Statistics subscenario --doc-only",
-            objective="Check scenario execution statistics for a super scenario executing a subscenario with the --doc-only option set.",
+            description="Check scenario execution statistics for a super scenario executing a subscenario with the --doc-only option set.",
             features=[
                 scenario.test.features.STATISTICS,
                 scenario.test.features.SUBSCENARIOS,

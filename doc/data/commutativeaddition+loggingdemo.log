@@ -1,24 +1,26 @@
 SCENARIO 'demo/commutativeaddition.py'
 ------------------------------------------------
+  TITLE: Commutative addition
+  DESCRIPTION: Addition of two members, swapping orders.
 
 
-STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+STEP#1: Initial conditions (demo/commutativeaddition.py:20:CommutativeAddition.step000)
 ------------------------------------------------
     ACTION: Let a = 1, and b = 3
   EVIDENCE:   -> a = 1
   EVIDENCE:   -> b = 3
 
-STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+STEP#2: a + b (demo/commutativeaddition.py:27:CommutativeAddition.step010)
 ------------------------------------------------
     ACTION: Compute (a + b) and store the result as result1.
   EVIDENCE:   -> result1 = 4
 
-STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+STEP#3: b + a (demo/commutativeaddition.py:34:CommutativeAddition.step020)
 ------------------------------------------------
     ACTION: Compute (b + a) and store the result as result2.
   EVIDENCE:   -> result2 = 4
 
-STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+STEP#4: Check (demo/commutativeaddition.py:41:CommutativeAddition.step030)
 ------------------------------------------------
     ACTION: Compare result1 and result2.
     RESULT: result1 and result2 are the same.
@@ -34,9 +36,11 @@ END OF 'demo/commutativeaddition.py'
 
 SCENARIO 'demo/loggingdemo.py'
 ------------------------------------------------
+  TITLE: Logging demo
+  DESCRIPTION: Demonstrate logging facilities.
 
 
-STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.step010)
+STEP#1: Logging with the main logger (demo/loggingdemo.py:24:LoggingScenario.step010)
 ------------------------------------------------
     ACTION: Log messages of different log levels with the main logger.
               ERROR    This is an error!!!
@@ -44,7 +48,7 @@ STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.ste
               INFO     This is information.
               DEBUG    This is debug.
 
-STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenario.step020)
+STEP#2: Logging with the scenario instance (demo/loggingdemo.py:33:LoggingScenario.step020)
 ------------------------------------------------
     ACTION: Log messages of different log levels with the scenario itself.
               ERROR    [demo/loggingdemo.py] This is an error!!!
@@ -52,7 +56,7 @@ STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenar
               INFO     [demo/loggingdemo.py] This is information.
               DEBUG    [demo/loggingdemo.py] This is debug.
 
-STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step030)
+STEP#3: Logging with a class logger (demo/loggingdemo.py:42:LoggingScenario.step030)
 ------------------------------------------------
     ACTION: Log messages of different log levels with the class logger instance.
               ERROR    [My logger] This is an error!!!
@@ -62,7 +66,7 @@ STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step
     ACTION: Log a debug message again with the class logger instance.
               DEBUG    [My logger] This is debug again.
 
-STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110)
+STEP#4: Class logger indentation (demo/loggingdemo.py:57:LoggingScenario.step110)
 ------------------------------------------------
     ACTION: Log something with the class logger.
               INFO     [My logger] Hello
@@ -82,7 +86,7 @@ STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110
     ACTION: Log something with the class logger.
               INFO     [My logger] Hello
 
-STEP#5: Main logger indentation (demo/loggingdemo.py:76:LoggingScenario.step120)
+STEP#5: Main logger indentation (demo/loggingdemo.py:78:LoggingScenario.step120)
 ------------------------------------------------
     ACTION: Log something with the main logger.
               INFO     Hello
@@ -111,8 +115,8 @@ END OF 'demo/loggingdemo.py'
                Time: HH:MM:SS.mmmmmm
 
 ------------------------------------------------
-INFO     TOTAL                                  Status      Steps    Actions    Results    Time
+INFO     TOTAL                                  Status      Steps    Actions    Results    Time               Title
 INFO     2 tests, 0 failed, 0 with warnings                   9/9      31/31        1/1    HH:MM:SS.mmmmmm
 ------------------------------------------------
-INFO     demo/commutativeaddition.py           SUCCESS        4/4        4/4        1/1    HH:MM:SS.mmmmmm
-INFO     demo/loggingdemo.py                   SUCCESS        5/5      27/27        0/0    HH:MM:SS.mmmmmm
+INFO     demo/commutativeaddition.py           SUCCESS        4/4        4/4        1/1    HH:MM:SS.mmmmmm    Commutative addition
+INFO     demo/loggingdemo.py                   SUCCESS        5/5      27/27        0/0    HH:MM:SS.mmmmmm    Logging demo

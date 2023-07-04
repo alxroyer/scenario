@@ -35,9 +35,11 @@ class KnownIssues190(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):
         scenario.test.TestCase.__init__(
             self,
             title="Known issue levels & campaigns",
-            objective="Check that campaign results with known issues of different levels are displayed correctly: "
-                      "SUCCESS, then WARNINGS, then FAIL tests, "
-                      "WARNINGS and FAIL tests being sorted by ascending issue levels each.",
+            description=(
+                "Check that campaign results with known issues of different levels are displayed correctly: "
+                "SUCCESS, then WARNINGS, then FAIL tests, "
+                "WARNINGS and FAIL tests being sorted by ascending issue levels each."
+            ),
             features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.CAMPAIGNS],
         )
 

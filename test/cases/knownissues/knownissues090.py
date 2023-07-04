@@ -27,7 +27,7 @@ class KnownIssues090(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Known issues & campaigns",
-            objective="Check that known issues in campaign results are displayed correctly: SUCCESS, then WARNINGS, then FAIL tests.",
+            description="Check that known issues in campaign results are displayed correctly: SUCCESS, then WARNINGS, then FAIL tests.",
             features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.CAMPAIGNS],
         )
 

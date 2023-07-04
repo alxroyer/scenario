@@ -29,7 +29,7 @@ class Campaign002(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Campaign execution with several test suites",
-            objective="Check that the campaign runner can execute several test suite files.",
+            description="Check that the campaign runner can execute several test suite files.",
             features=[
                 scenario.test.features.CAMPAIGNS,
                 scenario.ReqLink(scenario.test.features.STATISTICS, comments="Statistics by scenario, integrated by test suite, and globally for the campaign"),

@@ -18,10 +18,10 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Save requirements in scenario reports.
     - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
     - Cherry-pick integration note of 'check-types.py' in PyCharm.
     - Make `ReqDatabase.reqid2xxx()` handle requirement subkeys.
-    - Save title with `ScenarioDefinition`.
     - Make `covers()` (resp. `coveredby()`) take directly a requirement object (resp. a requirement tracker).
     - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls.
     - Formalize better the abilty to define requirement subitems.

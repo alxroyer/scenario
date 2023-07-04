@@ -29,7 +29,7 @@ class MultipleScenarios001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Multiple scenarios execution",
-            objective=(
+            description=(
                 "Check that several scenarios can be executed with a single scenario launcher invocation, "
                 "and that error display makes it easy to investigate on errors."
             ),

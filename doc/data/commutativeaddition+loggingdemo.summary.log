@@ -1,6 +1,6 @@
 ------------------------------------------------
-INFO     TOTAL                                  Status      Steps    Actions    Results    Time
+INFO     TOTAL                                  Status      Steps    Actions    Results    Time               Title
 INFO     2 tests, 0 failed, 0 with warnings                   9/9      31/31        1/1    HH:MM:SS.mmmmmm
 ------------------------------------------------
-INFO     demo/commutativeaddition.py           SUCCESS        4/4        4/4        1/1    HH:MM:SS.mmmmmm
-INFO     demo/loggingdemo.py                   SUCCESS        5/5      27/27        0/0    HH:MM:SS.mmmmmm
+INFO     demo/commutativeaddition.py           SUCCESS        4/4        4/4        1/1    HH:MM:SS.mmmmmm    Commutative addition
+INFO     demo/loggingdemo.py                   SUCCESS        5/5      27/27        0/0    HH:MM:SS.mmmmmm    Logging demo

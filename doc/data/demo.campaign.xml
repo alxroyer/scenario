@@ -6,25 +6,27 @@
 			<link href="out/commutativeaddition.json" rel="report" type="application/json"/>
 			<system-out>SCENARIO 'demo/commutativeaddition.py'
 ------------------------------------------------
+  TITLE: Commutative addition
+  DESCRIPTION: Addition of two members, swapping orders.
 
 
-STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+STEP#1: Initial conditions (demo/commutativeaddition.py:20:CommutativeAddition.step000)
 ------------------------------------------------
     ACTION: Let a = 1, and b = 3
   EVIDENCE:   -&gt; a = 1
   EVIDENCE:   -&gt; b = 3
 
-STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+STEP#2: a + b (demo/commutativeaddition.py:27:CommutativeAddition.step010)
 ------------------------------------------------
     ACTION: Compute (a + b) and store the result as result1.
   EVIDENCE:   -&gt; result1 = 4
 
-STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+STEP#3: b + a (demo/commutativeaddition.py:34:CommutativeAddition.step020)
 ------------------------------------------------
     ACTION: Compute (b + a) and store the result as result2.
   EVIDENCE:   -&gt; result2 = 4
 
-STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+STEP#4: Check (demo/commutativeaddition.py:41:CommutativeAddition.step030)
 ------------------------------------------------
     ACTION: Compare result1 and result2.
     RESULT: result1 and result2 are the same.
@@ -45,31 +47,33 @@ END OF 'demo/commutativeaddition.py'
 			<link href="out/commutativeadditions.json" rel="report" type="application/json"/>
 			<system-out>SCENARIO 'demo/commutativeadditions.py'
 ------------------------------------------------
+  TITLE: Commutative additions
+  DESCRIPTION: Call the CommutativeAddition scenario with different inputs.
 
 
-STEP#1: Both positive members (demo/commutativeadditions.py:16:CommutativeAdditions.step010)
+STEP#1: Both positive members (demo/commutativeadditions.py:20:CommutativeAdditions.step010)
 ------------------------------------------------
     ACTION: Launch the CommutativeAddition scenario with 4 and 5 for inputs.
       | SCENARIO 'demo/commutativeaddition.py'
       | ------------------------------------------------
       |
-      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:20:CommutativeAddition.step000)
       | ------------------------------------------------
       |     ACTION: Let a = 4, and b = 5
       |   EVIDENCE:   -&gt; a = 4
       |   EVIDENCE:   -&gt; b = 5
       |
-      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | STEP#2: a + b (demo/commutativeaddition.py:27:CommutativeAddition.step010)
       | ------------------------------------------------
       |     ACTION: Compute (a + b) and store the result as result1.
       |   EVIDENCE:   -&gt; result1 = 9
       |
-      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | STEP#3: b + a (demo/commutativeaddition.py:34:CommutativeAddition.step020)
       | ------------------------------------------------
       |     ACTION: Compute (b + a) and store the result as result2.
       |   EVIDENCE:   -&gt; result2 = 9
       |
-      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | STEP#4: Check (demo/commutativeaddition.py:41:CommutativeAddition.step030)
       | ------------------------------------------------
       |     ACTION: Compare result1 and result2.
       |     RESULT: result1 and result2 are the same.
@@ -77,29 +81,29 @@ STEP#1: Both positive members (demo/commutativeadditions.py:16:CommutativeAdditi
       |
       | END OF 'demo/commutativeaddition.py'
 
-STEP#2: Positive and negative members (demo/commutativeadditions.py:23:CommutativeAdditions.step020)
+STEP#2: Positive and negative members (demo/commutativeadditions.py:27:CommutativeAdditions.step020)
 ------------------------------------------------
     ACTION: Launch the CommutativeAddition scenario with -1 and 3 for inputs.
       | SCENARIO 'demo/commutativeaddition.py'
       | ------------------------------------------------
       |
-      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:20:CommutativeAddition.step000)
       | ------------------------------------------------
       |     ACTION: Let a = -1, and b = 3
       |   EVIDENCE:   -&gt; a = -1
       |   EVIDENCE:   -&gt; b = 3
       |
-      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | STEP#2: a + b (demo/commutativeaddition.py:27:CommutativeAddition.step010)
       | ------------------------------------------------
       |     ACTION: Compute (a + b) and store the result as result1.
       |   EVIDENCE:   -&gt; result1 = 2
       |
-      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | STEP#3: b + a (demo/commutativeaddition.py:34:CommutativeAddition.step020)
       | ------------------------------------------------
       |     ACTION: Compute (b + a) and store the result as result2.
       |   EVIDENCE:   -&gt; result2 = 2
       |
-      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | STEP#4: Check (demo/commutativeaddition.py:41:CommutativeAddition.step030)
       | ------------------------------------------------
       |     ACTION: Compare result1 and result2.
       |     RESULT: result1 and result2 are the same.
@@ -107,29 +111,29 @@ STEP#2: Positive and negative members (demo/commutativeadditions.py:23:Commutati
       |
       | END OF 'demo/commutativeaddition.py'
 
-STEP#3: Both negative members (demo/commutativeadditions.py:30:CommutativeAdditions.step030)
+STEP#3: Both negative members (demo/commutativeadditions.py:34:CommutativeAdditions.step030)
 ------------------------------------------------
     ACTION: Launch the CommutativeAddition scenario with -1 and -7 for inputs.
       | SCENARIO 'demo/commutativeaddition.py'
       | ------------------------------------------------
       |
-      | STEP#1: Initial conditions (demo/commutativeaddition.py:18:CommutativeAddition.step000)
+      | STEP#1: Initial conditions (demo/commutativeaddition.py:20:CommutativeAddition.step000)
       | ------------------------------------------------
       |     ACTION: Let a = -1, and b = -7
       |   EVIDENCE:   -&gt; a = -1
       |   EVIDENCE:   -&gt; b = -7
       |
-      | STEP#2: a + b (demo/commutativeaddition.py:25:CommutativeAddition.step010)
+      | STEP#2: a + b (demo/commutativeaddition.py:27:CommutativeAddition.step010)
       | ------------------------------------------------
       |     ACTION: Compute (a + b) and store the result as result1.
       |   EVIDENCE:   -&gt; result1 = -8
       |
-      | STEP#3: b + a (demo/commutativeaddition.py:32:CommutativeAddition.step020)
+      | STEP#3: b + a (demo/commutativeaddition.py:34:CommutativeAddition.step020)
       | ------------------------------------------------
       |     ACTION: Compute (b + a) and store the result as result2.
       |   EVIDENCE:   -&gt; result2 = -8
       |
-      | STEP#4: Check (demo/commutativeaddition.py:39:CommutativeAddition.step030)
+      | STEP#4: Check (demo/commutativeaddition.py:41:CommutativeAddition.step030)
       | ------------------------------------------------
       |     ACTION: Compare result1 and result2.
       |     RESULT: result1 and result2 are the same.
@@ -152,18 +156,20 @@ END OF 'demo/commutativeadditions.py'
 			<link href="out/handlers.json" rel="report" type="application/json"/>
 			<system-out>SCENARIO 'demo/handlers.py'
 ------------------------------------------------
+  TITLE: Handler demonstration
+  DESCRIPTION: Register handlers and show their effect.
 
 DEBUG    'scenario.before-test' handler called with test &lt;Handlers 'demo/handlers.py'&gt;
 DEBUG    'scenario.before-step' handler called with step &lt;StepDefinition 'Handlers.step010'&gt;
 
-STEP#1: `UserEvent.FOO` event triggering (demo/handlers.py:54:Handlers.step010)
+STEP#1: `UserEvent.FOO` event triggering (demo/handlers.py:56:Handlers.step010)
 ------------------------------------------------
     ACTION: Trigger the `UserEvent.FOO` event, with the following parameters: a=1 and b='bar'.
               DEBUG    'foo' handler called with {'a': 1, 'b': 'bar'}
 DEBUG    'scenario.after-step' handler called with step &lt;StepDefinition 'Handlers.step010'&gt;
 DEBUG    'scenario.before-step' handler called with step &lt;StepDefinition 'Handlers.step020'&gt;
 
-STEP#2: `UserEvent.FOO` event triggering (demo/handlers.py:60:Handlers.step020)
+STEP#2: `UserEvent.FOO` event triggering (demo/handlers.py:62:Handlers.step020)
 ------------------------------------------------
     ACTION: Trigger the `UserEvent.FOO` event, with the following parameters: a=2 and b='baz'.
               DEBUG    'foo' handler called with {'a': 2, 'b': 'baz'}
@@ -185,9 +191,11 @@ END OF 'demo/handlers.py'
 			<link href="out/htmllogin.json" rel="report" type="application/json"/>
 			<system-out>SCENARIO 'demo/htmllogin.py'
 ------------------------------------------------
+  TITLE: Login page
+  DESCRIPTION: Check the login procedure.
 
 
-STEP#1: Login screen (demo/htmllogin.py:13:TestLoginPage.step010_loginscreen)
+STEP#1: Login screen (demo/htmllogin.py:20:TestLoginPage.step010_loginscreen)
 ------------------------------------------------
     ACTION: Type the login.
               INFO     [edit[@id='login']] Typing text 'john'
@@ -212,9 +220,11 @@ END OF 'demo/htmllogin.py'
 			<link href="out/loggingdemo.json" rel="report" type="application/json"/>
 			<system-out>SCENARIO 'demo/loggingdemo.py'
 ------------------------------------------------
+  TITLE: Logging demo
+  DESCRIPTION: Demonstrate logging facilities.
 
 
-STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.step010)
+STEP#1: Logging with the main logger (demo/loggingdemo.py:24:LoggingScenario.step010)
 ------------------------------------------------
     ACTION: Log messages of different log levels with the main logger.
               ERROR    This is an error!!!
@@ -222,7 +232,7 @@ STEP#1: Logging with the main logger (demo/loggingdemo.py:22:LoggingScenario.ste
               INFO     This is information.
               DEBUG    This is debug.
 
-STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenario.step020)
+STEP#2: Logging with the scenario instance (demo/loggingdemo.py:33:LoggingScenario.step020)
 ------------------------------------------------
     ACTION: Log messages of different log levels with the scenario itself.
               ERROR    [demo/loggingdemo.py] This is an error!!!
@@ -230,7 +240,7 @@ STEP#2: Logging with the scenario instance (demo/loggingdemo.py:31:LoggingScenar
               INFO     [demo/loggingdemo.py] This is information.
               DEBUG    [demo/loggingdemo.py] This is debug.
 
-STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step030)
+STEP#3: Logging with a class logger (demo/loggingdemo.py:42:LoggingScenario.step030)
 ------------------------------------------------
     ACTION: Log messages of different log levels with the class logger instance.
               ERROR    [My logger] This is an error!!!
@@ -240,7 +250,7 @@ STEP#3: Logging with a class logger (demo/loggingdemo.py:40:LoggingScenario.step
     ACTION: Log a debug message again with the class logger instance.
               DEBUG    [My logger] This is debug again.
 
-STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110)
+STEP#4: Class logger indentation (demo/loggingdemo.py:57:LoggingScenario.step110)
 ------------------------------------------------
     ACTION: Log something with the class logger.
               INFO     [My logger] Hello
@@ -260,7 +270,7 @@ STEP#4: Class logger indentation (demo/loggingdemo.py:55:LoggingScenario.step110
     ACTION: Log something with the class logger.
               INFO     [My logger] Hello
 
-STEP#5: Main logger indentation (demo/loggingdemo.py:76:LoggingScenario.step120)
+STEP#5: Main logger indentation (demo/loggingdemo.py:78:LoggingScenario.step120)
 ------------------------------------------------
     ACTION: Log something with the main logger.
               INFO     Hello

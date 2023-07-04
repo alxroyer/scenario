@@ -23,9 +23,10 @@ class KnownIssuesScenario(scenario.Scenario):
         RAISE_EXCEPTIONS = "scenario.test.KnownIssues.raise_exceptions"
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Known issue scenario sample")
+        scenario.Scenario.__init__(
+            self,
+            title="Known issue scenario sample",
+        )
 
         self.raise_exceptions = scenario.conf.get(KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS, type=bool, default=False)  # type: bool
 

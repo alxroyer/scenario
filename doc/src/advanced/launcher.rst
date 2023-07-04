@@ -131,13 +131,28 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
     :end-at: sys.exit
     :dedent:
 
-- :ref:`configuration value settings <config-db.scenario>` that enable :ref:`file logging <logging.outfile>`:
+- :ref:`file logging <logging.outfile>` enabling:
 
-.. File logging
+.. File logging.
 .. literalinclude:: ../../../demo/run-demo.py
     :language: python
     :start-at: # File logging:
     :end-at: scenario.logging.info
+    :dedent:
+
+.. admonition:: Launchers and configuration database.
+    :class: tip
+
+    Please note the ability to configure the `scenario` framework behaviours
+    with the help of the :ref:`configuration database <config-db.scenario>`.
+
+- configuration of the :ref:`scenario attributes <scenario-attributes>` expected for each:
+
+.. Expected scenario attributes.
+.. literalinclude:: ../../../demo/run-demo.py
+    :language: python
+    :start-at: # Configure the list of expected scenario attributes.
+    :end-at: ])
     :dedent:
 
 

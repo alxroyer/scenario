@@ -23,9 +23,10 @@ import scenario
 class WaitingScenario(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        scenario.Scenario.__init__(self)
-
-        self.setattribute("TITLE", "Waiting scenario")
+        scenario.Scenario.__init__(
+            self,
+            title="Waiting scenario",
+        )
 
         scenario.handlers.install(
             scenario.Event.BEFORE_TEST,

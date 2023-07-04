@@ -29,7 +29,7 @@ class KnownIssues490(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Known issue URLs & campaigns",
-            objective="Check that known issue URLs are displayed in the campaign log and in final results.",
+            description="Check that known issue URLs are displayed in the campaign log and in final results.",
             features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.CAMPAIGNS],
         )
 

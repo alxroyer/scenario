@@ -10,8 +10,12 @@ from commutativeaddition import CommutativeAddition  # noqa  ## Module level imp
 
 class CommutativeAdditions(scenario.Scenario):
 
-    SHORT_TITLE = "Commutative additions"
-    TEST_GOAL = "Call the CommutativeAddition scenario with different inputs."
+    def __init__(self):  # type: (...) -> None
+        scenario.Scenario.__init__(
+            self,
+            title="Commutative additions",
+            description="Call the CommutativeAddition scenario with different inputs.",
+        )
 
     def step010(self):
         self.STEP("Both positive members")

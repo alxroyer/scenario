@@ -375,6 +375,7 @@ class ScenarioRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._loggermain import MAIN_LOGGER
+        from ._scenarioattributes import CoreScenarioAttributes
         from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenariologging import SCENARIO_LOGGING
@@ -400,16 +401,18 @@ class ScenarioRunner(_LoggerImpl):
         if SCENARIO_STACK.ismainscenario(scenario_definition):
             SCENARIO_LOGGING.beginattributes()
 
-            # Display the declared scenario attributes.
-            _scenario_definition_attribute_names = scenario_definition.getattributenames()  # type: typing.List[str]
-            for _scenario_definition_attribute_name in _scenario_definition_attribute_names:  # type: str
-                SCENARIO_LOGGING.attribute(_scenario_definition_attribute_name, scenario_definition.getattribute(_scenario_definition_attribute_name))
+            # Display scenario attributes.
+            for _attribute_name in scenario_definition.getattributenames():  # type: str
+                # Skip empty core attributes.
+                if (_attribute_name in CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                    continue
+                SCENARIO_LOGGING.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
 
-            # Check expected attributes.
+            # Check expected scenario attributes.
             _expected_attribute_names = SCENARIO_CONFIG.expectedscenarioattributes()  # type: typing.List[str]
             self.debug("Expected attributes: %r", _expected_attribute_names)
             for _expected_attribute_name in _expected_attribute_names:  # type: str
-                if _expected_attribute_name not in _scenario_definition_attribute_names:
+                if _expected_attribute_name not in scenario_definition.getattributenames():
                     MAIN_LOGGER.error(f"Missing test attribute {_expected_attribute_name}")
                     self.popindentation()
                     return ErrorCode.INPUT_FORMAT_ERROR

@@ -25,7 +25,7 @@ class DateTime001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Date/time ISO8601 formatting & parsing",
-            objective="Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()` functions.",
+            description="Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()` functions.",
             features=[],  # No specific feature.
         )
 

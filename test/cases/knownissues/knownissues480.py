@@ -27,7 +27,7 @@ class KnownIssues480(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Known issue URLs & multiple scenarios",
-            objective="Check that known issue URLs are displayed in the console in multiple scenario results.",
+            description="Check that known issue URLs are displayed in the console in multiple scenario results.",
             features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.MULTIPLE_SCENARIO_EXECUTION],
         )
 

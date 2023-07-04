@@ -25,7 +25,7 @@ class Stats010(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Statistics goto scenario",
-            objective="Check scenario execution statistics for a scenario with goto jumps.",
+            description="Check scenario execution statistics for a scenario with goto jumps.",
             features=[
                 scenario.test.features.STATISTICS,
                 scenario.test.features.GOTO,

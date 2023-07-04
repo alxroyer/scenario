@@ -71,10 +71,13 @@ if __name__ == "__main__":
     # Declare expected attributes.
     if UnitTestArgs.getinstance().check_expected_attributes:
         # Memo: Enum definitions are stored as lists in the configuration database.
-        scenario.conf.set(scenario.ConfigKey.EXPECTED_ATTRIBUTES, scenario.test.ScenarioAttribute)
-    # Configure test titles to be displayed as extra info (if nothing already configured).
-    if not SCENARIO_CONFIG.resultsextrainfo():
-        scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.test.ScenarioAttribute.TEST_TITLE])
+        scenario.conf.set(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES, [
+            scenario.ScenarioAttributes.TITLE,
+            scenario.ScenarioAttributes.DESCRIPTION,
+        ])
+    # No need to configure test titles as extra info to de displayed, this is the default.
+    # if not SCENARIO_CONFIG.resultsextrainfo():
+    #     scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.ScenarioAttributes.TITLE])
 
     # Scenario execution.
     _res = scenario.runner.main()  # type: scenario.ErrorCode

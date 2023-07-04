@@ -53,6 +53,7 @@ class ReqDatabase(_LoggerImpl):
 
         _LoggerImpl.__init__(self, DebugClass.REQ_DATABASE)
 
+        #: Database of requirement links, ordered requirements.
         self._req_ids = {}  # type: typing.Dict[_AnyReqIdType, typing.Set[_ReqLinkType]]
 
     def push(

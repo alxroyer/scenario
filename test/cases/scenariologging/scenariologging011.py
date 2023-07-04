@@ -26,7 +26,7 @@ class ScenarioLogging011(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario logging simple scenario --doc-only",
-            objective="Check the scenario logging output is generated as expected for a simple scenario with the --doc-only option set.",
+            description="Check the scenario logging output is generated as expected for a simple scenario with the --doc-only option set.",
             features=[
                 # Main features:
                 scenario.test.features.SCENARIO_LOGGING, scenario.test.features.DOC_ONLY,

@@ -27,7 +27,7 @@ class ConfigDb120(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="INI default values & sub-sections",
-            objective="Check the way sub-sections are emulated in INI files, and default values are propagated along sections.",
+            description="Check the way sub-sections are emulated in INI files, and default values are propagated along sections.",
             features=[
                 scenario.test.features.CONFIG_DB,
             ],

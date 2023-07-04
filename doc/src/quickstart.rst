@@ -36,34 +36,23 @@ Start with importing the :py:mod:`scenario` module:
     :start-at: # -*- coding: utf-8 -*-
     :end-at: import scenario
 
-Within your module, declare a class that extends the base :py:class:`scenario.Scenario` class:
+Within your module, declare a class that extends the base :py:class:`scenario.Scenario` class,
+with optional information: short title and more detailed description:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
     :start-at: class CommutativeAddition
-    :lines: 1
+    :end-before: self.a = a
 
-Depending on your configuration
-(see :py:meth:`scenario._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`),
-define your scenario attributes:
-
-.. literalinclude:: ../../demo/commutativeaddition.py
-    :language: python
-    :start-at: SHORT_TITLE
-    :end-at: TEST_GOAL
-    :dedent:
-
-Optionally, define an initializer that declares member attributes,
-which may condition the way the scenario works:
+The initializer may also save member variables,
+which condition the way the scenario works:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
-    :start-at: def __init__
+    :start-at: self.a = a
     :end-at: self.result2 = 0
-    :dedent:
 
-Then, define the test steps.
-Test steps are defined with methods starting with the ``step`` pattern:
+In this simple example, steps are defined with step methods, starting with the ``step`` pattern:
 
 .. literalinclude:: ../../demo/commutativeaddition.py
     :language: python
@@ -90,7 +79,7 @@ Test steps are defined with methods starting with the ``step`` pattern:
     :dedent:
 
 The steps are executed in their alphabetical order.
-That's the reason why regular steps are usually numbered.
+That's the reason why step methods usually hold a number after the ``step`` keyword.
 
 Give the step descriptions at the beginning of each step method
 by calling the :py:meth:`scenario._stepuserapi.StepUserApi.STEP()` method:

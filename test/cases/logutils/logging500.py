@@ -26,7 +26,7 @@ class Logging500(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Console logging",
-            objective="Check that logging is displayed by default in the console, and that it can be disabled.",
+            description="Check that logging is displayed by default in the console, and that it can be disabled.",
             features=[scenario.test.features.LOGGING],
         )
 
