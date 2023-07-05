@@ -37,7 +37,7 @@ if typing.TYPE_CHECKING:
     #: Any kind of requirement link, either:
     #:
     #: - a requirement identifier alone,
-    #: - a full :class:`.reqlink.ReqLink` instance.
+    #: - a full :class:`._reqlink.ReqLink` instance.
     AnyReqLinkType = typing.Union[
         # A requirement as is is enough to describe a requirement link.
         AnyReqIdType,

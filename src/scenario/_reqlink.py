@@ -64,6 +64,9 @@ class ReqLink:
             self.comments = anylongtext2str(comments)
 
     def __repr__(self):  # type: () -> str
+        """
+        Canonical string representation of the requirement link.
+        """
         from ._reflection import qualname
 
         return "".join([
@@ -76,6 +79,9 @@ class ReqLink:
         ])
 
     def __str__(self):  # type: () -> str
+        """
+        Human readable string representation of the requirement link.
+        """
         return "".join([
             str(self.req_id),
             f"/{self.sub_req_item}" if self.sub_req_item else "",

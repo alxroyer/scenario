@@ -33,7 +33,7 @@ class ReqTracker(abc.ABC):
     """
     Requirement tracker objects.
 
-    Actually, only :class:`.scenariodefinition.ScenarioDefinition` and :class:`.stepdefinition.StepDefinition`
+    Actually, only :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`
     may subclass this :class:`ReqTracker` abstract class.
     """
 
@@ -41,7 +41,7 @@ class ReqTracker(abc.ABC):
         """
         Initializes requirement tracking members.
 
-        Checks that only :class:`.scenariodefinition.ScenarioDefinition` and :class:`.stepdefinition.StepDefinition`
+        Checks that only :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`
         inherit from :class:`ReqTracker`.
         """
         from ._scenariodefinition import ScenarioDefinition

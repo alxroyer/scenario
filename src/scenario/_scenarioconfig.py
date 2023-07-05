@@ -309,10 +309,10 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: List of scenario attribute names.
 
-        Applicable when displaying campaign results
+        Applicable when displaying campaign results,
         or the result of several tests executed in a single command line.
 
-        Returns a 1-item list with :const:`._scenarioattributes.CoreScenarioAttributes.TITLE`
+        Returns a 1-item list with :attr:`._scenarioattributes.CoreScenarioAttributes.TITLE`
         by default in case nothing is configured.
         """
         from ._args import Args
