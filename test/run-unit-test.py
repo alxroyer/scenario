@@ -68,6 +68,9 @@ if __name__ == "__main__":
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.MAIN_PATH)
 
+    # Load requirements.
+    scenario.test.features.load()
+
     # Declare expected attributes.
     if UnitTestArgs.getinstance().check_expected_attributes:
         # Memo: Enum definitions are stored as lists in the configuration database.

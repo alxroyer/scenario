@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import scenario
+import typing
 
 
 class Feature:
@@ -27,9 +27,6 @@ class Feature:
         self.id = id  # type: str
         self.title = title  # type: str
         self.text = text  # type: str
-
-        # Ensure the feature is known as a requirement.
-        scenario.reqs.push(self)
 
     def __repr__(self):  # type: () -> str
         return f"<Feature id={self.id!r} title={self.title!r}>"
@@ -270,3 +267,17 @@ ATTRIBUTES = Feature(
         or when executing a campaign (see CAMPAIGNS).
     """,
 )  # type: Feature
+
+
+def load():  # type: (...) -> None
+    """
+    Loads :mod:`scenario.test` features in the `scenario` requirement database.
+    """
+    import scenario.test
+
+    # Inspect this module items.
+    for _name, _obj in vars(scenario.test.features).items():  # type: str, typing.Any
+        # For each `Feature` instance above.
+        if isinstance(_obj, Feature):
+            # Ensure the feature is known as a requirement.
+            scenario.reqs.push(_obj)
