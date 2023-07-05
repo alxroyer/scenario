@@ -742,7 +742,7 @@ __doc__ += """
 Requirement management
 ======================
 
-.. todo:: :ref:`todo`
+The scenario framework provide the ability to master the way tests cover input :ref:`requirements <req-mgt>`.
 """
 
 if typing.TYPE_CHECKING:
