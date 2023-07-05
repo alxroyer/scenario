@@ -240,10 +240,10 @@ The following table describes the `scenario` configurable keys & values.
 
       - Not set, i.e. use of the local timezone
 
-    * - .. _config-db.scenario.log_date_time:
+    * - .. _config-db.scenario.log_datetime:
 
         :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.LOG_DATETIME`
-      - ``scenario.log_date_time``
+      - ``scenario.log_datetime``
       - Boolean
       - Should the log lines include a timestamp?
       - Enabled

@@ -49,7 +49,7 @@ Type checking
       - Disbale "Add content roots to PYTHONPATH"
       - Disable "Add source roots to PYTHONPATH"
       - Disable "Run with Python Console"
-      - Set Parameters with "--config-value scenario.log_date_time 0"
+      - Set Parameters with "--config-value scenario.log_datetime 0"
 
     - Execution:
 

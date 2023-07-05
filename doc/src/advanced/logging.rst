@@ -50,7 +50,7 @@ When analyzing test logs, the timing question is usually essential.
 Log date/time is displayed by default at the beginning of the log lines,
 with a ISO8601 pattern: ``YYYY-MM-DDTHH:MM:SS.mmmuuu+HH:MM``.
 
-It may disabled through the :ref:`scenario.log_date_time <config-db.scenario.log_date_time>` configuration value.
+It may be disabled through the :ref:`scenario.log_datetime <config-db.scenario.log_datetime>` configuration value.
 
 
 .. _logging.main-logger:

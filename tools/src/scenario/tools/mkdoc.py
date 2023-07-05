@@ -134,8 +134,8 @@ class MkDoc:
 
             scenario.logging.info(f"Updating {_log_out_path}")
             _subprocess = SubProcess(sys.executable, script)  # type: SubProcess
-            _subprocess.addargs("--config-value", "scenario.log_color", "0")
-            _subprocess.addargs("--config-value", "scenario.log_date_time", "0")
+            _subprocess.addargs("--config-value", str(scenario.ConfigKey.LOG_COLOR_ENABLED), "0")
+            _subprocess.addargs("--config-value", str(scenario.ConfigKey.LOG_DATETIME), "0")
             _subprocess.addargs(*options)
             for _positional in positionals:  # type: scenario.Path
                 _subprocess.addargs(_positional)

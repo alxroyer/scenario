@@ -4,7 +4,7 @@ INFO     [scenario.ConfigDatabase]     a.b:
 INFO     [scenario.ConfigDatabase]       a.b.c: 55  # from demo/conf.json
 INFO     [scenario.ConfigDatabase]   scenario:
 INFO     [scenario.ConfigDatabase]     scenario.log_color: '0'  # from <args>
-INFO     [scenario.ConfigDatabase]     scenario.log_date_time: '0'  # from <args>
+INFO     [scenario.ConfigDatabase]     scenario.log_datetime: '0'  # from <args>
 INFO     [scenario.ConfigDatabase]   x:
 INFO     [scenario.ConfigDatabase]     x.y[0]:
 INFO     [scenario.ConfigDatabase]       x.y[0].z: '0'  # from <args>

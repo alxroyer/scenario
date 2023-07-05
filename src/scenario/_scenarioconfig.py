@@ -48,7 +48,7 @@ class ScenarioConfig(_LoggerImpl):
         #: Should a specific timezone be used? String value. Default is the local timezone.
         TIMEZONE = "scenario.timezone"
         #: Should the log lines include a timestamp? Boolean value.
-        LOG_DATETIME = "scenario.log_date_time"
+        LOG_DATETIME = "scenario.log_datetime"
         #: Should the log lines be displayed in the console? Boolean value.
         LOG_CONSOLE = "scenario.log_console"
         #: Should the log lines be colored? Boolean value.
