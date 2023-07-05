@@ -314,10 +314,15 @@ class Logger:
 
         Handles appropriately the optional ``exc_info`` parameter.
         """
+        from ._args import Args
         from ._logextradata import LogExtraData
 
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
         assert isinstance(self, Logger), f"{self!r} is not of type {Logger!r}"
+
+        # Check that the arguments have been parsed.
+        if not Args.isset():
+            raise RuntimeError("Avoid logging anything before arguments have been parsed")
 
         # Remove the exception info from the named arguments if any.
         _exc_info = None  # type: typing.Any
