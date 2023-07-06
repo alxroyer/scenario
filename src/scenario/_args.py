@@ -390,6 +390,8 @@ class ArgInfo:
             # Check and convert parsed item values.
             if (self.value_type is Path) and isinstance(_parsed_value, str):
                 _parsed_value = Path(_parsed_value)
+            elif isinstance(self.value_type, type):
+                _parsed_value = self.value_type(_parsed_value)
             elif inspect.isfunction(self.value_type) and isinstance(_parsed_value, str):
                 _parsed_value = self.value_type(_parsed_value)
             if _parsed_value is not None:

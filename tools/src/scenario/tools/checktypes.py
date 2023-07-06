@@ -27,17 +27,24 @@ class CheckTypes:
     class Args(scenario.Args):
         def __init__(
                 self,
-                check_types,  # type: CheckTypes
+                default_max_errors=None,  # type: int
         ):  # type: (...) -> None
             scenario.Args.__init__(self, class_debugging=False)
 
             self.setdescription("Python code type checker.")
 
+            self.max_errors = default_max_errors or 50  # type: int
+            self.addarg("Max errors", "max_errors", int).define(
+                "--max-errors", metavar="MAX_ERRORS",
+                action="store", default=self.max_errors,
+                help=f"Set the maximum number of errors to display. {self.max_errors} by default.",
+            )
+
             self.all_errors = False  # type: bool
             self.addarg("All errors", "all_errors", bool).define(
                 "--all-errors",
                 action="store_true", default=False,
-                help=f"Show all errors. Only the {check_types.max_errors} first errors otherwise.",
+                help="Show all errors. Only MAX_ERRORS first errors otherwise.",
             )
 
     def __init__(
@@ -45,13 +52,13 @@ class CheckTypes:
             main_path,  # type: scenario.AnyPathType
             mypy_conf_path,  # type: scenario.AnyPathType
             mypy_args=None,  # type: typing.Optional[typing.Sequence[str]]
-            max_errors=50,  # type: int
+            max_errors=None,  # type: int
     ):  # type: (...) -> None
 
         self.main_path = scenario.Path(main_path)  # type: scenario.Path
         self.mypy_conf_path = scenario.Path(mypy_conf_path)  # type: scenario.Path
         self.mypy_args = mypy_args or []  # type: typing.Sequence[str]
-        self.max_errors = max_errors  # type: int
+        self._default_max_errors = max_errors  # type: typing.Optional[int]
 
     def run(self):  # type: (...) -> scenario.ErrorCode
         from ._subprocess import SubProcess
@@ -59,7 +66,7 @@ class CheckTypes:
 
         # Command line arguments.
         if not scenario.Args.isset():
-            scenario.Args.setinstance(CheckTypes.Args(self))
+            scenario.Args.setinstance(CheckTypes.Args(default_max_errors=self._default_max_errors))
             if not CheckTypes.Args.getinstance().parse(sys.argv[1:]):
                 sys.exit(int(CheckTypes.Args.getinstance().error_code))
 
@@ -82,9 +89,9 @@ class CheckTypes:
         _errors = 0  # type: int
         for _line in _subprocess.stdout.splitlines():  # type: bytes
             if b'error:' in _line:
-                if CheckTypes.Args.getinstance().all_errors or (_errors < self.max_errors):
+                if CheckTypes.Args.getinstance().all_errors or (_errors < CheckTypes.Args.getinstance().max_errors):
                     scenario.logging.error(_line.decode("utf-8"))
-                elif (not CheckTypes.Args.getinstance().all_errors) and (_errors == self.max_errors):
+                elif (not CheckTypes.Args.getinstance().all_errors) and (_errors == CheckTypes.Args.getinstance().max_errors):
                     scenario.logging.error("...")
                 _errors += 1
             else:
