@@ -22,7 +22,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._reqtracker import ReqTracker as _ReqTrackerType
-    from ._reqtypes import AnyReqIdType as _AnyReqIdType
+    from ._reqtypes import AnyReqType as _AnyReqType
     from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
     from ._textutils import AnyLongTextType as _AnyLongTextType
 
@@ -37,7 +37,7 @@ class ReqLink:
 
     def __init__(
             self,
-            req_id,  # type: _AnyReqIdType
+            req,  # type: _AnyReqType
             sub_req_item=None,  # type: str
             comments=None,  # type: _AnyLongTextType
     ):  # type: (...) -> None
@@ -46,14 +46,16 @@ class ReqLink:
         possibly on a subitem of the requirement,
         and with optional justification comments.
 
-        :param req_id: Requirement identifier.
+        :param req: Tracked requirement.
         :param sub_req_item: Optional requirement subitem.
         :param comments: Optional justification comments.
         """
+        from ._req import Req
+        from ._reqdb import REQ_DB
         from ._textutils import anylongtext2str
 
         #: Requirement identifier.
-        self.req_id = req_id  # type: _AnyReqIdType
+        self.req = REQ_DB.getreq(req)  # type: Req
         #: Optional requirement subitem.
         self.sub_req_item = sub_req_item  # type: typing.Optional[str]
         #: Attached requirement trackers.
@@ -71,7 +73,7 @@ class ReqLink:
 
         return "".join([
             f"<{qualname(type(self))}",
-            f" req_id={self.req_id!r}",
+            f" req={self.req!r}",
             f" sub_req_item={self.sub_req_item}" if self.sub_req_item else "",
             f" req_trackers={self.req_trackers!r}",
             f" comments={self.comments}" if self.comments else "",
@@ -83,7 +85,7 @@ class ReqLink:
         Human readable string representation of the requirement link.
         """
         return "".join([
-            str(self.req_id),
+            self.req.id,
             f"/{self.sub_req_item}" if self.sub_req_item else "",
             " <- ",
             "{", ", ".join([str(_req_tracker) for _req_tracker in self.req_trackers]), "}",
@@ -92,19 +94,25 @@ class ReqLink:
 
     def matches(
             self,
-            req_id,  # type: _AnyReqIdType
+            req=None,  # type: _AnyReqType
             sub_req_item=None,  # type: str
     ):  # type: (...) -> bool
         """
         Tells whether the given requirement with optional subitem matches this link.
 
-        :param req_id: Requirement identifier.
-        :param sub_req_item: Optional requirement subitem.
-        :return: ``True`` in case of a match, ``False`` otherwise.
+        :param req:
+            Optional requirement predicate.
+        :param sub_req_item:
+            Optional requirement subitem predicate.
+            ``None`` for the main of the requirement.
+        :return:
+            ``True`` in case of a match, ``False`` otherwise.
         """
+        from ._reqdb import REQ_DB
+
         return all([
-            hash(req_id) == hash(self.req_id),
-            sub_req_item == self.sub_req_item,
+            (req is None) or (REQ_DB.getreq(req) is self.req),
+            (req is None) or (sub_req_item == self.sub_req_item),
         ])
 
     def coveredby(
@@ -119,7 +127,9 @@ class ReqLink:
         :param others: More requirement trackers.
         :return: First requirement tracker.
         """
-        from ._reqdb import REQ_DB
+        # Ensure the link is saved in the requirement link set
+        # as soon as it is actually used to link a requirement with trackers.
+        self.req.req_links.add(self)
 
         # Try to save requirement tracker references with this link.
         _first = first  # type: _ReqTrackerType  # Ensure `first` is of type `_ReqTrackerType` (and not `_VarReqTrackerType`).
@@ -130,9 +140,6 @@ class ReqLink:
 
                 # Link <-> tracker cross-reference.
                 _req_tracker.covers(self)
-
-        # Push the link to the requirement database.
-        REQ_DB.push(self)
 
         # Return the first step of the list.
         return first

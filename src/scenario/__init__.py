@@ -747,14 +747,35 @@ The scenario framework provide the ability to master the way tests cover input :
 
 if typing.TYPE_CHECKING:
     __doc__ += """
-    .. py:attribute:: AnyReqIdType
+    .. py:attribute:: ReqIdType
 
         Requirement identifier type.
 
-        .. seealso:: :obj:`._reqtypes.AnyReqIdType` implementation.
+        .. seealso:: :obj:`._reqtypes.ReqIdType` implementation.
     """
-    from ._reqtypes import AnyReqIdType as AnyReqIdType
-    __all__.append("AnyReqIdType")
+    from ._reqtypes import ReqIdType as ReqIdType
+    __all__.append("ReqIdType")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: Req
+
+        Requirement object.
+
+        .. seealso:: :class:`._req.Req` implementation.
+    """
+    from ._req import Req as Req
+    __all__.append("Req")
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: AnyReqType
+
+        Any requirement type.
+
+        .. seealso:: :obj:`._reqtypes.AnyReqType` implementation.
+    """
+    from ._reqtypes import AnyReqType as AnyReqType
+    __all__.append("AnyReqType")
 
 if True:
     __doc__ += """
@@ -785,7 +806,7 @@ if True:
     __doc__ += """
     .. py:attribute:: ReqLink
 
-        Requirement link between a :obj:`AnyReqIdType` and a :class:`ReqTracker`.
+        Requirement link between a :class:`Req` and a :class:`ReqTracker`.
 
         .. seealso:: :class:`._reqlink.ReqLink` implementation.
     """

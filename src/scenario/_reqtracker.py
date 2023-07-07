@@ -22,10 +22,10 @@ import abc
 import typing
 
 if typing.TYPE_CHECKING:
+    from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
-    from ._reqtypes import AnyReqIdType as _AnyReqIdType
     from ._reqtypes import AnyReqLinkType as _AnyReqLinkType
-    from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
+    from ._reqtypes import AnyReqType as _AnyReqType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
@@ -57,20 +57,31 @@ class ReqTracker(abc.ABC):
         self._req_links = set()  # type: typing.Set[_ReqLinkType]
 
     def covers(
-            self,  # type: _VarReqTrackerType
-            *req_links,  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
-    ):  # type: (...) -> _VarReqTrackerType
+            self,
+            first,  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
+            *others,  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
+    ):  # type: (...) -> _ReqLinkType
         """
         Declares requirement coverage from this tracker object.
 
-        :param req_links: Requirement links declared. May be the result of :meth:`reqlinks()`.
-        :return: ``self``
+        :param first:
+            First requirement link declared.
+
+            May be fed with the result of :meth:`getreqlinks()`.
+        :param others:
+            More requirement links.
+
+            May be fed with the result of :meth:`getreqlinks()` as well.
+        :return:
+            First requirement link.
         """
-        from ._reqdb import REQ_DB
         from ._reqlink import ReqLink
 
+        # Will store the first link encountered in `first`.
+        _first_link = None  # type: typing.Optional[ReqLink]
+
         # Try to save each link.
-        for _req_links in req_links:  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
+        for _req_links in [first, *others]:  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
             # Ensure we consider a set of links for the second loop below.
             if not isinstance(_req_links, set):
                 _req_links = {_req_links if isinstance(_req_links, ReqLink) else ReqLink(_req_links)}
@@ -80,6 +91,10 @@ class ReqTracker(abc.ABC):
                 if not isinstance(_req_link, ReqLink):
                     _req_link = ReqLink(_req_link)
 
+                # Save the first link.
+                if _first_link is None:
+                    _first_link = _req_link
+
                 if _req_link not in self._req_links:
                     # New link.
                     self._req_links.add(_req_link)
@@ -87,40 +102,57 @@ class ReqTracker(abc.ABC):
                     # Link <-> tracker cross-reference.
                     _req_link.coveredby(self)
 
-                # Push the link to the requirement database.
-                REQ_DB.push(_req_link)
+        # Return the first link in the end.
+        assert _first_link is not None, "Internal error"
+        return _first_link
 
-        return self
-
-    @property
-    def req_ids(self):  # type: (...) -> typing.Set[_AnyReqIdType]
+    def getreqs(self):  # type: (...) -> typing.Set[_ReqType]
         """
         Requirements tracked by this tracker.
         """
-        return set([_req_link.req_id for _req_link in self._req_links])
+        return set([_req_link.req for _req_link in self._req_links])
 
-    @property
-    def req_links(self):  # type: (...) -> typing.Set[_ReqLinkType]
-        """
-        Requirement links attached with this tracker.
-        """
-        return self._req_links
-
-    def reqlinks(
+    def getreqlinks(
             self,
-            req_id,  # type: _AnyReqIdType
+            req=None,  # type: _AnyReqType
             sub_req_item=None,  # type: str
+            direct_only=False,  # type: bool
     ):  # type: (...) -> typing.Set[_ReqLinkType]
         """
-        Requirement links attached with this tracker, for the given requirement reference.
+        Requirement links attached with this tracker,
+        filtered with the given predicates.
 
-        :param req_id: Requirement identifier to search links for.
-        :param sub_req_item: Sub-requirement item that specifies a particular point in the requirement.
-        :return: Set of requirement links.
+        :param req:
+            Requirement predicate to search links for.
+
+            Optional.
+        :param sub_req_item:
+            Sub-requirement predicate that specifies a particular subpoint in the requirement.
+
+            ``None`` for the main of the requirement.
+        :param direct_only:
+            Direct links only.
+
+            if ``False``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
+            links held by the steps will be included in the result.
+
+            ``False`` by default.
+        :return:
+            Filtered set of requirement links.
         """
+        from ._scenariodefinition import ScenarioDefinition
+        from ._stepdefinition import StepDefinition
+
+        # Constitute the whole list of requirement links to consider.
+        _req_links = set(self._req_links)  # type: typing.Set[_ReqLinkType]
+        if isinstance(self, ScenarioDefinition) and (not direct_only):
+            for _step in self.steps:  # type: StepDefinition
+                _req_links.update(_step._req_links)
+
+        # Filter this list with the requirement predicates.
         return set(filter(
-            lambda req_link: req_link.matches(req_id, sub_req_item),
-            self._req_links,
+            lambda req_link: req_link.matches(req, sub_req_item),
+            _req_links,
         ))
 
 

@@ -69,7 +69,7 @@ if __name__ == "__main__":
     scenario.Path.setmainpath(scenario.test.paths.MAIN_PATH)
 
     # Load requirements.
-    scenario.test.features.load()
+    scenario.test.reqs.load()
 
     # Declare expected attributes.
     if UnitTestArgs.getinstance().check_expected_attributes:

@@ -23,24 +23,32 @@ Defined in a separate module in order to avoid cyclic dependencies with ``typing
 import typing
 
 if typing.TYPE_CHECKING:
+    from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqtracker import ReqTracker as _ReqTrackerType
 
 
 if typing.TYPE_CHECKING:
     #: Requirement identifier type.
-    AnyReqIdType = typing.Hashable
+    ReqIdType = str
+
+    #: Any kind of requirement type, either:
+    #:
+    #: - a requirement identifier,
+    #: - a full :class:`._req.Req` instance.
+    AnyReqType = typing.Union[
+        ReqIdType,
+        _ReqType,
+    ]
 
     #: Variable requirement tracker type.
     VarReqTrackerType = typing.TypeVar("VarReqTrackerType", bound=_ReqTrackerType)
 
     #: Any kind of requirement link, either:
     #:
-    #: - a requirement identifier alone,
+    #: - a requirement (instance or identifier),
     #: - a full :class:`._reqlink.ReqLink` instance.
     AnyReqLinkType = typing.Union[
-        # A requirement as is is enough to describe a requirement link.
-        AnyReqIdType,
-        # Full `ReqLink` instance.
+        AnyReqType,
         _ReqLinkType,
     ]

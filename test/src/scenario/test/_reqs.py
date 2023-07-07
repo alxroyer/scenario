@@ -16,26 +16,10 @@
 
 import typing
 
-
-class Feature:
-    def __init__(
-            self,
-            id,  # type: str  # noqa  ## Shadows built-in name 'id'
-            title,  # type: str
-            text,  # type: str
-    ):  # type: (...) -> None
-        self.id = id  # type: str
-        self.title = title  # type: str
-        self.text = text  # type: str
-
-    def __repr__(self):  # type: () -> str
-        return f"<Feature id={self.id!r} title={self.title!r}>"
-
-    def __str__(self):  # type: () -> str
-        return f"{self.id} - {self.title}"
+import scenario
 
 
-SCENARIO_EXECUTION = Feature(
+SCENARIO_EXECUTION = scenario.Req(
     id="SCENARIO_EXECUTION",
     title="Scenario steps execution",
     text="""
@@ -47,17 +31,17 @@ SCENARIO_EXECUTION = Feature(
         - WARNINGS (in case of known issues, see KNOWN_ISSUES),
         - FAIL (see ERROR_HANDLING).
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-DOC_ONLY = Feature(
+DOC_ONLY = scenario.Req(
     id="DOC_ONLY",
     title="Documentation generation",
     text="""
         The scenario framework shall generate the test documentation without executing the test.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-ERROR_HANDLING = Feature(
+ERROR_HANDLING = scenario.Req(
     id="ERROR_HANDLING",
     title="Error handling",
     text="""
@@ -69,18 +53,18 @@ ERROR_HANDLING = Feature(
         Error known issues (see KNOWN_ISSUES) also make the test status fall to FAIL,
         but they don't break the test execution.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-EVIDENCE = Feature(
+EVIDENCE = scenario.Req(
     id="EVIDENCE",
     title="Evidence collection",
     text="""
         Evidence may be saved in the test report
         with their related actions and expected results.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-KNOWN_ISSUES = Feature(
+KNOWN_ISSUES = scenario.Req(
     id="KNOWN_ISSUES",
     title="Known issues",
     text="""
@@ -101,9 +85,9 @@ KNOWN_ISSUES = Feature(
         referencing a ticket in a tier bugtracking system.
         A URL builder handler may be configured in order to facilitate the navigation to from test reports.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-LOGGING = Feature(
+LOGGING = scenario.Req(
     id="LOGGING",
     title="Logging facilities",
     text="""
@@ -119,17 +103,17 @@ LOGGING = Feature(
         - Additional user indentation,
         - Console logging (by default) and/or file logging.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-DEBUG_LOGGING = Feature(
+DEBUG_LOGGING = scenario.Req(
     id="DEBUG_LOGGING",
     title="Debug logging facilities",
     text="""
         The logging facilites makes it possible to activate dynamically debug logging for each log class.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-SCENARIO_LOGGING = Feature(
+SCENARIO_LOGGING = scenario.Req(
     id="SCENARIO_LOGGING",
     title="`scenario` logging",
     text="""
@@ -143,9 +127,9 @@ SCENARIO_LOGGING = Feature(
         - The known issues registered (see KNOWN_ISSUES),
         - The final status of the test execution.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-SCENARIO_REPORT = Feature(
+SCENARIO_REPORT = scenario.Req(
     id="SCENARIO_REPORT",
     title="Scenario reports",
     text="""
@@ -154,17 +138,17 @@ SCENARIO_REPORT = Feature(
         This report saves a structured information for a test execution.
         See SCENARIO_LOGGING for the list of items that scenario report contains.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-STATISTICS = Feature(
+STATISTICS = scenario.Req(
     id="STATISTICS",
     title="Scenario execution statistics",
     text="""
         The scenario execution shall give statistics on the number of steps, actions and expected results.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-ALTERNATIVE_SCENARIOS = Feature(
+ALTERNATIVE_SCENARIOS = scenario.Req(
     id="ALTERNATIVE_SCENARIOS",
     title="Alternative scenarios",
     text="""
@@ -176,33 +160,33 @@ ALTERNATIVE_SCENARIOS = Feature(
         - Partial subscenarios execution,
         - Inheritance.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-STEP_PICKING = Feature(
+STEP_PICKING = scenario.Req(
     id="STEP_PICKING",
     title="Step picking",
     text="""
         A scenario shall be constituted by picking steps already defined.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-SUBSCENARIOS = Feature(
+SUBSCENARIOS = scenario.Req(
     id="SUBSCENARIOS",
     title="Subscenarios",
     text="""
         A scenario shall execute all or part of other scenarios as subscenarios.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-GOTO = Feature(
+GOTO = scenario.Req(
     id="GOTO",
     title="Jumping to another step",
     text="""
         A scenario execution shall jump to another step within the scenario.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-CONFIG_DB = Feature(
+CONFIG_DB = scenario.Req(
     id="CONFIG_DB",
     title="General configuration database",
     text="""
@@ -225,9 +209,9 @@ CONFIG_DB = Feature(
 
         Configuration files may also be saved from the configuration database eventually.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-MULTIPLE_SCENARIO_EXECUTION = Feature(
+MULTIPLE_SCENARIO_EXECUTION = scenario.Req(
     id="MULTIPLE_SCENARIO_EXECUTION",
     title="Multiple scenario execution",
     text="""
@@ -235,9 +219,9 @@ MULTIPLE_SCENARIO_EXECUTION = Feature(
         Whether the tests succeed or fail, the command line executes every scenario given.
         The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings.
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-CAMPAIGNS = Feature(
+CAMPAIGNS = scenario.Req(
     id="CAMPAIGNS",
     title="Campaign executions",
     text="""
@@ -249,9 +233,9 @@ CAMPAIGNS = Feature(
 
         The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
-ATTRIBUTES = Feature(
+ATTRIBUTES = scenario.Req(
     id="ATTRIBUTES",
     title="Scenario attributes",
     text="""
@@ -266,7 +250,7 @@ ATTRIBUTES = Feature(
         when executing multiple scenarios (see MULTIPLE_SCENARIO_EXECUTION),
         or when executing a campaign (see CAMPAIGNS).
     """,
-)  # type: Feature
+)  # type: scenario.Req
 
 
 def load():  # type: (...) -> None
@@ -276,8 +260,8 @@ def load():  # type: (...) -> None
     import scenario.test
 
     # Inspect this module items.
-    for _name, _obj in vars(scenario.test.features).items():  # type: str, typing.Any
-        # For each `Feature` instance above.
-        if isinstance(_obj, Feature):
+    for _name, _obj in vars(scenario.test.reqs).items():  # type: str, typing.Any
+        # For each `scenario.Req` instance above.
+        if isinstance(_obj, scenario.Req):
             # Ensure the feature is known as a requirement.
             scenario.reqs.push(_obj)

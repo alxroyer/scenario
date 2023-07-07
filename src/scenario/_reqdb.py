@@ -23,9 +23,11 @@ import typing
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqtracker import ReqTracker as _ReqTrackerType
-    from ._reqtypes import AnyReqIdType as _AnyReqIdType
+    from ._reqtypes import AnyReqType as _AnyReqType
+    from ._reqtypes import ReqIdType as _ReqIdType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
@@ -37,10 +39,12 @@ class ReqDatabase(_LoggerImpl):
 
     Provides a couple of query methods:
 
+    :requirement access:
+        :meth:`getreq()`.
     :all items:
-        :meth:`allreqids()`, :meth:`alllinks()`, :meth:`alltrackers()`, :meth:`allscenarios()`.
+        :meth:`getallreqs()`, :meth:`getalllinks()`, :meth:`getalltrackers()`, :meth:`getallscenarios()`.
     :requirements to trackers:
-        :meth:`reqid2links()`, :meth:`reqid2trackers()`, :meth:`reqid2scenarios()`.
+        See :class:`._req.Req`.
     :trackers to requirements:
         See :class:`._reqtracker.ReqTracker`.
     """
@@ -53,62 +57,80 @@ class ReqDatabase(_LoggerImpl):
 
         _LoggerImpl.__init__(self, DebugClass.REQ_DATABASE)
 
-        #: Database of requirement links, ordered requirements.
-        self._req_ids = {}  # type: typing.Dict[_AnyReqIdType, typing.Set[_ReqLinkType]]
+        #: Database of requirements, keyed by requirement identifiers.
+        self._req_db = {}  # type: typing.Dict[_ReqIdType, _ReqType]
 
     def push(
             self,
-            req_item,  # type: typing.Union[_AnyReqIdType, _ReqLinkType]
+            req,  # type: _ReqType
     ):  # type: (...) -> None
         """
-        Feeds the database with requirement items.
+        Feeds the database with requirements.
 
-        :param req_item: Either a requirement or a link.
+        :param req: Requirement to ensure registration for.
 
         .. note::
-            If ``req_item`` already exists in the database, it won't be duplicated.
+            If ``req`` already exists in the database, it won't be duplicated.
         """
-        from ._reqlink import ReqLink
-
-        if not isinstance(req_item, ReqLink):
-            _req_id = req_item  # type: _AnyReqIdType
-
-            # Ensure a set of links exists for the requirement.
-            if _req_id not in self._req_ids:
-                self.debug("New requirement %s", _req_id)
-                self._req_ids[_req_id] = set()
-
+        if req.id not in self._req_db:
+            # Save and log the new requirement.
+            self.debug("New requirement %r", req)
+            self._req_db[req.id] = req
         else:
-            _req_link = req_item  # type: ReqLink
+            # Check `req` is the instance we already know.
+            if req is self._req_db[req.id]:
+                self.debug("Requirement already stored %s", req)
+            else:
+                raise ValueError(f"Duplicate requirement {req.id!r}: {req!r} v/s {self._req_db[req.id]!r}")
 
-            # Ensure the requirement exists in the database.
-            self.push(_req_link.req_id)
+    def getreq(
+            self,
+            req,  # type: _AnyReqType
+    ):  # type: (...) -> _ReqType
+        """
+        Retrieves the registered :class:`._req.Req` instance
+        corresponding to the :obj:`._reqtypes.AnyReqType` description.
 
-            # Save the link if not known yet.
-            if _req_link not in self._req_ids[_req_link.req_id]:
-                self.debug("New link %s", _req_link)
-                self._req_ids[_req_link.req_id].add(_req_link)
+        :param req: Any requirement description.
+        :return: Requirement instance registered in the database.
+        """
+        from ._req import Req
 
-    def allreqids(self):  # type: (...) -> typing.Set[_AnyReqIdType]
+        # `Req` instance.
+        if isinstance(req, Req):
+            # Ensure the requirement object exist in the database.
+            self.push(req)
+            return req
+
+        # Requirement id.
+        elif isinstance(req, _ReqIdType):
+            if req in self._req_db:
+                return self._req_db[req]
+            else:
+                raise KeyError(f"Unknown requirement identifier {req!r}")
+
+        raise ValueError(f"Invalid requirement {req!r}")
+
+    def getallreqs(self):  # type: (...) -> typing.Set[_ReqType]
         """
         Returns all requirement identifiers saved in the database.
 
         :return: Requirement identifiers.
         """
-        return set(self._req_ids.keys())
+        return set(self._req_db.values())
 
-    def alllinks(self):  # type: () -> typing.Set[_ReqLinkType]
+    def getalllinks(self):  # type: () -> typing.Set[_ReqLinkType]
         """
         Returns all requirement links saved in the database.
 
         :return: Requirement links.
         """
         _req_links = set()  # type: typing.Set[_ReqLinkType]
-        for _req_id in self._req_ids:  # type: _AnyReqIdType
-            _req_links.add(*self._req_ids[_req_id])
+        for _req in self.getallreqs():  # type: _ReqType
+            _req_links.update(_req.req_links)
         return _req_links
 
-    def alltrackers(self):  # type: (...) -> typing.Set[_ReqTrackerType]
+    def getalltrackers(self):  # type: (...) -> typing.Set[_ReqTrackerType]
         """
         Returns all final requirement trackers saved in the database,
         either scenarios or steps.
@@ -118,12 +140,12 @@ class ReqDatabase(_LoggerImpl):
         _req_trackers = set()  # type: typing.Set[_ReqTrackerType]
 
         # Walk over requirement links.
-        for _req_link in self.alllinks():  # type: _ReqLinkType
-            _req_trackers.add(*_req_link.req_trackers)
+        for _req_link in self.getalllinks():  # type: _ReqLinkType
+            _req_trackers.update(_req_link.req_trackers)
 
         return _req_trackers
 
-    def allscenarios(self):  # type: (...) -> typing.Set[_ScenarioDefinitionType]
+    def getallscenarios(self):  # type: (...) -> typing.Set[_ScenarioDefinitionType]
         """
         Returns all scenarios that track requirements.
 
@@ -135,79 +157,8 @@ class ReqDatabase(_LoggerImpl):
 
         return set(map(
             lambda req_tracker: ReqTrackerHelper.getscenario(req_tracker),
-            self.alltrackers(),
+            self.getalltrackers(),
         ))
-
-    def reqid2links(
-            self,
-            req_id,  # type: _AnyReqIdType
-    ):  # type: (...) -> typing.Set[_ReqLinkType]
-        """
-        Returns all links that reference a given requirement.
-
-        :param req_id: Searched requirement identifier.
-        :return: Requirement links.
-        """
-        # Ensure the requirement exists in the database.
-        self.push(req_id)
-
-        return self._req_ids[req_id]
-
-    def reqid2trackers(
-            self,
-            req_id,  # type: _AnyReqIdType
-    ):  # type: (...) -> typing.Dict[_ReqTrackerType, typing.Set[_ReqLinkType]]
-        """
-        Returns all trackers that reference the given requirement.
-
-        :param req_id: Searched requirement identifier.
-        :return: Requirement trackers, with their related links.
-        """
-        _req_trackers = {}  # type: typing.Dict[_ReqTrackerType, typing.Set[_ReqLinkType]]
-
-        # Ensure the requirement exists in the database.
-        self.push(req_id)
-
-        # Walk over requirement links for the given id.
-        for _req_link in self._req_ids[req_id]:  # type: _ReqLinkType
-            for _req_tracker in _req_link.req_trackers:  # type: _ReqTrackerType
-                # Save requirement trackers with related links.
-                if _req_tracker not in _req_trackers:
-                    _req_trackers[_req_tracker] = set()
-                _req_trackers[_req_tracker].add(_req_link)
-
-        return _req_trackers
-
-    def reqid2scenarios(
-            self,
-            req_id,  # type: _AnyReqIdType
-    ):  # type: (...) -> typing.Dict[_ScenarioDefinitionType, typing.Set[_ReqLinkType]]
-        """
-        Returns all scenarios that reference a given requirement.
-
-        Either directly, or through one of their steps.
-
-        :param req_id: Searched requirement identifier.
-        :return: Scenario definitions, with their related links.
-        """
-        from ._reqtracker import ReqTrackerHelper
-
-        _scenarios = {}  # type: typing.Dict[_ScenarioDefinitionType, typing.Set[_ReqLinkType]]
-
-        # Ensure the requirement exists in the database.
-        self.push(req_id)
-
-        # Walk over trackers for the given requirement id.
-        for _req_tracker, _req_links in self.reqid2trackers(req_id).items():  # type: _ReqTrackerType, typing.Set[_ReqLinkType]
-            # Find out the final scenario reference from the requirement tracker object.
-            _scenario_definition = ReqTrackerHelper.getscenario(_req_tracker)  # type: _ScenarioDefinitionType
-
-            # Save the scenario reference in the `_scenarios` dictionary, with related links.
-            if _scenario_definition not in _scenarios:
-                _scenarios[_scenario_definition] = set()
-            _scenarios[_scenario_definition].add(*_req_links)
-
-        return _scenarios
 
 
 #: Main instance of :class:`ReqDatabase`.
