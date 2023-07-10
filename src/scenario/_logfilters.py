@@ -82,7 +82,7 @@ class HandlerLogFilter(logging.Filter):
     Log filter attached to a ``logging.Handler`` instance.
 
     Filters log records depending on `scenario` configurations:
-    :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` and :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_FILE`.
+    :meth:`._scenarioconfig.ScenarioConfig.logconsoleenabled()` and :meth:`._scenarioconfig.ScenarioConfig.logoutpath()`.
     """
 
     def __init__(
@@ -110,7 +110,7 @@ class HandlerLogFilter(logging.Filter):
 
             Nevertheless, we can see from the code that booleans are actually returned.
 
-        Checks the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` or :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_FILE` configurations,
+        Checks the :meth:`._scenarioconfig.ScenarioConfig.logconsoleenabled()` or :meth:`._scenarioconfig.ScenarioConfig.logoutpath()` configurations,
         depending on the handler attached.
         """
         from ._loghandler import LogHandler

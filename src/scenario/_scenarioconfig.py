@@ -64,6 +64,8 @@ class ScenarioConfig(_LoggerImpl):
 
         #: Expected scenario attributes. List of strings, or comma-separated string.
         EXPECTED_SCENARIO_ATTRIBUTES = "scenario.expected_scenario_attributes"
+        #: Should the scenario requirement coverage be refined on steps? Boolean value.
+        CHECK_STEP_REQ_COVERAGE = "scenario.check_step_req_coverage"
         #: Should the scenario continue on error? Boolean value.
         CONTINUE_ON_ERROR = "scenario.continue_on_error"
         #: Should we wait between two step executions? Float value.
@@ -251,6 +253,18 @@ class ScenarioConfig(_LoggerImpl):
         self._readstringlistfromconf(self.Key.EXPECTED_SCENARIO_ATTRIBUTES, _attribute_names)
         self.debug("expectedscenarioattributes() -> %r", _attribute_names)
         return _attribute_names
+
+    def checkstepreqcoverage(self):  # type: (...) -> bool
+        """
+        Determines whether the scenario requirement coverage shall be refined on steps.
+
+        Configurable through :const:`Key.CHECK_STEP_REQ_COVERAGE`.
+        """
+        from ._configdb import CONFIG_DB
+
+        _check_step_req_covergae = CONFIG_DB.get(self.Key.CHECK_STEP_REQ_COVERAGE, type=bool, default=False)  # type: bool
+        self.debug("checkstepreqcoverage() -> %r", _check_step_req_covergae)
+        return _check_step_req_covergae
 
     def continueonerror(self):  # type: (...) -> bool
         """

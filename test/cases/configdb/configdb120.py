@@ -34,7 +34,7 @@ class ConfigDb120(scenario.test.TestCase):
         )
 
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.
-        self.continue_on_error = True
+        self.continueonerror(True)
 
         self.knownissue(
             level=scenario.test.IssueLevel.SUT, id="#44",

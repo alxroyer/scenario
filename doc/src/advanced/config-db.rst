@@ -309,7 +309,7 @@ The following table describes the `scenario` configurable keys & values.
       - Should the scenarios continue on error?
         If set to ``True``, an error ends the current step, but following steps are still executed.
         The same behaviour may also be activated scenario by scenario
-        by setting the :py:attr:`scenario._scenariodefinition.ScenarioDefinition.continue_on_error` attribute.
+        by using the :py:meth:`scenario._scenariodefinition.ScenarioDefinition.continueonerror()` method.
       - Disabled
 
     * - .. _config-db.scenario.delay_between_steps:

@@ -37,7 +37,7 @@ class ConfigDb210(scenario.test.TestCase):
         )
 
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.
-        self.continue_on_error = True
+        self.continueonerror(True)
 
         self.section("Load JSON file")
         self.tmp_root_key1 = scenario.Path(__file__).stem + "-1"  # type: str

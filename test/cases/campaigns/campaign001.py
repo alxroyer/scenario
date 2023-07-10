@@ -52,8 +52,7 @@ class Campaign001(scenario.test.TestCase):
             #       which makes this test cover KNOWN_ISSUES.
             scenario.ReqLink(scenario.test.reqs.KNOWN_ISSUES, comments="Known issues reported from scenario to campaign reports"),
         )
-        # Check that all scenario requirements are detailed by step coverage.
-        self.check_step_coverage = True
+        self.checkstepreqcoverage(True)
 
         # Campaign execution.
         self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE]))

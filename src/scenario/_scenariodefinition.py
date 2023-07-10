@@ -235,20 +235,18 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         #: Continue on error option.
         #:
         #: Local configuration for the current scenario.
-        #:
-        #: Prevails on :attr:`._scenarioconfig.ScenarioConfig.Key.CONTINUE_ON_ERROR`
-        #: (see :meth:`._scenariorunner.ScenarioRunner._shouldstop()`).
+        #: Prevails on :meth:`._scenarioconfig.ScenarioConfig.continueonerror()`.
         #:
         #: Not set by default.
-        self.continue_on_error = None  # type: typing.Optional[bool]
+        self.__continue_on_error = None  # type: typing.Optional[bool]
 
         #: User scenario attributes (see :meth:`._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`).
         #:
         #: .. seealso:: :class:`._scenarioattributes.CoreScenarioAttributes` for core scenario attributes.
         self.__user_attributes = {}  # type: typing.Dict[str, typing.Any]
 
-        #: Check step coverage option.
-        self.check_step_coverage = None  # type: typing.Optional[bool]
+        #: Check step requirement coverage option.
+        self.__check_step_req_coverage = None  # type: typing.Optional[bool]
 
         #: List of steps that define the scenario.
         self.__step_definitions = []  # type: typing.List[_StepDefinitionType]
@@ -347,6 +345,40 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             *[_name for _name in self.__user_attributes],
         ]
 
+    def checkstepreqcoverage(
+            self,  # type: VarScenarioDefinitionType
+            check_step_req_coverage,  # type: typing.Optional[bool]
+    ):  # type: (...) -> VarScenarioDefinitionType
+        """
+        Sets the local configuration for this scenario be supposed to refine its requirement coverage on steps.
+
+        .. note:: Overrides the :meth:`._scenarioconfig.ScenarioConfig.checkstepreqcoverage()` global configuration.
+
+        :param check_step_req_coverage:
+            New `check step requirement coverage` local configuration.
+
+            ``None`` to rely on the :meth:`._scenarioconfig.ScenarioConfig.checkstepreqcoverage()` global configuration again.
+        :return:
+            ``self``
+        """
+        self.__check_step_req_coverage = check_step_req_coverage
+        return self
+
+    @property
+    def check_step_req_coverage(self):  # type: () -> bool
+        """
+        Tells whether the requirements tracked by this scenario should be refined on steps.
+
+        Takes the local configuration at first,
+        then the :meth:`._scenarioconfig.ScenarioConfig.checkstepreqcoverage()` global configuration.
+        """
+        from ._scenarioconfig import SCENARIO_CONFIG
+
+        if self.__check_step_req_coverage is not None:
+            return self.__check_step_req_coverage
+        else:
+            return SCENARIO_CONFIG.checkstepreqcoverage()
+
     def section(
             self,
             description,  # type: str
@@ -419,6 +451,50 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         Step list.
         """
         return self.__step_definitions.copy()
+
+    def continueonerror(
+            self,  # type: VarScenarioDefinitionType
+            continue_on_error,  # type: typing.Optional[bool]
+    ):  # type: (...) -> VarScenarioDefinitionType
+        """
+        Sets the local configuration for this scenario to continue on error or not.
+
+        .. note:: Overrides the :meth:`._scenarioconfig.ScenarioConfig.continueonerror()` global configuration.
+
+        :param continue_on_error:
+            *Continue on error* local configuration.
+
+            ``None`` to unset and rely on the :meth:`._scenarioconfig.ScenarioConfig.continueonerror()` global configuration again.
+        :return:
+            ``self``
+        """
+        self.__continue_on_error = continue_on_error
+        return self
+
+    @property
+    def continue_on_error(self):  # type: () -> bool
+        """
+        Tells whether this scenario shall continue on error or not.
+
+        Takes the local configuration at first,
+        then the :meth:`._scenarioconfig.ScenarioConfig.continueonerror()` global configuration.
+        """
+        from ._scenarioconfig import SCENARIO_CONFIG
+
+        if self.__continue_on_error is not None:
+            return self.__continue_on_error
+        else:
+            return SCENARIO_CONFIG.continueonerror()
+
+    @continue_on_error.setter
+    def continue_on_error(self, continue_on_error):  # type: (typing.Optional[bool]) -> None
+        """
+        Deprecated. Please use :meth:`continueonerror()` instead.
+
+        .. warning:: Deprecated.
+        """
+        self.warning(f"Setting the `ScenarioDefintion.continue_on_error` attribute is now deprecated. Please use the `continueonerror()` method instead.")
+        self.continueonerror(continue_on_error)
 
 
 if typing.TYPE_CHECKING:

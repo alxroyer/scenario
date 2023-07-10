@@ -37,7 +37,7 @@ class LogFormatter(logging.Formatter):
         See :ref:`log date/time <logging.date-time>` documentation.
 
         Displayed by default, unless it is disabled through
-        the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_DATETIME` configuration,
+        the :meth:`._scenarioconfig.ScenarioConfig.logdatetimeenabled()` configuration,
         or the :attr:`._logextradata.LogExtraData.DATE_TIME` extra flag.
     :Log level display:
         See :ref:`log levels <logging.log-levels>` documentation.
@@ -48,7 +48,7 @@ class LogFormatter(logging.Formatter):
         See :ref:`log date/time <logging.date-time>` documentation.
 
         Displayed by default, unless it is disabled through
-        the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_DATETIME` configuration,
+        the :meth:`._scenarioconfig.ScenarioConfig.logdatetimeenabled()` configuration,
         or the :attr:`._logextradata.LogExtraData.DATE_TIME` extra flag.
     :Log level display:
         See :ref:`log levels <logging.log-levels>` documentation.
@@ -63,7 +63,7 @@ class LogFormatter(logging.Formatter):
         See :ref:`log colors <logging.colors>` documentation.
 
         Console log colorization may be disabled through
-        the :attr:`._scenarioconfig.ScenarioConfig.Key.LOG_CONSOLE` configuration,
+        the :meth:`._scenarioconfig.ScenarioConfig.logconsoleenabled()` configuration,
         or the :attr:`._logextradata.LogExtraData.COLOR` extra flag.
     """
 

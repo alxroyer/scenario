@@ -43,7 +43,7 @@ class ConfigDb030(scenario.test.TestCase):
         )
 
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.
-        self.continue_on_error = True
+        self.continueonerror(True)
 
         _code_location_origin = scenario.Path(scenario.CodeLocation.fromclass(StoreConfigValue).file).prettypath  # type: str
 
