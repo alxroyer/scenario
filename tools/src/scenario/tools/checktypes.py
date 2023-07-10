@@ -91,9 +91,13 @@ class CheckTypes:
             if b'error:' in _line:
                 if CheckTypes.Args.getinstance().all_errors or (_errors < CheckTypes.Args.getinstance().max_errors):
                     scenario.logging.error(_line.decode("utf-8"))
-                elif (not CheckTypes.Args.getinstance().all_errors) and (_errors == CheckTypes.Args.getinstance().max_errors):
-                    scenario.logging.error("...")
+                else:
+                    scenario.logging.debug("Error line skipped: %r", _line)
+                    if _errors == CheckTypes.Args.getinstance().max_errors:
+                        scenario.logging.error("...")
                 _errors += 1
+            elif (b'note: ' in _line) and (_line.endswith(b' defined here')):
+                scenario.logging.debug(_line.decode("utf-8"))
             else:
                 scenario.logging.info(_line.decode("utf-8"))
         for _line in _subprocess.stderr.splitlines():
