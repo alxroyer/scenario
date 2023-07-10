@@ -27,7 +27,9 @@ class JsonReport010(scenario.test.TestCase):
             self,
             title="JSON report simple scenario",
             description="Check the JSON report is generated as expected for a simple scenario.",
-            features=[scenario.test.features.SCENARIO_REPORT],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, generate_report=True))

@@ -26,10 +26,10 @@ class Stats040(scenario.test.TestCase):
             self,
             title="Statistics subscenario",
             description="Check scenario execution statistics for a super scenario executing a subscenario.",
-            features=[
-                scenario.test.features.STATISTICS,
-                scenario.test.features.SUBSCENARIOS,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.STATISTICS,
+            scenario.test.reqs.SUBSCENARIOS,
         )
 
         # Scenario execution.

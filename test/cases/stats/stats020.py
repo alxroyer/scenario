@@ -27,10 +27,10 @@ class Stats020(scenario.test.TestCase):
             self,
             title="Statistics failing scenario",
             description="Check scenario execution statistics for a failing scenario, with the display of the error information.",
-            features=[
-                scenario.test.features.STATISTICS,
-                scenario.test.features.ERROR_HANDLING,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.STATISTICS,
+            scenario.test.reqs.ERROR_HANDLING,
         )
 
         # Scenario execution.

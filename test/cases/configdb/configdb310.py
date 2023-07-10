@@ -32,9 +32,9 @@ class ConfigDb310(scenario.test.TestCase):
                 "Check that a YAML configuration file can be loaded with a given root configuration key, "
                 "then saved as a new YAML file."
             ),
-            features=[
-                scenario.test.features.CONFIG_DB,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.CONFIG_DB,
         )
 
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.

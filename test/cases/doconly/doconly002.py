@@ -27,7 +27,10 @@ class DocOnly002(scenario.test.TestCase):
             self,
             title="--doc-only JSON report",
             description="Check the JSON report for a --doc-only execution.",
-            features=[scenario.test.features.DOC_ONLY, scenario.test.features.SCENARIO_REPORT],
+        )
+        self.covers(
+            scenario.test.reqs.DOC_ONLY,
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, doc_only=True, generate_report=True))

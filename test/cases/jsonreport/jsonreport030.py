@@ -27,7 +27,10 @@ class JsonReport030(scenario.test.TestCase):
             self,
             title="JSON report goto scenario",
             description="Check the JSON report is generated as expected for a scenario with goto jumps.",
-            features=[scenario.test.features.SCENARIO_REPORT, scenario.test.features.GOTO],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.test.reqs.GOTO,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.GOTO_SCENARIO, generate_report=True))

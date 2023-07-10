@@ -27,12 +27,13 @@ class ScenarioLogging011(scenario.test.TestCase):
             self,
             title="Scenario logging simple scenario --doc-only",
             description="Check the scenario logging output is generated as expected for a simple scenario with the --doc-only option set.",
-            features=[
-                # Main features:
-                scenario.test.features.SCENARIO_LOGGING, scenario.test.features.DOC_ONLY,
-                # Check attributes are displayed with scenario logging in *doc-only*:
-                scenario.test.features.ATTRIBUTES,
-            ],
+        )
+        self.covers(
+            # Main features:
+            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.test.reqs.DOC_ONLY,
+            # Check attributes are displayed with scenario logging in *doc-only*:
+            scenario.test.reqs.ATTRIBUTES,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, doc_only=True))

@@ -28,9 +28,9 @@ class ConfigDb200(scenario.test.TestCase):
             self,
             title="Load JSON configuration file",
             description="Check that a JSON configuration file can be loaded.",
-            features=[
-                scenario.test.features.CONFIG_DB,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.CONFIG_DB,
         )
 
         _conf_file = scenario.test.paths.datapath("conf.json")  # type: scenario.Path

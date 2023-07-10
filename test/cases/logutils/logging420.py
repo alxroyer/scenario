@@ -29,7 +29,9 @@ class Logging420(scenario.test.TestCase):
             self,
             title="Additional user indentation",
             description="Check that the user test can add and remove extra indentation.",
-            features=[scenario.test.features.LOGGING],
+        )
+        self.covers(
+            scenario.test.reqs.LOGGING,
         )
 
         self.addstep(ExecUserIndentation(scenario.test.paths.LOGGING_INDENTATION_SCENARIO))

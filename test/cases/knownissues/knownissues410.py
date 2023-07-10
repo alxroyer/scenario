@@ -29,7 +29,11 @@ class KnownIssues410(scenario.test.TestCase):
                 "Check that URL builder handlers can be set in order to generate URL for known-issues. "
                 "Check that these URL are logged in the console and saved in scenario reports."
             ),
-            features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         # Execution step.

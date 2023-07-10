@@ -34,7 +34,9 @@ class MultipleScenarios000(scenario.test.TestCase):
             self,
             title="Multiple scenarios & incompatible options",
             description="Check that a couple of options are incompatible with multiple scenario executions.",
-            features=[scenario.test.features.MULTIPLE_SCENARIO_EXECUTION],
+        )
+        self.covers(
+            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         self.section("Successful execution")

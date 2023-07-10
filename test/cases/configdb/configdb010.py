@@ -28,9 +28,9 @@ class ConfigDb010(scenario.test.TestCase):
             self,
             title="Configuration value from command line",
             description="Check that a configuration value can be set from the command line.",
-            features=[
-                scenario.test.features.CONFIG_DB,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.CONFIG_DB,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.CONFIG_DB_SCENARIO, config_values={"test_value": 100}))

@@ -30,10 +30,10 @@ class Campaign002(scenario.test.TestCase):
             self,
             title="Campaign execution with several test suites",
             description="Check that the campaign runner can execute several test suite files.",
-            features=[
-                scenario.test.features.CAMPAIGNS,
-                scenario.ReqLink(scenario.test.features.STATISTICS, comments="Statistics by scenario, integrated by test suite, and globally for the campaign"),
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.CAMPAIGNS,
+            scenario.ReqLink(scenario.test.reqs.STATISTICS, comments="Statistics by scenario, integrated by test suite, and globally for the campaign"),
         )
 
         # Campaign execution.

@@ -32,8 +32,9 @@ class Timezone001(scenario.test.TestCase):
                 "Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()` functions handle timezone specifications, "
                 "with or without DST (Daylight Saving Time) shifts."
             ),
-            features=[],  # No specific feature.
         )
+        # No specific requirement.
+        # self.covers()
 
         self.addstep(CheckFromIso8601())
         self.addstep(CheckToIso8601())

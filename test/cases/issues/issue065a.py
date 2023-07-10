@@ -36,7 +36,9 @@ class Issue65a(scenario.test.TestCase):
             self,
             title="Issue #65! Scenario execution lost time",
             description="Avoid untracked time when executing a scenario.",
-            features=[scenario.test.features.STATISTICS],
+        )
+        self.covers(
+            scenario.test.reqs.STATISTICS,
         )
 
         self.addstep(ExecScenario(

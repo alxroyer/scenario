@@ -34,10 +34,12 @@ class KnownIssues110(scenario.test.TestCase):
                 "depending on the --issue-level-error and --issue-level-ignored options. "
                 "Check the way things are logged in the console and saved in scenario reports."
             ),
-            features=[
-                scenario.test.features.KNOWN_ISSUES, scenario.test.features.ERROR_HANDLING,
-                scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.ERROR_HANDLING,
+            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         # Default mode

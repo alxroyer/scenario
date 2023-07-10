@@ -28,7 +28,10 @@ class Goto002(scenario.test.TestCase):
             self,
             title="Goto scenario reports",
             description="Check scenario report generation for goto scenarios.",
-            features=[scenario.test.features.GOTO, scenario.test.features.SCENARIO_REPORT],
+        )
+        self.covers(
+            scenario.test.reqs.GOTO,
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         self.section("Documentation generation")

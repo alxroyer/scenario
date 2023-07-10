@@ -28,9 +28,9 @@ class Campaign004(scenario.test.TestCase):
             self,
             title="Campaign --doc-only option",
             description="Check campaign results when the --doc-only option is used.",
-            features=[
-                scenario.test.features.CAMPAIGNS,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.CAMPAIGNS,
         )
 
         self.section("--doc-only option not set")

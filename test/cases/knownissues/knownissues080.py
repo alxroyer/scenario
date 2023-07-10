@@ -28,7 +28,10 @@ class KnownIssues080(scenario.test.TestCase):
             self,
             title="Known issues & multiple scenarios",
             description="Check that known issues are displayed in multiple scenario results.",
-            features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.MULTIPLE_SCENARIO_EXECUTION],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         # Execution step.

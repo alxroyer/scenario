@@ -32,10 +32,12 @@ class KnownIssues020(scenario.test.TestCase):
                 "Check that known issues declared at the definition level persist when a test error occurs. "
                 "Check the way things are displayed in the console are saved in the JSON report."
             ),
-            features=[
-                scenario.test.features.KNOWN_ISSUES, scenario.test.features.ERROR_HANDLING,
-                scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.ERROR_HANDLING,
+            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         # Execution step.

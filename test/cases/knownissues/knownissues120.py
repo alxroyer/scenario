@@ -30,7 +30,10 @@ class KnownIssues120(scenario.test.TestCase):
                 "Check that known issues considered as errors don't break the test execution "
                 "without requiring a *continue-on-error* option."
             ),
-            features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.ERROR_HANDLING],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.ERROR_HANDLING,
         )
 
         # Execution step.

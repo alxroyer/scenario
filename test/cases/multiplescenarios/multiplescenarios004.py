@@ -29,10 +29,10 @@ class MultipleScenarios004(scenario.test.TestCase):
             self,
             title="Multiple scenarios & extra info",
             description="Check extra info display when executing multiple scenarios.",
-            features=[
-                # Main features:
-                scenario.test.features.MULTIPLE_SCENARIO_EXECUTION, scenario.test.features.ATTRIBUTES,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.test.reqs.ATTRIBUTES,
         )
 
         self.section("No extra info")

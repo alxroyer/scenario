@@ -35,7 +35,11 @@ class FailingScenario001(scenario.test.TestCase):
                 "Check a scenario ends in error as soon as an exception is thrown. "
                 "Check the error is displayed and stored appropriately."
             ),
-            features=[scenario.test.features.ERROR_HANDLING, scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT],
+        )
+        self.covers(
+            scenario.test.reqs.ERROR_HANDLING,
+            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         self.scenario_expectations = scenario.test.data.scenarioexpectations(

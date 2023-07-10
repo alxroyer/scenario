@@ -37,20 +37,20 @@ class Campaign001(scenario.test.TestCase):
                 "Check furthermore that error display makes it easy to investigate on errors and warnings "
                 "(MULTIPLE_SCENARIO_EXECUTION, ERROR_HANDLING & KNOWN_ISSUES)."
             ),
-            features=[
-                scenario.ReqLink(scenario.test.features.CAMPAIGNS, comments="Single test suite"),
-                scenario.ReqLink(scenario.test.features.MULTIPLE_SCENARIO_EXECUTION, comments="Campaign final results"),
-                scenario.ReqLink(scenario.test.features.SCENARIO_LOGGING, comments="Scenario log files gathered with campaign reports"),
-                scenario.ReqLink(scenario.test.features.LOGGING, "File", comments="Scenario log files gathered with campaign reports"),
-                scenario.ReqLink(scenario.test.features.SCENARIO_REPORT, comments="Scenario reports gathered with campaign reports"),
-                scenario.ReqLink(scenario.test.features.STATISTICS, comments="Statistics by scenario, integrated for the campaign"),
-                # Note: TEST_DATA_TEST_SUITE embeds FAILING_SCENARIO,
-                #       which makes this test cover ERROR_HANDLING.
-                scenario.ReqLink(scenario.test.features.ERROR_HANDLING, comments="A scenario error is tracked and does not break the campaign"),
-                # Note: TEST_DATA_TEST_SUITE embeds KNOWN_ISSUE_DETAILS_SCENARIO and KNOWN_ISSUES_SCENARIO,
-                #       which makes this test cover KNOWN_ISSUES.
-                scenario.ReqLink(scenario.test.features.KNOWN_ISSUES, comments="Known issues reported from scenario to campaign reports"),
-            ],
+        )
+        self.covers(
+            scenario.ReqLink(scenario.test.reqs.CAMPAIGNS, comments="Single test suite"),
+            scenario.ReqLink(scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION, comments="Campaign final results"),
+            scenario.ReqLink(scenario.test.reqs.SCENARIO_LOGGING, comments="Scenario log files gathered with campaign reports"),
+            scenario.ReqLink(scenario.test.reqs.LOGGING, "File", comments="Scenario log files gathered with campaign reports"),
+            scenario.ReqLink(scenario.test.reqs.SCENARIO_REPORT, comments="Scenario reports gathered with campaign reports"),
+            scenario.ReqLink(scenario.test.reqs.STATISTICS, comments="Statistics by scenario, integrated for the campaign"),
+            # Note: TEST_DATA_TEST_SUITE embeds FAILING_SCENARIO,
+            #       which makes this test cover ERROR_HANDLING.
+            scenario.ReqLink(scenario.test.reqs.ERROR_HANDLING, comments="A scenario error is tracked and does not break the campaign"),
+            # Note: TEST_DATA_TEST_SUITE embeds KNOWN_ISSUE_DETAILS_SCENARIO and KNOWN_ISSUES_SCENARIO,
+            #       which makes this test cover KNOWN_ISSUES.
+            scenario.ReqLink(scenario.test.reqs.KNOWN_ISSUES, comments="Known issues reported from scenario to campaign reports"),
         )
         # Check that all scenario requirements are detailed by step coverage.
         self.check_step_coverage = True

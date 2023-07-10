@@ -26,9 +26,9 @@ class Stats010(scenario.test.TestCase):
             self,
             title="Statistics simple scenario",
             description="Check scenario execution statistics for a simple scenario.",
-            features=[
-                scenario.test.features.STATISTICS,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.STATISTICS,
         )
 
         # Scenario execution.

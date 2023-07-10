@@ -40,7 +40,10 @@ class KnownIssues190(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):
                 "SUCCESS, then WARNINGS, then FAIL tests, "
                 "WARNINGS and FAIL tests being sorted by ascending issue levels each."
             ),
-            features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.CAMPAIGNS],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.CAMPAIGNS,
         )
 
         # Execution step.

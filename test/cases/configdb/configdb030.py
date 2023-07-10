@@ -37,9 +37,9 @@ class ConfigDb030(scenario.test.TestCase):
             self,
             title="Configuration value types and conversions",
             description="Check the way configuration values are converted at use.",
-            features=[
-                scenario.test.features.CONFIG_DB,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.CONFIG_DB,
         )
 
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.

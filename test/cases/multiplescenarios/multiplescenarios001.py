@@ -33,7 +33,10 @@ class MultipleScenarios001(scenario.test.TestCase):
                 "Check that several scenarios can be executed with a single scenario launcher invocation, "
                 "and that error display makes it easy to investigate on errors."
             ),
-            features=[scenario.test.features.MULTIPLE_SCENARIO_EXECUTION, scenario.test.features.ERROR_HANDLING],
+        )
+        self.covers(
+            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.test.reqs.ERROR_HANDLING,
         )
 
         self.addstep(ExecScenario(

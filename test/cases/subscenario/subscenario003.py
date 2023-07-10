@@ -26,10 +26,10 @@ class SubScenario003(scenario.test.TestCase):
             self,
             title="Subscenario error",
             description="Check that a super scenario executing a failing subscenario propagates the subscenario error as is.",
-            features=[
-                scenario.test.features.SUBSCENARIOS,
-                scenario.test.features.ERROR_HANDLING,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.SUBSCENARIOS,
+            scenario.test.reqs.ERROR_HANDLING,
         )
 
         _scenario_expectations = scenario.test.data.scenarioexpectations(

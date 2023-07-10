@@ -28,7 +28,9 @@ class ScenarioExecution001(scenario.test.TestCase):
             self,
             title="Scenario execution",
             description="Check test steps are executed one after the other.",
-            features=[scenario.test.features.SCENARIO_EXECUTION],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_EXECUTION,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, expected_return_code=scenario.ErrorCode.SUCCESS))

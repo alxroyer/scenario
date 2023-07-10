@@ -30,7 +30,9 @@ class Logging200(scenario.test.TestCase):
             self,
             title="Log levels and classes",
             description="Check log lines are tagged with a log level between DEBUG, INFO, WARNING and ERROR, and an optional log class.",
-            features=[scenario.test.features.LOGGING],
+        )
+        self.covers(
+            scenario.test.reqs.LOGGING,
         )
 
         self.addstep(ExecScenario(

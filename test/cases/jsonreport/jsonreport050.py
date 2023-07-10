@@ -27,7 +27,10 @@ class JsonReport050(scenario.test.TestCase):
             self,
             title="JSON report known issues",
             description="Check the JSON report is generated as expected for a scenario with known issues.",
-            features=[scenario.test.features.SCENARIO_REPORT, scenario.test.features.KNOWN_ISSUES],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.test.reqs.KNOWN_ISSUES,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.KNOWN_ISSUES_SCENARIO, generate_report=True))

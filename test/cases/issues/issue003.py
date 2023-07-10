@@ -29,7 +29,11 @@ class Issue003(scenario.test.TestCase):
                 "Check that actions and expected resulted are differenciated even if they have the same location, "
                 "especially in JSON reports."
             ),
-            features=[scenario.test.features.SCENARIO_EXECUTION, scenario.test.features.SCENARIO_LOGGING, scenario.test.features.SCENARIO_REPORT],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_EXECUTION,
+            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.test.reqs.SCENARIO_REPORT,
         )
 
         # Scenario expectations.

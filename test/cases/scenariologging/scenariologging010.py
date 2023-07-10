@@ -27,12 +27,12 @@ class ScenarioLogging010(scenario.test.TestCase):
             self,
             title="Scenario logging simple scenario",
             description="Check the scenario logging output is generated as expected for a simple scenario.",
-            features=[
-                # Main features:
-                scenario.test.features.SCENARIO_LOGGING,
-                # Check attributes are displayed with scenario logging.
-                scenario.test.features.ATTRIBUTES,
-            ],
+        )
+        self.covers(
+            # Main features:
+            scenario.test.reqs.SCENARIO_LOGGING,
+            # Check attributes are displayed with scenario logging.
+            scenario.test.reqs.ATTRIBUTES,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO))

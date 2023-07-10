@@ -31,7 +31,10 @@ class KnownIssues210(scenario.test.TestCase):
             self,
             title="Issue level names",
             description="Check that issue levels can be configured with meaningful names, and that these names are displayed in the console.",
-            features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.SCENARIO_LOGGING],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.SCENARIO_LOGGING,
         )
 
         self.addstep(ExecScenario(

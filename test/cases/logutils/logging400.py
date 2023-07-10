@@ -34,7 +34,9 @@ class Logging400(scenario.test.TestCase):
             self,
             title="Scenario logging indentation",
             description="Check that action, result and evidence log lines are indented in a manner that helps reading the scenario execution log.",
-            features=[scenario.test.features.SCENARIO_LOGGING],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_LOGGING,
         )
 
         self.addstep(ExecScenario(

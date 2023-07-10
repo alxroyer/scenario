@@ -28,7 +28,10 @@ class KnownIssues280(scenario.test.TestCase):
             self,
             title="Issue level names & multiple scenarios",
             description="Check that issue level names are displayed in the console in multiple scenario results.",
-            features=[scenario.test.features.KNOWN_ISSUES, scenario.test.features.MULTIPLE_SCENARIO_EXECUTION],
+        )
+        self.covers(
+            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         self.addstep(ExecScenario(

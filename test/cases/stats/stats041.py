@@ -26,11 +26,11 @@ class Stats041(scenario.test.TestCase):
             self,
             title="Statistics subscenario --doc-only",
             description="Check scenario execution statistics for a super scenario executing a subscenario with the --doc-only option set.",
-            features=[
-                scenario.test.features.STATISTICS,
-                scenario.test.features.SUBSCENARIOS,
-                scenario.test.features.DOC_ONLY,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.STATISTICS,
+            scenario.test.reqs.SUBSCENARIOS,
+            scenario.test.reqs.DOC_ONLY,
         )
 
         # Scenario execution.

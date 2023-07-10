@@ -29,7 +29,10 @@ class Logging421(scenario.test.TestCase):
             self,
             title="Additional user indentation in subscenario",
             description="Check that additional user indentation still works in subscenarios.",
-            features=[scenario.test.features.LOGGING, scenario.test.features.SUBSCENARIOS],
+        )
+        self.covers(
+            scenario.test.reqs.LOGGING,
+            scenario.test.reqs.SUBSCENARIOS,
         )
 
         self.addstep(ExecUserIndentation(

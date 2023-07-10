@@ -28,7 +28,10 @@ class JsonReport020(scenario.test.TestCase):
             self,
             title="JSON report failing scenario",
             description="Check the JSON report is generated as expected for a failing scenario.",
-            features=[scenario.test.features.SCENARIO_REPORT, scenario.test.features.ERROR_HANDLING],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.test.reqs.ERROR_HANDLING,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, expected_return_code=scenario.ErrorCode.TEST_ERROR, generate_report=True))

@@ -37,7 +37,9 @@ class Logging300(scenario.test.TestCase):
                 "that class logger message colors can be parameterized, "
                 "and that log colors can be disabled."
             ),
-            features=[scenario.test.features.LOGGING],
+        )
+        self.covers(
+            scenario.test.reqs.LOGGING,
         )
 
         self.section("Log colors enabled by default")

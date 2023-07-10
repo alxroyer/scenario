@@ -27,7 +27,9 @@ class Goto001(scenario.test.TestCase):
             self,
             title="Goto jumps",
             description="Check the capacity the make the scenario execution jump to backward or forward steps.",
-            features=[scenario.test.features.GOTO],
+        )
+        self.covers(
+            scenario.test.reqs.GOTO,
         )
 
         self.section("Documentation generation")

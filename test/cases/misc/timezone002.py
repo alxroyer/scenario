@@ -27,8 +27,9 @@ class Timezone002(scenario.test.TestCase):
             self,
             title="Timezone configuration",
             description=f"Check the `scenario.datetime.toiso8601()` takes into account the '{scenario.ConfigKey.TIMEZONE}' configuration.",
-            features=[],  # No specific feature.
         )
+        # No specific requirement.
+        # self.covers()
 
         self.section("Numerical timezones")
         self.addstep(CheckTimezoneConfig("+00:00", "2020-01-01T00:00:00.000000+00:00"))

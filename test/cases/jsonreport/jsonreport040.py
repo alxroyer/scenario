@@ -27,7 +27,10 @@ class JsonReport040(scenario.test.TestCase):
             self,
             title="JSON report subscenario",
             description="Check the JSON report is generated as expected for a super scenario executing a subscenario.",
-            features=[scenario.test.features.SCENARIO_REPORT, scenario.test.features.SUBSCENARIOS],
+        )
+        self.covers(
+            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.test.reqs.SUBSCENARIOS,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SUPERSCENARIO_SCENARIO, generate_report=True))

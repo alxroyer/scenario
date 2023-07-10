@@ -29,9 +29,9 @@ class ConfigDb040(scenario.test.TestCase):
             self,
             title="Configuration value unset",
             description="Check that a configuration value can be unset.",
-            features=[
-                scenario.test.features.CONFIG_DB,
-            ],
+        )
+        self.covers(
+            scenario.test.reqs.CONFIG_DB,
         )
 
         self.tmp_root_key = scenario.Path(__file__).stem  # type: str

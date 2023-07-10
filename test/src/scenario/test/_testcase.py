@@ -30,14 +30,10 @@ class TestCase(scenario.Scenario):
             self,
             title,  # type: str
             description,  # type: str
-            features,  # type: typing.Sequence[scenario.AnyReqLinkType]
     ):  # type: (...) -> None
         from ._paths import MAIN_PATH
 
         scenario.Scenario.__init__(self, title=title, description=description)
-
-        # Requirement management.
-        self.covers(*features)
 
         #: Temporary paths registry.
         self._tmp_paths = []  # type: typing.List[scenario.Path]
