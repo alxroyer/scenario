@@ -52,6 +52,9 @@
 
 ## Roadmap to v0.3.0
 
+- Issue #84: Enforce named parameters when appropriate.
+    - Known issues,
+    - ...
 - Issue #66: Avoid redefining `argparse` API.
     - Integrate branch 'feature/#66/use-argparse-directly'.
 - Issue #58: Add sections for program arguments.
