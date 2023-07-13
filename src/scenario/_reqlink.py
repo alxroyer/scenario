@@ -21,8 +21,9 @@ Requirement / test coverage links.
 import typing
 
 if typing.TYPE_CHECKING:
+    from ._req import Req as _ReqType
     from ._reqtracker import ReqTracker as _ReqTrackerType
-    from ._reqtypes import AnyReqType as _AnyReqType
+    from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
     from ._textutils import AnyLongTextType as _AnyLongTextType
 
@@ -37,8 +38,7 @@ class ReqLink:
 
     def __init__(
             self,
-            req,  # type: _AnyReqType
-            sub_req_item=None,  # type: str
+            req_ref,  # type: _AnyReqRefType
             comments=None,  # type: _AnyLongTextType
     ):  # type: (...) -> None
         """
@@ -46,18 +46,14 @@ class ReqLink:
         possibly on a subitem of the requirement,
         and with optional justification comments.
 
-        :param req: Tracked requirement.
-        :param sub_req_item: Optional requirement subitem.
+        :param req_ref: Tracked requirement reference.
         :param comments: Optional justification comments.
         """
-        from ._req import Req
-        from ._reqdb import REQ_DB
+        from ._reqref import ReqRef
         from ._textutils import anylongtext2str
 
-        #: Requirement identifier.
-        self.req = REQ_DB.getreq(req)  # type: Req
-        #: Optional requirement subitem.
-        self.sub_req_item = sub_req_item  # type: typing.Optional[str]
+        #: Tracked requirement reference.
+        self.req_ref = req_ref if isinstance(req_ref, ReqRef) else ReqRef(req_ref)  # type: ReqRef
         #: Attached requirement trackers.
         self.req_trackers = set()  # type: typing.Set[_ReqTrackerType]
         #: Justification comments.
@@ -73,8 +69,7 @@ class ReqLink:
 
         return "".join([
             f"<{qualname(type(self))}",
-            f" req={self.req!r}",
-            f" sub_req_item={self.sub_req_item}" if self.sub_req_item else "",
+            f" req_ref={self.req_ref!r}",
             f" req_trackers={self.req_trackers!r}",
             f" comments={self.comments}" if self.comments else "",
             ">",
@@ -85,35 +80,34 @@ class ReqLink:
         Human readable string representation of the requirement link.
         """
         return "".join([
-            self.req.id,
-            f"/{self.sub_req_item}" if self.sub_req_item else "",
+            str(self.req_ref),
             " <- ",
             "{", ", ".join([str(_req_tracker) for _req_tracker in self.req_trackers]), "}",
             f" | {self.comments}" if self.comments else "",
         ])
 
+    @property
+    def req(self):  # type: () -> _ReqType
+        """
+        Tracked :class:`._req.Req` instance.
+        """
+        return self.req_ref.req
+
     def matches(
             self,
-            req=None,  # type: _AnyReqType
-            sub_req_item=None,  # type: str
+            req_ref=None,  # type: _AnyReqRefType
     ):  # type: (...) -> bool
         """
         Tells whether the given requirement with optional subitem matches this link.
 
-        :param req:
-            Optional requirement predicate.
-        :param sub_req_item:
-            Optional requirement subitem predicate.
-            ``None`` for the main of the requirement.
+        :param req_ref:
+            Optional requirement reference predicate.
         :return:
             ``True`` in case of a match, ``False`` otherwise.
-        """
-        from ._reqdb import REQ_DB
 
-        return all([
-            (req is None) or (REQ_DB.getreq(req) is self.req),
-            (req is None) or (sub_req_item == self.sub_req_item),
-        ])
+            ``True`` when the ``req_ref`` predicate is ``None``.
+        """
+        return (req_ref is None) or self.req_ref.matches(req_ref)
 
     def coveredby(
             self,
@@ -129,7 +123,7 @@ class ReqLink:
         """
         # Ensure the link is saved in the requirement link set
         # as soon as it is actually used to link a requirement with trackers.
-        self.req.req_links.add(self)
+        self.req_ref.req_links.add(self)
 
         # Try to save requirement tracker references with this link.
         _first = first  # type: _ReqTrackerType  # Ensure `first` is of type `_ReqTrackerType` (and not `_VarReqTrackerType`).

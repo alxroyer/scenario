@@ -25,9 +25,10 @@ if True:
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
+    from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
+    from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import AnyReqType as _AnyReqType
-    from ._reqtypes import ReqIdType as _ReqIdType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
@@ -57,31 +58,44 @@ class ReqDatabase(_LoggerImpl):
 
         _LoggerImpl.__init__(self, DebugClass.REQ_DATABASE)
 
-        #: Database of requirements, keyed by requirement identifiers.
-        self._req_db = {}  # type: typing.Dict[_ReqIdType, _ReqType]
+        #: Database of requirement references, keyed by identifiers.
+        self._req_db = {}  # type: typing.Dict[str, _ReqRefType]
 
     def push(
             self,
-            req,  # type: _ReqType
+            obj,  # type: typing.Union[_ReqType, _ReqRefType]
     ):  # type: (...) -> None
         """
         Feeds the database with requirements.
 
-        :param req: Requirement to ensure registration for.
+        :param obj:
+            Requirement or requirement reference to ensure registration for.
+
+            Requirement references with empty sub-item specifications will be interpreted as the related requirement itself.
 
         .. note::
             If ``req`` already exists in the database, it won't be duplicated.
         """
-        if req.id not in self._req_db:
-            # Save and log the new requirement.
-            self.debug("New requirement %r", req)
-            self._req_db[req.id] = req
+        from ._req import Req
+        from ._reqref import ReqRef
+
+        if isinstance(obj, ReqRef) and (not obj.subs):
+            self.debug("Empty sub-item specifications for %r, %r taken into account", obj, obj.req)
+            obj = obj.req
+
+        _req_ref = obj if isinstance(obj, ReqRef) else ReqRef(obj)  # type: ReqRef
+        _req_key = _req_ref.id  # type: str
+        _req_type = "requirement" if isinstance(obj, ReqRef) else "requirement reference"  # type: str
+        if _req_key not in self._req_db:
+            # Save and log the new requirement reference.
+            self.debug("New %s %r", _req_type, obj)
+            self._req_db[_req_key] = _req_ref
         else:
-            # Check `req` is the instance we already know.
-            if req is self._req_db[req.id]:
-                self.debug("Requirement already stored %s", req)
+            # Check this is the requirement instance we already know.
+            if obj is (self._req_db[_req_key].req if isinstance(obj, Req) else self._req_db[_req_key]):
+                self.debug("%s already stored %r", _req_type.capitalize(), obj)
             else:
-                raise ValueError(f"Duplicate requirement {req.id!r}: {req!r} v/s {self._req_db[req.id]!r}")
+                raise ValueError(f"Duplicate {_req_type} {_req_key!r}: {obj!r} v/s {self._req_db[_req_key].req!r}")
 
     def getreq(
             self,
@@ -94,28 +108,54 @@ class ReqDatabase(_LoggerImpl):
         :param req: Any requirement description.
         :return: Requirement instance registered in the database.
         """
+        return self.getreqref(req).req
+
+    def getreqref(
+            self,
+            req_ref,  # type: _AnyReqRefType
+    ):  # type: (...) -> _ReqRefType
+        """
+        Retrieves the registered :class:`._reqref.ReqRef` instance
+        corresponding to the :obj:`._reqtypes.AnyReqRefType` description.
+
+        :param req_ref: Any requirement reference description.
+        :return: Requirement reference instance registered in the database.
+        """
         from ._req import Req
+        from ._reqref import ReqRef
 
-        # `Req` instance.
-        if isinstance(req, Req):
-            # Ensure the requirement object exist in the database.
-            self.push(req)
-            return req
+        # `Req` or `ReqRef` instance.
+        if isinstance(req_ref, (Req, ReqRef)):
+            return self.getreqref(req_ref.id)
 
-        # Requirement id.
-        elif isinstance(req, _ReqIdType):
-            if req in self._req_db:
-                return self._req_db[req]
+        # Requirement reference as a string.
+        elif isinstance(req_ref, str):
+            if req_ref in self._req_db:
+                return self._req_db[req_ref]
             else:
-                raise KeyError(f"Unknown requirement identifier {req!r}")
+                raise KeyError(f"Unknown requirement reference {req_ref!r}")
 
-        raise ValueError(f"Invalid requirement {req!r}")
+        raise ValueError(f"Invalid requirement reference {req_ref!r}")
 
     def getallreqs(self):  # type: (...) -> typing.Set[_ReqType]
         """
         Returns all requirement identifiers saved in the database.
 
-        :return: Requirement identifiers.
+        :return: Requirements.
+        """
+        return set(map(
+            lambda req_ref: req_ref.req,
+            filter(
+                lambda req_ref: not req_ref.subs,
+                self._req_db.values(),
+            ),
+        ))
+
+    def getallrefs(self):  # type: (...) -> typing.Set[_ReqRefType]
+        """
+        Returns all requirement references saved in the database.
+
+        :return: Requirement references.
         """
         return set(self._req_db.values())
 
@@ -126,8 +166,8 @@ class ReqDatabase(_LoggerImpl):
         :return: Requirement links.
         """
         _req_links = set()  # type: typing.Set[_ReqLinkType]
-        for _req in self.getallreqs():  # type: _ReqType
-            _req_links.update(_req.req_links)
+        for _req_ref in self.getallrefs():  # type: _ReqRefType
+            _req_links.update(_req_ref.req_links)
         return _req_links
 
     def getalltrackers(self):  # type: (...) -> typing.Set[_ReqTrackerType]

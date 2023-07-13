@@ -25,30 +25,40 @@ import typing
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
+    from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
 
 
 if typing.TYPE_CHECKING:
-    #: Requirement identifier type.
-    ReqIdType = str
-
     #: Any kind of requirement type, either:
     #:
-    #: - a requirement identifier,
-    #: - a full :class:`._req.Req` instance.
+    #: - a requirement identifier (string),
+    #: - a :class:`._req.Req` instance.
     AnyReqType = typing.Union[
-        ReqIdType,
+        str,
         _ReqType,
     ]
 
     #: Variable requirement tracker type.
     VarReqTrackerType = typing.TypeVar("VarReqTrackerType", bound=_ReqTrackerType)
 
+    #: Any kind of requirement reference type, either:
+    #:
+    #: - a requirement identifier (string),
+    #: - a requirement reference identifier (string as well),
+    #: - a :class:`._req.Req` instance,
+    #: - a :class:`._reqref.ReqRef` instance.
+    AnyReqRefType = typing.Union[
+        str,
+        _ReqType,
+        _ReqRefType,
+    ]
+
     #: Any kind of requirement link, either:
     #:
-    #: - a requirement (instance or identifier),
+    #: - a requirement reference,
     #: - a full :class:`._reqlink.ReqLink` instance.
     AnyReqLinkType = typing.Union[
-        AnyReqType,
+        AnyReqRefType,
         _ReqLinkType,
     ]

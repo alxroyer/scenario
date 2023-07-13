@@ -104,6 +104,7 @@ LOGGING = scenario.Req(
         - Console logging (by default) and/or file logging.
     """,
 )  # type: scenario.Req
+LOGGING_FILE = LOGGING / "File"  # type: scenario.ReqRef
 
 DEBUG_LOGGING = scenario.Req(
     id="DEBUG_LOGGING",
@@ -234,6 +235,9 @@ CAMPAIGNS = scenario.Req(
         The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).
     """,
 )  # type: scenario.Req
+CAMPAIGNS_LOGGING = CAMPAIGNS / "logging"  # type: scenario.ReqRef
+CAMPAIGNS_FINAL_RESULTS = CAMPAIGNS / "final-results"  # type: scenario.ReqRef
+CAMPAIGNS_REPORT = CAMPAIGNS / "report"  # type: scenario.ReqRef
 
 ATTRIBUTES = scenario.Req(
     id="ATTRIBUTES",
@@ -262,6 +266,6 @@ def load():  # type: (...) -> None
     # Inspect this module items.
     for _name, _obj in vars(scenario.test.reqs).items():  # type: str, typing.Any
         # For each `scenario.Req` instance above.
-        if isinstance(_obj, scenario.Req):
+        if isinstance(_obj, (scenario.Req, scenario.ReqRef)):
             # Ensure the feature is known as a requirement.
             scenario.reqs.push(_obj)

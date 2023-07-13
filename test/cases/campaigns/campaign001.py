@@ -42,7 +42,7 @@ class Campaign001(scenario.test.TestCase):
             scenario.ReqLink(scenario.test.reqs.CAMPAIGNS, comments="Single test suite"),
             scenario.ReqLink(scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION, comments="Campaign final results"),
             scenario.ReqLink(scenario.test.reqs.SCENARIO_LOGGING, comments="Scenario log files gathered with campaign reports"),
-            scenario.ReqLink(scenario.test.reqs.LOGGING, "File", comments="Scenario log files gathered with campaign reports"),
+            scenario.ReqLink(scenario.test.reqs.LOGGING_FILE, comments="Scenario log files gathered with campaign reports"),
             scenario.ReqLink(scenario.test.reqs.SCENARIO_REPORT, comments="Scenario reports gathered with campaign reports"),
             scenario.ReqLink(scenario.test.reqs.STATISTICS, comments="Statistics by scenario, integrated for the campaign"),
             # Note: TEST_DATA_TEST_SUITE embeds FAILING_SCENARIO,
@@ -69,7 +69,7 @@ class Campaign001(scenario.test.TestCase):
         # Verifications.
         self.addstep(CheckCampaignLogExpectations(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Campaign log...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS, "Logging"),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
             # with errors and known issues.
             self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
             self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
@@ -77,7 +77,7 @@ class Campaign001(scenario.test.TestCase):
         self.addstep(ParseFinalResultsLog(ExecCampaign.getinstance()))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(), _campaign_expectations.all_test_case_expectations)).covers(
             # Campaign final results...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS, "Logging"),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
             self.getreqlinks(scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION),
             # with statistics, errors and known issues.
             self.getreqlinks(scenario.test.reqs.STATISTICS),
@@ -86,9 +86,9 @@ class Campaign001(scenario.test.TestCase):
         )
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Campaign outputs...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS, "Test results"),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_FINAL_RESULTS),
             # with log and scenario report files.
-            self.getreqlinks(scenario.test.reqs.LOGGING, "File"),
+            self.getreqlinks(scenario.test.reqs.LOGGING_FILE),
             self.getreqlinks(scenario.test.reqs.SCENARIO_REPORT),
         )
         self.knownissue(
@@ -97,8 +97,8 @@ class Campaign001(scenario.test.TestCase):
         )
         # self.addstep(CheckCampaignLogReports(ExecCampaign.getinstance(), _campaign_expectations)).covers(
         #     # Content of scenario log files...
-        #     self.getreqlinks(scenario.test.reqs.CAMPAIGNS, "Test results"),
-        #     self.getreqlinks(scenario.test.reqs.SCENARIO_LOGGING), self.reqid2links(scenario.test.reqs.LOGGING, "File"),
+        #     self.getreqlinks(scenario.test.reqs.CAMPAIGNS_FINAL_RESULTS),
+        #     self.getreqlinks(scenario.test.reqs.SCENARIO_LOGGING), self.reqid2links(scenario.test.reqs.LOGGING_FILE),
         #     # with statistics, errors and known issues.
         #     self.getreqlinks(scenario.test.reqs.STATISTICS),
         #     self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
@@ -106,7 +106,7 @@ class Campaign001(scenario.test.TestCase):
         # )
         self.addstep(CheckCampaignJsonReports(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Content of scenario reports...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS, "Test results"),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_FINAL_RESULTS),
             self.getreqlinks(scenario.test.reqs.SCENARIO_REPORT),
             # with statistics, errors and known issues.
             self.getreqlinks(scenario.test.reqs.STATISTICS),
@@ -115,7 +115,7 @@ class Campaign001(scenario.test.TestCase):
         )
         self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Campaign report...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS, "Report"),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_REPORT),
             # with statistics, errors and known issues.
             self.getreqlinks(scenario.test.reqs.STATISTICS),
             self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),

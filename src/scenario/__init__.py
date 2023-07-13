@@ -745,17 +745,6 @@ Requirement management
 The scenario framework provide the ability to master the way tests cover input :ref:`requirements <req-mgt>`.
 """
 
-if typing.TYPE_CHECKING:
-    __doc__ += """
-    .. py:attribute:: ReqIdType
-
-        Requirement identifier type.
-
-        .. seealso:: :obj:`._reqtypes.ReqIdType` implementation.
-    """
-    from ._reqtypes import ReqIdType as ReqIdType
-    __all__.append("ReqIdType")
-
 if True:
     __doc__ += """
     .. py:attribute:: Req
@@ -776,6 +765,27 @@ if typing.TYPE_CHECKING:
     """
     from ._reqtypes import AnyReqType as AnyReqType
     __all__.append("AnyReqType")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqRef
+
+        Requirement reference.
+
+        .. seealso:: :class:`._reqref.ReqRef` implementation.
+    """
+    from ._reqref import ReqRef as ReqRef
+    __all__.append("ReqRef")
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: AnyReqRefType
+
+        Any requirement reference type.
+
+        .. seealso:: :obj:`._reqtypes.AnyReqRefType` implementation.
+    """
+    from ._reqtypes import AnyReqRefType as AnyReqRefType
+    __all__.append("AnyReqRefType")
 
 if True:
     __doc__ += """

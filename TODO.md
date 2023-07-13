@@ -24,7 +24,6 @@
     - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
     - Make `ReqDatabase.reqid2xxx()` handle requirement subkeys.
     - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls.
-    - Formalize better the abilty to define requirement subitems.
     - Add a 'check-test-coverage.py' tool that displays requirement test coverage.
     - Add the ability to make the test check that its scenario links are detailed by step links.
     - Complete scenario001 with SCENARIO_LOGGING testing.

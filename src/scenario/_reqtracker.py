@@ -25,7 +25,7 @@ if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqtypes import AnyReqLinkType as _AnyReqLinkType
-    from ._reqtypes import AnyReqType as _AnyReqType
+    from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
@@ -114,26 +114,22 @@ class ReqTracker(abc.ABC):
 
     def getreqlinks(
             self,
-            req=None,  # type: _AnyReqType
-            sub_req_item=None,  # type: str
+            req_ref=None,  # type: _AnyReqRefType
             direct_only=False,  # type: bool
     ):  # type: (...) -> typing.Set[_ReqLinkType]
         """
         Requirement links attached with this tracker,
         filtered with the given predicates.
 
-        :param req:
-            Requirement predicate to search links for.
+        :param req_ref:
+            Requirement reference predicate to search links for.
 
             Optional.
-        :param sub_req_item:
-            Sub-requirement predicate that specifies a particular subpoint in the requirement.
-
-            ``None`` for the main of the requirement.
+            All requirement links when ``None``.
         :param direct_only:
             Direct links only.
 
-            if ``False``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
+            If ``False``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
             links held by the steps will be included in the result.
 
             ``False`` by default.
@@ -151,7 +147,7 @@ class ReqTracker(abc.ABC):
 
         # Filter this list with the requirement predicates.
         return set(filter(
-            lambda req_link: req_link.matches(req, sub_req_item),
+            lambda req_link: req_link.matches(req_ref),
             _req_links,
         ))
 
