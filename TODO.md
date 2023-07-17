@@ -22,6 +22,7 @@
     - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
     - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.
     - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
+    - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
     - Make `ReqDatabase.reqid2xxx()` handle requirement subkeys.
     - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls.
     - Add a 'check-test-coverage.py' tool that displays requirement test coverage.

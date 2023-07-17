@@ -71,7 +71,8 @@ def _reloadscenariomoduleswithtypechecking():  # type: (...) -> None
 def _reloadmodulewithtypechecking(
         module_name,  # type: str
 ):  # type: (...) -> None
-    from scenario._reflection import fqname, importmodulefrompath  # noqa  ## Access to a protected member
+    from scenario._reflection import importmodulefrompath  # noqa  ## Access to a protected member
+    from .._paths import SRC_PATH
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TYPE_CHECKING_RELOAD)  # type: Logger
@@ -88,6 +89,7 @@ def _reloadmodulewithtypechecking(
 
     def _reload(
             module_name,  # type: str  # noqa  ## Shadows name 'module_name' from outer scope
+            module_path,  # type: typing.Optional[pathlib.Path]
     ):  # type: (...) -> None
         """
         Recursive function that reloads a module,
@@ -96,10 +98,31 @@ def _reloadmodulewithtypechecking(
         # Mark the given module name as being reloaded.
         _being_reloaded.append(module_name)
 
-        # Original module, previously loaded with `typing.TYPE_CHECKING` disabled.
+        # Original module, previously loaded with `typing.TYPE_CHECKING=False`.
+        if module_name not in sys.modules:
+            # If the module has not been loaded yet, that may be because the module contains types only.
+            # Let's import it at once, with `typing.TYPE_CHECKING=False`,
+            # in order to ensure we have it in the `sys.modules` cache.
+            _logger.debug("Loading %r with `typing.TYPE_CHECKING=False`...", module_name)
+            assert module_path, f"Module path missing for module {module_name!r}"
+            try:
+                # Ensure `typing.TYPE_CHECKING` is disabled.
+                typing.TYPE_CHECKING = False
+
+                importmodulefrompath(
+                    module_path,
+                    # Ensure the module will be saved in `sys.modules`.
+                    sys_modules_cache=True,
+                )
+            except Exception as _err:
+                _logger.debug("Error while loading %r with `typing.TYPE_CHECKING=False`: %r", module_name, _err)
+                raise _err
+            assert module_name in sys.modules, f"Error while loading {module_name!r} with `typing.TYPE_CHECKING=False`, not in `sys.modules`"
         _original_module = sys.modules[module_name]  # type: types.ModuleType
         _logger.debug("_original_module = [%d] %r", id(_original_module), _original_module)
         _logger.debug("_original_module.__file__ = %r", _original_module.__file__)
+        assert _original_module.__file__, f"Invalid path {_original_module.__file__!r} for module {_original_module}"
+        module_path = pathlib.Path(_original_module.__file__)
 
         # Keep trying to reload the module with `typing.TYPE_CHECKING` enabled until:
         # - either it succeeds directly,
@@ -107,16 +130,16 @@ def _reloadmodulewithtypechecking(
         # - or it fails due to type checking cyclic dependencies (`ImportError` raised).
         while True:
             try:
+                _logger.debug("Reloading %r with `typing.TYPE_CHECKING=True`...", module_name)
+
                 # Activate `typing.TYPE_CHECKING`.
                 typing.TYPE_CHECKING = True
 
                 # Reload the module (without replacing the original one).
-                _logger.debug("Reloading %r...", module_name)
-                assert _original_module.__file__
-                if pathlib.Path(_original_module.__file__).name != "__init__.py":
+                if module_path.name != "__init__.py":
                     # Don't use `importlib.reload()` in general, otherwise the original modules would be replaced, possibly breaking consistency by the way.
                     _reloaded_module = importmodulefrompath(
-                        _original_module.__file__,
+                        module_path,
                         # Don't read from `sys.modules`, nor save the reloaded module in `sys.modules`.
                         sys_modules_cache=False,
                     )  # type: types.ModuleType
@@ -128,7 +151,7 @@ def _reloadmodulewithtypechecking(
                         _reloaded_module = importlib.reload(_original_module)  # Type already declared above.
                     finally:
                         # Fix `sys.modules` in order to keep the original module as the reference.
-                        _logger.debug("Restoring original module [%d] %s in `sys.modules`", id(_original_module), fqname(_original_module))
+                        _logger.debug("Restoring original module [%d] %r in `sys.modules`", id(_original_module), module_name)
                         sys.modules[module_name] = _original_module
                 _logger.debug("_reloaded_module = [%d] %r", id(_reloaded_module), _reloaded_module)
 
@@ -142,13 +165,14 @@ def _reloadmodulewithtypechecking(
                         # Note:
                         # It seems that the attribute copy below is enough to enable the corresponding documentation attached with it.
                         # The documentation is probably retrieved later in Sphinx through `sphinx.pycode.Parser.comments`.
-                        _logger.debug("Copying %r member from reloaded [%d] to original module [%d] %s",
-                                      _member_name, id(_reloaded_module), id(_original_module), fqname(_original_module))
+                        _logger.debug("Copying %r member from reloaded [%d] to original module [%d] %r",
+                                      _member_name, id(_reloaded_module), id(_original_module), module_name)
                         setattr(_original_module, _member_name, _reloaded_members[_member_name])
-                _logger.debug("Overwriting docstring from reloaded to original module %s", fqname(_original_module))
+                _logger.debug("Overwriting docstring from reloaded to original module %r", module_name)
                 setattr(_original_module, "__doc__", _reloaded_members["__doc__"])
 
                 # Success.
+                _logger.debug("Module %r successfully reloaded with `typing.TYPE_CHECKING=True`", module_name)
                 _RELOADWITHTYPECHECKING_CACHE.append(module_name)
                 return
 
@@ -181,7 +205,14 @@ def _reloadmodulewithtypechecking(
                         raise ImportError(f"Cannot import {module_name!r} due to type checking cyclic dependencies with {_module_dependency!r}")
                     else:
                         # Reload the typing dependency.
-                        _reload(_module_dependency)
+                        try:
+                            _logger.scenario_logger.pushindentation("  ")
+                            _reload(
+                                module_name=_module_dependency,
+                                module_path=pathlib.Path(_err.path or (SRC_PATH / f"{_module_dependency.replace('.', '/')}.py")),
+                            )
+                        finally:
+                            _logger.scenario_logger.popindentation("  ")
 
                         # If the typing dependency could be reloaded successfully, try again reloading the module for this `_reload()` call.
                         continue
@@ -194,7 +225,14 @@ def _reloadmodulewithtypechecking(
                 typing.TYPE_CHECKING = False
 
     # Initial recursive call.
-    _reload(module_name)
+    try:
+        _logger.scenario_logger.pushindentation("  ")
+        _reload(
+            module_name=module_name,
+            module_path=None,
+        )
+    finally:
+        _logger.scenario_logger.popindentation("  ")
 
 
 def _trackscenariotypes():  # type: (...) -> None
