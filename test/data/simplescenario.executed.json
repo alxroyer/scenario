@@ -23,7 +23,7 @@
   },
   "steps": [
     {
-      "location": "test/data/simplescenario.py:27:SimpleScenario.step010",
+      "location": "test/data/simplescenario.py:31:SimpleScenario.step010",
       "description": "step#10",
       "executions": [
         {
@@ -67,7 +67,7 @@
       ]
     },
     {
-      "location": "test/data/simplescenario.py:35:SimpleScenario.step020",
+      "location": "test/data/simplescenario.py:39:SimpleScenario.step020",
       "description": "step#20",
       "executions": [
         {
@@ -111,7 +111,7 @@
       ]
     },
     {
-      "location": "test/data/simplescenario.py:43:SimpleScenario.step030",
+      "location": "test/data/simplescenario.py:47:SimpleScenario.step030",
       "description": "step#30",
       "executions": [
         {

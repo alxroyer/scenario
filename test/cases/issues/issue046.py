@@ -47,7 +47,7 @@ class Issue46(scenario.test.TestCase):
 
         # Error message verifications.
         self.addstep(CheckErrorDisplay(ExecCampaign.getinstance(), scenario.test.paths.SYNTAX_ERROR_SCENARIO, {
-            f"File \"{os.fspath(scenario.test.paths.SYNTAX_ERROR_SCENARIO)}\", line 31": 2,  # location: SYNTAX_ERROR_SCENARIO/syntax-error
+            f"File \"{os.fspath(scenario.test.paths.SYNTAX_ERROR_SCENARIO)}\", line 32": 2,  # location: SYNTAX_ERROR_SCENARIO/syntax-error
             "SyntaxError: invalid syntax": 2,
         }))
         self.addstep(CheckErrorDisplay(ExecCampaign.getinstance(), scenario.test.paths.MISSING_SCENARIO_CLASS_SCENARIO, {

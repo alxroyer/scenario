@@ -23,7 +23,7 @@
   },
   "steps": [
     {
-      "location": "test/data/superscenario.py:37:SuperScenario.step001",
+      "location": "test/data/superscenario.py:38:SuperScenario.step001",
       "description": "Subscenario execution",
       "executions": [],
       "actions-results": [

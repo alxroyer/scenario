@@ -23,7 +23,7 @@
   },
   "steps": [
     {
-      "location": "test/data/gotoscenario.py:30:GotoScenario.step000",
+      "location": "test/data/gotoscenario.py:31:GotoScenario.step000",
       "description": "Initializations",
       "executions": [],
       "actions-results": [
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "location": "test/data/gotoscenario.py:40:GotoScenario.step010",
+      "location": "test/data/gotoscenario.py:41:GotoScenario.step010",
       "description": "A++",
       "executions": [],
       "actions-results": [
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "location": "test/data/gotoscenario.py:47:GotoScenario.step020",
+      "location": "test/data/gotoscenario.py:48:GotoScenario.step020",
       "description": "A?",
       "executions": [],
       "actions-results": [
@@ -49,7 +49,7 @@
       ]
     },
     {
-      "location": "test/data/gotoscenario.py:60:GotoScenario.step030",
+      "location": "test/data/gotoscenario.py:61:GotoScenario.step030",
       "description": "B++",
       "executions": [],
       "actions-results": [
@@ -57,7 +57,7 @@
       ]
     },
     {
-      "location": "test/data/gotoscenario.py:67:GotoScenario.step040",
+      "location": "test/data/gotoscenario.py:68:GotoScenario.step040",
       "description": "Check A and B",
       "executions": [],
       "actions-results": [

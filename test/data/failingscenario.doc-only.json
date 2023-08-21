@@ -23,7 +23,7 @@
   },
   "steps": [
     {
-      "location": "test/data/failingscenario.py:31:FailingScenario.step010",
+      "location": "test/data/failingscenario.py:32:FailingScenario.step010",
       "description": "Step in failure",
       "executions": [],
       "actions-results": [
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "location": "test/data/failingscenario.py:47:FailingScenario.step020",
+      "location": "test/data/failingscenario.py:48:FailingScenario.step020",
       "description": "Successful step",
       "executions": [],
       "actions-results": [

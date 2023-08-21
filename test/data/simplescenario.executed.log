@@ -3,21 +3,21 @@ SCENARIO 'test/data/simplescenario.py'
   TITLE: Simple scenario sample
 
 
-STEP#1: step#10 (test/data/simplescenario.py:27:SimpleScenario.step010)
+STEP#1: step#10 (test/data/simplescenario.py:31:SimpleScenario.step010)
 ------------------------------------------------
     ACTION: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
   EVIDENCE:   -> Lorem ipsum...
     RESULT: Et leo duis ut diam.
   EVIDENCE:   -> Et leo...
 
-STEP#2: step#20 (test/data/simplescenario.py:35:SimpleScenario.step020)
+STEP#2: step#20 (test/data/simplescenario.py:39:SimpleScenario.step020)
 ------------------------------------------------
     ACTION: Vitae turpis massa sed elementum.
   EVIDENCE:   -> Vitae turpis...
     RESULT: Faucibus a pellentesque sit amet.
   EVIDENCE:   -> Faucibus a pellentesque...
 
-STEP#3: step#30 (test/data/simplescenario.py:43:SimpleScenario.step030)
+STEP#3: step#30 (test/data/simplescenario.py:47:SimpleScenario.step030)
 ------------------------------------------------
     ACTION: Quam id leo in vitae turpis massa sed elementum.
   EVIDENCE:   -> Quam id leo...

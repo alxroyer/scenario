@@ -23,7 +23,7 @@
   },
   "steps": [
     {
-      "location": "test/data/knownissuesscenario.py:35:KnownIssuesScenario.KnownIssuesStep",
+      "location": "test/data/knownissuesscenario.py:36:KnownIssuesScenario.KnownIssuesStep",
       "description": "Object step with known issues",
       "executions": [
         {
@@ -35,31 +35,31 @@
               "type": "known-issue",
               "id": "#000",
               "message": "Known issue in KnownIssuesStep.__init__()",
-              "location": "test/data/knownissuesscenario.py:40:KnownIssuesScenario.KnownIssuesStep.__init__"
+              "location": "test/data/knownissuesscenario.py:41:KnownIssuesScenario.KnownIssuesStep.__init__"
             },
             {
               "type": "known-issue",
               "id": "#001",
               "message": "Known issue in KnownIssuesStep.step() before ACTION/RESULT",
-              "location": "test/data/knownissuesscenario.py:45:KnownIssuesScenario.KnownIssuesStep.step"
+              "location": "test/data/knownissuesscenario.py:46:KnownIssuesScenario.KnownIssuesStep.step"
             },
             {
               "type": "known-issue",
               "id": "#002",
               "message": "Known issue in KnownIssuesStep.step() under ACTION",
-              "location": "test/data/knownissuesscenario.py:48:KnownIssuesScenario.KnownIssuesStep.step"
+              "location": "test/data/knownissuesscenario.py:49:KnownIssuesScenario.KnownIssuesStep.step"
             },
             {
               "type": "known-issue",
               "id": "#003",
               "message": "Known issue in KnownIssuesStep.step() under ACTION",
-              "location": "test/data/knownissuesscenario.py:57:KnownIssuesScenario.KnownIssuesStep.step"
+              "location": "test/data/knownissuesscenario.py:58:KnownIssuesScenario.KnownIssuesStep.step"
             },
             {
               "type": "known-issue",
               "id": "#004",
               "message": "Known issue in KnownIssuesStep.step() after ACTION/RESULT",
-              "location": "test/data/knownissuesscenario.py:59:KnownIssuesScenario.KnownIssuesStep.step"
+              "location": "test/data/knownissuesscenario.py:60:KnownIssuesScenario.KnownIssuesStep.step"
             }
           ]
         }
@@ -77,7 +77,7 @@
                   "type": "known-issue",
                   "id": "#002",
                   "message": "Known issue in KnownIssuesStep.step() under ACTION",
-                  "location": "test/data/knownissuesscenario.py:48:KnownIssuesScenario.KnownIssuesStep.step"
+                  "location": "test/data/knownissuesscenario.py:49:KnownIssuesScenario.KnownIssuesStep.step"
                 }
               ],
               "subscenarios": []
@@ -110,7 +110,7 @@
                   "type": "known-issue",
                   "id": "#003",
                   "message": "Known issue in KnownIssuesStep.step() under ACTION",
-                  "location": "test/data/knownissuesscenario.py:57:KnownIssuesScenario.KnownIssuesStep.step"
+                  "location": "test/data/knownissuesscenario.py:58:KnownIssuesScenario.KnownIssuesStep.step"
                 }
               ],
               "subscenarios": []
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "location": "test/data/knownissuesscenario.py:61:KnownIssuesScenario.step010",
+      "location": "test/data/knownissuesscenario.py:62:KnownIssuesScenario.step010",
       "description": "Method step with known issues",
       "executions": [
         {
@@ -132,25 +132,25 @@
               "type": "known-issue",
               "id": "#011",
               "message": "Known issue in KnownIssuesScenario.step010() before ACTION/RESULT",
-              "location": "test/data/knownissuesscenario.py:64:KnownIssuesScenario.step010"
+              "location": "test/data/knownissuesscenario.py:65:KnownIssuesScenario.step010"
             },
             {
               "type": "known-issue",
               "id": "#012",
               "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
-              "location": "test/data/knownissuesscenario.py:67:KnownIssuesScenario.step010"
+              "location": "test/data/knownissuesscenario.py:68:KnownIssuesScenario.step010"
             },
             {
               "type": "known-issue",
               "id": "#013",
               "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
-              "location": "test/data/knownissuesscenario.py:76:KnownIssuesScenario.step010"
+              "location": "test/data/knownissuesscenario.py:77:KnownIssuesScenario.step010"
             },
             {
               "type": "known-issue",
               "id": "#014",
               "message": "Known issue in KnownIssuesScenario.step010() after ACTION/RESULT",
-              "location": "test/data/knownissuesscenario.py:78:KnownIssuesScenario.step010"
+              "location": "test/data/knownissuesscenario.py:79:KnownIssuesScenario.step010"
             }
           ]
         }
@@ -168,7 +168,7 @@
                   "type": "known-issue",
                   "id": "#012",
                   "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
-                  "location": "test/data/knownissuesscenario.py:67:KnownIssuesScenario.step010"
+                  "location": "test/data/knownissuesscenario.py:68:KnownIssuesScenario.step010"
                 }
               ],
               "subscenarios": []
@@ -201,7 +201,7 @@
                   "type": "known-issue",
                   "id": "#013",
                   "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
-                  "location": "test/data/knownissuesscenario.py:76:KnownIssuesScenario.step010"
+                  "location": "test/data/knownissuesscenario.py:77:KnownIssuesScenario.step010"
                 }
               ],
               "subscenarios": []
@@ -211,7 +211,7 @@
       ]
     },
     {
-      "location": "test/data/knownissuesscenario.py:80:KnownIssuesScenario.step020",
+      "location": "test/data/knownissuesscenario.py:81:KnownIssuesScenario.step020",
       "description": "Method step without known issues",
       "executions": [
         {
@@ -244,61 +244,61 @@
       "type": "known-issue",
       "id": "#---",
       "message": "Known issue in KnownIssuesScenario.__init__()",
-      "location": "test/data/knownissuesscenario.py:32:KnownIssuesScenario.__init__"
+      "location": "test/data/knownissuesscenario.py:33:KnownIssuesScenario.__init__"
     },
     {
       "type": "known-issue",
       "id": "#000",
       "message": "Known issue in KnownIssuesStep.__init__()",
-      "location": "test/data/knownissuesscenario.py:40:KnownIssuesScenario.KnownIssuesStep.__init__"
+      "location": "test/data/knownissuesscenario.py:41:KnownIssuesScenario.KnownIssuesStep.__init__"
     },
     {
       "type": "known-issue",
       "id": "#001",
       "message": "Known issue in KnownIssuesStep.step() before ACTION/RESULT",
-      "location": "test/data/knownissuesscenario.py:45:KnownIssuesScenario.KnownIssuesStep.step"
+      "location": "test/data/knownissuesscenario.py:46:KnownIssuesScenario.KnownIssuesStep.step"
     },
     {
       "type": "known-issue",
       "id": "#002",
       "message": "Known issue in KnownIssuesStep.step() under ACTION",
-      "location": "test/data/knownissuesscenario.py:48:KnownIssuesScenario.KnownIssuesStep.step"
+      "location": "test/data/knownissuesscenario.py:49:KnownIssuesScenario.KnownIssuesStep.step"
     },
     {
       "type": "known-issue",
       "id": "#003",
       "message": "Known issue in KnownIssuesStep.step() under ACTION",
-      "location": "test/data/knownissuesscenario.py:57:KnownIssuesScenario.KnownIssuesStep.step"
+      "location": "test/data/knownissuesscenario.py:58:KnownIssuesScenario.KnownIssuesStep.step"
     },
     {
       "type": "known-issue",
       "id": "#004",
       "message": "Known issue in KnownIssuesStep.step() after ACTION/RESULT",
-      "location": "test/data/knownissuesscenario.py:59:KnownIssuesScenario.KnownIssuesStep.step"
+      "location": "test/data/knownissuesscenario.py:60:KnownIssuesScenario.KnownIssuesStep.step"
     },
     {
       "type": "known-issue",
       "id": "#011",
       "message": "Known issue in KnownIssuesScenario.step010() before ACTION/RESULT",
-      "location": "test/data/knownissuesscenario.py:64:KnownIssuesScenario.step010"
+      "location": "test/data/knownissuesscenario.py:65:KnownIssuesScenario.step010"
     },
     {
       "type": "known-issue",
       "id": "#012",
       "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
-      "location": "test/data/knownissuesscenario.py:67:KnownIssuesScenario.step010"
+      "location": "test/data/knownissuesscenario.py:68:KnownIssuesScenario.step010"
     },
     {
       "type": "known-issue",
       "id": "#013",
       "message": "Known issue in KnownIssuesScenario.step010() under ACTION",
-      "location": "test/data/knownissuesscenario.py:76:KnownIssuesScenario.step010"
+      "location": "test/data/knownissuesscenario.py:77:KnownIssuesScenario.step010"
     },
     {
       "type": "known-issue",
       "id": "#014",
       "message": "Known issue in KnownIssuesScenario.step010() after ACTION/RESULT",
-      "location": "test/data/knownissuesscenario.py:78:KnownIssuesScenario.step010"
+      "location": "test/data/knownissuesscenario.py:79:KnownIssuesScenario.step010"
     }
   ],
   "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},

@@ -179,7 +179,7 @@ def scenarioexpectations(
                 if not doc_only:
                     _scenario_expectations.adderror(ErrorExpectations(
                         cls=scenario.ExceptionError, exception_type="AssertionError", message="This is an exception.",
-                        location=f"{_paths.FAILING_SCENARIO}:39:FailingScenario.step010",  # location: FAILING_SCENARIO/step010-exception
+                        location=f"{_paths.FAILING_SCENARIO}:40:FailingScenario.step010",  # location: FAILING_SCENARIO/step010-exception
                     ))
             if _reqs.stats():
                 if doc_only:
@@ -308,75 +308,75 @@ def scenarioexpectations(
                 # - Known issue #---
                 _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                     cls=scenario.KnownIssue, level=NOT_SET, id="#---", message="Known issue in KnownIssuesScenario.__init__()",
-                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:32:KnownIssuesScenario.__init__",  # location: KNOWN_ISSUES_SCENARIO/#---
+                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:33:KnownIssuesScenario.__init__",  # location: KNOWN_ISSUES_SCENARIO/#---
                 ))
                 # KnownIssueStep:
                 # - Known issue #000
                 _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                     cls=scenario.KnownIssue, level=NOT_SET, id="#000", message="Known issue in KnownIssuesStep.__init__()",
-                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:40:KnownIssuesScenario.KnownIssuesStep.__init__",  # location: KNOWN_ISSUES_SCENARIO/#000
+                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:41:KnownIssuesScenario.KnownIssuesStep.__init__",  # location: KNOWN_ISSUES_SCENARIO/#000
                 ))
                 # - Known issue #001
                 _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                     cls=scenario.KnownIssue, level=NOT_SET, id="#001", message="Known issue in KnownIssuesStep.step() before ACTION/RESULT",
-                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:45:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#001
+                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:46:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#001
                 ))
                 # - Known issue #002
                 if not doc_only:
                     _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                         cls=scenario.KnownIssue, level=NOT_SET, id="#002", message="Known issue in KnownIssuesStep.step() under ACTION",
-                        location=f"{_paths.KNOWN_ISSUES_SCENARIO}:48:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#002
+                        location=f"{_paths.KNOWN_ISSUES_SCENARIO}:49:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#002
                     ))
                 # - Exception!
                 if _raise_exceptions:
                     if not doc_only:
                         _scenario_expectations.adderror(level=logging.ERROR, error=ErrorExpectations(
                             cls=scenario.ExceptionError, exception_type="AssertionError", message="This is an exception.",
-                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:52:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/Step-fail
+                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:53:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/Step-fail
                         ))
                 # - Known issue #003
                 if not doc_only:
                     if not _raise_exceptions:
                         _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                             cls=scenario.KnownIssue, level=NOT_SET, id="#003", message="Known issue in KnownIssuesStep.step() under ACTION",
-                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:57:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#003
+                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:58:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#003
                         ))
                 # - Known issue #004
                 _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                     cls=scenario.KnownIssue, level=NOT_SET, id="#004", message="Known issue in KnownIssuesStep.step() after ACTION/RESULT",
-                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:59:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#004
+                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:60:KnownIssuesScenario.KnownIssuesStep.step",  # location: KNOWN_ISSUES_SCENARIO/#004
                 ))
                 # step010:
                 # - Known issue #011
                 _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                     cls=scenario.KnownIssue, level=NOT_SET, id="#011", message="Known issue in KnownIssuesScenario.step010() before ACTION/RESULT",
-                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:64:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#011
+                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:65:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#011
                 ))
                 # - Known issue #012
                 if not doc_only:
                     if (not _raise_exceptions) or continue_on_error:
                         _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                             cls=scenario.KnownIssue, level=NOT_SET, id="#012", message="Known issue in KnownIssuesScenario.step010() under ACTION",
-                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:67:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#012
+                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:68:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#012
                         ))
                 # - Exception!
                 if _raise_exceptions and continue_on_error:
                     if not doc_only:
                         _scenario_expectations.adderror(level=logging.ERROR, error=ErrorExpectations(
                             cls=scenario.ExceptionError, exception_type="AssertionError", message="This is an exception.",
-                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:71:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/step010-fail
+                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:72:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/step010-fail
                         ))
                 # - Known issue #013
                 if not doc_only:
                     if not _raise_exceptions:
                         _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                             cls=scenario.KnownIssue, level=NOT_SET, id="#013", message="Known issue in KnownIssuesScenario.step010() under ACTION",
-                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:76:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#013
+                            location=f"{_paths.KNOWN_ISSUES_SCENARIO}:77:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#013
                         ))
                 # - Known issue #014
                 _scenario_expectations.adderror(level=_known_issue_level, error=ErrorExpectations(
                     cls=scenario.KnownIssue, level=NOT_SET, id="#014", message="Known issue in KnownIssuesScenario.step010() after ACTION/RESULT",
-                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:78:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#014
+                    location=f"{_paths.KNOWN_ISSUES_SCENARIO}:79:KnownIssuesScenario.step010",  # location: KNOWN_ISSUES_SCENARIO/#014
                 ))
             if _reqs.stats():
                 if doc_only:

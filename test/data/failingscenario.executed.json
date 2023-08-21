@@ -23,7 +23,7 @@
   },
   "steps": [
     {
-      "location": "test/data/failingscenario.py:31:FailingScenario.step010",
+      "location": "test/data/failingscenario.py:32:FailingScenario.step010",
       "description": "Step in failure",
       "executions": [
         {
@@ -33,7 +33,7 @@
             {
               "type": "AssertionError",
               "message": "This is an exception.",
-              "location": "test/data/failingscenario.py:39:FailingScenario.step010"
+              "location": "test/data/failingscenario.py:40:FailingScenario.step010"
             }
           ],
           "warnings": []
@@ -64,7 +64,7 @@
                 {
                   "type": "AssertionError",
                   "message": "This is an exception.",
-                  "location": "test/data/failingscenario.py:39:FailingScenario.step010"
+                  "location": "test/data/failingscenario.py:40:FailingScenario.step010"
                 }
               ],
               "warnings": [],
@@ -83,7 +83,7 @@
       ]
     },
     {
-      "location": "test/data/failingscenario.py:47:FailingScenario.step020",
+      "location": "test/data/failingscenario.py:48:FailingScenario.step020",
       "description": "Successful step",
       "executions": [],
       "actions-results": [
@@ -107,7 +107,7 @@
     {
       "type": "AssertionError",
       "message": "This is an exception.",
-      "location": "test/data/failingscenario.py:39:FailingScenario.step010"
+      "location": "test/data/failingscenario.py:40:FailingScenario.step010"
     }
   ],
   "warnings": [],
