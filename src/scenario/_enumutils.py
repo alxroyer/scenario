@@ -53,3 +53,20 @@ def enum2str(
     if isinstance(value, enum.Enum):
         return str(value.value)
     return value
+
+
+def isin(
+        value,  # type: typing.Any
+        enum_type,  # type: typing.Type[enum.Enum]
+):  # type: (...) -> bool
+    """
+    Determines whether ``value`` is part of ``enum_type``.
+
+    :param value: Enum or enum value to check in ``enum_type``.
+    :param enum_type: Enum definition to check ``value`` in.
+    :return: ``True`` if ``value`` in ``enum_type``, ``False`` otherwise.
+    """
+    for _enum in enum_type:  # type: enum.Enum
+        if (value == _enum) or (value == _enum.value):
+            return True
+    return False

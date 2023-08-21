@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Save requirements in scenario reports.
     - Save requirement database with campaign reports.
     - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
     - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.

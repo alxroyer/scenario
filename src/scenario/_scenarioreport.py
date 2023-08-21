@@ -27,6 +27,7 @@ if True:
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._path import AnyPathType as _AnyPathType
+    from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._typing import JsonDictType as _JsonDictType
@@ -130,6 +131,7 @@ class ScenarioReport(_LoggerImpl):
         :return: JSON report object.
         """
         from ._debugutils import jsondump
+        from ._enumutils import isin
         from ._path import Path
         from ._scenarioattributes import CoreScenarioAttributes
         from ._testerrors import TestError
@@ -158,9 +160,12 @@ class ScenarioReport(_LoggerImpl):
         _json_scenario["attributes"] = {}
         for _attribute_name in scenario_definition.getattributenames():  # type: str
             # Skip empty core attributes.
-            if (_attribute_name in CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+            if isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
                 continue
             _json_scenario["attributes"][_attribute_name] = str(scenario_definition.getattribute(_attribute_name))
+
+        # Requirements.
+        self._reqtracker2json(scenario_definition, _json_scenario)
 
         # Steps.
         _json_scenario["steps"] = []
@@ -230,6 +235,9 @@ class ScenarioReport(_LoggerImpl):
         for _attribute_name in json_scenario["attributes"]:  # type: str
             _scenario_definition.setattribute(_attribute_name, json_scenario["attributes"][_attribute_name])
 
+        # Requirements.
+        self._json2reqtracker(json_scenario, _scenario_definition)
+
         # Steps.
         for _json_step_definition in json_scenario["steps"]:  # type: _JsonDictType
             _step_definition = self._json2step(_json_step_definition)  # type: _StepDefinitionType
@@ -277,8 +285,17 @@ class ScenarioReport(_LoggerImpl):
             "description": step_definition.description,
         }  # type: _JsonDictType
 
-        # Do not set 'executions' and 'actions-results' lists for step sections.
+        # Do not set 'reqs', 'actions-results' and 'executions' lists for step sections.
         if not isinstance(step_definition, StepSectionDescription):
+            # Requirements.
+            self._reqtracker2json(step_definition, _json_step_definition)
+
+            # Actions / results.
+            _json_step_definition["actions-results"] = []
+            for _action_result_definition in step_definition.actions_results:  # type: _ActionResultDefinitionType
+                _json_step_definition["actions-results"].append(self._actionresult2json(_action_result_definition))
+
+            # Executions.
             _json_step_definition["executions"] = []
             for _step_execution in step_definition.executions:  # type: StepExecution
                 _json_step_execution = {
@@ -295,10 +312,6 @@ class ScenarioReport(_LoggerImpl):
                     _json_step_execution["warnings"].append(_warning.tojson())
 
                 _json_step_definition["executions"].append(_json_step_execution)
-
-            _json_step_definition["actions-results"] = []
-            for _action_result_definition in step_definition.actions_results:  # type: _ActionResultDefinitionType
-                _json_step_definition["actions-results"].append(self._actionresult2json(_action_result_definition))
 
         self.popindentation()
         self.debug("JSON report generated for %r: %s", step_definition, jsondump(_json_step_definition, indent=2),
@@ -341,6 +354,15 @@ class ScenarioReport(_LoggerImpl):
             assert _step_definition.description is not None
             _step_definition = StepSectionDescription(_step_definition.description)
         else:
+            # Requirements.
+            self._json2reqtracker(json_step_definition, _step_definition)
+
+            # Actions / results.
+            for _json_action_result_definition in json_step_definition["actions-results"]:  # type: _JsonDictType
+                _action_result_definition = self._json2actionresult(_json_action_result_definition)  # type: _ActionResultDefinitionType
+                _step_definition.addactionresult(_action_result_definition)
+
+            # Executions.
             for _json_step_execution in json_step_definition["executions"]:  # type: _JsonDictType
                 self.debug("Building step execution instance from JSON: %s", jsondump(_json_step_execution, indent=2),
                            extra=self.longtext(max_lines=10))
@@ -363,12 +385,61 @@ class ScenarioReport(_LoggerImpl):
                 _step_definition.executions.append(_step_execution)
                 self.popindentation()
 
-            for _json_action_result_definition in json_step_definition["actions-results"]:  # type: _JsonDictType
-                _action_result_definition = self._json2actionresult(_json_action_result_definition)  # type: _ActionResultDefinitionType
-                _step_definition.addactionresult(_action_result_definition)
-
         self.popindentation()
         return _step_definition
+
+    def _reqtracker2json(
+            self,
+            req_tracker,  # type: _ReqTrackerType
+            json_req_tracker,  # type: _JsonDictType
+    ):  # type: (...) -> None
+        """
+        Generates JSON requirement links for a requirement tracker.
+
+        :param req_tracker: Requirement tracker which JSON report to feed with requirement links. Either a scenario or a step.
+        :param json_req_tracker: JSON report to update.
+        """
+        from ._reqlink import ReqLink
+
+        json_req_tracker["reqs"] = []
+
+        for _req_link in req_tracker.getreqlinks():  # type: ReqLink
+            _json_req_link = {"ref": _req_link.req_ref.id}  # type: _JsonDictType
+
+            if _req_link.comments:
+                _json_req_link["comments"] = _req_link.comments
+
+            json_req_tracker["reqs"].append(_json_req_link)
+
+    def _json2reqtracker(
+            self,
+            json_req_tracker,  # type: _JsonDictType
+            req_tracker,  # type: _ReqTrackerType
+    ):  # type: (...) -> None
+        """
+        Reads requirement coverage for the JSON report of a requirement tracker.
+
+        :param json_req_tracker: JSON report of a requirement tracker.
+        :param req_tracker: Requirement tracker to update. Either a scenario or a step.
+        """
+        from ._reqdb import REQ_DB
+        from ._reqlink import ReqLink
+
+        # Memo: No 'reqs' until feature #83 has been developped.
+        if "reqs" in json_req_tracker:
+            for _json_req_link in json_req_tracker["reqs"]:  # type: _JsonDictType
+                _req_ref_id = _json_req_link["ref"]  # type: str
+                try:
+                    _req_ref = REQ_DB.getreqref(_req_ref_id)
+                except KeyError:
+                    self.warning(f"Unknown requirement reference {_req_ref_id!r}")
+                    continue
+
+                _comments = None  # type: typing.Optional[str]
+                if "comments" in _json_req_link:
+                    _comments = str(_json_req_link["comments"])
+
+                req_tracker.covers(ReqLink(_req_ref, comments=_comments))
 
     def _actionresult2json(
             self,
@@ -378,7 +449,7 @@ class ScenarioReport(_LoggerImpl):
         Generates the JSON report for an action / expected result.
 
         :param action_result_definition: Action or expected result to generate the JSON report for.
-        :return JSON: JSON report object.
+        :return: JSON report object.
         """
         from ._actionresultexecution import ActionResultExecution
         from ._debugutils import jsondump

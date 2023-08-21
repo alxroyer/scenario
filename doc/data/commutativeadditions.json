@@ -6,22 +6,12 @@
     "TITLE": "Commutative additions",
     "DESCRIPTION": "Call the CommutativeAddition scenario with different inputs."
   },
+  "reqs": [],
   "steps": [
     {
       "location": "demo/commutativeadditions.py:20:CommutativeAdditions.step010",
       "description": "Both positive members",
-      "executions": [
-        {
-          "number": 1,
-          "time": {
-            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-            "elapsed": SSS.mmmmmm
-          },
-          "errors": [],
-          "warnings": []
-        }
-      ],
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -44,22 +34,12 @@
                     "TITLE": "Commutative addition",
                     "DESCRIPTION": "Addition of two members, swapping orders."
                   },
+                  "reqs": [],
                   "steps": [
                     {
                       "location": "demo/commutativeaddition.py:20:CommutativeAddition.step000",
                       "description": "Initial conditions",
-                      "executions": [
-                        {
-                          "number": 1,
-                          "time": {
-                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                            "elapsed": SSS.mmmmmm
-                          },
-                          "errors": [],
-                          "warnings": []
-                        }
-                      ],
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -81,14 +61,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
-                      "description": "a + b",
+                      ],
                       "executions": [
                         {
-                          "number": 2,
+                          "number": 1,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -97,7 +73,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
+                      "description": "a + b",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -118,14 +99,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
-                      "description": "b + a",
+                      ],
                       "executions": [
                         {
-                          "number": 3,
+                          "number": 2,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -134,7 +111,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
+                      "description": "b + a",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -155,14 +137,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
-                      "description": "Check",
+                      ],
                       "executions": [
                         {
-                          "number": 4,
+                          "number": 3,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -171,7 +149,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
+                      "description": "Check",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -209,6 +192,18 @@
                             }
                           ]
                         }
+                      ],
+                      "executions": [
+                        {
+                          "number": 4,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
                       ]
                     }
                   ],
@@ -225,14 +220,10 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "location": "demo/commutativeadditions.py:27:CommutativeAdditions.step020",
-      "description": "Positive and negative members",
+      ],
       "executions": [
         {
-          "number": 2,
+          "number": 1,
           "time": {
             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -241,7 +232,12 @@
           "errors": [],
           "warnings": []
         }
-      ],
+      ]
+    },
+    {
+      "location": "demo/commutativeadditions.py:27:CommutativeAdditions.step020",
+      "description": "Positive and negative members",
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -264,22 +260,12 @@
                     "TITLE": "Commutative addition",
                     "DESCRIPTION": "Addition of two members, swapping orders."
                   },
+                  "reqs": [],
                   "steps": [
                     {
                       "location": "demo/commutativeaddition.py:20:CommutativeAddition.step000",
                       "description": "Initial conditions",
-                      "executions": [
-                        {
-                          "number": 1,
-                          "time": {
-                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                            "elapsed": SSS.mmmmmm
-                          },
-                          "errors": [],
-                          "warnings": []
-                        }
-                      ],
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -301,14 +287,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
-                      "description": "a + b",
+                      ],
                       "executions": [
                         {
-                          "number": 2,
+                          "number": 1,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -317,7 +299,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
+                      "description": "a + b",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -338,14 +325,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
-                      "description": "b + a",
+                      ],
                       "executions": [
                         {
-                          "number": 3,
+                          "number": 2,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -354,7 +337,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
+                      "description": "b + a",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -375,14 +363,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
-                      "description": "Check",
+                      ],
                       "executions": [
                         {
-                          "number": 4,
+                          "number": 3,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -391,7 +375,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
+                      "description": "Check",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -429,6 +418,18 @@
                             }
                           ]
                         }
+                      ],
+                      "executions": [
+                        {
+                          "number": 4,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
                       ]
                     }
                   ],
@@ -445,14 +446,10 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "location": "demo/commutativeadditions.py:34:CommutativeAdditions.step030",
-      "description": "Both negative members",
+      ],
       "executions": [
         {
-          "number": 3,
+          "number": 2,
           "time": {
             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -461,7 +458,12 @@
           "errors": [],
           "warnings": []
         }
-      ],
+      ]
+    },
+    {
+      "location": "demo/commutativeadditions.py:34:CommutativeAdditions.step030",
+      "description": "Both negative members",
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -484,22 +486,12 @@
                     "TITLE": "Commutative addition",
                     "DESCRIPTION": "Addition of two members, swapping orders."
                   },
+                  "reqs": [],
                   "steps": [
                     {
                       "location": "demo/commutativeaddition.py:20:CommutativeAddition.step000",
                       "description": "Initial conditions",
-                      "executions": [
-                        {
-                          "number": 1,
-                          "time": {
-                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                            "elapsed": SSS.mmmmmm
-                          },
-                          "errors": [],
-                          "warnings": []
-                        }
-                      ],
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -521,14 +513,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
-                      "description": "a + b",
+                      ],
                       "executions": [
                         {
-                          "number": 2,
+                          "number": 1,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -537,7 +525,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:27:CommutativeAddition.step010",
+                      "description": "a + b",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -558,14 +551,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
-                      "description": "b + a",
+                      ],
                       "executions": [
                         {
-                          "number": 3,
+                          "number": 2,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -574,7 +563,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:34:CommutativeAddition.step020",
+                      "description": "b + a",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -595,14 +589,10 @@
                             }
                           ]
                         }
-                      ]
-                    },
-                    {
-                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
-                      "description": "Check",
+                      ],
                       "executions": [
                         {
-                          "number": 4,
+                          "number": 3,
                           "time": {
                             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -611,7 +601,12 @@
                           "errors": [],
                           "warnings": []
                         }
-                      ],
+                      ]
+                    },
+                    {
+                      "location": "demo/commutativeaddition.py:41:CommutativeAddition.step030",
+                      "description": "Check",
+                      "reqs": [],
                       "actions-results": [
                         {
                           "type": "ACTION",
@@ -649,6 +644,18 @@
                             }
                           ]
                         }
+                      ],
+                      "executions": [
+                        {
+                          "number": 4,
+                          "time": {
+                            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                            "elapsed": SSS.mmmmmm
+                          },
+                          "errors": [],
+                          "warnings": []
+                        }
                       ]
                     }
                   ],
@@ -664,6 +671,18 @@
               ]
             }
           ]
+        }
+      ],
+      "executions": [
+        {
+          "number": 3,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
         }
       ]
     }

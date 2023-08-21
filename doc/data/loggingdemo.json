@@ -6,22 +6,12 @@
     "TITLE": "Logging demo",
     "DESCRIPTION": "Demonstrate logging facilities."
   },
+  "reqs": [],
   "steps": [
     {
       "location": "demo/loggingdemo.py:24:LoggingScenario.step010",
       "description": "Logging with the main logger",
-      "executions": [
-        {
-          "number": 1,
-          "time": {
-            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-            "elapsed": SSS.mmmmmm
-          },
-          "errors": [],
-          "warnings": []
-        }
-      ],
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -40,14 +30,10 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "location": "demo/loggingdemo.py:33:LoggingScenario.step020",
-      "description": "Logging with the scenario instance",
+      ],
       "executions": [
         {
-          "number": 2,
+          "number": 1,
           "time": {
             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -56,7 +42,12 @@
           "errors": [],
           "warnings": []
         }
-      ],
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:33:LoggingScenario.step020",
+      "description": "Logging with the scenario instance",
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -75,14 +66,10 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "location": "demo/loggingdemo.py:42:LoggingScenario.step030",
-      "description": "Logging with a class logger",
+      ],
       "executions": [
         {
-          "number": 3,
+          "number": 2,
           "time": {
             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -91,7 +78,12 @@
           "errors": [],
           "warnings": []
         }
-      ],
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:42:LoggingScenario.step030",
+      "description": "Logging with a class logger",
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -144,14 +136,10 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "location": "demo/loggingdemo.py:57:LoggingScenario.step110",
-      "description": "Class logger indentation",
+      ],
       "executions": [
         {
-          "number": 4,
+          "number": 3,
           "time": {
             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -160,7 +148,12 @@
           "errors": [],
           "warnings": []
         }
-      ],
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:57:LoggingScenario.step110",
+      "description": "Class logger indentation",
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -349,14 +342,10 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "location": "demo/loggingdemo.py:78:LoggingScenario.step120",
-      "description": "Main logger indentation",
+      ],
       "executions": [
         {
-          "number": 5,
+          "number": 4,
           "time": {
             "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
             "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
@@ -365,7 +354,12 @@
           "errors": [],
           "warnings": []
         }
-      ],
+      ]
+    },
+    {
+      "location": "demo/loggingdemo.py:78:LoggingScenario.step120",
+      "description": "Main logger indentation",
+      "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
@@ -553,6 +547,18 @@
               "subscenarios": []
             }
           ]
+        }
+      ],
+      "executions": [
+        {
+          "number": 5,
+          "time": {
+            "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+            "elapsed": SSS.mmmmmm
+          },
+          "errors": [],
+          "warnings": []
         }
       ]
     }
