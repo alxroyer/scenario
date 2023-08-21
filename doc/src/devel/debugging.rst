@@ -13,18 +13,20 @@
 .. limitations under the License.
 
 
-.. _devel:
+.. _debugging:
 
-Development
-===========
+Debugging
+=========
 
-This page describes how to develop the `scenario` library.
+Traces
+------
 
-.. toctree::
-    :maxdepth: 3
+.. todo:: Documentation missing for debugging the `scenario` library with traces
 
-    env
-    design/index
-    coding-rules/index
-    delivery
-    debugging
+    - See :py:class:`scenario._debugclasses.DebugClass`.
+
+
+Debugging a test with PyCharm
+-----------------------------
+
+.. todo:: Documentation missing for debugging the `scenario` library with PyCharm
