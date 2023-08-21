@@ -94,6 +94,9 @@ if __name__ == "__main__":
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.MAIN_PATH)
 
+    # Load requirements.
+    scenario.test.reqs.load()
+
     # Campaign execution:
     # - Have the neighbour `UNIT_TEST_LAUNCHER` script be used as the scenario runner script.
     scenario.conf.set(scenario.ConfigKey.RUNNER_SCRIPT_PATH, scenario.test.paths.UNIT_TEST_LAUNCHER)

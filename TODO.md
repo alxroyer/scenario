@@ -30,6 +30,36 @@
         - Shall work either on test suite files, or campaign results.
     - Add the ability to make the test check that its scenario links are detailed by step links.
     - Complete scenario001 with SCENARIO_LOGGING testing.
+    - Fix test regressions:
+        - Campaigns:
+            - campaign001.py
+            - campaign002.py
+            - campaign003.py
+            - campaign004.py
+            - campaign005.py
+        - "1 != <ErrorCode.ENVIRONMENT_ERROR: 40>":
+            - configdb320.py
+        - "JSON {} | 'tests.total' => Missing item":
+            - issue042.py
+            - knownissues080.py
+            - knownissues180.py
+            - knownissues190.py
+            - knownissues380.py
+            - knownissues480.py
+            - multiplescenarios000.py
+            - multiplescenarios001.py
+            - multiplescenarios002.py
+            - multiplescenarios003.py
+            - multiplescenarios004.py
+        - "KeyError: 'time'":
+            - issue065b.py
+        - "len(['      ERROR    FAIL', '      ERROR    FAIL']) is not...":
+            - knownissues090.py
+            - knownissues390.py
+            - knownissues490.py
+        - "b'  DESCRIPTION:' != b''":
+            - scenariologging010.py
+            - scenariologging011.py
     - Implement tests.
     - Add documentation with demo.
     - Limitation when using step methods => use scenario stack.
