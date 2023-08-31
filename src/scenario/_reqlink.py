@@ -18,14 +18,18 @@
 Requirement / test coverage links.
 """
 
+import abc
 import typing
 
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
+    from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
+    from ._setutils import OrderedSetType as _OrderedSetType
     from ._textutils import AnyLongTextType as _AnyLongTextType
+    from ._typingutils import VarItemType as _VarItemType
 
 
 class ReqLink:
@@ -49,13 +53,14 @@ class ReqLink:
         :param req_ref: Tracked requirement reference.
         :param comments: Optional justification comments.
         """
-        from ._reqref import ReqRef
         from ._textutils import anylongtext2str
 
         #: Tracked requirement reference.
-        self.req_ref = req_ref if isinstance(req_ref, ReqRef) else ReqRef(req_ref)  # type: ReqRef
-        #: Attached requirement trackers.
-        self.req_trackers = set()  # type: typing.Set[_ReqTrackerType]
+        #:
+        #: Unresolved input data for the :meth:`req_ref()` property.
+        self._any_req_ref = req_ref  # type: _AnyReqRefType
+        #: Unordered attached requirement trackers.
+        self._req_trackers = set()  # type: typing.Set[_ReqTrackerType]
         #: Justification comments.
         self.comments = ""  # type: str
         if comments:
@@ -71,7 +76,7 @@ class ReqLink:
             f"<{qualname(type(self))}",
             f" req_ref={self.req_ref!r}",
             f" req_trackers={self.req_trackers!r}",
-            f" comments={self.comments}" if self.comments else "",
+            f" comments={self.comments!r}" if self.comments else "",
             ">",
         ])
 
@@ -86,12 +91,43 @@ class ReqLink:
             f" | {self.comments}" if self.comments else "",
         ])
 
+    def __hash__(self):  # type: (...) -> int
+        """
+        Ensures :class:`ReqLink` objects are hashable, so that they can be used in sets.
+        """
+        return id(self)
+
     @property
     def req(self):  # type: () -> _ReqType
         """
         Tracked :class:`._req.Req` instance.
         """
         return self.req_ref.req
+
+    @property
+    def req_ref(self):  # type: () -> _ReqRefType
+        """
+        Tracked requirement reference.
+
+        Resolution of :attr:`_any_req_ref`.
+        """
+        from ._reqdb import REQ_DB
+
+        return REQ_DB.getreqref(self._any_req_ref, push_unknown=True)
+
+    @property
+    def req_trackers(self):  # type: () -> _OrderedSetType[_ReqTrackerType]
+        """
+        Attached requirement trackers, ordered by scenario names then steps.
+        """
+        from ._reqtracker import ReqTrackerHelper
+        from ._setutils import OrderedSetHelper
+
+        return OrderedSetHelper.build(
+            self._req_trackers,
+            # Sort by scenario names, then steps.
+            key=ReqTrackerHelper.key,
+        )
 
     def matches(
             self,
@@ -121,19 +157,84 @@ class ReqLink:
         :param others: More requirement trackers.
         :return: First requirement tracker.
         """
-        # Ensure the link is saved in the requirement link set
-        # as soon as it is actually used to link a requirement with trackers.
-        self.req_ref.req_links.add(self)
+        from ._reqdb import REQ_DB
+
+        # As soon as the link is actually bound with trackers:
+        # - ensure the database knows the requirement reference (non main references only),
+        if self.req_ref.subs:
+            REQ_DB.push(self.req_ref)
+        # - ensure the link is saved in the requirement reference link set,
+        if self not in self.req_ref.req_links:
+            self.req_ref._req_links.add(self)  # noqa  ## Access to protected member.
 
         # Try to save requirement tracker references with this link.
         _first = first  # type: _ReqTrackerType  # Ensure `first` is of type `_ReqTrackerType` (and not `_VarReqTrackerType`).
         for _req_tracker in [_first, *others]:  # type: _ReqTrackerType
             if _req_tracker not in self.req_trackers:
                 # New tracker reference.
-                self.req_trackers.add(_req_tracker)
+                self._req_trackers.add(_req_tracker)
+
+                # Debug the downstream requirement link.
+                REQ_DB.debug("Requirement link: %s -> %r", self.req_ref.id, _req_tracker)
 
                 # Link <-> tracker cross-reference.
                 _req_tracker.covers(self)
 
         # Return the first step of the list.
         return first
+
+
+if typing.TYPE_CHECKING:
+    #: Set of items with related requirement links.
+    #:
+    #: Requirement links ordered by requirement reference ids.
+    SetWithReqLinksType = typing.Dict[_VarItemType, _OrderedSetType[ReqLink]]
+
+
+class ReqLinkHelper(abc.ABC):
+    """
+    Helper class for :class:`ReqLink` items.
+    """
+
+    @staticmethod
+    def key(
+            req_link,  # type: ReqLink
+    ):  # type: (...) -> typing.Tuple[str, ...]
+        """
+        Key function to sort :class:`ReqLink` items by requirement reference ids.
+
+        By requirement reference ids, then scenario names and steps.
+
+        :param req_link: Requirement link item to sort.
+        :return: Key tuple.
+        """
+        from ._reqtracker import ReqTrackerHelper
+
+        return (
+            req_link.req_ref.id,
+            *[ReqTrackerHelper.key(req_tracker) for req_tracker in req_link.req_trackers],
+        )
+
+    @staticmethod
+    def updatesetwithreqlinks(
+            set_with_req_links,  # type: SetWithReqLinksType[_VarItemType]  # noqa  ## Shadows built-in name 'dict'
+            item,  # type: _VarItemType
+            req_links,  # type: _OrderedSetType[ReqLink]
+    ):  # type: (...) -> None
+        """
+        Updates a set of items with related requirement links.
+
+        :param set_with_req_links: Set of items to update.
+        :param item: Item to save or update.
+        :param req_links: Related requirement links.
+        """
+        from ._setutils import OrderedSetHelper
+
+        set_with_req_links[item] = (
+            req_links if item not in set_with_req_links
+            else OrderedSetHelper.merge(
+                set_with_req_links[item], req_links,
+                # Sort by requirement reference ids.
+                key=ReqLinkHelper.key,
+            )
+        )

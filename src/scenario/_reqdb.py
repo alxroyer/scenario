@@ -30,6 +30,7 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import AnyReqType as _AnyReqType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class ReqDatabase(_LoggerImpl):
@@ -79,13 +80,12 @@ class ReqDatabase(_LoggerImpl):
         from ._req import Req
         from ._reqref import ReqRef
 
-        if isinstance(obj, ReqRef) and (not obj.subs):
-            self.debug("Empty sub-item specifications for %r, %r taken into account", obj, obj.req)
-            obj = obj.req
-
         _req_ref = obj if isinstance(obj, ReqRef) else ReqRef(obj)  # type: ReqRef
+        # Ensure the `ReqRef._req` cache is set for `Req` registrations. Infinite cyclic calls otherwise.
+        if isinstance(obj, Req):
+            _req_ref._req = obj
         _req_key = _req_ref.id  # type: str
-        _req_type = "requirement" if isinstance(obj, ReqRef) else "requirement reference"  # type: str
+        _req_type = "requirement reference" if isinstance(obj, ReqRef) else "requirement"  # type: str
         if _req_key not in self._req_db:
             # Save and log the new requirement reference.
             self.debug("New %s %r", _req_type, obj)
@@ -100,25 +100,45 @@ class ReqDatabase(_LoggerImpl):
     def getreq(
             self,
             req,  # type: _AnyReqType
+            *,
+            push_unknown=False,  # type: bool
     ):  # type: (...) -> _ReqType
         """
         Retrieves the registered :class:`._req.Req` instance
         corresponding to the :obj:`._reqtypes.AnyReqType` description.
 
         :param req: Any requirement description.
+        :param push_unknown: ``True`` to push the new :class:`._req.Req` instance if not already known.
         :return: Requirement instance registered in the database.
         """
-        return self.getreqref(req).req
+        from ._req import Req
+
+        # `Req` instance.
+        if isinstance(req, Req):
+            if push_unknown and (req.id not in self._req_db):
+                self.push(req)
+            return self.getreq(req.id)
+
+        # Requirement as a string.
+        elif isinstance(req, str):
+            if req not in self._req_db:
+                raise KeyError(f"Unknown requirement id {req!r}")
+            return self._req_db[req].req
+
+        raise ValueError(f"Invalid requirement {req!r}")
 
     def getreqref(
             self,
             req_ref,  # type: _AnyReqRefType
+            *,
+            push_unknown=False,  # type: bool
     ):  # type: (...) -> _ReqRefType
         """
         Retrieves the registered :class:`._reqref.ReqRef` instance
         corresponding to the :obj:`._reqtypes.AnyReqRefType` description.
 
         :param req_ref: Any requirement reference description.
+        :param push_unknown: ``True`` to push a new :class:`._reqref.ReqRef` instance if not already known.
         :return: Requirement reference instance registered in the database.
         """
         from ._req import Req
@@ -126,79 +146,136 @@ class ReqDatabase(_LoggerImpl):
 
         # `Req` or `ReqRef` instance.
         if isinstance(req_ref, (Req, ReqRef)):
+            if push_unknown and (req_ref.id not in self._req_db):
+                self.push(req_ref)
             return self.getreqref(req_ref.id)
 
         # Requirement reference as a string.
         elif isinstance(req_ref, str):
-            if req_ref in self._req_db:
-                return self._req_db[req_ref]
-            else:
-                raise KeyError(f"Unknown requirement reference {req_ref!r}")
+            if req_ref not in self._req_db:
+                if push_unknown:
+                    _req_id = req_ref.split("/")[0]  # type: str
+                    self._req_db[req_ref] = ReqRef(self.getreq(_req_id), *req_ref.split("/")[1:])
+                else:
+                    raise KeyError(f"Unknown requirement reference {req_ref!r}")
+            return self._req_db[req_ref]
 
         raise ValueError(f"Invalid requirement reference {req_ref!r}")
 
-    def getallreqs(self):  # type: (...) -> typing.Set[_ReqType]
+    def getallreqs(self):  # type: (...) -> _OrderedSetType[_ReqType]
         """
-        Returns all requirement identifiers saved in the database.
+        Returns all requirements saved in the database.
 
-        :return: Requirements.
+        :return: Requirements, ordered by ids.
         """
-        return set(map(
-            lambda req_ref: req_ref.req,
-            filter(
-                lambda req_ref: not req_ref.subs,
-                self._req_db.values(),
+        from ._setutils import OrderedSetHelper
+
+        _reqs = OrderedSetHelper.build(
+            map(
+                # Convert `ReqRef` to `Req` objects.
+                lambda req_ref: req_ref.req,
+                # Filter-out sub requirement references from the database.
+                filter(
+                    lambda req_ref: not req_ref.subs,
+                    self._req_db.values(),
+                ),
             ),
-        ))
+            # Sort by requirement ids.
+            key=lambda req: req.id,
+        )  # type: _OrderedSetType[_ReqType]
 
-    def getallrefs(self):  # type: (...) -> typing.Set[_ReqRefType]
+        self.debug("getallreqs() -> %r", _reqs)
+        return _reqs
+
+    def getallrefs(self):  # type: (...) -> _OrderedSetType[_ReqRefType]
         """
         Returns all requirement references saved in the database.
 
-        :return: Requirement references.
+        :return: Requirement references, ordered by ids.
         """
-        return set(self._req_db.values())
+        from ._setutils import OrderedSetHelper
 
-    def getalllinks(self):  # type: () -> typing.Set[_ReqLinkType]
+        _req_refs = OrderedSetHelper.build(
+            # All requirement references in the database.
+            self._req_db.values(),
+            # Sort by requirement reference ids.
+            key=lambda req_ref: req_ref.id,
+        )  # type: _OrderedSetType[_ReqRefType]
+
+        self.debug("getallrefs() -> %r", _req_refs)
+        return _req_refs
+
+    def getalllinks(self):  # type: () -> _OrderedSetType[_ReqLinkType]
         """
         Returns all requirement links saved in the database.
 
-        :return: Requirement links.
+        :return: Requirement links, ordered by requirement reference ids.
         """
-        _req_links = set()  # type: typing.Set[_ReqLinkType]
-        for _req_ref in self.getallrefs():  # type: _ReqRefType
-            _req_links.update(_req_ref.req_links)
+        from ._reqlink import ReqLinkHelper
+        from ._setutils import OrderedSetHelper
+
+        _req_links = OrderedSetHelper.merge(
+            # All requirement links from the database.
+            *[_req_ref.req_links for _req_ref in self._req_db.values()],
+            # Sort by requirement reference ids.
+            key=ReqLinkHelper.key,
+        )  # type: _OrderedSetType[_ReqLinkType]
+
+        self.debug("getalllinks() -> %r", _req_links)
         return _req_links
 
-    def getalltrackers(self):  # type: (...) -> typing.Set[_ReqTrackerType]
+    def getalltrackers(self):  # type: (...) -> _OrderedSetType[_ReqTrackerType]
         """
         Returns all final requirement trackers saved in the database,
         either scenarios or steps.
 
-        :return: Requirement trackers.
+        :return: Requirement trackers, ordered by scenario names then steps.
         """
-        _req_trackers = set()  # type: typing.Set[_ReqTrackerType]
+        from ._reqtracker import ReqTrackerHelper
+        from ._setutils import OrderedSetHelper
 
-        # Walk over requirement links.
-        for _req_link in self.getalllinks():  # type: _ReqLinkType
-            _req_trackers.update(_req_link.req_trackers)
+        # All trackers from the database.
+        _req_tracker_list = []  # type: typing.List[_ReqTrackerType]
+        for _req_ref in self._req_db.values():  # type: _ReqRefType
+            for _req_link in _req_ref.req_links:  # type: _ReqLinkType
+                _req_tracker_list.extend(_req_link.req_trackers)
+        # Sort by scenario names, then steps.
+        _req_trackers = OrderedSetHelper.build(
+            _req_tracker_list,
+            key=ReqTrackerHelper.key,
+        )  # type: _OrderedSetType[_ReqTrackerType]
 
+        self.debug("getalltrackers() -> %r", _req_trackers)
         return _req_trackers
 
-    def getallscenarios(self):  # type: (...) -> typing.Set[_ScenarioDefinitionType]
+    def getallscenarios(self):  # type: (...) -> _OrderedSetType[_ScenarioDefinitionType]
         """
         Returns all scenarios that track requirements.
 
         Either directly, or through one of their steps.
 
-        :return: Tracking scenarios.
+        :return: Tracking scenarios, ordered by names.
         """
         from ._reqtracker import ReqTrackerHelper
+        from ._setutils import OrderedSetHelper
 
-        return set(map(
-            lambda req_tracker: ReqTrackerHelper.getscenario(req_tracker),
-            self.getalltrackers(),
-        ))
+        # All scenarios from the database.
+        _scenario_list = []  # type: typing.List[_ScenarioDefinitionType]
+        for _req_ref in self._req_db.values():  # type: _ReqRefType
+            for _req_link in _req_ref.req_links:  # type: _ReqLinkType
+                # Convert `ReqTracker` to `ScenarioDefinition` objects.
+                _scenario_list.extend(list(map(
+                    lambda req_tracker: ReqTrackerHelper.getscenario(req_tracker),
+                    _req_link.req_trackers,
+                )))
+        # Sort by names.
+        _scenarios = list(OrderedSetHelper.build(
+            _scenario_list,
+            key=lambda scenario: scenario.name,
+        ))  # type: _OrderedSetType[_ScenarioDefinitionType]
+
+        self.debug("getallscenarios() -> %r", _scenarios)
+        return _scenarios
 
 
 #: Main instance of :class:`ReqDatabase`.

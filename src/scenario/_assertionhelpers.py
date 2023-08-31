@@ -25,6 +25,7 @@ import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
+    from ._typingutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:
@@ -34,27 +35,14 @@ if typing.TYPE_CHECKING:
     #: Evidence parameter type.
     EvidenceParamType = typing.Optional[typing.Union[bool, str]]
 
-    #: Comparable type.
-    #:
-    #: Declared as a ``typing.TypeVar`` so that every comparable parameter within the same function call is of the same type.
-    VarComparableType = typing.TypeVar("VarComparableType", int, float, str)
-
-    #: Type representing a type, or a set of types.
-    TypeOrTypesType = typing.Optional[typing.Union[type, typing.Iterable[type]]]
-
-    #: Item type.
-    #:
-    #: Declared as a ``typing.TypeVar`` so that item and iterable parameters within the same function call are set with consistent types.
-    VarItemType = typing.TypeVar("VarItemType")
-
 
 #: ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.
 unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 
 
 def safecontainer(
-        obj,  # type: typing.Iterable[VarItemType]
-):  # type: (...) -> typing.Union[str, bytes, typing.List[VarItemType]]
+        obj,  # type: typing.Iterable[_VarItemType]
+):  # type: (...) -> typing.Union[str, bytes, typing.List[_VarItemType]]
     """
     Ensures working with a string or list-like object.
 

@@ -236,8 +236,7 @@ CAMPAIGNS = scenario.Req(
     """,
 )  # type: scenario.Req
 CAMPAIGNS_LOGGING = CAMPAIGNS / "logging"  # type: scenario.ReqRef
-CAMPAIGNS_FINAL_RESULTS = CAMPAIGNS / "final-results"  # type: scenario.ReqRef
-CAMPAIGNS_REPORT = CAMPAIGNS / "report"  # type: scenario.ReqRef
+CAMPAIGNS_REPORTS = CAMPAIGNS / "reports"  # type: scenario.ReqRef
 
 ATTRIBUTES = scenario.Req(
     id="ATTRIBUTES",
@@ -255,6 +254,33 @@ ATTRIBUTES = scenario.Req(
         or when executing a campaign (see CAMPAIGNS).
     """,
 )  # type: scenario.Req
+
+REQUIREMENT_MANAGEMENT = scenario.Req(
+    id="REQUIREMENT_MANAGEMENT",
+    title="Requirement management",
+    text="""
+        The scenario framework provides a way to track requirements, and cover them by tests with justification.
+
+        Requirements may be tracked at different levels:
+
+        - On the requirement side: requirements may be tracked entirely, or just parts of them.
+        - On the test side: the requirement item may be tracked either by test scenarios and/or steps.
+
+        These associations define requirement links which may be commented with textual justifications.
+
+        The scenario framework provides a way to generate requirement coverage reports:
+
+        - either from test suite files,
+        - or from campaign execution results.
+
+        For a given scenario, a consolidation may be done between:
+
+        - the declared set of requirement coverage,
+        - and the coverage declared from its steps.
+    """,
+)  # type: scenario.Req
+REQUIREMENT_MANAGEMENT_REPORTS = REQUIREMENT_MANAGEMENT / "reports"  # type: scenario.ReqRef
+REQUIREMENT_MANAGEMENT_SCENARIO_CONSOLIDATION = REQUIREMENT_MANAGEMENT / "scenario-consolidation"  # type: scenario.ReqRef
 
 
 def load():  # type: (...) -> None

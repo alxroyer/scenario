@@ -25,7 +25,7 @@ import typing
 if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
-    from ._typing import JsonDictType as _JsonDictType
+    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class TestError(Exception):

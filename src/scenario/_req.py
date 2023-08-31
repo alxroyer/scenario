@@ -22,9 +22,11 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
+    from ._reqlink import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class Req:
@@ -88,6 +90,12 @@ class Req:
             f": {self.title!r}" if self.title else "",
         ])
 
+    def __hash__(self):  # type: (...) -> int
+        """
+        Ensures :class:`Req` objects are hashable, so that they can be used in sets.
+        """
+        return id(self)
+
     def __truediv__(
             self,
             sub,  # type: str
@@ -112,24 +120,30 @@ class Req:
         return REQ_DB.getreqref(self)
 
     @property
-    def sub_refs(self):  # type: () -> typing.Set[_ReqRefType]
+    def sub_refs(self):  # type: () -> _OrderedSetType[_ReqRefType]
         """
         References to sub-parts of this requirement.
+
+        Sorted by requirement reference ids.
         """
         from ._reqdb import REQ_DB
+        from ._setutils import OrderedSetHelper
 
-        return set(filter(
-            lambda req_ref: (req_ref.req is self) and req_ref.subs,
-            REQ_DB.getallrefs(),
-        ))
+        return OrderedSetHelper.build(
+            # Filter requirement references that point to sub-parts of this requirement.
+            filter(
+                lambda req_ref: (req_ref.req is self) and req_ref.subs,
+                REQ_DB.getallrefs(),
+            ),
+            # Sort by requirement reference ids.
+            key=lambda req_ref: req_ref.id
+        )
 
-    def gettrackers(
-            self,
-    ):  # type: (...) -> typing.Dict[_ReqTrackerType, typing.Set[_ReqLinkType]]
+    def gettrackers(self):  # type: (...) -> _SetWithReqLinksType[_ReqTrackerType]
         """
         Returns all trackers linked with this requirement.
 
-        :return: Requirement trackers, with their related links.
+        :return: Requirement trackers, with their related links (ordered by their requirement reference ids).
 
         This method returns trackers linked with the main part of the requirement, or a sub-part of it.
         In order to get trackers for the main part of the requirement only,
@@ -140,25 +154,23 @@ class Req:
         but only through one of its steps.
         See :meth:`getscenarios()` for the purpose.
         """
-        _req_trackers = {}  # type: typing.Dict[_ReqTrackerType, typing.Set[_ReqLinkType]]
+        from ._reqlink import ReqLinkHelper
+
+        _req_trackers = {}  # type: _SetWithReqLinksType[_ReqTrackerType]
 
         # Walk through all requirement references attached with this requirement.
         for _req_ref in [self.main_ref, *self.sub_refs]:  # type: _ReqRefType
             # Integrate `gettrackers()` results for each.
-            for _req_tracker, _req_links in _req_ref.gettrackers().items():  # type: _ReqTrackerType, typing.Set[_ReqLinkType]
-                if _req_tracker not in _req_trackers:
-                    _req_trackers[_req_tracker] = set()
-                _req_trackers[_req_tracker].update(_req_links)
+            for _req_tracker, _req_links in _req_ref.gettrackers().items():  # type: _ReqTrackerType, _OrderedSetType[_ReqLinkType]
+                ReqLinkHelper.updatesetwithreqlinks(_req_trackers, _req_tracker, _req_links)
 
         return _req_trackers
 
-    def getscenarios(
-            self,
-    ):  # type: (...) -> typing.Dict[_ScenarioDefinitionType, typing.Set[_ReqLinkType]]
+    def getscenarios(self):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
         """
         Returns all scenarios linked with this requirement.
 
-        :return: Scenario definitions, with their related links.
+        :return: Scenario definitions, with their related links (ordered by their requirement reference ids).
 
         This method returns scenarios that reference the main part of the requirement, or a sub-part of it.
         In order to get scenarios for the main part of the requirement only,
@@ -166,14 +178,14 @@ class Req:
 
         Returns scenarios linked with this requirement, either directly or through one of their steps.
         """
-        _scenario_definitions = {}  # type: typing.Dict[_ScenarioDefinitionType, typing.Set[_ReqLinkType]]
+        from ._reqlink import ReqLinkHelper
+
+        _scenario_definitions = {}  # type: _SetWithReqLinksType[_ScenarioDefinitionType]
 
         # Walk through all requirement references attached with this requirement.
         for _req_ref in [self.main_ref, *self.sub_refs]:  # type: _ReqRefType
             # Integrate `getscenarios()` results for each.
-            for _scenario_definition, _req_links in _req_ref.getscenarios().items():  # type: _ScenarioDefinitionType, typing.Set[_ReqLinkType]
-                if _scenario_definition not in _scenario_definitions:
-                    _scenario_definitions[_scenario_definition] = set()
-                _scenario_definitions[_scenario_definition].update(_req_links)
+            for _scenario_definition, _req_links in _req_ref.getscenarios().items():  # type: _ScenarioDefinitionType, _OrderedSetType[_ReqLinkType]
+                ReqLinkHelper.updatesetwithreqlinks(_scenario_definitions, _scenario_definition, _req_links)
 
         return _scenario_definitions

@@ -50,6 +50,7 @@ SUPERSCENARIO_SCENARIO = DATA_PATH / "superscenario.py"  # type: scenario.Path
 SYNTAX_ERROR_SCENARIO = DATA_PATH / "errors" / "syntaxerrorscenario.py"  # type: scenario.Path
 WAITING_SCENARIO = DATA_PATH / "waitingscenario.py"  # type: scenario.Path
 
+# Test suite files.
 DEMO_TEST_SUITE = DEMO_PATH / "demo.suite"  # type: scenario.Path
 TEST_DATA_TEST_SUITE = DATA_PATH / "test-data.suite"  # type: scenario.Path
 

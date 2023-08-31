@@ -78,7 +78,6 @@ class Campaign001(scenario.test.TestCase):
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(), _campaign_expectations.all_test_case_expectations)).covers(
             # Campaign final results...
             self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
-            self.getreqlinks(scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION),
             # with statistics, errors and known issues.
             self.getreqlinks(scenario.test.reqs.STATISTICS),
             self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
@@ -86,7 +85,7 @@ class Campaign001(scenario.test.TestCase):
         )
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Campaign outputs...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_FINAL_RESULTS),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
             # with log and scenario report files.
             self.getreqlinks(scenario.test.reqs.LOGGING_FILE),
             self.getreqlinks(scenario.test.reqs.SCENARIO_REPORT),
@@ -106,7 +105,7 @@ class Campaign001(scenario.test.TestCase):
         # )
         self.addstep(CheckCampaignJsonReports(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Content of scenario reports...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_FINAL_RESULTS),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_REPORTS),
             self.getreqlinks(scenario.test.reqs.SCENARIO_REPORT),
             # with statistics, errors and known issues.
             self.getreqlinks(scenario.test.reqs.STATISTICS),
@@ -115,7 +114,7 @@ class Campaign001(scenario.test.TestCase):
         )
         self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Campaign report...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_REPORT),
+            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_REPORTS),
             # with statistics, errors and known issues.
             self.getreqlinks(scenario.test.reqs.STATISTICS),
             self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),

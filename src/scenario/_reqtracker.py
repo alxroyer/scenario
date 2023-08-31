@@ -27,6 +27,7 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import AnyReqLinkType as _AnyReqLinkType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class ReqTracker(abc.ABC):
@@ -58,8 +59,8 @@ class ReqTracker(abc.ABC):
 
     def covers(
             self,
-            first,  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
-            *others,  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
+            first,  # type: typing.Union[_AnyReqLinkType, _OrderedSetType[_ReqLinkType]]
+            *others,  # type: typing.Union[_AnyReqLinkType, _OrderedSetType[_ReqLinkType]]
     ):  # type: (...) -> _ReqLinkType
         """
         Declares requirement coverage from this tracker object.
@@ -75,16 +76,17 @@ class ReqTracker(abc.ABC):
         :return:
             First requirement link.
         """
+        from ._reqdb import REQ_DB
         from ._reqlink import ReqLink
 
         # Will store the first link encountered in `first`.
         _first_link = None  # type: typing.Optional[ReqLink]
 
         # Try to save each link.
-        for _req_links in [first, *others]:  # type: typing.Union[_AnyReqLinkType, typing.Set[_ReqLinkType]]
+        for _req_links in [first, *others]:  # type: typing.Union[_AnyReqLinkType, _OrderedSetType[_ReqLinkType]]
             # Ensure we consider a set of links for the second loop below.
-            if not isinstance(_req_links, set):
-                _req_links = {_req_links if isinstance(_req_links, ReqLink) else ReqLink(_req_links)}
+            if (not hasattr(_req_links, "__iter__")) or isinstance(_req_links, str):
+                _req_links = [_req_links if isinstance(_req_links, ReqLink) else ReqLink(_req_links)]
 
             for _req_link in _req_links:  # type: _AnyReqLinkType
                 # Ensure we have a `ReqLink` object.
@@ -102,21 +104,30 @@ class ReqTracker(abc.ABC):
                     # Link <-> tracker cross-reference.
                     _req_link.coveredby(self)
 
+                    # Let's debug the upstream requirement link after.
+                    REQ_DB.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
+
         # Return the first link in the end.
         assert _first_link is not None, "Internal error"
         return _first_link
 
-    def getreqs(self):  # type: (...) -> typing.Set[_ReqType]
+    def getreqs(self):  # type: (...) -> _OrderedSetType[_ReqType]
         """
-        Requirements tracked by this tracker.
+        Requirements tracked by this tracker, ordered by ids.
         """
-        return set([_req_link.req for _req_link in self._req_links])
+        from ._setutils import OrderedSetHelper
+
+        return OrderedSetHelper.build(
+            [_req_link.req for _req_link in self._req_links],
+            # Sort by requirement ids.
+            key=lambda req: req.id,
+        )
 
     def getreqlinks(
             self,
             req_ref=None,  # type: _AnyReqRefType
             direct_only=False,  # type: bool
-    ):  # type: (...) -> typing.Set[_ReqLinkType]
+    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this tracker,
         filtered with the given predicates.
@@ -134,28 +145,59 @@ class ReqTracker(abc.ABC):
 
             ``False`` by default.
         :return:
-            Filtered set of requirement links.
+            Filtered set of requirement links, ordered by requirement reference ids.
         """
+        from ._reqlink import ReqLinkHelper
         from ._scenariodefinition import ScenarioDefinition
+        from ._setutils import OrderedSetHelper
         from ._stepdefinition import StepDefinition
 
         # Constitute the whole list of requirement links to consider.
-        _req_links = set(self._req_links)  # type: typing.Set[_ReqLinkType]
+        _req_links = list(self._req_links)  # type: typing.List[_ReqLinkType]
         if isinstance(self, ScenarioDefinition) and (not direct_only):
             for _step in self.steps:  # type: StepDefinition
-                _req_links.update(_step._req_links)
+                _req_links.extend(_step._req_links)
 
-        # Filter this list with the requirement predicates.
-        return set(filter(
-            lambda req_link: req_link.matches(req_ref),
-            _req_links,
-        ))
+        return OrderedSetHelper.build(
+            # Filter this list with the requirement predicates.
+            filter(
+                lambda req_link: req_link.matches(req_ref),
+                _req_links,
+            ),
+            # Sort by requirement reference ids.
+            key=ReqLinkHelper.key,
+        )
 
 
 class ReqTrackerHelper:
     """
     Helper class for :class:`ReqTracker`.
     """
+
+    @staticmethod
+    def key(
+            req_tracker,  # type: ReqTracker
+    ):  # type: (...) -> str
+        """
+        Key function to sort :class:`ReqTracker` items.
+
+        By scenario (or owner scenario) names, then step ids
+
+        :param req_tracker: Scenario or step definition to sort.
+        :return: Sortable string.
+        """
+        from ._scenariodefinition import ScenarioDefinition
+        from ._stepdefinition import StepDefinition
+
+        if isinstance(req_tracker, ScenarioDefinition):
+            return req_tracker.name
+        elif isinstance(req_tracker, StepDefinition):
+            # Find out the number of digits to consider to format the step number.
+            # Depends on the number of steps the owner scenario holds.
+            _step_number_digits = len(str(req_tracker.scenario.steps))  # type: int
+            _step_number_fmt = f"0{_step_number_digits}d"  # type: str
+            return f"{req_tracker.scenario.name}:{req_tracker.number:{_step_number_fmt}}"
+        raise TypeError(f"Unexpected requirement tracker type {req_tracker!r}")
 
     @staticmethod
     def getscenario(

@@ -21,7 +21,7 @@ import scenario
 import scenario.test
 import scenario.text
 if typing.TYPE_CHECKING:
-    from scenario._typing import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
+    from scenario._typingutils import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if typing.TYPE_CHECKING:
     from multiplescenarios.steps.parser import ParseFinalResultsLog as _ParseFinalResultsLogType

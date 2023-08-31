@@ -23,7 +23,7 @@ import json
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._typing import JsonDictType as _JsonDictType
+    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class DelayedStr(abc.ABC):

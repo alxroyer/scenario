@@ -28,7 +28,7 @@ if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._logger import Logger as _LoggerType
     from ._testerrors import TestError as _TestErrorType
-    from ._typing import JsonDictType as _JsonDictType
+    from ._typingutils import JsonDictType as _JsonDictType
 
 
 if typing.TYPE_CHECKING:

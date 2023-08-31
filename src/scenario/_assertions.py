@@ -29,13 +29,13 @@ if True:
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType as _ErrParamType
     from ._assertionhelpers import EvidenceParamType as _EvidenceParamType
-    from ._assertionhelpers import TypeOrTypesType as _TypeOrTypesType
-    from ._assertionhelpers import VarComparableType as _VarComparableType
-    from ._assertionhelpers import VarItemType as _VarItemType
     from ._path import AnyPathType as _AnyPathType
     from ._stepexecution import StepExecution as _StepExecutionType
     from ._stepspecifications import AnyStepExecutionSpecificationType as _AnyStepExecutionSpecificationType
-    from ._typing import JsonDictType as _JsonDictType
+    from ._typingutils import JsonDictType as _JsonDictType
+    from ._typingutils import TypeOrTypesType as _TypeOrTypesType
+    from ._typingutils import VarComparableType as _VarComparableType
+    from ._typingutils import VarItemType as _VarItemType
 
 
 class Assertions:

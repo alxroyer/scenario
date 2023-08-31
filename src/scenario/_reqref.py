@@ -24,10 +24,12 @@ import typing
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
+    from ._reqlink import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import AnyReqType as _AnyReqType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class ReqRef:
@@ -48,17 +50,13 @@ class ReqRef:
         :param req: Requirement to define a reference for.
         :param subs: Optional sub-item specifications.
         """
-        from ._req import Req
-        from ._reqdb import REQ_DB
-
         #: Requirement this :class:`ReqRef` refers to.
-        self.req = (
-            # Note:
-            #  In order to avoid logging before the logging system is ready,
-            #  don't sollicitate the requirement database if we already have a `Req` instance.
-            req if isinstance(req, Req)
-            else REQ_DB.getreq(req)
-        )  # type: _ReqType
+        #:
+        #: Unresolved input data for the :meth:`req()` property.
+        self._any_req = req  # type: _AnyReqType
+
+        #: Resolved requirement reference.
+        self._req = None  # type: typing.Optional[_ReqType]
 
         #: Requirement sub-item specifications.
         #:
@@ -67,8 +65,8 @@ class ReqRef:
         #: If empty, the :class:`ReqRef` instance refers to the main part of the requirement.
         self.subs = subs  # type: typing.Sequence[str]
 
-        #: Links with requirement trackers.
-        self.req_links = set()  # type: typing.Set[_ReqLinkType]
+        #: Unordered links with requirement trackers.
+        self._req_links = set()  # type: typing.Set[_ReqLinkType]
 
     def __repr__(self):  # type: () -> str
         """
@@ -76,12 +74,7 @@ class ReqRef:
         """
         from ._reflection import qualname
 
-        return "".join([
-            f"<{qualname(type(self))}",
-            f" req.id={self.req.id!r}",
-            f" subs={self.subs!r}",
-            ">",
-        ])
+        return f"<{qualname(type(self))} id={self.id!r}>"
 
     def __str__(self):  # type: () -> str
         """
@@ -89,15 +82,52 @@ class ReqRef:
         """
         return self.id
 
+    def __hash__(self):  # type: (...) -> int
+        """
+        Ensures :class:`ReqRef` objects are hashable, so that they can be used in sets.
+        """
+        return id(self)
+
     @property
     def id(self):  # type: () -> str
         """
         Requirement reference identifier.
         """
+        from ._req import Req
+
         return "/".join([
-            self.req.id,
+            # Don't sollicitate the requirement database if we already have a `Req` instance for `_any_req`.
+            self._any_req.id if isinstance(self._any_req, Req) else self.req.id,
             *self.subs,
         ])
+
+    @property
+    def req(self):  # type: () -> _ReqType
+        """
+        Requirement this :class:`ReqRef` refers to.
+
+        Resolution of :attr:`_any_req`.
+        Cached with :attr:`_req`.
+        """
+        from ._reqdb import REQ_DB
+
+        if self._req is None:
+            self._req = REQ_DB.getreq(self._any_req, push_unknown=True)
+        return self._req
+
+    @property
+    def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
+        """
+        Links with requirement trackers, ordered by requirement reference ids.
+        """
+        from ._reqlink import ReqLinkHelper
+        from ._setutils import OrderedSetHelper
+
+        return OrderedSetHelper.build(
+            self._req_links,
+            # Sort by requirement reference ids.
+            key=ReqLinkHelper.key,
+        )
 
     def join(
             self,
@@ -152,54 +182,49 @@ class ReqRef:
         else:
             raise TypeError(f"Can't compare {self!r} with {other!r}")
 
-    def gettrackers(
-            self,
-    ):  # type: (...) -> typing.Dict[_ReqTrackerType, typing.Set[_ReqLinkType]]
+    def gettrackers(self):  # type: (...) -> _SetWithReqLinksType[_ReqTrackerType]
         """
-        Returns all trackers linked with directly this requirement reference.
+        Returns all trackers linked directly with this requirement reference.
 
-        :return: Requirement trackers, with their related links.
+        :return: Requirement trackers, with their related links (ordered by their requirement reference ids).
 
         For :class:`._scenariodefinition.ScenarioDefinition` instances,
         the scenario won't be returned if it is not linked with the requirement reference directly,
         but only through one of its steps.
         See :meth:`getscenarios()` for the purpose.
         """
-        _req_trackers = {}  # type: typing.Dict[_ReqTrackerType, typing.Set[_ReqLinkType]]
+        from ._reqlink import ReqLinkHelper
+
+        _req_trackers = {}  # type: _SetWithReqLinksType[_ReqTrackerType]
 
         # Walk through requirement links.
         for _req_link in self.req_links:  # type: _ReqLinkType
             # For each direct tracker.
             for _req_tracker in _req_link.req_trackers:  # type: _ReqTrackerType
                 # Save the tracker with the related link.
-                if _req_tracker not in _req_trackers:
-                    _req_trackers[_req_tracker] = set()
-                _req_trackers[_req_tracker].add(_req_link)
+                ReqLinkHelper.updatesetwithreqlinks(_req_trackers, _req_tracker, [_req_link])
 
         return _req_trackers
 
-    def getscenarios(
-            self,
-    ):  # type: (...) -> typing.Dict[_ScenarioDefinitionType, typing.Set[_ReqLinkType]]
+    def getscenarios(self):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
         """
         Returns all scenarios linked with this requirement reference.
 
-        :return: Scenario definitions, with their related links.
+        :return: Scenario definitions, with their related links (ordered by their requirement reference ids).
 
         Returns scenarios linked with this requirement reference, either directly or through one of their steps.
         """
+        from ._reqlink import ReqLinkHelper
         from ._reqtracker import ReqTrackerHelper
 
-        _scenario_definitions = {}  # type: typing.Dict[_ScenarioDefinitionType, typing.Set[_ReqLinkType]]
+        _scenario_definitions = {}  # type: _SetWithReqLinksType[_ScenarioDefinitionType]
 
         # Walk through direct requirement trackers.
-        for _req_tracker, _req_links in self.gettrackers().items():  # type: _ReqTrackerType, typing.Set[_ReqLinkType]
+        for _req_tracker, _req_links in self.gettrackers().items():  # type: _ReqTrackerType, _OrderedSetType[_ReqLinkType]
             # Find out the final scenario reference from the direct requirement tracker.
             _scenario_definition = ReqTrackerHelper.getscenario(_req_tracker)  # type: _ScenarioDefinitionType
 
-            # Save the scenario reference with the related link.
-            if _scenario_definition not in _scenario_definitions:
-                _scenario_definitions[_scenario_definition] = set()
-            _scenario_definitions[_scenario_definition].update(_req_links)
+            # Save the scenario reference with the related links.
+            ReqLinkHelper.updatesetwithreqlinks(_scenario_definitions, _scenario_definition, _req_links)
 
         return _scenario_definitions

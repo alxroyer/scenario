@@ -23,5 +23,16 @@ import typing
 
 # JSON.
 if typing.TYPE_CHECKING:
+    #: Comparable type.
+    #:
+    #: Declared as a ``typing.TypeVar`` so that every comparable parameter within the same function call is of the same type.
+    VarComparableType = typing.TypeVar("VarComparableType", int, float, str)
+
+    #: Type representing a type, or a set of types.
+    TypeOrTypesType = typing.Optional[typing.Union[type, typing.Sequence[type]]]
+
+    #: General item type.
+    VarItemType = typing.TypeVar("VarItemType")
+
     #: JSON dictionary type.
     JsonDictType = typing.Dict[str, typing.Any]

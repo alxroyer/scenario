@@ -60,7 +60,10 @@
         - "b'  DESCRIPTION:' != b''":
             - scenariologging010.py
             - scenariologging011.py
-    - Implement tests.
+    - Implement tests:
+        - Campaign reports.
+        - Scenario reports.
+        - 'check-test-coverage.py'.
     - Add documentation with demo.
     - Limitation when using step methods => use scenario stack.
     - Implement *check_step_coverage* option.

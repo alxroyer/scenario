@@ -30,7 +30,7 @@ if typing.TYPE_CHECKING:
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
-    from ._typing import JsonDictType as _JsonDictType
+    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class ScenarioReport(_LoggerImpl):
