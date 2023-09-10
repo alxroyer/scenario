@@ -56,6 +56,27 @@ class StepUserApi(abc.ABC):
 
         SCENARIO_RUNNER.onstepdescription(description)
 
+    def SECTION(  # noqa  ## PEP8: Function name should be lower case
+            self,
+            text,  # type: str
+    ):  # type: (...) -> typing.ContextManager[None]
+        """
+        Starts a section of actions and expected results, entitled with a text action.
+
+        Shall be used in a ``with`` statement.
+
+        :param text:
+            Action text.
+
+            .. tip:: Terminate with a ':' character in order to introduce the following actions and expected results in the section.
+        :return:
+            Logging indentation context.
+        """
+        from ._loggermain import MAIN_LOGGER
+
+        self.ACTION(text)
+        return MAIN_LOGGER.pushindentation("    ")
+
     def ACTION(  # noqa  ## PEP8: Function name should be lower case
             self,
             action,  # type: str

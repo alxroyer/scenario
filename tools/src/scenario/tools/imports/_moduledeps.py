@@ -87,15 +87,14 @@ class ModuleDeps(_ErrorTrackerLoggerImpl):
             return self.score
 
         self.debug("Computing score...")
-        scenario.logging.pushindentation()
-        self.status = ModuleDeps.ComputationStatus.COMPUTING
-        self.score = max([
-            # Ensure one value at least.
-            0,
-            # Recursive call on module deps.
-            *[_dep.getscore() for _dep in self.deps]
-        ]) + 1
-        self.status = ModuleDeps.ComputationStatus.DONE
-        scenario.logging.popindentation()
+        with scenario.logging.pushindentation():
+            self.status = ModuleDeps.ComputationStatus.COMPUTING
+            self.score = max([
+                # Ensure one value at least.
+                0,
+                # Recursive call on module deps.
+                *[_dep.getscore() for _dep in self.deps],
+            ]) + 1
+            self.status = ModuleDeps.ComputationStatus.DONE
         self.debug("Score=%d...", self.score)
         return self.score

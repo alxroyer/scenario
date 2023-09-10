@@ -60,8 +60,7 @@ def simplifyreferences(
                     _logger.warning(f"{docname}: Mismatching text {_child!r} with expected short reference {short_ref!r}")
         elif isinstance(_child, docutils.nodes.Element):
             # Element children: make recursive calls.
-            _logger.scenario_logger.pushindentation("  ")
-            simplifyreferences(docname, _child, short_ref=short_ref)
-            _logger.scenario_logger.popindentation("  ")
+            with _logger.scenario_logger.pushindentation("  "):
+                simplifyreferences(docname, _child, short_ref=short_ref)
         else:
             _logger.warning(f"{docname}: Unexpected kind of node {_child!r}")

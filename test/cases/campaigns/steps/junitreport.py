@@ -63,15 +63,14 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
 
             for _test_suite_index in range(len(self.campaign_expectations.test_suite_expectations)):  # type: int
                 self.RESULT(f"- test suite #{_test_suite_index + 1}:")
-                scenario.logging.pushindentation()
-                self._checktestsuite(
-                    self.testdatafromlist(
-                        _campaign_execution.test_suite_executions, _test_suite_index,
-                        default=scenario.TestSuiteExecution(campaign_execution=_campaign_execution, test_suite_path=None),
-                    ),
-                    self.campaign_expectations.test_suite_expectations[_test_suite_index],
-                )
-                scenario.logging.popindentation()
+                with scenario.logging.pushindentation():
+                    self._checktestsuite(
+                        self.testdatafromlist(
+                            _campaign_execution.test_suite_executions, _test_suite_index,
+                            default=scenario.TestSuiteExecution(campaign_execution=_campaign_execution, test_suite_path=None),
+                        ),
+                        self.campaign_expectations.test_suite_expectations[_test_suite_index],
+                    )
 
             if self.RESULT("The report file gives the campaign execution time, which is mainly explained by the test suite times."):
                 self.assertgreater(
@@ -120,15 +119,14 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
 
             for _test_case_index in range(len(test_suite_expectations.test_case_expectations)):  # type: int
                 self.RESULT(f"- test case #{_test_case_index + 1}:")
-                scenario.logging.pushindentation()
-                self._checktestcase(
-                    self.testdatafromlist(
-                        test_suite_execution.test_case_executions, _test_case_index,
-                        default=scenario.TestCaseExecution(test_suite_execution=test_suite_execution, script_path=None),
-                    ),
-                    test_suite_expectations.test_case_expectations[_test_case_index],
-                )
-                scenario.logging.popindentation()
+                with scenario.logging.pushindentation():
+                    self._checktestcase(
+                        self.testdatafromlist(
+                            test_suite_execution.test_case_executions, _test_case_index,
+                            default=scenario.TestCaseExecution(test_suite_execution=test_suite_execution, script_path=None),
+                        ),
+                        test_suite_expectations.test_case_expectations[_test_case_index],
+                    )
 
         if self.RESULT("The report file gives the start time for the test suite."):
             self.assertisnotnone(
@@ -205,39 +203,38 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
                     default=scenario.TestError(message=""),
                 )  # type: scenario.TestError
                 self.RESULT(f"- Error #{_error_index + 1}:")
-                scenario.logging.pushindentation()
-                if _error_expectations.cls is not None:
-                    if self.RESULT(f"Error class is {_error_expectations.cls.__name__}."):
-                        self.assertisinstance(
-                            _error, _error_expectations.cls,
-                            evidence="Error class",
-                        )
-                if _error_expectations.error_type is not None:
-                    if self.RESULT(f"Error type is {_error_expectations.error_type!r}."):
-                        assert isinstance(_error, scenario.ExceptionError)
+                with scenario.logging.pushindentation():
+                    if _error_expectations.cls is not None:
+                        if self.RESULT(f"Error class is {_error_expectations.cls.__name__}."):
+                            self.assertisinstance(
+                                _error, _error_expectations.cls,
+                                evidence="Error class",
+                            )
+                    if _error_expectations.error_type is not None:
+                        if self.RESULT(f"Error type is {_error_expectations.error_type!r}."):
+                            assert isinstance(_error, scenario.ExceptionError)
+                            self.assertequal(
+                                _error.exception_type, _error_expectations.error_type,
+                                evidence="Error type",
+                            )
+                    if _error_expectations.id is not None:
+                        if self.RESULT(f"Issue id is {_error_expectations.id!r}."):
+                            assert isinstance(_error, scenario.KnownIssue)
+                            self.assertequal(
+                                _error.id, _error_expectations.id,
+                                evidence="Issue id",
+                            )
+                    if self.RESULT(f"Error message is {_error_expectations.message!r}."):
                         self.assertequal(
-                            _error.exception_type, _error_expectations.error_type,
-                            evidence="Error type",
+                            _error.message, _error_expectations.message,
+                            evidence="Error message",
                         )
-                if _error_expectations.id is not None:
-                    if self.RESULT(f"Issue id is {_error_expectations.id!r}."):
-                        assert isinstance(_error, scenario.KnownIssue)
-                        self.assertequal(
-                            _error.id, _error_expectations.id,
-                            evidence="Issue id",
-                        )
-                if self.RESULT(f"Error message is {_error_expectations.message!r}."):
-                    self.assertequal(
-                        _error.message, _error_expectations.message,
-                        evidence="Error message",
-                    )
-                if _error_expectations.location is not None:
-                    if self.RESULT(f"Error location is {_error_expectations.location!r}."):
-                        self.assertequal(
-                            _error.location.tolongstring() if _error.location else None, _error_expectations.location,
-                            evidence="Error location",
-                        )
-                scenario.logging.popindentation()
+                    if _error_expectations.location is not None:
+                        if self.RESULT(f"Error location is {_error_expectations.location!r}."):
+                            self.assertequal(
+                                _error.location.tolongstring() if _error.location else None, _error_expectations.location,
+                                evidence="Error location",
+                            )
 
         if self.RESULT("The report gives the execution time."):
             self.assertgreater(

@@ -239,54 +239,53 @@ class ExecutionLocations(_LoggerImpl):
         _locations = []  # type: typing.List[CodeLocation]
 
         self.debug("len(tb_items) = %d", len(tb_items))
-        self.pushindentation()
 
-        # For each stack trace element which class is just above `ScenarioDefinition`.
-        for _tb_item in reversed(tb_items):  # type: traceback.FrameSummary
-            # Stop when `limit` is reached.
-            if limit is not None:
-                if len(_locations) >= limit:
-                    break
+        with self.pushindentation():
+            # For each stack trace element which class is just above `ScenarioDefinition`.
+            for _tb_item in reversed(tb_items):  # type: traceback.FrameSummary
+                # Stop when `limit` is reached.
+                if limit is not None:
+                    if len(_locations) >= limit:
+                        break
 
-            try:
-                _location = CodeLocation.fromtbitem(_tb_item)  # type: CodeLocation
-            except Exception as _err:
-                # The creation of the `CodeLocation` instance may file for core Python traceback items.
-                self.debug("Could not create `CodeLocation` from %r: %s", _tb_item, _err)
-                self.debug("=> skipping traceback item")
-                continue
+                try:
+                    _location = CodeLocation.fromtbitem(_tb_item)  # type: CodeLocation
+                except Exception as _err:
+                    # The creation of the `CodeLocation` instance may file for core Python traceback items.
+                    self.debug("Could not create `CodeLocation` from %r: %s", _tb_item, _err)
+                    self.debug("=> skipping traceback item")
+                    continue
 
-            # Filter-out stack trace elements based on file paths:
-            _keep = True
-            # - Avoid 'src/scenario' sources.
-            if isinstance(_location.file, Path) and _location.file.is_relative_to(pathlib.Path(__file__).parent):
-                _keep = False
-            for _skipped_path in (
-                # - Avoid unittest sources.
-                pathlib.Path("unittest") / "case.py",
-                # - Avoid PyCharm sources (visible in the execution stack when debugging).
-                pathlib.Path("pydevd.py"),
-                pathlib.Path("_pydev_execfile.py"),
-            ):  # type: pathlib.Path
-                if _location.file.as_posix().endswith(_skipped_path.as_posix()):
+                # Filter-out stack trace elements based on file paths:
+                _keep = True
+                # - Avoid 'src/scenario' sources.
+                if isinstance(_location.file, Path) and _location.file.is_relative_to(pathlib.Path(__file__).parent):
                     _keep = False
+                for _skipped_path in (
+                    # - Avoid unittest sources.
+                    pathlib.Path("unittest") / "case.py",
+                    # - Avoid PyCharm sources (visible in the execution stack when debugging).
+                    pathlib.Path("pydevd.py"),
+                    pathlib.Path("_pydev_execfile.py"),
+                ):  # type: pathlib.Path
+                    if _location.file.as_posix().endswith(_skipped_path.as_posix()):
+                        _keep = False
 
-            if _keep:
-                self.debug("Location stack trace - %s:%d: %s", _location.file, _location.line, _location.qualname)
-                if fqn:
-                    # Ensure the location function name is fully qualified.
-                    _location.qualname = checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
-                    # Fix the `traceback` item as well.
-                    _tb_item.name = _location.qualname
-                _locations.insert(0, _location)
-            else:
-                self.debug("Skipped stack trace - %s:%s: %s", _location.file, _location.line, _location.qualname)
-                _scenario_runner_path = pathlib.Path("scenario") / "src" / "scenario" / "scenariorunner.py"  # type: pathlib.Path
-                if _location.file.as_posix().endswith(_scenario_runner_path.as_posix()) and (_location.qualname == "main"):
-                    self.debug("End of test location computation")
-                    break
+                if _keep:
+                    self.debug("Location stack trace - %s:%d: %s", _location.file, _location.line, _location.qualname)
+                    if fqn:
+                        # Ensure the location function name is fully qualified.
+                        _location.qualname = checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
+                        # Fix the `traceback` item as well.
+                        _tb_item.name = _location.qualname
+                    _locations.insert(0, _location)
+                else:
+                    self.debug("Skipped stack trace - %s:%s: %s", _location.file, _location.line, _location.qualname)
+                    _scenario_runner_path = pathlib.Path("scenario") / "src" / "scenario" / "scenariorunner.py"  # type: pathlib.Path
+                    if _location.file.as_posix().endswith(_scenario_runner_path.as_posix()) and (_location.qualname == "main"):
+                        self.debug("End of test location computation")
+                        break
 
-        self.popindentation()
         self.debug("%d locations returned", len(_locations))
         return _locations
 

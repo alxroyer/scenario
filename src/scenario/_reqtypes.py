@@ -27,6 +27,8 @@ if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
+    from ._setutils import OrderedSetType as _OrderedSetType
+    from ._typingutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:
@@ -62,3 +64,8 @@ if typing.TYPE_CHECKING:
         AnyReqRefType,
         _ReqLinkType,
     ]
+
+    #: Set of items with related requirement links.
+    #:
+    #: Requirement links ordered by requirement reference ids.
+    SetWithReqLinksType = typing.Dict[_VarItemType, _OrderedSetType[_ReqLinkType]]

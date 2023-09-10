@@ -14,21 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import scenario
-
-
-class ReqScenario1(scenario.Scenario):
-
-    def __init__(self):  # type: (...) -> None
-        from reqdb import loadreqdb
-
-        # Ensure the requirement database is loaded.
-        loadreqdb()
-
-        scenario.Scenario.__init__(
-            self,
-            title="Requirement scenario 1",
-        )
-        self.covers(
-            "REQ-001",
-        )
+"""
+No exports by default,
+import public submodules as needed.
+"""

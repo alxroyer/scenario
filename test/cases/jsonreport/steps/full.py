@@ -124,12 +124,11 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
             )
         for _step_definition_index in range(len(_step_definitions_ref)):  # type: int
             self.RESULT(f"- Step #{_step_definition_index + 1}:")
-            scenario.logging.pushindentation()
-            self._checkstepdefinition(
-                json_step_definition=self.testdatafromjson(json_scenario, f"steps[{_step_definition_index}]", type=dict),
-                json_step_definition_ref=self._assertjsonref(json_scenario_ref, f"steps[{_step_definition_index}]", type=dict),
-            )
-            scenario.logging.popindentation()
+            with scenario.logging.pushindentation():
+                self._checkstepdefinition(
+                    json_step_definition=self.testdatafromjson(json_scenario, f"steps[{_step_definition_index}]", type=dict),
+                    json_step_definition_ref=self._assertjsonref(json_scenario_ref, f"steps[{_step_definition_index}]", type=dict),
+                )
 
         if self.RESULT(f"The test status is '{self._assertjsonref(json_scenario_ref, 'status', type=str)}'."):
             self.assertjson(
@@ -215,12 +214,11 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
             )
         for _execution_index in range(len(_executions_ref)):  # type: int
             self.RESULT(f"- Step execution #{_execution_index + 1}:")
-            scenario.logging.pushindentation()
-            self._checkstepexecution(
-                json_step_execution=self.testdatafromjson(json_step_definition, f"executions[{_execution_index}]", type=dict),
-                json_step_execution_ref=self._assertjsonref(json_step_definition_ref, f"executions[{_execution_index}]", type=dict),
-            )
-            scenario.logging.popindentation()
+            with scenario.logging.pushindentation():
+                self._checkstepexecution(
+                    json_step_execution=self.testdatafromjson(json_step_definition, f"executions[{_execution_index}]", type=dict),
+                    json_step_execution_ref=self._assertjsonref(json_step_definition_ref, f"executions[{_execution_index}]", type=dict),
+                )
 
         _action_result_definitions_ref = self._assertjsonref(json_step_definition_ref, "actions-results", type=list)  # type: typing.List[_JsonDictType]
         _actions_results_txt = scenario.text.Countable("action/result", _action_result_definitions_ref)  # type: scenario.text.Countable
@@ -231,16 +229,15 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
             )
         for _action_result_definition_index in range(len(_action_result_definitions_ref)):  # type: int
             self.RESULT(f"- Action/result #{_action_result_definition_index + 1}:")
-            scenario.logging.pushindentation()
-            self._checkactionresultdefinition(
-                json_action_result_definition=self.testdatafromjson(
-                    json_step_definition, f"actions-results[{_action_result_definition_index}]", type=dict,
-                ),
-                json_action_result_definition_ref=self._assertjsonref(
-                    json_step_definition_ref, f"actions-results[{_action_result_definition_index}]", type=dict,
-                ),
-            )
-            scenario.logging.popindentation()
+            with scenario.logging.pushindentation():
+                self._checkactionresultdefinition(
+                    json_action_result_definition=self.testdatafromjson(
+                        json_step_definition, f"actions-results[{_action_result_definition_index}]", type=dict,
+                    ),
+                    json_action_result_definition_ref=self._assertjsonref(
+                        json_step_definition_ref, f"actions-results[{_action_result_definition_index}]", type=dict,
+                    ),
+                )
 
     def _checkstepexecution(
             self,
@@ -308,12 +305,11 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
             )
         for _execution_index in range(len(_executions_ref)):  # type: int
             self.RESULT(f"- Action/result execution #{_execution_index + 1}:")
-            scenario.logging.pushindentation()
-            self._checkactionresultexecution(
-                json_action_result_execution=self.testdatafromjson(json_action_result_definition, f"executions[{_execution_index}]", type=dict),
-                json_action_result_execution_ref=self._assertjsonref(json_action_result_definition_ref, f"executions[{_execution_index}]", type=dict),
-            )
-            scenario.logging.popindentation()
+            with scenario.logging.pushindentation():
+                self._checkactionresultexecution(
+                    json_action_result_execution=self.testdatafromjson(json_action_result_definition, f"executions[{_execution_index}]", type=dict),
+                    json_action_result_execution_ref=self._assertjsonref(json_action_result_definition_ref, f"executions[{_execution_index}]", type=dict),
+                )
 
     def _checkactionresultexecution(
             self,
@@ -340,24 +336,23 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                 json_action_result_execution, "evidence", type=list, len=len(_evidence_ref),
                 evidence="Number of evidence items",
             )
-        scenario.logging.pushindentation()
-        for _evidence_index in range(len(_evidence_ref)):  # type: int
-            _evidence_item_ref = _evidence_ref[_evidence_index]  # type: str
-            _regex = None  # type: typing.Optional[str]
-            if _evidence_item_ref.startswith("<regex>") and _evidence_item_ref.endswith("</regex>"):
-                _regex = _evidence_item_ref[len("<regex>"):-len("</regex>")]
-            if self.RESULT(f"- {_evidence_item_ref!r}"):
-                if _regex is not None:
-                    self.assertregex(
-                        _regex, self.assertjson(json_action_result_execution, f"evidence[{_evidence_index}]", type=str),
-                        evidence="Evidence",
-                    )
-                else:
-                    self.assertjson(
-                        json_action_result_execution, f"evidence[{_evidence_index}]", type=str, value=_evidence_item_ref,
-                        evidence="Evidence",
-                    )
-        scenario.logging.popindentation()
+        with scenario.logging.pushindentation():
+            for _evidence_index in range(len(_evidence_ref)):  # type: int
+                _evidence_item_ref = _evidence_ref[_evidence_index]  # type: str
+                _regex = None  # type: typing.Optional[str]
+                if _evidence_item_ref.startswith("<regex>") and _evidence_item_ref.endswith("</regex>"):
+                    _regex = _evidence_item_ref[len("<regex>"):-len("</regex>")]
+                if self.RESULT(f"- {_evidence_item_ref!r}"):
+                    if _regex is not None:
+                        self.assertregex(
+                            _regex, self.assertjson(json_action_result_execution, f"evidence[{_evidence_index}]", type=str),
+                            evidence="Evidence",
+                        )
+                    else:
+                        self.assertjson(
+                            json_action_result_execution, f"evidence[{_evidence_index}]", type=str, value=_evidence_item_ref,
+                            evidence="Evidence",
+                        )
 
         self._checkerrors(
             json_obj=json_action_result_execution,
@@ -380,12 +375,11 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
         for _subscenario_index in range(len(_json_subscenarios_ref)):  # type: int
             _json_subscenario_ref = _json_subscenarios_ref[_subscenario_index]  # type: _JsonDictType
             self.RESULT(f"- Subscenario #{_subscenario_index + 1}:")
-            scenario.logging.pushindentation()
-            self._checkscenario(
-                json_scenario=self.testdatafromjson(json_action_result_execution, f"subscenarios[{_subscenario_index}]", type=dict),
-                json_scenario_ref=_json_subscenario_ref,
-            )
-            scenario.logging.popindentation()
+            with scenario.logging.pushindentation():
+                self._checkscenario(
+                    json_scenario=self.testdatafromjson(json_action_result_execution, f"subscenarios[{_subscenario_index}]", type=dict),
+                    json_scenario_ref=_json_subscenario_ref,
+                )
 
     def _checktimes(
             self,
@@ -451,31 +445,29 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
         for _error_index in range(len(_errors_ref)):  # type: int
             self.RESULT(f"- {_errors_txt.singular.capitalize()} #{_error_index + 1}")
             _jsonpath_error = f"{jsonpath}[{_error_index}]"  # type: str
-            scenario.logging.pushindentation()
 
-            if self.RESULT(f"Error type is {self._assertjsonref(_errors_ref[_error_index], 'type')!r}."):
-                self.assertjson(
-                    json_obj, f"{_jsonpath_error}.type", ref=json_obj_ref,
-                    evidence="Error type",
-                )
-            if self._assertjsonref(_errors_ref[_error_index], "type") == "known-issue":
-                if self.RESULT(f"Issue id is {self._assertjsonref(_errors_ref[_error_index], 'id')!r}."):
+            with scenario.logging.pushindentation():
+                if self.RESULT(f"Error type is {self._assertjsonref(_errors_ref[_error_index], 'type')!r}."):
                     self.assertjson(
-                        json_obj, f"{_jsonpath_error}.id", ref=json_obj_ref,
-                        evidence="Issue id",
+                        json_obj, f"{_jsonpath_error}.type", ref=json_obj_ref,
+                        evidence="Error type",
                     )
-            if self.RESULT(f"{_errors_txt.singular.capitalize()} message is {self._assertjsonref(_errors_ref[_error_index], 'message')!r}."):
-                self.assertjson(
-                    json_obj, f"{_jsonpath_error}.message", ref=json_obj_ref,
-                    evidence=f"{_errors_txt.singular.capitalize()} message",
-                )
-            if self.RESULT(f"{_errors_txt.singular.capitalize()} location is {self._assertjsonref(_errors_ref[_error_index], 'location')!r}."):
-                self.assertjson(
-                    json_obj, f"{_jsonpath_error}.location", ref=json_obj_ref,
-                    evidence=f"{_errors_txt.singular.capitalize()} location",
-                )
-
-            scenario.logging.popindentation()
+                if self._assertjsonref(_errors_ref[_error_index], "type") == "known-issue":
+                    if self.RESULT(f"Issue id is {self._assertjsonref(_errors_ref[_error_index], 'id')!r}."):
+                        self.assertjson(
+                            json_obj, f"{_jsonpath_error}.id", ref=json_obj_ref,
+                            evidence="Issue id",
+                        )
+                if self.RESULT(f"{_errors_txt.singular.capitalize()} message is {self._assertjsonref(_errors_ref[_error_index], 'message')!r}."):
+                    self.assertjson(
+                        json_obj, f"{_jsonpath_error}.message", ref=json_obj_ref,
+                        evidence=f"{_errors_txt.singular.capitalize()} message",
+                    )
+                if self.RESULT(f"{_errors_txt.singular.capitalize()} location is {self._assertjsonref(_errors_ref[_error_index], 'location')!r}."):
+                    self.assertjson(
+                        json_obj, f"{_jsonpath_error}.location", ref=json_obj_ref,
+                        evidence=f"{_errors_txt.singular.capitalize()} location",
+                    )
 
     def _assertjsonref(
             self,

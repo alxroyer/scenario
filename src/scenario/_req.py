@@ -22,9 +22,9 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
-    from ._reqlink import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
+    from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
 
@@ -139,42 +139,67 @@ class Req:
             key=lambda req_ref: req_ref.id
         )
 
-    def gettrackers(self):  # type: (...) -> _SetWithReqLinksType[_ReqTrackerType]
+    def gettrackers(
+            self,
+            *,
+            walk_sub_refs=True,  # type: bool
+    ):  # type: (...) -> _SetWithReqLinksType[_ReqTrackerType]
         """
-        Returns all trackers linked with this requirement.
+        Returns trackers linked with this requirement.
 
-        :return: Requirement trackers, with their related links (ordered by their requirement reference ids).
+        :param walk_sub_refs:
+            Option to include requirement sub-reference trackers.
 
-        This method returns trackers linked with the main part of the requirement, or a sub-part of it.
-        In order to get trackers for the main part of the requirement only,
-        please use :attr:`main_ref` and :meth:`._reqref.ReqRef.gettrackers()`.
+            If ``True``, trackers tracking sub-references of the requirement will be included in the result.
 
-        For :class:`._scenariodefinition.ScenarioDefinition` instances,
-        the scenario won't be returned if it is not linked with the requirement directly,
-        but only through one of its steps.
+            ``True`` by default.
+
+            .. tip::
+                The trackers tracking the main part only of the requirement
+                can also be retrieved through the :meth:`._reqref.ReqRef.gettrackers()` method of the :attr:`main_ref`.
+        :return:
+            Requirement trackers, with their related links (ordered by their requirement reference ids).
+
+        Does not return :class:`._scenariodefinition.ScenarioDefinition` instances that track this requirement through steps only.
         See :meth:`getscenarios()` for the purpose.
         """
         from ._reqlink import ReqLinkHelper
 
         _req_trackers = {}  # type: _SetWithReqLinksType[_ReqTrackerType]
 
+        # Compute requirement references depending on `sub_ref_links`.
+        _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
+        if walk_sub_refs:
+            _req_refs.extend(self.sub_refs)
+
         # Walk through all requirement references attached with this requirement.
-        for _req_ref in [self.main_ref, *self.sub_refs]:  # type: _ReqRefType
+        for _req_ref in _req_refs:  # type: _ReqRefType
             # Integrate `gettrackers()` results for each.
             for _req_tracker, _req_links in _req_ref.gettrackers().items():  # type: _ReqTrackerType, _OrderedSetType[_ReqLinkType]
                 ReqLinkHelper.updatesetwithreqlinks(_req_trackers, _req_tracker, _req_links)
 
         return _req_trackers
 
-    def getscenarios(self):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
+    def getscenarios(
+            self,
+            *,
+            walk_sub_refs=True,  # type: bool
+    ):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
         """
         Returns all scenarios linked with this requirement.
 
-        :return: Scenario definitions, with their related links (ordered by their requirement reference ids).
+        :param walk_sub_refs:
+            Option to include requirement sub-reference scenarios.
 
-        This method returns scenarios that reference the main part of the requirement, or a sub-part of it.
-        In order to get scenarios for the main part of the requirement only,
-        please use :attr:`main_ref` and :meth:`._reqref.ReqRef.getscenarios()`.
+            If ``True``, scenarios tracking sub-references of the requirement will be included in the result.
+
+            ``True`` by default.
+
+            .. tip::
+                The scenarios tracking the main part only of the requirement
+                can also be retrieved through the :meth:`._reqref.ReqRef.getscenarios()` method of the :attr:`main_ref`.
+        :return:
+            Scenario definitions, with their related links (ordered by their requirement reference ids).
 
         Returns scenarios linked with this requirement, either directly or through one of their steps.
         """
@@ -182,10 +207,66 @@ class Req:
 
         _scenario_definitions = {}  # type: _SetWithReqLinksType[_ScenarioDefinitionType]
 
+        # Compute requirement references depending on `sub_ref_links`.
+        _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
+        if walk_sub_refs:
+            _req_refs.extend(self.sub_refs)
+
         # Walk through all requirement references attached with this requirement.
-        for _req_ref in [self.main_ref, *self.sub_refs]:  # type: _ReqRefType
+        for _req_ref in _req_refs:  # type: _ReqRefType
             # Integrate `getscenarios()` results for each.
             for _scenario_definition, _req_links in _req_ref.getscenarios().items():  # type: _ScenarioDefinitionType, _OrderedSetType[_ReqLinkType]
                 ReqLinkHelper.updatesetwithreqlinks(_scenario_definitions, _scenario_definition, _req_links)
 
         return _scenario_definitions
+
+    def getreqlinks(
+            self,
+            req_tracker=None,  # type: _ReqTrackerType
+            *,
+            walk_sub_refs=True,  # type: bool
+    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+        """
+        Requirement links attached with this requirement,
+        filtered with the given predicates.
+
+        :param req_tracker:
+            Requirement tracker predicate to search links for.
+
+            Optional.
+            All requirement links when ``None``.
+        :param walk_sub_refs:
+            Option to include requirement sub-reference links.
+
+            If ``True``, links held by the requirement sub-references will be included in the result.
+
+            ``True`` by default.
+
+            .. tip::
+                The links held by the main part only of the requirement
+                can also be retrieved through the :attr:`._reqref.ReqRef.req_links` member of the :attr:`main_ref`.
+        :return:
+            Filtered set of requirement links, ordered by requirement reference ids.
+        """
+        from ._reqlink import ReqLinkHelper
+        from ._setutils import OrderedSetHelper
+
+        # Compute requirement references depending on `sub_ref_links`.
+        _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
+        if walk_sub_refs:
+            _req_refs.extend(self.sub_refs)
+
+        # Walk through requirement references.
+        _req_links = []  # type: typing.List[_ReqLinkType]
+        for _req_ref in _req_refs:  # type: _ReqRefType
+            # Filter links with the requirement predicates.
+            _req_links.extend(filter(
+                lambda req_link: req_link.matches(req_tracker=req_tracker),
+                _req_ref.req_links,
+            ))
+
+        # Sort by requirement reference ids.
+        return OrderedSetHelper.build(
+            _req_links,
+            key=ReqLinkHelper.key,
+        )

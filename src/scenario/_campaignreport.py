@@ -224,11 +224,8 @@ class CampaignReport(_LoggerImpl):
 
         for _xml_test_suite in _xml_test_suites.getchildren("testsuite"):  # type: Xml.Node
             self.debug("New testsuites/testsuite")
-            try:
-                self.pushindentation()
+            with self.pushindentation():
                 _campaign_execution.test_suite_executions.append(self._xml2testsuite(_campaign_execution, _xml_test_suite))
-            finally:
-                self.popindentation()
 
         # Eventually check the `scenario` statistics, which are properties of `CampaignExecution`.
         self._xmlcheckstats(_xml_test_suites, "steps-executed", _campaign_execution.test_suite_executions)
@@ -378,11 +375,8 @@ class CampaignReport(_LoggerImpl):
 
         for _xml_test_case in xml_test_suite.getchildren("testcase"):  # type: Xml.Node
             self.debug("New testsuite/testcase")
-            try:
-                self.pushindentation()
+            with self.pushindentation():
                 _test_suite_execution.test_case_executions.append(self._xml2testcase(_test_suite_execution, _xml_test_case))
-            finally:
-                self.popindentation()
 
         # Eventually check the `scenario` statistics, which are properties of `TestSuite`.
         self._xmlcheckstats(xml_test_suite, "steps-executed", _test_suite_execution.test_case_executions)

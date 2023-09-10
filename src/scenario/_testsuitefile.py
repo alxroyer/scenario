@@ -77,49 +77,46 @@ class TestSuiteFile(_LoggerImpl):
 
         # Foe each line in the campaign file.
         self.debug("Reading '%s'", self.path)
-        self.pushindentation()
-        for _line in TextFile(self.path, "r").readlines():  # type: str
-            _line = _line.strip()
-            if not _line:
-                continue
-            if _line.startswith("#"):
-                continue
+        with self.pushindentation():
+            for _line in TextFile(self.path, "r").readlines():  # type: str
+                _line = _line.strip()
+                if not _line:
+                    continue
+                if _line.startswith("#"):
+                    continue
 
-            if _line.startswith("-"):
-                # Black list.
-                _line = _line[1:].strip()
-                self.debug("Black list line: %r", _line)
-                self.pushindentation()
-                for _rm_path in self.path.parent.glob(_line):  # type: Path
-                    for _test_script_path in self.script_paths:  # type: Path
-                        if _test_script_path.samefile(_rm_path):
-                            self.debug("- '%s'", _test_script_path)
-                            self.script_paths.remove(_test_script_path)
-                self.popindentation()
-
-            else:
-                # White list.
-                self.debug("White list line: %r", _line)
-                self.pushindentation()
-                if _line.startswith("+"):
+                if _line.startswith("-"):
+                    # Black list.
                     _line = _line[1:].strip()
-                if "*" in _line:
-                    for _add_path in self.path.parent.glob(_line):  # type: typing.Optional[Path]
-                        assert _add_path
-                        if not _add_path.is_file():
-                            continue
-                        for _test_script_path in self.script_paths:  # type already declared above
-                            if _test_script_path.samefile(_add_path):
-                                _add_path = None
-                                break
-                        if _add_path is not None:
+                    self.debug("Black list line: %r", _line)
+                    with self.pushindentation():
+                        for _rm_path in self.path.parent.glob(_line):  # type: Path
+                            for _test_script_path in self.script_paths:  # type: Path
+                                if _test_script_path.samefile(_rm_path):
+                                    self.debug("- '%s'", _test_script_path)
+                                    self.script_paths.remove(_test_script_path)
+
+                else:
+                    # White list.
+                    self.debug("White list line: %r", _line)
+                    with self.pushindentation():
+                        if _line.startswith("+"):
+                            _line = _line[1:].strip()
+                        if "*" in _line:
+                            for _add_path in self.path.parent.glob(_line):  # type: typing.Optional[Path]
+                                assert _add_path
+                                if not _add_path.is_file():
+                                    continue
+                                for _test_script_path in self.script_paths:  # type already declared above
+                                    if _test_script_path.samefile(_add_path):
+                                        _add_path = None
+                                        break
+                                if _add_path is not None:
+                                    self.debug("+ '%s'", _add_path)
+                                    self.script_paths.append(_add_path)
+                        else:
+                            _add_path = self.path.parent / _line  # Type already declared above
                             self.debug("+ '%s'", _add_path)
                             self.script_paths.append(_add_path)
-                else:
-                    _add_path = self.path.parent / _line  # Type already declared above
-                    self.debug("+ '%s'", _add_path)
-                    self.script_paths.append(_add_path)
-                self.popindentation()
-        self.popindentation()
 
         return True

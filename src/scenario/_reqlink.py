@@ -26,6 +26,7 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
+    from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
     from ._setutils import OrderedSetType as _OrderedSetType
     from ._textutils import AnyLongTextType as _AnyLongTextType
@@ -71,11 +72,12 @@ class ReqLink:
         Canonical string representation of the requirement link.
         """
         from ._reflection import qualname
+        from ._reqtracker import ReqTrackerHelper
 
         return "".join([
             f"<{qualname(type(self))}",
             f" req_ref={self.req_ref!r}",
-            f" req_trackers={self.req_trackers!r}",
+            f" req_trackers={[ReqTrackerHelper.key(_req_tracker) for _req_tracker in self.req_trackers]!r}",
             f" comments={self.comments!r}" if self.comments else "",
             ">",
         ])
@@ -131,19 +133,26 @@ class ReqLink:
 
     def matches(
             self,
+            *,
             req_ref=None,  # type: _AnyReqRefType
+            req_tracker=None,  # type: _ReqTrackerType
     ):  # type: (...) -> bool
         """
         Tells whether the given requirement with optional subitem matches this link.
 
         :param req_ref:
             Optional requirement reference predicate.
+        :param req_tracker:
+            Optional requirement tracker predicate.
         :return:
             ``True`` in case of a match, ``False`` otherwise.
 
             ``True`` when the ``req_ref`` predicate is ``None``.
         """
-        return (req_ref is None) or self.req_ref.matches(req_ref)
+        return all([
+            (req_ref is None) or self.req_ref.matches(req_ref),
+            (req_tracker is None) or (req_tracker in self._req_trackers),
+        ])
 
     def coveredby(
             self,
@@ -184,13 +193,6 @@ class ReqLink:
         return first
 
 
-if typing.TYPE_CHECKING:
-    #: Set of items with related requirement links.
-    #:
-    #: Requirement links ordered by requirement reference ids.
-    SetWithReqLinksType = typing.Dict[_VarItemType, _OrderedSetType[ReqLink]]
-
-
 class ReqLinkHelper(abc.ABC):
     """
     Helper class for :class:`ReqLink` items.
@@ -217,7 +219,7 @@ class ReqLinkHelper(abc.ABC):
 
     @staticmethod
     def updatesetwithreqlinks(
-            set_with_req_links,  # type: SetWithReqLinksType[_VarItemType]  # noqa  ## Shadows built-in name 'dict'
+            set_with_req_links,  # type: _SetWithReqLinksType[_VarItemType]  # noqa  ## Shadows built-in name 'dict'
             item,  # type: _VarItemType
             req_links,  # type: _OrderedSetType[ReqLink]
     ):  # type: (...) -> None

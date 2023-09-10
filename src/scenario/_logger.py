@@ -92,8 +92,8 @@ class Logger:
         #: Optional log color configuration.
         self._log_color = None  # type: typing.Optional[_ConsoleType.Color]
 
-        #: Logger indentation.
-        self._indentation = ""  # type: str
+        #: Logger indentation stack.
+        self._indentations = []  # type: typing.List[str]
 
         #: Extra flags configurations.
         self._extra_flags = {}  # type: typing.Dict[_LogExtraDataType, bool]
@@ -162,17 +162,39 @@ class Logger:
     def pushindentation(
             self,
             indentation="    ",  # type: str
-    ):  # type: (...) -> None
+    ):  # type: (...) -> typing.ContextManager[None]
         """
         Adds indentation for this :class:`Logger` instance.
 
-        :param indentation: Optional indentation pattern.
+        :param indentation:
+            Indentation pattern.
+        :return:
+            Context manager that automatically pops indentation,
+            when :meth:`pushindentation()` is called in a ``with`` statement.
+
+            Unused when :meth:`pushindentation()` not called in a ``with`` statement.
 
         See the dedicated sections to learn more about the differences between calling this method
         :ref:`on the main logger <logging.indentation.main-logger>` on the one hand,
         and :ref:`on a class logger <logging.indentation.class-logger>` on the other hand.
+
+        .. tip::
+            Call this method in a ``with`` statement,
+            in order to ensure the expected counter :meth:`popindentation()` is called,
+            whatever happens (``return``, ``break``, ``continue`` jumps, or exception raised).
         """
-        self._indentation += indentation
+        from ._loggingcontext import LoggingContext
+
+        self._indentations.append(indentation)
+
+        # Return a started `LoggingContext` instance that does not push indentation again,
+        # but would call `popindentation()` with the appropriate indentation:
+        # - Initialize without indentation, and start.
+        _ctx = LoggingContext(logger=self, indentation="")  # type: LoggingContext
+        _ctx.__enter__()
+        # - Fix indentation once started.
+        _ctx.indentation = indentation
+        return _ctx
 
     def popindentation(
             self,
@@ -185,16 +207,16 @@ class Logger:
                             Must be the same as the indentation pattern passed on with the matching :meth:`pushindentation()` call
                             on a LIFO basis (Last-In First-Out).
         """
-        if self._indentation.endswith(indentation):
-            self._indentation = self._indentation[:-len(indentation)]
+        if self._indentations and (self._indentations[-1] == indentation):
+            self._indentations.pop()
         else:
-            self.warning(f"Current indentation {self._indentation!r} does not end with {indentation!r}, cannot pop indentation")
+            self.warning(f"Current indentation stack {self._indentations!r} does not end with {indentation!r}, cannot pop indentation")
 
     def resetindentation(self):  # type: (...) -> None
         """
         Resets the indentation state attached with this :class:`Logger` instance.
         """
-        self._indentation = ""
+        self._indentations.clear()
 
     def getindentation(self):  # type: (...) -> str
         """
@@ -202,7 +224,7 @@ class Logger:
 
         :return: Current indentation.
         """
-        return self._indentation
+        return "".join(self._indentations)
 
     def setextraflag(
             self,

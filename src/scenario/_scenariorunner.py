@@ -291,9 +291,8 @@ class ScenarioRunner(_LoggerImpl):
         scenario_definition.execution.startsteplist()
         while (not self._shouldstop()) and scenario_definition.execution.current_step_definition:
             # Execute the step.
-            self.pushindentation()
-            self._execstep(scenario_definition.execution.current_step_definition)
-            self.popindentation()
+            with self.pushindentation():
+                self._execstep(scenario_definition.execution.current_step_definition)
 
             # Move to next step.
             if scenario_definition.execution.current_step_definition is not None:
@@ -327,39 +326,37 @@ class ScenarioRunner(_LoggerImpl):
         from ._stepdefinition import StepDefinitionHelper
 
         self.debug("_buildscenario(scenario_definition=%r)", scenario_definition)
-        self.pushindentation()
 
-        # Inspect the scenario definition class to build step definitions from methods
-        ScenarioDefinitionHelper(scenario_definition).buildsteps()
+        with self.pushindentation():
+            # Inspect the scenario definition class to build step definitions from methods
+            ScenarioDefinitionHelper(scenario_definition).buildsteps()
 
-        # Feed the building context of the scenario stack with the scenario definition being built.
-        SCENARIO_STACK.building.pushscenariodefinition(scenario_definition)
+            # Feed the building context of the scenario stack with the scenario definition being built.
+            SCENARIO_STACK.building.pushscenariodefinition(scenario_definition)
 
-        # Create the `ScenarioExecution` instance right now.
-        # Even though we are only building objects for now,
-        # this is required to make it possible to iterate over the step list (just after), and execute them in the `BUILD_OBJECTS` exection mode.
-        scenario_definition.execution = ScenarioExecution(scenario_definition)
+            # Create the `ScenarioExecution` instance right now.
+            # Even though we are only building objects for now,
+            # this is required to make it possible to iterate over the step list (just after), and execute them in the `BUILD_OBJECTS` exection mode.
+            scenario_definition.execution = ScenarioExecution(scenario_definition)
 
-        # Start iterating over the step list.
-        scenario_definition.execution.startsteplist()
-        while scenario_definition.execution.current_step_definition:
-            self.pushindentation()
+            # Start iterating over the step list.
+            scenario_definition.execution.startsteplist()
+            while scenario_definition.execution.current_step_definition:
+                with self.pushindentation():
+                    # Save *init* known issues for this step definition
+                    # before executing the step and collecting other known issues registered at the definition level.
+                    # These known issues shall be notified before the step is actually executed.
+                    StepDefinitionHelper(scenario_definition.execution.current_step_definition).saveinitknownissues()
 
-            # Save *init* known issues for this step definition before executing the step and collecting other known issues registered at the definition level.
-            # These known issues shall be notified before the step is actually executed.
-            StepDefinitionHelper(scenario_definition.execution.current_step_definition).saveinitknownissues()
+                    # Execute the step method in the `BUILD_OBJECTS` exection mode.
+                    self._execstep(scenario_definition.execution.current_step_definition)
 
-            # Execute the step method in the `BUILD_OBJECTS` exection mode.
-            self._execstep(scenario_definition.execution.current_step_definition)
+                # Continue iterating over the step list.
+                scenario_definition.execution.nextstep()
 
-            # Continue iterating over the step list.
-            self.popindentation()
-            scenario_definition.execution.nextstep()
+            # Eventually remove the scenario definition reference from the building context of the scenario stack.
+            SCENARIO_STACK.building.popscenariodefinition(scenario_definition)
 
-        # Eventually remove the scenario definition reference from the building context of the scenario stack.
-        SCENARIO_STACK.building.popscenariodefinition(scenario_definition)
-
-        self.popindentation()
         return ErrorCode.SUCCESS
 
     def _beginscenario(
@@ -382,54 +379,53 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenariostack import SCENARIO_STACK
 
         self.debug("_beginscenario(scenario_definition=%r)", scenario_definition)
-        self.pushindentation()
 
-        # Scenario execution stack management:
-        # - Note: The scenario execution instance has already been created in `_buildscenario()`.
-        assert scenario_definition.execution
-        # - Before pushing the scenario execution to the stack, store the subscenario reference in the current action / expected result when applicable.
-        if SCENARIO_STACK.current_action_result_execution:
-            SCENARIO_STACK.current_action_result_execution.subscenarios.append(scenario_definition.execution)
-        # - Eventually push the scenario execution to the execution stack.
-        SCENARIO_STACK.pushscenarioexecution(scenario_definition.execution)
+        with self.pushindentation():
+            # Scenario execution stack management:
+            # - Note: The scenario execution instance has already been created in `_buildscenario()`.
+            assert scenario_definition.execution
+            # - Before pushing the scenario execution to the stack, store the subscenario reference in the current action / expected result when applicable.
+            if SCENARIO_STACK.current_action_result_execution:
+                SCENARIO_STACK.current_action_result_execution.subscenarios.append(scenario_definition.execution)
+            # - Eventually push the scenario execution to the execution stack.
+            SCENARIO_STACK.pushscenarioexecution(scenario_definition.execution)
 
-        # Test intro.
-        SCENARIO_LOGGING.beginscenario(scenario_definition)
+            # Test intro.
+            SCENARIO_LOGGING.beginscenario(scenario_definition)
 
-        # Check and display that the main scenario attributes.
-        # (main scenario only)
-        if SCENARIO_STACK.ismainscenario(scenario_definition):
-            SCENARIO_LOGGING.beginattributes()
+            # Check and display that the main scenario attributes.
+            # (main scenario only)
+            if SCENARIO_STACK.ismainscenario(scenario_definition):
+                SCENARIO_LOGGING.beginattributes()
 
-            # Display scenario attributes.
-            for _attribute_name in scenario_definition.getattributenames():  # type: str
-                # Skip empty core attributes.
-                if (_attribute_name in CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
-                    continue
-                SCENARIO_LOGGING.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
+                # Display scenario attributes.
+                for _attribute_name in scenario_definition.getattributenames():  # type: str
+                    # Skip empty core attributes.
+                    if (_attribute_name in CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                        continue
+                    SCENARIO_LOGGING.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
 
-            # Check expected scenario attributes.
-            _expected_attribute_names = SCENARIO_CONFIG.expectedscenarioattributes()  # type: typing.List[str]
-            self.debug("Expected attributes: %r", _expected_attribute_names)
-            for _expected_attribute_name in _expected_attribute_names:  # type: str
-                if _expected_attribute_name not in scenario_definition.getattributenames():
-                    MAIN_LOGGER.error(f"Missing test attribute {_expected_attribute_name}")
-                    self.popindentation()
-                    return ErrorCode.INPUT_FORMAT_ERROR
+                # Check expected scenario attributes.
+                _expected_attribute_names = SCENARIO_CONFIG.expectedscenarioattributes()  # type: typing.List[str]
+                self.debug("Expected attributes: %r", _expected_attribute_names)
+                for _expected_attribute_name in _expected_attribute_names:  # type: str
+                    if _expected_attribute_name not in scenario_definition.getattributenames():
+                        MAIN_LOGGER.error(f"Missing test attribute {_expected_attribute_name}")
+                        self.popindentation()
+                        return ErrorCode.INPUT_FORMAT_ERROR
 
-            SCENARIO_LOGGING.endattributes()
+                SCENARIO_LOGGING.endattributes()
 
-        # Start execution time.
-        assert scenario_definition.execution is not None
-        scenario_definition.execution.time.setstarttime()
+            # Start execution time.
+            assert scenario_definition.execution is not None
+            scenario_definition.execution.time.setstarttime()
 
-        # Execute *before test* handlers.
-        HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
+            # Execute *before test* handlers.
+            HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
 
-        # Notify every known issues registered at the definition level.
-        self._notifyknownissuedefinitions(scenario_definition)
+            # Notify every known issues registered at the definition level.
+            self._notifyknownissuedefinitions(scenario_definition)
 
-        self.popindentation()
         return ErrorCode.SUCCESS
 
     def _endscenario(
@@ -449,41 +445,40 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenariostack import SCENARIO_STACK
 
         self.debug("_endscenario(scenario_definition=%r)", scenario_definition)
-        self.pushindentation()
 
-        assert SCENARIO_STACK.iscurrentscenario(scenario_definition)
-        assert scenario_definition.execution
+        with self.pushindentation():
+            assert SCENARIO_STACK.iscurrentscenario(scenario_definition)
+            assert scenario_definition.execution
 
-        # Known issues:
-        # - Finish iterating over the steps in order to notify each known issue defined at the definition level.
-        while scenario_definition.execution.current_step_definition:
-            self._notifyknownissuedefinitions(scenario_definition.execution.current_step_definition)
-            scenario_definition.execution.nextstep()
-        # - Check that all known issues registered at the definition level have been notified.
-        self._notifyknownissuedefinitions(scenario_definition)
+            # Known issues:
+            # - Finish iterating over the steps in order to notify each known issue defined at the definition level.
+            while scenario_definition.execution.current_step_definition:
+                self._notifyknownissuedefinitions(scenario_definition.execution.current_step_definition)
+                scenario_definition.execution.nextstep()
+            # - Check that all known issues registered at the definition level have been notified.
+            self._notifyknownissuedefinitions(scenario_definition)
 
-        # Execute *after test* handlers (whether the test is SUCCESS or not).
-        HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
+            # Execute *after test* handlers (whether the test is SUCCESS or not).
+            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
 
-        # End execution time.
-        scenario_definition.execution.time.setendtime()
+            # End execution time.
+            scenario_definition.execution.time.setendtime()
 
-        # Test outro.
-        SCENARIO_LOGGING.endscenario(scenario_definition)
+            # Test outro.
+            SCENARIO_LOGGING.endscenario(scenario_definition)
 
-        # Pop the scenario from the stack.
-        SCENARIO_STACK.popscenarioexecution()
+            # Pop the scenario from the stack.
+            SCENARIO_STACK.popscenarioexecution()
 
-        if SCENARIO_STACK.size > 0:
-            # When errors occurred, and this in not the main scenario,
-            # raise the last error in order to break the execution of the parent scenario.
-            if scenario_definition.execution.errors:
-                raise scenario_definition.execution.errors[-1]
+            if SCENARIO_STACK.size > 0:
+                # When errors occurred, and this in not the main scenario,
+                # raise the last error in order to break the execution of the parent scenario.
+                if scenario_definition.execution.errors:
+                    raise scenario_definition.execution.errors[-1]
 
-        if SCENARIO_STACK.size == 0:
-            SCENARIO_LOGGING.displaystatistics(scenario_definition.execution)
+            if SCENARIO_STACK.size == 0:
+                SCENARIO_LOGGING.displaystatistics(scenario_definition.execution)
 
-        self.popindentation()
         return ErrorCode.SUCCESS
 
     def _execstep(
@@ -540,28 +535,27 @@ class ScenarioRunner(_LoggerImpl):
             self._notifyknownissuedefinitions(step_definition, StepDefinitionHelper(step_definition).getinitknownissues())
 
             # Method execution.
-            try:
-                self.debug("Executing %r in %s mode", step_definition, self._execution_mode.name)
-                self.pushindentation()
-                step_definition.step()
-            except GotoException:
-                # This exception was raised to stop the execution in the step,
-                # but is not representative of an error.
-                pass
-            except TestError as _error:
-                # Test error propagation as is.
-                self.onerror(_error)
-            except Exception as _exception:
-                # An exception occurred during the test.
-                self.onerror(ExceptionError(exception=_exception))
-            except KeyboardInterrupt as _interrupt:
-                # CTRL+C.
-                self.onerror(ExceptionError(exception=_interrupt))
-            finally:
-                # Ensure the current action/result (if any) is terminated after the step execution.
-                if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                    self._endcurrentactionresult()
-                self.popindentation()
+            self.debug("Executing %r in %s mode", step_definition, self._execution_mode.name)
+            with self.pushindentation():
+                try:
+                    step_definition.step()
+                except GotoException:
+                    # This exception was raised to stop the execution in the step,
+                    # but is not representative of an error.
+                    pass
+                except TestError as _error:
+                    # Test error propagation as is.
+                    self.onerror(_error)
+                except Exception as _exception:
+                    # An exception occurred during the test.
+                    self.onerror(ExceptionError(exception=_exception))
+                except KeyboardInterrupt as _interrupt:
+                    # CTRL+C.
+                    self.onerror(ExceptionError(exception=_interrupt))
+                finally:
+                    # Ensure the current action/result (if any) is terminated after the step execution.
+                    if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
+                        self._endcurrentactionresult()
 
             # Check that all known issues registered at the definition level have been notified.
             self._notifyknownissuedefinitions(step_definition)

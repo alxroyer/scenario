@@ -205,14 +205,11 @@ def _reloadmodulewithtypechecking(
                         raise ImportError(f"Cannot import {module_name!r} due to type checking cyclic dependencies with {_module_dependency!r}")
                     else:
                         # Reload the typing dependency.
-                        try:
-                            _logger.scenario_logger.pushindentation("  ")
+                        with _logger.scenario_logger.pushindentation("  "):
                             _reload(
                                 module_name=_module_dependency,
                                 module_path=pathlib.Path(_err.path or (SRC_PATH / f"{_module_dependency.replace('.', '/')}.py")),
                             )
-                        finally:
-                            _logger.scenario_logger.popindentation("  ")
 
                         # If the typing dependency could be reloaded successfully, try again reloading the module for this `_reload()` call.
                         continue
@@ -225,14 +222,11 @@ def _reloadmodulewithtypechecking(
                 typing.TYPE_CHECKING = False
 
     # Initial recursive call.
-    try:
-        _logger.scenario_logger.pushindentation("  ")
+    with _logger.scenario_logger.pushindentation("  "):
         _reload(
             module_name=module_name,
             module_path=None,
         )
-    finally:
-        _logger.scenario_logger.popindentation("  ")
 
 
 def _trackscenariotypes():  # type: (...) -> None

@@ -18,6 +18,7 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Provide key functions as static methods of base classes, use them in `ReqMgt010.CheckReqDbContent`.
     - Save requirement database with campaign reports.
     - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
     - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.
@@ -65,6 +66,7 @@
         - Scenario reports.
         - 'check-test-coverage.py'.
     - Add documentation with demo.
+    - Document logging indentation context.
     - Limitation when using step methods => use scenario stack.
     - Implement *check_step_coverage* option.
     - `covers()` and `coveredby()` in execution mode should do nothing.

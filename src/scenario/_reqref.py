@@ -24,10 +24,10 @@ import typing
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
-    from ._reqlink import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import AnyReqType as _AnyReqType
+    from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
 
@@ -188,9 +188,7 @@ class ReqRef:
 
         :return: Requirement trackers, with their related links (ordered by their requirement reference ids).
 
-        For :class:`._scenariodefinition.ScenarioDefinition` instances,
-        the scenario won't be returned if it is not linked with the requirement reference directly,
-        but only through one of its steps.
+        Does not return :class:`._scenariodefinition.ScenarioDefinition` instances that track this reference through steps only.
         See :meth:`getscenarios()` for the purpose.
         """
         from ._reqlink import ReqLinkHelper

@@ -245,9 +245,8 @@ def checkfuncqualname(
             module,  # type: types.ModuleType
     ):  # type: (...) -> typing.Optional[str]
         _res = None  # type: typing.Optional[str]
-        try:
-            REFLECTION_LOGGER.debug("Walking %r", module)
-            REFLECTION_LOGGER.pushindentation()
+        REFLECTION_LOGGER.debug("Walking %r", module)
+        with REFLECTION_LOGGER.pushindentation():
             for _class_name, _cls in inspect.getmembers(module, inspect.isclass):  # type: str, type
                 _res = _walkclass(_cls)
                 if _res is not None:
@@ -259,8 +258,6 @@ def checkfuncqualname(
             if func_name == "<module>":
                 REFLECTION_LOGGER.debug("_walkmodule(): %r matches '%s'! => returning '%s'", module, func_name, qualname(module))
                 return qualname(module)
-        finally:
-            REFLECTION_LOGGER.popindentation()
         return None
 
     def _walkclass(
@@ -273,9 +270,8 @@ def checkfuncqualname(
             return None
 
         _res = None  # type: typing.Optional[str]
-        try:
-            REFLECTION_LOGGER.debug("Walking class %r", cls)
-            REFLECTION_LOGGER.pushindentation()
+        REFLECTION_LOGGER.debug("Walking class %r", cls)
+        with REFLECTION_LOGGER.pushindentation():
             # Inner classes.
             for _class_name, _cls in inspect.getmembers(cls, inspect.isclass):  # type: str, type
                 _res = _walkclass(_cls)
@@ -311,8 +307,6 @@ def checkfuncqualname(
                     _res = _walkfunction(typing.cast(types.FunctionType, _prop.fdel))
                     if _res is not None:
                         return _res
-        finally:
-            REFLECTION_LOGGER.popindentation()
         return None
 
     def _walkfunction(
@@ -331,15 +325,12 @@ def checkfuncqualname(
             code_name,  # type: str
             code,  # type: types.CodeType
     ):  # type: (...) -> typing.Optional[str]
-        try:
-            REFLECTION_LOGGER.debug("Walking %s '%s' %r", code_type, code_name, code)
-            REFLECTION_LOGGER.pushindentation()
-
+        REFLECTION_LOGGER.debug("Walking %s '%s' %r", code_type, code_name, code)
+        with REFLECTION_LOGGER.pushindentation():
             # Filter-out non-matching lines.
             REFLECTION_LOGGER.debug("_walkcode(): Computing line bounds...")
-            REFLECTION_LOGGER.pushindentation()
-            _code_line_count = codelinecount(code)  # type: int
-            REFLECTION_LOGGER.popindentation()
+            with REFLECTION_LOGGER.pushindentation():
+                _code_line_count = codelinecount(code)  # type: int
             if (line < code.co_firstlineno) or (line > code.co_firstlineno + _code_line_count):
                 REFLECTION_LOGGER.debug("_walkcode(): Line %d out of [%d, %d]", line, code.co_firstlineno, code.co_firstlineno + _code_line_count)
                 return None
@@ -351,44 +342,43 @@ def checkfuncqualname(
             # In this tuple, inner classes and functions are given as a code object, followed by a name.
             # The name seems to be a short name for classes, but fully qualified names for functions...
             REFLECTION_LOGGER.debug("_walkcode(): Scanning code items:")
-            REFLECTION_LOGGER.pushindentation()
-            _last_code = None  # type: typing.Optional[types.CodeType]
-            _inner_codes = []  # type: typing.List[typing.Tuple[str, types.CodeType]]
-            for _const in code.co_consts:  # type: typing.Any
-                REFLECTION_LOGGER.debug("<%s>: %r", type(_const).__name__, _const)
-                if (_last_code is None) and isinstance(_const, types.CodeType):
-                    # Lambda.
-                    if _const.co_name == "<lambda>":
-                        # By definition, lambdas have no name.
-                        # Save them as is.
-                        _inner_codes.append((_const.co_name, _const))
-                        REFLECTION_LOGGER.debug("  => Inner code saved: %r", _inner_codes[-1])
+            with REFLECTION_LOGGER.pushindentation():
+                _last_code = None  # type: typing.Optional[types.CodeType]
+                _inner_codes = []  # type: typing.List[typing.Tuple[str, types.CodeType]]
+                for _const in code.co_consts:  # type: typing.Any
+                    REFLECTION_LOGGER.debug("<%s>: %r", type(_const).__name__, _const)
+                    if (_last_code is None) and isinstance(_const, types.CodeType):
+                        # Lambda.
+                        if _const.co_name == "<lambda>":
+                            # By definition, lambdas have no name.
+                            # Save them as is.
+                            _inner_codes.append((_const.co_name, _const))
+                            REFLECTION_LOGGER.debug("  => Inner code saved: %r", _inner_codes[-1])
+                            continue
+
+                        # Inline `for` iteration.
+                        # Examples:
+                        # - `[x for x in ...]` => '<listcomp>'
+                        # - `(x for x in ...)` => '<genexpr>'
+                        if _const.co_name in ("<listcomp>", "<genexpr>"):
+                            REFLECTION_LOGGER.debug("  => Inline `for` iteration, skipped")
+                            continue
+
+                        # No special name, hence should be an inner class or function.
+                        # Let's save it as `_last_code`, and wait for a `str` name as the next code item.
+                        _last_code = _const
+                        REFLECTION_LOGGER.debug("  => Inner code detected, `str` name expected juste after...")
                         continue
 
-                    # Inline `for` iteration.
-                    # Examples:
-                    # - `[x for x in ...]` => '<listcomp>'
-                    # - `(x for x in ...)` => '<genexpr>'
-                    if _const.co_name in ("<listcomp>", "<genexpr>"):
-                        REFLECTION_LOGGER.debug("  => Inline `for` iteration, skipped")
+                    # Inner function name.
+                    if _last_code is not None:
+                        if isinstance(_const, str):
+                            _inner_codes.append((_const, _last_code))
+                            REFLECTION_LOGGER.debug("  => Inner code saved: %r", _inner_codes[-1])
+                        else:
+                            REFLECTION_LOGGER.warning(f"{_const!r} following {_last_code!r} expected to be of type str, {qualname(type(_const))} found")
+                        _last_code = None
                         continue
-
-                    # No special name, hence should be an inner class or function.
-                    # Let's save it as `_last_code`, and wait for a `str` name as the next code item.
-                    _last_code = _const
-                    REFLECTION_LOGGER.debug("  => Inner code detected, `str` name expected juste after...")
-                    continue
-
-                # Inner function name.
-                if _last_code is not None:
-                    if isinstance(_const, str):
-                        _inner_codes.append((_const, _last_code))
-                        REFLECTION_LOGGER.debug("  => Inner code saved: %r", _inner_codes[-1])
-                    else:
-                        REFLECTION_LOGGER.warning(f"{_const!r} following {_last_code!r} expected to be of type str, {qualname(type(_const))} found")
-                    _last_code = None
-                    continue
-            REFLECTION_LOGGER.popindentation()
             for _inner_code_name, _inner_code in _inner_codes:  # type: str, types.CodeType
                 # Recursive call:
                 # - Direct recursion for functions.
@@ -404,20 +394,17 @@ def checkfuncqualname(
                 REFLECTION_LOGGER.debug("_walkcode(): '%s' matches '%s'!", code_name, func_name)
                 return code_name
 
-        finally:
-            REFLECTION_LOGGER.popindentation()
         return None
 
     # === Main implementation ===
 
     REFLECTION_LOGGER.debug("checkfuncqualname(file='%s', line=%d, func_name=%r)", file, line, func_name)
 
-    REFLECTION_LOGGER.pushindentation()
     _fqn = None  # type: typing.Optional[str]
-    _module = getloadedmodulefrompath(file)  # type: typing.Optional[types.ModuleType]
-    if _module:
-        _fqn = _walkmodule(_module)
-    REFLECTION_LOGGER.popindentation()
+    with REFLECTION_LOGGER.pushindentation():
+        _module = getloadedmodulefrompath(file)  # type: typing.Optional[types.ModuleType]
+        if _module:
+            _fqn = _walkmodule(_module)
 
     if not _fqn:
         REFLECTION_LOGGER.warning(f"Could not find fully qualified name for {file}:{line}:{func_name}()")

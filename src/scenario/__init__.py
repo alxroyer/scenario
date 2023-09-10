@@ -337,6 +337,16 @@ if True:
 
 if True:
     __doc__ += """
+    .. py:attribute:: LoggingContext
+
+        Logging context.
+
+        .. seealso:: :class:`._loggingcontext.LoggingContext` implementation.
+    """
+    from ._loggingcontext import LoggingContext as LoggingContext
+
+if True:
+    __doc__ += """
     .. py:attribute:: Console
 
         Console colors.
@@ -832,6 +842,16 @@ if typing.TYPE_CHECKING:
     """
     from ._reqtypes import AnyReqLinkType as AnyReqLinkType
     __all__.append("AnyReqLinkType")
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: SetWithReqLinksType
+
+        Set of items with related requirement links.
+
+        .. seealso:: :obj:`._reqtypes.SetWithReqLinksType` implementation.
+    """
+    from ._reqtypes import SetWithReqLinksType as SetWithReqLinksType
+    __all__.append("SetWithReqLinksType")
 
 
 __doc__ += """

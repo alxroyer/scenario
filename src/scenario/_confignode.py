@@ -115,63 +115,61 @@ class ConfigNode:
         if (not subkey) and (data is None):
             return self.remove()
 
-        CONFIG_DB.pushindentation()
-        CONFIG_DB.debug("%r: set(data=%r, subkey=%r, origin=%r)", self, data, subkey, origin)
+        with CONFIG_DB.pushindentation():
+            CONFIG_DB.debug("%r: set(data=%r, subkey=%r, origin=%r)", self, data, subkey, origin)
 
-        # Default ``origin`` to code location.
-        if origin is None:
-            origin = EXECUTION_LOCATIONS.fromcurrentstack(limit=1, fqn=True)[0].tolongstring()
+            # Default ``origin`` to code location.
+            if origin is None:
+                origin = EXECUTION_LOCATIONS.fromcurrentstack(limit=1, fqn=True)[0].tolongstring()
 
-        # When a sub-key is given, set the data on the sub-node described by the sub-key.
-        if subkey:
-            # Retrieve or create the target sub-node.
-            _target_node = self._getsubnode(subkey, create_missing=True, origin=origin)  # type: typing.Optional[ConfigNode]
-            CONFIG_DB.debug("%r: _target_node = %r", self, _target_node)
-            assert _target_node, "Sub-node should have been created"
-            # Set the data on it.
-            _target_node.set(data=data, origin=origin)
+            # When a sub-key is given, set the data on the sub-node described by the sub-key.
+            if subkey:
+                # Retrieve or create the target sub-node.
+                _target_node = self._getsubnode(subkey, create_missing=True, origin=origin)  # type: typing.Optional[ConfigNode]
+                CONFIG_DB.debug("%r: _target_node = %r", self, _target_node)
+                assert _target_node, "Sub-node should have been created"
+                # Set the data on it.
+                _target_node.set(data=data, origin=origin)
 
-        # Store the data directly in this node otherwise.
-        else:
-            # Dictionary data.
-            if isinstance(data, dict):
-                # Instanciate / check this node manages a dictionary of sub-nodes.
-                if self._data is None:
-                    self._setdata({})
-                if not isinstance(self._data, dict):
-                    raise ValueError(self.errmsg(f"Bad dict data {saferepr(data)} for a non-dict configuration node", origin=origin))
-                # Use recursive calls with the ``subkey`` parameter set for each field of the input dictionary.
-                for _field_name in data:  # type: str
-                    self.set(subkey=_field_name, data=data[_field_name], origin=origin)
-
-            # List data (or enum definitions).
-            elif isinstance(data, (list, enum.EnumMeta)):
-                # Instanciate / check this node manages a list of sub-nodes.
-                if self._data is None:
-                    self._setdata([])
-                if not isinstance(self._data, list):
-                    raise ValueError(self.errmsg(f"Bad list data {saferepr(data)} for a non-list configuration node", origin=origin))
-                # Add sub-nodes for each item of the input list.
-                for _index in range(len(data)):  # type: int
-                    self._data.append(ConfigNode(parent=self, key=f"{self.key}[{len(self._data)}]"))
-                    # Apply `list()` on `data` so that enum definitions can be indexed.
-                    self._data[-1].set(list(data)[_index], origin=origin)
-
-            # Final value.
+            # Store the data directly in this node otherwise.
             else:
-                # Check this node does not already handle sub-nodes.
-                if isinstance(self._data, dict):
-                    raise ValueError(self.errmsg(f"Bad final data {data!r} for a dictionary node", origin=origin))
-                if isinstance(self._data, list):
-                    raise ValueError(self.errmsg(f"Bad final data {data!r} for a list node", origin=origin))
-                # Store the data.
-                self._setdata(data)
+                # Dictionary data.
+                if isinstance(data, dict):
+                    # Instanciate / check this node manages a dictionary of sub-nodes.
+                    if self._data is None:
+                        self._setdata({})
+                    if not isinstance(self._data, dict):
+                        raise ValueError(self.errmsg(f"Bad dict data {saferepr(data)} for a non-dict configuration node", origin=origin))
+                    # Use recursive calls with the ``subkey`` parameter set for each field of the input dictionary.
+                    for _field_name in data:  # type: str
+                        self.set(subkey=_field_name, data=data[_field_name], origin=origin)
 
-            # Ensure origin is set.
-            if origin and (origin not in self.origins):
-                self.origins.append(origin)
+                # List data (or enum definitions).
+                elif isinstance(data, (list, enum.EnumMeta)):
+                    # Instanciate / check this node manages a list of sub-nodes.
+                    if self._data is None:
+                        self._setdata([])
+                    if not isinstance(self._data, list):
+                        raise ValueError(self.errmsg(f"Bad list data {saferepr(data)} for a non-list configuration node", origin=origin))
+                    # Add sub-nodes for each item of the input list.
+                    for _index in range(len(data)):  # type: int
+                        self._data.append(ConfigNode(parent=self, key=f"{self.key}[{len(self._data)}]"))
+                        # Apply `list()` on `data` so that enum definitions can be indexed.
+                        self._data[-1].set(list(data)[_index], origin=origin)
 
-        CONFIG_DB.popindentation()
+                # Final value.
+                else:
+                    # Check this node does not already handle sub-nodes.
+                    if isinstance(self._data, dict):
+                        raise ValueError(self.errmsg(f"Bad final data {data!r} for a dictionary node", origin=origin))
+                    if isinstance(self._data, list):
+                        raise ValueError(self.errmsg(f"Bad final data {data!r} for a list node", origin=origin))
+                    # Store the data.
+                    self._setdata(data)
+
+                # Ensure origin is set.
+                if origin and (origin not in self.origins):
+                    self.origins.append(origin)
 
     def _setdata(
             self,
@@ -251,9 +249,8 @@ class ConfigNode:
             if self.key:
                 CONFIG_DB.log(log_level, f"{self.key}:")
             for _direct_subkey in sorted(self._data.keys()):  # type: str
-                CONFIG_DB.pushindentation("  ")
-                self._data[_direct_subkey].show(log_level)
-                CONFIG_DB.popindentation("  ")
+                with CONFIG_DB.pushindentation("  "):
+                    self._data[_direct_subkey].show(log_level)
         elif isinstance(self._data, list):
             for _index in range(len(self._data)):  # type: int
                 self._data[_index].show(log_level)
@@ -390,15 +387,12 @@ class ConfigNode:
 
         # Walk through the sub-node.
         if _subnode:
-            try:
-                CONFIG_DB.pushindentation()
+            with CONFIG_DB.pushindentation():
                 return _subnode._getsubnode(
                     subkey=_remaining,
                     create_missing=create_missing,
                     origin=origin,
                 )
-            finally:
-                CONFIG_DB.popindentation()
         return None
 
     @property

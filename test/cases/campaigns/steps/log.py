@@ -74,9 +74,8 @@ class CheckCampaignLogExpectations(_LogVerificationStepImpl):
                     f"ERROR    {_expected_test_case_in_error.name}",
                     evidence="Test case in error",
                 )
-            scenario.logging.pushindentation()
-            self._checktestcaseerrors(_expected_test_case_in_error)
-            scenario.logging.popindentation()
+            with scenario.logging.pushindentation():
+                self._checktestcaseerrors(_expected_test_case_in_error)
 
         _test_cases_txt = scenario.text.Countable("test case", _expected_test_cases_with_warnings)  # Type already declared above.
         if self.RESULT(f"The campaign output displays {len(_test_cases_txt)} {_test_cases_txt} with warnings{_test_cases_txt.ifany(':', '.')}"):
@@ -96,9 +95,8 @@ class CheckCampaignLogExpectations(_LogVerificationStepImpl):
                     f"WARNING  {_expected_test_case_with_warnings.name}",
                     evidence="Test case with warnings",
                 )
-            scenario.logging.pushindentation()
-            self._checktestcaseerrors(_expected_test_case_with_warnings)
-            scenario.logging.popindentation()
+            with scenario.logging.pushindentation():
+                self._checktestcaseerrors(_expected_test_case_with_warnings)
 
     def _checktestcaseerrors(
             self,

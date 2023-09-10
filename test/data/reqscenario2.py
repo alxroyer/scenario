@@ -29,5 +29,33 @@ class ReqScenario2(scenario.Scenario):
             self,
             title="Requirement scenario 2",
         )
-        self.covers("REQ-001/1")
+        self.covers(scenario.ReqLink("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2"))
         self.covers("REQ-002")
+
+        self.addstep(TextStep(description="Foo", actions="Bar", results="Baz")).covers(
+            scenario.ReqLink("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2:step#1"),
+        )
+
+
+class TextStep(scenario.Step):
+
+    def __init__(
+            self,
+            *,
+            description,  # type: str
+            actions,  # type: str
+            results,  # type: str
+    ):  # type: (...) -> None
+        scenario.Step.__init__(self)
+
+        self.description = description  # type: str
+        self.actions = actions  # type: str
+        self.results = results  # type: str
+
+    def step(self):  # type: (...) -> None
+        self.STEP(self.description)
+
+        for _action_line in self.actions.splitlines():  # type: str
+            self.ACTION(_action_line)
+        for _result_line in self.results.splitlines():  # type: str
+            self.RESULT(_result_line)
