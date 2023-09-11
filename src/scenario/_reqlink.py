@@ -218,25 +218,38 @@ class ReqLinkHelper(abc.ABC):
         )
 
     @staticmethod
-    def updatesetwithreqlinks(
-            set_with_req_links,  # type: _SetWithReqLinksType[_VarItemType]  # noqa  ## Shadows built-in name 'dict'
-            item,  # type: _VarItemType
-            req_links,  # type: _OrderedSetType[ReqLink]
-    ):  # type: (...) -> None
+    def buildsetwithreqlinks(
+            req_link_holders,  # type: typing.Sequence[typing.Union[_ReqRefType, _ReqTrackerType]]
+            items_from_link,  # type: typing.Callable[[ReqLink], typing.Iterable[_VarItemType]]
+    ):  # type: (...) -> _SetWithReqLinksType[_VarItemType]
         """
-        Updates a set of items with related requirement links.
+        Builds a set of items with related requirement links.
 
-        :param set_with_req_links: Set of items to update.
-        :param item: Item to save or update.
-        :param req_links: Related requirement links.
+        :param req_link_holders: List of requirement references or requirement trackers to walk through.
+        :param items_from_link: Function that retrieves the items to save from requirement links.
         """
         from ._setutils import OrderedSetHelper
 
-        set_with_req_links[item] = (
-            req_links if item not in set_with_req_links
-            else OrderedSetHelper.merge(
-                set_with_req_links[item], req_links,
-                # Sort by requirement reference ids.
+        _set_with_req_links = {}  # type: _SetWithReqLinksType[_VarItemType]
+
+        # Walk from `req_link_holders` through requirement links and items to save.
+        for _req_link_holder in req_link_holders:  # type: typing.Union[_ReqRefType, _ReqTrackerType]
+            for _req_link in _req_link_holder.req_links:  # type: ReqLink
+                for _item in items_from_link(_req_link):  # type: _VarItemType
+                    # Build unordered sets of requirement links first.
+                    if _item not in _set_with_req_links:
+                        _set_with_req_links[_item] = [_req_link]
+                    else:
+                        _req_links = _set_with_req_links[_item]  # type: typing.Sequence[ReqLink]
+                        assert isinstance(_req_links, list)
+                        _req_links.append(_req_link)
+
+        # Sum up and sort sets of links in the end.
+        for _item in _set_with_req_links:  # Type already declared above.
+            _set_with_req_links[_item] = OrderedSetHelper.build(
+                _set_with_req_links[_item],
+                # Sort links by requirement reference ids.
                 key=ReqLinkHelper.key,
             )
-        )
+
+        return _set_with_req_links

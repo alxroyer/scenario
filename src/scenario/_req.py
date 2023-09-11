@@ -165,20 +165,12 @@ class Req:
         """
         from ._reqlink import ReqLinkHelper
 
-        _req_trackers = {}  # type: _SetWithReqLinksType[_ReqTrackerType]
-
-        # Compute requirement references depending on `sub_ref_links`.
-        _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
-        if walk_sub_refs:
-            _req_refs.extend(self.sub_refs)
-
-        # Walk through all requirement references attached with this requirement.
-        for _req_ref in _req_refs:  # type: _ReqRefType
-            # Integrate `gettrackers()` results for each.
-            for _req_tracker, _req_links in _req_ref.gettrackers().items():  # type: _ReqTrackerType, _OrderedSetType[_ReqLinkType]
-                ReqLinkHelper.updatesetwithreqlinks(_req_trackers, _req_tracker, _req_links)
-
-        return _req_trackers
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Determine the list of requirement references to walk through, depending on `walk_sub_refs`.
+            [self.main_ref] if not walk_sub_refs else [self.main_ref, *self.sub_refs],
+            # Get requirement trackers from each link.
+            lambda req_link: req_link.req_trackers,
+        )
 
     def getscenarios(
             self,
@@ -204,21 +196,14 @@ class Req:
         Returns scenarios linked with this requirement, either directly or through one of their steps.
         """
         from ._reqlink import ReqLinkHelper
+        from ._reqtracker import ReqTrackerHelper
 
-        _scenario_definitions = {}  # type: _SetWithReqLinksType[_ScenarioDefinitionType]
-
-        # Compute requirement references depending on `sub_ref_links`.
-        _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
-        if walk_sub_refs:
-            _req_refs.extend(self.sub_refs)
-
-        # Walk through all requirement references attached with this requirement.
-        for _req_ref in _req_refs:  # type: _ReqRefType
-            # Integrate `getscenarios()` results for each.
-            for _scenario_definition, _req_links in _req_ref.getscenarios().items():  # type: _ScenarioDefinitionType, _OrderedSetType[_ReqLinkType]
-                ReqLinkHelper.updatesetwithreqlinks(_scenario_definitions, _scenario_definition, _req_links)
-
-        return _scenario_definitions
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Determine the list of requirement references to walk through, depending on `walk_sub_refs`.
+            [self.main_ref] if not walk_sub_refs else [self.main_ref, *self.sub_refs],
+            # Get scenarios from each link.
+            lambda req_link: map(ReqTrackerHelper.getscenario, req_link.req_trackers),
+        )
 
     def getreqlinks(
             self,

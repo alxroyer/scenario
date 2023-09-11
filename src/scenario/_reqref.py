@@ -193,16 +193,12 @@ class ReqRef:
         """
         from ._reqlink import ReqLinkHelper
 
-        _req_trackers = {}  # type: _SetWithReqLinksType[_ReqTrackerType]
-
-        # Walk through requirement links.
-        for _req_link in self.req_links:  # type: _ReqLinkType
-            # For each direct tracker.
-            for _req_tracker in _req_link.req_trackers:  # type: _ReqTrackerType
-                # Save the tracker with the related link.
-                ReqLinkHelper.updatesetwithreqlinks(_req_trackers, _req_tracker, [_req_link])
-
-        return _req_trackers
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Walk requirement links from the current requirement reference.
+            [self],
+            # Get requirement trackers from each link.
+            lambda req_link: req_link.req_trackers,
+        )
 
     def getscenarios(self):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
         """
@@ -215,14 +211,12 @@ class ReqRef:
         from ._reqlink import ReqLinkHelper
         from ._reqtracker import ReqTrackerHelper
 
-        _scenario_definitions = {}  # type: _SetWithReqLinksType[_ScenarioDefinitionType]
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Walk requirement links from the current requirement reference.
+            [self],
+            # Get scenarios from each link.
+            lambda req_link: map(ReqTrackerHelper.getscenario, req_link.req_trackers),
+        )
 
-        # Walk through direct requirement trackers.
-        for _req_tracker, _req_links in self.gettrackers().items():  # type: _ReqTrackerType, _OrderedSetType[_ReqLinkType]
-            # Find out the final scenario reference from the direct requirement tracker.
-            _scenario_definition = ReqTrackerHelper.getscenario(_req_tracker)  # type: _ScenarioDefinitionType
 
-            # Save the scenario reference with the related links.
-            ReqLinkHelper.updatesetwithreqlinks(_scenario_definitions, _scenario_definition, _req_links)
 
-        return _scenario_definitions
