@@ -31,6 +31,11 @@ if True:
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
+    from ._req import Req as _ReqType
+    from ._reqlink import ReqLink as _ReqLinkType
+    from ._reqref import ReqRef as _ReqRefType
+    from ._reqtypes import AnyReqRefType as _AnyReqRefType
+    from ._setutils import OrderedSetType as _OrderedSetType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
@@ -344,6 +349,116 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             # User scenario attributes after.
             *[_name for _name in self.__user_attributes],
         ]
+
+    def getreqs(
+            self,
+            *,
+            walk_steps=True,  # type: bool
+    ):  # type: (...) -> _OrderedSetType[_ReqType]
+        """
+        :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
+
+        :param walk_steps:
+            Option to include step requirements.
+
+            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
+            requirements tracked by the scenario steps will be included in the result.
+
+            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
+
+            ``True`` by default.
+        :return:
+            Same as :meth:`._reqtracker.ReqTracker.getreqs()`.
+        """
+        from ._setutils import OrderedSetHelper
+
+        return OrderedSetHelper.build(
+            # Convert link >> requirement.
+            map(
+                lambda p_req_link: p_req_link.req_ref.req,
+                self.getreqlinks(walk_steps=walk_steps),
+            ),
+            # Sort by requirement ids.
+            key=lambda req: req.id,
+        )
+
+    def getreqrefs(
+            self,
+            *,
+            walk_steps=True,  # type: bool
+    ):  # type: (...) -> _OrderedSetType[_ReqRefType]
+        """
+        :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
+
+        :param walk_steps:
+            Option to include step requirement references.
+
+            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
+            requirement references tracked by the scenario steps will be included in the result.
+
+            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
+
+            ``True`` by default.
+        :return:
+            Same as :meth:`._reqtracker.ReqTracker.getreqrefs()`.
+        """
+        from ._setutils import OrderedSetHelper
+
+        return OrderedSetHelper.build(
+            # Convert link >> requirement reference.
+            map(
+                lambda p_req_link: p_req_link.req_ref,
+                self.getreqlinks(walk_steps=walk_steps),
+            ),
+            # Sort by requirement reference ids.
+            key=lambda req_ref: req_ref.id,
+        )
+
+    def getreqlinks(
+            self,
+            req_ref=None,  # type: _AnyReqRefType
+            *,
+            walk_steps=True,  # type: bool
+    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+        """
+        :meth:`._reqtracker.ReqTracker.getreqlinks()` override for the ``walk_steps`` option augmentation.
+
+        :param req_ref:
+            Same as :meth:`._reqtracker.ReqTracker.getreqlinks()`.
+        :param walk_steps:
+            Option to include step requirement links.
+
+            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
+            links held by the scenario steps will be included in the result.
+
+            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
+
+            ``True`` by default.
+
+            .. tip::
+                Retrieving the direct requirement links from the current tracker
+                can also be done through the :attr:`.reqtracker.ReqTracker.req_links` attribute.
+        :return:
+            Same as :meth:`._reqtracker.ReqTracker.getreqlinks()`.
+        """
+        from ._reqlink import ReqLinkHelper
+        from ._setutils import OrderedSetHelper
+
+        # Constitute the whole list of requirement links to consider, depending on the `walk_steps` option.
+        _req_links = list(self._req_links)  # type: typing.List[_ReqLinkType]
+        if walk_steps:
+            for _step in self.steps:  # type: _StepDefinitionType
+                _req_links.extend(_step._req_links)
+
+        return OrderedSetHelper.build(
+            # Filter this list with the requirement predicates.
+            filter(
+                lambda req_link: req_link.matches(req_ref=req_ref),
+                _req_links,
+            ),
+            # Sort by requirement reference ids.
+            key=ReqLinkHelper.key,
+        )
 
     def checkstepreqcoverage(
             self,  # type: VarScenarioDefinitionType

@@ -128,21 +128,12 @@ class ReqTracker(abc.ABC):
 
     def getreqs(
             self,
-            *,
-            walk_steps=True,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqType]
         """
         Requirements tracked by this tracker, ordered by ids.
 
-        :param walk_steps:
-            Option to include step requirements.
-
-            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
-            requirements tracked by the scenario steps will be included in the result.
-
-            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
-
-            ``True`` by default.
+        :return:
+            Requirements tracked by this tracker, ordered by ids.
         """
         from ._setutils import OrderedSetHelper
 
@@ -150,7 +141,7 @@ class ReqTracker(abc.ABC):
             # Convert link >> requirement.
             map(
                 lambda p_req_link: p_req_link.req_ref.req,
-                self.getreqlinks(walk_steps=walk_steps),
+                self._req_links,
             ),
             # Sort by requirement ids.
             key=lambda req: req.id,
@@ -158,21 +149,12 @@ class ReqTracker(abc.ABC):
 
     def getreqrefs(
             self,
-            *,
-            walk_steps=True,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqRefType]
         """
         Requirement references tracked by this tracker, ordered by ids.
 
-        :param walk_steps:
-            Option to include step requirement references.
-
-            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
-            requirement references tracked by the scenario steps will be included in the result.
-
-            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
-
-            ``True`` by default.
+        :return:
+            Requirement references tracked by this tracker, ordered by ids.
         """
         from ._setutils import OrderedSetHelper
 
@@ -180,7 +162,7 @@ class ReqTracker(abc.ABC):
             # Convert link >> requirement reference.
             map(
                 lambda p_req_link: p_req_link.req_ref,
-                self.getreqlinks(walk_steps=walk_steps),
+                self._req_links,
             ),
             # Sort by requirement reference ids.
             key=lambda req_ref: req_ref.id,
@@ -190,7 +172,6 @@ class ReqTracker(abc.ABC):
             self,
             req_ref=None,  # type: _AnyReqRefType
             *,
-            walk_steps=True,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this tracker,
@@ -201,38 +182,17 @@ class ReqTracker(abc.ABC):
 
             Optional.
             All requirement links when ``None``.
-        :param walk_steps:
-            Option to include step requirement links.
-
-            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
-            links held by the scenario steps will be included in the result.
-
-            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
-
-            ``True`` by default.
-
-            .. tip::
-                Retrieving the direct requirement links from the current tracker
-                can be done through the :attr:`req_links` attribute.
         :return:
             Filtered set of requirement links, ordered by requirement reference ids.
         """
         from ._reqlink import ReqLinkHelper
-        from ._scenariodefinition import ScenarioDefinition
         from ._setutils import OrderedSetHelper
-        from ._stepdefinition import StepDefinition
-
-        # Constitute the whole list of requirement links to consider.
-        _req_links = list(self._req_links)  # type: typing.List[_ReqLinkType]
-        if isinstance(self, ScenarioDefinition) and walk_steps:
-            for _step in self.steps:  # type: StepDefinition
-                _req_links.extend(_step._req_links)
 
         return OrderedSetHelper.build(
-            # Filter this list with the requirement predicates.
+            # Filter requirement links with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_ref=req_ref),
-                _req_links,
+                self._req_links,
             ),
             # Sort by requirement reference ids.
             key=ReqLinkHelper.key,
