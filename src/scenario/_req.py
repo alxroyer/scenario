@@ -142,7 +142,7 @@ class Req:
     def gettrackers(
             self,
             *,
-            walk_sub_refs=True,  # type: bool
+            walk_sub_refs=False,  # type: bool
     ):  # type: (...) -> _SetWithReqLinksType[_ReqTrackerType]
         """
         Returns trackers linked with this requirement.
@@ -152,7 +152,7 @@ class Req:
 
             If ``True``, trackers tracking sub-references of the requirement will be included in the result.
 
-            ``True`` by default.
+            ``False`` by default.
 
             .. tip::
                 The trackers tracking the main part only of the requirement
@@ -175,7 +175,7 @@ class Req:
     def getscenarios(
             self,
             *,
-            walk_sub_refs=True,  # type: bool
+            walk_sub_refs=False,  # type: bool
     ):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
         """
         Returns all scenarios linked with this requirement.
@@ -185,7 +185,7 @@ class Req:
 
             If ``True``, scenarios tracking sub-references of the requirement will be included in the result.
 
-            ``True`` by default.
+            ``False`` by default.
 
             .. tip::
                 The scenarios tracking the main part only of the requirement
@@ -209,7 +209,7 @@ class Req:
             self,
             req_tracker=None,  # type: _ReqTrackerType
             *,
-            walk_sub_refs=True,  # type: bool
+            walk_sub_refs=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this requirement,
@@ -225,7 +225,7 @@ class Req:
 
             If ``True``, links held by the requirement sub-references will be included in the result.
 
-            ``True`` by default.
+            ``False`` by default.
 
             .. tip::
                 The links held by the main part only of the requirement

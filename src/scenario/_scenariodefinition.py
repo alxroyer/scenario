@@ -353,7 +353,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
     def getreqs(
             self,
             *,
-            walk_steps=True,  # type: bool
+            walk_steps=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqType]
         """
         :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
@@ -361,12 +361,9 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         :param walk_steps:
             Option to include step requirements.
 
-            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
-            requirements tracked by the scenario steps will be included in the result.
+            If ``True``, requirements tracked by the scenario steps will be included in the result.
 
-            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
-
-            ``True`` by default.
+            ``False`` by default.
         :return:
             Same as :meth:`._reqtracker.ReqTracker.getreqs()`.
         """
@@ -385,7 +382,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
     def getreqrefs(
             self,
             *,
-            walk_steps=True,  # type: bool
+            walk_steps=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqRefType]
         """
         :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
@@ -393,12 +390,9 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         :param walk_steps:
             Option to include step requirement references.
 
-            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
-            requirement references tracked by the scenario steps will be included in the result.
+            If ``True``, requirement references tracked by the scenario steps will be included in the result.
 
-            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
-
-            ``True`` by default.
+            ``False`` by default.
         :return:
             Same as :meth:`._reqtracker.ReqTracker.getreqrefs()`.
         """
@@ -418,7 +412,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             self,
             req_ref=None,  # type: _AnyReqRefType
             *,
-            walk_steps=True,  # type: bool
+            walk_steps=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         :meth:`._reqtracker.ReqTracker.getreqlinks()` override for the ``walk_steps`` option augmentation.
@@ -428,16 +422,13 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         :param walk_steps:
             Option to include step requirement links.
 
-            If ``True``, and the current tracker is a :class:`._scenariodefinition.ScenarioDefinition`,
-            links held by the scenario steps will be included in the result.
+            If ``True``, links held by the scenario steps will be included in the result.
 
-            Ignored for :class:`._stepdefinition.StepDefinition` trackers.
-
-            ``True`` by default.
+            ``False`` by default.
 
             .. tip::
                 Retrieving the direct requirement links from the current tracker
-                can also be done through the :attr:`.reqtracker.ReqTracker.req_links` attribute.
+                can also be done through the :attr:`._reqtracker.ReqTracker.req_links` attribute.
         :return:
             Same as :meth:`._reqtracker.ReqTracker.getreqlinks()`.
         """
