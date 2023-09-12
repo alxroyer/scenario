@@ -218,5 +218,32 @@ class ReqRef:
             lambda req_link: map(ReqTrackerHelper.getscenario, req_link.req_trackers),
         )
 
+    def getreqlinks(
+            self,
+            req_tracker=None,  # type: _ReqTrackerType
+    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+        """
+        Requirement links attached with this requirement reference,
+        filtered with the given predicates.
 
+        :param req_tracker:
+            Requirement tracker predicate to search links for.
 
+            Optional.
+            All requirement links when ``None``.
+
+        :return:
+            Filtered set of requirement links, ordered by requirement reference ids.
+        """
+        from ._reqlink import ReqLinkHelper
+        from ._setutils import OrderedSetHelper
+
+        return OrderedSetHelper.build(
+            # Filter links with the requirement predicates.
+            filter(
+                lambda req_link: req_link.matches(req_tracker=req_tracker),
+                self._req_links,
+            ),
+            # Sort by requirement reference ids.
+            key=ReqLinkHelper.key,
+        )
