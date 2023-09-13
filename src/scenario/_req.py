@@ -210,6 +210,7 @@ class Req:
             req_tracker=None,  # type: _ReqTrackerType
             *,
             walk_sub_refs=False,  # type: bool
+            walk_steps=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this requirement,
@@ -230,6 +231,9 @@ class Req:
             .. tip::
                 The links held by the main part only of the requirement
                 can also be retrieved through the :attr:`._reqref.ReqRef.req_links` member of the :attr:`main_ref`.
+        :param walk_steps:
+            When ``req_tracker`` is a scenario,
+            ``True`` makes the link match if it comes from a step of the scenario.
         :return:
             Filtered set of requirement links, ordered by requirement reference ids.
         """
@@ -246,7 +250,7 @@ class Req:
         for _req_ref in _req_refs:  # type: _ReqRefType
             # Filter links with the requirement predicates.
             _req_links.extend(filter(
-                lambda req_link: req_link.matches(req_tracker=req_tracker),
+                lambda req_link: req_link.matches(req_tracker=req_tracker, walk_steps=walk_steps),
                 _req_ref.req_links,
             ))
 

@@ -221,6 +221,8 @@ class ReqRef:
     def getreqlinks(
             self,
             req_tracker=None,  # type: _ReqTrackerType
+            *,
+            walk_steps=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this requirement reference,
@@ -231,7 +233,9 @@ class ReqRef:
 
             Optional.
             All requirement links when ``None``.
-
+        :param walk_steps:
+            When ``req_tracker`` is a scenario,
+            ``True`` makes the link match if it comes from a step of the scenario.
         :return:
             Filtered set of requirement links, ordered by requirement reference ids.
         """
@@ -241,7 +245,7 @@ class ReqRef:
         return OrderedSetHelper.build(
             # Filter links with the requirement predicates.
             filter(
-                lambda req_link: req_link.matches(req_tracker=req_tracker),
+                lambda req_link: req_link.matches(req_tracker=req_tracker, walk_steps=walk_steps),
                 self._req_links,
             ),
             # Sort by requirement reference ids.

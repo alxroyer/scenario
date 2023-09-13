@@ -413,6 +413,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             req_ref=None,  # type: _AnyReqRefType
             *,
             walk_steps=False,  # type: bool
+            walk_sub_refs=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         :meth:`._reqtracker.ReqTracker.getreqlinks()` override for the ``walk_steps`` option augmentation.
@@ -429,6 +430,9 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             .. tip::
                 Retrieving the direct requirement links from the current tracker
                 can also be done through the :attr:`._reqtracker.ReqTracker.req_links` attribute.
+        :param walk_sub_refs:
+            When ``req_ref`` is a main requirement,
+            ``True`` makes the requirement link match if it tracks a sub-reference of the requirement.
         :return:
             Same as :meth:`._reqtracker.ReqTracker.getreqlinks()`.
         """
@@ -444,7 +448,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         return OrderedSetHelper.build(
             # Filter this list with the requirement predicates.
             filter(
-                lambda req_link: req_link.matches(req_ref=req_ref),
+                lambda req_link: req_link.matches(req_ref=req_ref, walk_sub_refs=walk_sub_refs),
                 _req_links,
             ),
             # Sort by requirement reference ids.

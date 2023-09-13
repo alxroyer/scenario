@@ -172,6 +172,7 @@ class ReqTracker(abc.ABC):
             self,
             req_ref=None,  # type: _AnyReqRefType
             *,
+            walk_sub_refs=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this tracker,
@@ -182,6 +183,9 @@ class ReqTracker(abc.ABC):
 
             Optional.
             All requirement links when ``None``.
+        :param walk_sub_refs:
+            When ``req_ref`` is a main requirement,
+            ``True`` makes the requirement link match if it tracks a sub-reference of the requirement.
         :return:
             Filtered set of requirement links, ordered by requirement reference ids.
         """
@@ -191,7 +195,7 @@ class ReqTracker(abc.ABC):
         return OrderedSetHelper.build(
             # Filter requirement links with the requirement predicates.
             filter(
-                lambda req_link: req_link.matches(req_ref=req_ref),
+                lambda req_link: req_link.matches(req_ref=req_ref, walk_sub_refs=walk_sub_refs),
                 self._req_links,
             ),
             # Sort by requirement reference ids.
