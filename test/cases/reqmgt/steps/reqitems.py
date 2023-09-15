@@ -19,12 +19,25 @@ import typing
 import scenario
 
 
+if typing.TYPE_CHECKING:
+    #: Either:
+    #:
+    #: - a detailed tuple of reference id and sub-part specifications,
+    #: - a simple requirement reference id,
+    #: - or a full :class:`scenario.ReqRef` object.
+    AnyExpectedReqRefType = typing.Union[
+        typing.Tuple[str, typing.Tuple[str, ...]],
+        str,
+        scenario.ReqRef,
+    ]
+
+
 class CheckReqItemStep(scenario.Step):
 
     def checkreqref(
             self,
             req_ref1,  # type: scenario.ReqRef
-            req_ref2,  # type: typing.Union[str, typing.Tuple[str, typing.Tuple[str, ...]]]
+            req_ref2,  # type: AnyExpectedReqRefType
             evidence=False,  # type: bool
     ):  # type: (...) -> None
         """
@@ -32,12 +45,12 @@ class CheckReqItemStep(scenario.Step):
             Requirement reference to check.
         :param req_ref2:
             Expected requirement reference.
-
-            Either a simple requirement reference id, or a detailed tuple of reference id and sub-part specifications.
         :param evidence:
             Evidence flag.
         """
-        if isinstance(req_ref2, str):
+        if isinstance(req_ref2, scenario.ReqRef):
+            self.assertsameinstances(req_ref1, req_ref2, evidence=evidence and "Requirement reference")
+        elif isinstance(req_ref2, str):
             self.assertequal(req_ref1.id, req_ref2, evidence=evidence and "Requirement reference id")
         else:
             self.assertequal(req_ref1.req.id, req_ref2[0], evidence=evidence and "Requirement id")
@@ -50,7 +63,7 @@ class CheckReqItemStep(scenario.Step):
     def checkreqlink(
             self,
             req_link,  # type: scenario.ReqLink
-            req_ref,  # type: typing.Union[str, typing.Tuple[str, typing.Tuple[str, ...]]]
+            req_ref,  # type: AnyExpectedReqRefType
             req_trackers,  # type: typing.Sequence[scenario.ReqTracker]
             comments=None,  # type: str
             evidence=False,  # type: bool
@@ -76,3 +89,18 @@ class CheckReqItemStep(scenario.Step):
                 self.assertequal(req_link.comments, comments, evidence=evidence and "Comments")
             else:
                 self.assertisempty(req_link.comments, evidence=evidence and "Comments")
+
+    def checkiteminsetwithreqlinks(
+            self,
+            item,  # type: scenario.types.VarItem
+            set_with_req_links,  # type: scenario.SetWithReqLinksType[scenario.types.VarItem]
+            req_links,  # type: typing.Sequence[typing.Tuple[AnyExpectedReqRefType, typing.Sequence[scenario.ReqTracker]]]
+            evidence=False,  # type: bool
+    ):  # type: (...) -> None
+        self.assertin(item, set_with_req_links, evidence=evidence)
+        self.assertlen(set_with_req_links[item], len(req_links), evidence=evidence and "Number of links")
+        for _index, _req_link_specs in enumerate(req_links):  # type: int, typing.Tuple[AnyExpectedReqRefType, typing.Sequence[scenario.ReqTracker]]
+            if evidence:
+                self.evidence(f"req-link#{_index+1}:")
+            with scenario.logging.pushindentation(f"  "):
+                self.checkreqlink(set_with_req_links[item][_index], *_req_link_specs, evidence=evidence)

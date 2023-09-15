@@ -20,8 +20,6 @@ import typing
 import scenario
 import scenario.test
 import scenario.text
-if typing.TYPE_CHECKING:
-    from scenario._typingutils import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if True:
     # `JsonReportFileVerificationStep` used for inheritance.
@@ -47,10 +45,10 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
             ),
         )  # type: scenario.Path
         self.assertisfile(self._json_path_ref)
-        self._json_ref = json.loads(self._json_path_ref.read_bytes())  # type: _JsonDictType
+        self._json_ref = json.loads(self._json_path_ref.read_bytes())  # type: scenario.types.JsonDict
 
         #: JSON data read from the report file.
-        self.json = {}  # type: _JsonDictType
+        self.json = {}  # type: scenario.types.JsonDict
 
     def step(self):  # type: (...) -> None
         self.STEP("Full scenario report")
@@ -77,8 +75,8 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _checkscenario(
             self,
-            json_scenario,  # type: _JsonDictType
-            json_scenario_ref,  # type: _JsonDictType
+            json_scenario,  # type: scenario.types.JsonDict
+            json_scenario_ref,  # type: scenario.types.JsonDict
     ):  # type: (...) -> None
         # Do not debug the ``json_scenario`` content for the top scenario.
         # It's usually been debugged previously.
@@ -101,7 +99,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                 evidence="Test name",
             )
 
-        _attributes_ref = self._assertjsonref(json_scenario_ref, "attributes", type=dict)  # type: _JsonDictType
+        _attributes_ref = self._assertjsonref(json_scenario_ref, "attributes", type=dict)  # type: scenario.types.JsonDict
         _attributes_txt = scenario.text.Countable("attribute", _attributes_ref)  # type: scenario.text.Countable
         if self.RESULT(f"The JSON report gives {len(_attributes_txt)} scenario {_attributes_txt}{_attributes_txt.ifany(':', '.')}"):
             self.assertjson(
@@ -115,7 +113,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                     evidence=f"Attribute '{_attribute_name}'",
                 )
 
-        _step_definitions_ref = self._assertjsonref(json_scenario_ref, "steps", type=list)  # type: typing.List[_JsonDictType]
+        _step_definitions_ref = self._assertjsonref(json_scenario_ref, "steps", type=list)  # type: typing.List[scenario.types.JsonDict]
         _steps_txt = scenario.text.Countable("step", _step_definitions_ref)  # type: scenario.text.Countable
         if self.RESULT(f"The number of steps is {len(_steps_txt)}{_steps_txt.ifany(':', '.')}"):
             self.assertjson(
@@ -156,7 +154,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                 _stats = self.assertjson(
                     json_scenario, "stats", type=dict,
                     evidence="Test statistics",
-                )  # type: _JsonDictType
+                )  # type: scenario.types.JsonDict
                 self.debug("%s", scenario.debug.jsondump(_stats, indent=2),
                            extra=self.longtext(max_lines=20))
 
@@ -184,8 +182,8 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _checkstepdefinition(
             self,
-            json_step_definition,  # type: _JsonDictType
-            json_step_definition_ref,  # type: _JsonDictType
+            json_step_definition,  # type: scenario.types.JsonDict
+            json_step_definition_ref,  # type: scenario.types.JsonDict
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkstepdefinition(): json_step_definition = %s", scenario.debug.jsondump(json_step_definition, indent=2),
@@ -205,7 +203,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                 evidence="Step description",
             )
 
-        _executions_ref = self._assertjsonref(json_step_definition_ref, "executions", type=list)  # type: typing.List[_JsonDictType]
+        _executions_ref = self._assertjsonref(json_step_definition_ref, "executions", type=list)  # type: typing.List[scenario.types.JsonDict]
         _executions_txt = scenario.text.Countable("execution", _executions_ref)  # type: scenario.text.Countable
         if self.RESULT(f"The number of step executions is {len(_executions_txt)}{_executions_txt.ifany(':', '.')}"):
             self.assertjson(
@@ -220,7 +218,8 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                     json_step_execution_ref=self._assertjsonref(json_step_definition_ref, f"executions[{_execution_index}]", type=dict),
                 )
 
-        _action_result_definitions_ref = self._assertjsonref(json_step_definition_ref, "actions-results", type=list)  # type: typing.List[_JsonDictType]
+        _action_result_definitions_ref = self._assertjsonref(json_step_definition_ref, "actions-results", type=list) \
+            # type: typing.List[scenario.types.JsonDict]
         _actions_results_txt = scenario.text.Countable("action/result", _action_result_definitions_ref)  # type: scenario.text.Countable
         if self.RESULT(f"The number of actions/results is {len(_actions_results_txt)}{_actions_results_txt.ifany(':', '.')}"):
             self.assertjson(
@@ -241,8 +240,8 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _checkstepexecution(
             self,
-            json_step_execution,  # type: _JsonDictType
-            json_step_execution_ref,  # type: _JsonDictType
+            json_step_execution,  # type: scenario.types.JsonDict
+            json_step_execution_ref,  # type: scenario.types.JsonDict
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkstepexecution(): json_step_execution = %s", scenario.debug.jsondump(json_step_execution, indent=2),
@@ -274,8 +273,8 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _checkactionresultdefinition(
             self,
-            json_action_result_definition,  # type: _JsonDictType
-            json_action_result_definition_ref,  # type: _JsonDictType
+            json_action_result_definition,  # type: scenario.types.JsonDict
+            json_action_result_definition_ref,  # type: scenario.types.JsonDict
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkactionresultdefinition(): json_action_result_definition = %s",
@@ -296,7 +295,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                 evidence="Action/result description",
             )
 
-        _executions_ref = self._assertjsonref(json_action_result_definition_ref, "executions")  # type: typing.List[_JsonDictType]
+        _executions_ref = self._assertjsonref(json_action_result_definition_ref, "executions")  # type: typing.List[scenario.types.JsonDict]
         _executions_txt = scenario.text.Countable("execution", _executions_ref)  # type: scenario.text.Countable
         if self.RESULT(f"The number of action/result executions is {len(_executions_txt)}{_executions_txt.ifany(':', '.')}"):
             self.assertjson(
@@ -313,8 +312,8 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _checkactionresultexecution(
             self,
-            json_action_result_execution,  # type: _JsonDictType
-            json_action_result_execution_ref,  # type: _JsonDictType
+            json_action_result_execution,  # type: scenario.types.JsonDict
+            json_action_result_execution_ref,  # type: scenario.types.JsonDict
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkactionresultexecution(): json_action_result_execution = %s",
@@ -365,7 +364,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
             jsonpath="warnings",
         )
 
-        _json_subscenarios_ref = self._assertjsonref(json_action_result_execution_ref, "subscenarios", type=list)  # type: typing.List[_JsonDictType]
+        _json_subscenarios_ref = self._assertjsonref(json_action_result_execution_ref, "subscenarios", type=list)  # type: typing.List[scenario.types.JsonDict]
         _subscenarios_txt = scenario.text.Countable("subscenario", _json_subscenarios_ref)  # type: scenario.text.Countable
         if self.RESULT(f"The number of subscenarios is {len(_subscenarios_txt)}{_subscenarios_txt.ifany(':', '.')}"):
             self.assertjson(
@@ -373,7 +372,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                 evidence="Number of subscenarios",
             )
         for _subscenario_index in range(len(_json_subscenarios_ref)):  # type: int
-            _json_subscenario_ref = _json_subscenarios_ref[_subscenario_index]  # type: _JsonDictType
+            _json_subscenario_ref = _json_subscenarios_ref[_subscenario_index]  # type: scenario.types.JsonDict
             self.RESULT(f"- Subscenario #{_subscenario_index + 1}:")
             with scenario.logging.pushindentation():
                 self._checkscenario(
@@ -383,8 +382,8 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _checktimes(
             self,
-            json_time,  # type: _JsonDictType
-            json_time_ref,  # type: _JsonDictType
+            json_time,  # type: scenario.types.JsonDict
+            json_time_ref,  # type: scenario.types.JsonDict
     ):  # type: (...) -> None
         _start_ref = self.assertjson(json_time_ref, "start")  # type: typing.Optional[str]
         if _start_ref is None:
@@ -430,11 +429,11 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _checkerrors(
             self,
-            json_obj,  # type: _JsonDictType
-            json_obj_ref,  # type: _JsonDictType
+            json_obj,  # type: scenario.types.JsonDict
+            json_obj_ref,  # type: scenario.types.JsonDict
             jsonpath,  # type: str
     ):  # type: (...) -> None
-        _errors_ref = self._assertjsonref(json_obj_ref, jsonpath, type=list)  # type: typing.List[_JsonDictType]
+        _errors_ref = self._assertjsonref(json_obj_ref, jsonpath, type=list)  # type: typing.List[scenario.types.JsonDict]
         assert jsonpath.endswith("s")
         _errors_txt = scenario.text.Countable(jsonpath[:-1], _errors_ref)  # type: scenario.text.Countable
         if self.RESULT(f"{len(_errors_txt)} {_errors_txt} {_errors_txt.are} registered{_errors_txt.ifany(':', '.')}"):
@@ -471,7 +470,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
     def _assertjsonref(
             self,
-            json_ref,  # type: _JsonDictType
+            json_ref,  # type: scenario.types.JsonDict
             jsonpath,  # type: typing.Optional[str]
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
             value=None,  # type: typing.Union[int, str]

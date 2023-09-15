@@ -87,7 +87,7 @@ class SphinxHacking:
         - `sphinx#11353 <https://github.com/sphinx-doc/sphinx/issues/11353>`_
         - `sphinx#11387 <https://github.com/sphinx-doc/sphinx/issues/11387>`_
         """
-        from scenario._debugutils import SafeRepr  # noqa  ## Access to a protected member
+        from scenario import debug
         from scenario._reflection import fqname  # noqa  ## Access to a protected member
         from ._logging import Logger
 
@@ -103,7 +103,7 @@ class SphinxHacking:
             subject, objpath, attrgetter,
             **_kwargs,
         )  # type: typing.Dict[str, sphinx.ext.autodoc.ObjectMember]
-        _logger.debug("_members = %s", SafeRepr(_members))
+        _logger.debug("_members = %s", debug.SafeRepr(_members))
 
         # [sphinx#11353](https://github.com/sphinx-doc/sphinx/issues/11353)
         #

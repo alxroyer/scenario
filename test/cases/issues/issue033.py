@@ -19,8 +19,6 @@ import typing
 
 import scenario.test
 import scenario.text
-if typing.TYPE_CHECKING:
-    from scenario._typingutils import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if True:
     # `JsonReportFileVerificationStep` used for inheritance.
@@ -80,7 +78,7 @@ class CheckExceptionLocation(_JsonReportFileVerificationStepImpl):
     def step(self):  # type: (...) -> None
         self.STEP("Exception location")
 
-        _json_error = {}  # type: _JsonDictType
+        _json_error = {}  # type: scenario.types.JsonDict
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} error info from the JSON report"):
             _json_error = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"errors[{self.index}]", type=dict,
@@ -110,7 +108,7 @@ class CheckKnownIssueLocation(_JsonReportFileVerificationStepImpl):
     def step(self):  # type: (...) -> None
         self.STEP("Known issue location")
 
-        _json_known_issue = {}  # type: _JsonDictType
+        _json_known_issue = {}  # type: scenario.types.JsonDict
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} known issue info from the JSON report"):
             _json_known_issue = self.assertjson(
                 json.loads(self.report_path.read_bytes()), f"warnings[{self.index}]", type=dict,

@@ -861,6 +861,17 @@ Miscellaneous
 The `scenario` framework also exposes a couple of useful classes and types that may be used.
 """
 
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: types
+
+        Useful types.
+
+        .. seealso:: :mod:`._types` implementation.
+    """
+    from . import _types as types
+    __all__.append("types")
+
 if True:
     __doc__ += """
     .. py:attribute:: Path

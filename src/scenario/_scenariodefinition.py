@@ -35,6 +35,7 @@ if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
+    from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._setutils import OrderedSetType as _OrderedSetType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
@@ -354,7 +355,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             self,
             *,
             walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqType]
+    ):  # type: (...) -> _SetWithReqLinksType[_ReqType]
         """
         :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
 
@@ -367,23 +368,20 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         :return:
             Same as :meth:`._reqtracker.ReqTracker.getreqs()`.
         """
-        from ._setutils import OrderedSetHelper
+        from ._reqlink import ReqLinkHelper
 
-        return OrderedSetHelper.build(
-            # Convert link >> requirement.
-            map(
-                lambda p_req_link: p_req_link.req_ref.req,
-                self.getreqlinks(walk_steps=walk_steps),
-            ),
-            # Sort by requirement ids.
-            key=lambda req: req.id,
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Determine the list of requirement trackers to walk through, depending on `walk_sub_refs`.
+            [self] if not walk_steps else [self, *self.steps],
+            # Get the requirement for each link.
+            lambda req_link: [req_link.req],
         )
 
     def getreqrefs(
             self,
             *,
             walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqRefType]
+    ):  # type: (...) -> _SetWithReqLinksType[_ReqRefType]
         """
         :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
 
@@ -396,16 +394,13 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         :return:
             Same as :meth:`._reqtracker.ReqTracker.getreqrefs()`.
         """
-        from ._setutils import OrderedSetHelper
+        from ._reqlink import ReqLinkHelper
 
-        return OrderedSetHelper.build(
-            # Convert link >> requirement reference.
-            map(
-                lambda p_req_link: p_req_link.req_ref,
-                self.getreqlinks(walk_steps=walk_steps),
-            ),
-            # Sort by requirement reference ids.
-            key=lambda req_ref: req_ref.id,
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Determine the list of requirement trackers to walk through, depending on `walk_sub_refs`.
+            [self] if not walk_steps else [self, *self.steps],
+            # Get the requirement reference for each link.
+            lambda req_link: [req_link.req_ref],
         )
 
     def getreqlinks(

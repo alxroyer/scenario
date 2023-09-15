@@ -20,8 +20,6 @@ import typing
 import scenario
 import scenario.test
 import scenario.text
-if typing.TYPE_CHECKING:
-    from scenario._typingutils import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if typing.TYPE_CHECKING:
     from scenariologging.steps.parser import ParseScenarioLog as _ParseScenarioLogType
@@ -52,7 +50,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkscenario(
             self,
-            json_scenario,  # type: _JsonDictType
+            json_scenario,  # type: scenario.types.JsonDict
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
         from scenarioexecution.steps.execution import ExecScenario
@@ -133,7 +131,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkscenarioerrors(
             self,
-            json_scenario,  # type: _JsonDictType
+            json_scenario,  # type: scenario.types.JsonDict
             jsonpath,  # type: str
             error_expectation_list,  # type: typing.Optional[typing.List[scenario.test.ErrorExpectations]]
     ):  # type: (...) -> None
@@ -224,7 +222,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkstep(
             self,
-            json_step,  # type: _JsonDictType
+            json_step,  # type: scenario.types.JsonDict
             step_expectations,  # type: scenario.test.StepExpectations
     ):  # type: (...) -> None
         if step_expectations.name:
@@ -259,7 +257,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
     def _checkactionresult(
             self,
-            json_action_result,  # type: _JsonDictType
+            json_action_result,  # type: scenario.types.JsonDict
             action_result_expectations,  # type: scenario.test.ActionResultExpectations
     ):  # type: (...) -> None
         _type_desc = "action" if action_result_expectations.type == scenario.ActionResult.Type.ACTION else "expected result"  # type: str

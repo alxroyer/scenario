@@ -19,8 +19,6 @@ import re
 import typing
 
 import scenario.test
-if typing.TYPE_CHECKING:
-    from scenario._typingutils import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if True:
     from steps.logparsing import LogParserStep as _LogParserStepImpl  # `LogParserStep` used for inheritance.
@@ -45,8 +43,8 @@ class ParseFinalResultsLog(_LogParserStepImpl):
 
         self._parse_state = ParseFinalResultsLog.ParseState.END_NOT_REACHED_YET  # type: ParseFinalResultsLog.ParseState
 
-        self.json_total_stats = {}  # type: _JsonDictType
-        self.json_scenario_stats = []  # type: typing.List[_JsonDictType]
+        self.json_total_stats = {}  # type: scenario.types.JsonDict
+        self.json_scenario_stats = []  # type: typing.List[scenario.types.JsonDict]
 
     @property
     def doc_only(self):  # type: () -> typing.Optional[bool]
@@ -170,7 +168,7 @@ class ParseFinalResultsLog(_LogParserStepImpl):
                     "extra-info": self.tostr(_match.group(9 if self.doc_only else 12)),
                     "errors": [],
                     "warnings": [],
-                }  # type: _JsonDictType
+                }  # type: scenario.types.JsonDict
                 if self.doc_only:
                     _json_scenario_stats["steps"]["total"] = int(_match.group(4))
                     _json_scenario_stats["actions"]["total"] = int(_match.group(5))
@@ -224,7 +222,7 @@ class ParseFinalResultsLog(_LogParserStepImpl):
                     "type": "known-issue",
                     "message": self.tostr(_match.group(7)),
                     "location": self.tostr(b'%s:%s:%s' % (_match.group(8), _match.group(9), _match.group(10))),
-                }  # type: _JsonDictType
+                }  # type: scenario.types.JsonDict
                 if _match.group(5):
                     _known_issue["level"] = int(_match.group(5))
                 if _match.group(6):
@@ -265,7 +263,7 @@ class ParseFinalResultsLog(_LogParserStepImpl):
                     "type": self.tostr(_match.group(2)),
                     "message": self.tostr(_match.group(3)),
                     "location": self.tostr(b'%s:%s:%s' % (_match.group(4), _match.group(5), _match.group(6))),
-                }  # type: _JsonDictType
+                }  # type: scenario.types.JsonDict
                 assert self.json_scenario_stats, "No current scenario"
                 self.json_scenario_stats[-1]["errors"].append(_json_error)
                 self._debuglineinfo("Error: %s", scenario.debug.jsondump(_json_error))

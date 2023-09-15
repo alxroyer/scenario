@@ -27,6 +27,7 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqLinkType as _AnyReqLinkType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
+    from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
 
@@ -128,44 +129,40 @@ class ReqTracker(abc.ABC):
 
     def getreqs(
             self,
-    ):  # type: (...) -> _OrderedSetType[_ReqType]
+    ):  # type: (...) -> _SetWithReqLinksType[_ReqType]
         """
         Requirements tracked by this tracker, ordered by ids.
 
         :return:
-            Requirements tracked by this tracker, ordered by ids.
+            Requirements tracked by this tracker,
+            either directly or through a sub-reference of it,
+            with their related links (ordered by their requirement reference ids).
         """
-        from ._setutils import OrderedSetHelper
+        from ._reqlink import ReqLinkHelper
 
-        return OrderedSetHelper.build(
-            # Convert link >> requirement.
-            map(
-                lambda p_req_link: p_req_link.req_ref.req,
-                self._req_links,
-            ),
-            # Sort by requirement ids.
-            key=lambda req: req.id,
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Walk requirement links from the current requirement tracker.
+            [self],
+            # Get the requirement for each link.
+            lambda req_link: [req_link.req],
         )
 
     def getreqrefs(
             self,
-    ):  # type: (...) -> _OrderedSetType[_ReqRefType]
+    ):  # type: (...) -> _SetWithReqLinksType[_ReqRefType]
         """
         Requirement references tracked by this tracker, ordered by ids.
 
         :return:
-            Requirement references tracked by this tracker, ordered by ids.
+            Requirement references tracked by this tracker, with their related links (ordered by their requirement reference ids).
         """
-        from ._setutils import OrderedSetHelper
+        from ._reqlink import ReqLinkHelper
 
-        return OrderedSetHelper.build(
-            # Convert link >> requirement reference.
-            map(
-                lambda p_req_link: p_req_link.req_ref,
-                self._req_links,
-            ),
-            # Sort by requirement reference ids.
-            key=lambda req_ref: req_ref.id,
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Walk requirement links from the current requirement tracker.
+            [self],
+            # Get the requirement reference for each link.
+            lambda req_link: [req_link.req_ref],
         )
 
     def getreqlinks(

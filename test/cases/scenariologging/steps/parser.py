@@ -20,8 +20,6 @@ import typing
 import scenario
 import scenario.test
 import scenario.text
-if typing.TYPE_CHECKING:
-    from scenario._typingutils import JsonDictType as _JsonDictType  # noqa  ## Access to protected module
 
 if True:
     from steps.logparsing import LogParserStep as _LogParserStepImpl  # `LogParserStep` used for inheritance.
@@ -41,11 +39,11 @@ class ParseScenarioLog(_LogParserStepImpl):
         self.description = "Scenario log output parsing"
 
         # Initialize the scenario stack.
-        self._json_scenario_stack = []  # type: typing.List[_JsonDictType]
+        self._json_scenario_stack = []  # type: typing.List[scenario.types.JsonDict]
         # Then create the first scenario.
-        self.json_main_scenario = self._newscenario()  # type: _JsonDictType
+        self.json_main_scenario = self._newscenario()  # type: scenario.types.JsonDict
 
-    def _newscenario(self):  # type: (...) -> _JsonDictType
+    def _newscenario(self):  # type: (...) -> scenario.types.JsonDict
         _json_new_scenario = {
             "name": None,
             "attributes": {},
@@ -60,7 +58,7 @@ class ParseScenarioLog(_LogParserStepImpl):
                 "results": {"executed": 0, "total": 0},
             },
             ParseScenarioLog.PARSE_STATE: "",
-        }  # type: _JsonDictType
+        }  # type: scenario.types.JsonDict
 
         # Check the current stack in order to determine whether it is a subscenario.
         if self._json_scenario_stack:
@@ -79,7 +77,7 @@ class ParseScenarioLog(_LogParserStepImpl):
     def _getscenario(
             self,
             match,  # type: ParseScenarioLog._Match
-    ):  # type: (...) -> _JsonDictType
+    ):  # type: (...) -> scenario.types.JsonDict
         """
         Retrieves the JSON data corresponding to the scenario with the given indentation.
 
@@ -210,7 +208,7 @@ class ParseScenarioLog(_LogParserStepImpl):
                 "name": self.tostr(_match.group(5)),
                 "description": self.tostr(_match.group(2)),
                 "actions-results": [],
-            }  # type: _JsonDictType
+            }  # type: scenario.types.JsonDict
             self._getscenario(_match)["steps"].append(_json_step)
             self._setparsestate(_match, f"STEP '{_json_step['name']}'")
             _match.debug("Step: name=%r, description=%r", _json_step["name"], _json_step["description"])
@@ -223,7 +221,7 @@ class ParseScenarioLog(_LogParserStepImpl):
                 "type": self.tostr(_match.group(1)),
                 "description": self.tostr(_match.group(2)),
                 "subscenarios": [],
-            }  # type: _JsonDictType
+            }  # type: scenario.types.JsonDict
             assert self._getscenario(_match)["steps"], "No current step, cannot add action/result"
             self._getscenario(_match)["steps"][-1]["actions-results"].append(_json_action_result)
             self._setparsestate(_match, f"{_json_action_result['type'].upper()} {_json_action_result['description']!r}")
@@ -304,7 +302,7 @@ class ParseScenarioLog(_LogParserStepImpl):
                 "type": "known-issue",
                 "message": self.tostr(_match.group(7)),
                 "location": self.tostr(b'%s:%s:%s' % (_match.group(8), _match.group(9), _match.group(10))),
-            }  # type: _JsonDictType
+            }  # type: scenario.types.JsonDict
             if _match.group(5):
                 _known_issue["level"] = int(_match.group(5))
             if _match.group(6):
@@ -360,7 +358,7 @@ class ParseScenarioLog(_LogParserStepImpl):
         for _stats_type in ("step", "action", "result"):  # type: str
             _match = self._match(rb' *Number of %ss: (\d+)$' % self.tobytes(_stats_type.upper()), line)
             if _match:
-                _stats = {"executed": 0, "total": int(_match.group(1))}  # type: _JsonDictType
+                _stats = {"executed": 0, "total": int(_match.group(1))}  # type: scenario.types.JsonDict
                 self.json_main_scenario["stats"][_stats_type + "s"] = _stats
                 _match.debug("Number of %s: %d", scenario.text.pluralize(_stats_type.upper()), _stats["total"])
                 return True
