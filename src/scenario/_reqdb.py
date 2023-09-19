@@ -166,11 +166,11 @@ class ReqDatabase(_LoggerImpl):
         """
         Returns all requirements saved in the database.
 
-        :return: Requirements, ordered by ids.
+        :return: :class:`._req.Req` ordered set (see :meth:`._req.Req.orderedset()` for order details).
         """
-        from ._setutils import OrderedSetHelper
+        from ._req import Req
 
-        _reqs = OrderedSetHelper.build(
+        _reqs = Req.orderedset(
             map(
                 # Convert `ReqRef` to `Req` objects.
                 lambda req_ref: req_ref.req,
@@ -180,9 +180,7 @@ class ReqDatabase(_LoggerImpl):
                     self._req_db.values(),
                 ),
             ),
-            # Sort by requirement ids.
-            key=lambda req: req.id,
-        )  # type: _OrderedSetType[_ReqType]
+        )  # type: _OrderedSetType[Req]
 
         self.debug("getallreqs() -> %r", _reqs)
         return _reqs
@@ -191,16 +189,14 @@ class ReqDatabase(_LoggerImpl):
         """
         Returns all requirement references saved in the database.
 
-        :return: Requirement references, ordered by ids.
+        :return: :class:`._reqref.ReqRef` ordered set (see :meth:`._reqref.ReqRef.orderedset()` for order details).
         """
-        from ._setutils import OrderedSetHelper
+        from ._reqref import ReqRef
 
-        _req_refs = OrderedSetHelper.build(
+        _req_refs = ReqRef.orderedset(
             # All requirement references in the database.
             self._req_db.values(),
-            # Sort by requirement reference ids.
-            key=lambda req_ref: req_ref.id,
-        )  # type: _OrderedSetType[_ReqRefType]
+        )  # type: _OrderedSetType[ReqRef]
 
         self.debug("getallrefs() -> %r", _req_refs)
         return _req_refs
@@ -209,17 +205,14 @@ class ReqDatabase(_LoggerImpl):
         """
         Returns all requirement links saved in the database.
 
-        :return: Requirement links, ordered by requirement reference ids.
+        :return: :class:`._reqlink.ReqLink` ordered set (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLinkHelper
-        from ._setutils import OrderedSetHelper
+        from ._reqlink import ReqLink
 
-        _req_links = OrderedSetHelper.merge(
-            # All requirement links from the database.
-            *[_req_ref.req_links for _req_ref in self._req_db.values()],
-            # Sort by requirement reference ids.
-            key=ReqLinkHelper.key,
-        )  # type: _OrderedSetType[_ReqLinkType]
+        _req_link_list = []  # type: typing.List[ReqLink]
+        for _req_ref in self._req_db.values():  # type: _ReqRefType
+            _req_link_list.extend(_req_ref.req_links)
+        _req_links = ReqLink.orderedset(_req_link_list)  # type: _OrderedSetType[ReqLink]
 
         self.debug("getalllinks() -> %r", _req_links)
         return _req_links
@@ -229,21 +222,15 @@ class ReqDatabase(_LoggerImpl):
         Returns all final requirement trackers saved in the database,
         either scenarios or steps.
 
-        :return: Requirement trackers, ordered by scenario names then steps.
+        :return: :class:`._reqtracker.ReqTracker` ordered set (see :meth:`._reqtracker.ReqTracker.orderedset()` for order details).
         """
-        from ._reqtracker import ReqTrackerHelper
-        from ._setutils import OrderedSetHelper
+        from ._reqtracker import ReqTracker
 
-        # All trackers from the database.
-        _req_tracker_list = []  # type: typing.List[_ReqTrackerType]
+        _req_tracker_list = []  # type: typing.List[ReqTracker]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _req_tracker_list.extend(_req_link.req_trackers)
-        # Sort by scenario names, then steps.
-        _req_trackers = OrderedSetHelper.build(
-            _req_tracker_list,
-            key=ReqTrackerHelper.key,
-        )  # type: _OrderedSetType[_ReqTrackerType]
+        _req_trackers = ReqTracker.orderedset(_req_tracker_list)  # type: _OrderedSetType[ReqTracker]
 
         self.debug("getalltrackers() -> %r", _req_trackers)
         return _req_trackers
@@ -254,25 +241,22 @@ class ReqDatabase(_LoggerImpl):
 
         Either directly, or through one of their steps.
 
-        :return: Tracking scenarios, ordered by names.
+        :return: :class:`._scenariodefinition.ScenarioDefinition` ordered set (see :meth:`._reqtracker.ReqTracker.orderedset()` for order details).
         """
         from ._reqtracker import ReqTrackerHelper
-        from ._setutils import OrderedSetHelper
+        from ._scenariodefinition import ScenarioDefinition
 
-        # All scenarios from the database.
-        _scenario_list = []  # type: typing.List[_ScenarioDefinitionType]
+        _scenario_list = []  # type: typing.List[ScenarioDefinition]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
-                # Convert `ReqTracker` to `ScenarioDefinition` objects.
-                _scenario_list.extend(list(map(
-                    lambda req_tracker: ReqTrackerHelper.getscenario(req_tracker),
-                    _req_link.req_trackers,
-                )))
-        # Sort by names.
-        _scenarios = list(OrderedSetHelper.build(
-            _scenario_list,
-            key=lambda scenario: scenario.name,
-        ))  # type: _OrderedSetType[_ScenarioDefinitionType]
+                _scenario_list.extend(
+                    # Convert `ReqTracker` to `ScenarioDefinition` objects.
+                    map(
+                        lambda req_tracker: ReqTrackerHelper.getscenario(req_tracker),
+                        _req_link.req_trackers,
+                    ),
+                )
+        _scenarios = ScenarioDefinition.orderedset(_scenario_list)  # type: _OrderedSetType[ScenarioDefinition]
 
         self.debug("getallscenarios() -> %r", _scenarios)
         return _scenarios

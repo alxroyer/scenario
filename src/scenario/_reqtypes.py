@@ -42,6 +42,10 @@ if typing.TYPE_CHECKING:
     ]
 
     #: Variable requirement tracker type.
+    #:
+    #: Useful to discriminate types of returned objects when calling class methods
+    #: - with either :class:`._reqtracker.ReqTracker`,
+    #: - or :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition` subclasses.
     VarReqTrackerType = typing.TypeVar("VarReqTrackerType", bound=_ReqTrackerType)
 
     #: Any kind of requirement reference type, either:
@@ -67,5 +71,5 @@ if typing.TYPE_CHECKING:
 
     #: Set of items with related requirement links.
     #:
-    #: Requirement links ordered by requirement reference ids.
+    #: See :meth:`._reqlink.ReqLink.orderedset()` for requirement link order details.
     SetWithReqLinksType = typing.Dict[_VarItemType, _OrderedSetType[_ReqLinkType]]

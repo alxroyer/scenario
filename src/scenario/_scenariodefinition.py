@@ -431,8 +431,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         :return:
             Same as :meth:`._reqtracker.ReqTracker.getreqlinks()`.
         """
-        from ._reqlink import ReqLinkHelper
-        from ._setutils import OrderedSetHelper
+        from ._reqlink import ReqLink
 
         # Constitute the whole list of requirement links to consider, depending on the `walk_steps` option.
         _req_links = list(self._req_links)  # type: typing.List[_ReqLinkType]
@@ -440,14 +439,12 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             for _step in self.steps:  # type: _StepDefinitionType
                 _req_links.extend(_step._req_links)
 
-        return OrderedSetHelper.build(
+        return ReqLink.orderedset(
             # Filter this list with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_ref=req_ref, walk_sub_refs=walk_sub_refs),
                 _req_links,
             ),
-            # Sort by requirement reference ids.
-            key=ReqLinkHelper.key,
         )
 
     def checkstepreqcoverage(

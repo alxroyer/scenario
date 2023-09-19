@@ -18,7 +18,8 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Provide key functions as static methods of base classes, use them in `ReqMgt010.CheckReqDbContent`.
+    - Choose between "sub-class" and "subclass" spellings >> "subclass" (according to Wiktionary).
+    - Get rid of `OrderedSetHelper`, use global functions packaged in an '_orderedset.py' module instead.
     - Save requirement database with campaign reports.
     - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
     - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.

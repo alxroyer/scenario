@@ -28,6 +28,7 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import AnyReqLinkType as _AnyReqLinkType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
+    from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
 
@@ -39,6 +40,24 @@ class ReqTracker(abc.ABC):
     Actually, only :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`
     may subclass this :class:`ReqTracker` abstract class.
     """
+
+    @classmethod
+    def orderedset(
+            cls,  # type: typing.Type[_VarReqTrackerType]
+            req_trackers,  # type: typing.Iterable[_VarReqTrackerType]
+    ):  # type: (...) -> _OrderedSetType[_VarReqTrackerType]
+        """
+        Ensures an ordered set of unique :class:`ReqTracker` items.
+
+        :param req_trackers: Unordered list of :class:`ReqTracker` items.
+        :return: Ordered set of unique :class:`ReqTracker` items, ordered by scenario (or owner scenario) names, then step ids.
+        """
+        from ._setutils import OrderedSetHelper
+
+        return OrderedSetHelper.build(
+            req_trackers,
+            key=ReqTrackerHelper.sortkeyfunction,
+        )
 
     def __init__(self):  # type: (...) -> None
         """
@@ -62,16 +81,13 @@ class ReqTracker(abc.ABC):
     @property
     def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
         """
-        Requirement links attached with this tracker, ordered by requirement reference ids.
-        """
-        from ._reqlink import ReqLinkHelper
-        from ._setutils import OrderedSetHelper
+        Requirement links attached with this tracker.
 
-        return OrderedSetHelper.build(
-            self._req_links,
-            # Sort by requirement reference ids.
-            key=ReqLinkHelper.key,
-        )
+        See :meth:`._reqlink.ReqLink.orderedset()` for order details.
+        """
+        from ._reqlink import ReqLink
+
+        return ReqLink.orderedset(self._req_links)
 
     def covers(
             self,
@@ -131,12 +147,12 @@ class ReqTracker(abc.ABC):
             self,
     ):  # type: (...) -> _SetWithReqLinksType[_ReqType]
         """
-        Requirements tracked by this tracker, ordered by ids.
+        Requirements tracked by this tracker, with related links.
 
         :return:
             Requirements tracked by this tracker,
             either directly or through a sub-reference of it,
-            with their related links (ordered by their requirement reference ids).
+            with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
         from ._reqlink import ReqLinkHelper
 
@@ -151,10 +167,11 @@ class ReqTracker(abc.ABC):
             self,
     ):  # type: (...) -> _SetWithReqLinksType[_ReqRefType]
         """
-        Requirement references tracked by this tracker, ordered by ids.
+        Requirement references tracked by this tracker, with related links.
 
         :return:
-            Requirement references tracked by this tracker, with their related links (ordered by their requirement reference ids).
+            Requirement references tracked by this tracker,
+            with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
         from ._reqlink import ReqLinkHelper
 
@@ -184,19 +201,16 @@ class ReqTracker(abc.ABC):
             When ``req_ref`` is a main requirement,
             ``True`` makes the requirement link match if it tracks a sub-reference of the requirement.
         :return:
-            Filtered set of requirement links, ordered by requirement reference ids.
+            Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLinkHelper
-        from ._setutils import OrderedSetHelper
+        from ._reqlink import ReqLink
 
-        return OrderedSetHelper.build(
+        return ReqLink.orderedset(
             # Filter requirement links with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_ref=req_ref, walk_sub_refs=walk_sub_refs),
                 self._req_links,
             ),
-            # Sort by requirement reference ids.
-            key=ReqLinkHelper.key,
         )
 
 
@@ -206,13 +220,13 @@ class ReqTrackerHelper:
     """
 
     @staticmethod
-    def key(
+    def sortkeyfunction(
             req_tracker,  # type: ReqTracker
     ):  # type: (...) -> str
         """
         Key function to sort :class:`ReqTracker` items.
 
-        By scenario (or owner scenario) names, then step ids
+        By scenario (or owner scenario) names, then step ids.
 
         :param req_tracker: Scenario or step definition to sort.
         :return: Sortable string.
