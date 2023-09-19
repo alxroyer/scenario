@@ -50,9 +50,9 @@ class ReqRef:
         :param req_refs: Unordered list of :class:`ReqRef` items.
         :return: Ordered set of unique :class:`ReqRef` items, ordered by requirement reference id.
         """
-        from ._setutils import OrderedSetHelper
+        from ._setutils import orderedset
 
-        return OrderedSetHelper.build(
+        return orderedset(
             req_refs,
             key=ReqRefHelper.sortkeyfunction,
         )

@@ -52,9 +52,9 @@ class ReqTracker(abc.ABC):
         :param req_trackers: Unordered list of :class:`ReqTracker` items.
         :return: Ordered set of unique :class:`ReqTracker` items, ordered by scenario (or owner scenario) names, then step ids.
         """
-        from ._setutils import OrderedSetHelper
+        from ._setutils import orderedset
 
-        return OrderedSetHelper.build(
+        return orderedset(
             req_trackers,
             key=ReqTrackerHelper.sortkeyfunction,
         )

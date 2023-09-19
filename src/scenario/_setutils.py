@@ -34,44 +34,31 @@ if typing.TYPE_CHECKING:
     OrderedSetType = typing.Sequence
 
     #: Variable key function.
+    #:
+    #: Used to sort lists of items.
     VarKeyFunctionType = typing.Callable[[_VarItemType], typing.Any]
 
 
-class OrderedSetHelper(abc.ABC):
+def orderedset(
+        *unordered,  # type: typing.Iterable[_VarItemType]
+        key,  # type: VarKeyFunctionType[_VarItemType]
+):  # type: (...) -> OrderedSetType[_VarItemType]
     """
-    Helper class for ordered sets.
+    Sorts and ensures unique items from unordered list(s).
+
+    :param unordered: Unordered list(s) of items, possibly with duplicates.
+    :param key: Key function to use for sorting items.
+    :return: Resulting ordered set.
     """
+    # Sum up all `unordered` items in a single list.
+    _ordered_set = []  # type: typing.List[_VarItemType]
+    for _unordered in unordered:  # type: typing.Iterable[_VarItemType]
+        _ordered_set.extend(_unordered)
 
-    @staticmethod
-    def build(
-            unordered,  # type: typing.Iterable[_VarItemType]
-            *,
-            key,  # type: VarKeyFunctionType[_VarItemType]
-    ):  # type: (...) -> OrderedSetType[_VarItemType]
-        """
-        Sorts and ensures unique items from an unordered list.
+    # Ensure unique items.
+    _ordered_set = list(set(_ordered_set))
 
-        :param unordered: Unordered list of items, possibly with duplicates.
-        :param key: Key function to use for sorting items.
-        :return: Resulting ordered set.
-        """
-        _ordered_set = list(set(unordered))  # type: typing.List[_VarItemType]
-        _ordered_set.sort(key=key)
-        return _ordered_set
+    # Sort remaining items.
+    _ordered_set.sort(key=key)
 
-    @staticmethod
-    def merge(
-            *sets,  # type: typing.Iterable[_VarItemType]
-            key,  # type: VarKeyFunctionType[_VarItemType]
-    ):  # type: (...) -> OrderedSetType[_VarItemType]
-        """
-        Merges several unordered sets as a single ordered set.
-
-        :param sets: Unordered lists of items, possibly with duplicates each.
-        :param key: Key function to use for sorting items.
-        :return: Resulting ordered set.
-        """
-        _unordered = []  # type: typing.List[_VarItemType]
-        for _set in sets:  # type: typing.Iterable[_VarItemType]
-            _unordered.extend(_set)
-        return OrderedSetHelper.build(_unordered, key=key)
+    return _ordered_set

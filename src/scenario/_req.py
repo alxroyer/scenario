@@ -45,9 +45,9 @@ class Req:
         :param reqs: Unordered list of :class:`Req` items.
         :return: Ordered set of unique :class:`Req` items, ordered by requirement id.
         """
-        from ._setutils import OrderedSetHelper
+        from ._setutils import orderedset
 
-        return OrderedSetHelper.build(
+        return orderedset(
             reqs,
             key=ReqHelper.sortkeyfunction,
         )

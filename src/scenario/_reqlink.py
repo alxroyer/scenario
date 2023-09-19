@@ -51,9 +51,9 @@ class ReqLink:
         :param req_links: Unordered list of :class:`ReqLink` items.
         :return: Ordered set of unique :class:`ReqLink` items, by requirement reference ids, then scenario names and steps.
         """
-        from ._setutils import OrderedSetHelper
+        from ._setutils import orderedset
 
-        return OrderedSetHelper.build(
+        return orderedset(
             req_links,
             key=ReqLinkHelper.sortkeyfunction,
         )
@@ -287,8 +287,6 @@ class ReqLinkHelper(abc.ABC):
         :param req_link_holders: List of requirement references or requirement trackers to walk through.
         :param items_from_link: Function that retrieves the items to save from requirement links.
         """
-        from ._setutils import OrderedSetHelper
-
         _set_with_req_links = {}  # type: _SetWithReqLinksType[_VarItemType]
 
         # Walk from `req_link_holders` through requirement links and items to save.
