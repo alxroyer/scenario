@@ -123,7 +123,7 @@ class ExecutionStep(Step):
         #: :class:`SubProcess` instance owned.
         #:
         #: Initialized as a *void* instance.
-        #: To be set with actual instances in sub-classes.
+        #: To be set with actual instances in subclasses.
         self.subprocess = SubProcess()  # type: SubProcess
 
 

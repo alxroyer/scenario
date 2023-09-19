@@ -60,7 +60,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
             **kwargs  # type: typing.Any
     ):  # type: (...) -> typing.Any
         """
-        Overloads class definition of :class:`ScenarioDefinition` class and sub-classes.
+        Overloads class definition of :class:`ScenarioDefinition` class and subclasses.
 
         Sets :class:`MetaScenarioDefinition.InitWrapper` instances in place of ``__init__()`` methods,
         in order to have :class:`ScenarioDefinition` initializers enclosed with

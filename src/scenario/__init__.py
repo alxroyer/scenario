@@ -251,7 +251,7 @@ if True:
 
         Library of static assertion methods.
 
-        Can be sub-classed.
+        Can be subclassed.
         :class:`Scenario` and :class:`Step` inherit from this class.
 
         .. seealso:: :class:`._assertions.Assertions` implementation.

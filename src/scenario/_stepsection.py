@@ -92,7 +92,7 @@ class StepSectionBegin(_StepDefinitionImpl):
     @abc.abstractmethod
     def step(self):  # type: (...) -> None
         """
-        Must be overridden by sub-classes.
+        Must be overridden by subclasses.
 
         Sub-classes' overrides should call this method to display the common step title.
         """

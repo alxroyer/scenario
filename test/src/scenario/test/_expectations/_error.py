@@ -52,7 +52,7 @@ class ErrorExpectations:
 
     def loggingtext(self):  # type: (...) -> str
         """
-        Returns a logging line for the error as :meth:`scenario.TestError.__str__()` and sub-classes would.
+        Returns a logging line for the error as :meth:`scenario.TestError.__str__()` and subclasses would.
         """
         _text = ""  # type: str
         if self.cls is not scenario.KnownIssue:

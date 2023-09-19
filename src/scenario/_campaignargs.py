@@ -59,7 +59,7 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         #: Output directory path.
         #:
         #: Inner attribute.
-        #: ``None`` until actually set, either with the ``--outdir`` option, or programmatically in sub-classes.
+        #: ``None`` until actually set, either with the ``--outdir`` option, or programmatically in subclasses.
         self._outdir = None  # type: typing.Optional[Path]
         self.addarg("Output directory", "_outdir", Path).define(
             "--outdir", metavar="OUTDIR_PATH",
