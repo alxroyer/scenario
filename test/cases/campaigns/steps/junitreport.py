@@ -45,13 +45,10 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
         _campaign_execution = scenario.CampaignExecution(outdir=None)  # type: scenario.CampaignExecution
         if self.ACTION("Read the .xml campaign report file."):
             self.evidence(f"Campaign report path: '{self.getexecstep(ExecCampaign).junit_report_path}'")
-            _campaign_execution_read = scenario.campaign_report.readjunitreport(self.getexecstep(ExecCampaign).junit_report_path)
-            self.assertisnotnone(
-                _campaign_execution_read,
+            _campaign_execution = self.assertisnotnone(
+                scenario.campaign_report.readjunitreport(self.getexecstep(ExecCampaign).junit_report_path),
                 evidence="Campaign report successfully read",
             )
-            assert _campaign_execution_read
-            _campaign_execution = _campaign_execution_read
 
         if self.campaign_expectations.test_suite_expectations is not None:
             _test_suites_txt = scenario.text.Countable("test suite", self.campaign_expectations.test_suite_expectations)  # type: scenario.text.Countable
@@ -252,16 +249,6 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
             execution,  # type: typing.Union[scenario.CampaignExecution, scenario.TestSuiteExecution, scenario.TestCaseExecution]
             expectations,  # type: typing.Union[scenario.test.CampaignExpectations, scenario.test.TestSuiteExpectations, scenario.test.ScenarioExpectations]
     ):  # type: (...) -> None
-        if self.RESULT("The report gives the total number of steps."):
-            self.assertgreater(
-                execution.steps.total, 0,
-                evidence="Total number of steps",
-            )
-        if self.RESULT("The report gives the total number of actions and results."):
-            self.assertgreater(
-                execution.actions.total + execution.results.total, 0,
-                evidence="Total number of actions and results",
-            )
         for _stat_type in ("steps", "actions", "results"):  # type: str
             _stat_expectations = getattr(expectations, _stat_type[:-1] + "_stats")  # type: scenario.test.StatExpectations
             _stats = getattr(execution, _stat_type) if self.doexecute() else None  # type: typing.Optional[scenario.ExecTotalStats]

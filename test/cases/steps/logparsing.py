@@ -41,12 +41,19 @@ class LogParserStep(scenario.test.VerificationStep, _LogProcessorImpl, metaclass
         # self.STEP()
 
         if self.ACTION("Parse the log output."):
+            self._beforeparsing()
             for _line in self.subprocess.stdout.splitlines():  # type: bytes
                 if not _line:
                     continue
                 self.debug("line: %r", _line)
                 if not self._parseline(_line):
                     self.warning(f"Line not parsed: {_line!r}")
+            self._afterparsing()
+
+    def _beforeparsing(self):  # type: (...) -> None
+        """
+        To be overloaded.
+        """
 
     def _parseline(
             self,
@@ -59,6 +66,11 @@ class LogParserStep(scenario.test.VerificationStep, _LogProcessorImpl, metaclass
         :return: ``True`` if the line has been recognized and parsed.
         """
         return False
+
+    def _afterparsing(self):  # type: (...) -> None
+        """
+        To be overloaded.
+        """
 
     def _debuglineinfo(
             self,

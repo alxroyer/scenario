@@ -55,12 +55,8 @@ class ParseFinalResultsLog(_LogParserStepImpl):
 
         return self.getexecstep(ExecCommonArgs).doc_only
 
-    def _setparsestate(
-            self,
-            parse_state,  # type: ParseFinalResultsLog.ParseState
-    ):  # type: (...) -> None
-        self._debuglineinfo("%r -> %r", self._parse_state, parse_state)
-        self._parse_state = parse_state
+    def _beforeparsing(self):  # type: (...) -> None
+        self._debuglineinfo("%r", self._parse_state)
 
     def _parseline(
             self,
@@ -75,7 +71,7 @@ class ParseFinalResultsLog(_LogParserStepImpl):
             return True
 
         if self._parse_state == ParseFinalResultsLog.ParseState.END_NOT_REACHED_YET:
-            if re.search(rb'(INFO) +TOTAL +Status +Steps +Actions +Results +Time$', line):
+            if re.search(rb'(INFO) +TOTAL +Status +Steps +Actions +Results +Time( +([^ ].*))?$', line):
                 self._debuglineinfo("Header line found")
                 self._setparsestate(ParseFinalResultsLog.ParseState.TOTAL_STATS_LINE)
                 return True
@@ -150,8 +146,8 @@ class ParseFinalResultsLog(_LogParserStepImpl):
                     rb'(\d+) +' if self.doc_only else rb'(\d+)/(\d+) +',
                     # Time (7) or (10).
                     rb'(\d+:\d+:\d+\.\d+)',
-                    # Extra info (9) or (12).
-                    rb'(    |)(.+|)',
+                    # Extra info (8) or (11).
+                    rb' *([^ ].*)?',
                     # End of line.
                     rb'$',
                 ]),
@@ -165,7 +161,7 @@ class ParseFinalResultsLog(_LogParserStepImpl):
                     "actions": {"executed": None, "total": None},
                     "results": {"executed": None, "total": None},
                     "time": scenario.datetime.str2fduration(self.tostr(_match.group(7 if self.doc_only else 10))),
-                    "extra-info": self.tostr(_match.group(9 if self.doc_only else 12)),
+                    "extra-info": self.tostr(_match.group(8 if self.doc_only else 11)),
                     "errors": [],
                     "warnings": [],
                 }  # type: scenario.types.JsonDict
@@ -284,3 +280,10 @@ class ParseFinalResultsLog(_LogParserStepImpl):
             return True
 
         return super()._parseline(line)
+
+    def _setparsestate(
+            self,
+            parse_state,  # type: ParseFinalResultsLog.ParseState
+    ):  # type: (...) -> None
+        self._debuglineinfo("%r -> %r", self._parse_state, parse_state)
+        self._parse_state = parse_state

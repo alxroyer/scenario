@@ -409,6 +409,22 @@ def scenarioexpectations(
                     _scenario_expectations.setstats(steps=(1, 1), actions=(31, 31), results=(0, 0))
         _loggingindentationscenario()
 
+    elif script_path.samefile(_paths.REQ_SCENARIO1):
+        def _reqscenario1():  # type: (...) -> None
+            if _reqs.attributes():
+                _scenario_expectations.addattribute("TITLE", "Requirement scenario 1")
+            if _reqs.stats():
+                _scenario_expectations.setstats(steps=0, actions=0, results=0)
+        _reqscenario1()
+
+    elif script_path.samefile(_paths.REQ_SCENARIO2):
+        def _reqscenario2():  # type: (...) -> None
+            if _reqs.attributes():
+                _scenario_expectations.addattribute("TITLE", "Requirement scenario 2")
+            if _reqs.stats():
+                _scenario_expectations.setstats(steps=1, actions=1, results=1)
+        _reqscenario2()
+
     elif script_path.samefile(_paths.SCENARIO_LOGGING_SCENARIO):
         def _scenariologgingscenario():  # type: (...) -> None
             if _reqs.attributes():

@@ -68,6 +68,10 @@ class CampaignOutdirFilesManager:
     def junit_report_path(self):  # type: () -> scenario.Path
         return self._campaign_execution.junit_report_path
 
+    @property
+    def reqdb_path(self):  # type: () -> scenario.Path
+        return self._campaign_execution.reqdb_path
+
 
 class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
 
@@ -96,36 +100,40 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
                 assert _test_suite_expectations.test_case_expectations is not None
                 for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: scenario.test.ScenarioExpectations
                     assert _test_case_expectations.script_path is not None
-                    self.assertisfile(
+                    self._assertoutfile(
                         self._outfiles.getscenarioresults(_test_case_expectations.script_path).log.path,
                         evidence=f"'{_test_case_expectations.script_path}' '.log' file",
                     )
-                    self._expectedfilefound(self._outfiles.getscenarioresults(_test_case_expectations.script_path).log.path)
-                    self.assertisfile(
+                    self._assertoutfile(
                         self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path,
                         evidence=f"'{_test_case_expectations.script_path}' '.json' file",
                     )
-                    self._expectedfilefound(self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path)
-        if self.RESULT("The directory also contains a '.xml' campaign report file."):
-            self.assertisfile(
+        if self.RESULT("The directory contains a '.xml' campaign report file."):
+            self._assertoutfile(
                 self._outfiles.junit_report_path,
                 evidence="Campaign report",
             )
-            self._expectedfilefound(self._outfiles.junit_report_path)
+        if self.RESULT("The directory contains a '.json' requirement file."):
+            self._assertoutfile(
+                self._outfiles.reqdb_path,
+                evidence="Requirement file",
+            )
         if self.RESULT("The directory contains no other file."):
             self.assertisempty(
                 self._outdir_content,
                 evidence="Remaining files",
             )
 
-    def _expectedfilefound(
+    def _assertoutfile(
             self,
-            path,  # type: typing.Optional[scenario.Path]
+            expected_path,  # type: typing.Optional[scenario.Path]
+            evidence,  # type: str
     ):  # type: (...) -> None
-        if path:
-            _index = 0  # type: int
-            while _index < len(self._outdir_content):
-                if self._outdir_content[_index].samefile(path):
-                    del self._outdir_content[_index]
-                else:
-                    _index += 1
+        # Check the expected file exists.
+        self.assertisfile(expected_path, evidence=evidence)
+
+        # Remove it from the `self._outdir_content` member list.
+        def not_expected_path(remaining_path):  # type: (scenario.Path) -> bool
+            assert expected_path  # `expected_path` can't be `None` at this point.
+            return not remaining_path.samefile(expected_path)
+        self._outdir_content = list(filter(not_expected_path, self._outdir_content))

@@ -73,6 +73,13 @@ class CampaignExecution:
         return self.outdir / "campaign.xml"
 
     @property
+    def reqdb_path(self):  # type: () -> _PathType
+        """
+        Requirement database JSON dump path.
+        """
+        return self.outdir / "reqdb.json"
+
+    @property
     def steps(self):  # type: () -> _ExecTotalStatsType
         """
         Step statistics.
@@ -443,7 +450,7 @@ class JsonReportReader:
         from ._scenarioreport import SCENARIO_REPORT
 
         if self.path:
-            self.content = SCENARIO_REPORT.readjsonreport(self.path)
+            self.content = SCENARIO_REPORT.readjsonreport(self.path, feed_reqdb=True)
         else:
             MAIN_LOGGER.error("No JSON path to read")
         return self.content is not None

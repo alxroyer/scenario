@@ -47,33 +47,23 @@ class ReqMgt010(scenario.test.TestCase):
     class Data:
         @property
         def req001(self):  # type: () -> scenario.Req
-            from reqdb import REQ_001
-
-            return REQ_001
+            return scenario.reqs.getreq("REQ-001")
 
         @property
         def req001_main(self):  # type: () -> scenario.ReqRef
-            from reqdb import REQ_001
-
-            return REQ_001.main_ref
+            return scenario.reqs.getreqref("REQ-001")
 
         @property
         def req001_1(self):  # type: () -> scenario.ReqRef
-            from reqdb import REQ_001
-
-            return REQ_001.sub_refs[0]
+            return scenario.reqs.getreqref("REQ-001/1")
 
         @property
         def req002(self):  # type: () -> scenario.Req
-            from reqdb import REQ_002
-
-            return REQ_002
+            return scenario.reqs.getreq("REQ-002")
 
         @property
         def req002_main(self):  # type: () -> scenario.ReqRef
-            from reqdb import REQ_002
-
-            return REQ_002.main_ref
+            return scenario.reqs.getreqref("REQ-002")
 
         @property
         def scenario1(self):  # type: () -> scenario.Scenario

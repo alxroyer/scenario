@@ -18,11 +18,13 @@
 Requirement database.
 """
 
+import json
 import typing
 
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._path import Path as _PathType
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
@@ -31,6 +33,7 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import AnyReqType as _AnyReqType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
+    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class ReqDatabase(_LoggerImpl):
@@ -62,10 +65,91 @@ class ReqDatabase(_LoggerImpl):
         #: Database of requirement references, keyed by identifiers.
         self._req_db = {}  # type: typing.Dict[str, _ReqRefType]
 
+    def load(
+            self,
+            reqdb_file,  # type: _PathType
+    ):  # type: (...) -> None
+        """
+        Load requirements from a JSON file.
+
+        :param reqdb_file: JSON file to read.
+        """
+        from ._req import Req
+        from ._reqref import ReqRef
+
+        # Read the JSON file.
+        self.debug(f"Reading {reqdb_file}")
+        _reqdb_json = json.loads(reqdb_file.read_text(encoding="utf-8"))  # type: _JsonDictType
+
+        # Feed the database from the JSON content.
+        for _key in _reqdb_json:  # type: str
+            if _key.startswith("$"):
+                continue
+            _req_id = _key  # type: str
+
+            _req_json = _reqdb_json[_req_id]  # type: _JsonDictType
+
+            # Check requirement id redundancy in the input file.
+            if _req_id != _req_json["id"]:
+                self.warning(
+                    f"{reqdb_file}: Requirement id mismatch: {_req_id!r} (JSON key) != {_req_json['id']!r} (\"id\" field), "
+                    f"keeping {_req_json['id']!r}"
+                )
+
+            _req = self.push(Req(
+                id=_req_json["id"],
+                title=_req_json["title"],
+                text=_req_json["text"],
+            ))  # type: Req
+
+            for _reqref_id in _req_json["sub-refs"]:  # type: str
+                self.push(ReqRef(
+                    _req,
+                    *_reqref_id.split("/")[1:],
+                ))
+
+    def dump(
+            self,
+            reqdb_file,  # type: _PathType
+    ):  # type: (...) -> None
+        """
+        Dump the requirement database to a JSON file.
+
+        :param reqdb_file: JSON file to write.
+        """
+        from ._pkginfo import PKG_INFO
+
+        # Build JSON content from requirement information stored in the database.
+        _reqdb_json = {
+            "$schema": f"https://github.com/alxroyer/scenario/blob/v{PKG_INFO.version}/schema/reqdb.schema.json",
+            "$version": PKG_INFO.version,
+        }  # type: _JsonDictType
+
+        for _req in self.getallreqs():  # type: _ReqType
+            _reqdb_json[_req.id] = {
+                "id": _req.id,
+                "title": _req.title,
+                "text": _req.text,
+                "sub-refs": [_sub_ref.id for _sub_ref in _req.sub_refs],
+            }
+
+        # Write the JSON file.
+        self.debug(f"Writing {reqdb_file}")
+        reqdb_file.parent.mkdir(parents=True, exist_ok=True)
+        reqdb_file.write_text(json.dumps(_reqdb_json, indent=2), encoding="utf-8")
+
+    @typing.overload
+    def push(self, obj):  # type: (_ReqType) -> _ReqType
+        ...
+
+    @typing.overload
+    def push(self, obj):  # type: (_ReqRefType) -> _ReqRefType
+        ...
+
     def push(
             self,
             obj,  # type: typing.Union[_ReqType, _ReqRefType]
-    ):  # type: (...) -> None
+    ):  # type: (...) -> typing.Union[_ReqType, _ReqRefType]
         """
         Feeds the database with requirements.
 
@@ -73,6 +157,8 @@ class ReqDatabase(_LoggerImpl):
             Requirement or requirement reference to ensure registration for.
 
             Requirement references with empty sub-item specifications will be interpreted as the related requirement itself.
+        :return:
+            Object actually saved in the database.
 
         .. note::
             If ``req`` already exists in the database, it won't be duplicated.
@@ -97,6 +183,12 @@ class ReqDatabase(_LoggerImpl):
             else:
                 raise ValueError(f"Duplicate {_req_type} {_req_key!r}: {obj!r} v/s {self._req_db[_req_key].req!r}")
 
+        # Return the object eventually saved in the database.
+        if isinstance(obj, Req):
+            return self._req_db[_req_key].req
+        else:
+            return self._req_db[_req_key]
+
     def getreq(
             self,
             req,  # type: _AnyReqType
@@ -116,13 +208,17 @@ class ReqDatabase(_LoggerImpl):
         # `Req` instance.
         if isinstance(req, Req):
             if push_unknown and (req.id not in self._req_db):
-                self.push(req)
-            return self.getreq(req.id)
+                return self.push(req)
+            else:
+                return self.getreq(req.id)
 
         # Requirement as a string.
         elif isinstance(req, str):
             if req not in self._req_db:
-                raise KeyError(f"Unknown requirement id {req!r}")
+                if push_unknown:
+                    return self.push(Req(id=req))
+                else:
+                    raise KeyError(f"Unknown requirement id {req!r}")
             return self._req_db[req].req
 
         raise ValueError(f"Invalid requirement {req!r}")
@@ -147,15 +243,19 @@ class ReqDatabase(_LoggerImpl):
         # `Req` or `ReqRef` instance.
         if isinstance(req_ref, (Req, ReqRef)):
             if push_unknown and (req_ref.id not in self._req_db):
-                self.push(req_ref)
-            return self.getreqref(req_ref.id)
+                req_ref = self.push(req_ref)
+                return req_ref if isinstance(req_ref, ReqRef) else req_ref.main_ref
+            else:
+                return self.getreqref(req_ref.id)
 
         # Requirement reference as a string.
         elif isinstance(req_ref, str):
             if req_ref not in self._req_db:
                 if push_unknown:
                     _req_id = req_ref.split("/")[0]  # type: str
-                    self._req_db[req_ref] = ReqRef(self.getreq(_req_id), *req_ref.split("/")[1:])
+                    _req = self.getreq(_req_id, push_unknown=push_unknown)  # type: Req
+                    if req_ref != _req.id:
+                        self._req_db[req_ref] = ReqRef(_req, *req_ref.split("/")[1:])
                 else:
                     raise KeyError(f"Unknown requirement reference {req_ref!r}")
             return self._req_db[req_ref]

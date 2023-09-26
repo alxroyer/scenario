@@ -71,6 +71,10 @@ class ExecCampaign(_ExecCommonArgsImpl):
     def junit_report_path(self):  # type: () -> scenario.Path
         return self.final_outdir_path / "campaign.xml"
 
+    @property
+    def reqdb_path(self):  # type: () -> scenario.Path
+        return self.final_outdir_path / "reqdb.json"
+
     def step(self):  # type: (...) -> None
         # Description already set programmatically.
         # self.STEP()

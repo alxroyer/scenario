@@ -50,6 +50,9 @@ class ScenarioReport(_LoggerImpl):
         #: JSON report path being written or read.
         self._json_path = Path()  # type: Path
 
+        #: ``True`` to feed automatically the requirement database with tracked requirement references.
+        self._feed_reqdb = False  # type: bool
+
     def writejsonreport(
             self,
             scenario_definition,  # type: _ScenarioDefinitionType
@@ -87,11 +90,13 @@ class ScenarioReport(_LoggerImpl):
     def readjsonreport(
             self,
             json_path,  # type: _AnyPathType
+            feed_reqdb=False,  # type: bool
     ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
         """
         Reads the JSON report file.
 
         :param json_path: JSON file path to read.
+        :param feed_reqdb: ``True`` to feed automatically the requirement database with tracked requirement references.
         :return:
             Scenario data read from the JSON report file.
             ``None`` when the file could not be read, or its content could not be parsed successfully.
@@ -100,6 +105,7 @@ class ScenarioReport(_LoggerImpl):
         from ._path import Path
 
         try:
+            self._feed_reqdb = feed_reqdb
             self.resetindentation()
             self.debug("Reading scenario execution from JSON report '%s'", json_path)
 
@@ -117,6 +123,7 @@ class ScenarioReport(_LoggerImpl):
             return None
         finally:
             self.resetindentation()
+            self._feed_reqdb = False
 
     def _scenario2json(
             self,
@@ -418,6 +425,7 @@ class ScenarioReport(_LoggerImpl):
         :param req_tracker: Requirement tracker to update. Either a scenario or a step.
         """
         from ._reqdb import REQ_DB
+        from ._reqref import ReqRef
         from ._reqlink import ReqLink
 
         # Memo: No 'reqs' until feature #83 has been developped.
@@ -425,10 +433,14 @@ class ScenarioReport(_LoggerImpl):
             for _json_req_link in json_req_tracker["reqs"]:  # type: _JsonDictType
                 _req_ref_id = _json_req_link["ref"]  # type: str
                 try:
-                    _req_ref = REQ_DB.getreqref(_req_ref_id)
+                    _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_reqdb)  # type: ReqRef
                 except KeyError:
-                    self.warning(f"Unknown requirement reference {_req_ref_id!r}")
-                    continue
+                    if self._feed_reqdb:
+                        # Requirement reference should have been added automatically.
+                        raise
+                    else:
+                        self.warning(f"Unknown requirement reference {_req_ref_id!r}")
+                        continue
 
                 _comments = None  # type: typing.Optional[str]
                 if "comments" in _json_req_link:

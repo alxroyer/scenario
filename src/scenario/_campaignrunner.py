@@ -45,7 +45,8 @@ class CampaignRunner(_LoggerImpl):
     - :class:`._campaignargs.CampaignArgs`: command line arguments,
     - :class:`._campaignexecution.CampaignExecution`: object that describes a campaign execution,
     - :class:`._campaignlogging.CampaignLogging`: campaign execution logging,
-    - :class:`._campaignreport.CampaignReport`: campaign report generation.
+    - :class:`._campaignreport.CampaignReport`: campaign report generation,
+    - :class:`._reqdb.ReqDatabase`: requirement database export.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -72,6 +73,7 @@ class CampaignRunner(_LoggerImpl):
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
         from ._path import Path
+        from ._reqdb import REQ_DB
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
         from ._testerrors import ExceptionError
@@ -98,6 +100,7 @@ class CampaignRunner(_LoggerImpl):
             HANDLERS.callhandlers(ScenarioEvent.BEFORE_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
 
             CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
+
             _campaign_execution.time.setstarttime()
 
             for _test_suite_path in CampaignArgs.getinstance().test_suite_paths:  # type: Path
@@ -106,7 +109,10 @@ class CampaignRunner(_LoggerImpl):
                     return _res
 
             _campaign_execution.time.setendtime()
+
             CAMPAIGN_REPORT.writejunitreport(_campaign_execution, _campaign_execution.junit_path)
+            REQ_DB.dump(_campaign_execution.reqdb_path)
+
             CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
 
             HANDLERS.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))

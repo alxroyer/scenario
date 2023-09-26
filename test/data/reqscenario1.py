@@ -15,15 +15,17 @@
 # limitations under the License.
 
 import scenario
+import scenario.test
 
 
 class ReqScenario1(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        from reqdb import loadreqdb
-
         # Ensure the requirement database is loaded.
-        loadreqdb()
+        try:
+            scenario.reqs.getreq("REQ-001")
+        except KeyError:
+            scenario.reqs.load(scenario.test.paths.datapath("reqdb.json"))
 
         scenario.Scenario.__init__(
             self,

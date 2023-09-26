@@ -18,17 +18,16 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Save requirement database with campaign reports.
-    - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
-    - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.
-    - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
-    - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
-    - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
-    - Make `ReqDatabase.reqid2xxx()` handle requirement subkeys.
-    - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls.
+    - Don't generate the 'reqdb.json' file if no requirements.
+    - Make `ReqTracker.covers()` take no `_OrderedSetType[_ReqLinkType]`.
+      Add a `ReqTracker.getreqlink()` method that return a single `ReqLink` instance.
+    - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls?
+    - Add an option to load requirements from a JSON file.
+        - Test 'reqdb.json' results depending on this option.
     - Add a 'check-test-coverage.py' tool that displays requirement test coverage.
         - Shall work either on test suite files, or campaign results.
     - Add the ability to make the test check that its scenario links are detailed by step links.
+    - Add a HTTP server that displays pages on requirement management.
     - Complete scenario001 with SCENARIO_LOGGING testing.
     - Fix test regressions:
         - Campaigns:
@@ -61,7 +60,9 @@
             - scenariologging010.py
             - scenariologging011.py
     - Implement tests:
+        - Add req expectations. Check in scenario log & report.
         - Campaign reports.
+        - Subscenarios.
         - Scenario reports.
         - 'check-test-coverage.py'.
     - Add documentation with demo.
@@ -70,7 +71,22 @@
     - Implement *check_step_coverage* option.
     - `covers()` and `coveredby()` in execution mode should do nothing.
     - Check docstrings.
-    - Add a HTTP server that displays pages on requirement management.
+    - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
+    - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.
+    - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
+    - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
+    - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
+- Issue #xxx: Main logging indentation should be saved in scenario reports.
+    - As displayed in logging.
+- Issue #xxx: Improve assertion error messages with evidence introductory text.
+    - When `evidence` is fed with a text, error messages from assertions shall be prefixed with `f"{evidence}: ".
+- Issue #xxx: Strengthen JSON reading & writing:
+    - Secnario reports, requirement databases.
+    - Provide JSON schemas.
+    - Use github links for JSON schema.
+    - Store `$schema` fields.
+    - Store `$version` fields.
+    - Display warnings when reading a while with a higher version than the current `scenario` version.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.

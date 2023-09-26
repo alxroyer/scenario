@@ -30,6 +30,8 @@ CAMPAIGN
 
 END OF CAMPAIGN
 ------------------------------------------------
+          JUnit campaign report: out/campaign.xml
+                   Requirements: out/reqdb.json
           Number of test suites: 1
 
 DEBUG    JUnit report: 'out/campaign.xml'

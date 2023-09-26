@@ -25,6 +25,7 @@ class Campaign001(scenario.test.TestCase):
         from campaigns.steps.junitreport import CheckCampaignJunitReport
         from campaigns.steps.log import CheckCampaignLogExpectations
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
+        from campaigns.steps.reqdbfile import CheckCampaignReqdbFile
         from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
 
         scenario.test.TestCase.__init__(
@@ -33,7 +34,7 @@ class Campaign001(scenario.test.TestCase):
             description=(
                 "Check that the campaign runner can execute a test suite file (CAMPAIGNS), "
                 "gather the test case log files (LOGGING), reports (SCENARIO_REPORT) and statistics (STATISTICS), "
-                "and produce the campaign report (CAMPAIGNS). "
+                "and produce the campaign report (CAMPAIGNS) and requirement file (REQUIREMENT_MANAGEMENT). "
                 "Check furthermore that error display makes it easy to investigate on errors and warnings "
                 "(MULTIPLE_SCENARIO_EXECUTION, ERROR_HANDLING & KNOWN_ISSUES)."
             ),
@@ -45,11 +46,14 @@ class Campaign001(scenario.test.TestCase):
             scenario.ReqLink(scenario.test.reqs.LOGGING_FILE, comments="Scenario log files gathered with campaign reports"),
             scenario.ReqLink(scenario.test.reqs.SCENARIO_REPORT, comments="Scenario reports gathered with campaign reports"),
             scenario.ReqLink(scenario.test.reqs.STATISTICS, comments="Statistics by scenario, integrated for the campaign"),
-            # Note: TEST_DATA_TEST_SUITE embeds FAILING_SCENARIO,
-            #       which makes this test cover ERROR_HANDLING.
+            scenario.ReqLink(scenario.test.reqs.REQUIREMENT_MANAGEMENT, comments="Requirement output file dumped with campaign reports"),
+            # Note:
+            #  TEST_DATA_TEST_SUITE embeds FAILING_SCENARIO,
+            #  which makes this test cover ERROR_HANDLING.
             scenario.ReqLink(scenario.test.reqs.ERROR_HANDLING, comments="A scenario error is tracked and does not break the campaign"),
-            # Note: TEST_DATA_TEST_SUITE embeds KNOWN_ISSUE_DETAILS_SCENARIO and KNOWN_ISSUES_SCENARIO,
-            #       which makes this test cover KNOWN_ISSUES.
+            # Note:
+            #  TEST_DATA_TEST_SUITE embeds KNOWN_ISSUE_DETAILS_SCENARIO and KNOWN_ISSUES_SCENARIO,
+            #  which makes this test cover KNOWN_ISSUES.
             scenario.ReqLink(scenario.test.reqs.KNOWN_ISSUES, comments="Known issues reported from scenario to campaign reports"),
         )
         self.checkstepreqcoverage(True)
@@ -83,16 +87,19 @@ class Campaign001(scenario.test.TestCase):
             self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
             self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
         )
+
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             # Campaign outputs...
             self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
-            # with log and scenario report files.
+            # with requirements...
+            self.getreqlinks(scenario.test.reqs.REQUIREMENT_MANAGEMENT),
+            # and log and scenario report files.
             self.getreqlinks(scenario.test.reqs.LOGGING_FILE),
             self.getreqlinks(scenario.test.reqs.SCENARIO_REPORT),
         )
         self.knownissue(
             level=scenario.test.IssueLevel.TEST, id="#83",
-            message="Step missing to check LOGGING/File and SCENARIO_LOGGING",
+            message="Step missing to check LOGGING/File and SCENARIO_LOGGING requirements",
         )
         # self.addstep(CheckCampaignLogReports(ExecCampaign.getinstance(), _campaign_expectations)).covers(
         #     # Content of scenario log files...
@@ -119,4 +126,7 @@ class Campaign001(scenario.test.TestCase):
             self.getreqlinks(scenario.test.reqs.STATISTICS),
             self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
             self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
+        )
+        self.addstep(CheckCampaignReqdbFile(ExecCampaign.getinstance(), scenario.test.paths.datapath("reqdb.json"))).covers(
+            self.getreqlinks(scenario.test.reqs.REQUIREMENT_MANAGEMENT)
         )
