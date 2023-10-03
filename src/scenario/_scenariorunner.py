@@ -378,6 +378,7 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: Scenario or subscenario which execution to start.
         :return: Error code.
         """
+        from ._enumutils import isin
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._loggermain import MAIN_LOGGER
@@ -410,7 +411,7 @@ class ScenarioRunner(_LoggerImpl):
                 # Display scenario attributes.
                 for _attribute_name in scenario_definition.getattributenames():  # type: str
                     # Skip empty core attributes.
-                    if (_attribute_name in CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                    if isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
                         continue
                     SCENARIO_LOGGING.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
 
