@@ -46,7 +46,7 @@ class Campaign001(scenario.test.TestCase):
             scenario.ReqLink(scenario.test.reqs.LOGGING_FILE, comments="Scenario log files gathered with campaign reports"),
             scenario.ReqLink(scenario.test.reqs.SCENARIO_REPORT, comments="Scenario reports gathered with campaign reports"),
             scenario.ReqLink(scenario.test.reqs.STATISTICS, comments="Statistics by scenario, integrated for the campaign"),
-            scenario.ReqLink(scenario.test.reqs.REQUIREMENT_MANAGEMENT, comments="Requirement output file dumped with campaign reports"),
+            scenario.ReqLink(scenario.test.reqs.REQUIREMENT_MANAGEMENT, comments="Requirements in campaign reports"),
             # Note:
             #  TEST_DATA_TEST_SUITE embeds FAILING_SCENARIO,
             #  which makes this test cover ERROR_HANDLING.
@@ -69,6 +69,7 @@ class Campaign001(scenario.test.TestCase):
             error_details=True, stats=True,
         )
         assert _campaign_expectations.all_test_case_expectations
+        _campaign_expectations.reqdbfile(scenario.test.paths.REQDB_FILE)
 
         # Verifications.
         self.addstep(CheckCampaignLogExpectations(ExecCampaign.getinstance(), _campaign_expectations)).covers(
@@ -127,6 +128,6 @@ class Campaign001(scenario.test.TestCase):
             self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
             self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
         )
-        self.addstep(CheckCampaignReqdbFile(ExecCampaign.getinstance(), scenario.test.paths.datapath("reqdb.json"))).covers(
+        self.addstep(CheckCampaignReqdbFile(ExecCampaign.getinstance(), _campaign_expectations)).covers(
             self.getreqlinks(scenario.test.reqs.REQUIREMENT_MANAGEMENT)
         )

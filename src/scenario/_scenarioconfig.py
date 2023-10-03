@@ -24,6 +24,7 @@ if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._confignode import ConfigNode as _ConfigNodeType
     from ._console import Console as _ConsoleType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
@@ -59,6 +60,11 @@ class ScenarioConfig(_LoggerImpl):
         LOG_FILE = "scenario.log_file"
         #: Which debug classes to display? List of strings, or comma-separated string.
         DEBUG_CLASSES = "scenario.debug_classes"
+
+        # Requirements.
+
+        #: Requirement files to load at the beginning of tests and campaigns. List of strings, or comma-separated string.
+        REQDB_FILES = "scenario.reqdb_files"
 
         # Test execution & results.
 
@@ -238,10 +244,32 @@ class ScenarioConfig(_LoggerImpl):
             if _debug_class not in _debug_classes:
                 _debug_classes.append(_debug_class)
         # ...and configuration database.
-        self._readstringlistfromconf(self.Key.DEBUG_CLASSES, _debug_classes)
+        for _debug_class, _ in self._readstringlistfromconf(self.Key.DEBUG_CLASSES):  # Type already declared above.
+            if _debug_class not in _debug_classes:
+                _debug_classes.append(_debug_class)
         # Don't debug `debugclasses()`, otherwise it may cause infinite recursions when logging.
         # self.debug("debugclasses() -> %r", _debug_classes)
         return _debug_classes
+
+    def reqdbfiles(self):  # type: (...) -> typing.Sequence[_PathType]
+        """
+        Retrieves the list of requirement files to load.
+
+        :return: List of requirement files.
+        """
+        from ._confignode import ConfigNode
+        from ._path import Path
+
+        _reqdb_files = []  # type: typing.List[Path]
+        for _string, _node in self._readstringlistfromconf(self.Key.REQDB_FILES):  # type: str, ConfigNode
+            if Path.is_absolute(_string):
+                _reqdb_files.append(Path(_string))
+            elif _node.source_file:
+                _reqdb_files.append(Path(_string, relative_to=_node.source_file))
+            else:
+                raise ValueError(_node.errmsg(f"Invalid requirement file path {_string!r}"))
+
+        return _reqdb_files
 
     def expectedscenarioattributes(self):  # type: (...) -> typing.List[str]
         """
@@ -250,7 +278,9 @@ class ScenarioConfig(_LoggerImpl):
         Configurable through :attr:`Key.EXPECTED_SCENARIO_ATTRIBUTES`.
         """
         _attribute_names = []  # type: typing.List[str]
-        self._readstringlistfromconf(self.Key.EXPECTED_SCENARIO_ATTRIBUTES, _attribute_names)
+        for _attribute_name, _ in self._readstringlistfromconf(self.Key.EXPECTED_SCENARIO_ATTRIBUTES):  # type: str, _ConfigNodeType
+            if _attribute_name not in _attribute_names:
+                _attribute_names.append(_attribute_name)
         self.debug("expectedscenarioattributes() -> %r", _attribute_names)
         return _attribute_names
 
@@ -343,7 +373,9 @@ class ScenarioConfig(_LoggerImpl):
                 if _attribute_name not in _attribute_names:
                     _attribute_names.append(_attribute_name)
         # ...and configuration database.
-        self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO, _attribute_names)
+        for _attribute_name, _ in self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO):  # Type already declared above.
+            if _attribute_name not in _attribute_names:
+                _attribute_names.append(_attribute_name)
 
         # Default to titles.
         if not _attribute_names:
@@ -429,37 +461,57 @@ class ScenarioConfig(_LoggerImpl):
     def _readstringlistfromconf(
             self,
             config_key,  # type: ScenarioConfig.Key
-            outlist,  # type: typing.List[str]
-    ):  # type: (...) -> None
+            allow_empty_strings=False,  # type: bool
+    ):  # type: (...) -> typing.Sequence[typing.Tuple[str, _ConfigNodeType]]
         """
-        Reads a string list from the configuration database, and feeds an output list.
+        Reads a string list from the configuration database.
 
         :param config_key:
             Configuration key for the string list.
 
             The configuration node pointed by ``config_key`` may be either a list of strings, or a comma-separated string.
-        :param outlist:
-            Output string list to feed.
+        :param allow_empty_strings:
+            ``False`` to ignore empty strings.
 
-            Values are prevented in case of duplicates.
+            ``False`` by default.
+        :return:
+            Strings with related configuration nodes.
         """
         from ._configdb import CONFIG_DB
         from ._confignode import ConfigNode
 
-        _conf_node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[ConfigNode]
-        if _conf_node:
-            _data = _conf_node.data  # type: typing.Any
+        _strings = []  # type: typing.List[str]
+        _nodes = []  # type: typing.List[ConfigNode]
+
+        _node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[ConfigNode]
+        if _node:
+            _data = _node.data  # type: typing.Any
             if isinstance(_data, list):
-                for _item in _data:  # type: typing.Any
-                    if _item and isinstance(_item, str) and (_item not in outlist):
-                        outlist.append(_item)
+                for _sub_key in _node.getsubkeys():  # type: str
+                    _sub_node = _node.get(_sub_key)  # type: typing.Optional[ConfigNode]
+                    # `_node.get()` should always return a sub-node in this situation.
+                    if not _sub_node:
+                        raise RuntimeError("Internal error")
+
+                    if isinstance(_sub_node.data, str):
+                        if allow_empty_strings or _sub_node.data:
+                            _strings.append(_sub_node.data)
+                            _nodes.append(_sub_node)
+                    else:
+                        self.warning(_sub_node.errmsg(f"Invalid string {_sub_node.data!r}"))
             elif isinstance(_data, str):
                 for _part in _data.split(","):  # type: str
                     _part = _part.strip()
-                    if _part and (_part not in outlist):
-                        outlist.append(_part)
+
+                    if allow_empty_strings or _part:
+                        _strings.append(_part)
+                        _nodes.append(_node)
             else:
-                self.warning(_conf_node.errmsg(f"Invalid type {type(_data)}"))
+                self.warning(_node.errmsg(f"Invalid string list {_data!r}"))
+
+        if len(_strings) != len(_nodes):
+            raise RuntimeError("Internal error")
+        return list(zip(_strings, _nodes))
 
 
 #: Main instance of :class:`ScenarioConfig`.

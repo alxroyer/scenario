@@ -94,35 +94,54 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
         if self.ACTION("Read the directory containing the campaign results."):
             self.evidence(f"Reading '{self.getexecstep(ExecCampaign).final_outdir_path}'")
             self._outdir_content = list(self.getexecstep(ExecCampaign).final_outdir_path.iterdir())
-        if self.RESULT("This directory contains 1 '.log' and 1 '.json' file for each scenario executed."):
-            assert self.campaign_expectations.test_suite_expectations is not None
-            for _test_suite_expectations in self.campaign_expectations.test_suite_expectations:  # type: scenario.test.TestSuiteExpectations
-                assert _test_suite_expectations.test_case_expectations is not None
-                for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: scenario.test.ScenarioExpectations
-                    assert _test_case_expectations.script_path is not None
-                    self._assertoutfile(
-                        self._outfiles.getscenarioresults(_test_case_expectations.script_path).log.path,
-                        evidence=f"'{_test_case_expectations.script_path}' '.log' file",
-                    )
-                    self._assertoutfile(
-                        self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path,
-                        evidence=f"'{_test_case_expectations.script_path}' '.json' file",
-                    )
+
+        # Scenario reports.
+        if self.campaign_expectations.test_suite_expectations is not None:
+            if self.RESULT("This directory contains 1 '.log' and 1 '.json' file for each scenario executed."):
+                for _test_suite_expectations in self.campaign_expectations.test_suite_expectations:  # type: scenario.test.TestSuiteExpectations
+                    assert _test_suite_expectations.test_case_expectations is not None
+                    for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: scenario.test.ScenarioExpectations
+                        assert _test_case_expectations.script_path is not None
+                        self._assertoutfile(
+                            self._outfiles.getscenarioresults(_test_case_expectations.script_path).log.path,
+                            evidence=f"'{_test_case_expectations.script_path}' '.log' file",
+                        )
+                        self._assertoutfile(
+                            self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path,
+                            evidence=f"'{_test_case_expectations.script_path}' '.json' file",
+                        )
+
+        # Campaign report.
         if self.RESULT("The directory contains a '.xml' campaign report file."):
             self._assertoutfile(
                 self._outfiles.junit_report_path,
                 evidence="Campaign report",
             )
-        if self.RESULT("The directory contains a '.json' requirement file."):
-            self._assertoutfile(
-                self._outfiles.reqdb_path,
-                evidence="Requirement file",
-            )
-        if self.RESULT("The directory contains no other file."):
-            self.assertisempty(
-                self._outdir_content,
-                evidence="Remaining files",
-            )
+
+        # Requirement file.
+        if self.campaign_expectations.reqdb_file:
+            if self.RESULT("The directory contains a '.json' requirement file."):
+                self._assertoutfile(
+                    self._outfiles.reqdb_path,
+                    evidence="Requirement file",
+                )
+        elif self.campaign_expectations.reqdb_file is False:
+            if self.RESULT("The directory contains no '.json' requirement file."):
+                self.assertnotexists(
+                    self._outfiles.reqdb_path,
+                    evidence="Requirement file",
+                )
+
+        # No other file.
+        if all([
+            self.campaign_expectations.test_suite_expectations is not None,
+            self.campaign_expectations.reqdb_file,
+        ]):
+            if self.RESULT("The directory contains no other file."):
+                self.assertisempty(
+                    self._outdir_content,
+                    evidence="Remaining files",
+                )
 
     def _assertoutfile(
             self,

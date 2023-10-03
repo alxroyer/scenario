@@ -56,6 +56,9 @@ WAITING_SCENARIO = DATA_PATH / "waitingscenario.py"  # type: scenario.Path
 DEMO_TEST_SUITE = DEMO_PATH / "demo.suite"  # type: scenario.Path
 TEST_DATA_TEST_SUITE = DATA_PATH / "test-data.suite"  # type: scenario.Path
 
+# Requirement files.
+REQDB_FILE = DATA_PATH / "reqdb.json"  # type: scenario.Path
+
 
 def datapath(
         basename,  # type: str

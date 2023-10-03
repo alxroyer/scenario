@@ -74,6 +74,7 @@ class CampaignRunner(_LoggerImpl):
         from ._loggingservice import LOGGING_SERVICE
         from ._path import Path
         from ._reqdb import REQ_DB
+        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
         from ._testerrors import ExceptionError
@@ -96,11 +97,18 @@ class CampaignRunner(_LoggerImpl):
             # Start log features.
             LOGGING_SERVICE.start()
 
+            # Load requirements.
+            for _reqdb_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
+                MAIN_LOGGER.info(f"Loading requirements from '{_reqdb_file}'")
+                REQ_DB.load(_reqdb_file)
+
             _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
+
+            # *before-campaign* handlers.
             HANDLERS.callhandlers(ScenarioEvent.BEFORE_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
 
+            # Execute the campaign.
             CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
-
             _campaign_execution.time.setstarttime()
 
             for _test_suite_path in CampaignArgs.getinstance().test_suite_paths:  # type: Path
@@ -109,12 +117,15 @@ class CampaignRunner(_LoggerImpl):
                     return _res
 
             _campaign_execution.time.setendtime()
-
-            CAMPAIGN_REPORT.writejunitreport(_campaign_execution, _campaign_execution.junit_path)
-            REQ_DB.dump(_campaign_execution.reqdb_path)
-
             CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
 
+            # Write the JUnit campaign report.
+            CAMPAIGN_REPORT.writejunitreport(_campaign_execution, _campaign_execution.junit_path)
+            # Dump the requirement file (only when there are requirements).
+            if REQ_DB.getallreqs():
+                REQ_DB.dump(_campaign_execution.reqdb_path)
+
+            # *after-campaign* handlers.
             HANDLERS.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
 
             # Display final results.

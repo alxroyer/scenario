@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Don't generate the 'reqdb.json' file if no requirements.
     - Make `ReqTracker.covers()` take no `_OrderedSetType[_ReqLinkType]`.
       Add a `ReqTracker.getreqlink()` method that return a single `ReqLink` instance.
     - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls?

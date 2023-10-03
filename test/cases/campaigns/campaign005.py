@@ -17,7 +17,7 @@
 import scenario.test
 
 
-class Campaign004(scenario.test.TestCase):
+class Campaign005(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign

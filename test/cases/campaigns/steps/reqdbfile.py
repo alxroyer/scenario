@@ -30,13 +30,11 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
     def __init__(
             self,
             exec_step,  # type: _ExecCampaignType
-            expected_reqdb_file,  # type: scenario.Path
-            check_title_and_text=None,  # type: typing.Optional[bool]
+            campaign_expectations,  # type: scenario.test.CampaignExpectations
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
 
-        self.expected_reqdb_file = expected_reqdb_file  # type: scenario.Path
-        self.check_title_and_text = check_title_and_text  # type: typing.Optional[bool]
+        self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
 
     def step(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign
@@ -44,7 +42,8 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
         self.STEP("Requirement database file content")
 
         # Expected requirements.
-        _expected_reqdb = json.loads(self.expected_reqdb_file.read_text(encoding="utf-8"))  # type: scenario.types.JsonDict
+        assert isinstance(self.campaign_expectations.reqdb_file, scenario.Path), "Requirement file missing in campaign expectations"
+        _expected_reqdb = json.loads(self.campaign_expectations.reqdb_file.read_text(encoding="utf-8"))  # type: scenario.types.JsonDict
 
         _reqdb = {}  # type: scenario.types.JsonDict
         if self.ACTION("Read the requirement file."):
@@ -83,7 +82,7 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
                         _req["id"], _expected_req["id"],
                         evidence=True,
                     )
-                if self.check_title_and_text is True:
+                if self.campaign_expectations.reqdb_file_titles_and_texts is True:
                     if self.RESULT(f"with title: {_expected_req['title']}"):
                         self.assertin("title", _req, evidence=False)
                         self.assertequal(
@@ -96,7 +95,7 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
                             _req["text"], _expected_req["text"],
                             evidence=True,
                         )
-                elif self.check_title_and_text is False:
+                elif self.campaign_expectations.reqdb_file_titles_and_texts is False:
                     if self.RESULT(f"without title"):
                         if "title" in _req:
                             self.assertisempty(

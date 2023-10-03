@@ -40,8 +40,8 @@ class ConfigDbScenario(scenario.Scenario):
         if self.ACTION("Read and display final configuration values from the configuration database with their origin."):
             for _key in scenario.conf.getkeys():  # type: str
                 _conf_node = scenario.conf.getnode(_key)  # type: typing.Optional[scenario.ConfigNode]
-                if _conf_node:
-                    self.evidence(f"{_conf_node.key} ({_conf_node.origin}): {_conf_node.data!r}")
+                _conf_node = self.assertisnotnone(_conf_node)
+                self.evidence(f"{_conf_node.key} ({_conf_node.origin}): {_conf_node.data!r}")
 
     def step020(self):  # type: (...) -> None
         self.STEP("Show configuration database")

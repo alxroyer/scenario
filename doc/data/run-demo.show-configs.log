@@ -1,3 +1,4 @@
+INFO     Loading 'demo/conf.json'
 INFO     Main path: '/path/to/scenario'
 INFO     [scenario.ConfigDatabase]   a:
 INFO     [scenario.ConfigDatabase]     a.b:

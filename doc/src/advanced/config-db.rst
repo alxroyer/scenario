@@ -293,6 +293,18 @@ The following table describes the `scenario` configurable keys & values.
       - Which debug classes to display?
       - Not set
 
+    * - .. _config-db.scenario.reqdb_files:
+
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQDB_FILES`
+      - ``scenario.reqdb_files``
+      - List of strings (or comma-separated string)
+      - List of requirement files to load.
+
+        Absolute paths, or relative paths to the configuration file they are defined into.
+
+        Applicable when running tests and campaigns.
+      - Not set
+
     * - .. _config-db.scenario.expected_scenario_attributes:
 
         :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.EXPECTED_SCENARIO_ATTRIBUTES`

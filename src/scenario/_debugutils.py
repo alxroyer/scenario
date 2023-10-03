@@ -179,7 +179,7 @@ class SafeRepr(DelayedStr):
         # ``focus`` parameter not set.
         try:
             _repr = repr(self.obj)
-        except Exception:  # noqa  ## Too broad exception clause
+        except:  # noqa  ## Too broad exception clause
             _repr = object.__repr__(self.obj)
         if len(_repr) <= self.max_length:
             return _repr

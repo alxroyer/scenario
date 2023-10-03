@@ -161,7 +161,7 @@ class Path:
         # `pathlib.PurePath.stem` implemented as a member property.
         self.as_posix = self._abspath.as_posix  #: Shortcut to ``pathlib.PurePath.as_posix()``.
         self.as_uri = self._abspath.as_uri  #: Shortcut to ``pathlib.PurePath.as_uri()``.
-        self.is_absolute = self._abspath.is_absolute  #: Shortcut to ``pathlib.PurePath.is_absolute()``.
+        # `pathlib.PurePath.is_absolute()` implemented as a static method (not a member method, which differs from `pathlib`!).
         # `pathlib.PurePath.is_relative_to()` implemented as a member method.
         self.is_reserved = self._abspath.is_reserved  #: Shortcut to ``pathlib.PurePath.is_reserved()``.
         # `pathlib.PurePath.joinpath()` implemented as a member method.
@@ -467,6 +467,21 @@ class Path:
         :return: ``True`` when the path is void, ``False`` otherwise.
         """
         return self == Path()
+
+    @staticmethod
+    def is_absolute(
+            path,  # type: AnyPathType
+    ):  # type: (...) -> bool
+        """
+        Tells whether a given path is an absolute path.
+
+        :param path: Path to check.
+        :return: ``True`` when ``path`` is an absolute path, ``False`` otherwise.
+        """
+        try:
+            return pathlib.Path(path).is_absolute()
+        except:  # noqa  ## Too broad exception clause.
+            return False
 
     def is_relative_to(
             self,

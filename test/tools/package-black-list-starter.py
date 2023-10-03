@@ -29,6 +29,7 @@ before the non-test `scenario` processing takes place.
 - Therefore, without this starter script, we have no opportunity to setup our test conditions before a YAML configuration file is loaded.
 """
 
+import logging
 import sys
 
 import scenario
@@ -38,7 +39,11 @@ import scenario.test
 def _main():  # type: (...) -> None
     # Main variables.
     _this_script_path = scenario.Path(__file__)  # type: scenario.Path
-    _logger = scenario.Logger(_this_script_path.name).enabledebug(True)  # type: scenario.Logger
+    # Memo:
+    #  Avoid using `scenario.Logger` in this starter script
+    #  in order to avoid 'Avoid logging anything before arguments have been parsed' errors.
+    # _logger = scenario.Logger(_this_script_path.name).enabledebug(True)  # type: scenario.Logger
+    _logger = logging.getLogger()  # type: logging.Logger
 
     # First of all, remove the first argument (this script actually).
     _logger.debug("sys.argv = %r", sys.argv)

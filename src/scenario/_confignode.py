@@ -27,6 +27,7 @@ if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._configtypes import OriginType as _OriginType
     from ._configtypes import VarDataType as _VarDataType
+    from ._path import Path as _PathType
 
 
 class ConfigNode:
@@ -116,7 +117,7 @@ class ConfigNode:
             return self.remove()
 
         with CONFIG_DB.pushindentation():
-            CONFIG_DB.debug("%r: set(data=%r, subkey=%r, origin=%r)", self, data, subkey, origin)
+            CONFIG_DB.debug("%r: set(subkey=%r, data=%r, origin=%r)", self, subkey, data, origin)
 
             # Default ``origin`` to code location.
             if origin is None:
@@ -334,34 +335,39 @@ class ConfigNode:
             return self
 
         # Parse the sub-key.
-        _sep_index = min([
-            subkey.find(".") if subkey.find(".") >= 0 else len(subkey),
-            subkey.find("[") if subkey.find("[") >= 0 else len(subkey),
-            subkey.find("]") if subkey.find("]") >= 0 else len(subkey),
-        ])  # type: int
+        _sep_index = min(filter(
+            # Filter-out -1 and 0 values.
+            lambda index: index > 0,
+            [
+                # Search for a '.' or '[' character from the second character of `subkey`.
+                subkey.find(".", 1),
+                subkey.find("[", 1),
+                # Default to the length of `subkey`.
+                # Memo:
+                #  `len(sub-key) > 0` since `subkey` is not empty at this point.
+                #  So we will always have the `len(sub-key)` value left at least for the `min()` function to work on.
+                len(subkey),
+            ],
+        ))  # type: int
         _first = subkey[:_sep_index]  # type: str
         _sep = subkey[_sep_index:_sep_index+1]  # type: str
-        _remaining = subkey[_sep_index+1:]  # type: str
-        if _sep == "]":
-            if _remaining.startswith("."):
-                _sep += "."
-                _remaining = _remaining[1:]
-            # Once the key has been parsed, restore the starting '[' for display purpose.
-            subkey = "[" + subkey
+        _remaining = subkey[_sep_index:] if (_sep == "[") else subkey[_sep_index+1:]  # type: str
 
         # Depending on the sub-key, let's search for a sub-node.
         _subnode = None  # type: typing.Optional[ConfigNode]
         _errmsg_start = self.errmsg(f"Bad sub-key {subkey!r}: ", origin)  # type: str
 
         # List index selector.
-        if re.match(r"-?[0-9]+", _first):
+        _match = re.match(r"^\[?(-?[0-9]+)]?$", _first)  # type: typing.Optional[typing.Match[str]]
+        if _match:
             if self._data is None:
                 self._setdata([])
             if not isinstance(self._data, list):
                 raise IndexError(_errmsg_start + f"Cannot index a non-list node with {_first!r}")
-            _index = int(_first)  # type: int
+            _index = int(_match.group(1))  # type: int
             if create_missing and (_index == len(self._data)):
                 self._data.append(ConfigNode(parent=self, key=ConfigKey.join(self.key, f"[{_index}]")))
+                CONFIG_DB.debug("  New %r", self._data[-1])
             try:
                 _subnode = self._data[_index]
             except IndexError:
@@ -384,6 +390,7 @@ class ConfigNode:
                 # Create it when missing and applicable.
                 elif create_missing:
                     _subnode = self._data[_first] = ConfigNode(parent=self, key=ConfigKey.join(self.key, _first))
+                    CONFIG_DB.debug("  New %r", _subnode)
 
         # Walk through the sub-node.
         if _subnode:
@@ -490,6 +497,25 @@ class ConfigNode:
         if self.origins:
             return self.origins[-1]
         return ""
+
+    @property
+    def source_file(self):  # type: () -> typing.Optional[_PathType]
+        """
+        Source configuration file for the current node.
+
+        ``None`` when the origin of the configuration node is not a file.
+
+        .. seealso:: :attr:`origin`.
+        """
+        from ._path import Path
+
+        try:
+            _path = Path(self.origin)  # type: Path
+            if _path.is_file():
+                return _path
+        except:  # noqa  ## Too broad exception clause.
+            pass
+        return None
 
     def errmsg(
             self,

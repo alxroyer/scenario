@@ -93,7 +93,9 @@ class ScenarioRunner(_LoggerImpl):
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
         from ._path import Path
+        from ._reqdb import REQ_DB
         from ._scenarioargs import ScenarioArgs
+        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioexecution import ScenarioExecution
         from ._scenarioreport import SCENARIO_REPORT
         from ._scenarioresults import SCENARIO_RESULTS
@@ -113,6 +115,12 @@ class ScenarioRunner(_LoggerImpl):
             # Start log features.
             LOGGING_SERVICE.start()
 
+            # Load requirements.
+            for _reqdb_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
+                MAIN_LOGGER.info(f"Loading requirements from '{_reqdb_file}'")
+                REQ_DB.load(_reqdb_file)
+
+            # Execute tests.
             _errors = []  # type: typing.List[ErrorCode]
             for _scenario_path in ScenarioArgs.getinstance().scenario_paths:  # type: Path
                 self.debug("Executing '%s'...", _scenario_path)
@@ -146,6 +154,7 @@ class ScenarioRunner(_LoggerImpl):
                     SCENARIO_REPORT.writejsonreport(_scenario_execution.definition, _json_report)
                     _exec_times_logger.tick("After JSON report generation")
 
+            # Display final results (when applicable).
             if SCENARIO_RESULTS.count > 1:
                 SCENARIO_RESULTS.display()
 

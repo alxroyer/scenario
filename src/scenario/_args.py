@@ -222,6 +222,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         # - 2) load configuration files,
         for _config_path in self.config_paths:  # type: Path
             try:
+                MAIN_LOGGER.info(f"Loading '{_config_path}'")
                 CONFIG_DB.loadfile(_config_path)
             except EnvironmentError as _env_err:
                 self.error_code = ErrorCode.ENVIRONMENT_ERROR
