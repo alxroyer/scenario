@@ -155,6 +155,56 @@ class Req:
             ),
         )
 
+    def getreqlinks(
+            self,
+            req_tracker=None,  # type: _ReqTrackerType
+            *,
+            walk_sub_refs=False,  # type: bool
+            walk_steps=False,  # type: bool
+    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+        """
+        Requirement links attached with this requirement,
+        filtered with the given predicates.
+
+        :param req_tracker:
+            Requirement tracker predicate to search links for.
+
+            Optional.
+            All requirement links when ``None``.
+        :param walk_sub_refs:
+            Option to include requirement sub-reference links.
+
+            If ``True``, links held by the requirement sub-references will be included in the result.
+
+            ``False`` by default.
+
+            .. tip::
+                The links held by the main part only of the requirement
+                can also be retrieved through the :attr:`._reqref.ReqRef.req_links` member of the :attr:`main_ref`.
+        :param walk_steps:
+            When ``req_tracker`` is a scenario,
+            ``True`` makes the link match if it comes from a step of the scenario.
+        :return:
+            Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
+        """
+        from ._reqlink import ReqLink
+
+        # Compute requirement references depending on `sub_ref_links`.
+        _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
+        if walk_sub_refs:
+            _req_refs.extend(self.sub_refs)
+
+        # Walk through requirement references.
+        _req_links = []  # type: typing.List[_ReqLinkType]
+        for _req_ref in _req_refs:  # type: _ReqRefType
+            # Filter links with the requirement predicates.
+            _req_links.extend(filter(
+                lambda req_link: req_link.matches(req_tracker=req_tracker, walk_steps=walk_steps),
+                _req_ref.req_links,
+            ))
+
+        return ReqLink.orderedset(_req_links)
+
     def gettrackers(
             self,
             *,
@@ -220,56 +270,6 @@ class Req:
             # Get scenarios from each link.
             lambda req_link: map(ReqTrackerHelper.getscenario, req_link.req_trackers),
         )
-
-    def getreqlinks(
-            self,
-            req_tracker=None,  # type: _ReqTrackerType
-            *,
-            walk_sub_refs=False,  # type: bool
-            walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
-        """
-        Requirement links attached with this requirement,
-        filtered with the given predicates.
-
-        :param req_tracker:
-            Requirement tracker predicate to search links for.
-
-            Optional.
-            All requirement links when ``None``.
-        :param walk_sub_refs:
-            Option to include requirement sub-reference links.
-
-            If ``True``, links held by the requirement sub-references will be included in the result.
-
-            ``False`` by default.
-
-            .. tip::
-                The links held by the main part only of the requirement
-                can also be retrieved through the :attr:`._reqref.ReqRef.req_links` member of the :attr:`main_ref`.
-        :param walk_steps:
-            When ``req_tracker`` is a scenario,
-            ``True`` makes the link match if it comes from a step of the scenario.
-        :return:
-            Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
-        """
-        from ._reqlink import ReqLink
-
-        # Compute requirement references depending on `sub_ref_links`.
-        _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
-        if walk_sub_refs:
-            _req_refs.extend(self.sub_refs)
-
-        # Walk through requirement references.
-        _req_links = []  # type: typing.List[_ReqLinkType]
-        for _req_ref in _req_refs:  # type: _ReqRefType
-            # Filter links with the requirement predicates.
-            _req_links.extend(filter(
-                lambda req_link: req_link.matches(req_tracker=req_tracker, walk_steps=walk_steps),
-                _req_ref.req_links,
-            ))
-
-        return ReqLink.orderedset(_req_links)
 
 
 class ReqHelper(abc.ABC):

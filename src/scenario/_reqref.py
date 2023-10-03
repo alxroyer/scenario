@@ -197,6 +197,37 @@ class ReqRef:
         else:
             raise TypeError(f"Can't compare {self!r} with {other!r}")
 
+    def getreqlinks(
+            self,
+            req_tracker=None,  # type: _ReqTrackerType
+            *,
+            walk_steps=False,  # type: bool
+    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+        """
+        Requirement links attached with this requirement reference,
+        filtered with the given predicates.
+
+        :param req_tracker:
+            Requirement tracker predicate to search links for.
+
+            Optional.
+            All requirement links when ``None``.
+        :param walk_steps:
+            When ``req_tracker`` is a scenario,
+            ``True`` makes the link match if it comes from a step of the scenario.
+        :return:
+            Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
+        """
+        from ._reqlink import ReqLink
+
+        return ReqLink.orderedset(
+            # Filter links with the requirement predicates.
+            filter(
+                lambda req_link: req_link.matches(req_tracker=req_tracker, walk_steps=walk_steps),
+                self._req_links,
+            ),
+        )
+
     def gettrackers(self):  # type: (...) -> _SetWithReqLinksType[_ReqTrackerType]
         """
         Returns all trackers linked directly with this requirement reference.
@@ -231,37 +262,6 @@ class ReqRef:
             [self],
             # Get scenarios from each link.
             lambda req_link: map(ReqTrackerHelper.getscenario, req_link.req_trackers),
-        )
-
-    def getreqlinks(
-            self,
-            req_tracker=None,  # type: _ReqTrackerType
-            *,
-            walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
-        """
-        Requirement links attached with this requirement reference,
-        filtered with the given predicates.
-
-        :param req_tracker:
-            Requirement tracker predicate to search links for.
-
-            Optional.
-            All requirement links when ``None``.
-        :param walk_steps:
-            When ``req_tracker`` is a scenario,
-            ``True`` makes the link match if it comes from a step of the scenario.
-        :return:
-            Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
-        """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(
-            # Filter links with the requirement predicates.
-            filter(
-                lambda req_link: req_link.matches(req_tracker=req_tracker, walk_steps=walk_steps),
-                self._req_links,
-            ),
         )
 
 

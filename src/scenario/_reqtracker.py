@@ -143,45 +143,6 @@ class ReqTracker(abc.ABC):
         assert _first_link is not None, "Internal error"
         return _first_link
 
-    def getreqs(
-            self,
-    ):  # type: (...) -> _SetWithReqLinksType[_ReqType]
-        """
-        Requirements tracked by this tracker, with related links.
-
-        :return:
-            Requirements tracked by this tracker,
-            either directly or through a sub-reference of it,
-            with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
-        """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
-            # Walk requirement links from the current requirement tracker.
-            [self],
-            # Get the requirement for each link.
-            lambda req_link: [req_link.req],
-        )
-
-    def getreqrefs(
-            self,
-    ):  # type: (...) -> _SetWithReqLinksType[_ReqRefType]
-        """
-        Requirement references tracked by this tracker, with related links.
-
-        :return:
-            Requirement references tracked by this tracker,
-            with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
-        """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
-            # Walk requirement links from the current requirement tracker.
-            [self],
-            # Get the requirement reference for each link.
-            lambda req_link: [req_link.req_ref],
-        )
-
     def getreqlinks(
             self,
             req_ref=None,  # type: _AnyReqRefType
@@ -211,6 +172,45 @@ class ReqTracker(abc.ABC):
                 lambda req_link: req_link.matches(req_ref=req_ref, walk_sub_refs=walk_sub_refs),
                 self._req_links,
             ),
+        )
+
+    def getreqrefs(
+            self,
+    ):  # type: (...) -> _SetWithReqLinksType[_ReqRefType]
+        """
+        Requirement references tracked by this tracker, with related links.
+
+        :return:
+            Requirement references tracked by this tracker,
+            with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
+        """
+        from ._reqlink import ReqLinkHelper
+
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Walk requirement links from the current requirement tracker.
+            [self],
+            # Get the requirement reference for each link.
+            lambda req_link: [req_link.req_ref],
+        )
+
+    def getreqs(
+            self,
+    ):  # type: (...) -> _SetWithReqLinksType[_ReqType]
+        """
+        Requirements tracked by this tracker, with related links.
+
+        :return:
+            Requirements tracked by this tracker,
+            either directly or through a sub-reference of it,
+            with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
+        """
+        from ._reqlink import ReqLinkHelper
+
+        return ReqLinkHelper.buildsetwithreqlinks(
+            # Walk requirement links from the current requirement tracker.
+            [self],
+            # Get the requirement for each link.
+            lambda req_link: [req_link.req],
         )
 
 
