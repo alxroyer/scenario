@@ -169,54 +169,60 @@ class ReqLink:
             Optional requirement reference predicate.
         :param walk_sub_refs:
             When ``req_ref`` is a main requirement,
-            ``True`` makes the requirement link match if it tracks a sub-reference of the requirement.
+            ``True`` makes the link match if it tracks a sub-reference of the requirement.
+
+            Or when ``req_ref`` is a requirement sub-reference,
+            ``True`` makes the link match if it tracks the main requirement of ``req_ref``.
+
+            Ignored when ``req_ref`` is not set.
         :param req_tracker:
             Optional requirement tracker predicate.
         :param walk_steps:
             When ``req_tracker`` is a scenario,
             ``True`` makes the link match if it comes from a step of the scenario.
+
+            Or when ``req_tracker`` is a step,
+            ``True`` makes the link match of it comes from the owner scenario.
+
+            Ignored when ``req_tracker`` is not set.
         :return:
             ``True`` in case of a match, ``False`` otherwise.
 
-            ``True`` when the ``req_ref`` predicate is ``None``.
+            ``True`` by default when no predicates are set.
         """
         from ._reqdb import REQ_DB
         from ._scenariodefinition import ScenarioDefinition
         from ._stepdefinition import StepDefinition
 
-        # Requirement reference predicate.
+        # Requirement reference predicates.
         if req_ref is not None:
             req_ref = REQ_DB.getreqref(req_ref)
             if not self.req_ref.matches(req_ref):
                 # Requirement reference mismatch.
-                if (not walk_sub_refs) or req_ref.subs:
-                    # No sub-reference to walk through.
+                if not walk_sub_refs:
                     return False
-                else:
-                    # Walk through requirement sub-references.
-                    for _sub_ref in req_ref.req.sub_refs:  # type: _ReqRefType
-                        if self.req_ref.matches(_sub_ref):
-                            # Match with a sub-reference of the requirement.
-                            break
-                    else:
-                        # No sub-reference matches neither.
+                elif not req_ref.subs:
+                    # Main requirement reference => walk through sub-references.
+                    if not any([self.req_ref.matches(_sub_ref) for _sub_ref in req_ref.req.sub_refs]):
+                        return False
+                elif req_ref.subs:
+                    # Sub-reference => check the related main requirement.
+                    if not self.req_ref.matches(req_ref.req):
                         return False
 
-        # Requirement tracker predicate.
+        # Requirement tracker predicates.
         if req_tracker is not None:
             if req_tracker not in self._req_trackers:
                 # Requirement tracker mismatch.
-                if (not walk_steps) or (not isinstance(req_tracker, ScenarioDefinition)):
-                    # No steps to walk through.
+                if not walk_steps:
                     return False
-                else:
-                    # Walk through scenario steps.
-                    for _step in req_tracker.steps:  # type: StepDefinition
-                        if _step in self._req_trackers:
-                            # Match with a step of the scenario.
-                            break
-                    else:
-                        # No step matches neither.
+                elif isinstance(req_tracker, ScenarioDefinition):
+                    # Scenario => walk through steps.
+                    if not any([(_step in self._req_trackers) for _step in req_tracker.steps]):
+                        return False
+                elif isinstance(req_tracker, StepDefinition):
+                    # Step => check owner scenario.
+                    if req_tracker.scenario not in self._req_trackers:
                         return False
 
         # All predicates passed.
