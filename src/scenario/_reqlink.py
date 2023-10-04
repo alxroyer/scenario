@@ -26,10 +26,10 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
+    from ._reqtypes import ReqLinkDefType as _ReqLinkDefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
     from ._setutils import OrderedSetType as _OrderedSetType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
     from ._typingutils import VarItemType as _VarItemType
 
 
@@ -60,29 +60,38 @@ class ReqLink:
 
     def __init__(
             self,
-            req_ref,  # type: _AnyReqRefType
-            comments=None,  # type: _AnyLongTextType
+            req_link_def,  # type: _ReqLinkDefType
     ):  # type: (...) -> None
         """
         Initializes a requirement / test coverage link,
         possibly on a subitem of the requirement,
         and with optional justification comments.
 
-        :param req_ref: Tracked requirement reference.
-        :param comments: Optional justification comments.
+        :param req_link_def: Requirement link definition.
         """
         from ._textutils import anylongtext2str
 
         #: Tracked requirement reference.
         #:
         #: Unresolved input data for the :meth:`req_ref()` property.
-        self._any_req_ref = req_ref  # type: _AnyReqRefType
-        #: Unordered attached requirement trackers.
-        self._req_trackers = set()  # type: typing.Set[_ReqTrackerType]
+        self._any_req_ref = ""  # type: _AnyReqRefType
         #: Justification comments.
         self.comments = ""  # type: str
-        if comments:
-            self.comments = anylongtext2str(comments)
+        #: Unordered attached requirement trackers.
+        self._req_trackers = set()  # type: typing.Set[_ReqTrackerType]
+
+        # Analyze the requirement link definition.
+        if isinstance(req_link_def, tuple):
+            # 1st member of the tuple is a requirement reference.
+            self._any_req_ref = req_link_def[0]
+            # 2nd member is optional comments.
+            if len(req_link_def) > 1:
+                self.comments = anylongtext2str(
+                    req_link_def[1],  # type: ignore[misc]  ## Tuple index out of range (mypy@1.0.1 bug?)
+                )
+        else:
+            # If not a tuple, `req_link_def` is just a requirement reference.
+            self._any_req_ref = req_link_def
 
     def __repr__(self):  # type: () -> str
         """
@@ -215,15 +224,13 @@ class ReqLink:
 
     def coveredby(
             self,
-            first,  # type: _VarReqTrackerType
-            *others,  # type: _ReqTrackerType
-    ):  # type: (...) -> _VarReqTrackerType
+            req_tracker,  # type: _VarReqTrackerType
+    ):  # type: (...) -> ReqLink
         """
-        Attaches requirement trackers with this link.
+        Attaches a requirement tracker with this link.
 
-        :param first: First requirement tracker at least.
-        :param others: More requirement trackers.
-        :return: First requirement tracker.
+        :param req_tracker: Requirement tracker to attach.
+        :return: ``self``
         """
         from ._reqdb import REQ_DB
 
@@ -235,21 +242,18 @@ class ReqLink:
         if self not in self.req_ref.req_links:
             self.req_ref._req_links.add(self)  # noqa  ## Access to protected member.
 
-        # Try to save requirement tracker references with this link.
-        _first = first  # type: _ReqTrackerType  # Ensure `first` is of type `_ReqTrackerType` (and not `_VarReqTrackerType`).
-        for _req_tracker in [_first, *others]:  # type: _ReqTrackerType
-            if _req_tracker not in self.req_trackers:
-                # New tracker reference.
-                self._req_trackers.add(_req_tracker)
+        # Try to save the requirement tracker reference with this link.
+        if req_tracker not in self.req_trackers:
+            # New tracker reference.
+            self._req_trackers.add(req_tracker)
 
-                # Debug the downstream requirement link.
-                REQ_DB.debug("Requirement link: %s -> %r", self.req_ref.id, _req_tracker)
+            # Debug the downstream requirement link.
+            REQ_DB.debug("Requirement link: %s -> %r", self.req_ref.id, req_tracker)
 
-                # Link <-> tracker cross-reference.
-                _req_tracker.covers(self)
+            # Link <-> tracker cross-reference.
+            req_tracker.covers(self)
 
-        # Return the first step of the list.
-        return first
+        return self
 
 
 class ReqLinkHelper(abc.ABC):

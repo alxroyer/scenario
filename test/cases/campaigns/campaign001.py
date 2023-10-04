@@ -40,21 +40,21 @@ class Campaign001(scenario.test.TestCase):
             ),
         )
         self.covers(
-            scenario.ReqLink(scenario.test.reqs.CAMPAIGNS, comments="Single test suite"),
-            scenario.ReqLink(scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION, comments="Campaign final results"),
-            scenario.ReqLink(scenario.test.reqs.SCENARIO_LOGGING, comments="Scenario log files gathered with campaign reports"),
-            scenario.ReqLink(scenario.test.reqs.LOGGING_FILE, comments="Scenario log files gathered with campaign reports"),
-            scenario.ReqLink(scenario.test.reqs.SCENARIO_REPORT, comments="Scenario reports gathered with campaign reports"),
-            scenario.ReqLink(scenario.test.reqs.STATISTICS, comments="Statistics by scenario, integrated for the campaign"),
-            scenario.ReqLink(scenario.test.reqs.REQUIREMENT_MANAGEMENT, comments="Requirements in campaign reports"),
+            (scenario.test.reqs.CAMPAIGNS, "Single test suite"),
+            (scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION, "Campaign final results"),
+            (scenario.test.reqs.SCENARIO_LOGGING, "Scenario log files gathered with campaign reports"),
+            (scenario.test.reqs.LOGGING_FILE, "Scenario log files gathered with campaign reports"),
+            (scenario.test.reqs.SCENARIO_REPORT, "Scenario reports gathered with campaign reports"),
+            (scenario.test.reqs.STATISTICS, "Statistics by scenario, integrated for the campaign"),
+            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirements in campaign reports"),
             # Note:
             #  TEST_DATA_TEST_SUITE embeds FAILING_SCENARIO,
             #  which makes this test cover ERROR_HANDLING.
-            scenario.ReqLink(scenario.test.reqs.ERROR_HANDLING, comments="A scenario error is tracked and does not break the campaign"),
+            (scenario.test.reqs.ERROR_HANDLING, "A scenario error is tracked and does not break the campaign"),
             # Note:
             #  TEST_DATA_TEST_SUITE embeds KNOWN_ISSUE_DETAILS_SCENARIO and KNOWN_ISSUES_SCENARIO,
             #  which makes this test cover KNOWN_ISSUES.
-            scenario.ReqLink(scenario.test.reqs.KNOWN_ISSUES, comments="Known issues reported from scenario to campaign reports"),
+            (scenario.test.reqs.KNOWN_ISSUES, "Known issues reported from scenario to campaign reports")
         )
         self.checkstepreqcoverage(True)
 
@@ -73,30 +73,23 @@ class Campaign001(scenario.test.TestCase):
 
         # Verifications.
         self.addstep(CheckCampaignLogExpectations(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            # Campaign log...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
-            # with errors and known issues.
-            self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
-            self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
+            (scenario.test.reqs.CAMPAIGNS_LOGGING, "Main campaign logging"),
+            (scenario.test.reqs.ERROR_HANDLING, "Scenario errors logged with main campaign logging"),
+            (scenario.test.reqs.KNOWN_ISSUES, "Known issues logged with main campaign logging"),
         )
         self.addstep(ParseFinalResultsLog(ExecCampaign.getinstance()))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(), _campaign_expectations.all_test_case_expectations)).covers(
-            # Campaign final results...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
-            # with statistics, errors and known issues.
-            self.getreqlinks(scenario.test.reqs.STATISTICS),
-            self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
-            self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
+            (scenario.test.reqs.CAMPAIGNS_LOGGING, "Campaign final results"),
+            (scenario.test.reqs.STATISTICS, "Statistics logged with campaign final results"),
+            (scenario.test.reqs.ERROR_HANDLING, "Scenario errors logged with campaign final results"),
+            (scenario.test.reqs.KNOWN_ISSUES, "Known issues logged with campaign final results"),
         )
 
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            # Campaign outputs...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_LOGGING),
-            # with requirements...
-            self.getreqlinks(scenario.test.reqs.REQUIREMENT_MANAGEMENT),
-            # and log and scenario report files.
-            self.getreqlinks(scenario.test.reqs.LOGGING_FILE),
-            self.getreqlinks(scenario.test.reqs.SCENARIO_REPORT),
+            (scenario.test.reqs.CAMPAIGNS_LOGGING, "Campaign output files"),
+            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirements saved with campaign output files"),
+            (scenario.test.reqs.LOGGING_FILE, "Scenario logging saved with campaign output files"),
+            (scenario.test.reqs.SCENARIO_REPORT, "Scenario reports saved with campaign output files"),
         )
         self.knownissue(
             level=scenario.test.IssueLevel.TEST, id="#83",
@@ -112,22 +105,19 @@ class Campaign001(scenario.test.TestCase):
         #     self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
         # )
         self.addstep(CheckCampaignJsonReports(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            # Content of scenario reports...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_REPORTS),
-            self.getreqlinks(scenario.test.reqs.SCENARIO_REPORT),
-            # with statistics, errors and known issues.
-            self.getreqlinks(scenario.test.reqs.STATISTICS),
-            self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
-            self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
+            (scenario.test.reqs.CAMPAIGNS_REPORTS, "Scenario report content in campaign output files"),
+            (scenario.test.reqs.SCENARIO_REPORT, "Scenario report content in campaign output files"),
+            (scenario.test.reqs.STATISTICS, "Statistics saved in scenario reports in campaign output files"),
+            (scenario.test.reqs.ERROR_HANDLING, "Scenario errors saved in scenario reports in campaign output files"),
+            (scenario.test.reqs.KNOWN_ISSUES, "Known issues saved in scenario reports in campaign output files"),
         )
         self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            # Campaign report...
-            self.getreqlinks(scenario.test.reqs.CAMPAIGNS_REPORTS),
-            # with statistics, errors and known issues.
-            self.getreqlinks(scenario.test.reqs.STATISTICS),
-            self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
-            self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
+            (scenario.test.reqs.CAMPAIGNS_REPORTS, "Campaign report content"),
+            (scenario.test.reqs.STATISTICS, "Statistics saved in campaign report content"),
+            (scenario.test.reqs.ERROR_HANDLING, "Scenario errors saved in campaign report content"),
+            (scenario.test.reqs.KNOWN_ISSUES, "Known issues saved in campaign report content"),
         )
         self.addstep(CheckCampaignReqdbFile(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            self.getreqlinks(scenario.test.reqs.REQUIREMENT_MANAGEMENT)
+            (scenario.test.reqs.CAMPAIGNS_REPORTS, "Requirement file content in campaign output files"),
+            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirement file content in campaign output files"),
         )

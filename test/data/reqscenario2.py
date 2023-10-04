@@ -31,11 +31,13 @@ class ReqScenario2(scenario.Scenario):
             self,
             title="Requirement scenario 2",
         )
-        self.covers(scenario.ReqLink("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2"))
-        self.covers("REQ-002")
+        self.covers(
+            ("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2"),
+            ("REQ-002", ),  # No justification for REQ-002.
+        )
 
         self.addstep(TextStep(description="Foo", actions="Bar", results="Baz")).covers(
-            scenario.ReqLink("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2:step#1"),
+            ("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2:step#1"),
         )
 
 

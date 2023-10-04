@@ -426,7 +426,8 @@ class ScenarioReport(_LoggerImpl):
         """
         from ._reqdb import REQ_DB
         from ._reqref import ReqRef
-        from ._reqlink import ReqLink
+        if typing.TYPE_CHECKING:
+            from ._reqtypes import ReqLinkDefType
 
         # Memo: No 'reqs' until feature #83 has been developped.
         if "reqs" in json_req_tracker:
@@ -442,11 +443,11 @@ class ScenarioReport(_LoggerImpl):
                         self.warning(f"Unknown requirement reference {_req_ref_id!r}")
                         continue
 
-                _comments = None  # type: typing.Optional[str]
+                _req_link_def = _req_ref  # type: ReqLinkDefType
                 if "comments" in _json_req_link:
-                    _comments = str(_json_req_link["comments"])
+                    _req_link_def = (_req_ref, str(_json_req_link["comments"]))
 
-                req_tracker.covers(ReqLink(_req_ref, comments=_comments))
+                req_tracker.covers(_req_link_def)
 
     def _actionresult2json(
             self,

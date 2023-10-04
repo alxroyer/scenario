@@ -31,8 +31,8 @@ class ScenarioLogging010(scenario.test.TestCase):
         self.covers(
             # Main features:
             scenario.test.reqs.SCENARIO_LOGGING,
-            # Check attributes are displayed with scenario logging.
-            scenario.test.reqs.ATTRIBUTES,
+            # Additional coverage:
+            (scenario.test.reqs.ATTRIBUTES, "Attribute display with scenario logging"),
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO))

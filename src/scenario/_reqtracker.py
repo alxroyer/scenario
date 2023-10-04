@@ -90,58 +90,40 @@ class ReqTracker(abc.ABC):
         return ReqLink.orderedset(self._req_links)
 
     def covers(
-            self,
-            first,  # type: typing.Union[_AnyReqLinkType, _OrderedSetType[_ReqLinkType]]
-            *others,  # type: typing.Union[_AnyReqLinkType, _OrderedSetType[_ReqLinkType]]
-    ):  # type: (...) -> _ReqLinkType
+            self,  # type: _VarReqTrackerType
+            first,  # type: _AnyReqLinkType
+            *others,  # type: _AnyReqLinkType
+    ):  # type: (...) -> _VarReqTrackerType
         """
         Declares requirement coverage from this tracker object.
 
         :param first:
             First requirement link declared.
-
-            May be fed with the result of :meth:`getreqlinks()`.
         :param others:
             More requirement links.
-
-            May be fed with the result of :meth:`getreqlinks()` as well.
         :return:
-            First requirement link.
+            ``self``
         """
         from ._reqdb import REQ_DB
         from ._reqlink import ReqLink
 
-        # Will store the first link encountered in `first`.
-        _first_link = None  # type: typing.Optional[ReqLink]
-
         # Try to save each link.
-        for _req_links in [first, *others]:  # type: typing.Union[_AnyReqLinkType, _OrderedSetType[_ReqLinkType]]
-            # Ensure we consider a set of links for the second loop below.
-            if (not hasattr(_req_links, "__iter__")) or isinstance(_req_links, str):
-                _req_links = [_req_links if isinstance(_req_links, ReqLink) else ReqLink(_req_links)]
+        for _req_link in [first, *others]:  # type: _AnyReqLinkType
+            # Ensure we have a `ReqLink` object.
+            if not isinstance(_req_link, ReqLink):
+                _req_link = ReqLink(_req_link)
 
-            for _req_link in _req_links:  # type: _AnyReqLinkType
-                # Ensure we have a `ReqLink` object.
-                if not isinstance(_req_link, ReqLink):
-                    _req_link = ReqLink(_req_link)
+            if _req_link not in self._req_links:
+                # New link.
+                self._req_links.add(_req_link)
 
-                # Save the first link.
-                if _first_link is None:
-                    _first_link = _req_link
+                # Link <-> tracker cross-reference.
+                _req_link.coveredby(self)
 
-                if _req_link not in self._req_links:
-                    # New link.
-                    self._req_links.add(_req_link)
+                # Let's debug the upstream requirement link after.
+                REQ_DB.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
 
-                    # Link <-> tracker cross-reference.
-                    _req_link.coveredby(self)
-
-                    # Let's debug the upstream requirement link after.
-                    REQ_DB.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
-
-        # Return the first link in the end.
-        assert _first_link is not None, "Internal error"
-        return _first_link
+        return self
 
     def getreqlinks(
             self,

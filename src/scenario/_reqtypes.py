@@ -28,16 +28,26 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._setutils import OrderedSetType as _OrderedSetType
+    from ._textutils import AnyLongTextType as _AnyLongTextType
     from ._typingutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:
-    #: Any kind of requirement type, either:
+    #: Requirement definition type.
     #:
-    #: - a requirement identifier (string),
+    #: Only requirement identifiers, as strings.
+    ReqDefType = typing.Union[
+        str,
+    ]
+
+    #: Any kind of requirement type:
+    #:
+    #: Either:
+    #:
+    #: - a :obj:`ReqDefType` definition.
     #: - a :class:`._req.Req` instance.
     AnyReqType = typing.Union[
-        str,
+        ReqDefType,
         _ReqType,
     ]
 
@@ -48,24 +58,47 @@ if typing.TYPE_CHECKING:
     #: - or :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition` subclasses.
     VarReqTrackerType = typing.TypeVar("VarReqTrackerType", bound=_ReqTrackerType)
 
-    #: Any kind of requirement reference type, either:
+    #: Requirement reference definition type.
+    #:
+    #: Either:
     #:
     #: - a requirement identifier (string),
     #: - a requirement reference identifier (string as well),
     #: - a :class:`._req.Req` instance,
-    #: - a :class:`._reqref.ReqRef` instance.
-    AnyReqRefType = typing.Union[
+    ReqRefDefType = typing.Union[
         str,
         _ReqType,
+    ]
+
+    #: Any kind of requirement reference type.
+    #:
+    #: Either:
+    #:
+    #: - a :obj:`ReqRefDefType` definition,
+    #: - a :class:`._reqref.ReqRef` instance.
+    AnyReqRefType = typing.Union[
+        ReqRefDefType,
         _ReqRefType,
+    ]
+
+    #: Requirement link definition.
+    #:
+    #: Either:
+    #:
+    #: - a requirement reference (see :obj:`AnyReqRefType`),
+    #: - a tuple of requirement reference with optional comments.
+    ReqLinkDefType = typing.Union[
+        AnyReqRefType,
+        typing.Tuple[AnyReqRefType],
+        typing.Tuple[AnyReqRefType, _AnyLongTextType],
     ]
 
     #: Any kind of requirement link, either:
     #:
-    #: - a requirement reference,
+    #: - a :obj:`ReqLinkDefType` definition,
     #: - a full :class:`._reqlink.ReqLink` instance.
     AnyReqLinkType = typing.Union[
-        AnyReqRefType,
+        ReqLinkDefType,
         _ReqLinkType,
     ]
 

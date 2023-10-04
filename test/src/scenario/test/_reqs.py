@@ -229,8 +229,10 @@ CAMPAIGNS = scenario.Req(
         A campaign is the execution of a set of test suites, each being a set of test cases, i.e. scenarios.
         Whether the tests succeed or fail, the campaign keeps going on.
 
-        Test results (see SCENARIO_LOGGING and SCENARIO_REPORT files) are stored in the output directory.
-        A JUnit XML campaign report is also saved in the output directory.
+        An output directory is fed with the following files:
+        - test results: log files and reports (see SCENARIO_LOGGING and SCENARIO_REPORT files),
+        - a requirement file, if requirements are involved (see REQUIREMENT_MANAGEMENT),
+        - a JUnit XML campaign report.
 
         The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).
     """,
@@ -271,7 +273,7 @@ REQUIREMENT_MANAGEMENT = scenario.Req(
         The scenario framework provides a way to generate requirement coverage reports:
 
         - either from test suite files,
-        - or from campaign execution results.
+        - or from campaign execution results (see CAMPAIGNS).
 
         For a given scenario, a consolidation may be done between:
 

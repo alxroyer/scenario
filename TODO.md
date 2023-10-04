@@ -18,11 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Make `ReqTracker.covers()` take no `_OrderedSetType[_ReqLinkType]`.
-      Add a `ReqTracker.getreqlink()` method that return a single `ReqLink` instance.
-    - Simplify `self.DESC()`, `self.ACTION()`, `self.RESULT()`, `scenario.REQ()` calls?
-    - Add an option to load requirements from a JSON file.
-        - Test 'reqdb.json' results depending on this option.
     - Add a 'check-test-coverage.py' tool that displays requirement test coverage.
         - Shall work either on test suite files, or campaign results.
     - Add the ability to make the test check that its scenario links are detailed by step links.

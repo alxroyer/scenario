@@ -32,7 +32,7 @@ class Campaign006(scenario.test.TestCase):
         )
         self.covers(
             scenario.test.reqs.CAMPAIGNS,
-            scenario.ReqLink(scenario.test.reqs.REQUIREMENT_MANAGEMENT, comments="Requirement output file management with campaigns"),
+            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirement output file management with campaigns"),
         )
 
         self.section("Tests without requirements, no input requirement file")

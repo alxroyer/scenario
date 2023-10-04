@@ -32,8 +32,8 @@ class ScenarioLogging011(scenario.test.TestCase):
             # Main features:
             scenario.test.reqs.SCENARIO_LOGGING,
             scenario.test.reqs.DOC_ONLY,
-            # Check attributes are displayed with scenario logging in *doc-only*:
-            scenario.test.reqs.ATTRIBUTES,
+            # Additional coverage:
+            (scenario.test.reqs.ATTRIBUTES, "Attribute display in scenario logging --doc-only"),
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, doc_only=True))

@@ -29,8 +29,8 @@ class Campaign005(scenario.test.TestCase):
             description="Check extra info display with campaign results.",
         )
         self.covers(
-            scenario.test.reqs.CAMPAIGNS,
-            scenario.ReqLink(scenario.test.reqs.ATTRIBUTES, comments="Display with campaign final results"),
+            (scenario.test.reqs.CAMPAIGNS, ),
+            (scenario.test.reqs.ATTRIBUTES, "Display with campaign final results"),
         )
 
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
