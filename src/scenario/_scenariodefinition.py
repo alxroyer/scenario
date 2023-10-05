@@ -251,8 +251,8 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         #: .. seealso:: :class:`._scenarioattributes.CoreScenarioAttributes` for core scenario attributes.
         self.__user_attributes = {}  # type: typing.Dict[str, typing.Any]
 
-        #: Check step requirement coverage option.
-        self.__check_step_req_coverage = None  # type: typing.Optional[bool]
+        #: Expect step requirement refinement local configuration.
+        self.__expect_step_req_refinement = None  # type: typing.Optional[bool]
 
         #: List of steps that define the scenario.
         self.__step_definitions = []  # type: typing.List[_StepDefinitionType]
@@ -449,39 +449,39 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             ),
         )
 
-    def checkstepreqcoverage(
+    def expectstepreqrefinement(
             self,  # type: VarScenarioDefinitionType
-            check_step_req_coverage,  # type: typing.Optional[bool]
+            expect_step_req_refinement,  # type: typing.Optional[bool]
     ):  # type: (...) -> VarScenarioDefinitionType
         """
         Sets the local configuration for this scenario be supposed to refine its requirement coverage on steps.
 
-        .. note:: Overrides the :meth:`._scenarioconfig.ScenarioConfig.checkstepreqcoverage()` global configuration.
+        .. note:: Overrides the :meth:`._scenarioconfig.ScenarioConfig.expectstepreqrefinement()` global configuration.
 
-        :param check_step_req_coverage:
+        :param expect_step_req_refinement:
             New `check step requirement coverage` local configuration.
 
-            ``None`` to rely on the :meth:`._scenarioconfig.ScenarioConfig.checkstepreqcoverage()` global configuration again.
+            ``None`` to rely on the :meth:`._scenarioconfig.ScenarioConfig.expectstepreqrefinement()` global configuration again.
         :return:
             ``self``
         """
-        self.__check_step_req_coverage = check_step_req_coverage
+        self.__expect_step_req_refinement = expect_step_req_refinement
         return self
 
     @property
-    def check_step_req_coverage(self):  # type: () -> bool
+    def expect_step_req_refinement(self):  # type: () -> bool
         """
         Tells whether the requirements verified by this scenario should be refined on steps.
 
-        Takes the local configuration at first,
-        then the :meth:`._scenarioconfig.ScenarioConfig.checkstepreqcoverage()` global configuration.
+        Takes the local configuration set with :meth:`expectstepreqrefinement()` at first,
+        then the :meth:`._scenarioconfig.ScenarioConfig.expectstepreqrefinement()` global configuration.
         """
         from ._scenarioconfig import SCENARIO_CONFIG
 
-        if self.__check_step_req_coverage is not None:
-            return self.__check_step_req_coverage
+        if self.__expect_step_req_refinement is not None:
+            return self.__expect_step_req_refinement
         else:
-            return SCENARIO_CONFIG.checkstepreqcoverage()
+            return SCENARIO_CONFIG.expectstepreqrefinement()
 
     def section(
             self,

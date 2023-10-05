@@ -305,6 +305,14 @@ The following table describes the `scenario` configurable keys & values.
         Applicable when running tests and campaigns.
       - Not set
 
+    * - .. _config-db.scenario.expect_step_req_refinement:
+
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.EXPECT_STEP_REQ_REFINEMENT`
+      - ``scenario.expect_step_req_refinement``
+      - Boolean
+      - Should the scenario requirement coverage be refined on steps?
+      - Not set
+
     * - .. _config-db.scenario.expected_scenario_attributes:
 
         :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.EXPECTED_SCENARIO_ATTRIBUTES`

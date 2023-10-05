@@ -56,7 +56,7 @@ class Campaign001(scenario.test.TestCase):
             #  which makes this test cover KNOWN_ISSUES.
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues reported from scenario to campaign reports")
         )
-        self.checkstepreqcoverage(True)
+        self.expectstepreqrefinement(True)
 
         # Campaign execution.
         self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE]))
