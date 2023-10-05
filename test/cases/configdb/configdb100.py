@@ -29,7 +29,7 @@ class ConfigDb100(scenario.test.TestCase):
             title="Load INI configuration file",
             description="Check that a INI configuration file can be loaded.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

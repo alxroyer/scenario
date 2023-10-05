@@ -28,7 +28,7 @@ class JsonReport041(scenario.test.TestCase):
             title="JSON report subscenario --doc-only",
             description="Check the JSON report is generated as expected for a super scenario executing a subscenario with the --doc-only option set.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,
             scenario.test.reqs.SUBSCENARIOS,
             scenario.test.reqs.DOC_ONLY,

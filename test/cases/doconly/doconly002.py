@@ -28,7 +28,7 @@ class DocOnly002(scenario.test.TestCase):
             title="--doc-only JSON report",
             description="Check the JSON report for a --doc-only execution.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.DOC_ONLY,
             scenario.test.reqs.SCENARIO_REPORT,
         )

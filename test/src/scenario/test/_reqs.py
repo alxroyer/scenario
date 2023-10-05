@@ -237,8 +237,8 @@ CAMPAIGNS = scenario.Req(
         The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).
     """,
 )  # type: scenario.Req
-CAMPAIGNS_LOGGING = CAMPAIGNS / "logging"  # type: scenario.ReqRef
-CAMPAIGNS_REPORTS = CAMPAIGNS / "reports"  # type: scenario.ReqRef
+CAMPAIGN_LOGGING = CAMPAIGNS / "logging"  # type: scenario.ReqRef
+CAMPAIGN_REPORTS = CAMPAIGNS / "reports"  # type: scenario.ReqRef
 
 ATTRIBUTES = scenario.Req(
     id="ATTRIBUTES",
@@ -263,10 +263,10 @@ REQUIREMENT_MANAGEMENT = scenario.Req(
     text="""
         The scenario framework provides a way to track requirements, and cover them by tests with justification.
 
-        Requirements may be tracked at different levels:
+        Requirements may be traced at different levels:
 
-        - On the requirement side: requirements may be tracked entirely, or just parts of them.
-        - On the test side: the requirement item may be tracked either by test scenarios and/or steps.
+        - On the requirement side: requirements may be traced entirely, or just parts of them.
+        - On the test side: the requirement item may be traced either by test scenarios and/or steps.
 
         These associations define requirement links which may be commented with textual justifications.
 

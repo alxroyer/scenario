@@ -30,7 +30,7 @@ class Issue003(scenario.test.TestCase):
                 "especially in JSON reports."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SCENARIO_EXECUTION,
             scenario.test.reqs.SCENARIO_LOGGING,
             scenario.test.reqs.SCENARIO_REPORT,

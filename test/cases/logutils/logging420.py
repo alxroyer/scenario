@@ -30,7 +30,7 @@ class Logging420(scenario.test.TestCase):
             title="Additional user indentation",
             description="Check that the user test can add and remove extra indentation.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.LOGGING,
         )
 

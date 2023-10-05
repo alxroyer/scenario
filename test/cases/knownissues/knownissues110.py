@@ -35,7 +35,7 @@ class KnownIssues110(scenario.test.TestCase):
                 "Check the way things are logged in the console and saved in scenario reports."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.ERROR_HANDLING,
             scenario.test.reqs.SCENARIO_LOGGING,

@@ -31,6 +31,6 @@ class ReqScenario1(scenario.Scenario):
             self,
             title="Requirement scenario 1",
         )
-        self.covers(
+        self.verifies(
             "REQ-001",
         )

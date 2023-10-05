@@ -38,7 +38,7 @@ class ConfigDb030(scenario.test.TestCase):
             title="Configuration value types and conversions",
             description="Check the way configuration values are converted at use.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

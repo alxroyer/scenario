@@ -39,7 +39,7 @@ class KnownIssues180(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):
                 "WARNINGS and FAIL tests being sorted by ascending issue levels each."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )

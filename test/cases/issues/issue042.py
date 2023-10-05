@@ -27,7 +27,7 @@ class Issue42(scenario.test.TestCase):
             title="Issue #42! Bad known issue display on multiple test execution",
             description="Check that known issues are correctly displayed when several tests are executed in a single command line.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )

@@ -24,11 +24,11 @@ import typing
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqref import ReqRef as _ReqRefType
-    from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import ReqLinkDefType as _ReqLinkDefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
-    from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
+    from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
+    from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._setutils import OrderedSetType as _OrderedSetType
     from ._typingutils import VarItemType as _VarItemType
 
@@ -71,14 +71,14 @@ class ReqLink:
         """
         from ._textutils import anylongtext2str
 
-        #: Tracked requirement reference.
+        #: Verified requirement reference.
         #:
         #: Unresolved input data for the :meth:`req_ref()` property.
         self._any_req_ref = ""  # type: _AnyReqRefType
         #: Justification comments.
         self.comments = ""  # type: str
-        #: Unordered attached requirement trackers.
-        self._req_trackers = set()  # type: typing.Set[_ReqTrackerType]
+        #: Unordered requirement verifiers tracing the given requirement reference with this link.
+        self._req_verifiers = set()  # type: typing.Set[_ReqVerifierType]
 
         # Analyze the requirement link definition.
         if isinstance(req_link_def, tuple):
@@ -98,12 +98,12 @@ class ReqLink:
         Canonical string representation of the requirement link.
         """
         from ._reflection import qualname
-        from ._reqtracker import ReqTrackerHelper
+        from ._reqverifier import ReqVerifierHelper
 
         return "".join([
             f"<{qualname(type(self))}",
             f" req_ref={self.req_ref!r}",
-            f" req_trackers={[ReqTrackerHelper.sortkeyfunction(_req_tracker) for _req_tracker in self.req_trackers]!r}",
+            f" req_verifiers={[ReqVerifierHelper.sortkeyfunction(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
             f" comments={self.comments!r}" if self.comments else "",
             ">",
         ])
@@ -115,7 +115,7 @@ class ReqLink:
         return "".join([
             str(self.req_ref),
             " <- ",
-            "{", ", ".join([str(_req_tracker) for _req_tracker in self.req_trackers]), "}",
+            "{", ", ".join([str(_req_verifier) for _req_verifier in self.req_verifiers]), "}",
             f" | {self.comments}" if self.comments else "",
         ])
 
@@ -128,14 +128,14 @@ class ReqLink:
     @property
     def req(self):  # type: () -> _ReqType
         """
-        Tracked :class:`._req.Req` instance.
+        Verified :class:`._req.Req` instance.
         """
         return self.req_ref.req
 
     @property
     def req_ref(self):  # type: () -> _ReqRefType
         """
-        Tracked requirement reference.
+        Verified requirement reference.
 
         Resolution of :attr:`_any_req_ref`.
         """
@@ -144,47 +144,41 @@ class ReqLink:
         return REQ_DB.getreqref(self._any_req_ref, push_unknown=True)
 
     @property
-    def req_trackers(self):  # type: () -> _OrderedSetType[_ReqTrackerType]
+    def req_verifiers(self):  # type: () -> _OrderedSetType[_ReqVerifierType]
         """
-        Attached requirement trackers.
+        Requirement verifiers tracing the given requirement reference with this link.
 
-        See :meth:`._reqtracker.ReqTracker.orderedset()` for order details.
+        See :meth:`._reqverifier.ReqVerifier.orderedset()` for order details.
         """
-        from ._reqtracker import ReqTracker
+        from ._reqverifier import ReqVerifier
 
-        return ReqTracker.orderedset(self._req_trackers)
+        return ReqVerifier.orderedset(self._req_verifiers)
 
     def matches(
             self,
             *,
             req_ref=None,  # type: _AnyReqRefType
             walk_sub_refs=False,  # type: bool
-            req_tracker=None,  # type: _ReqTrackerType
+            req_verifier=None,  # type: _ReqVerifierType
             walk_steps=False,  # type: bool
     ):  # type: (...) -> bool
         """
-        Tells whether the given requirement with optional subitem matches this link.
+        Tells whether the link matches the given predicates.
 
         :param req_ref:
             Optional requirement reference predicate.
         :param walk_sub_refs:
             When ``req_ref`` is a main requirement,
-            ``True`` makes the link match if it tracks a sub-reference of the requirement.
-
-            Or when ``req_ref`` is a requirement sub-reference,
-            ``True`` makes the link match if it tracks the main requirement of ``req_ref``.
+            ``True`` makes the link match if it traces a sub-reference of the requirement.
 
             Ignored when ``req_ref`` is not set.
-        :param req_tracker:
-            Optional requirement tracker predicate.
+        :param req_verifier:
+            Optional requirement verifier predicate.
         :param walk_steps:
-            When ``req_tracker`` is a scenario,
+            When ``req_verifier`` is a scenario,
             ``True`` makes the link match if it comes from a step of the scenario.
 
-            Or when ``req_tracker`` is a step,
-            ``True`` makes the link match of it comes from the owner scenario.
-
-            Ignored when ``req_tracker`` is not set.
+            Ignored when ``req_verifier`` is not set.
         :return:
             ``True`` in case of a match, ``False`` otherwise.
 
@@ -192,55 +186,46 @@ class ReqLink:
         """
         from ._reqdb import REQ_DB
         from ._scenariodefinition import ScenarioDefinition
-        from ._stepdefinition import StepDefinition
 
         # Requirement reference predicates.
         if req_ref is not None:
             req_ref = REQ_DB.getreqref(req_ref)
             if not self.req_ref.matches(req_ref):
                 # Requirement reference mismatch.
-                if not walk_sub_refs:
-                    return False
-                elif not req_ref.subs:
-                    # Main requirement reference => walk through sub-references.
+                if walk_sub_refs and (not req_ref.subs):
+                    # Main requirement reference and `walk_sub_refs`.
                     if not any([self.req_ref.matches(_sub_ref) for _sub_ref in req_ref.req.sub_refs]):
                         return False
-                elif req_ref.subs:
-                    # Sub-reference => check the related main requirement.
-                    if not self.req_ref.matches(req_ref.req):
-                        return False
-
-        # Requirement tracker predicates.
-        if req_tracker is not None:
-            if req_tracker not in self._req_trackers:
-                # Requirement tracker mismatch.
-                if not walk_steps:
+                else:
                     return False
-                elif isinstance(req_tracker, ScenarioDefinition):
-                    # Scenario => walk through steps.
-                    if not any([(_step in self._req_trackers) for _step in req_tracker.steps]):
+
+        # Requirement verifier predicates.
+        if req_verifier is not None:
+            if req_verifier not in self._req_verifiers:
+                # Requirement verifier mismatch.
+                if walk_steps and isinstance(req_verifier, ScenarioDefinition):
+                    # Scenario and `walk_steps`.
+                    if not any([(_step in self._req_verifiers) for _step in req_verifier.steps]):
                         return False
-                elif isinstance(req_tracker, StepDefinition):
-                    # Step => check owner scenario.
-                    if req_tracker.scenario not in self._req_trackers:
-                        return False
+                else:
+                    return False
 
         # All predicates passed.
         return True
 
-    def coveredby(
+    def verifiedby(
             self,
-            req_tracker,  # type: _VarReqTrackerType
+            req_verifier,  # type: _VarReqVerifierType
     ):  # type: (...) -> ReqLink
         """
-        Attaches a requirement tracker with this link.
+        Adds a requirement verifier that traces the requirement reference with this link.
 
-        :param req_tracker: Requirement tracker to attach.
+        :param req_verifier: Requirement verifier that traces the requirement reference with this link.
         :return: ``self``
         """
         from ._reqdb import REQ_DB
 
-        # As soon as the link is actually bound with trackers:
+        # As soon as the link is actually traced by verifiers:
         # - ensure the database knows the requirement reference (non main references only),
         if self.req_ref.subs:
             REQ_DB.push(self.req_ref)
@@ -248,16 +233,16 @@ class ReqLink:
         if self not in self.req_ref.req_links:
             self.req_ref._req_links.add(self)  # noqa  ## Access to protected member.
 
-        # Try to save the requirement tracker reference with this link.
-        if req_tracker not in self.req_trackers:
-            # New tracker reference.
-            self._req_trackers.add(req_tracker)
+        # Try to save the requirement verifier with this link.
+        if req_verifier not in self.req_verifiers:
+            # New requirement verifier.
+            self._req_verifiers.add(req_verifier)
 
             # Debug the downstream requirement link.
-            REQ_DB.debug("Requirement link: %s -> %r", self.req_ref.id, req_tracker)
+            REQ_DB.debug("Requirement link: %s -> %r", self.req_ref.id, req_verifier)
 
-            # Link <-> tracker cross-reference.
-            req_tracker.covers(self)
+            # Link <-> verifier cross-reference.
+            req_verifier.verifies(self)
 
         return self
 
@@ -279,28 +264,28 @@ class ReqLinkHelper(abc.ABC):
         :param req_link: Requirement link item to sort.
         :return: Key tuple.
         """
-        from ._reqtracker import ReqTrackerHelper
+        from ._reqverifier import ReqVerifierHelper
 
         return (
             req_link.req_ref.id,
-            *[ReqTrackerHelper.sortkeyfunction(req_tracker) for req_tracker in req_link.req_trackers],
+            *[ReqVerifierHelper.sortkeyfunction(_req_verifier) for _req_verifier in req_link.req_verifiers],
         )
 
     @staticmethod
     def buildsetwithreqlinks(
-            req_link_holders,  # type: typing.Sequence[typing.Union[_ReqRefType, _ReqTrackerType]]
+            req_link_holders,  # type: typing.Sequence[typing.Union[_ReqRefType, _ReqVerifierType]]
             items_from_link,  # type: typing.Callable[[ReqLink], typing.Iterable[_VarItemType]]
     ):  # type: (...) -> _SetWithReqLinksType[_VarItemType]
         """
         Builds a set of items with related requirement links.
 
-        :param req_link_holders: List of requirement references or requirement trackers to walk through.
+        :param req_link_holders: List of requirement references or requirement verifiers to walk through.
         :param items_from_link: Function that retrieves the items to save from requirement links.
         """
         _set_with_req_links = {}  # type: _SetWithReqLinksType[_VarItemType]
 
         # Walk from `req_link_holders` through requirement links and items to save.
-        for _req_link_holder in req_link_holders:  # type: typing.Union[_ReqRefType, _ReqTrackerType]
+        for _req_link_holder in req_link_holders:  # type: typing.Union[_ReqRefType, _ReqVerifierType]
             for _req_link in _req_link_holder.req_links:  # type: ReqLink
                 for _item in items_from_link(_req_link):  # type: _VarItemType
                     # Build unordered sets of requirement links first.

@@ -30,7 +30,7 @@ class ConfigDb040(scenario.test.TestCase):
             title="Configuration value unset",
             description="Check that a configuration value can be unset.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

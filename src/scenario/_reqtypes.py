@@ -26,7 +26,7 @@ if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
-    from ._reqtracker import ReqTracker as _ReqTrackerType
+    from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._setutils import OrderedSetType as _OrderedSetType
     from ._textutils import AnyLongTextType as _AnyLongTextType
     from ._typingutils import VarItemType as _VarItemType
@@ -51,12 +51,12 @@ if typing.TYPE_CHECKING:
         _ReqType,
     ]
 
-    #: Variable requirement tracker type.
+    #: Variable requirement verifier type.
     #:
     #: Useful to discriminate types of returned objects when calling class methods
-    #: - with either :class:`._reqtracker.ReqTracker`,
+    #: - with either :class:`._reqverifier.ReqVerifier`,
     #: - or :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition` subclasses.
-    VarReqTrackerType = typing.TypeVar("VarReqTrackerType", bound=_ReqTrackerType)
+    VarReqVerifierType = typing.TypeVar("VarReqVerifierType", bound=_ReqVerifierType)
 
     #: Requirement reference definition type.
     #:

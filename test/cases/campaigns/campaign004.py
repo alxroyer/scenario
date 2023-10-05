@@ -29,7 +29,7 @@ class Campaign004(scenario.test.TestCase):
             title="Campaign --doc-only option",
             description="Check campaign results when the --doc-only option is used.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CAMPAIGNS,
         )
 

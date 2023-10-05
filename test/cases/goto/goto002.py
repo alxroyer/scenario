@@ -29,7 +29,7 @@ class Goto002(scenario.test.TestCase):
             title="Goto scenario reports",
             description="Check scenario report generation for goto scenarios.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.GOTO,
             scenario.test.reqs.SCENARIO_REPORT,
         )

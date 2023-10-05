@@ -27,7 +27,7 @@ class KnownIssues011(scenario.test.TestCase):
             title="Known issues --doc-only",
             description="Check that known issues when declared at the definition level still generate warnings in --doc-only.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.DOC_ONLY,
         )

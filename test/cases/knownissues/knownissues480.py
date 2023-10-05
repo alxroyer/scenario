@@ -29,7 +29,7 @@ class KnownIssues480(scenario.test.TestCase):
             title="Known issue URLs & multiple scenarios",
             description="Check that known issue URLs are displayed in the console in multiple scenario results.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )

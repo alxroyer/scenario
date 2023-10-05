@@ -27,7 +27,7 @@ import typing
 if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._reqtracker import ReqTracker as _ReqTrackerImpl  # `ReqTracker` used for inheritance.
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
@@ -161,7 +161,7 @@ class MetaScenarioDefinition(abc.ABCMeta):
                 SCENARIO_STACK.building.popscenariodefinition(_scenario_definition)
 
 
-class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTrackerImpl, metaclass=MetaScenarioDefinition):
+class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl, metaclass=MetaScenarioDefinition):
     """
     Base class for any final test scenario.
 
@@ -233,7 +233,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
         _LoggerImpl.__init__(self, log_class=self.name)
-        _ReqTrackerImpl.__init__(self)
+        _ReqVerifierImpl.__init__(self)
 
         # Activate debugging by default for scenario definitions.
         self.enabledebug(True)
@@ -357,21 +357,21 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             walk_steps=False,  # type: bool
     ):  # type: (...) -> _SetWithReqLinksType[_ReqType]
         """
-        :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
+        :meth:`._reqverifier.ReqVerifier.getreqrefs()` override for the ``walk_steps`` option augmentation.
 
         :param walk_steps:
             Option to include step requirements.
 
-            If ``True``, requirements tracked by the scenario steps will be included in the result.
+            If ``True``, requirements verified by the scenario steps will be included in the result.
 
             ``False`` by default.
         :return:
-            Same as :meth:`._reqtracker.ReqTracker.getreqs()`.
+            Same as :meth:`._reqverifier.ReqVerifier.getreqs()`.
         """
         from ._reqlink import ReqLinkHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Determine the list of requirement trackers to walk through, depending on `walk_sub_refs`.
+            # Determine the list of requirement verifiers to walk through, depending on `walk_sub_refs`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement for each link.
             lambda req_link: [req_link.req],
@@ -383,21 +383,21 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             walk_steps=False,  # type: bool
     ):  # type: (...) -> _SetWithReqLinksType[_ReqRefType]
         """
-        :meth:`._reqtracker.ReqTracker.getreqrefs()` override for the ``walk_steps`` option augmentation.
+        :meth:`._reqverifier.ReqVerifier.getreqrefs()` override for the ``walk_steps`` option augmentation.
 
         :param walk_steps:
             Option to include step requirement references.
 
-            If ``True``, requirement references tracked by the scenario steps will be included in the result.
+            If ``True``, requirement references verified by the scenario steps will be included in the result.
 
             ``False`` by default.
         :return:
-            Same as :meth:`._reqtracker.ReqTracker.getreqrefs()`.
+            Same as :meth:`._reqverifier.ReqVerifier.getreqrefs()`.
         """
         from ._reqlink import ReqLinkHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Determine the list of requirement trackers to walk through, depending on `walk_sub_refs`.
+            # Determine the list of requirement verifiers to walk through, depending on `walk_sub_refs`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement reference for each link.
             lambda req_link: [req_link.req_ref],
@@ -411,10 +411,10 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             walk_sub_refs=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
-        :meth:`._reqtracker.ReqTracker.getreqlinks()` override for the ``walk_steps`` option augmentation.
+        :meth:`._reqverifier.ReqVerifier.getreqlinks()` override for the ``walk_steps`` option augmentation.
 
         :param req_ref:
-            Same as :meth:`._reqtracker.ReqTracker.getreqlinks()`.
+            Same as :meth:`._reqverifier.ReqVerifier.getreqlinks()`.
         :param walk_steps:
             Option to include step requirement links.
 
@@ -423,13 +423,15 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
             ``False`` by default.
 
             .. tip::
-                Retrieving the direct requirement links from the current tracker
-                can also be done through the :attr:`._reqtracker.ReqTracker.req_links` attribute.
+                Retrieving the direct requirement links from the current verifier
+                can also be done through the :attr:`._reqverifier.ReqVerifier.req_links` attribute.
         :param walk_sub_refs:
             When ``req_ref`` is a main requirement,
-            ``True`` makes the requirement link match if it tracks a sub-reference of the requirement.
+            ``True`` makes the links match if they trace a sub-reference of the requirement.
+
+            Ignored when ``req_ref`` is not set.
         :return:
-            Same as :meth:`._reqtracker.ReqTracker.getreqlinks()`.
+            Same as :meth:`._reqverifier.ReqVerifier.getreqlinks()`.
         """
         from ._reqlink import ReqLink
 
@@ -469,7 +471,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqTra
     @property
     def check_step_req_coverage(self):  # type: () -> bool
         """
-        Tells whether the requirements tracked by this scenario should be refined on steps.
+        Tells whether the requirements verified by this scenario should be refined on steps.
 
         Takes the local configuration at first,
         then the :meth:`._scenarioconfig.ScenarioConfig.checkstepreqcoverage()` global configuration.

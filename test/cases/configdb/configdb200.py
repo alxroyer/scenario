@@ -29,7 +29,7 @@ class ConfigDb200(scenario.test.TestCase):
             title="Load JSON configuration file",
             description="Check that a JSON configuration file can be loaded.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

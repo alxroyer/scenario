@@ -29,7 +29,7 @@ class ConfigDb020(scenario.test.TestCase):
             title="Configuration value from code",
             description="Check that a configuration value can be set from the code.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

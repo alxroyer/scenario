@@ -29,7 +29,7 @@ class KnownIssues380(scenario.test.TestCase):
             title="Known issue ids & multiple scenarios",
             description="Check that known issue identifiers are displayed in the console in multiple scenario results.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )

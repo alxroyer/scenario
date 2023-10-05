@@ -28,7 +28,7 @@ class ScenarioLogging010(scenario.test.TestCase):
             title="Scenario logging simple scenario",
             description="Check the scenario logging output is generated as expected for a simple scenario.",
         )
-        self.covers(
+        self.verifies(
             # Main features:
             scenario.test.reqs.SCENARIO_LOGGING,
             # Additional coverage:

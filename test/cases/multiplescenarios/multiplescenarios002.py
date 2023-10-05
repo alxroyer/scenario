@@ -31,7 +31,7 @@ class MultipleScenarios002(scenario.test.TestCase):
             title="Multiple scenarios --doc-only",
             description="Check that several scenarios can be executed with a single scenario launcher invocation with the --doc-only option set.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
             scenario.test.reqs.DOC_ONLY,
         )

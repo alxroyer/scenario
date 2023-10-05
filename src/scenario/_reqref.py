@@ -25,10 +25,10 @@ import typing
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
-    from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import AnyReqType as _AnyReqType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
+    from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
 
@@ -83,7 +83,7 @@ class ReqRef:
         #: If empty, the :class:`ReqRef` instance refers to the main part of the requirement.
         self.subs = subs  # type: typing.Sequence[str]
 
-        #: Unordered links with requirement trackers.
+        #: Unordered links with requirement verifiers.
         self._req_links = set()  # type: typing.Set[_ReqLinkType]
 
     def __repr__(self):  # type: () -> str
@@ -136,7 +136,7 @@ class ReqRef:
     @property
     def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
         """
-        Links with requirement trackers.
+        Links with requirement verifiers.
 
         See :meth:`._reqlink.ReqLink.orderedset()` for order details.
         """
@@ -199,7 +199,7 @@ class ReqRef:
 
     def getreqlinks(
             self,
-            req_tracker=None,  # type: _ReqTrackerType
+            req_verifier=None,  # type: _ReqVerifierType
             *,
             walk_steps=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
@@ -207,14 +207,16 @@ class ReqRef:
         Requirement links attached with this requirement reference,
         filtered with the given predicates.
 
-        :param req_tracker:
-            Requirement tracker predicate to search links for.
+        :param req_verifier:
+            Requirement verifier predicate to search links for.
 
             Optional.
             All requirement links when ``None``.
         :param walk_steps:
-            When ``req_tracker`` is a scenario,
-            ``True`` makes the link match if it comes from a step of the scenario.
+            When ``req_verifier`` is a scenario,
+            ``True`` makes the links match if they come from a step of the scenario.
+
+            Ignored when ``req_verifier`` is not set.
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
@@ -223,16 +225,16 @@ class ReqRef:
         return ReqLink.orderedset(
             # Filter links with the requirement predicates.
             filter(
-                lambda req_link: req_link.matches(req_tracker=req_tracker, walk_steps=walk_steps),
+                lambda req_link: req_link.matches(req_verifier=req_verifier, walk_steps=walk_steps),
                 self._req_links,
             ),
         )
 
-    def gettrackers(self):  # type: (...) -> _SetWithReqLinksType[_ReqTrackerType]
+    def getverifiers(self):  # type: (...) -> _SetWithReqLinksType[_ReqVerifierType]
         """
-        Returns all trackers linked directly with this requirement reference.
+        Returns all verifiers linked directly with this requirement reference.
 
-        :return: Requirement trackers, with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
+        :return: Requirement verifiers, with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
 
         Does not return :class:`._scenariodefinition.ScenarioDefinition` instances that track this reference through steps only.
         See :meth:`getscenarios()` for the purpose.
@@ -242,8 +244,8 @@ class ReqRef:
         return ReqLinkHelper.buildsetwithreqlinks(
             # Walk requirement links from the current requirement reference.
             [self],
-            # Get requirement trackers from each link.
-            lambda req_link: req_link.req_trackers,
+            # Get requirement verifiers from each link.
+            lambda req_link: req_link.req_verifiers,
         )
 
     def getscenarios(self):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
@@ -255,13 +257,13 @@ class ReqRef:
         Returns scenarios linked with this requirement reference, either directly or through one of their steps.
         """
         from ._reqlink import ReqLinkHelper
-        from ._reqtracker import ReqTrackerHelper
+        from ._reqverifier import ReqVerifierHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
             # Walk requirement links from the current requirement reference.
             [self],
             # Get scenarios from each link.
-            lambda req_link: map(ReqTrackerHelper.getscenario, req_link.req_trackers),
+            lambda req_link: map(ReqVerifierHelper.getscenario, req_link.req_verifiers),
         )
 
 

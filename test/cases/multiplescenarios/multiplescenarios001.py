@@ -34,7 +34,7 @@ class MultipleScenarios001(scenario.test.TestCase):
                 "and that error display makes it easy to investigate on errors."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
             scenario.test.reqs.ERROR_HANDLING,
         )

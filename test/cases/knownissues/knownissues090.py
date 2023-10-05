@@ -29,7 +29,7 @@ class KnownIssues090(scenario.test.TestCase):
             title="Known issues & campaigns",
             description="Check that known issues in campaign results are displayed correctly: SUCCESS, then WARNINGS, then FAIL tests.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.CAMPAIGNS,
         )

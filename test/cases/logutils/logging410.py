@@ -35,7 +35,7 @@ class Logging410(scenario.test.TestCase):
             title="Scenario stack indentation",
             description="Check that indentation is shifted for each subscenario being executed.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.LOGGING,
         )
 

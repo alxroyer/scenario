@@ -29,7 +29,7 @@ class ScenarioExecution001(scenario.test.TestCase):
             title="Scenario execution",
             description="Check test steps are executed one after the other.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SCENARIO_EXECUTION,
         )
 

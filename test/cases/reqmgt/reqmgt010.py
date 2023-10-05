@@ -33,7 +33,7 @@ class ReqMgt010(scenario.test.TestCase):
             title="Requirement database and queries",
             description="Check the requirement database can be fed from tests being loaded, and queried.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.REQUIREMENT_MANAGEMENT,
         )
 
@@ -180,7 +180,7 @@ class CheckReqDbContent(_CheckReqItemStepImpl, ReqMgt010.Data):
                            "without comments,"):
                 self.checkreqlink(
                     self.new_req_links[0],
-                    req_ref=("REQ-001", ()), req_trackers=[self.scenario1],
+                    req_ref=("REQ-001", ()), req_verifiers=[self.scenario1],
                     comments="",
                     evidence=True,
                 )
@@ -188,7 +188,7 @@ class CheckReqDbContent(_CheckReqItemStepImpl, ReqMgt010.Data):
                            "with 'Justification for REQ-001/1 covered by ReqScenario2' for comments,"):
                 self.checkreqlink(
                     self.new_req_links[1],
-                    req_ref=("REQ-001", ("1", )), req_trackers=[self.scenario2],
+                    req_ref=("REQ-001", ("1", )), req_verifiers=[self.scenario2],
                     comments="Justification for REQ-001/1 covered by ReqScenario2",
                     evidence=True,
                 )
@@ -196,7 +196,7 @@ class CheckReqDbContent(_CheckReqItemStepImpl, ReqMgt010.Data):
                            "with 'Justification for REQ-001/1 covered by ReqScenario2:step#1' for comments,"):
                 self.checkreqlink(
                     self.new_req_links[2],
-                    req_ref=("REQ-001", ("1", )), req_trackers=[self.scenario2_step1],
+                    req_ref=("REQ-001", ("1", )), req_verifiers=[self.scenario2_step1],
                     comments="Justification for REQ-001/1 covered by ReqScenario2:step#1",
                     evidence=True,
                 )
@@ -204,7 +204,7 @@ class CheckReqDbContent(_CheckReqItemStepImpl, ReqMgt010.Data):
                            "without comments."):
                 self.checkreqlink(
                     self.new_req_links[3],
-                    req_ref=("REQ-002", ()), req_trackers=[self.scenario2],
+                    req_ref=("REQ-002", ()), req_verifiers=[self.scenario2],
                     comments="",
                     evidence=True,
                 )
@@ -267,7 +267,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
             _direct_req_refs = {}  # type: scenario.SetWithReqLinksType[scenario.ReqRef]
             if self.ACTION("Retrieve direct requirement references from ReqScenario1."):
                 _direct_req_refs = self.scenario1.getreqrefs(walk_steps=False)
-            if self.RESULT("The scenario tracks 1 requirement reference:"):
+            if self.RESULT("The scenario traces 1 requirement reference:"):
                 self.assertlen(_direct_req_refs, 1, evidence=True)
             if self.RESULT("1. REQ-001 (main part)"):
                 self.checkiteminsetwithreqlinks(
@@ -283,7 +283,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve direct requirement references from ReqScenario2."):
                 _direct_req_refs = self.scenario2.getreqrefs(walk_steps=False)
-            if self.RESULT("The scenario tracks 2 requirement references:"):
+            if self.RESULT("The scenario traces 2 requirement references:"):
                 self.assertlen(_direct_req_refs, 2, evidence=True)
             if self.RESULT("1. REQ-001/1 (sub-part),"):
                 self.checkiteminsetwithreqlinks(
@@ -298,7 +298,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve all requirement references from ReqScenario2 (including step references)."):
                 _all_req_refs = self.scenario2.getreqrefs(walk_steps=True)
-            if self.RESULT("The scenario still tracks 2 requirement references:"):
+            if self.RESULT("The scenario still traces 2 requirement references:"):
                 self.assertlen(_all_req_refs, 2, evidence=True)
             if self.RESULT("1. REQ-001/1 (sub-part), with 1 more link from ReqScenario2/step#1,"):
                 self.checkiteminsetwithreqlinks(
@@ -313,7 +313,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve ReqScenario2/step#1 requirement references."):
                 _direct_req_refs = self.scenario2_step1.getreqrefs()
-            if self.RESULT("The step tracks 1 requirement reference:"):
+            if self.RESULT("The step traces 1 requirement reference:"):
                 self.assertlen(_direct_req_refs, 1, evidence=True)
             if self.RESULT("1. REQ-001/1 (sub-part)."):
                 self.checkiteminsetwithreqlinks(
@@ -327,7 +327,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
             _direct_reqs = {}  # type: scenario.types.SetWithReqLinks[scenario.Req]
             if self.ACTION("Retrieve direct requirements from ReqScenario1."):
                 _direct_reqs = self.scenario1.getreqs(walk_steps=False)
-            if self.RESULT("The scenario tracks 1 requirement:"):
+            if self.RESULT("The scenario traces 1 requirement:"):
                 self.assertlen(_direct_reqs, 1, evidence=True)
             if self.RESULT("1. REQ-001."):
                 self.checkiteminsetwithreqlinks(
@@ -343,7 +343,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve direct requirements from ReqScenario2."):
                 _direct_reqs = self.scenario2.getreqs(walk_steps=False)
-            if self.RESULT("The scenario tracks 2 requirements:"):
+            if self.RESULT("The scenario traces 2 requirements:"):
                 self.assertlen(_direct_reqs, 2, evidence=True)
             if self.RESULT("1. REQ-001,"):
                 self.checkiteminsetwithreqlinks(
@@ -358,7 +358,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve all requirements from ReqScenario2."):
                 _all_reqs = self.scenario2.getreqs(walk_steps=True)
-            if self.RESULT("The scenario still tracks 2 requirements:"):
+            if self.RESULT("The scenario still traces 2 requirements:"):
                 self.assertlen(_all_reqs, 2, evidence=True)
             if self.RESULT("1. REQ-001, through its REQ-001/1 sub-part, with 1 more link from ReqScenario2/step#1,"):
                 self.checkiteminsetwithreqlinks(
@@ -373,7 +373,7 @@ class CheckUpstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve ReqScenario2/step#1 requirements."):
                 _direct_reqs = self.scenario2_step1.getreqs()
-            if self.RESULT("The step tracks 1 requirement:"):
+            if self.RESULT("The step traces 1 requirement:"):
                 self.assertlen(_direct_reqs, 1, evidence=True)
             if self.RESULT("1. REQ-001."):
                 self.checkiteminsetwithreqlinks(
@@ -388,7 +388,7 @@ class CheckDownstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
         self.STEP("Downstream requirement links")
 
         self._checkreqlinks()
-        self._checkreqtrackers()
+        self._checkreqverifiers()
         self._checkscenarios()
 
     def _checkreqlinks(self):  # type: (...) -> None
@@ -396,7 +396,7 @@ class CheckDownstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
             _direct_req_links = []  # type: typing.Sequence[scenario.ReqLink]
             if self.ACTION("Retrieve REQ-001 direct requirement links."):
                 _direct_req_links = self.req001.getreqlinks(walk_sub_refs=False)
-            if self.RESULT("The requirement is tracked by 1 link directly:"):
+            if self.RESULT("The requirement is traced by 1 link directly:"):
                 self.assertlen(_direct_req_links, 1, evidence=True)
             if self.RESULT("1. from ReqScenario1."):
                 self.checkreqlink(_direct_req_links[0], self.req001_main, [self.scenario1], evidence=True)
@@ -423,7 +423,7 @@ class CheckDownstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve REQ-002 direct requirement links."):
                 _direct_req_links = self.req002.getreqlinks(walk_sub_refs=False)
-            if self.RESULT("The requirement is tracked by 1 link directly:"):
+            if self.RESULT("The requirement is traced by 1 link directly:"):
                 self.assertlen(_direct_req_links, 1, evidence=True)
             if self.RESULT("1. from ReqScenario2, to the main part of REQ-002."):
                 self.checkreqlink(_direct_req_links[0], self.req002_main, [self.scenario2], evidence=True)
@@ -433,76 +433,76 @@ class CheckDownstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
             if self.RESULT("Same result."):
                 self.assertequal(_all_req_links, _direct_req_links, evidence=True)
 
-    def _checkreqtrackers(self):  # type: (...) -> None
-        with self.SECTION("Check requirement trackers:"):
-            _direct_req_trackers = {}  # type: scenario.SetWithReqLinksType[scenario.ReqTracker]
-            if self.ACTION("Retrieve REQ-001 direct requirement trackers."):
-                _direct_req_trackers = self.req001.gettrackers(walk_sub_refs=False)
-            if self.RESULT("The requirement is tracked by 1 tracker directly:"):
-                self.assertlen(_direct_req_trackers, 1, evidence=True)
+    def _checkreqverifiers(self):  # type: (...) -> None
+        with self.SECTION("Check requirement verifiers:"):
+            _direct_req_verifiers = {}  # type: scenario.SetWithReqLinksType[scenario.ReqVerifier]
+            if self.ACTION("Retrieve REQ-001 direct requirement verifiers."):
+                _direct_req_verifiers = self.req001.getverifiers(walk_sub_refs=False)
+            if self.RESULT("The requirement is traced by 1 verifier directly:"):
+                self.assertlen(_direct_req_verifiers, 1, evidence=True)
             if self.RESULT("1. ReqScenario1."):
                 self.checkiteminsetwithreqlinks(
-                    self.scenario1, _direct_req_trackers, [(self.req001_main, [self.scenario1])],
+                    self.scenario1, _direct_req_verifiers, [(self.req001_main, [self.scenario1])],
                     evidence=True,
                 )
 
-            _all_req_trackers = {}  # type: scenario.SetWithReqLinksType[scenario.ReqTracker]
-            if self.ACTION("Retrieve all REQ-001 requirement trackers (including sub-ref trackers)."):
-                _all_req_trackers = self.req001.gettrackers(walk_sub_refs=True)
-            if self.RESULT("The result contains 3 requirement trackers:"):
-                self.assertlen(_all_req_trackers, 3, evidence=True)
-            if self.RESULT("1. ReqScenario1, tracking REQ-001 (main-part)."):
+            _all_req_verifiers = {}  # type: scenario.SetWithReqLinksType[scenario.ReqVerifier]
+            if self.ACTION("Retrieve all REQ-001 requirement verifiers (including sub-ref verifiers)."):
+                _all_req_verifiers = self.req001.getverifiers(walk_sub_refs=True)
+            if self.RESULT("The result contains 3 requirement verifiers:"):
+                self.assertlen(_all_req_verifiers, 3, evidence=True)
+            if self.RESULT("1. ReqScenario1, tracing REQ-001 (main-part)."):
                 self.checkiteminsetwithreqlinks(
-                    self.scenario1, _all_req_trackers, [(self.req001_main, [self.scenario1])],
+                    self.scenario1, _all_req_verifiers, [(self.req001_main, [self.scenario1])],
                     evidence=True,
                 )
-            if self.RESULT("2. ReqScenario2, tracking REQ-001/1,"):
+            if self.RESULT("2. ReqScenario2, tracing REQ-001/1,"):
                 self.checkiteminsetwithreqlinks(
-                    self.scenario2, _all_req_trackers, [(self.req001_1, [self.scenario2])],
+                    self.scenario2, _all_req_verifiers, [(self.req001_1, [self.scenario2])],
                     evidence=True,
                 )
-            if self.RESULT("3. ReqScenario2/step#1, tracking REQ-001/1."):
+            if self.RESULT("3. ReqScenario2/step#1, tracing REQ-001/1."):
                 self.checkiteminsetwithreqlinks(
-                    self.scenario2_step1, _all_req_trackers, [(self.req001_1, [self.scenario2_step1])],
+                    self.scenario2_step1, _all_req_verifiers, [(self.req001_1, [self.scenario2_step1])],
                     evidence=True,
                 )
 
-            if self.ACTION("Retrieve REQ-001/1 requirement trackers."):
-                _direct_req_trackers = self.req001_1.gettrackers()
-            if self.RESULT("The requirement sub-part is tracked by 2 trackers:"):
-                self.assertlen(_direct_req_trackers, 2, evidence=True)
+            if self.ACTION("Retrieve REQ-001/1 requirement verifiers."):
+                _direct_req_verifiers = self.req001_1.getverifiers()
+            if self.RESULT("The requirement sub-part is traced by 2 verifiers:"):
+                self.assertlen(_direct_req_verifiers, 2, evidence=True)
             if self.RESULT("1. ReqScenario2,"):
                 self.checkiteminsetwithreqlinks(
-                    self.scenario2, _direct_req_trackers, [(self.req001_1, [self.scenario2])],
+                    self.scenario2, _direct_req_verifiers, [(self.req001_1, [self.scenario2])],
                     evidence=True,
                 )
             if self.RESULT("2. ReqScenario2/step#1."):
                 self.checkiteminsetwithreqlinks(
-                    self.scenario2_step1, _direct_req_trackers, [(self.req001_1, [self.scenario2_step1])],
+                    self.scenario2_step1, _direct_req_verifiers, [(self.req001_1, [self.scenario2_step1])],
                     evidence=True,
                 )
 
-            if self.ACTION("Retrieve REQ-002 direct requirement trackers."):
-                _direct_req_trackers = self.req002.gettrackers(walk_sub_refs=False)
-            if self.RESULT("The requirement is tracked by 1 tracker directly:"):
-                self.assertlen(_direct_req_trackers, 1, evidence=True)
+            if self.ACTION("Retrieve REQ-002 direct requirement verifiers."):
+                _direct_req_verifiers = self.req002.getverifiers(walk_sub_refs=False)
+            if self.RESULT("The requirement is traced by 1 verifier directly:"):
+                self.assertlen(_direct_req_verifiers, 1, evidence=True)
             if self.RESULT("1. ReqScenario2."):
                 self.checkiteminsetwithreqlinks(
-                    self.scenario2, _direct_req_trackers, [(self.req002_main, [self.scenario2])],
+                    self.scenario2, _direct_req_verifiers, [(self.req002_main, [self.scenario2])],
                     evidence=True,
                 )
 
-            if self.ACTION("Retrieve all REQ-002 requirement trackers (including sub-ref trackers)."):
-                _all_req_trackers = self.req002.gettrackers(walk_sub_refs=True)
+            if self.ACTION("Retrieve all REQ-002 requirement verifiers (including sub-ref verifiers)."):
+                _all_req_verifiers = self.req002.getverifiers(walk_sub_refs=True)
             if self.RESULT("Same result."):
-                self.assertequal(_all_req_trackers, _direct_req_trackers, evidence=True)
+                self.assertequal(_all_req_verifiers, _direct_req_verifiers, evidence=True)
 
     def _checkscenarios(self):  # type: (...) -> None
-        with self.SECTION("Check requirement trackers:"):
+        with self.SECTION("Check requirement verifiers:"):
             _direct_scenarios = {}  # type: scenario.SetWithReqLinksType[scenario.ScenarioDefinition]
             if self.ACTION("Retrieve REQ-001 direct scenarios."):
                 _direct_scenarios = self.req001.getscenarios(walk_sub_refs=False)
-            if self.RESULT("The requirement is tracked by 1 scenario directly:"):
+            if self.RESULT("The requirement is traced by 1 scenario directly:"):
                 self.assertlen(_direct_scenarios, 1, evidence=True)
             if self.RESULT("1. ReqScenario1."):
                 self.checkiteminsetwithreqlinks(
@@ -515,12 +515,12 @@ class CheckDownstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
                 _all_scenarios = self.req001.getscenarios(walk_sub_refs=True)
             if self.RESULT("The result contains 2 scenarios:"):
                 self.assertlen(_all_scenarios, 2, evidence=True)
-            if self.RESULT("1. ReqScenario1, still tracking REQ-001 (main part),"):
+            if self.RESULT("1. ReqScenario1, still tracing REQ-001 (main part),"):
                 self.checkiteminsetwithreqlinks(
                     self.scenario1, _all_scenarios, [(self.req001_main, [self.scenario1])],
                     evidence=True,
                 )
-            if self.RESULT("2. ReqScenario2, tracking REQ-001/1 twice from ReqScenario2 and ReqScenario2/step#1."):
+            if self.RESULT("2. ReqScenario2, tracing REQ-001/1 twice from ReqScenario2 and ReqScenario2/step#1."):
                 self.checkiteminsetwithreqlinks(
                     self.scenario2, _all_scenarios, [(self.req001_1, [self.scenario2]), (self.req001_1, [self.scenario2_step1])],
                     evidence=True,
@@ -528,9 +528,9 @@ class CheckDownstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve REQ-001/1 scenarios."):
                 _direct_scenarios = self.req001_1.getscenarios()
-            if self.RESULT("The requirement sub-part is tracked by 1 scenario:"):
+            if self.RESULT("The requirement sub-part is traced by 1 scenario:"):
                 self.assertlen(_direct_scenarios, 1, evidence=True)
-            if self.RESULT("1. ReqScenario2, tracking it twice from ReqScenario2 and ReqScenario2/step#1."):
+            if self.RESULT("1. ReqScenario2, tracing it twice from ReqScenario2 and ReqScenario2/step#1."):
                 self.checkiteminsetwithreqlinks(
                     self.scenario2, _direct_scenarios, [(self.req001_1, [self.scenario2]), (self.req001_1, [self.scenario2_step1])],
                     evidence=True,
@@ -538,7 +538,7 @@ class CheckDownstreamReqLinks(_CheckReqItemStepImpl, ReqMgt010.Data):
 
             if self.ACTION("Retrieve REQ-002 direct scenarios."):
                 _direct_scenarios = self.req002.getscenarios(walk_sub_refs=False)
-            if self.RESULT("The requirement is tracked by 1 scenario directly:"):
+            if self.RESULT("The requirement is traced by 1 scenario directly:"):
                 self.assertlen(_direct_scenarios, 1, evidence=True)
             if self.RESULT("1. ReqScenario2."):
                 self.checkiteminsetwithreqlinks(

@@ -27,7 +27,7 @@ class Stats010(scenario.test.TestCase):
             title="Statistics simple scenario",
             description="Check scenario execution statistics for a simple scenario.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.STATISTICS,
         )
 

@@ -31,7 +31,7 @@ class Logging100(scenario.test.TestCase):
             title="Logging timestamps",
             description="Check log lines are displayed with timestamps (by default), and the ability to avoid them.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.LOGGING,
         )
 

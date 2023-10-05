@@ -27,7 +27,7 @@ class SubScenario001(scenario.test.TestCase):
             title="Subscenario execution",
             description="Check log output and JSON report of a scenario that executes another scenario as a subscenario.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SUBSCENARIOS,
         )
 

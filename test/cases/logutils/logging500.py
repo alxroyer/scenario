@@ -28,7 +28,7 @@ class Logging500(scenario.test.TestCase):
             title="Console logging",
             description="Check that logging is displayed by default in the console, and that it can be disabled.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.LOGGING,
         )
 

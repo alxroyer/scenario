@@ -27,7 +27,7 @@ class DocOnly001(scenario.test.TestCase):
             title="--doc-only execution",
             description="Check the --doc-only execution succeeds even for a failing scenario.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.DOC_ONLY,
         )
 

@@ -64,24 +64,24 @@ class CheckReqItemStep(scenario.Step):
             self,
             req_link,  # type: scenario.ReqLink
             req_ref,  # type: AnyExpectedReqRefType
-            req_trackers,  # type: typing.Sequence[scenario.ReqTracker]
+            req_verifiers,  # type: typing.Sequence[scenario.ReqVerifier]
             comments=None,  # type: str
             evidence=False,  # type: bool
     ):  # type: (...) -> None
         """
         :param req_link: Requirement link to check.
         :param req_ref: Expected requirement reference. See :meth:`checkreqref()` for details.
-        :param req_trackers: Expected requirement trackers.
+        :param req_verifiers: Expected requirement verifiers.
         :param comments: Expected comments. Optional.
         :param evidence: Evidence flag.
         """
         # Check the requirement reference.
         self.checkreqref(req_link.req_ref, req_ref, evidence=evidence)
 
-        # Check trackers.
-        self.assertlen(req_link.req_trackers, len(req_trackers), evidence=evidence and (False if req_trackers else "No requirement trackers"))
-        for _index, _src_req_tracker in enumerate(req_trackers):  # type: int, scenario.ReqTracker
-            self.assertsameinstances(req_link.req_trackers[_index], _src_req_tracker, evidence=evidence and f"Requirement tracker #{_index + 1}")
+        # Check verifiers.
+        self.assertlen(req_link.req_verifiers, len(req_verifiers), evidence=evidence and (False if req_verifiers else "No requirement verifiers"))
+        for _index, _src_req_verifier in enumerate(req_verifiers):  # type: int, scenario.ReqVerifier
+            self.assertsameinstances(req_link.req_verifiers[_index], _src_req_verifier, evidence=evidence and f"Requirement verifier #{_index + 1}")
 
         # Optionally check comments.
         if comments is not None:
@@ -94,12 +94,12 @@ class CheckReqItemStep(scenario.Step):
             self,
             item,  # type: scenario.types.VarItem
             set_with_req_links,  # type: scenario.SetWithReqLinksType[scenario.types.VarItem]
-            req_links,  # type: typing.Sequence[typing.Tuple[AnyExpectedReqRefType, typing.Sequence[scenario.ReqTracker]]]
+            req_links,  # type: typing.Sequence[typing.Tuple[AnyExpectedReqRefType, typing.Sequence[scenario.ReqVerifier]]]
             evidence=False,  # type: bool
     ):  # type: (...) -> None
         self.assertin(item, set_with_req_links, evidence=evidence)
         self.assertlen(set_with_req_links[item], len(req_links), evidence=evidence and "Number of links")
-        for _index, _req_link_specs in enumerate(req_links):  # type: int, typing.Tuple[AnyExpectedReqRefType, typing.Sequence[scenario.ReqTracker]]
+        for _index, _req_link_specs in enumerate(req_links):  # type: int, typing.Tuple[AnyExpectedReqRefType, typing.Sequence[scenario.ReqVerifier]]
             if evidence:
                 self.evidence(f"req-link#{_index+1}:")
             with scenario.logging.pushindentation(f"  "):

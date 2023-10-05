@@ -27,7 +27,7 @@ class KnownIssues010(scenario.test.TestCase):
             title="Known issues",
             description="Check known issues generate warnings by default, and that the status of the test is WARNINGS.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
         )
 

@@ -32,7 +32,7 @@ class ConfigDb110(scenario.test.TestCase):
                 "then saved as a new INI file."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

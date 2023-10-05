@@ -31,7 +31,7 @@ class Campaign002(scenario.test.TestCase):
             title="Campaign execution with several test suites",
             description="Check that the campaign runner can execute several test suite files.",
         )
-        self.covers(
+        self.verifies(
             (scenario.test.reqs.CAMPAIGNS, ),
             (scenario.test.reqs.STATISTICS, "Statistics by scenario, integrated by test suite, and globally for the campaign"),
         )

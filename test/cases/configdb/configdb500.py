@@ -32,7 +32,7 @@ class ConfigDb500(scenario.test.TestCase):
                 "Check the one loaded in the end overloads the ones loaded before."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

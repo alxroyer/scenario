@@ -33,7 +33,7 @@ class ConfigDb310(scenario.test.TestCase):
                 "then saved as a new YAML file."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

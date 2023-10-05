@@ -31,7 +31,7 @@ class KnownIssues120(scenario.test.TestCase):
                 "without requiring a *continue-on-error* option."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.ERROR_HANDLING,
         )

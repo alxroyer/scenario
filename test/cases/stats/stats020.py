@@ -28,7 +28,7 @@ class Stats020(scenario.test.TestCase):
             title="Statistics failing scenario",
             description="Check scenario execution statistics for a failing scenario, with the display of the error information.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.STATISTICS,
             scenario.test.reqs.ERROR_HANDLING,
         )

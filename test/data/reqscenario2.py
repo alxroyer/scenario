@@ -31,12 +31,12 @@ class ReqScenario2(scenario.Scenario):
             self,
             title="Requirement scenario 2",
         )
-        self.covers(
+        self.verifies(
             ("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2"),
             ("REQ-002", ),  # No justification for REQ-002.
         )
 
-        self.addstep(TextStep(description="Foo", actions="Bar", results="Baz")).covers(
+        self.addstep(TextStep(description="Foo", actions="Bar", results="Baz")).verifies(
             ("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2:step#1"),
         )
 

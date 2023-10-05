@@ -27,7 +27,7 @@ class SubScenario003(scenario.test.TestCase):
             title="Subscenario error",
             description="Check that a super scenario executing a failing subscenario propagates the subscenario error as is.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SUBSCENARIOS,
             scenario.test.reqs.ERROR_HANDLING,
         )

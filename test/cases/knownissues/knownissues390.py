@@ -31,7 +31,7 @@ class KnownIssues390(scenario.test.TestCase):
             title="Known issue ids & campaigns",
             description="Check that known issue identifiers are displayed in the campaign log and in final results.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.CAMPAIGNS,
         )

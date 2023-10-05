@@ -29,7 +29,7 @@ class KnownIssues080(scenario.test.TestCase):
             title="Known issues & multiple scenarios",
             description="Check that known issues are displayed in multiple scenario results.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )

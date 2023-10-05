@@ -32,7 +32,7 @@ class KnownIssues210(scenario.test.TestCase):
             title="Issue level names",
             description="Check that issue levels can be configured with meaningful names, and that these names are displayed in the console.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.SCENARIO_LOGGING,
         )

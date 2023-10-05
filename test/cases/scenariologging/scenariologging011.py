@@ -28,7 +28,7 @@ class ScenarioLogging011(scenario.test.TestCase):
             title="Scenario logging simple scenario --doc-only",
             description="Check the scenario logging output is generated as expected for a simple scenario with the --doc-only option set.",
         )
-        self.covers(
+        self.verifies(
             # Main features:
             scenario.test.reqs.SCENARIO_LOGGING,
             scenario.test.reqs.DOC_ONLY,

@@ -30,7 +30,7 @@ class ConfigDb300(scenario.test.TestCase):
             title="Load YAML configuration file",
             description="Check that a YAML configuration file can be loaded (when 'pyyaml' is installed).",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

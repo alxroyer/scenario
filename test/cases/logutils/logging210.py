@@ -28,7 +28,7 @@ class Logging210(scenario.test.TestCase):
             title="Class logger debugging enabling",
             description="Check that debugging is disabled by default for class loggers, and that it can be enabled.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.DEBUG_LOGGING,
         )
 

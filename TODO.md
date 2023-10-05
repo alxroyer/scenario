@@ -18,6 +18,7 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Rename `checkstepreqcoverage()` >> `expectstepreqrefinement()`
     - Add a 'check-test-coverage.py' tool that displays requirement test coverage.
         - Shall work either on test suite files, or campaign results.
     - Add the ability to make the test check that its scenario links are detailed by step links.

@@ -30,7 +30,7 @@ class KnownIssues410(scenario.test.TestCase):
                 "Check that these URL are logged in the console and saved in scenario reports."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.SCENARIO_LOGGING,
             scenario.test.reqs.SCENARIO_REPORT,

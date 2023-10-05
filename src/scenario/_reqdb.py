@@ -28,9 +28,9 @@ if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
-    from ._reqtracker import ReqTracker as _ReqTrackerType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import AnyReqType as _AnyReqType
+    from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
     from ._typingutils import JsonDictType as _JsonDictType
@@ -40,18 +40,18 @@ class ReqDatabase(_LoggerImpl):
     """
     Requirement database.
 
-    Stores requirements and links with trackers (:meth:`push()`).
+    Stores requirements and links with verifiers (:meth:`push()`).
 
     Provides a couple of query methods:
 
     :requirement access:
         :meth:`getreq()`.
     :all items:
-        :meth:`getallreqs()`, :meth:`getalllinks()`, :meth:`getalltrackers()`, :meth:`getallscenarios()`.
-    :requirements to trackers:
+        :meth:`getallreqs()`, :meth:`getalllinks()`, :meth:`getallverifiers()`, :meth:`getallscenarios()`.
+    :requirements to verifiers:
         See :class:`._req.Req`.
-    :trackers to requirements:
-        See :class:`._reqtracker.ReqTracker`.
+    :verifiers to requirements:
+        See :class:`._reqverifier.ReqVerifier`.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -317,23 +317,23 @@ class ReqDatabase(_LoggerImpl):
         self.debug("getalllinks() -> %r", _req_links)
         return _req_links
 
-    def getalltrackers(self):  # type: (...) -> _OrderedSetType[_ReqTrackerType]
+    def getallverifiers(self):  # type: (...) -> _OrderedSetType[_ReqVerifierType]
         """
-        Returns all final requirement trackers saved in the database,
+        Returns all final requirement verifiers saved in the database,
         either scenarios or steps.
 
-        :return: :class:`._reqtracker.ReqTracker` ordered set (see :meth:`._reqtracker.ReqTracker.orderedset()` for order details).
+        :return: :class:`._reqverifier.ReqVerifier` ordered set (see :meth:`._reqverifier.ReqVerifier.orderedset()` for order details).
         """
-        from ._reqtracker import ReqTracker
+        from ._reqverifier import ReqVerifier
 
-        _req_tracker_list = []  # type: typing.List[ReqTracker]
+        _req_verifier_list = []  # type: typing.List[ReqVerifier]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
-                _req_tracker_list.extend(_req_link.req_trackers)
-        _req_trackers = ReqTracker.orderedset(_req_tracker_list)  # type: _OrderedSetType[ReqTracker]
+                _req_verifier_list.extend(_req_link.req_verifiers)
+        _req_verifiers = ReqVerifier.orderedset(_req_verifier_list)  # type: _OrderedSetType[ReqVerifier]
 
-        self.debug("getalltrackers() -> %r", _req_trackers)
-        return _req_trackers
+        self.debug("getallverifiers() -> %r", _req_verifiers)
+        return _req_verifiers
 
     def getallscenarios(self):  # type: (...) -> _OrderedSetType[_ScenarioDefinitionType]
         """
@@ -341,20 +341,17 @@ class ReqDatabase(_LoggerImpl):
 
         Either directly, or through one of their steps.
 
-        :return: :class:`._scenariodefinition.ScenarioDefinition` ordered set (see :meth:`._reqtracker.ReqTracker.orderedset()` for order details).
+        :return: :class:`._scenariodefinition.ScenarioDefinition` ordered set (see :meth:`._reqverifier.ReqVerifier.orderedset()` for order details).
         """
-        from ._reqtracker import ReqTrackerHelper
+        from ._reqverifier import ReqVerifierHelper
         from ._scenariodefinition import ScenarioDefinition
 
         _scenario_list = []  # type: typing.List[ScenarioDefinition]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _scenario_list.extend(
-                    # Convert `ReqTracker` to `ScenarioDefinition` objects.
-                    map(
-                        lambda req_tracker: ReqTrackerHelper.getscenario(req_tracker),
-                        _req_link.req_trackers,
-                    ),
+                    # Ensure `ScenarioDefinition` from `ReqVerifier` objects.
+                    map(ReqVerifierHelper.getscenario, _req_link.req_verifiers),
                 )
         _scenarios = ScenarioDefinition.orderedset(_scenario_list)  # type: _OrderedSetType[ScenarioDefinition]
 

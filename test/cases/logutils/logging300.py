@@ -38,7 +38,7 @@ class Logging300(scenario.test.TestCase):
                 "and that log colors can be disabled."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.LOGGING,
         )
 

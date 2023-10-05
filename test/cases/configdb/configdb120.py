@@ -29,7 +29,7 @@ class ConfigDb120(scenario.test.TestCase):
             title="INI default values & sub-sections",
             description="Check the way sub-sections are emulated in INI files, and default values are propagated along sections.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

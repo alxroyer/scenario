@@ -37,7 +37,7 @@ class Issue46(scenario.test.TestCase):
             title="Issue #46! Campaign halts on errors",
             description="Check that a campaign does not halt on errors due the scenario scripts being tested.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CAMPAIGNS,
             scenario.test.reqs.ERROR_HANDLING,
         )

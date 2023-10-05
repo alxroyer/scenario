@@ -28,7 +28,7 @@ class KnownIssues290(scenario.test.TestCase):
             title="Issue level names & campaigns",
             description="Check that issue level names are displayed in campaign logs and in final results.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.KNOWN_ISSUES,
             scenario.test.reqs.CAMPAIGNS,
         )

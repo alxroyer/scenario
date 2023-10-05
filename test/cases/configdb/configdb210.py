@@ -32,7 +32,7 @@ class ConfigDb210(scenario.test.TestCase):
                 "then saved as a new JSON file."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

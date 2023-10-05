@@ -27,7 +27,7 @@ if True:
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._path import AnyPathType as _AnyPathType
-    from ._reqtracker import ReqTracker as _ReqTrackerType
+    from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._typingutils import JsonDictType as _JsonDictType
@@ -50,7 +50,7 @@ class ScenarioReport(_LoggerImpl):
         #: JSON report path being written or read.
         self._json_path = Path()  # type: Path
 
-        #: ``True`` to feed automatically the requirement database with tracked requirement references.
+        #: ``True`` to feed automatically the requirement database with verified requirement references.
         self._feed_reqdb = False  # type: bool
 
     def writejsonreport(
@@ -95,8 +95,10 @@ class ScenarioReport(_LoggerImpl):
         """
         Reads the JSON report file.
 
-        :param json_path: JSON file path to read.
-        :param feed_reqdb: ``True`` to feed automatically the requirement database with tracked requirement references.
+        :param json_path:
+            JSON file path to read.
+        :param feed_reqdb:
+            ``True`` to feed automatically the requirement database with verified requirement references.
         :return:
             Scenario data read from the JSON report file.
             ``None`` when the file could not be read, or its content could not be parsed successfully.
@@ -172,7 +174,7 @@ class ScenarioReport(_LoggerImpl):
                 _json_scenario["attributes"][_attribute_name] = str(scenario_definition.getattribute(_attribute_name))
 
             # Requirements.
-            self._reqtracker2json(scenario_definition, _json_scenario)
+            self._reqverifier2json(scenario_definition, _json_scenario)
 
             # Steps.
             _json_scenario["steps"] = []
@@ -242,7 +244,7 @@ class ScenarioReport(_LoggerImpl):
                 _scenario_definition.setattribute(_attribute_name, json_scenario["attributes"][_attribute_name])
 
             # Requirements.
-            self._json2reqtracker(json_scenario, _scenario_definition)
+            self._json2reqverifier(json_scenario, _scenario_definition)
 
             # Steps.
             for _json_step_definition in json_scenario["steps"]:  # type: _JsonDictType
@@ -293,7 +295,7 @@ class ScenarioReport(_LoggerImpl):
             # Do not set 'reqs', 'actions-results' and 'executions' lists for step sections.
             if not isinstance(step_definition, StepSectionDescription):
                 # Requirements.
-                self._reqtracker2json(step_definition, _json_step_definition)
+                self._reqverifier2json(step_definition, _json_step_definition)
 
                 # Actions / results.
                 _json_step_definition["actions-results"] = []
@@ -359,7 +361,7 @@ class ScenarioReport(_LoggerImpl):
                 _step_definition = StepSectionDescription(_step_definition.description)
             else:
                 # Requirements.
-                self._json2reqtracker(json_step_definition, _step_definition)
+                self._json2reqverifier(json_step_definition, _step_definition)
 
                 # Actions / results.
                 for _json_action_result_definition in json_step_definition["actions-results"]:  # type: _JsonDictType
@@ -390,39 +392,39 @@ class ScenarioReport(_LoggerImpl):
 
         return _step_definition
 
-    def _reqtracker2json(
+    def _reqverifier2json(
             self,
-            req_tracker,  # type: _ReqTrackerType
-            json_req_tracker,  # type: _JsonDictType
+            req_verifier,  # type: _ReqVerifierType
+            json_req_verifier,  # type: _JsonDictType
     ):  # type: (...) -> None
         """
-        Generates JSON requirement links for a requirement tracker.
+        Generates JSON requirement links for a requirement verifier.
 
-        :param req_tracker: Requirement tracker which JSON report to feed with requirement links. Either a scenario or a step.
-        :param json_req_tracker: JSON report to update.
+        :param req_verifier: Requirement verifier which JSON report to feed with requirement links. Either a scenario or a step.
+        :param json_req_verifier: JSON report to update.
         """
         from ._reqlink import ReqLink
 
-        json_req_tracker["reqs"] = []
+        json_req_verifier["reqs"] = []
 
-        for _req_link in req_tracker.getreqlinks():  # type: ReqLink
+        for _req_link in req_verifier.getreqlinks():  # type: ReqLink
             _json_req_link = {"ref": _req_link.req_ref.id}  # type: _JsonDictType
 
             if _req_link.comments:
                 _json_req_link["comments"] = _req_link.comments
 
-            json_req_tracker["reqs"].append(_json_req_link)
+            json_req_verifier["reqs"].append(_json_req_link)
 
-    def _json2reqtracker(
+    def _json2reqverifier(
             self,
-            json_req_tracker,  # type: _JsonDictType
-            req_tracker,  # type: _ReqTrackerType
+            json_req_verifier,  # type: _JsonDictType
+            req_verifier,  # type: _ReqVerifierType
     ):  # type: (...) -> None
         """
-        Reads requirement coverage for the JSON report of a requirement tracker.
+        Reads requirement coverage from the JSON report of a requirement verifier.
 
-        :param json_req_tracker: JSON report of a requirement tracker.
-        :param req_tracker: Requirement tracker to update. Either a scenario or a step.
+        :param json_req_verifier: JSON report of a requirement verifier.
+        :param req_verifier: Requirement verifier to update. Either a scenario or a step.
         """
         from ._reqdb import REQ_DB
         from ._reqref import ReqRef
@@ -430,8 +432,8 @@ class ScenarioReport(_LoggerImpl):
             from ._reqtypes import ReqLinkDefType
 
         # Memo: No 'reqs' until feature #83 has been developped.
-        if "reqs" in json_req_tracker:
-            for _json_req_link in json_req_tracker["reqs"]:  # type: _JsonDictType
+        if "reqs" in json_req_verifier:
+            for _json_req_link in json_req_verifier["reqs"]:  # type: _JsonDictType
                 _req_ref_id = _json_req_link["ref"]  # type: str
                 try:
                     _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_reqdb)  # type: ReqRef
@@ -447,7 +449,7 @@ class ScenarioReport(_LoggerImpl):
                 if "comments" in _json_req_link:
                     _req_link_def = (_req_ref, str(_json_req_link["comments"]))
 
-                req_tracker.covers(_req_link_def)
+                req_verifier.verifies(_req_link_def)
 
     def _actionresult2json(
             self,

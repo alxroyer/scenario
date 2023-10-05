@@ -28,7 +28,7 @@ class Inheritance001(scenario.test.TestCase):
             title="Inheritance & step order",
             description="Check step order when a scenario inherits from another one.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.ALTERNATIVE_SCENARIOS,
             scenario.test.reqs.SCENARIO_EXECUTION,
         )

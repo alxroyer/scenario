@@ -27,7 +27,7 @@ class Stats021(scenario.test.TestCase):
             title="Statistics failing scenario --doc-only",
             description="Check scenario execution statistics for a failing scenario executed with the --doc-only option set.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.STATISTICS,
             scenario.test.reqs.ERROR_HANDLING,
             scenario.test.reqs.DOC_ONLY,

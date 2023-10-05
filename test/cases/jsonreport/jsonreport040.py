@@ -28,7 +28,7 @@ class JsonReport040(scenario.test.TestCase):
             title="JSON report subscenario",
             description="Check the JSON report is generated as expected for a super scenario executing a subscenario.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,
             scenario.test.reqs.SUBSCENARIOS,
         )

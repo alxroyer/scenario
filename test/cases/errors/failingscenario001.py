@@ -36,7 +36,7 @@ class FailingScenario001(scenario.test.TestCase):
                 "Check the error is displayed and stored appropriately."
             ),
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.ERROR_HANDLING,
             scenario.test.reqs.SCENARIO_LOGGING,
             scenario.test.reqs.SCENARIO_REPORT,

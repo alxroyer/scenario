@@ -28,7 +28,7 @@ class JsonReport010(scenario.test.TestCase):
             title="JSON report simple scenario",
             description="Check the JSON report is generated as expected for a simple scenario.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,
         )
 

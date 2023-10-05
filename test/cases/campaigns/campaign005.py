@@ -28,8 +28,8 @@ class Campaign005(scenario.test.TestCase):
             title="Campaign & extra info",
             description="Check extra info display with campaign results.",
         )
-        self.covers(
-            (scenario.test.reqs.CAMPAIGNS, ),
+        self.verifies(
+            (scenario.test.reqs.CAMPAIGN_LOGGING, ),
             (scenario.test.reqs.ATTRIBUTES, "Display with campaign final results"),
         )
 

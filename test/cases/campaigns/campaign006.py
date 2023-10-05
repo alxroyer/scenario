@@ -30,8 +30,8 @@ class Campaign006(scenario.test.TestCase):
             title="Campaign & requirement file",
             description="Check requirement file output with campaign results.",
         )
-        self.covers(
-            scenario.test.reqs.CAMPAIGNS,
+        self.verifies(
+            (scenario.test.reqs.CAMPAIGN_REPORTS, ),
             (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirement output file management with campaigns"),
         )
 

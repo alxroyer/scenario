@@ -29,7 +29,7 @@ class ConfigDb320(scenario.test.TestCase):
             title="'pyyaml' environment error",
             description="Check that an environment error is raised when 'pyyaml' is not installed.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CONFIG_DB,
         )
 

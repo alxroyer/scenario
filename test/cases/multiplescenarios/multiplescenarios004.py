@@ -30,7 +30,7 @@ class MultipleScenarios004(scenario.test.TestCase):
             title="Multiple scenarios & extra info",
             description="Check extra info display when executing multiple scenarios.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
             scenario.test.reqs.ATTRIBUTES,
         )

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Requirement trackers.
+Requirement verifiers.
 """
 
 import abc
@@ -28,43 +28,43 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import AnyReqLinkType as _AnyReqLinkType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
-    from ._reqtypes import VarReqTrackerType as _VarReqTrackerType
+    from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
 
 
-class ReqTracker(abc.ABC):
+class ReqVerifier(abc.ABC):
     """
-    Requirement tracker objects.
+    Requirement verifier objects.
 
     Actually, only :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`
-    may subclass this :class:`ReqTracker` abstract class.
+    may subclass this :class:`ReqVerifier` abstract class.
     """
 
     @classmethod
     def orderedset(
-            cls,  # type: typing.Type[_VarReqTrackerType]
-            req_trackers,  # type: typing.Iterable[_VarReqTrackerType]
-    ):  # type: (...) -> _OrderedSetType[_VarReqTrackerType]
+            cls,  # type: typing.Type[_VarReqVerifierType]
+            req_verifiers,  # type: typing.Iterable[_VarReqVerifierType]
+    ):  # type: (...) -> _OrderedSetType[_VarReqVerifierType]
         """
-        Ensures an ordered set of unique :class:`ReqTracker` items.
+        Ensures an ordered set of unique :class:`ReqVerifier` items.
 
-        :param req_trackers: Unordered list of :class:`ReqTracker` items.
-        :return: Ordered set of unique :class:`ReqTracker` items, ordered by scenario (or owner scenario) names, then step ids.
+        :param req_verifiers: Unordered list of :class:`ReqVerifier` items.
+        :return: Ordered set of unique :class:`ReqVerifier` items, ordered by scenario (or owner scenario) names, then step ids.
         """
         from ._setutils import orderedset
 
         return orderedset(
-            req_trackers,
-            key=ReqTrackerHelper.sortkeyfunction,
+            req_verifiers,
+            key=ReqVerifierHelper.sortkeyfunction,
         )
 
     def __init__(self):  # type: (...) -> None
         """
-        Initializes requirement tracking members.
+        Initializes an empty requirement link set.
 
         Checks that only :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`
-        inherit from :class:`ReqTracker`.
+        inherit from :class:`ReqVerifier`.
         """
         from ._scenariodefinition import ScenarioDefinition
         from ._stepdefinition import StepDefinition
@@ -73,15 +73,15 @@ class ReqTracker(abc.ABC):
             isinstance(self, ScenarioDefinition),
             isinstance(self, StepDefinition),
         ]):
-            raise TypeError(f"Cannot subclass ReqTracker if not a scenario nor step definition")
+            raise TypeError(f"Cannot subclass ReqVerifier if not a scenario nor step definition")
 
-        #: Links to tracked requirements.
+        #: Links to the verified requirements.
         self._req_links = set()  # type: typing.Set[_ReqLinkType]
 
     @property
     def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
         """
-        Requirement links attached with this tracker.
+        Requirement links through which this verifier traces requirement references.
 
         See :meth:`._reqlink.ReqLink.orderedset()` for order details.
         """
@@ -89,13 +89,13 @@ class ReqTracker(abc.ABC):
 
         return ReqLink.orderedset(self._req_links)
 
-    def covers(
-            self,  # type: _VarReqTrackerType
+    def verifies(
+            self,  # type: _VarReqVerifierType
             first,  # type: _AnyReqLinkType
             *others,  # type: _AnyReqLinkType
-    ):  # type: (...) -> _VarReqTrackerType
+    ):  # type: (...) -> _VarReqVerifierType
         """
-        Declares requirement coverage from this tracker object.
+        Declares requirement coverage from this verifier object.
 
         :param first:
             First requirement link declared.
@@ -117,8 +117,8 @@ class ReqTracker(abc.ABC):
                 # New link.
                 self._req_links.add(_req_link)
 
-                # Link <-> tracker cross-reference.
-                _req_link.coveredby(self)
+                # Link <-> verifier cross-reference.
+                _req_link.verifiedby(self)
 
                 # Let's debug the upstream requirement link after.
                 REQ_DB.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
@@ -132,7 +132,7 @@ class ReqTracker(abc.ABC):
             walk_sub_refs=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
-        Requirement links attached with this tracker,
+        Requirement links attached with this verifier,
         filtered with the given predicates.
 
         :param req_ref:
@@ -142,7 +142,9 @@ class ReqTracker(abc.ABC):
             All requirement links when ``None``.
         :param walk_sub_refs:
             When ``req_ref`` is a main requirement,
-            ``True`` makes the requirement link match if it tracks a sub-reference of the requirement.
+            ``True`` makes the links match if they trace a sub-reference of the requirement.
+
+            Ignored when ``req_ref`` is not set.
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
@@ -160,16 +162,16 @@ class ReqTracker(abc.ABC):
             self,
     ):  # type: (...) -> _SetWithReqLinksType[_ReqRefType]
         """
-        Requirement references tracked by this tracker, with related links.
+        Requirement references traced by this verifier, with related links.
 
         :return:
-            Requirement references tracked by this tracker,
+            Requirement references traced by this verifier,
             with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
         from ._reqlink import ReqLinkHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Walk requirement links from the current requirement tracker.
+            # Walk requirement links from the current requirement verifier.
             [self],
             # Get the requirement reference for each link.
             lambda req_link: [req_link.req_ref],
@@ -179,68 +181,68 @@ class ReqTracker(abc.ABC):
             self,
     ):  # type: (...) -> _SetWithReqLinksType[_ReqType]
         """
-        Requirements tracked by this tracker, with related links.
+        Requirements traced by this verifier, with related links.
 
         :return:
-            Requirements tracked by this tracker,
+            Requirements traced by this verifier,
             either directly or through a sub-reference of it,
             with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
         from ._reqlink import ReqLinkHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Walk requirement links from the current requirement tracker.
+            # Walk requirement links from the current requirement verifier.
             [self],
             # Get the requirement for each link.
             lambda req_link: [req_link.req],
         )
 
 
-class ReqTrackerHelper:
+class ReqVerifierHelper:
     """
-    Helper class for :class:`ReqTracker`.
+    Helper class for :class:`ReqVerifier`.
     """
 
     @staticmethod
     def sortkeyfunction(
-            req_tracker,  # type: ReqTracker
+            req_verifier,  # type: ReqVerifier
     ):  # type: (...) -> str
         """
-        Key function to sort :class:`ReqTracker` items.
+        Key function to sort :class:`ReqVerifier` items.
 
         By scenario (or owner scenario) names, then step ids.
 
-        :param req_tracker: Scenario or step definition to sort.
+        :param req_verifier: Scenario or step definition to sort.
         :return: Sortable string.
         """
         from ._scenariodefinition import ScenarioDefinition
         from ._stepdefinition import StepDefinition
 
-        if isinstance(req_tracker, ScenarioDefinition):
-            return req_tracker.name
-        elif isinstance(req_tracker, StepDefinition):
+        if isinstance(req_verifier, ScenarioDefinition):
+            return req_verifier.name
+        elif isinstance(req_verifier, StepDefinition):
             # Find out the number of digits to consider to format the step number.
             # Depends on the number of steps the owner scenario holds.
-            _step_number_digits = len(str(len(req_tracker.scenario.steps)))  # type: int
+            _step_number_digits = len(str(len(req_verifier.scenario.steps)))  # type: int
             _step_number_fmt = f"0{_step_number_digits}d"  # type: str
-            return f"{req_tracker.scenario.name}:step#{req_tracker.number:{_step_number_fmt}}"
-        raise TypeError(f"Unexpected requirement tracker type {req_tracker!r}")
+            return f"{req_verifier.scenario.name}:step#{req_verifier.number:{_step_number_fmt}}"
+        raise TypeError(f"Unexpected requirement verifier type {req_verifier!r}")
 
     @staticmethod
     def getscenario(
-            req_tracker,  # type: ReqTracker
+            req_verifier,  # type: ReqVerifier
     ):  # type: (...) -> _ScenarioDefinitionType
         """
-        Retrieves the :class:`._scenariodefinition.ScenarioDefinition` instance from a :class:`ReqTracker`.
+        Retrieves the :class:`._scenariodefinition.ScenarioDefinition` instance from a :class:`ReqVerifier`.
 
-        :param req_tracker: Scenario or step definition as a :class:`ReqTracker` instance.
+        :param req_verifier: Scenario or step definition as a :class:`ReqVerifier` instance.
         :return: Scenario definition.
         """
         from ._scenariodefinition import ScenarioDefinition
         from ._stepdefinition import StepDefinition
 
-        if isinstance(req_tracker, ScenarioDefinition):
-            return req_tracker
-        if isinstance(req_tracker, StepDefinition):
-            return req_tracker.scenario
-        raise TypeError(f"Unexpected requirement tracker type {req_tracker!r}")
+        if isinstance(req_verifier, ScenarioDefinition):
+            return req_verifier
+        if isinstance(req_verifier, StepDefinition):
+            return req_verifier.scenario
+        raise TypeError(f"Unexpected requirement verifier type {req_verifier!r}")

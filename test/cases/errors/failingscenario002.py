@@ -31,7 +31,7 @@ class FailingScenario002(scenario.test.TestCase):
             title="Continue on error",
             description="Check steps following an error step continue being executed when the *continue_on_error* option is enabled.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.ERROR_HANDLING,
         )
 

@@ -27,7 +27,7 @@ class SubScenario002(scenario.test.TestCase):
             title="Subscenario --doc-only",
             description="Check that a super scenario does not execute its subscenarios when the --doc-only option is set.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.SUBSCENARIOS,
             scenario.test.reqs.DOC_ONLY,
         )

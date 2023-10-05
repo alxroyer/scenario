@@ -39,7 +39,7 @@ class Campaign001(scenario.test.TestCase):
                 "(MULTIPLE_SCENARIO_EXECUTION, ERROR_HANDLING & KNOWN_ISSUES)."
             ),
         )
-        self.covers(
+        self.verifies(
             (scenario.test.reqs.CAMPAIGNS, "Single test suite"),
             (scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION, "Campaign final results"),
             (scenario.test.reqs.SCENARIO_LOGGING, "Scenario log files gathered with campaign reports"),
@@ -72,21 +72,21 @@ class Campaign001(scenario.test.TestCase):
         _campaign_expectations.reqdbfile(scenario.test.paths.REQDB_FILE)
 
         # Verifications.
-        self.addstep(CheckCampaignLogExpectations(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            (scenario.test.reqs.CAMPAIGNS_LOGGING, "Main campaign logging"),
+        self.addstep(CheckCampaignLogExpectations(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+            (scenario.test.reqs.CAMPAIGN_LOGGING, "Main campaign logging"),
             (scenario.test.reqs.ERROR_HANDLING, "Scenario errors logged with main campaign logging"),
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues logged with main campaign logging"),
         )
         self.addstep(ParseFinalResultsLog(ExecCampaign.getinstance()))
-        self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(), _campaign_expectations.all_test_case_expectations)).covers(
-            (scenario.test.reqs.CAMPAIGNS_LOGGING, "Campaign final results"),
+        self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(), _campaign_expectations.all_test_case_expectations)).verifies(
+            (scenario.test.reqs.CAMPAIGN_LOGGING, "Campaign final results"),
             (scenario.test.reqs.STATISTICS, "Statistics logged with campaign final results"),
             (scenario.test.reqs.ERROR_HANDLING, "Scenario errors logged with campaign final results"),
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues logged with campaign final results"),
         )
 
-        self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            (scenario.test.reqs.CAMPAIGNS_LOGGING, "Campaign output files"),
+        self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+            (scenario.test.reqs.CAMPAIGN_LOGGING, "Campaign output files"),
             (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirements saved with campaign output files"),
             (scenario.test.reqs.LOGGING_FILE, "Scenario logging saved with campaign output files"),
             (scenario.test.reqs.SCENARIO_REPORT, "Scenario reports saved with campaign output files"),
@@ -95,7 +95,7 @@ class Campaign001(scenario.test.TestCase):
             level=scenario.test.IssueLevel.TEST, id="#83",
             message="Step missing to check LOGGING/File and SCENARIO_LOGGING requirements",
         )
-        # self.addstep(CheckCampaignLogReports(ExecCampaign.getinstance(), _campaign_expectations)).covers(
+        # self.addstep(CheckCampaignLogReports(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
         #     # Content of scenario log files...
         #     self.getreqlinks(scenario.test.reqs.CAMPAIGNS_FINAL_RESULTS),
         #     self.getreqlinks(scenario.test.reqs.SCENARIO_LOGGING), self.reqid2links(scenario.test.reqs.LOGGING_FILE),
@@ -104,20 +104,20 @@ class Campaign001(scenario.test.TestCase):
         #     self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
         #     self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
         # )
-        self.addstep(CheckCampaignJsonReports(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            (scenario.test.reqs.CAMPAIGNS_REPORTS, "Scenario report content in campaign output files"),
+        self.addstep(CheckCampaignJsonReports(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+            (scenario.test.reqs.CAMPAIGN_REPORTS, "Scenario report content in campaign output files"),
             (scenario.test.reqs.SCENARIO_REPORT, "Scenario report content in campaign output files"),
             (scenario.test.reqs.STATISTICS, "Statistics saved in scenario reports in campaign output files"),
             (scenario.test.reqs.ERROR_HANDLING, "Scenario errors saved in scenario reports in campaign output files"),
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues saved in scenario reports in campaign output files"),
         )
-        self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            (scenario.test.reqs.CAMPAIGNS_REPORTS, "Campaign report content"),
+        self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+            (scenario.test.reqs.CAMPAIGN_REPORTS, "Campaign report content"),
             (scenario.test.reqs.STATISTICS, "Statistics saved in campaign report content"),
             (scenario.test.reqs.ERROR_HANDLING, "Scenario errors saved in campaign report content"),
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues saved in campaign report content"),
         )
-        self.addstep(CheckCampaignReqdbFile(ExecCampaign.getinstance(), _campaign_expectations)).covers(
-            (scenario.test.reqs.CAMPAIGNS_REPORTS, "Requirement file content in campaign output files"),
+        self.addstep(CheckCampaignReqdbFile(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+            (scenario.test.reqs.CAMPAIGN_REPORTS, "Requirement file content in campaign output files"),
             (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirement file content in campaign output files"),
         )

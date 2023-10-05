@@ -29,7 +29,7 @@ class Campaign003(scenario.test.TestCase):
             title="Campaign --dt-subdir option",
             description="Check the creation of date/time subdirectory for campaign results when the --dt-subdir option is used.",
         )
-        self.covers(
+        self.verifies(
             scenario.test.reqs.CAMPAIGNS,
         )
 

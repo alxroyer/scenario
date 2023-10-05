@@ -810,23 +810,23 @@ if True:
 
 if True:
     __doc__ += """
-    .. py:attribute:: ReqTracker
+    .. py:attribute:: ReqVerifier
 
-        Requirement tracker class.
+        Requirement verifier class.
 
         .. note::
-            Only :class:`Scenario` and :class:`Step` may track / cover requirements.
+            Only :class:`Scenario` and :class:`Step` may verify requirements.
 
-        .. seealso:: :class:`._reqtracker.ReqTracker` implementation.
+        .. seealso:: :class:`._reqverifier.ReqVerifier` implementation.
     """
-    from ._reqtracker import ReqTracker as ReqTracker
-    __all__.append("ReqTracker")
+    from ._reqverifier import ReqVerifier as ReqVerifier
+    __all__.append("ReqVerifier")
 
 if True:
     __doc__ += """
     .. py:attribute:: ReqLink
 
-        Requirement link between a :class:`Req` and a :class:`ReqTracker`.
+        Requirement link between a :class:`ReqRef` and one or more :class:`ReqVerifier` objects (:class:`Scenario` or :class:`Step`).
 
         .. seealso:: :class:`._reqlink.ReqLink` implementation.
     """
