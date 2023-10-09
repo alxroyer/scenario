@@ -30,9 +30,9 @@ import sys
 import typing
 
 # Path management.
-MAIN_PATH = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
-sys.path.append(str(MAIN_PATH / "src"))
-sys.path.append(str(MAIN_PATH / "tools" / "src"))
+_root_scenario_path = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
+sys.path.append(str(_root_scenario_path / "src"))
+sys.path.append(str(_root_scenario_path / "tools" / "src"))
 
 
 # Project information
@@ -160,7 +160,7 @@ setup = scenario.tools.sphinx.setup  # type: typing.Callable[[sphinx.application
 extensions.append("sphinx.ext.autodoc")
 
 # Autodoc needs the path to be set appropriately so that the Python modules can be loaded and inspected.
-sys.path.insert(0, str(MAIN_PATH / "src"))
+sys.path.insert(0, str(_root_scenario_path / "src"))
 
 # [SPHINX_AUTODOC]: "This value selects what content will be inserted into the main body of an autoclass directive. (...)
 #                    "class" Only the class’ docstring is inserted. This is the default.

@@ -65,7 +65,7 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
             path,  # type: typing.Union[str, scenario.Path]
     ):  # type: (...) -> str
         if isinstance(path, str):
-            path = scenario.Path(path, relative_to=scenario.test.paths.MAIN_PATH)
+            path = scenario.Path(path, relative_to=scenario.test.paths.ROOT_SCENARIO_PATH)
         return self.test_case.getpathdesc(path)
 
     @property

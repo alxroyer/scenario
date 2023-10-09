@@ -18,18 +18,18 @@ import scenario
 
 
 # Directories.
-MAIN_PATH = scenario.Path(__file__).parents[4]  # type: scenario.Path
-DEMO_PATH = MAIN_PATH / "demo"  # type: scenario.Path
-DATA_PATH = MAIN_PATH / "test" / "data"  # type: scenario.Path
-UNIT_TESTS_PATH = MAIN_PATH / "test" / "cases"  # type: scenario.Path
-UNIT_RESULTS_PATH = MAIN_PATH / "test" / "results"  # type: scenario.Path
+ROOT_SCENARIO_PATH = scenario.Path(__file__).parents[4]  # type: scenario.Path
+DEMO_PATH = ROOT_SCENARIO_PATH / "demo"  # type: scenario.Path
+DATA_PATH = ROOT_SCENARIO_PATH / "test" / "data"  # type: scenario.Path
+UNIT_TESTS_PATH = ROOT_SCENARIO_PATH / "test" / "cases"  # type: scenario.Path
+UNIT_RESULTS_PATH = ROOT_SCENARIO_PATH / "test" / "results"  # type: scenario.Path
 
 # Launchers.
-TEST_LAUNCHER = MAIN_PATH / "bin" / "run-test.py"  # type: scenario.Path
-CAMPAIGN_LAUNCHER = MAIN_PATH / "bin" / "run-campaign.py"  # type: scenario.Path
-PACKAGE_BLACK_LIST_STARTER = MAIN_PATH / "test" / "tools" / "package-black-list-starter.py"  # type: scenario.Path
-UNIT_TEST_LAUNCHER = MAIN_PATH / "test" / "run-unit-test.py"  # type: scenario.Path
-UNIT_CAMPAIGN_LAUNCHER = MAIN_PATH / "test" / "run-unit-campaign.py"  # type: scenario.Path
+TEST_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-test.py"  # type: scenario.Path
+CAMPAIGN_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-campaign.py"  # type: scenario.Path
+PACKAGE_BLACK_LIST_STARTER = ROOT_SCENARIO_PATH / "test" / "tools" / "package-black-list-starter.py"  # type: scenario.Path
+UNIT_TEST_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "run-unit-test.py"  # type: scenario.Path
+UNIT_CAMPAIGN_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "run-unit-campaign.py"  # type: scenario.Path
 
 # Data scenarios.
 ACTION_RESULT_LOOP_SCENARIO = DATA_PATH / "actionresultloopscenario.py"  # type: scenario.Path

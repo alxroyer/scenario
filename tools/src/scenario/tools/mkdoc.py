@@ -67,7 +67,7 @@ class MkDoc:
             sys.exit(int(scenario.Args.getinstance().error_code))
 
         # Execution.
-        scenario.Path.setmainpath(_paths.MAIN_PATH)
+        scenario.Path.setmainpath(_paths.ROOT_SCENARIO_PATH)
         self.checktools()
         if MkDoc.Args.getinstance().all or MkDoc.Args.getinstance().logs:
             self.buildlogs()
@@ -88,7 +88,7 @@ class MkDoc:
         tracktoolversion("sphinx-build", [*PY_SPHINX_BUILD_CMD, "--version"])
         # tracktoolversion("dot", ["dot", "-V"])  ## PlantUML does not need dot to be installed for regular sequence diagrams.
         tracktoolversion("java", ["java", "-version"])
-        tracktoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=_paths.MAIN_PATH)
+        tracktoolversion("PlantUML", ["java", "-jar", self.PLANTUML_PATH, "-version"], cwd=_paths.ROOT_SCENARIO_PATH)
 
     def buildlogs(self):  # type: (...) -> None
         """
@@ -129,7 +129,7 @@ class MkDoc:
             _tmp_outdir = None  # type: typing.Optional[scenario.Path]
             if positionals:
                 if sum([_positional.name.endswith(".py") for _positional in positionals]) == 0:
-                    _tmp_outdir = _paths.MAIN_PATH / "out"
+                    _tmp_outdir = _paths.ROOT_SCENARIO_PATH / "out"
             _xml_report_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".xml")  # type: scenario.Path
 
             scenario.logging.info(f"Updating {_log_out_path}")
@@ -145,7 +145,7 @@ class MkDoc:
                 scenario.logging.debug("Creating directory '%s'", _tmp_outdir)
                 _tmp_outdir.mkdir(parents=True, exist_ok=True)
                 _subprocess.addargs("--outdir", _tmp_outdir)
-            _subprocess.setcwd(_paths.MAIN_PATH)
+            _subprocess.setcwd(_paths.ROOT_SCENARIO_PATH)
             _subprocess.showstdout(False)
             _subprocess.run()
 
@@ -257,7 +257,7 @@ class MkDoc:
         )
 
         # Module dependencies.
-        _generatelog(_paths.MAIN_PATH / "tools" / "check-module-deps.py")
+        _generatelog(_paths.ROOT_SCENARIO_PATH / "tools" / "check-module-deps.py")
 
     def builddiagrams(self):  # type: (...) -> None
         """
@@ -275,7 +275,7 @@ class MkDoc:
                     _subprocess = SubProcess("java", "-jar", self.PLANTUML_PATH)  # type: SubProcess
                     _subprocess.addargs("-config", _cfg_path)
                     _subprocess.addargs(_path)
-                    _subprocess.setcwd(_paths.MAIN_PATH)
+                    _subprocess.setcwd(_paths.ROOT_SCENARIO_PATH)
                     _subprocess.run()
                 else:
                     scenario.logging.info(f"No need to update {_png_outpath} from {_path}")

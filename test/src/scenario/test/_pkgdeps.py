@@ -18,11 +18,11 @@
 def checkpkgdeps():  # type: (...) -> None
     import scenario
     from scenario._reflection import extendnamespacepackagepath  # noqa  ## Access to protected member
-    from ._paths import MAIN_PATH
+    from ._paths import ROOT_SCENARIO_PATH
 
     # Ensure `scenario.text` can be loaded.
     try:
         import scenario.text
     except ImportError:
-        extendnamespacepackagepath(namespace_package=scenario, root_src_path=MAIN_PATH / "utils" / "src")
+        extendnamespacepackagepath(namespace_package=scenario, root_src_path=ROOT_SCENARIO_PATH / "utils" / "src")
         import scenario.text

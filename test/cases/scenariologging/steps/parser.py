@@ -233,8 +233,8 @@ class ParseScenarioLog(_LogParserStepImpl):
         if _match:
             _traceback_path = scenario.Path(self.tostr(_match.group(1)))  # type: scenario.Path
             if (
-                _traceback_path.is_relative_to(scenario.test.paths.MAIN_PATH)
-                and (not _traceback_path.is_relative_to(scenario.test.paths.MAIN_PATH / "src"))
+                _traceback_path.is_relative_to(scenario.test.paths.ROOT_SCENARIO_PATH)
+                and (not _traceback_path.is_relative_to(scenario.test.paths.ROOT_SCENARIO_PATH / "src"))
             ):
                 self._getscenario(_match)["errors"].append({
                     "type": None,

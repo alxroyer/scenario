@@ -24,7 +24,7 @@ import scenario
 class CheckModuleDeps:
 
     def run(self):  # type: (...) -> scenario.ErrorCode
-        from .._paths import MAIN_PATH
+        from .. import _paths
 
         # Command line arguments.
         scenario.Args.setinstance(scenario.Args(class_debugging=False))
@@ -33,7 +33,7 @@ class CheckModuleDeps:
             return scenario.Args.getinstance().error_code
 
         # Set main path after arguments have been parsed.
-        scenario.Path.setmainpath(MAIN_PATH, log_level=logging.DEBUG)
+        scenario.Path.setmainpath(_paths.ROOT_SCENARIO_PATH, log_level=logging.DEBUG)
 
         self._parseimports()
         self._computedeps()
@@ -42,11 +42,11 @@ class CheckModuleDeps:
         return scenario.ErrorCode.SUCCESS
 
     def _parseimports(self):  # type: (...) -> None
-        from .._paths import SRC_PATH
+        from .. import _paths
         from ._moduledeps import ModuleDeps
 
-        scenario.logging.debug("Walking through '%s'", SRC_PATH / "scenario")
-        for _src_path in (SRC_PATH / "scenario").iterdir():  # type: scenario.Path
+        scenario.logging.debug("Walking through '%s'", _paths.SRC_PATH / "scenario")
+        for _src_path in (_paths.SRC_PATH / "scenario").iterdir():  # type: scenario.Path
             if _src_path.is_file() and _src_path.name.endswith(".py"):
                 _current_module = ModuleDeps.get(_src_path)  # type: ModuleDeps
                 _current_module.parser.parse()

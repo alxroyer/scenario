@@ -38,7 +38,7 @@ def sphinxapidoc():  # type: (...) -> None
     Executed in the context of the `sphinx-build` execution.
     Use `scenario.tools.sphinx` logging.
     """
-    from .._paths import DOC_SRC_PATH, MAIN_PATH, SRC_PATH
+    from .. import _paths
     from .._subprocess import SubProcess
     from ._logging import Logger
 
@@ -46,7 +46,7 @@ def sphinxapidoc():  # type: (...) -> None
 
     # First remove the previous 'doc/src/py/' directory with its .rst generated files.
     # Useful in case source modules have been renamed.
-    _doc_src_py_path = DOC_SRC_PATH / "py"  # type: scenario.Path
+    _doc_src_py_path = _paths.DOC_SRC_PATH / "py"  # type: scenario.Path
     if _doc_src_py_path.is_dir():
         _logger.info(f"Removing {_doc_src_py_path}")
         shutil.rmtree(_doc_src_py_path)
@@ -80,7 +80,7 @@ def sphinxapidoc():  # type: (...) -> None
     # [SPHINX_APIDOC_HELP]
     #     -T, --no-toc = "don't create a table of contents file"
     _subprocess.addargs("--no-toc")
-    _subprocess.addargs(SRC_PATH / "scenario")
+    _subprocess.addargs(_paths.SRC_PATH / "scenario")
 
     # Configure `.. automodule::` options.
     #
@@ -91,7 +91,7 @@ def sphinxapidoc():  # type: (...) -> None
     #     ...
     # ]))
 
-    _subprocess.setcwd(MAIN_PATH)
+    _subprocess.setcwd(_paths.ROOT_SCENARIO_PATH)
     _subprocess.setlogger(_logger.scenario_logger)
     _subprocess.onstdoutline(lambda line: _logger.info(line.decode("utf-8")))
     _subprocess.onstderrline(lambda line: _logger.error(line.decode("utf-8")))
@@ -131,14 +131,14 @@ def sphinxbuild():  # type: (...) -> None
     Executed in the context of the main 'mkdoc.py' execution.
     Use `scenario.logging` directly.
     """
-    from .._paths import DOC_OUT_PATH, DOC_SRC_PATH, MAIN_PATH, TOOLS_CONF_PATH
+    from .. import _paths
     from .._subprocess import SubProcess
 
     scenario.logging.info("Executing sphinx-build...")
 
     # Update timestamps.
     scenario.logging.debug("Ensuring every .rst file timestamp has been updated")
-    for _path in DOC_SRC_PATH.iterdir():  # type: scenario.Path
+    for _path in _paths.DOC_SRC_PATH.iterdir():  # type: scenario.Path
         if _path.is_file() and _path.name.endswith(".rst"):
             scenario.logging.debug("%r.touch()", _path)
             _path.touch()
@@ -176,7 +176,7 @@ def sphinxbuild():  # type: (...) -> None
     # [SPHINX_BUILD_HELP]:
     #     -c PATH = path where configuration file (conf.py) is located
     #               (default: same as SOURCEDIR)
-    _subprocess.addargs("-c", TOOLS_CONF_PATH / "sphinx")
+    _subprocess.addargs("-c", _paths.TOOLS_CONF_PATH / "sphinx")
 
     # Errors:
     # [SPHINX_BUILD_HELP]:
@@ -191,12 +191,12 @@ def sphinxbuild():  # type: (...) -> None
     # Source directory:
     # [SPHINX_BUILD_HELP]:
     #     path to documentation source files
-    _subprocess.addargs(DOC_SRC_PATH)
+    _subprocess.addargs(_paths.DOC_SRC_PATH)
 
     # Output directory:
     # [SPHINX_BUILD_HELP]:
     #     path to output directory
-    _subprocess.addargs(DOC_OUT_PATH)
+    _subprocess.addargs(_paths.DOC_OUT_PATH)
 
     # $(sphinx-build) execution.
     def _onstderrline(line):  # type: (bytes) -> None
@@ -207,5 +207,5 @@ def sphinxbuild():  # type: (...) -> None
         scenario.logging.log(_level, line.decode("utf-8"))
 
     _subprocess.onstderrline(_onstderrline)
-    _subprocess.setcwd(MAIN_PATH)
+    _subprocess.setcwd(_paths.ROOT_SCENARIO_PATH)
     _subprocess.run()

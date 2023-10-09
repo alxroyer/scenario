@@ -10,8 +10,8 @@ import pathlib
 import sys
 
 # Path management.
-MAIN_PATH = pathlib.Path(__file__).parents[1]
-sys.path.append(str(MAIN_PATH / "src"))
+_root_scenario_path = pathlib.Path(__file__).parents[1]
+sys.path.append(str(_root_scenario_path / "src"))
 
 import scenario  # noqa  ## Module level import not at top of file
 

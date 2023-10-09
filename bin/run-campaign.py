@@ -27,9 +27,8 @@ if __name__ == "__main__":
     try:
         import scenario
     except ImportError:
-        _home_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
-        _src_path = _home_path / "src"  # type: pathlib.Path
-        sys.path.append(str(_src_path))
+        _root_scenario_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
+        sys.path.append(str(_root_scenario_path / "src"))
         import scenario
     finally:
         if "scenario" not in sys.modules:

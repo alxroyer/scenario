@@ -19,10 +19,10 @@ import pathlib
 import sys
 
 # Path management.
-MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
-sys.path.append(str(MAIN_PATH / "src"))
-sys.path.append(str(MAIN_PATH / "test" / "cases"))
-sys.path.append(str(MAIN_PATH / "test" / "src"))
+_root_scenario_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
+sys.path.append(str(_root_scenario_path / "src"))
+sys.path.append(str(_root_scenario_path / "test" / "cases"))
+sys.path.append(str(_root_scenario_path / "test" / "src"))
 
 if True:
     import scenario
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         sys.exit(int(UnitTestArgs.getinstance().error_code))
 
     # Set main path after arguments have been parsed.
-    scenario.Path.setmainpath(scenario.test.paths.MAIN_PATH)
+    scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
     # Load requirements.
     scenario.test.reqs.load()

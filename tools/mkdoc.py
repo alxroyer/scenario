@@ -19,9 +19,9 @@ import pathlib
 import sys
 
 # Path management.
-MAIN_PATH = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
-sys.path.append(str(MAIN_PATH / "src"))
-sys.path.append(str(MAIN_PATH / "tools" / "src"))
+_root_scenario_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
+sys.path.append(str(_root_scenario_path / "src"))
+sys.path.append(str(_root_scenario_path / "tools" / "src"))
 
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ class TestCase(scenario.Scenario):
             title,  # type: str
             description,  # type: str
     ):  # type: (...) -> None
-        from ._paths import MAIN_PATH
+        from ._paths import ROOT_SCENARIO_PATH
 
         scenario.Scenario.__init__(self, title=title, description=description)
 
@@ -39,7 +39,7 @@ class TestCase(scenario.Scenario):
         self._tmp_paths = []  # type: typing.List[scenario.Path]
 
         # Main path configuration.
-        scenario.Path.setmainpath(MAIN_PATH)
+        scenario.Path.setmainpath(ROOT_SCENARIO_PATH)
 
         scenario.handlers.install(
             scenario.Event.AFTER_TEST,

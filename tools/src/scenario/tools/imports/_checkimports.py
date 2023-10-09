@@ -53,7 +53,7 @@ class CheckImports:
             sys.exit(int(scenario.Args.getinstance().error_code))
 
         # Set main path after arguments have been parsed.
-        scenario.Path.setmainpath(_paths.MAIN_PATH, log_level=logging.INFO)
+        scenario.Path.setmainpath(_paths.ROOT_SCENARIO_PATH, log_level=logging.INFO)
 
         # Process paths.
         for _start_path in (CheckImports.Args.getinstance().paths or (
