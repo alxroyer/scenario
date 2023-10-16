@@ -616,11 +616,13 @@ class ScenarioDefinitionHelper:
     @staticmethod
     def getscenariodefinitionclassfromscript(
             script_path,  # type: _AnyPathType
+            sys_modules_cache=True,  # type: bool
     ):  # type: (...) -> typing.Type[ScenarioDefinition]
         """
         Retrieves the scenario definitions classes from a Python script.
 
         :param script_path: Path of a Python script.
+        :param sys_modules_cache: See :func:`._reflection.importmodulefrompath()`.
         :return: Scenario definition classes, if any.
         """
         from ._path import Path
@@ -628,7 +630,7 @@ class ScenarioDefinitionHelper:
 
         # Load the test scenario module.
         script_path = Path(script_path)
-        _module = importmodulefrompath(script_path)  # type: types.ModuleType
+        _module = importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
 
         # Find out the scenario classes in that module.
         _scenario_definition_class = None  # type: typing.Optional[typing.Type[ScenarioDefinition]]

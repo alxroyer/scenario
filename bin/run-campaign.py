@@ -35,6 +35,6 @@ if __name__ == "__main__":
             print("Could not import scenario. Please adjust PYTHONPATH environment variable.")
             sys.exit(40)  # ErrorCodes.ENVIRONMENT_ERROR
 
-    # Main script => redirect to CampaignRunner.main()
+    # Main script => redirect to `scenario.campaign_runner.main()`.
     _res = scenario.campaign_runner.main()  # type: scenario.ErrorCode
     sys.exit(int(_res))

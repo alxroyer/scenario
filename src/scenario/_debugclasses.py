@@ -46,6 +46,12 @@ class DebugClass(_StrEnumImpl):
     REFLECTION = "scenario.reflection"
     #: Requirement database debugging.
     REQ_DATABASE = "scenario.ReqDatabase"
+    #: Requirement HTTP server debugging.
+    REQ_HTTP_SERVER = "scenario.ReqHttpServer"
+    #: Requirement management runner debugging.
+    REQ_MANAGEMENT = "scenario.ReqManagement"
+    #: Requirement traceability debugging.
+    REQ_TRACEABILITY = "scenario.ReqTraceability"
     #: Scenario configuration debugging.
     SCENARIO_CONFIG = "scenario.ScenarioConfig"
     #: Scenario report debugging.

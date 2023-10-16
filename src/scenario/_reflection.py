@@ -105,9 +105,17 @@ def importmodulefrompath(
     """
     Imports a module from its Python script path.
 
-    :param script_path: Python script path.
-    :param sys_modules_cache: Read from modules previously loaded and cached in ``sys.modules``, save loaded modules in ``sys.modules`` otherwise.
-    :return: Module loaded.
+    :param script_path:
+        Python script path.
+    :param sys_modules_cache:
+        When ``True``,
+        read from modules previously loaded and cached in ``sys.modules``,
+        or save newly loaded modules in ``sys.modules``.
+
+        When ``False``,
+        just load the module and leave ``sys.modules`` unchanged.
+    :return:
+        Module loaded.
 
     .. admonition:: Known issues when loading a '__init__.py' package definition file
         :class: warning
@@ -147,6 +155,9 @@ def importmodulefrompath(
         if _module_name in sys.modules:
             return sys.modules[_module_name]
 
+    # If not in `sys.modules`, save `sys.modules` keys before we load `script_path`.
+    _initial_sys_modules_keys = list(sys.modules)  # type: typing.Sequence[str]
+
     try:
         # Inspired from https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
         assert sys.version_info >= (3, 6), f"Incorrect Python version {sys.version}, 3.6 required at least"
@@ -157,17 +168,55 @@ def importmodulefrompath(
         if _module is None:
             raise ImportError(f"Could not load '{script_path}'")
         _module_spec.loader.exec_module(_module)
-
-        # Register the module just loaded in the ``sys.modules`` dictionary.
-        # Note: Works even if `_module_name` is in the "package.module" form.
-        if sys_modules_cache:
-            sys.modules[_module_name] = _module
-
-        REFLECTION_LOGGER.debug("importmodulefrompath('%s') => %r", script_path, _module)
-        return _module
     except Exception as _err:
         REFLECTION_LOGGER.debug("%s", _err, exc_info=sys.exc_info())
         raise _err
+
+    if sys_modules_cache:
+        # Register the module just loaded in the `sys.modules` dictionary.
+        # Note: Works even if `_module_name` is in the "package.module" form.
+        REFLECTION_LOGGER.debug("Saving %s -> %r in `sys.modules`", _module_name, _module)
+        sys.modules[_module_name] = _module
+    else:
+        # Save the module just loaded in `_non_cached_modules`.
+        # Useful for :func:`_inspectgetfilehack()` just after.
+        REFLECTION_LOGGER.debug("Saving %s -> %r in `_non_cached_modules`", _module_name, _module)
+        _non_cached_modules[_module_name] = _module
+
+        # Ensure `sys.modules` remain unchanged.
+        # Move new modules to `_non_cached_modules` as well.
+        for _sys_module_name in list(sys.modules.keys()):  # type: str
+            if _sys_module_name not in _initial_sys_modules_keys:
+                REFLECTION_LOGGER.debug("Moving %s -> %r from `sys.modules` to `_non_cached_modules`", _module_name, _module)
+                _non_cached_modules[_sys_module_name] = sys.modules[_sys_module_name]
+                del sys.modules[_sys_module_name]
+
+    REFLECTION_LOGGER.debug("importmodulefrompath('%s') => %r", script_path, _module)
+    return _module
+
+
+#: Modules loaded by :func:`importmodulefrompath()` with ``sys_modules_cache=False``.
+#:
+#: Useful for :func:`_inspectgetfilehack()`.
+_non_cached_modules = {}  # type: typing.Dict[str, types.ModuleType]
+
+
+def _inspectgetfilehack(
+        object,  # type: typing.Any  # noqa  ## Shadows built-in name 'object'
+):  # type: (...) -> str
+    # Class defined in modules registered in `_non_cached_modules`.
+    if inspect.isclass(object):
+        if hasattr(object, "__module__") and (object.__module__ in _non_cached_modules):
+            _module = _non_cached_modules[object.__module__]  # type: types.ModuleType
+            if getattr(_module, "__file__", None):
+                return str(_module.__file__)
+
+    # Call the original `inspect.getfile()` implementation by default.
+    return _inspect_getfile_origin(object)
+
+
+_inspect_getfile_origin = inspect.getfile  # type: typing.Callable[[typing.Any], str]
+inspect.getfile = _inspectgetfilehack
 
 
 def getloadedmodulefrompath(
@@ -176,16 +225,20 @@ def getloadedmodulefrompath(
     """
     Retrieves a module already loaded corresponding to the given path.
 
+    Walks both ``sys.modules`` and :attr:`_non_cached_modules`.
+
     :param script_path: Python script path.
     :return: Corresponding module if already loaded.
     """
     script_path = pathlib.Path(script_path)
     _module = None  # type: typing.Optional[types.ModuleType]
-    for _module_name in sys.modules:  # type: str
-        if hasattr(sys.modules[_module_name], "__file__"):
-            if pathlib.Path(sys.modules[_module_name].__file__ or "").samefile(script_path):
-                _module = sys.modules[_module_name]
-                break
+    for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
+        if _module is None:
+            for _module_name in _module_registry:  # type: str
+                if hasattr(_module_registry[_module_name], "__file__"):
+                    if pathlib.Path(_module_registry[_module_name].__file__ or "").samefile(script_path):
+                        _module = _module_registry[_module_name]
+                        break
 
     REFLECTION_LOGGER.debug("getloadedmodulefrompath('%s') => %r", script_path, _module)
     return _module

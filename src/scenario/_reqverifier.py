@@ -204,6 +204,26 @@ class ReqVerifierHelper:
     """
 
     @staticmethod
+    def tolongstring(
+            req_verifier,  # type: ReqVerifier
+            sortable=False,  # type: bool
+    ):  # type: (...) -> str
+        from ._scenariodefinition import ScenarioDefinition
+        from ._stepdefinition import StepDefinition
+
+        if isinstance(req_verifier, ScenarioDefinition):
+            return req_verifier.name
+        elif isinstance(req_verifier, StepDefinition):
+            _step_number_fmt = "d"  # type: str
+            if sortable:
+                # Find out the number of digits to consider to format the step number.
+                # Depends on the number of steps the owner scenario holds.
+                _step_number_digits = len(str(len(req_verifier.scenario.steps)))  # type: int
+                _step_number_fmt = f"0{_step_number_digits}d"
+            return f"{req_verifier.scenario.name}:step#{req_verifier.number:{_step_number_fmt}}"
+        raise TypeError(f"Unexpected requirement verifier type {req_verifier!r}")
+
+    @staticmethod
     def sortkeyfunction(
             req_verifier,  # type: ReqVerifier
     ):  # type: (...) -> str
@@ -215,18 +235,7 @@ class ReqVerifierHelper:
         :param req_verifier: Scenario or step definition to sort.
         :return: Sortable string.
         """
-        from ._scenariodefinition import ScenarioDefinition
-        from ._stepdefinition import StepDefinition
-
-        if isinstance(req_verifier, ScenarioDefinition):
-            return req_verifier.name
-        elif isinstance(req_verifier, StepDefinition):
-            # Find out the number of digits to consider to format the step number.
-            # Depends on the number of steps the owner scenario holds.
-            _step_number_digits = len(str(len(req_verifier.scenario.steps)))  # type: int
-            _step_number_fmt = f"0{_step_number_digits}d"  # type: str
-            return f"{req_verifier.scenario.name}:step#{req_verifier.number:{_step_number_fmt}}"
-        raise TypeError(f"Unexpected requirement verifier type {req_verifier!r}")
+        return ReqVerifierHelper.tolongstring(req_verifier, sortable=True)
 
     @staticmethod
     def getscenario(

@@ -32,7 +32,7 @@ class Logging510(scenario.test.TestCase):
             description="Check that logging can be saved into a file, even though console logging is turned off.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
+            scenario.test.reqs.LOGGING_FILE,
         )
 
         self.section("File logging activation (console logging enabled by default)")

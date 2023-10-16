@@ -296,4 +296,4 @@ def load():  # type: (...) -> None
         # For each `scenario.Req` instance above.
         if isinstance(_obj, (scenario.Req, scenario.ReqRef)):
             # Ensure the feature is known as a requirement.
-            scenario.reqs.push(_obj)
+            scenario.req_db.push(_obj)

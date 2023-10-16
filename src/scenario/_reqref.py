@@ -169,6 +169,12 @@ class ReqRef:
         """
         return self.join(sub)
 
+    def ismain(self):  # type: (...) -> bool
+        return not self.subs
+
+    def issubref(self):  # type: (...) -> bool
+        return not not self.subs
+
     def matches(
             self,
             other,  # type: _AnyReqRefType

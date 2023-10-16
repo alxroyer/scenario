@@ -18,60 +18,39 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Add a 'check-test-coverage.py' tool that displays requirement test coverage.
-        - Shall work either on test suite files, or campaign results.
-    - Add the ability to make the test check that its scenario links are detailed by step links.
-    - Add a HTTP server that displays pages on requirement management.
-    - Complete scenario001 with SCENARIO_LOGGING testing.
-    - Fix test regressions:
-        - Campaigns:
-            - campaign001.py
-            - campaign002.py
-            - campaign003.py
-            - campaign004.py
-            - campaign005.py
-        - "1 != <ErrorCode.ENVIRONMENT_ERROR: 40>":
-            - configdb320.py
-        - "JSON {} | 'tests.total' => Missing item":
-            - issue042.py
-            - knownissues080.py
-            - knownissues180.py
-            - knownissues190.py
-            - knownissues380.py
-            - knownissues480.py
-            - multiplescenarios000.py
-            - multiplescenarios001.py
-            - multiplescenarios002.py
-            - multiplescenarios003.py
-            - multiplescenarios004.py
-        - "KeyError: 'time'":
-            - issue065b.py
-        - "len(['      ERROR    FAIL', '      ERROR    FAIL']) is not...":
-            - knownissues090.py
-            - knownissues390.py
-            - knownissues490.py
-        - "b'  DESCRIPTION:' != b''":
-            - scenariologging010.py
-            - scenariologging011.py
+    - Improve the way to display an exception stacktrace.
+    - Add a 'req-mgt.py' tool that displays requirement test coverage.
+        - Check docstrings.
+        - Add a `scenario.unit_tests` configuration, used in `ReqManagement` and `CampaignRunner`.
+        - Make `ReqManagement` load campaign results.
+        - Make `CampaignRunner` generate upstream and downstream traceability reports.
+        - Make *req-db*, upstream and downstream traceability file names configurable.
+        - Implement `ReqHttpServer`.
+    - Implement *expect-step-req-refinement* option.
+        - Warning (known issue?) on test execution.
+    - Fix test regressions.
     - Implement tests:
         - Add req expectations. Check in scenario log & report.
-        - Campaign reports.
-        - Subscenarios.
-        - Scenario reports.
-        - 'check-test-coverage.py'.
-    - Add documentation with demo.
-    - Document logging indentation context.
+        - Complete scenario001 with SCENARIO_LOGGING testing.
+        - Req management & subscenarios.
+        - Req management & scenario reports.
+        - Campaign reports: req-db, traceability reports.
+        - Traceability reports: from suites and from campaign reports.
+    - Documentation:
+        - Add demo for requirement management.
+        - Req management: command line & HTTP server.
+        - Document logging indentation context.
     - Limitation when using step methods => use scenario stack.
-    - Implement *check_step_coverage* option.
-    - `covers()` and `coveredby()` in execution mode should do nothing.
-    - Check docstrings.
-    - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
-    - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.
-    - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
-    - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
-    - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
+    - Deliver:
+        - Check docstrings.
+        - Cherry-pick `ScenarioConfig` refactoring in the 'int/v0.2.2+' branch.
+        - Cherry-pick 'check-types.py' improvements + integration note in PyCharm in the 'int/v0.2.2+' branch.
+        - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
+        - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
+        - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
 - Issue #xxx: Main logging indentation should be saved in scenario reports.
     - As displayed in logging.
+    - Make main logging indentation not shift the logging level?
 - Issue #xxx: Improve assertion error messages with evidence introductory text.
     - When `evidence` is fed with a text, error messages from assertions shall be prefixed with `f"{evidence}: ".
 - Issue #xxx: Strengthen JSON reading & writing:

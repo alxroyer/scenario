@@ -65,6 +65,9 @@ class ReqDatabase(_LoggerImpl):
         #: Database of requirement references, keyed by identifiers.
         self._req_db = {}  # type: typing.Dict[str, _ReqRefType]
 
+    def clear(self):  # type: (...) -> None
+        self._req_db.clear()
+
     def load(
             self,
             reqdb_file,  # type: _PathType
@@ -121,6 +124,7 @@ class ReqDatabase(_LoggerImpl):
 
         # Build JSON content from requirement information stored in the database.
         _reqdb_json = {
+            "$encoding": "utf-8",
             "$schema": f"https://github.com/alxroyer/scenario/blob/v{PKG_INFO.version}/schema/reqdb.schema.json",
             "$version": PKG_INFO.version,
         }  # type: _JsonDictType
@@ -276,7 +280,7 @@ class ReqDatabase(_LoggerImpl):
                 lambda req_ref: req_ref.req,
                 # Filter-out sub requirement references from the database.
                 filter(
-                    lambda req_ref: not req_ref.subs,
+                    lambda req_ref: req_ref.ismain(),
                     self._req_db.values(),
                 ),
             ),

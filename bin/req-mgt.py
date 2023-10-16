@@ -16,7 +16,7 @@
 # limitations under the License.
 
 """
-Scenario test launcher.
+Scenario requirement management.
 """
 
 import pathlib
@@ -35,6 +35,6 @@ if __name__ == "__main__":
             print("Could not import scenario. Please adjust PYTHONPATH environment variable.")
             sys.exit(40)  # ErrorCodes.ENVIRONMENT_ERROR
 
-    # Main script => redirect to `scenario.runner.main()`.
-    _res = scenario.runner.main()  # type: scenario.ErrorCode
+    # Main script => redirect to `scenario.req_mgt.main()`.
+    _res = scenario.req_mgt.main()  # type: scenario.ErrorCode
     sys.exit(int(_res))

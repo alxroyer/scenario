@@ -107,7 +107,6 @@ class ScenarioRunner(_LoggerImpl):
         try:
             # Analyze program arguments, if not already set.
             if not ScenarioArgs.isset():
-                # Create a first ScenarioArgs instance.
                 ScenarioArgs.setinstance(ScenarioArgs())
                 if not ScenarioArgs.getinstance().parse(sys.argv[1:]):
                     return ScenarioArgs.getinstance().error_code
@@ -164,15 +163,12 @@ class ScenarioRunner(_LoggerImpl):
             # End test.
             return ErrorCode.worst(_errors)
 
-        except TestError as _error:
-            # Don't create an `ExceptionError` from a `TestError`.
-            # Display it as is.
-            _error.logerror(MAIN_LOGGER, logging.ERROR)
-            return ErrorCode.INTERNAL_ERROR
-        except Exception as _exception:
-            # Other kind of exception: use a `ExceptionError` to display it.
-            ExceptionError(_exception).logerror(MAIN_LOGGER, logging.ERROR)
-            return ErrorCode.INTERNAL_ERROR
+        except Exception as _err:
+            # Use a `ExceptionError` instance to display the exception (except for `TestError`s).
+            (_err if isinstance(_err, TestError) else ExceptionError(_err)) \
+                .logerror(MAIN_LOGGER, logging.ERROR)
+
+            return ErrorCode.fromexception(_err)
         finally:
             _exec_times_logger.finish()
 

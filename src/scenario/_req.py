@@ -150,7 +150,7 @@ class Req:
         return ReqRef.orderedset(
             # Filter requirement references that point to sub-parts of this requirement.
             filter(
-                lambda req_ref: (req_ref.req is self) and req_ref.subs,
+                lambda req_ref: (req_ref.req is self) and req_ref.issubref(),
                 REQ_DB.getallrefs(),
             ),
         )

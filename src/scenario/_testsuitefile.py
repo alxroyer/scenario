@@ -63,12 +63,13 @@ class TestSuiteFile(_LoggerImpl):
 
         return f"<{qualname(type(self))} path='{self.path}'>"
 
-    def read(self):  # type: (...) -> bool
+    def read(self):  # type: (...) -> None
         """
         Reads and parses the test suite file.
 
-        :return: ``True`` for success, ``False`` otherwise.
+        :raise ._errcodes.ErrorCodeError: With :const:`._error.ErrorCode.INPUT_FORMAT_ERROR`, when the file could not be parsed.
         """
+        from ._errcodes import ErrorCode, ErrorCodeError
         from ._path import Path
         from ._textfile import TextFile
 
@@ -85,38 +86,44 @@ class TestSuiteFile(_LoggerImpl):
                 if _line.startswith("#"):
                     continue
 
-                if _line.startswith("-"):
-                    # Black list.
-                    _line = _line[1:].strip()
-                    self.debug("Black list line: %r", _line)
-                    with self.pushindentation():
-                        for _rm_path in self.path.parent.glob(_line):  # type: Path
-                            for _test_script_path in self.script_paths:  # type: Path
-                                if _test_script_path.samefile(_rm_path):
-                                    self.debug("- '%s'", _test_script_path)
-                                    self.script_paths.remove(_test_script_path)
+                try:
+                    if _line.startswith("-"):
+                        # Black list.
+                        _line = _line[1:].strip()
+                        self.debug("Black list line: %r", _line)
+                        with self.pushindentation():
+                            for _rm_path in self.path.parent.glob(_line):  # type: Path
+                                for _test_script_path in self.script_paths:  # type: Path
+                                    if _test_script_path.samefile(_rm_path):
+                                        self.debug("- '%s'", _test_script_path)
+                                        self.script_paths.remove(_test_script_path)
 
-                else:
-                    # White list.
-                    self.debug("White list line: %r", _line)
-                    with self.pushindentation():
-                        if _line.startswith("+"):
-                            _line = _line[1:].strip()
-                        if "*" in _line:
-                            for _add_path in self.path.parent.glob(_line):  # type: typing.Optional[Path]
-                                assert _add_path
-                                if not _add_path.is_file():
-                                    continue
-                                for _test_script_path in self.script_paths:  # type already declared above
-                                    if _test_script_path.samefile(_add_path):
-                                        _add_path = None
-                                        break
-                                if _add_path is not None:
-                                    self.debug("+ '%s'", _add_path)
-                                    self.script_paths.append(_add_path)
-                        else:
-                            _add_path = self.path.parent / _line  # Type already declared above
-                            self.debug("+ '%s'", _add_path)
-                            self.script_paths.append(_add_path)
+                    else:
+                        # White list.
+                        self.debug("White list line: %r", _line)
+                        with self.pushindentation():
+                            if _line.startswith("+"):
+                                _line = _line[1:].strip()
+                            if "*" in _line:
+                                for _add_path in self.path.parent.glob(_line):  # type: typing.Optional[Path]
+                                    assert _add_path
+                                    if not _add_path.is_file():
+                                        continue
+                                    for _test_script_path in self.script_paths:  # type already declared above
+                                        if _test_script_path.samefile(_add_path):
+                                            _add_path = None
+                                            break
+                                    if _add_path is not None:
+                                        self.debug("+ '%s'", _add_path)
+                                        self.script_paths.append(_add_path)
+                            else:
+                                _add_path = self.path.parent / _line  # Type already declared above
+                                self.debug("+ '%s'", _add_path)
+                                self.script_paths.append(_add_path)
 
-        return True
+                except Exception as _err:
+                    raise ErrorCodeError(
+                        error_code=ErrorCode.INPUT_FORMAT_ERROR,
+                        message=f"Error while parsing '{self.path}': {_err}",
+                        exception=_err,
+                    )

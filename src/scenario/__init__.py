@@ -505,6 +505,17 @@ if True:
     from ._errcodes import ErrorCode as ErrorCode
     __all__.append("ErrorCode")
 
+if True:
+    __doc__ += """
+    .. py:attribute:: ErrorCodeError
+
+        Exception holding an :class:`ErrorCode` value.
+
+        .. seealso:: :class:`_errcodes.ErrorCodeError` implementation.
+    """
+    from ._errcodes import ErrorCodeError as ErrorCodeError
+    __all__.append("ErrorCodeError")
+
 
 __doc__ += """
 Handlers
@@ -799,14 +810,25 @@ if typing.TYPE_CHECKING:
 
 if True:
     __doc__ += """
-    .. py:attribute:: reqs
+    .. py:attribute:: req_db
 
         Requirement database.
 
         .. seealso:: :class:`._reqdb.ReqDatabase` implementation.
     """
-    from ._reqdb import REQ_DB as reqs  # noqa  ## Constant variable imported as non-constant
-    __all__.append("reqs")
+    from ._reqdb import REQ_DB as req_db  # noqa  ## Constant variable imported as non-constant
+    __all__.append("req_db")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: req_mgt
+
+        Requirement management runner.
+
+        .. seealso:: :class:`._reqmgt.ReqManagement` implementation.
+    """
+    from ._reqmgtmain import REQ_MANAGEMENT as req_mgt  # noqa  ## Constant variable imported as non-constant
+    __all__.append("req_mgt")
 
 if True:
     __doc__ += """

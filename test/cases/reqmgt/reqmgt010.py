@@ -47,23 +47,23 @@ class ReqMgt010(scenario.test.TestCase):
     class Data:
         @property
         def req001(self):  # type: () -> scenario.Req
-            return scenario.reqs.getreq("REQ-001")
+            return scenario.req_db.getreq("REQ-001")
 
         @property
         def req001_main(self):  # type: () -> scenario.ReqRef
-            return scenario.reqs.getreqref("REQ-001")
+            return scenario.req_db.getreqref("REQ-001")
 
         @property
         def req001_1(self):  # type: () -> scenario.ReqRef
-            return scenario.reqs.getreqref("REQ-001/1")
+            return scenario.req_db.getreqref("REQ-001/1")
 
         @property
         def req002(self):  # type: () -> scenario.Req
-            return scenario.reqs.getreq("REQ-002")
+            return scenario.req_db.getreq("REQ-002")
 
         @property
         def req002_main(self):  # type: () -> scenario.ReqRef
-            return scenario.reqs.getreqref("REQ-002")
+            return scenario.req_db.getreqref("REQ-002")
 
         @property
         def scenario1(self):  # type: () -> scenario.Scenario
@@ -91,9 +91,9 @@ class SaveScenarioTestReqs(scenario.Step):
         self.STEP("`scenario.test` requirements backup")
 
         if self.ACTION("Save the `scenario.test` requirements, requirement references and links already stored in the requirement database."):
-            self.scenario_reqs = scenario.reqs.getallreqs()
-            self.scenario_req_refs = scenario.reqs.getallrefs()
-            self.scenario_req_links = scenario.reqs.getalllinks()
+            self.scenario_reqs = scenario.req_db.getallreqs()
+            self.scenario_req_refs = scenario.req_db.getallrefs()
+            self.scenario_req_links = scenario.req_db.getalllinks()
 
 
 class CreateScenario(scenario.Step):
@@ -138,7 +138,7 @@ class CheckReqDbContent(_CheckReqItemStepImpl, ReqMgt010.Data):
             if self.ACTION("Search for new requirements in the requirement database."):
                 self.new_reqs = list(filter(
                     lambda req: req not in SaveScenarioTestReqs.getinstance().scenario_reqs,
-                    scenario.reqs.getallreqs(),
+                    scenario.req_db.getallreqs(),
                 ))
             if self.RESULT("Two requirements have been saved in the database:"):
                 self.assertlen(self.new_reqs, 2, evidence=True)
@@ -153,7 +153,7 @@ class CheckReqDbContent(_CheckReqItemStepImpl, ReqMgt010.Data):
             if self.ACTION("Search for new requirement references in the requirement database."):
                 self.new_req_refs = list(filter(
                     lambda req_ref: req_ref not in SaveScenarioTestReqs.getinstance().scenario_req_refs,
-                    scenario.reqs.getallrefs(),
+                    scenario.req_db.getallrefs(),
                 ))
             if self.RESULT("Three requirement references have been saved in the database:"):
                 self.assertlen(self.new_req_refs, 3, evidence=True)
@@ -170,7 +170,7 @@ class CheckReqDbContent(_CheckReqItemStepImpl, ReqMgt010.Data):
             if self.ACTION("Search for new requirement links in the requirement database."):
                 self.new_req_links = list(filter(
                     lambda req_link: req_link not in SaveScenarioTestReqs.getinstance().scenario_req_links,
-                    scenario.reqs.getalllinks(),
+                    scenario.req_db.getalllinks(),
                 ))
             if self.RESULT("Four requirement links have been saved in the database:"):
                 self.assertlen(self.new_req_links, 4, evidence=True)

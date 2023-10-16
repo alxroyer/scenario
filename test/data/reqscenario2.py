@@ -23,9 +23,9 @@ class ReqScenario2(scenario.Scenario):
     def __init__(self):  # type: (...) -> None
         # Ensure the requirement database is loaded.
         try:
-            scenario.reqs.getreq("REQ-001")
+            scenario.req_db.getreq("REQ-001")
         except KeyError:
-            scenario.reqs.load(scenario.test.paths.datapath("reqdb.json"))
+            scenario.req_db.load(scenario.test.paths.datapath("reqdb.json"))
 
         scenario.Scenario.__init__(
             self,

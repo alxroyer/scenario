@@ -104,5 +104,5 @@ if __name__ == "__main__":
     # if not SCENARIO_CONFIG.resultsextrainfo():
     #     scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.ScenarioAttributes.TEST_TITLE])
     # - Eventually launch the campaign execution.
-    _res = scenario.campaign_runner.main()  # Type already defined above.
+    _res = scenario.campaign_runner.main()  # type: scenario.ErrorCode
     sys.exit(int(_res))

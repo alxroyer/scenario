@@ -37,7 +37,7 @@ class ErrorCode(enum.IntEnum):
 
     #: Success.
     SUCCESS = 0
-    #: When a test failed.
+    #: When one or several tests failed.
     TEST_ERROR = 21
 
     #: Errors due to the environnement.
@@ -54,6 +54,22 @@ class ErrorCode(enum.IntEnum):
     INTERNAL_ERROR = 50
 
     @staticmethod
+    def fromexception(
+            exception,  # type: Exception
+    ):  # type: (...) -> ErrorCode
+        from ._testerrors import TestError
+
+        if isinstance(exception, ErrorCodeError):
+            return exception.error_code
+        if isinstance(exception, TestError):
+            return ErrorCode.TEST_ERROR
+        if isinstance(exception, EnvironmentError):
+            return ErrorCode.ENVIRONMENT_ERROR
+
+        # Default to internal error.
+        return ErrorCode.INTERNAL_ERROR
+
+    @staticmethod
     def worst(
             error_codes,  # type: typing.List[ErrorCode]
     ):  # type: (...) -> ErrorCode
@@ -62,11 +78,35 @@ class ErrorCode(enum.IntEnum):
 
         The higher the error value, the worse.
 
-        :param error_codes: List to find the worst error code from.
-        :return: Worst error code.
+        :param error_codes: List to find the worst error code from. May be empty.
+        :return: Worst error code. :const:`ErrorCode.SUCCESS` by default.
         """
         _res = ErrorCode.SUCCESS  # type: ErrorCode
         for _error in error_codes:  # type: ErrorCode
             if int(_error) > int(_res):
                 _res = _error
         return _res
+
+
+class ErrorCodeError(Exception):
+
+    @staticmethod
+    def fromexception(
+            exception,  # type: Exception
+    ):  # type: (...) -> ErrorCodeError
+        return ErrorCodeError(
+            error_code=ErrorCode.fromexception(exception),
+            message=str(exception),
+            exception=exception,
+        )
+
+    def __init__(
+            self,
+            error_code,  # type: ErrorCode
+            message,  # type: str
+            exception=None,  # type: Exception
+    ):  # type: (...) -> None
+        Exception.__init__(self, f"{error_code.name}({error_code.value}): {message}")
+
+        self.error_code = error_code  # type: ErrorCode
+        self.exception = exception  # type: typing.Optional[Exception]

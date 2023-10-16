@@ -112,9 +112,7 @@ class CampaignRunner(_LoggerImpl):
             _campaign_execution.time.setstarttime()
 
             for _test_suite_path in CampaignArgs.getinstance().test_suite_paths:  # type: Path
-                _res = self._exectestsuitefile(_campaign_execution, _test_suite_path)  # type: ErrorCode
-                if _res != ErrorCode.SUCCESS:
-                    return _res
+                self._exectestsuitefile(_campaign_execution, _test_suite_path)
 
             _campaign_execution.time.setendtime()
             CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
@@ -138,41 +136,38 @@ class CampaignRunner(_LoggerImpl):
 
         except Exception as _err:
             ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
-            return ErrorCode.INTERNAL_ERROR
+            return ErrorCode.fromexception(_err)
 
     def _exectestsuitefile(
             self,
             campaign_execution,  # type: _CampaignExecutionType
             test_suite_path,  # type: _AnyPathType
-    ):  # type: (...) -> _ErrorCodeType
+    ):  # type: (...) -> None
         """
         Executes a test suite file.
 
         :param campaign_execution: :class:`._campaignexecution.CampaignExecution` object to store results into.
         :param test_suite_path: Test suite file to execute.
-        :return: Error code.
+        :raise: Exception when something worse than test errors occured.
         """
         from ._campaignexecution import TestSuiteExecution
 
         _test_suite_execution = TestSuiteExecution(campaign_execution, test_suite_path)  # type: TestSuiteExecution
         campaign_execution.test_suite_executions.append(_test_suite_execution)
-        _res = self._exectestsuite(_test_suite_execution)  # type: _ErrorCodeType
-
-        return _res
+        self._exectestsuite(_test_suite_execution)
 
     def _exectestsuite(
             self,
             test_suite_execution,  # type: _TestSuiteExecutionType
-    ):  # type: (...) -> _ErrorCodeType
+    ):  # type: (...) -> None
         """
         Executes a test suite.
 
         :param test_suite_execution: Test suite to execute.
-        :return: Error code.
+        :raise: Exception when something worse than test errors occured.
         """
         from ._campaignexecution import TestCaseExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._path import Path
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
@@ -182,34 +177,30 @@ class CampaignRunner(_LoggerImpl):
         CAMPAIGN_LOGGING.begintestsuite(test_suite_execution)
         test_suite_execution.time.setstarttime()
 
-        _error_codes = []  # type: typing.List[ErrorCode]
-        if not test_suite_execution.test_suite_file.read():
-            _error_codes.append(ErrorCode.INPUT_FORMAT_ERROR)
-        else:
+        try:
+            test_suite_execution.test_suite_file.read()
+
             for _test_script_path in test_suite_execution.test_suite_file.script_paths:  # type: Path
                 _test_case_execution = TestCaseExecution(test_suite_execution, _test_script_path)  # type: TestCaseExecution
                 test_suite_execution.test_case_executions.append(_test_case_execution)
 
-                _res = self._exectestcase(_test_case_execution)
-                if _res != ErrorCode.SUCCESS:
-                    break
+                self._exectestcase(_test_case_execution)
 
-        test_suite_execution.time.setendtime()
-        CAMPAIGN_LOGGING.endtestsuite(test_suite_execution)
+        finally:
+            test_suite_execution.time.setendtime()
+            CAMPAIGN_LOGGING.endtestsuite(test_suite_execution)
 
-        HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
-
-        return ErrorCode.worst(_error_codes)
+            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
 
     def _exectestcase(
             self,
             test_case_execution,  # type: _TestCaseExecutionType
-    ):  # type: (...) -> _ErrorCodeType
+    ):  # type: (...) -> None
         """
         Executes a test case.
 
         :param test_case_execution: Test case to execute.
-        :return: Error code.
+        :raise: Exception when something worse than test errors occured.
         """
         from ._campaignargs import CampaignArgs
         from ._campaignlogging import CAMPAIGN_LOGGING
@@ -237,143 +228,145 @@ class CampaignRunner(_LoggerImpl):
         _exec_times_logger.tick("Starting test case")
         test_case_execution.time.setstarttime()
 
-        # Prepare output paths.
-        def _mkoutpath(
-                ext,  # type: str
-        ):  # type: (...) -> Path
-            """
-            Output file path builder.
+        try:
+            # Prepare output paths.
+            def _mkoutpath(
+                    ext,  # type: str
+            ):  # type: (...) -> Path
+                """
+                Output file path builder.
 
-            :param ext: Extension for the new file.
-            :return: Output file path.
-            """
-            return test_case_execution.test_suite_execution.campaign_execution.outdir / (test_case_execution.script_path.stem + ext)
+                :param ext: Extension for the new file.
+                :return: Output file path.
+                """
+                return test_case_execution.test_suite_execution.campaign_execution.outdir / (test_case_execution.script_path.stem + ext)
 
-        test_case_execution.json.path = _mkoutpath(".json")
-        test_case_execution.log.path = _mkoutpath(".log")
+            test_case_execution.json.path = _mkoutpath(".json")
+            test_case_execution.log.path = _mkoutpath(".log")
 
-        # Prepare the command line.
-        _subprocess = SubProcess(sys.executable, SCENARIO_CONFIG.runnerscriptpath())  # type: SubProcess
-        # Report configuration files and single configuration values from campaign to scenario execution.
-        for _config_path in CampaignArgs.getinstance().config_paths:  # type: Path
-            _subprocess.addargs("--config-file", _config_path)
-        for _config_name in CampaignArgs.getinstance().config_values:  # type: str
-            _subprocess.addargs("--config-value", _config_name, CampaignArgs.getinstance().config_values[_config_name])
-        # Report common execution options from campaign to scenario execution.
-        CampaignArgs.reportexecargs(CampaignArgs.getinstance(), _subprocess)
-        # --json-report option.
-        _subprocess.addargs("--json-report", test_case_execution.json.path)
-        # Log outfile specification.
-        _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_FILE), test_case_execution.log.path)
-        # No log console specification.
-        _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_CONSOLE), "0")
-        # Log date/time option propagation.
-        _log_datetime_config = CONFIG_DB.getnode(SCENARIO_CONFIG.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
-        if _log_datetime_config:
-            _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
-        # Script path.
-        _subprocess.addargs(test_case_execution.script_path)
+            # Prepare the command line.
+            _subprocess = SubProcess(sys.executable, SCENARIO_CONFIG.runnerscriptpath())  # type: SubProcess
+            # Report configuration files and single configuration values from campaign to scenario execution.
+            for _config_path in CampaignArgs.getinstance().config_paths:  # type: Path
+                _subprocess.addargs("--config-file", _config_path)
+            for _config_name in CampaignArgs.getinstance().config_values:  # type: str
+                _subprocess.addargs("--config-value", _config_name, CampaignArgs.getinstance().config_values[_config_name])
+            # Report common execution options from campaign to scenario execution.
+            CampaignArgs.reportexecargs(CampaignArgs.getinstance(), _subprocess)
+            # --json-report option.
+            _subprocess.addargs("--json-report", test_case_execution.json.path)
+            # Log outfile specification.
+            _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_FILE), test_case_execution.log.path)
+            # No log console specification.
+            _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_CONSOLE), "0")
+            # Log date/time option propagation.
+            _log_datetime_config = CONFIG_DB.getnode(SCENARIO_CONFIG.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
+            if _log_datetime_config:
+                _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
+            # Script path.
+            _subprocess.addargs(test_case_execution.script_path)
 
-        # In case no execution data is available in the end,
-        # create `ScenarioDefinition` and `ScenarioExecution` instances from scratch in order to save error details.
-        _fallback_errors = ScenarioDefinition()  # type: ScenarioDefinition
-        _fallback_errors.name = test_case_execution.name
-        _fallback_errors.execution = ScenarioExecution(_fallback_errors)
-        _fallback_errors.execution.time.setstarttime()
+            # In case no execution data is available in the end,
+            # create `ScenarioDefinition` and `ScenarioExecution` instances from scratch in order to save error details.
+            _fallback_errors = ScenarioDefinition()  # type: ScenarioDefinition
+            _fallback_errors.name = test_case_execution.name
+            _fallback_errors.execution = ScenarioExecution(_fallback_errors)
+            _fallback_errors.execution.time.setstarttime()
 
-        def _fallbackerror(
-                error_message,  # type: str
-        ):  # type: (...) -> None
-            assert _fallback_errors.execution
-            _fallback_errors.execution.errors.append(TestError(error_message))
+            def _fallbackerror(
+                    error_message,  # type: str
+            ):  # type: (...) -> None
+                assert _fallback_errors.execution
+                _fallback_errors.execution.errors.append(TestError(error_message))
 
-        # Execute the scenario.
-        _exec_times_logger.tick("Executing the sub-process")
-        _subprocess.setlogger(self).run(timeout=SCENARIO_CONFIG.scenariotimeout())
-        _exec_times_logger.tick("After sub-process execution")
-        self.debug("%s returned %r", _subprocess, _subprocess.returncode)
+            # Execute the scenario.
+            _exec_times_logger.tick("Executing the sub-process")
+            _subprocess.setlogger(self).run(timeout=SCENARIO_CONFIG.scenariotimeout())
+            _exec_times_logger.tick("After sub-process execution")
+            self.debug("%s returned %r", _subprocess, _subprocess.returncode)
 
-        # Analyze scenario return code.
-        if _subprocess.returncode is None:
-            _fallbackerror(f"'{test_case_execution.script_path}' did not return within {_subprocess.time.elapsed} seconds")
-        elif _subprocess.returncode != 0:
-            try:
-                _returncode_desc = str(ErrorCode(_subprocess.returncode))  # type: str
-            except ValueError as _err:
-                _returncode_desc = str(_err)  # Type already declared above.
-            _fallbackerror(f"'{test_case_execution.script_path}' failed with error code {_subprocess.returncode!r} ({_returncode_desc})")
-        _exec_times_logger.tick("After post-analyses")
+            # Analyze scenario return code.
+            if _subprocess.returncode is None:
+                _fallbackerror(f"'{test_case_execution.script_path}' did not return within {_subprocess.time.elapsed} seconds")
+            elif _subprocess.returncode != 0:
+                try:
+                    _returncode_desc = str(ErrorCode(_subprocess.returncode))  # type: str
+                except ValueError as _err:
+                    _returncode_desc = str(_err)  # Type already declared above.
+                _fallbackerror(f"'{test_case_execution.script_path}' failed with error code {_subprocess.returncode!r} ({_returncode_desc})")
+            _exec_times_logger.tick("After post-analyses")
 
-        # Read the log outfile.
-        if test_case_execution.log.path.is_file():
-            # Don't bother with errors, keep going on.
-            self.debug("Reading '%s'", test_case_execution.log.path)
-            test_case_execution.log.read()
-        else:
-            self.debug("No such file '%s'", test_case_execution.log.path)
-        _exec_times_logger.tick("After reading the log file")
+            # Read the log outfile.
+            if test_case_execution.log.path.is_file():
+                # Don't bother with errors, keep going on.
+                self.debug("Reading '%s'", test_case_execution.log.path)
+                test_case_execution.log.read()
+            else:
+                self.debug("No such file '%s'", test_case_execution.log.path)
+            _exec_times_logger.tick("After reading the log file")
 
-        # Read the JSON outfile.
-        if test_case_execution.json.path.is_file():
-            # Don't bother with errors, keep going on.
-            self.debug("Reading '%s'", test_case_execution.json.path)
-            test_case_execution.json.read()
-        else:
-            self.debug("No such file '%s'", test_case_execution.json.path)
-        _exec_times_logger.tick("After reading the JSON file")
+            # Read the JSON outfile.
+            if test_case_execution.json.path.is_file():
+                # Don't bother with errors, keep going on.
+                self.debug("Reading '%s'", test_case_execution.json.path)
+                test_case_execution.json.read()
+            else:
+                self.debug("No such file '%s'", test_case_execution.json.path)
+            _exec_times_logger.tick("After reading the JSON file")
 
-        # Fix the scenario definition and execution instances, if not successfully read from the JSON report above.
-        if not test_case_execution.scenario_execution:
-            test_case_execution.json.content = _fallback_errors
+            # Fix the scenario definition and execution instances, if not successfully read from the JSON report above.
+            if not test_case_execution.scenario_execution:
+                test_case_execution.json.content = _fallback_errors
 
-            # Read error lines from stdout.
-            if test_case_execution.log.content:
-                for _stdout_line in test_case_execution.log.content.splitlines():  # type: bytes
-                    _match = re.match(
-                        # Note:
-                        # 4 spaces after 'ERROR' in general
-                        # 2 more spaces due to `ExceptionError.logerror()`
-                        rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % ISO8601_REGEX.encode("utf-8"),
-                        _stdout_line,
-                    )  # type: typing.Optional[typing.Match[bytes]]
-                    if _match:
-                        _fallbackerror(_match.group(3).decode("utf-8"))
+                # Read error lines from stdout.
+                if test_case_execution.log.content:
+                    for _stdout_line in test_case_execution.log.content.splitlines():  # type: bytes
+                        _match = re.match(
+                            # Note:
+                            # 4 spaces after 'ERROR' in general
+                            # 2 more spaces due to `ExceptionError.logerror()`
+                            rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % ISO8601_REGEX.encode("utf-8"),
+                            _stdout_line,
+                        )  # type: typing.Optional[typing.Match[bytes]]
+                        if _match:
+                            _fallbackerror(_match.group(3).decode("utf-8"))
 
-            # Save stderr lines as well.
-            for _stderr_line in _subprocess.stderr.splitlines():  # type: bytes
-                if _stderr_line:
-                    _fallbackerror(_stderr_line.decode("utf-8"))
+                # Save stderr lines as well.
+                for _stderr_line in _subprocess.stderr.splitlines():  # type: bytes
+                    if _stderr_line:
+                        _fallbackerror(_stderr_line.decode("utf-8"))
 
-            # Specific case when the file does not exist:
-            # it causes a ARGUMENTS_ERROR that displays its error while the logging service is not started up yet,
-            # thus we don't catch the 'No such file error'
-            if _subprocess.returncode == ErrorCode.ARGUMENTS_ERROR:
-                if not test_case_execution.script_path.is_file():
-                    _fallbackerror(f"No such file '{test_case_execution.script_path}'")
+                # Specific case when the file does not exist:
+                # it causes a ARGUMENTS_ERROR that displays its error while the logging service is not started up yet,
+                # thus we don't catch the 'No such file error'
+                if _subprocess.returncode == ErrorCode.ARGUMENTS_ERROR:
+                    if not test_case_execution.script_path.is_file():
+                        _fallbackerror(f"No such file '{test_case_execution.script_path}'")
 
-            # Terminate the fake scenario execution.
-            _fallback_errors.execution.time.setendtime()
-            _exec_times_logger.tick("After execution error management")
-        # From now, the scenario execution instance necessarily exists.
-        assert test_case_execution.scenario_execution
+                # Terminate the fake scenario execution.
+                _fallback_errors.execution.time.setendtime()
+                _exec_times_logger.tick("After execution error management")
+            # From now, the scenario execution instance necessarily exists.
+            assert test_case_execution.scenario_execution
 
-        # Dispatch handlers.
-        if test_case_execution.scenario_execution is not None:
-            for _error in test_case_execution.scenario_execution.errors:  # type: TestError
-                HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
-        HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
-        _exec_times_logger.tick("After *after-test-case* handlers")
+        finally:
+            # Terminate the test case instance.
+            _exec_times_logger.tick("Ending test case")
+            test_case_execution.time.setendtime()
+            CAMPAIGN_LOGGING.endtestcase(test_case_execution)
 
-        # Terminate the test case instance.
-        _exec_times_logger.tick("Ending test case")
-        test_case_execution.time.setendtime()
-        CAMPAIGN_LOGGING.endtestcase(test_case_execution)
+            # Dispatch handlers.
+            if test_case_execution.scenario_execution is not None:
+                for _error in test_case_execution.scenario_execution.errors:  # type: TestError
+                    HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
+            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
+            _exec_times_logger.tick("After *after-test-case* handlers")
 
-        # Feed the `SCENARIO_RESULTS` instance.
-        SCENARIO_RESULTS.add(test_case_execution.scenario_execution)
+            # Feed the `SCENARIO_RESULTS` instance.
+            if test_case_execution.scenario_execution is not None:
+                SCENARIO_RESULTS.add(test_case_execution.scenario_execution)
 
-        _exec_times_logger.finish()
-        return ErrorCode.SUCCESS
+            _exec_times_logger.finish()
 
 
 #: Main instance of :class:`CampaignRunner`.

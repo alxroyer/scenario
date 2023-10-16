@@ -103,7 +103,7 @@ class ReqLink:
         return "".join([
             f"<{qualname(type(self))}",
             f" req_ref={self.req_ref!r}",
-            f" req_verifiers={[ReqVerifierHelper.sortkeyfunction(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
+            f" req_verifiers={[ReqVerifierHelper.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
             f" comments={self.comments!r}" if self.comments else "",
             ">",
         ])
@@ -112,10 +112,12 @@ class ReqLink:
         """
         Human readable string representation of the requirement link.
         """
+        from ._reqverifier import ReqVerifierHelper
+
         return "".join([
             str(self.req_ref),
             " <- ",
-            "{", ", ".join([str(_req_verifier) for _req_verifier in self.req_verifiers]), "}",
+            "{", ", ".join([ReqVerifierHelper.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]), "}",
             f" | {self.comments}" if self.comments else "",
         ])
 
@@ -192,7 +194,7 @@ class ReqLink:
             req_ref = REQ_DB.getreqref(req_ref)
             if not self.req_ref.matches(req_ref):
                 # Requirement reference mismatch.
-                if walk_sub_refs and (not req_ref.subs):
+                if walk_sub_refs and req_ref.ismain():
                     # Main requirement reference and `walk_sub_refs`.
                     if not any([self.req_ref.matches(_sub_ref) for _sub_ref in req_ref.req.sub_refs]):
                         return False
@@ -226,8 +228,8 @@ class ReqLink:
         from ._reqdb import REQ_DB
 
         # As soon as the link is actually traced by verifiers:
-        # - ensure the database knows the requirement reference (non main references only),
-        if self.req_ref.subs:
+        # - ensure the database knows the requirement reference (subreferences only),
+        if self.req_ref.issubref():
             REQ_DB.push(self.req_ref)
         # - ensure the link is saved in the requirement reference link set,
         if self not in self.req_ref.req_links:
