@@ -18,16 +18,16 @@ import scenario
 import scenario.test
 
 
-class JsonReport020(scenario.test.TestCase):
+class ScenarioReport020(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from jsonreport.steps.full import CheckFullJsonReport
+        from scenarioreport.steps.full import CheckFullScenarioReport
         from steps.common import ExecScenario
 
         scenario.test.TestCase.__init__(
             self,
-            title="JSON report failing scenario",
-            description="Check the JSON report is generated as expected for a failing scenario.",
+            title="Scenario report failing scenario",
+            description="Check the scenario report is generated as expected for a failing scenario.",
         )
         self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,
@@ -35,4 +35,4 @@ class JsonReport020(scenario.test.TestCase):
         )
 
         self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, expected_return_code=scenario.ErrorCode.TEST_ERROR, generate_report=True))
-        self.addstep(CheckFullJsonReport(ExecScenario.getinstance()))
+        self.addstep(CheckFullScenarioReport(ExecScenario.getinstance()))

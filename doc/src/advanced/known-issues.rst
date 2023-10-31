@@ -105,7 +105,7 @@ These names make it easier to read in the console, and maintain in the test code
                 self.STEP("...")
 
                 # Track a known issue, with issue level *PLANNED=10*.
-                # By default, this known issue is logged in the console, and saved in JSON reports, as warning.
+                # By default, this known issue is logged in the console, and saved in scenario reports, as warning.
                 self.knownissue(
                     level=CommonIssueLevel.PLANNED,
                     message="Waiting for feature XXX to be implemented",
@@ -189,7 +189,7 @@ and are usually directly clickable from both contexts.
             self.STEP("...")
 
             # Track issue #10.
-            # Thanks to the URL builder handler, the 'https://repo/issues/10' URL is displayed in the console and saved in JSON reports.
+            # Thanks to the URL builder handler, the 'https://repo/issues/10' URL is displayed in the console and saved in scenario reports.
             self.knownissue(
                 id="#10",
                 message="Waiting for feature #10 to be implemented",

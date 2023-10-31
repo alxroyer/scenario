@@ -20,14 +20,14 @@ import scenario.test
 class Issue003(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
             title="Issue #3! Actions / Results differenciation even at the same location",
             description=(
                 "Check that actions and expected resulted are differenciated even if they have the same location, "
-                "especially in JSON reports."
+                "especially in scenario reports."
             ),
         )
         self.verifies(
@@ -50,4 +50,4 @@ class Issue003(scenario.test.TestCase):
         # Verifications.
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
         self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), _scenario_expectations))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), _scenario_expectations))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), _scenario_expectations))

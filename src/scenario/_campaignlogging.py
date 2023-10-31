@@ -118,9 +118,9 @@ class CampaignLogging:
         from ._testerrors import TestError
 
         if test_case_execution.log.path and test_case_execution.log.path.is_file():
-            MAIN_LOGGER.debug("Log file:    '%s'", test_case_execution.log.path)
-        if test_case_execution.json.path and test_case_execution.json.path.is_file():
-            MAIN_LOGGER.debug("JSON report: '%s'", test_case_execution.json.path)
+            MAIN_LOGGER.debug("Log file:        '%s'", test_case_execution.log.path)
+        if test_case_execution.report.path and test_case_execution.report.path.is_file():
+            MAIN_LOGGER.debug("Scenario report: '%s'", test_case_execution.report.path)
 
         if test_case_execution.status == ExecutionStatus.WARNINGS:
             MAIN_LOGGER.warning(str(test_case_execution.status))

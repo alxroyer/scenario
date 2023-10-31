@@ -20,13 +20,13 @@ import scenario.test
 class DocOnly002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from jsonreport.steps.full import CheckFullJsonReport
+        from scenarioreport.steps.full import CheckFullScenarioReport
         from steps.common import ExecScenario
 
         scenario.test.TestCase.__init__(
             self,
-            title="--doc-only JSON report",
-            description="Check the JSON report for a --doc-only execution.",
+            title="--doc-only scenario report",
+            description="Check the scenario report for a --doc-only execution.",
         )
         self.verifies(
             scenario.test.reqs.DOC_ONLY,
@@ -34,4 +34,4 @@ class DocOnly002(scenario.test.TestCase):
         )
 
         self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, doc_only=True, generate_report=True))
-        self.addstep(CheckFullJsonReport(ExecScenario.getinstance()))
+        self.addstep(CheckFullScenarioReport(ExecScenario.getinstance()))

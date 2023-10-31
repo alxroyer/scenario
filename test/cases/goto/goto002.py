@@ -21,8 +21,8 @@ import scenario.test
 class Goto002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from jsonreport.steps.full import CheckFullJsonReport
-        from steps.common import CheckJsonReportExpectations, ExecScenario
+        from scenarioreport.steps.full import CheckFullScenarioReport
+        from steps.common import CheckScenarioReportExpectations, ExecScenario
 
         scenario.test.TestCase.__init__(
             self,
@@ -36,8 +36,8 @@ class Goto002(scenario.test.TestCase):
 
         self.section("Documentation generation")
         self.addstep(ExecScenario(scenario.test.paths.GOTO_SCENARIO, generate_report=True, doc_only=True))
-        self.addstep(CheckFullJsonReport(ExecScenario.getinstance(0)))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(0), scenario.test.data.scenarioexpectations(
+        self.addstep(CheckFullScenarioReport(ExecScenario.getinstance(0)))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(0), scenario.test.data.scenarioexpectations(
             scenario.test.paths.GOTO_SCENARIO,
             steps=True, stats=True,  # Check step order and statistics.
             doc_only=True,
@@ -45,8 +45,8 @@ class Goto002(scenario.test.TestCase):
 
         self.section("Test execution")
         self.addstep(ExecScenario(scenario.test.paths.GOTO_SCENARIO, generate_report=True, doc_only=False))
-        self.addstep(CheckFullJsonReport(ExecScenario.getinstance(1)))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(1), scenario.test.data.scenarioexpectations(
+        self.addstep(CheckFullScenarioReport(ExecScenario.getinstance(1)))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(1), scenario.test.data.scenarioexpectations(
             scenario.test.paths.GOTO_SCENARIO,
             steps=True, stats=True,  # Check step order and statistics.
             doc_only=False,

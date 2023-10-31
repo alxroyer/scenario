@@ -15,10 +15,9 @@
 # limitations under the License.
 
 """
-JSON configuration file management.
+JSON / YAML configuration file management.
 """
 
-import json
 import typing
 
 if typing.TYPE_CHECKING:
@@ -26,9 +25,9 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
 
 
-class ConfigJson:
+class ConfigJsonDict:
     """
-    JSON configuration file management.
+    JSON / YAML configuration file management.
     """
 
     @staticmethod
@@ -37,26 +36,25 @@ class ConfigJson:
             root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
-        Loads a JSON configuration file.
+        Loads a JSON / YAML configuration file.
 
-        :param path: Path of the JSON file to load.
-        :param root: Root key to load the JSON file from.
+        :param path: Path of the file to load.
+        :param root: Root key to load the file from.
         """
         from ._configdb import CONFIG_DB
-        from ._path import Path
-        from ._textfile import guessencoding
+        from ._jsondictutils import JsonDict
+        if typing.TYPE_CHECKING:
+            from ._jsondictutils import JsonDictType
 
-        CONFIG_DB.debug("Loading JSON file '%s'", path)
+        CONFIG_DB.debug("Loading JSON / YAML file '%s'", path)
 
-        # Read the JSON file.
-        with Path(path).open("r", encoding=guessencoding(path)) as _file:  # type: typing.TextIO
-            _data = json.load(_file)  # type: typing.Any
-            _file.close()
+        # Read the file.
+        _data = JsonDict.readfile(path)  # type: JsonDictType
 
         # Push the data to the configuration database.
         CONFIG_DB.set(root, _data, origin=path)
 
-        CONFIG_DB.debug("JSON file '%s' successfully read", path)
+        CONFIG_DB.debug("JSON / YAML file '%s' successfully read", path)
 
     @staticmethod
     def savefile(
@@ -64,19 +62,23 @@ class ConfigJson:
             root="",  # type: _KeyType
     ):  # type: (...) -> None
         """
-        Saves a JSON configuration file.
+        Saves a JSON / YAML configuration file.
 
-        :param path: Path of the JSON file to save.
+        :param path: Path of the file to save.
         :param root: Root key to save data from.
         """
         from ._configdb import CONFIG_DB
-        from ._path import Path
+        from ._debugutils import saferepr
+        from ._jsondictutils import JsonDict
 
-        CONFIG_DB.debug("Saving JSON file '%s'", path)
+        CONFIG_DB.debug("Saving JSON / YAML file '%s'", path)
 
-        # Save the JSON file. Use UTF-8 encoding.
-        with Path(path).open("w", encoding="utf-8") as _file:  # type: typing.TextIO
-            json.dump(CONFIG_DB.get(root), _file)
-            _file.close()
+        # Save the file.
+        _content = CONFIG_DB.get(root)  # type: typing.Optional[typing.Any]
+        if _content is None:
+            raise KeyError(f"No content for config key {root!r}, can't save file '{path}'")
+        if not isinstance(_content, dict):
+            raise ValueError(f"Not a dictionary {saferepr(_content)} for config key {root!r}, can't save file '{path}'")
+        JsonDict.writefile(_content, path)
 
-        CONFIG_DB.debug("JSON file '%s' successfully saved", path)
+        CONFIG_DB.debug("JSON / YAML file '%s' successfully saved", path)

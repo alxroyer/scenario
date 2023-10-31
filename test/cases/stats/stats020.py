@@ -21,7 +21,7 @@ import scenario.test
 class Stats020(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
@@ -42,7 +42,7 @@ class Stats020(scenario.test.TestCase):
             error_details=True, stats=True,
         )  # type: scenario.test.ScenarioExpectations
 
-        # Verifications: check statistics in the log output and in the JSON report.
+        # Verifications: check statistics in the log output and in the scenario report.
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
         self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), _scenario_expectations))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), _scenario_expectations))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), _scenario_expectations))

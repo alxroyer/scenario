@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import typing
 
 import scenario
@@ -37,18 +36,19 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
         self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
 
     def step(self):  # type: (...) -> None
+        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
         from campaigns.steps.execution import ExecCampaign
 
         self.STEP("Requirement database file content")
 
         # Expected requirements.
         assert isinstance(self.campaign_expectations.reqdb_file, scenario.Path), "Requirement file missing in campaign expectations"
-        _expected_reqdb = json.loads(self.campaign_expectations.reqdb_file.read_text(encoding="utf-8"))  # type: scenario.types.JsonDict
+        _expected_reqdb = JsonDict.readfile(self.campaign_expectations.reqdb_file)  # type: scenario.types.JsonDict
 
         _reqdb = {}  # type: scenario.types.JsonDict
         if self.ACTION("Read the requirement file."):
             self.evidence(f"Requirement file: {self.getexecstep(ExecCampaign).reqdb_path}")
-            _reqdb = json.loads(self.getexecstep(ExecCampaign).reqdb_path.read_text(encoding="utf-8"))
+            _reqdb = JsonDict.readfile(self.getexecstep(ExecCampaign).reqdb_path)
 
         def _reqids(reqdb_json):  # type: (scenario.types.JsonDict) -> typing.List[str]
             return list(

@@ -1,7 +1,7 @@
 INFO     <05>                __init__.py => [_actionresultdefinition.py, _actionresultexecution.py, _args.py,
 INFO                                         _assertionhelpers.py, _assertions.py, _campaignargs.py, _campaignexecution.py,
-INFO                                         _campaignreport.py, _campaignrunner.py, _configdb.py, _confignode.py, _console.py,
-INFO                                         _datetimeutils.py, _debugutils.py, _enumutils.py, _errcodes.py,
+INFO                                         _campaignreport.py, _campaignrunner.py, _configdb.py, _confignode.py,
+INFO                                         _consoleutils.py, _datetimeutils.py, _debugutils.py, _enumutils.py, _errcodes.py,
 INFO                                         _executionstatus.py, _handlers.py, _issuelevels.py, _knownissues.py, _locations.py,
 INFO                                         _logextradata.py, _logger.py, _loggermain.py, _loggingcontext.py, _path.py,
 INFO                                         _pkginfo.py, _req.py, _reqdb.py, _reqlink.py, _reqmgtmain.py, _reqref.py,
@@ -50,17 +50,17 @@ INFO     <01>       _assertionhelpers.py => []
 INFO     <01>      _campaignexecution.py => []
 INFO     <01>             _configargs.py => []
 INFO     <01>              _configini.py => []
-INFO     <01>             _configjson.py => []
+INFO     <01>         _configjsondict.py => []
 INFO     <01>              _configkey.py => []
 INFO     <01>             _confignode.py => []
 INFO     <01>            _configtypes.py => []
-INFO     <01>             _configyaml.py => []
-INFO     <01>                _console.py => []
+INFO     <01>           _consoleutils.py => []
 INFO     <01>          _datetimeutils.py => []
 INFO     <01>             _debugutils.py => []
 INFO     <01>              _enumutils.py => []
 INFO     <01>               _errcodes.py => []
 INFO     <01>            _issuelevels.py => []
+INFO     <01>          _jsondictutils.py => []
 INFO     <01>             _logfilters.py => []
 INFO     <01>           _logformatter.py => []
 INFO     <01>                 _logger.py => []
@@ -83,9 +83,9 @@ INFO     <01>     _stepspecifications.py => []
 INFO     <01>            _stepuserapi.py => []
 INFO     <01>             _subprocess.py => []
 INFO     <01>             _testerrors.py => []
-INFO     <01>               _textfile.py => []
+INFO     <01>          _textfileutils.py => []
 INFO     <01>              _textutils.py => []
 INFO     <01>          _timezoneutils.py => []
-INFO     <01>                  _types.py => []
-INFO     <01>            _typingutils.py => []
+INFO     <01>            _typeexports.py => []
+INFO     <01>              _typeutils.py => []
 INFO     <01>               _xmlutils.py => []

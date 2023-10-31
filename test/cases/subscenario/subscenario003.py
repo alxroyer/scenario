@@ -20,7 +20,7 @@ import scenario.test
 class SubScenario003(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
@@ -46,4 +46,4 @@ class SubScenario003(scenario.test.TestCase):
         ))
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
         self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), _scenario_expectations))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), _scenario_expectations))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), _scenario_expectations))

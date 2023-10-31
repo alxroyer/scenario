@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import typing
 
 import scenario
@@ -22,47 +21,48 @@ import scenario.test
 import scenario.text
 
 if True:
-    # `JsonReportFileVerificationStep` used for inheritance.
-    from jsonreport.steps.reportfile import JsonReportFileVerificationStep as _JsonReportFileVerificationStepImpl
+    # `ScenarioReportFileVerificationStep` used for inheritance.
+    from scenarioreport.steps.reportfile import ScenarioReportFileVerificationStep as _ScenarioReportFileVerificationStepImpl
 if typing.TYPE_CHECKING:
     from scenarioexecution.steps.execution import ExecScenario as _ExecScenarioType
 
 
-class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
+class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
-        _JsonReportFileVerificationStepImpl.__init__(self, exec_step)
+        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
 
-        # Read the reference JSON report file.
+        _ScenarioReportFileVerificationStepImpl.__init__(self, exec_step)
+
+        # Read the reference scenario report file.
         assert len(exec_step.scenario_paths) == 1
         self._json_path_ref = scenario.test.paths.datapath(
-            exec_step.scenario_paths[0].name.replace(
-                ".py",
-                ".doc-only.json" if exec_step.doc_only else ".executed.json"
-            ),
+            exec_step.scenario_paths[0].with_suffix(".doc-only.json" if exec_step.doc_only else ".executed.json").name,
         )  # type: scenario.Path
         self.assertisfile(self._json_path_ref)
-        self._json_ref = json.loads(self._json_path_ref.read_bytes())  # type: scenario.types.JsonDict
+        self._json_ref = JsonDict.readfile(self._json_path_ref)  # type: scenario.types.JsonDict
 
         #: JSON data read from the report file.
         self.json = {}  # type: scenario.types.JsonDict
 
     def step(self):  # type: (...) -> None
+        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
+
         self.STEP("Full scenario report")
 
         scenario.logging.resetindentation()
 
-        # Read the reference JSON report file.
+        # Read the reference scenario report file.
         if self.doexecute():
             self.debug("step(): _json_ref = %s", scenario.debug.jsondump(self._json_ref, indent=2),
                        extra=self.longtext(max_lines=10))
 
-        # Read the JSON report file.
-        if self.ACTION("Read the JSON report file."):
-            self.json = json.loads(self.report_path.read_bytes())
+        # Read the scenario report file.
+        if self.ACTION("Read the scenario report file."):
+            self.json = JsonDict.readfile(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
                        extra=self.longtext(max_lines=10))
 
@@ -87,13 +87,13 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
                        extra=self.longtext(max_lines=10))
 
         if "$schema" in json_scenario_ref:
-            if self.RESULT("The JSON report gives the JSON schema it follows."):
+            if self.RESULT("The scenario report gives the JSON schema it follows."):
                 self.assertjson(
                     json_scenario, "$schema", ref=json_scenario_ref,
                     evidence="Schema reference",
                 )
 
-        if self.RESULT(f"The JSON report gives the expected test name: '{self._assertjsonref(json_scenario_ref, 'name', type=str)}'."):
+        if self.RESULT(f"The scenario report gives the expected test name: '{self._assertjsonref(json_scenario_ref, 'name', type=str)}'."):
             self.assertjson(
                 json_scenario, "name", ref=json_scenario_ref,
                 evidence="Test name",
@@ -101,7 +101,7 @@ class CheckFullJsonReport(_JsonReportFileVerificationStepImpl):
 
         _attributes_ref = self._assertjsonref(json_scenario_ref, "attributes", type=dict)  # type: scenario.types.JsonDict
         _attributes_txt = scenario.text.Countable("attribute", _attributes_ref)  # type: scenario.text.Countable
-        if self.RESULT(f"The JSON report gives {len(_attributes_txt)} scenario {_attributes_txt}{_attributes_txt.ifany(':', '.')}"):
+        if self.RESULT(f"The scenario report gives {len(_attributes_txt)} scenario {_attributes_txt}{_attributes_txt.ifany(':', '.')}"):
             self.assertjson(
                 json_scenario, "attributes", type=dict, len=len(_attributes_ref),
                 evidence="Number of scenario attributes",

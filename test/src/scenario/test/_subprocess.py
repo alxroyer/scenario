@@ -133,8 +133,8 @@ class SubProcess(scenario.SubProcess):
         self.report_path = report_path
 
         if self.launcher_path.samefile(TEST_LAUNCHER):
-            assert not self.hasargs("--json-report")
-            self.addargs("--json-report", report_path)
+            assert not self.hasargs("--scenario-report")
+            self.addargs("--scenario-report", report_path)
         elif self.launcher_path.samefile(CAMPAIGN_LAUNCHER):
             scenario.Assertions.fail("Campaign reports not handled yet")
         else:

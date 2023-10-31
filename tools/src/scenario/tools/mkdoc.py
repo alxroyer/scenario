@@ -111,8 +111,8 @@ class MkDoc:
                 positionals=None,  # type: typing.List[scenario.Path]
                 suffix="",  # type: str
                 summary=False,  # type: bool
-                json_report=False,  # type: bool
-                xml_report=False,  # type: bool
+                scenario_report=False,  # type: bool
+                campaign_report=False,  # type: bool
         ):  # type: (...) -> None
             """
             Create a log file from a script execution.
@@ -124,23 +124,23 @@ class MkDoc:
             if positionals:
                 _basename_no_ext = "+".join([_positional.stem for _positional in positionals]) + suffix
 
-            _log_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".log")  # type: scenario.Path
-            _json_report_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".json")  # type: scenario.Path
+            _log_outpath = _paths.DOC_DATA_PATH / (_basename_no_ext + ".log")  # type: scenario.Path
+            _scenario_report_outpath = _paths.DOC_DATA_PATH / (_basename_no_ext + ".json")  # type: scenario.Path
             _tmp_outdir = None  # type: typing.Optional[scenario.Path]
             if positionals:
                 if sum([_positional.name.endswith(".py") for _positional in positionals]) == 0:
                     _tmp_outdir = _paths.ROOT_SCENARIO_PATH / "out"
-            _xml_report_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".xml")  # type: scenario.Path
+            _campaign_report_outpath = _paths.DOC_DATA_PATH / (_basename_no_ext + ".xml")  # type: scenario.Path
 
-            scenario.logging.info(f"Updating {_log_out_path}")
+            scenario.logging.info(f"Updating '{_log_outpath}'")
             _subprocess = SubProcess(sys.executable, script)  # type: SubProcess
             _subprocess.addargs("--config-value", str(scenario.ConfigKey.LOG_COLOR_ENABLED), "0")
             _subprocess.addargs("--config-value", str(scenario.ConfigKey.LOG_DATETIME), "0")
             _subprocess.addargs(*options)
             for _positional in positionals:  # type: scenario.Path
                 _subprocess.addargs(_positional)
-            if json_report:
-                _subprocess.addargs("--json-report", _json_report_out_path)
+            if scenario_report:
+                _subprocess.addargs("--scenario-report", _scenario_report_outpath)
             if _tmp_outdir:
                 scenario.logging.debug("Creating directory '%s'", _tmp_outdir)
                 _tmp_outdir.mkdir(parents=True, exist_ok=True)
@@ -167,8 +167,8 @@ class MkDoc:
 
                 _log_lines.append(_log_line)
 
-            # scenario.logging.info(f"Updating {_log_out_path}")  # Already logged above
-            _dumptext(_log_out_path, b'\n'.join(_log_lines))
+            # scenario.logging.info(f"Updating '{_log_outpath}'")  # Already logged above
+            _dumptext(_log_outpath, b'\n'.join(_log_lines))
 
             # Dump the scenario executions summary when required.
             if summary and (_summary_total_line_index > 0):
@@ -177,20 +177,20 @@ class MkDoc:
                 _dumptext(_log_summary_out_path, b'\n'.join(_log_lines[_summary_total_line_index - 1:]))
 
             # Replace execution times in the JSON and XML reports with substitution patterns.
-            if json_report:
-                scenario.logging.info(f"Updating {_json_report_out_path}")
-                _json_data = _json_report_out_path.read_bytes()  # type: bytes
-                _json_data = re.sub(rb'"(start|end)": "%s"' % _iso_8601_regex, rb'"\1": "%s"' % _iso_8601_subst, _json_data)
-                _json_data = re.sub(rb'"elapsed": %s' % _float_duration_regex, rb'"elapsed": %s' % _float_duration_subst, _json_data)
-                _dumptext(_json_report_out_path, _json_data)
-            if xml_report:
-                scenario.logging.info(f"Updating {_xml_report_out_path}")
+            if scenario_report:
+                scenario.logging.info(f"Updating '{_scenario_report_outpath}'")
+                _file_content = _scenario_report_outpath.read_bytes()  # type: bytes
+                _file_content = re.sub(rb'"(start|end)": "%s"' % _iso_8601_regex, rb'"\1": "%s"' % _iso_8601_subst, _file_content)
+                _file_content = re.sub(rb'"elapsed": %s' % _float_duration_regex, rb'"elapsed": %s' % _float_duration_subst, _file_content)
+                _dumptext(_scenario_report_outpath, _file_content)
+            if campaign_report:
+                scenario.logging.info(f"Updating '{_campaign_report_outpath}'")
                 assert _tmp_outdir, "Temporary output directory should have been determined before"
-                _xml_data = (_tmp_outdir / "campaign.xml").read_bytes()  # type: bytes
-                _xml_data = re.sub(rb'time="%s"' % _float_duration_regex, rb'time="%s"' % _float_duration_subst, _xml_data)
-                _xml_data = re.sub(rb'timestamp="%s"' % _iso_8601_regex, rb'timestamp="%s"' % _iso_8601_subst, _xml_data)
-                _xml_data = re.sub(rb'Time: %s' % _str_duration_regex, rb'Time: %s' % _str_duration_subst, _xml_data)
-                _dumptext(_xml_report_out_path, _xml_data)
+                _file_content = (_tmp_outdir / "campaign.xml").read_bytes()  # File already declared above.
+                _file_content = re.sub(rb'time="%s"' % _float_duration_regex, rb'time="%s"' % _float_duration_subst, _file_content)
+                _file_content = re.sub(rb'timestamp="%s"' % _iso_8601_regex, rb'timestamp="%s"' % _iso_8601_subst, _file_content)
+                _file_content = re.sub(rb'Time: %s' % _str_duration_regex, rb'Time: %s' % _str_duration_subst, _file_content)
+                _dumptext(_campaign_report_outpath, _file_content)
 
             if _tmp_outdir:
                 scenario.logging.debug("Removing directory '%s'", _tmp_outdir)
@@ -221,17 +221,17 @@ class MkDoc:
         _generatelog(
             _paths.BIN_PATH / "run-test.py",
             positionals=[_paths.DEMO_PATH / "commutativeaddition.py"],
-            json_report=True,
+            scenario_report=True,
         )
         _generatelog(
             _paths.BIN_PATH / "run-test.py",
             positionals=[_paths.DEMO_PATH / "commutativeadditions.py"],
-            json_report=True,
+            scenario_report=True,
         )
         _generatelog(
             _paths.BIN_PATH / "run-test.py",
             positionals=[_paths.DEMO_PATH / "loggingdemo.py"],
-            json_report=True,
+            scenario_report=True,
         )
         _generatelog(
             _paths.BIN_PATH / "run-test.py",
@@ -253,7 +253,7 @@ class MkDoc:
         # Campaign executions.
         _generatelog(
             _paths.BIN_PATH / "run-campaign.py", positionals=[_paths.DEMO_PATH / "demo.suite"],
-            suffix=".campaign", summary=True, xml_report=True,
+            suffix=".campaign", summary=True, campaign_report=True,
         )
 
         # Module dependencies.

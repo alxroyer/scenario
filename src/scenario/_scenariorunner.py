@@ -147,11 +147,11 @@ class ScenarioRunner(_LoggerImpl):
                 SCENARIO_RESULTS.add(_scenario_execution)
                 _exec_times_logger.tick("After executepath()")
 
-                # Generate JSON report if required.
-                _json_report = ScenarioArgs.getinstance().json_report  # type: typing.Optional[Path]
-                if _json_report:
-                    SCENARIO_REPORT.writejsonreport(_scenario_execution.definition, _json_report)
-                    _exec_times_logger.tick("After JSON report generation")
+                # Generate scenario report if required.
+                _scenario_report = ScenarioArgs.getinstance().scenario_report  # type: typing.Optional[Path]
+                if _scenario_report:
+                    SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)
+                    _exec_times_logger.tick("After scenario report generation")
 
             # Display final results (when applicable).
             if SCENARIO_RESULTS.count > 1:

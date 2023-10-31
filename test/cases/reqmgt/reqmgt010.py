@@ -108,7 +108,7 @@ class CreateScenario(scenario.Step):
         self.scenario_instance = scenario.Scenario()  # type: scenario.Scenario
 
     def step(self):  # type: (...) -> None
-        from scenario._reflection import qualname  # noqa  ## Access to protected member
+        from scenario._reflection import qualname  # noqa  ## Access to protected module
 
         self.STEP("Scenario creation")
 

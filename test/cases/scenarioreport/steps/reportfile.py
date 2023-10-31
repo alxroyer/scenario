@@ -21,12 +21,12 @@ if typing.TYPE_CHECKING:
     import scenario
 
 
-class JsonReportFileVerificationStep(scenario.test.VerificationStep):
+class ScenarioReportFileVerificationStep(scenario.test.VerificationStep):
     """
-    Provides easy access to the JSON report path info.
+    Provides easy access to the scenario report path info.
     """
 
     @property
     def report_path(self):  # type: () -> scenario.Path
-        assert self.subprocess.report_path, f"JSON report should have generated with {self.subprocess}"
+        assert self.subprocess.report_path, f"Scenario report should have been generated with {self.subprocess}"
         return self.subprocess.report_path

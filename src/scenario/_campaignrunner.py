@@ -241,7 +241,7 @@ class CampaignRunner(_LoggerImpl):
                 """
                 return test_case_execution.test_suite_execution.campaign_execution.outdir / (test_case_execution.script_path.stem + ext)
 
-            test_case_execution.json.path = _mkoutpath(".json")
+            test_case_execution.report.path = _mkoutpath(".json")
             test_case_execution.log.path = _mkoutpath(".log")
 
             # Prepare the command line.
@@ -253,8 +253,8 @@ class CampaignRunner(_LoggerImpl):
                 _subprocess.addargs("--config-value", _config_name, CampaignArgs.getinstance().config_values[_config_name])
             # Report common execution options from campaign to scenario execution.
             CampaignArgs.reportexecargs(CampaignArgs.getinstance(), _subprocess)
-            # --json-report option.
-            _subprocess.addargs("--json-report", test_case_execution.json.path)
+            # --scenario-report option.
+            _subprocess.addargs("--scenario-report", test_case_execution.report.path)
             # Log outfile specification.
             _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_FILE), test_case_execution.log.path)
             # No log console specification.
@@ -305,18 +305,18 @@ class CampaignRunner(_LoggerImpl):
                 self.debug("No such file '%s'", test_case_execution.log.path)
             _exec_times_logger.tick("After reading the log file")
 
-            # Read the JSON outfile.
-            if test_case_execution.json.path.is_file():
+            # Read the scenario report outfile.
+            if test_case_execution.report.path.is_file():
                 # Don't bother with errors, keep going on.
-                self.debug("Reading '%s'", test_case_execution.json.path)
-                test_case_execution.json.read()
+                self.debug("Reading '%s'", test_case_execution.report.path)
+                test_case_execution.report.read()
             else:
-                self.debug("No such file '%s'", test_case_execution.json.path)
-            _exec_times_logger.tick("After reading the JSON file")
+                self.debug("No such file '%s'", test_case_execution.report.path)
+            _exec_times_logger.tick("After reading the scenario report file")
 
-            # Fix the scenario definition and execution instances, if not successfully read from the JSON report above.
+            # Fix the scenario definition and execution instances, if not successfully read from the scenario report above.
             if not test_case_execution.scenario_execution:
-                test_case_execution.json.content = _fallback_errors
+                test_case_execution.report.content = _fallback_errors
 
                 # Read error lines from stdout.
                 if test_case_execution.log.content:

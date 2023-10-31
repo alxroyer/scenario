@@ -50,13 +50,13 @@ class MultipleScenarios000(scenario.test.TestCase):
             scenario.test.data.scenarioexpectations(scenario.test.paths.SUPERSCENARIO_SCENARIO),
         ]))
 
-        self.section("--json-report option")
+        self.section("--scenario-report option")
         self.addstep(ExecScenario(
             [scenario.test.paths.FAILING_SCENARIO, scenario.test.paths.SUPERSCENARIO_SCENARIO],
             generate_report=True,
             expected_return_code=scenario.ErrorCode.ARGUMENTS_ERROR,
         ))
-        self.addstep(CheckMultipleScenariosIncompatibleOption(ExecScenario.getinstance(1), option="--json-report"))
+        self.addstep(CheckMultipleScenariosIncompatibleOption(ExecScenario.getinstance(1), option="--scenario-report"))
 
 
 class CheckMultipleScenariosIncompatibleOption(_LogVerificationStepImpl):

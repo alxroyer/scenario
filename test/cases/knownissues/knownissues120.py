@@ -21,7 +21,7 @@ import scenario.test
 class KnownIssues120(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
@@ -72,4 +72,4 @@ class KnownIssues120(scenario.test.TestCase):
         # Verification steps.
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
         self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), _scenario_expectations_errors))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), _scenario_expectations_errors))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), _scenario_expectations_errors))

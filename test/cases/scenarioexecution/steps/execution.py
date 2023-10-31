@@ -84,11 +84,11 @@ class ExecScenario(_ExecCommonArgsImpl):
         _action_description += ". Catch the output"
         _action_description += _action_description2
 
-        # JSON report generation.
+        # Scenario report generation.
         if self.generate_report is False:
-            _action_description += ", do not generate the JSON report"
+            _action_description += ", do not generate the scenario report"
         if self.generate_report is True:
-            _action_description += ", generate the JSON report"
+            _action_description += ", generate the scenario report"
 
             if self.doexecute():
                 self.subprocess.generatereport()

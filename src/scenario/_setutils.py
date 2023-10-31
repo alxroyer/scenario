@@ -24,7 +24,7 @@ import abc
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._typingutils import VarItemType as _VarItemType
+    from ._typeutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:

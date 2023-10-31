@@ -17,7 +17,7 @@
 
 def checkpkgdeps():  # type: (...) -> None
     import scenario
-    from scenario._reflection import extendnamespacepackagepath  # noqa  ## Access to protected member
+    from scenario._reflection import extendnamespacepackagepath  # noqa  ## Access to protected module
     from ._paths import ROOT_SCENARIO_PATH
 
     # Ensure `scenario.text` can be loaded.

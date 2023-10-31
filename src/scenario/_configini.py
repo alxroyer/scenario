@@ -44,7 +44,7 @@ class ConfigIni:
         :param root: Root key to load the INI file from.
         """
         from ._configdb import CONFIG_DB
-        from ._textfile import guessencoding
+        from ._textfileutils import guessencoding
 
         CONFIG_DB.debug("Loading INI file '%s'", path)
 

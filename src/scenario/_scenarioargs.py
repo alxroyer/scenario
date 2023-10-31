@@ -138,13 +138,14 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
 
         CommonExecArgs.__init__(self)
 
-        #: JSON report output file path.
-        #: No JSON report when ``None``.
-        self.json_report = None  # type: typing.Optional[Path]
-        self.addarg("JSON output file", "json_report", Path).define(
-            "--json-report", metavar="JSON_REPORT_PATH",
+        #: Scenario report output file path.
+        #: No scenario report when ``None``.
+        self.scenario_report = None  # type: typing.Optional[Path]
+        self.addarg("Scenario report output file", "scenario_report", Path).define(
+            "--scenario-report", metavar="SCENARIO_REPORT_PATH",
             action="store", type=str, default=None,
-            help="Save the report in the given JSON output file path. "
+            help="Save the report in the given output file path. "
+                 "JSON format (or YAML if 'yaml' is installed). "
                  "Single scenario only.",
         )
 
@@ -168,6 +169,23 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
                 help="Scenario script(s) to execute.",
             )
 
+    def parse(
+            self,
+            args,  # type: typing.List[str]
+    ):  # type: (...) -> bool
+        """
+        :meth:`._args.Args.parse()` override for ``--json-report`` deprecation.
+
+        .. seealso:: :meth:`._args.Args.parse()` for parameters and return details.
+        """
+        if "--json-report" in args:
+            self.warning("--json-report option deprecated, please use --scenario-report instead")
+            args = list(map(
+                lambda arg: "--scenario-report" if (arg == "--json-report") else arg,
+                args,
+            ))
+        return _ArgsImpl.parse(self, args)
+
     def _checkargs(
             self,
             args,  # type: typing.Any
@@ -177,6 +195,7 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
 
         :return: ``True`` for success, ``False`` otherwise.
         """
+        from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
 
@@ -185,15 +204,21 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         if not CommonExecArgs._checkargs(self, args):
             return False
 
+        # Scenario report.
+        if self.scenario_report is not None:
+            if not JsonDict.isknwonsuffix(self.scenario_report):
+                MAIN_LOGGER.error(f"Unknown suffix for scenario report '{self.scenario_report}'")
+                return False
+
+            # Incomptibility with multiple scenarios.
+            if len(self.scenario_paths) > 1:
+                MAIN_LOGGER.error("Cannot use the --scenario-report option with multiple scenario files")
+                return False
+
+        # Scenario paths.
         for _scenario_path in self.scenario_paths:  # type: Path
             if not _scenario_path.is_file():
                 MAIN_LOGGER.error(f"No such file '{_scenario_path}'")
-                return False
-
-        # Multiple scenarios.
-        if len(self.scenario_paths) > 1:
-            if self.json_report:
-                MAIN_LOGGER.error("Cannot use the --json-report option with multiple scenario files")
                 return False
 
         return True

@@ -23,7 +23,7 @@ import re
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._console import Console as _ConsoleType
+    from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
 
 
@@ -89,7 +89,7 @@ class LogFormatter(logging.Formatter):
         :param record: Log record to format for printing.
         :return: Log string representation.
         """
-        from ._console import Console
+        from ._consoleutils import Console
         from ._datetimeutils import toiso8601
         from ._logextradata import LogExtraData
         from ._logger import Logger
@@ -242,7 +242,7 @@ class LogFormatter(logging.Formatter):
         :param level: Log level which respective color to find out.
         :return: Log color corresponding to the given log level.
         """
-        from ._console import Console
+        from ._consoleutils import Console
         from ._scenarioconfig import SCENARIO_CONFIG
 
         if level < logging.INFO:

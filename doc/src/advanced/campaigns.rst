@@ -94,7 +94,7 @@ The ``--outdir`` option specifies the directory where the execution reports shou
 
     The date/time subdirectory is formed on the 'YYYY-MM-DD_HH-MM-SS' pattern.
 
-For each scenario executed, a :ref:`JSON report <reports>` is stored in the output directory.
+For each scenario executed, a :ref:`scenario report <reports>` is stored in the output directory.
 
 Eventually, a campaign report is generated in the XML JUnit format.
 

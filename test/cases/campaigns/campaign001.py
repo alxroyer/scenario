@@ -21,11 +21,11 @@ class Campaign001(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign
-        from campaigns.steps.jsonreports import CheckCampaignJsonReports
         from campaigns.steps.junitreport import CheckCampaignJunitReport
         from campaigns.steps.log import CheckCampaignLogExpectations
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
         from campaigns.steps.reqdbfile import CheckCampaignReqdbFile
+        from campaigns.steps.scenarioreports import CheckCampaignScenarioReports
         from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
 
         scenario.test.TestCase.__init__(
@@ -104,7 +104,7 @@ class Campaign001(scenario.test.TestCase):
         #     self.getreqlinks(scenario.test.reqs.ERROR_HANDLING),
         #     self.getreqlinks(scenario.test.reqs.KNOWN_ISSUES),
         # )
-        self.addstep(CheckCampaignJsonReports(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+        self.addstep(CheckCampaignScenarioReports(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
             (scenario.test.reqs.CAMPAIGN_REPORTS, "Scenario report content in campaign output files"),
             (scenario.test.reqs.SCENARIO_REPORT, "Scenario report content in campaign output files"),
             (scenario.test.reqs.STATISTICS, "Statistics saved in scenario reports in campaign output files"),

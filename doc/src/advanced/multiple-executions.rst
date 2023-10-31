@@ -35,7 +35,7 @@ For example:
 
     When executing several scenarios in the same command line,
     a couple of options come to be not applicable,
-    such as ``--json-report``.
+    such as ``--scenario-report``.
 
 The tests are executed one after the other, in the order given by the command line.
 

@@ -24,7 +24,7 @@ import traceback
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._console import Console as _ConsoleType
+    from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
 
 

@@ -98,7 +98,7 @@ class CheckTimes(_CheckTimeLostStepImpl):
         _log_file_times = []  # type: typing.List[float]
         _json_file_times = []  # type: typing.List[float]
         _untracked_times = []  # type: typing.List[float]
-        if self.ACTION("Evaluate the time taken to execute test case sub-processes, then to read the log and JSON report files."):
+        if self.ACTION("Evaluate the time taken to execute test case sub-processes, then to read the log and scenario report files."):
 
             _debug_lines = self.assertlines(b'[scenario.#65.exec-times]')  # type: typing.List[bytes]
             for _debug_line in _debug_lines:  # type: bytes

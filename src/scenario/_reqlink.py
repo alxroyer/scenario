@@ -30,7 +30,7 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._setutils import OrderedSetType as _OrderedSetType
-    from ._typingutils import VarItemType as _VarItemType
+    from ._typeutils import VarItemType as _VarItemType
 
 
 class ReqLink:

@@ -36,7 +36,7 @@ class MainLogger(_LoggerImpl):
         """
         Enables debugging by default and makes console initializations.
         """
-        from ._console import disableconsolebuffering
+        from ._consoleutils import disableconsolebuffering
         from ._logfilters import HandlerLogFilter
         from ._logformatter import LogFormatter
         from ._loghandler import LogHandler

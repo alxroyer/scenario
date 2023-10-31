@@ -175,8 +175,8 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
             )
         if self.RESULT("The report gives the scenario report."):
             self.assertisfile(
-                test_case_execution.json.path,
-                evidence="JSON report",
+                test_case_execution.report.path,
+                evidence="Scenario report",
             )
 
         if scenario_expectations.status is not None:

@@ -15,10 +15,9 @@
 # limitations under the License.
 
 """
-Statistics class module.
+Scenario reports.
 """
 
-import json
 import sys
 import typing
 
@@ -26,16 +25,16 @@ if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
-    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class ScenarioReport(_LoggerImpl):
     """
-    JSON report generator.
+    Scenario report generator.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -47,8 +46,8 @@ class ScenarioReport(_LoggerImpl):
 
         _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_REPORT)
 
-        #: JSON report path being written or read.
-        self._json_path = Path()  # type: Path
+        #: JSON / YAML report path being written or read.
+        self._report_path = Path()  # type: Path
 
         #: ``True`` to feed automatically the requirement database with verified requirement references.
         self._feed_reqdb = False  # type: bool
@@ -56,32 +55,48 @@ class ScenarioReport(_LoggerImpl):
     def writejsonreport(
             self,
             scenario_definition,  # type: _ScenarioDefinitionType
-            json_path,  # type: _AnyPathType
+            report_path,  # type: _AnyPathType
+    ):  # type: (...) -> bool
+        self.warning(f"ScenarioReport.writejsonreport() deprecated, please use ScenarioReport.writescenarioreport() instead")
+        return self.writescenarioreport(
+            scenario_definition,
+            report_path,
+        )
+
+    def writescenarioreport(
+            self,
+            scenario_definition,  # type: _ScenarioDefinitionType
+            report_path,  # type: _AnyPathType
     ):  # type: (...) -> bool
         """
-        Generates the JSON report output file for the given scenario execution.
+        Generates the scenario report output file for the given scenario execution.
 
-        :param scenario_definition: Scenario to generate the JSON report for.
-        :param json_path: Path to write the JSON report into.
+        :param scenario_definition: Scenario to generate the scenario report for.
+        :param report_path: Path to write the scenario report into.
         :return: ``True`` for success, ``False`` otherwise.
         """
+        from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
 
         try:
             self.resetindentation()
-            self.debug("Writing scenario execution to JSON report '%s'", json_path)
+            self.debug("Writing scenario report to '%s'", report_path)
 
             # Build the JSON content.
-            self._json_path = Path(json_path)
+            self._report_path = Path(report_path)
             _json = self._scenario2json(scenario_definition, is_main=True)  # type: _JsonDictType
 
-            # Write the JSON file.
-            Path(json_path).write_text(json.dumps(_json, indent=2), encoding="utf-8")
+            # Write the report file.
+            JsonDict.writefile(
+                schema_subpath="schema/scenario-report.schema.json",
+                content=_json,
+                output_path=self._report_path,
+            )
 
             return True
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not write JSON report '{json_path}': {_err}")
+            MAIN_LOGGER.error(f"Could not write report '{self._report_path}': {_err}")
             self.debug("Exception", exc_info=sys.exc_info())
             return False
         finally:
@@ -89,38 +104,50 @@ class ScenarioReport(_LoggerImpl):
 
     def readjsonreport(
             self,
-            json_path,  # type: _AnyPathType
+            report_path,  # type: _AnyPathType
+            feed_reqdb=False,  # type: bool
+    ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
+        self.warning(f"ScenarioReport.readjsonreport() deprecated, please use ScenarioReport.readscenarioreport() instead")
+        return self.readscenarioreport(
+            report_path,
+            feed_reqdb=feed_reqdb,
+        )
+
+    def readscenarioreport(
+            self,
+            report_path,  # type: _AnyPathType
             feed_reqdb=False,  # type: bool
     ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
         """
-        Reads the JSON report file.
+        Reads the scenario report file.
 
-        :param json_path:
-            JSON file path to read.
+        :param report_path:
+            Scenario report path to read.
         :param feed_reqdb:
             ``True`` to feed automatically the requirement database with verified requirement references.
         :return:
-            Scenario data read from the JSON report file.
+            Scenario data read from the scenario report file.
             ``None`` when the file could not be read, or its content could not be parsed successfully.
         """
+        from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
 
         try:
             self._feed_reqdb = feed_reqdb
             self.resetindentation()
-            self.debug("Reading scenario execution from JSON report '%s'", json_path)
+            self.debug("Reading scenario report from '%s'", report_path)
 
-            # Read the JSON file.
-            _json = json.loads(Path(json_path).read_bytes())  # type: _JsonDictType
+            # Read the report file.
+            self._report_path = Path(report_path)
+            _json = JsonDict.readfile(self._report_path)  # type: _JsonDictType
 
             # Analyze the JSON content.
-            self._json_path = Path(json_path)
             _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
 
             return _scenario_definition
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not read JSON report '{json_path}': {_err}")
+            MAIN_LOGGER.error(f"Could not read report '{self._report_path}': {_err}")
             self.debug("Exception", exc_info=sys.exc_info())
             return None
         finally:
@@ -135,9 +162,9 @@ class ScenarioReport(_LoggerImpl):
         """
         Scenario report JSON generation.
 
-        :param scenario_definition: Scenario to generate the JSON report for.
+        :param scenario_definition: Scenario to generate JSON content for.
         :param is_main: True for the main scenario, False otherwise.
-        :return: JSON report object.
+        :return: JSON content.
         """
         from ._debugutils import jsondump
         from ._enumutils import isin
@@ -145,15 +172,11 @@ class ScenarioReport(_LoggerImpl):
         from ._scenarioattributes import CoreScenarioAttributes
         from ._testerrors import TestError
 
-        self.debug("Generating JSON report for scenario %r", scenario_definition)
+        self.debug("Generating JSON content for scenario %r", scenario_definition)
 
         with self.pushindentation():
             # Build a JSON object.
-            _json_scenario = {}  # type: _JsonDictType
-
-            # JSON schema.
-            if is_main:
-                _json_scenario["$schema"] = "https://github.com/alxroyer/scenario/blob/master/schema/scenario-report-v1.schema.json"
+            _json_scenario = {}  # type: _JsonDictType  # noqa  ## This dictionary creation sould be rewritten as a dictionary literal
 
             # Scenario name.
             _json_scenario["name"] = scenario_definition.name
@@ -203,7 +226,7 @@ class ScenarioReport(_LoggerImpl):
                         "results": scenario_definition.execution.result_stats.tojson(),
                     }
 
-        self.debug("JSON report generated for scenario %r: %s", scenario_definition.name, jsondump(_json_scenario, indent=2),
+        self.debug("JSON content generated for scenario %r: %s", scenario_definition.name, jsondump(_json_scenario, indent=2),
                    extra=self.longtext(max_lines=20))
         return _json_scenario
 
@@ -212,9 +235,9 @@ class ScenarioReport(_LoggerImpl):
             json_scenario,  # type: _JsonDictType
     ):  # type: (...) -> _ScenarioDefinitionType
         """
-        Scenario data reading from JSON report.
+        Scenario data reading from JSON content.
 
-        :param json_scenario: Scenario JSON report to read.
+        :param json_scenario: Scenario JSON content to read.
         :return: Scenario data.
         """
         from ._debugutils import jsondump
@@ -274,17 +297,17 @@ class ScenarioReport(_LoggerImpl):
             step_definition,  # type: _StepDefinitionType
     ):  # type: (...) -> _JsonDictType
         """
-        Generates the JSON report for a step.
+        Generates JSON content for a step.
 
-        :param step_definition: Step definition (with execution) to generate the JSON report for.
-        :return: JSON report object.
+        :param step_definition: Step definition (with execution) to generate JSON content for.
+        :return: JSON content.
         """
         from ._debugutils import jsondump
         from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
-        self.debug("Generating JSON report for %r", step_definition)
+        self.debug("Generating JSON content for %r", step_definition)
 
         with self.pushindentation():
             _json_step_definition = {
@@ -320,7 +343,7 @@ class ScenarioReport(_LoggerImpl):
 
                     _json_step_definition["executions"].append(_json_step_execution)
 
-        self.debug("JSON report generated for %r: %s", step_definition, jsondump(_json_step_definition, indent=2),
+        self.debug("JSON content generated for %r: %s", step_definition, jsondump(_json_step_definition, indent=2),
                    extra=self.longtext(max_lines=10))
         return _json_step_definition
 
@@ -329,9 +352,9 @@ class ScenarioReport(_LoggerImpl):
             json_step_definition,  # type: _JsonDictType
     ):  # type: (...) -> _StepDefinitionType
         """
-        Step reading from JSON report.
+        Step reading from JSON content.
 
-        :param json_step_definition: Step definition JSON report to read.
+        :param json_step_definition: Step definition JSON content to read.
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
         from ._debugutils import jsondump
@@ -400,8 +423,8 @@ class ScenarioReport(_LoggerImpl):
         """
         Generates JSON requirement links for a requirement verifier.
 
-        :param req_verifier: Requirement verifier which JSON report to feed with requirement links. Either a scenario or a step.
-        :param json_req_verifier: JSON report to update.
+        :param req_verifier: Requirement verifier which JSON content to feed with requirement links. Either a scenario or a step.
+        :param json_req_verifier: JSON content to update.
         """
         from ._reqlink import ReqLink
 
@@ -421,9 +444,9 @@ class ScenarioReport(_LoggerImpl):
             req_verifier,  # type: _ReqVerifierType
     ):  # type: (...) -> None
         """
-        Reads requirement coverage from the JSON report of a requirement verifier.
+        Reads requirement coverage from the JSON content of a requirement verifier.
 
-        :param json_req_verifier: JSON report of a requirement verifier.
+        :param json_req_verifier: JSON content of a requirement verifier.
         :param req_verifier: Requirement verifier to update. Either a scenario or a step.
         """
         from ._reqdb import REQ_DB
@@ -456,17 +479,17 @@ class ScenarioReport(_LoggerImpl):
             action_result_definition,  # type: _ActionResultDefinitionType
     ):  # type: (...) -> _JsonDictType
         """
-        Generates the JSON report for an action / expected result.
+        Generates JSON content for an action / expected result.
 
-        :param action_result_definition: Action or expected result to generate the JSON report for.
-        :return: JSON report object.
+        :param action_result_definition: Action or expected result to generate JSON content for.
+        :return: JSON content object.
         """
         from ._actionresultexecution import ActionResultExecution
         from ._debugutils import jsondump
         from ._scenarioexecution import ScenarioExecution
         from ._testerrors import TestError
 
-        self.debug("Generating JSON report for %r", action_result_definition)
+        self.debug("Generating JSON content for %r", action_result_definition)
 
         with self.pushindentation():
             _json_action_result_definition = {
@@ -491,12 +514,12 @@ class ScenarioReport(_LoggerImpl):
                     _json_action_result_execution["warnings"].append(_warning.tojson())
 
                 for _subscenario_execution in _action_result_execution.subscenarios:  # type: ScenarioExecution
-                    self.debug("Generation JSON report sor subscenario %r", _subscenario_execution.definition)
+                    self.debug("Generating JSON content for subscenario %r", _subscenario_execution.definition)
                     with self.pushindentation("  | "):
                         _json_action_result_execution["subscenarios"].append(self._scenario2json(_subscenario_execution.definition, is_main=False))
                 _json_action_result_definition["executions"].append(_json_action_result_execution)
 
-        self.debug("JSON report generated for %r: %s", action_result_definition, jsondump(_json_action_result_definition, indent=2),
+        self.debug("JSON content generated for %r: %s", action_result_definition, jsondump(_json_action_result_definition, indent=2),
                    extra=self.longtext(max_lines=10))
         return _json_action_result_definition
 
@@ -505,9 +528,9 @@ class ScenarioReport(_LoggerImpl):
             json_action_result_definition,  # type: _JsonDictType
     ):  # type: (...) -> _ActionResultDefinitionType
         """
-        Action / expected result reading from JSON report.
+        Action / expected result reading from JSON content.
 
-        :param json_action_result_definition: Action / expected result JSON report to read.
+        :param json_action_result_definition: Action / expected result JSON content to read.
         :return: :class:`._actionresultdefinition.ActionResultDefinition` data.
         """
         from ._actionresultdefinition import ActionResultDefinition

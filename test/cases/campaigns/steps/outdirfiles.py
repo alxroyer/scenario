@@ -34,18 +34,18 @@ class CampaignOutdirFilesManager:
                 campaign_execution,  # type: _ExecCampaignType
                 scenario_path,  # type: scenario.Path
         ):  # type: (...) -> None
-            from scenario._campaignexecution import JsonReportReader, LogFileReader  # noqa  ## Access to protected module
+            from scenario._campaignexecution import LogFileReader, ReportFileReader  # noqa  ## Access to protected module
 
             self.scenario_path = scenario_path  # type: scenario.Path
             self.log = LogFileReader()  # type: LogFileReader
             self.log.path = campaign_execution.final_outdir_path / scenario_path.name.replace(".py", ".log")
-            self.json = JsonReportReader()  # type: JsonReportReader
-            self.json.path = campaign_execution.final_outdir_path / scenario_path.name.replace(".py", ".json")
+            self.report = ReportFileReader()  # type: ReportFileReader
+            self.report.path = campaign_execution.final_outdir_path / scenario_path.name.replace(".py", ".json")
 
         @property
         def scenario_report(self):  # type: () -> typing.Optional[scenario.ScenarioExecution]
-            if self.json.content:
-                return self.json.content.execution
+            if self.report.content:
+                return self.report.content.execution
             return None
 
     def __init__(
@@ -107,7 +107,7 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
                             evidence=f"'{_test_case_expectations.script_path}' '.log' file",
                         )
                         self._assertoutfile(
-                            self._outfiles.getscenarioresults(_test_case_expectations.script_path).json.path,
+                            self._outfiles.getscenarioresults(_test_case_expectations.script_path).report.path,
                             evidence=f"'{_test_case_expectations.script_path}' '.json' file",
                         )
 

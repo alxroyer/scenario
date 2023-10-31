@@ -16,10 +16,10 @@
   ],
 
   "$schema": "http://json-schema.org/schema#",
-  "$id": "scenario/schema/scenario-report-v1.schema.json",
+  "$id": "scenario/schema/scenario-report.schema.json",
 
   "title": "Scenario execution report",
-  "description": "Schema that describes the JSON report of a scenario execution, executed with --doc-only or not",
+  "description": "Schema that describes the report of a scenario execution, executed with --doc-only or not",
 
   "definitions": {
     "scenario-report": {

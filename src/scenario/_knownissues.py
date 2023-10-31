@@ -26,9 +26,9 @@ if True:
     from ._testerrors import TestError as _TestErrorImpl  # `TestError` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
+    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._logger import Logger as _LoggerType
     from ._testerrors import TestError as _TestErrorType
-    from ._typingutils import JsonDictType as _JsonDictType
 
 
 if typing.TYPE_CHECKING:

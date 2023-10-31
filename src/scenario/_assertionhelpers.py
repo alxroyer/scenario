@@ -25,7 +25,7 @@ import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
-    from ._typingutils import VarItemType as _VarItemType
+    from ._typeutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:

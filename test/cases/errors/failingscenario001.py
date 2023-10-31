@@ -26,7 +26,7 @@ if True:
 class FailingScenario001(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
@@ -55,9 +55,9 @@ class FailingScenario001(scenario.test.TestCase):
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
         self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), self.scenario_expectations))
         self.addstep(CheckLogOutputExceptionDisplay(ExecScenario.getinstance()))
-        # JSON report.
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), self.scenario_expectations))
-        self.addstep(CheckJsonReportExceptionStorage(CheckJsonReportExpectations.getinstance()))
+        # Scenario report.
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), self.scenario_expectations))
+        self.addstep(CheckScenarioReportExceptionStorage(CheckScenarioReportExpectations.getinstance()))
 
     @property
     def error_location(self):  # type: () -> scenario.CodeLocation
@@ -94,10 +94,10 @@ class CheckLogOutputExceptionDisplay(_LogVerificationStepImpl):
             )
 
 
-class CheckJsonReportExceptionStorage(scenario.test.VerificationStep):
+class CheckScenarioReportExceptionStorage(scenario.test.VerificationStep):
 
     def step(self):  # type: (...) -> None
-        self.STEP("JSON report error storage")
+        self.STEP("Scenario report error storage")
 
         if self.RESULT("The error is stored with the final status of the scenario."):
             self._asserterror("scenario", "")
@@ -113,25 +113,25 @@ class CheckJsonReportExceptionStorage(scenario.test.VerificationStep):
             obj_type,  # type: str
             jsonpath_prefix,  # type: str
     ):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations
+        from steps.common import CheckScenarioReportExpectations
 
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors",
+            self.getexecstep(CheckScenarioReportExpectations).json, f"{jsonpath_prefix}errors",
             type=list, len=1,
             evidence=f"{obj_type.capitalize()} number of errors",
         )
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors[0].type",
+            self.getexecstep(CheckScenarioReportExpectations).json, f"{jsonpath_prefix}errors[0].type",
             value="AssertionError",
             evidence=f"{obj_type.capitalize()} error type",
         )
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors[0].message",
+            self.getexecstep(CheckScenarioReportExpectations).json, f"{jsonpath_prefix}errors[0].message",
             value="This is an exception.",
             evidence=f"{obj_type.capitalize()} error message",
         )
         self.assertjson(
-            self.getexecstep(CheckJsonReportExpectations).json, f"{jsonpath_prefix}errors[0].location",
+            self.getexecstep(CheckScenarioReportExpectations).json, f"{jsonpath_prefix}errors[0].location",
             value=FailingScenario001.getinstance().error_location.tolongstring(),
             evidence=f"{obj_type.capitalize()} error location",
         )

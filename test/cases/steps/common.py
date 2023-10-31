@@ -22,12 +22,12 @@ This module intends to provide shortcuts to common steps for test cases.
 
 # Reexports.
 try:
-    from jsonreport.steps.expectations import CheckJsonReportExpectations as CheckJsonReportExpectations
     from multiplescenarios.steps.expectations import CheckFinalResultsLogExpectations as CheckFinalResultsLogExpectations
     from multiplescenarios.steps.parser import ParseFinalResultsLog as ParseFinalResultsLog
     from scenarioexecution.steps.execution import ExecScenario as ExecScenario
     from scenariologging.steps.expectations import CheckScenarioLogExpectations as CheckScenarioLogExpectations
     from scenariologging.steps.parser import ParseScenarioLog as ParseScenarioLog
+    from scenarioreport.steps.expectations import CheckScenarioReportExpectations as CheckScenarioReportExpectations
     from steps.commonargs import ExecCommonArgs as ExecCommonArgs
     from steps.logverifications import LogVerificationStep as LogVerificationStep
 finally:

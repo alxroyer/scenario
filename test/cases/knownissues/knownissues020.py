@@ -23,14 +23,14 @@ if True:
 class KnownIssues020(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
             title="Known issue persistence v/s test errors",
             description=(
                 "Check that known issues declared at the definition level persist when a test error occurs. "
-                "Check the way things are displayed in the console are saved in the JSON report."
+                "Check the way things are displayed in the console and saved in the scenario report."
             ),
         )
         self.verifies(
@@ -62,7 +62,7 @@ class KnownIssues020(scenario.test.TestCase):
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
         self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), _scenario_expectations))
         self.addstep(CheckKnownIssuesLogOutput(ExecScenario.getinstance()))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), _scenario_expectations))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), _scenario_expectations))
 
 
 class CheckKnownIssuesLogOutput(_LogVerificationStepImpl):

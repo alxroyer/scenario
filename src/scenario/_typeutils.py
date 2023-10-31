@@ -21,7 +21,6 @@ Type definitions to help type hints.
 import typing
 
 
-# JSON.
 if typing.TYPE_CHECKING:
     #: Comparable type.
     #:
@@ -33,6 +32,3 @@ if typing.TYPE_CHECKING:
 
     #: General item type.
     VarItemType = typing.TypeVar("VarItemType")
-
-    #: JSON dictionary type.
-    JsonDictType = typing.Dict[str, typing.Any]

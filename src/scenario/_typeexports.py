@@ -27,6 +27,14 @@ __all__ = []  # type: typing.List[str]
 
 if typing.TYPE_CHECKING:
     __doc__ += """
+    .. py:attribute:: JsonDict
+
+        .. seealso:: :obj:`._jsondictutils.JsonDictType` implementation.
+    """
+    from ._jsondictutils import JsonDictType as JsonDict
+    __all__.append("JsonDict")
+
+    __doc__ += """
     .. py:attribute:: SetWithReqLinks
 
         .. seealso:: :obj:`._reqtypes.SetWithReqLinksType` implementation.
@@ -43,17 +51,9 @@ if typing.TYPE_CHECKING:
     __all__.append("OrderedSet")
 
     __doc__ += """
-    .. py:attribute:: JsonDict
-
-        .. seealso:: :obj:`._typingutils.JsonDictType` implementation.
-    """
-    from ._typingutils import JsonDictType as JsonDict
-    __all__.append("JsonDict")
-
-    __doc__ += """
     .. py:attribute:: VarItem
 
-        .. seealso:: :obj:`._typingutils.VarItemType` implementation.
+        .. seealso:: :obj:`._typeutils.VarItemType` implementation.
     """
-    from ._typingutils import VarItemType as VarItem
+    from ._typeutils import VarItemType as VarItem
     __all__.append("VarItem")

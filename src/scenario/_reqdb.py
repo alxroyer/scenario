@@ -18,12 +18,12 @@
 Requirement database.
 """
 
-import json
 import typing
 
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -33,7 +33,6 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
-    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class ReqDatabase(_LoggerImpl):
@@ -77,12 +76,13 @@ class ReqDatabase(_LoggerImpl):
 
         :param reqdb_file: JSON file to read.
         """
+        from ._jsondictutils import JsonDict
         from ._req import Req
         from ._reqref import ReqRef
 
         # Read the JSON file.
-        self.debug(f"Reading {reqdb_file}")
-        _reqdb_json = json.loads(reqdb_file.read_text(encoding="utf-8"))  # type: _JsonDictType
+        self.debug("Reading '%s'", reqdb_file)
+        _reqdb_json = JsonDict.readfile(reqdb_file)  # type: _JsonDictType
 
         # Feed the database from the JSON content.
         for _key in _reqdb_json:  # type: str
@@ -120,14 +120,10 @@ class ReqDatabase(_LoggerImpl):
 
         :param reqdb_file: JSON file to write.
         """
-        from ._pkginfo import PKG_INFO
+        from ._jsondictutils import JsonDict
 
         # Build JSON content from requirement information stored in the database.
-        _reqdb_json = {
-            "$encoding": "utf-8",
-            "$schema": f"https://github.com/alxroyer/scenario/blob/v{PKG_INFO.version}/schema/reqdb.schema.json",
-            "$version": PKG_INFO.version,
-        }  # type: _JsonDictType
+        _reqdb_json = {}  # type: _JsonDictType
 
         for _req in self.getallreqs():  # type: _ReqType
             _reqdb_json[_req.id] = {
@@ -139,8 +135,11 @@ class ReqDatabase(_LoggerImpl):
 
         # Write the JSON file.
         self.debug(f"Writing {reqdb_file}")
-        reqdb_file.parent.mkdir(parents=True, exist_ok=True)
-        reqdb_file.write_text(json.dumps(_reqdb_json, indent=2), encoding="utf-8")
+        JsonDict.writefile(
+            schema_subpath="schema/reqdb.schema.json",
+            content=_reqdb_json,
+            output_path=reqdb_file,
+        )
 
     @typing.overload
     def push(self, obj):  # type: (_ReqType) -> _ReqType

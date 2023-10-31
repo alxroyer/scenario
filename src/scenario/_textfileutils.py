@@ -76,7 +76,12 @@ class TextFile:
             if not _first_line:
                 break
             # Inspired from https://www.python.org/dev/peps/pep-0263/
-            _match = re.match(rb'^[ \t\f]*#.*?coding[:=][ \t]*([-_.a-zA-Z0-9]+)', _first_line)
+            _match = re.match(rb'^[ \t\f]*#.*?coding[:=][ \t]*([-_.a-zA-Z0-9]+).*$', _first_line)  # type: typing.Optional[typing.Match[bytes]]
+            if _match:
+                self.encoding = _match.group(1).decode("utf-8")
+                break
+            # JSON '$encoding' specification.
+            _match = re.match(rb'^[{ \t]*["\']\$encoding["\'][ \t]*:[ \t]*["\']([-_.a-zA-Z0-9]+)["\'].*$', _first_line)  # Type already declared above.
             if _match:
                 self.encoding = _match.group(1).decode("utf-8")
                 break

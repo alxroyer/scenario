@@ -18,12 +18,13 @@
 Console management.
 """
 
+import abc
 import enum
 import sys
 import typing
 
 
-class Console:
+class Console(abc.ABC):
     """
     Console management.
     """

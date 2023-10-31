@@ -71,7 +71,7 @@ class TestSuiteFile(_LoggerImpl):
         """
         from ._errcodes import ErrorCode, ErrorCodeError
         from ._path import Path
-        from ._textfile import TextFile
+        from ._textfileutils import TextFile
 
         # Reset the script path list in case :meth:`parse()` is called several times..
         self.script_paths = []

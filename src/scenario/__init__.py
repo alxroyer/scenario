@@ -351,9 +351,9 @@ if True:
 
         Console colors.
 
-        .. seealso:: :class:`._console.Console` implementation.
+        .. seealso:: :class:`._consoleutils.Console` implementation.
     """
-    from ._console import Console as Console
+    from ._consoleutils import Console as Console
     __all__.append("Console")
 
 if True:
@@ -891,7 +891,7 @@ if typing.TYPE_CHECKING:
 
         .. seealso:: :mod:`._types` implementation.
     """
-    from . import _types as types
+    from . import _typeexports as types
     __all__.append("types")
 
 if True:

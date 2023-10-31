@@ -17,20 +17,21 @@
 import scenario.test
 
 
-class JsonReport010(scenario.test.TestCase):
+class ScenarioReport030(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from jsonreport.steps.full import CheckFullJsonReport
+        from scenarioreport.steps.full import CheckFullScenarioReport
         from steps.common import ExecScenario
 
         scenario.test.TestCase.__init__(
             self,
-            title="JSON report simple scenario",
-            description="Check the JSON report is generated as expected for a simple scenario.",
+            title="Scenario report goto scenario",
+            description="Check the scenario report is generated as expected for a scenario with goto jumps.",
         )
         self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,
+            scenario.test.reqs.GOTO,
         )
 
-        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, generate_report=True))
-        self.addstep(CheckFullJsonReport(ExecScenario.getinstance()))
+        self.addstep(ExecScenario(scenario.test.paths.GOTO_SCENARIO, generate_report=True))
+        self.addstep(CheckFullScenarioReport(ExecScenario.getinstance()))

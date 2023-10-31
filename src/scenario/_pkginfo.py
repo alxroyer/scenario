@@ -27,6 +27,10 @@ class PackageInfo:
     """
 
     @property
+    def repo_url(self):  # type: () -> str
+        return "https://github.com/alxroyer/scenario"
+
+    @property
     def version(self):  # type: () -> str
         """
         Current version of the :mod:`scenario` package as a `semver <https://semver.org/>`_ string.

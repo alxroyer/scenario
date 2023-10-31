@@ -261,8 +261,8 @@ class TestCaseExecution:
         self.time = TimeStats()  # type: TimeStats
         #: Test case log output.
         self.log = LogFileReader()  # type: LogFileReader
-        #: Test case JSON output.
-        self.json = JsonReportReader()  # type: JsonReportReader
+        #: Test case report output.
+        self.report = ReportFileReader()  # type: ReportFileReader
 
     def __repr__(self):  # type: () -> str
         """
@@ -277,8 +277,8 @@ class TestCaseExecution:
         """
         Scenario execution data.
         """
-        if self.json.content:
-            return self.json.content.execution
+        if self.report.content:
+            return self.report.content.execution
         return None
 
     @property
@@ -423,9 +423,9 @@ class LogFileReader:
         return False
 
 
-class JsonReportReader:
+class ReportFileReader:
     """
-    JSON file path and content.
+    Scenario report file path and content.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -442,15 +442,15 @@ class JsonReportReader:
 
     def read(self):  # type: (...) -> bool
         """
-        Read the JSON report.
+        Read the scenario report.
 
-        :return: ``True`` when the JSON report file could be read and parsed successfully, ``False`` otherwise.
+        :return: ``True`` when the scenario report file could be read and parsed successfully, ``False`` otherwise.
         """
         from ._loggermain import MAIN_LOGGER
         from ._scenarioreport import SCENARIO_REPORT
 
         if self.path:
-            self.content = SCENARIO_REPORT.readjsonreport(self.path, feed_reqdb=True)
+            self.content = SCENARIO_REPORT.readscenarioreport(self.path, feed_reqdb=True)
         else:
-            MAIN_LOGGER.error("No JSON path to read")
+            MAIN_LOGGER.error("No scenario report path to read")
         return self.content is not None

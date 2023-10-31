@@ -29,7 +29,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._setutils import OrderedSetType as _OrderedSetType
     from ._textutils import AnyLongTextType as _AnyLongTextType
-    from ._typingutils import VarItemType as _VarItemType
+    from ._typeutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:

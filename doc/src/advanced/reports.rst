@@ -18,11 +18,11 @@
 Reports
 =======
 
-Reports may be generated when executing a single scenario, with the ``--json-report`` option:
+Reports may be generated when executing a single scenario, with the ``--scenario-report`` option:
 
 .. code-block:: bash
 
-    $ ./bin/run-test.py ./demo/commutativeaddition.py --json-report ./demo/commutativeaddition.json
+    $ ./bin/run-test.py ./demo/commutativeaddition.py --scenario-report ./demo/commutativeaddition.json
 
 Below, the JSON output file for the :ref:`quickstart <quickstart.first-scenario>` ``CommutativeAddition`` sample scenario:
 

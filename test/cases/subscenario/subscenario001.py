@@ -20,12 +20,12 @@ import scenario.test
 class SubScenario001(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         scenario.test.TestCase.__init__(
             self,
             title="Subscenario execution",
-            description="Check log output and JSON report of a scenario that executes another scenario as a subscenario.",
+            description="Check log output and scenario report of a scenario that executes another scenario as a subscenario.",
         )
         self.verifies(
             scenario.test.reqs.SUBSCENARIOS,
@@ -39,4 +39,4 @@ class SubScenario001(scenario.test.TestCase):
         self.addstep(ExecScenario(scenario.test.paths.SUPERSCENARIO_SCENARIO, generate_report=True))
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
         self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), _scenario_expectations))
-        self.addstep(CheckJsonReportExpectations(ExecScenario.getinstance(), _scenario_expectations))
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), _scenario_expectations))

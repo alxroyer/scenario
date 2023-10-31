@@ -23,9 +23,9 @@ import traceback
 import typing
 
 if typing.TYPE_CHECKING:
+    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
-    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class TestError(Exception):

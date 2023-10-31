@@ -114,7 +114,7 @@ class CampaignReport(_LoggerImpl):
             # Read and parse the JUnit XML file.
             _xml_doc = Xml.Document.read(junit_path)  # type: Xml.Document
 
-            # Analyze the JSON content.
+            # Analyze the scenario report content.
             self._junit_path = Path(junit_path)
             _campaign_execution = self._xml2campaign(_xml_doc)  # type: _CampaignExecutionType
 
@@ -400,6 +400,7 @@ class CampaignReport(_LoggerImpl):
         :param test_case_execution: Test case execution to generate the JUnit XML for.
         :return: Test case JUnit XML.
         """
+        from ._jsondictutils import JsonDict
         from ._knownissues import KnownIssue
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
@@ -434,7 +435,7 @@ class CampaignReport(_LoggerImpl):
         _xml_test_case.setattr("results-executed", str(test_case_execution.results.executed))
         _xml_test_case.setattr("results-total", str(test_case_execution.results.total))
 
-        # Set references to the log and JSON outfiles.
+        # Set references to the log and scenario report outfiles.
         # Non JUnit standard...
         # Syntax inspired from HTML '<link rel="stylesheet" type="text/css" href=""/>' items.
         # testcase/link[@rel='log']:
@@ -444,11 +445,16 @@ class CampaignReport(_LoggerImpl):
         if test_case_execution.log.path is not None:
             self._path2xmlattr(_xml_log_link, "href", test_case_execution.log.path)
         # testcase/link[@rel='report']:
-        _xml_json_link = _xml_test_case.appendchild(xml_doc.createnode("link"))  # type: Xml.Node
-        _xml_json_link.setattr("rel", "report")
-        _xml_json_link.setattr("type", "application/json")
-        if test_case_execution.json.path is not None:
-            self._path2xmlattr(_xml_json_link, "href", test_case_execution.json.path)
+        if test_case_execution.report.path is not None:
+            _xml_report_link = _xml_test_case.appendchild(xml_doc.createnode("link"))  # type: Xml.Node
+            _xml_report_link.setattr("rel", "report")
+            if JsonDict.isjson(test_case_execution.report.path):
+                _xml_report_link.setattr("type", "application/json")
+            elif JsonDict.isyaml(test_case_execution.report.path):
+                _xml_report_link.setattr("type", "application/yaml")
+            else:
+                raise ValueError(f"Unknwon scenario report file type '{test_case_execution.report.path}'")
+            self._path2xmlattr(_xml_report_link, "href", test_case_execution.report.path)
 
         # Create a <failure/> node for each test error.
         for _error in test_case_execution.errors:  # type: TestError
@@ -535,12 +541,12 @@ class CampaignReport(_LoggerImpl):
                 # Read the log file by the way.
                 _test_case_execution.log.read()
             if _xml_link.getattr("rel") == "report":
-                _test_case_execution.json.path = self._xmlattr2path(_xml_link, "href")
-                self.debug("testcase/link[@rel='report']/@href = '%s'", _test_case_execution.json.path)
-                # Read the JSON report by the way.
-                _test_case_execution.json.read()
+                _test_case_execution.report.path = self._xmlattr2path(_xml_link, "href")
+                self.debug("testcase/link[@rel='report']/@href = '%s'", _test_case_execution.report.path)
+                # Read the scenario report by the way.
+                _test_case_execution.report.read()
 
-        # Failures have already been filled by reading the JSON report above.
+        # Failures have already been filled by reading the scenario report above.
         # Let's reset them, and build them again (at the scenario level only), this time from the JUnit report information.
         if _test_case_execution.scenario_execution:
             _test_case_execution.scenario_execution.errors = []

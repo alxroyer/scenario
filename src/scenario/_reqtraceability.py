@@ -19,19 +19,18 @@ Requirement traceability reports.
 """
 
 import abc
-import json
 import typing
 
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
-    from ._typingutils import JsonDictType as _JsonDictType
 
 
 class ReqTraceability(_LoggerImpl):
@@ -110,6 +109,8 @@ class ReqTraceability(_LoggerImpl):
             self.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
     class Downstream(abc.ABC):
+
+        JSON_SCHEMA_SUBPATH = "schema/downstream-traceability.schema.json"  # type: str
 
         @staticmethod
         def tojson(
@@ -252,17 +253,21 @@ class ReqTraceability(_LoggerImpl):
             downstream_traceability,  # type: ReqDownstreamTraceabilityType
             outfile,  # type: _PathType
     ):  # type: (...) -> None
+        from ._jsondictutils import JsonDict
+
         self.info(f"Saving downstream traceability in '{outfile}'")
 
-        self._writejson(
+        JsonDict.writefile(
             # Build a JSON content from the computed traceability.
-            json_content=ReqTraceability.Downstream.tojson(downstream_traceability),
+            schema_subpath=ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH,
+            content=ReqTraceability.Downstream.tojson(downstream_traceability),
             # Save it to the given outfile.
-            schema_subpath="schema/downstream-traceability.schema.json",
-            outfile=outfile,
+            output_path=outfile,
         )
 
     class Upstream(abc.ABC):
+
+        JSON_SCHEMA_SUBPATH = "schema/upstream-traceability.schema.json"  # type: str
 
         @staticmethod
         def tojson(
@@ -401,43 +406,17 @@ class ReqTraceability(_LoggerImpl):
             upstream_traceability,  # type: ReqUpstreamTraceabilityType
             outfile,  # type: _PathType
     ):  # type: (...) -> None
+        from ._jsondictutils import JsonDict
+
         self.info(f"Saving upstream traceability in '{outfile}'")
 
-        self._writejson(
+        JsonDict.writefile(
             # Build a JSON content from the computed traceability.
-            json_content=ReqTraceability.Upstream.tojson(upstream_traceability),
+            schema_subpath=ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH,
+            content=ReqTraceability.Upstream.tojson(upstream_traceability),
             # Save it to the given outfile.
-            schema_subpath="schema/upstream-traceability.schema.json",
-            outfile=outfile,
+            output_path=outfile,
         )
-
-    def _writejson(
-            self,
-            json_content,  # type: _JsonDictType
-            schema_subpath,  # type: str
-            outfile,  # type: _PathType
-    ):  # type: (...) -> None
-        from ._pkginfo import PKG_INFO
-
-        # Add meta information.
-        json_content = dict(json_content)
-        json_content.update({
-            "$encoding": "utf-8",
-            "$schema": f"https://github.com/alxroyer/scenario/blob/v{PKG_INFO.version}/{schema_subpath}",
-            "$version": PKG_INFO.version,
-        })
-
-        outfile.parent.mkdir(parents=True, exist_ok=True)
-        if outfile.suffix.lower() in (".json",):
-            outfile.write_text(json.dumps(json_content, indent=2), encoding="utf-8")
-        elif outfile.suffix.lower() in (".yml", ".yaml",):
-            try:
-                import yaml
-            except ImportError as _err:
-                raise EnvironmentError(_err)
-            outfile.write_text(yaml.safe_dump(json_content), encoding="utf-8")
-        else:
-            raise ValueError(f"Unknown extension {outfile.suffix!r}")
 
 
 if typing.TYPE_CHECKING:

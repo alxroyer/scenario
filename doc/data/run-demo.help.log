@@ -2,7 +2,7 @@ usage: run-demo.py [-h] [--config-file CONFIG_PATH] [--config-value KEY VALUE]
                    [--debug-class DEBUG_CLASS] [--doc-only]
                    [--issue-level-error ISSUE_LEVEL]
                    [--issue-level-ignored ISSUE_LEVEL]
-                   [--json-report JSON_REPORT_PATH]
+                   [--scenario-report SCENARIO_REPORT_PATH]
                    [--extra-info ATTRIBUTE_NAME] [--welcome NAME]
                    [--show-configs]
                    SCENARIO_PATH [SCENARIO_PATH ...]
@@ -32,9 +32,10 @@ optional arguments:
                         Define the issue level from and under which known
                         issues should be ignored. None by default, i.e. no
                         known issue ignored by default.
-  --json-report JSON_REPORT_PATH
-                        Save the report in the given JSON output file path.
-                        Single scenario only.
+  --scenario-report SCENARIO_REPORT_PATH
+                        Save the report in the given output file path. JSON
+                        format (or YAML if 'yaml' is installed). Single
+                        scenario only.
   --extra-info ATTRIBUTE_NAME
                         Scenario attribute to display for extra info when
                         displaying results. Applicable when executing several

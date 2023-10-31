@@ -50,10 +50,8 @@ class ConfigDatabase(_LoggerImpl):
         """
         #: INI configuration file format.
         INI = "INI"
-        #: JSON configuration file format.
-        JSON = "JSON"
-        #: YAML configuration file format.
-        YAML = "YAML"
+        #: JSON-like configuration file format.
+        JSON_DICT = "JSON / YAML"
 
     def __init__(self):  # type: (...) -> None
         """
@@ -86,27 +84,22 @@ class ConfigDatabase(_LoggerImpl):
             Root key to load the file from.
         """
         from ._configini import ConfigIni
-        from ._configjson import ConfigJson
-        from ._configyaml import ConfigYaml
+        from ._configjsondict import ConfigJsonDict
+        from ._jsondictutils import JsonDict
         from ._path import Path
 
         if format is None:
-            _suffix = Path(path).suffix.lower()  # type: str
-            if _suffix in (".ini", ):
+            if Path(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
-            elif _suffix in (".json", ):
-                format = ConfigDatabase.FileFormat.JSON  # noqa  ## Shadows built-in name 'format'
-            elif _suffix in (".yml", ".yaml", ):
-                format = ConfigDatabase.FileFormat.YAML  # noqa  ## Shadows built-in name 'format'
+            elif JsonDict.isknwonsuffix(path):
+                format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'
             else:
                 raise ValueError(f"{path}: Unknown configuration file suffix")
 
         if format == ConfigDatabase.FileFormat.INI:
             ConfigIni.loadfile(path, root=root)
-        elif format == ConfigDatabase.FileFormat.JSON:
-            ConfigJson.loadfile(path, root=root)
-        elif format == ConfigDatabase.FileFormat.YAML:
-            ConfigYaml.loadfile(path, root=root)
+        elif format == ConfigDatabase.FileFormat.JSON_DICT:
+            ConfigJsonDict.loadfile(path, root=root)
         else:
             raise NotImplementedError(f"Unknown file format {format}")
 
@@ -129,27 +122,22 @@ class ConfigDatabase(_LoggerImpl):
             Root key to save the file from.
         """
         from ._configini import ConfigIni
-        from ._configjson import ConfigJson
-        from ._configyaml import ConfigYaml
+        from ._configjsondict import ConfigJsonDict
+        from ._jsondictutils import JsonDict
         from ._path import Path
 
         if format is None:
-            _suffix = Path(path).suffix.lower()  # type: str
-            if _suffix in (".ini", ):
+            if Path(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
-            elif _suffix in (".json", ):
-                format = ConfigDatabase.FileFormat.JSON  # noqa  ## Shadows built-in name 'format'
-            elif _suffix in (".yml", ".yaml", ):
-                format = ConfigDatabase.FileFormat.YAML  # noqa  ## Shadows built-in name 'format'
+            elif JsonDict.isknwonsuffix(path):
+                format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'
             else:
                 raise ValueError("%s: Unknown configuration file suffix" % path)
 
         if format == ConfigDatabase.FileFormat.INI:
             ConfigIni.savefile(path, root=root)
-        elif format == ConfigDatabase.FileFormat.JSON:
-            ConfigJson.savefile(path, root=root)
-        elif format == ConfigDatabase.FileFormat.YAML:
-            ConfigYaml.savefile(path, root=root)
+        elif format == ConfigDatabase.FileFormat.JSON_DICT:
+            ConfigJsonDict.savefile(path, root=root)
         else:
             raise NotImplementedError(f"Unknown file format {format}")
 
@@ -255,7 +243,7 @@ class ConfigDatabase(_LoggerImpl):
             key,  # type: _KeyType
             type=None,  # type: type  # noqa  ## Shadows built-in name 'type'
             default=None,  # type: typing.Any
-    ):  # type: (...) -> typing.Any
+    ):  # type: (...) -> typing.Optional[typing.Any]
         """
         Returns a configuration value of any type.
 

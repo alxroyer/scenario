@@ -17,22 +17,20 @@
 import scenario.test
 
 
-class JsonReport041(scenario.test.TestCase):
+class ScenarioReport010(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from jsonreport.steps.full import CheckFullJsonReport
+        from scenarioreport.steps.full import CheckFullScenarioReport
         from steps.common import ExecScenario
 
         scenario.test.TestCase.__init__(
             self,
-            title="JSON report subscenario --doc-only",
-            description="Check the JSON report is generated as expected for a super scenario executing a subscenario with the --doc-only option set.",
+            title="Scenario report simple scenario",
+            description="Check the scenario report is generated as expected for a simple scenario.",
         )
         self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,
-            scenario.test.reqs.SUBSCENARIOS,
-            scenario.test.reqs.DOC_ONLY,
         )
 
-        self.addstep(ExecScenario(scenario.test.paths.SUPERSCENARIO_SCENARIO, generate_report=True, doc_only=True))
-        self.addstep(CheckFullJsonReport(ExecScenario.getinstance()))
+        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, generate_report=True))
+        self.addstep(CheckFullScenarioReport(ExecScenario.getinstance()))

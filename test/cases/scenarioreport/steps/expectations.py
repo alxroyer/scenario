@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import enum
-import json
 import typing
 
 import scenario
@@ -23,12 +22,13 @@ import scenario.test
 import scenario.text
 
 if True:
-    from .reportfile import JsonReportFileVerificationStep as _JsonReportFileVerificationStepImpl  # `JsonReportFileVerificationStep` used for inheritance.
+    # `ScenarioReportFileVerificationStep` used for inheritance.
+    from .reportfile import ScenarioReportFileVerificationStep as _ScenarioReportFileVerificationStepImpl
 if typing.TYPE_CHECKING:
     from scenarioexecution.steps.execution import ExecScenario as _ExecScenarioType
 
 
-class _JsonItems:
+class _JsonDictItems:
     """
     Class that implements a list of JSON dictionaries,
     but compares them on basis of their ids.
@@ -75,18 +75,18 @@ class _JsonItems:
 class _ScenarioTestedItems:
 
     def __init__(self):  # type: (...) -> None
-        self.step_executions = _JsonItems()  # type: _JsonItems
-        self.action_result_executions = _JsonItems()  # type: _JsonItems
+        self.step_executions = _JsonDictItems()  # type: _JsonDictItems
+        self.action_result_executions = _JsonDictItems()  # type: _JsonDictItems
 
 
-class CheckJsonReportExpectations(_JsonReportFileVerificationStepImpl):
+class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
 
     def __init__(
             self,
             exec_step,  # type: _ExecScenarioType
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
     ):  # type: (...) -> None
-        _JsonReportFileVerificationStepImpl.__init__(self, exec_step)
+        _ScenarioReportFileVerificationStepImpl.__init__(self, exec_step)
 
         self.scenario_expectations = scenario_expectations  # type: scenario.test.ScenarioExpectations
         #: JSON data read from the report file.
@@ -95,18 +95,20 @@ class CheckJsonReportExpectations(_JsonReportFileVerificationStepImpl):
         self._scenario_tested_items = []  # type: typing.List[_ScenarioTestedItems]
 
     def step(self):  # type: (...) -> None
+        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
+
         self.STEP("Scenario report expectations")
 
         scenario.logging.resetindentation()
-        # Read the JSON report file.
-        if self.ACTION("Read the JSON report file."):
-            self.json = json.loads(self.report_path.read_bytes())
+        # Read the scenario report file.
+        if self.ACTION("Read the scenario report file."):
+            self.json = JsonDict.readfile(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
                        extra=self.longtext(max_lines=10))
 
-        self.checkjsonreport(self.json, self.scenario_expectations)
+        self.checkscenarioreport(self.json, self.scenario_expectations)
 
-    def checkjsonreport(
+    def checkscenarioreport(
             self,
             json_scenario,  # type: scenario.types.JsonDict
             scenario_expectations,  # type: scenario.test.ScenarioExpectations
@@ -178,7 +180,7 @@ class CheckJsonReportExpectations(_JsonReportFileVerificationStepImpl):
 
         if scenario_expectations.attributes is not None:
             _attributes_txt = scenario.text.Countable("attribute", scenario_expectations.attributes)  # type: scenario.text.Countable
-            if self.RESULT(f"The JSON report gives {len(_attributes_txt)} scenario {_attributes_txt}{_attributes_txt.ifany(':', '.')}"):
+            if self.RESULT(f"The scenario report gives {len(_attributes_txt)} scenario {_attributes_txt}{_attributes_txt.ifany(':', '.')}"):
                 self.assertjson(
                     json_scenario, "attributes", type=dict, len=len(scenario_expectations.attributes),
                     evidence="Number of scenario attributes",

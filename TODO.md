@@ -18,6 +18,10 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Issue #74: Rename "JSON reports" into "scenario reports":
+        - Check YAML writing with indentation.
+        - Add an option to choose the default scenario report suffix.
+        - Test scenario reports in YAML.
     - Improve the way to display an exception stacktrace.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Check docstrings.
@@ -26,6 +30,7 @@
         - Make `CampaignRunner` generate upstream and downstream traceability reports.
         - Make *req-db*, upstream and downstream traceability file names configurable.
         - Implement `ReqHttpServer`.
+    - Implement JSON schemas.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
     - Fix test regressions.
@@ -48,6 +53,7 @@
         - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
         - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
         - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
+- Issue #xxx: Don't use console colors directly, but use meta tags (like `<strong>` or `<span class=''>`).
 - Issue #xxx: Main logging indentation should be saved in scenario reports.
     - As displayed in logging.
     - Make main logging indentation not shift the logging level?
@@ -83,7 +89,6 @@
     - Integrate branch 'feature/#66/use-argparse-directly'.
 - Issue #58: Add sections for program arguments.
     - Integrate branch 'feature/#66/use-argparse-directly'.
-- Issue #74: Rename JSON reports into something else.
 
 
 ## Roadmap to v1.0.0

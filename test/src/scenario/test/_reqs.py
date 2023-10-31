@@ -59,7 +59,7 @@ EVIDENCE = scenario.Req(
     id="EVIDENCE",
     title="Evidence collection",
     text="""
-        Evidence may be saved in the test report
+        Evidence may be saved in the test reports
         with their related actions and expected results.
     """,
 )  # type: scenario.Req
@@ -134,10 +134,11 @@ SCENARIO_REPORT = scenario.Req(
     id="SCENARIO_REPORT",
     title="Scenario reports",
     text="""
-        A scenario execution shall output a JSON report file.
+        A scenario execution shall output a report file
+        (format: JSON or YAML, schema: schema/scenario-report.schema.json).
 
         This report saves a structured information for a test execution.
-        See SCENARIO_LOGGING for the list of items that scenario report contains.
+        See SCENARIO_LOGGING for the list of items that scenario reports contain.
     """,
 )  # type: scenario.Req
 
@@ -232,7 +233,7 @@ CAMPAIGNS = scenario.Req(
         An output directory is fed with the following files:
         - test results: log files and reports (see SCENARIO_LOGGING and SCENARIO_REPORT files),
         - a requirement file, if requirements are involved (see REQUIREMENT_MANAGEMENT),
-        - a JUnit XML campaign report.
+        - a JUnit XML campaign report (format: XML Junit, schema: JUnit + `scenario` augmentations).
 
         The log output, in the end, gives a summary of the scenario execution status, and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).
     """,
@@ -263,6 +264,10 @@ REQUIREMENT_MANAGEMENT = scenario.Req(
     text="""
         The scenario framework provides a way to track requirements, and cover them by tests with justification.
 
+        Requirements are defined in a requirement database.
+        This database can be saved and reloaded throught requirement files
+        (format: JSON or YAML, schema: schema/reqdb.schema.json).
+
         Requirements may be traced at different levels:
 
         - On the requirement side: requirements may be traced entirely, or just parts of them.
@@ -270,7 +275,8 @@ REQUIREMENT_MANAGEMENT = scenario.Req(
 
         These associations define requirement links which may be commented with textual justifications.
 
-        The scenario framework provides a way to generate requirement coverage reports:
+        The scenario framework provides a way to generate requirement traceability reports
+        (format: JSON or YAML, schema: schema/downstream-traceability.schema.json and schema/upstream-traceability.schema.json):
 
         - either from test suite files,
         - or from campaign execution results (see CAMPAIGNS).

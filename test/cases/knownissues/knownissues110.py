@@ -151,7 +151,7 @@ class KnownIssues110(scenario.test.TestCase):
             known_issue_level,  # type: typing.Optional[scenario.AnyIssueLevelType]
             expected_test_status,  # type: scenario.ExecutionStatus
     ):  # type: (...) -> None
-        from steps.common import CheckJsonReportExpectations, CheckScenarioLogExpectations, ExecScenario, ParseScenarioLog
+        from steps.common import CheckScenarioLogExpectations, CheckScenarioReportExpectations, ExecScenario, ParseScenarioLog
 
         self.section(
             f"Ignored / error issue level: [{scenario.IssueLevel.getdesc(ignored_issue_level)} - {scenario.IssueLevel.getdesc(error_issue_level)}], "
@@ -199,7 +199,7 @@ class KnownIssues110(scenario.test.TestCase):
                 else 2
             ),
         ))
-        self.addstep(CheckJsonReportExpectations(_1, _scenario_expectations))
+        self.addstep(CheckScenarioReportExpectations(_1, _scenario_expectations))
 
 
 class CheckLogDetails(_LogVerificationStepImpl):

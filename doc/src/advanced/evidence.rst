@@ -36,4 +36,4 @@ lets you save evidence while the test is executed.
 can be used to collect evidence as well.
 Set the optional ``evidence`` parameter to either ``True`` or a string describing what is being checked.
 
-Test evidence is saved with the scenario JSON reports in the 'evidence' list of each action or expected result execution.
+Test evidence is saved with the scenario reports in the 'evidence' list of each action or expected result execution.

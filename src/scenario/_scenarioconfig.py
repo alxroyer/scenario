@@ -25,7 +25,7 @@ if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
-    from ._console import Console as _ConsoleType
+    from ._consoleutils import Console as _ConsoleType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
 
@@ -209,7 +209,7 @@ class ScenarioConfig(_LoggerImpl):
         """
         from ._configdb import CONFIG_DB
         from ._confignode import ConfigNode
-        from ._console import Console
+        from ._consoleutils import Console
 
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
         _config_node = CONFIG_DB.getnode(_key)  # type: typing.Optional[ConfigNode]
