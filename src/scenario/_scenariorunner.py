@@ -211,7 +211,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._scenariodefinition import ScenarioDefinitionHelper
-        from ._testerrors import ExceptionError
 
         _exec_times_logger = ExecTimesLogger("ScenarioRunner.executepath()")  # type: ExecTimesLogger
         # Save the current time before loading the scenario script
@@ -225,13 +224,13 @@ class ScenarioRunner(_LoggerImpl):
             )  # type: typing.Type[_ScenarioDefinitionType]
             _exec_times_logger.tick("Once the definition class has been found")
         except ImportError as _err:
-            ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+            MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.INPUT_MISSING_ERROR
         except SyntaxError as _err:
-            ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+            MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.INPUT_FORMAT_ERROR
         except LookupError as _err:
-            ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+            MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.INPUT_FORMAT_ERROR
 
         try:

@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Improve the way to display an exception stacktrace.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Check docstrings.
         - Refactor `req-mgt.py --serve` into a general HTTP server that:

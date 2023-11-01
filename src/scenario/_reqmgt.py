@@ -18,7 +18,6 @@
 Requirement management main program.
 """
 
-import logging
 import sys
 import typing
 
@@ -55,7 +54,6 @@ class ReqManagement(_LoggerImpl):
         from ._reqhttpserver import REQ_HTTP_SERVER
         from ._reqmgtargs import ReqManagementArgs
         from ._reqtraceability import REQ_TRACEABILITY
-        from ._testerrors import ExceptionError
 
         # Analyze program arguments, if not already set.
         if not ReqManagementArgs.isset():
@@ -73,7 +71,7 @@ class ReqManagement(_LoggerImpl):
             REQ_TRACEABILITY.loaddata(
             )
         except Exception as _err:
-            ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+            MAIN_LOGGER.logexceptiontraceback(_err)
             _errors.append(ErrorCode.fromexception(_err))
 
         # Execute `ReqManagementArgs` options.
@@ -86,7 +84,7 @@ class ReqManagement(_LoggerImpl):
                         outfile=ReqManagementArgs.getinstance().downstream_traceability_outfile,
                     )
                 except Exception as _err:
-                    ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+                    MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))
 
             # Upstream traceability report.
@@ -97,7 +95,7 @@ class ReqManagement(_LoggerImpl):
                         outfile=ReqManagementArgs.getinstance().upstream_traceability_outfile,
                     )
                 except Exception as _err:
-                    ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+                    MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))
 
             # HTTP server.
@@ -107,7 +105,7 @@ class ReqManagement(_LoggerImpl):
                 except InterruptedError as _err:
                     self.debug("InterruptedError: %s", _err)
                 except Exception as _err:
-                    ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+                    MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))
 
         # Terminate log features.

@@ -18,7 +18,6 @@
 Campaign execution management.
 """
 
-import logging
 import re
 import sys
 import time
@@ -77,7 +76,6 @@ class CampaignRunner(_LoggerImpl):
         from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
-        from ._testerrors import ExceptionError
 
         try:
             # Analyze program arguments, if not already set.
@@ -135,7 +133,7 @@ class CampaignRunner(_LoggerImpl):
             return ErrorCode.SUCCESS
 
         except Exception as _err:
-            ExceptionError(_err).logerror(MAIN_LOGGER, logging.ERROR)
+            MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.fromexception(_err)
 
     def _exectestsuitefile(

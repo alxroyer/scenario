@@ -20,7 +20,6 @@ Requirement management HTTP interface.
 
 import http.server
 import io
-import logging
 import shutil
 import socketserver
 import sys
@@ -80,7 +79,6 @@ class ReqHttpServer(_LoggerImpl):
 
         :param request: GET request to process.
         """
-        from ._testerrors import ExceptionError
 
         self.debug("request.path = %r", request.path)
 
@@ -107,7 +105,7 @@ class ReqHttpServer(_LoggerImpl):
 
             shutil.copyfileobj(f, request.wfile)
         except Exception as _err:
-            ExceptionError(_err).logerror(self, logging.ERROR)
+            self.logexceptiontraceback(_err)
 
             request.send_error(
                 http.HTTPStatus.INTERNAL_SERVER_ERROR,

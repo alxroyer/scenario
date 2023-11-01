@@ -437,6 +437,24 @@ class Logger:
         if _lines_displayed < len(_lines):
             self._torecord(level, "...", tuple([]), **kwargs)
 
+    def logexceptiontraceback(
+            self,
+            exception,  # type: Exception
+            *,
+            level=logging.ERROR,  # type: int
+            indent="",  # type: str
+    ):  # type: (...) -> None
+        """
+        Log an exception with its traceback.
+
+        :param exception: Exception to log.
+        :param level: Log level.
+        :param indent: Indentation to use.
+        """
+        from ._testerrors import ExceptionError
+
+        ExceptionError(exception).logerror(self, level=level, indent=indent)
+
 
 if typing.TYPE_CHECKING:
     #: Variable logger type.
