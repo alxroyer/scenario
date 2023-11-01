@@ -70,7 +70,7 @@ class ScenarioConfig(_LoggerImpl):
         #: Should the scenario requirement coverage be refined on steps? Boolean value.
         EXPECT_STEP_REQ_REFINEMENT = "scenario.expect_step_req_refinement"
 
-        # Test execution & results.
+        # Test & campaign execution.
 
         #: Expected scenario attributes. List of strings, or comma-separated string.
         EXPECTED_SCENARIO_ATTRIBUTES = "scenario.expected_scenario_attributes"
@@ -82,10 +82,15 @@ class ScenarioConfig(_LoggerImpl):
         RUNNER_SCRIPT_PATH = "scenario.runner_script_path"
         #: Maximum time for a scenario execution. Useful when executing campaigns. Float value.
         SCENARIO_TIMEOUT = "scenario.scenario_timeout"
+
+        # Results & reports.
+
         #: Scenario attributes to display for extra info when displaying scenario results,
         #: after a campaign execution, or when executing several tests in a single command line.
         #: List of strings, or comma-separated string.
         RESULTS_EXTRA_INFO = "scenario.results_extra_info"
+        #: Scenario report suffix.
+        SCENARIO_REPORT_SUFFIX = "scenario.scenario_report_suffix"
 
         # Known issues and issue levels.
 
@@ -120,7 +125,7 @@ class ScenarioConfig(_LoggerImpl):
 
         if self.__timezone is None:
             # Set the cache member with an empty string if no configuration is set.
-            self.__timezone = (CONFIG_DB.get(self.Key.TIMEZONE, type=str) or "").strip()
+            self.__timezone = CONFIG_DB.get(self.Key.TIMEZONE, type=str, default="").strip()
             # Convert empty string to `None`.
             self.__timezone = self.__timezone or None
 
@@ -385,6 +390,20 @@ class ScenarioConfig(_LoggerImpl):
 
         self.debug("resultsextrainfo() -> %r", _attribute_names)
         return _attribute_names
+
+    def scenarioreportsuffix(self):  # type: (...) -> str
+        """
+        Scenario report suffix to use.
+
+        Useful when executing campaigns.
+
+        '.json' by default.
+
+        :return: Scenario report suffix.
+        """
+        from ._configdb import CONFIG_DB
+
+        return CONFIG_DB.get(self.Key.SCENARIO_REPORT_SUFFIX, type=str, default=".json")
 
     def loadissuelevelnames(self):  # type: (...) -> None
         """

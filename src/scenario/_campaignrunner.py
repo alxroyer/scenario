@@ -241,7 +241,7 @@ class CampaignRunner(_LoggerImpl):
                 """
                 return test_case_execution.test_suite_execution.campaign_execution.outdir / (test_case_execution.script_path.stem + ext)
 
-            test_case_execution.report.path = _mkoutpath(".json")
+            test_case_execution.report.path = _mkoutpath(SCENARIO_CONFIG.scenarioreportsuffix())
             test_case_execution.log.path = _mkoutpath(".log")
 
             # Prepare the command line.

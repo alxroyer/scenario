@@ -249,10 +249,18 @@ class ConfigDatabase(_LoggerImpl):
         """
         Returns a configuration value of any type.
 
-        :param key: Configuration key.
-        :param type: Expected value type.
-        :param default: Default value.
-        :return: Configuration value if set, or default value if set, or ``None`` otherwise.
+        :param key:
+            Configuration key.
+        :param type:
+            Expected value type.
+        :param default:
+            Default value.
+
+            Not saved in the database.
+
+            if ``os.PathLike``, converted to ``str`` with ``os.fspath()`` called on it.
+        :return:
+            Configuration value if set, or default value if set, or ``None`` otherwise.
         """
         from ._confignode import ConfigNode
 

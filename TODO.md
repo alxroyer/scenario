@@ -20,8 +20,6 @@
 - Issue #83: Add the ability to track requirements.
     - Issue #74: Rename "JSON reports" into "scenario reports":
         - Check YAML writing with indentation.
-        - Add an option to choose the default scenario report suffix.
-        - Test scenario reports in YAML.
     - Improve the way to display an exception stacktrace.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Check docstrings.
@@ -46,6 +44,7 @@
         - Req management & scenario reports.
         - Campaign reports: req-db, traceability reports.
         - Traceability reports: from suites and from campaign reports.
+        - Test scenario reports in YAML: single scenario & campaign executions (#74).
     - Documentation:
         - Add demo for requirement management.
         - Req management: command line & HTTP server.

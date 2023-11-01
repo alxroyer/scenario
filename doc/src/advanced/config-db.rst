@@ -217,6 +217,12 @@ The following table describes the `scenario` configurable keys & values.
       - Description
       - Default
 
+    * - `Time & logging`
+      -
+      -
+      -
+      -
+
     * - .. _config-db.scenario.timezone:
 
         :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.TIMEZONE`
@@ -293,6 +299,12 @@ The following table describes the `scenario` configurable keys & values.
       - Which debug classes to display?
       - Not set
 
+    * - `Requirement management`
+      -
+      -
+      -
+      -
+
     * - .. _config-db.scenario.reqdb_files:
 
         :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQDB_FILES`
@@ -312,6 +324,12 @@ The following table describes the `scenario` configurable keys & values.
       - Boolean
       - Should the scenario requirement coverage be refined on steps?
       - Not set
+
+    * - `Test & campaign execution`
+      -
+      -
+      -
+      -
 
     * - .. _config-db.scenario.expected_scenario_attributes:
 
@@ -357,6 +375,12 @@ The following table describes the `scenario` configurable keys & values.
       - Maximum time for a scenario execution. Useful when executing campaigns.
       - 600.0 seconds, i.e. 10 minutes
 
+    * - `Results & reports`
+      -
+      -
+      -
+      -
+
     * - .. _config-db.scenario.results_extra_info:
 
         :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.RESULTS_EXTRA_INFO`
@@ -365,6 +389,22 @@ The following table describes the `scenario` configurable keys & values.
       - Scenario attributes to display for extra info when displaying scenario results,
         after a campaign execution, or when executing several tests in a single command line.
       - Not set
+
+    * - .. _config-db.scenario.scenario_report_suffix:
+
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.SCENARIO_REPORT_SUFFIX`
+      - ``scenario.scenario_report_suffix``
+      - String.
+      - Scenario report suffix.
+
+        Used when executing campaigns.
+      - '.json'
+
+    * - `Known issues and issue levels`
+      -
+      -
+      -
+      -
 
     * - .. _config-db.scenario.issue_levels:
 
