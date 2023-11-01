@@ -39,7 +39,7 @@ class Campaign001(scenario.test.TestCase):
                 "(MULTIPLE_SCENARIO_EXECUTION, ERROR_HANDLING & KNOWN_ISSUES)."
             ),
         )
-        self.verifies(
+        self.expectstepreqrefinement(True).verifies(
             (scenario.test.reqs.CAMPAIGNS, "Single test suite"),
             (scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION, "Campaign final results"),
             (scenario.test.reqs.SCENARIO_LOGGING, "Scenario log files gathered with campaign reports"),
@@ -56,7 +56,6 @@ class Campaign001(scenario.test.TestCase):
             #  which makes this test cover KNOWN_ISSUES.
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues reported from scenario to campaign reports")
         )
-        self.expectstepreqrefinement(True)
 
         # Campaign execution.
         self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE]))

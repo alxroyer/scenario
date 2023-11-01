@@ -36,10 +36,12 @@ class FailingScenario001(scenario.test.TestCase):
                 "Check the error is displayed and stored appropriately."
             ),
         )
-        self.verifies(
+        self.expectstepreqrefinement(True).verifies(
+            # Main features:
             scenario.test.reqs.ERROR_HANDLING,
-            scenario.test.reqs.SCENARIO_LOGGING,
-            scenario.test.reqs.SCENARIO_REPORT,
+            # Additional coverage:
+            (scenario.test.reqs.SCENARIO_LOGGING, "Scenario logging with errors"),
+            (scenario.test.reqs.SCENARIO_REPORT, "Scenario report with errors"),
         )
 
         self.scenario_expectations = scenario.test.data.scenarioexpectations(
@@ -50,14 +52,32 @@ class FailingScenario001(scenario.test.TestCase):
             error_details=True, stats=True,
         )  # type: scenario.test.ScenarioExpectations
 
-        self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, generate_report=True, expected_return_code=scenario.ErrorCode.TEST_ERROR))
+        self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, generate_report=True, expected_return_code=scenario.ErrorCode.TEST_ERROR)).verifies(
+            scenario.test.reqs.ERROR_HANDLING,
+        )
         # Log output.
         self.addstep(ParseScenarioLog(ExecScenario.getinstance()))
-        self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), self.scenario_expectations))
-        self.addstep(CheckLogOutputExceptionDisplay(ExecScenario.getinstance()))
+        self.addstep(CheckScenarioLogExpectations(ParseScenarioLog.getinstance(), self.scenario_expectations)).verifies(
+            scenario.test.reqs.ERROR_HANDLING,
+            (scenario.test.reqs.SCENARIO_LOGGING, "Actions & expected results displayed until the error occurs"),
+        )
+        self.addstep(CheckLogOutputExceptionDisplay(ExecScenario.getinstance())).verifies(
+            scenario.test.reqs.ERROR_HANDLING,
+            (scenario.test.reqs.SCENARIO_LOGGING, "Traceback displayed"),
+        )
         # Scenario report.
-        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), self.scenario_expectations))
-        self.addstep(CheckScenarioReportExceptionStorage(CheckScenarioReportExpectations.getinstance()))
+        self.knownissue(
+            level=scenario.test.IssueLevel.TEST,
+            message="CheckScenarioReportExpectations should check all steps, actions & expected results definitions, even after failure",
+        )
+        self.addstep(CheckScenarioReportExpectations(ExecScenario.getinstance(), self.scenario_expectations)).verifies(
+            scenario.test.reqs.ERROR_HANDLING,
+            (scenario.test.reqs.SCENARIO_REPORT, "All actions & expected results definitions saved, executed until the error occurs"),
+        )
+        self.addstep(CheckScenarioReportExceptionStorage(CheckScenarioReportExpectations.getinstance())).verifies(
+            scenario.test.reqs.ERROR_HANDLING,
+            (scenario.test.reqs.SCENARIO_REPORT, "Error storage at each level: scenario, step, action & expected result"),
+        )
 
     @property
     def error_location(self):  # type: () -> scenario.CodeLocation
