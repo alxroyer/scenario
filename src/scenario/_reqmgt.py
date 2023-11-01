@@ -29,13 +29,26 @@ if typing.TYPE_CHECKING:
 
 
 class ReqManagement(_LoggerImpl):
+    """
+    Requirement management main program.
+
+    Instantiated once with the :data:`REQ_MANAGEMENT` singleton.
+    """
 
     def __init__(self):  # type: (...) -> None
+        """
+        Configures logging for the :class:`ReqManagement` class.
+        """
         from ._debugclasses import DebugClass
 
         _LoggerImpl.__init__(self, DebugClass.REQ_MANAGEMENT)
 
     def main(self):  # type: (...) -> _ErrorCodeType
+        """
+        Requirement management main function, as a member method.
+
+        :return: Error code.
+        """
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
@@ -104,4 +117,5 @@ class ReqManagement(_LoggerImpl):
         return ErrorCode.worst(_errors)
 
 
+#: Main instance of :class:`ReqManagement`.
 REQ_MANAGEMENT = ReqManagement()  # type: ReqManagement

@@ -30,7 +30,7 @@ if typing.TYPE_CHECKING:
 
 class StepDefinitionSpecification:
     """
-    Step definition specification.
+    Step definition specification resolution.
 
     Implementation for :obj:`AnyStepDefinitionSpecificationType`.
     """
@@ -170,7 +170,7 @@ class StepDefinitionSpecification:
 
 class StepExecutionSpecification:
     """
-    Step execution specification.
+    Step execution specification resolution.
 
     Implementation for :obj:`AnyStepExecutionSpecificationType`.
     """

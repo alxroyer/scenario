@@ -827,7 +827,7 @@ if True:
 
         .. seealso:: :class:`._reqmgt.ReqManagement` implementation.
     """
-    from ._reqmgtmain import REQ_MANAGEMENT as req_mgt  # noqa  ## Constant variable imported as non-constant
+    from ._reqmgt import REQ_MANAGEMENT as req_mgt  # noqa  ## Constant variable imported as non-constant
     __all__.append("req_mgt")
 
 if True:
@@ -889,7 +889,7 @@ if typing.TYPE_CHECKING:
 
         Useful types.
 
-        .. seealso:: :mod:`._types` implementation.
+        .. seealso:: :mod:`._typeexports` implementation.
     """
     from . import _typeexports as types
     __all__.append("types")

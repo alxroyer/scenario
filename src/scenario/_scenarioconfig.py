@@ -34,6 +34,8 @@ class ScenarioConfig(_LoggerImpl):
     """
     `scenario` configuration management.
 
+    Instantiated once with the :data:`SCENARIO_CONFIG` singleton.
+
     This class defines static methods that help reading `scenario` configurations:
     from the program arguments (see: :class:`._args.Args`),
     and the configuration database (see: :class:`._configdb.ConfigDatabase`).

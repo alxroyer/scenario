@@ -179,6 +179,8 @@ class CodeLocation:
 class ExecutionLocations(_LoggerImpl):
     """
     Methods to build execution location stacks.
+
+    Instantiated once with the :data:`EXECUTION_LOCATIONS` singleton.
     """
 
     def __init__(self):  # type: (...) -> None

@@ -459,7 +459,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         .. note:: Overrides the :meth:`._scenarioconfig.ScenarioConfig.expectstepreqrefinement()` global configuration.
 
         :param expect_step_req_refinement:
-            New `check step requirement coverage` local configuration.
+            New `expect step requirement refinement` local configuration.
 
             ``None`` to rely on the :meth:`._scenarioconfig.ScenarioConfig.expectstepreqrefinement()` global configuration again.
         :return:

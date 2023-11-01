@@ -36,6 +36,8 @@ class CampaignReport(_LoggerImpl):
     """
     Campaign report management.
 
+    Instantiated once with the :data:`CAMPAIGN_REPORT` singleton.
+
     JUnit XML reporting file format:
 
     - Refer to: https://llg.cubic.org/docs/junit/ [CUBIC]

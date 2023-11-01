@@ -42,7 +42,7 @@ class ScenarioRunner(_LoggerImpl):
     """
     Test execution engine: runs scenarios, i.e. instances derived from the :class:`._scenariodefinition.ScenarioDefinition` class.
 
-    Only one instance, accessible through the :data:`SCENARIO_RUNNER` singleton.
+    Instantiated once with the :data:`SCENARIO_RUNNER` singleton.
 
     Implements the :meth:`main()` function for scenario executions.
 

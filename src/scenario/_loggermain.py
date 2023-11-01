@@ -30,6 +30,8 @@ if True:
 class MainLogger(_LoggerImpl):
     """
     Main logger augmentation of :class:`._logger.Logger`.
+
+    Instantiated once with the :data:`MAIN_LOGGER` singleton.
     """
 
     def __init__(self):  # type: (...) -> None

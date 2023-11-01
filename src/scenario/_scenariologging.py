@@ -35,6 +35,8 @@ if typing.TYPE_CHECKING:
 class ScenarioLogging:
     """
     Scenario logging management.
+
+    Instantiated once with the :data:`SCENARIO_LOGGING` singleton.
     """
 
     #: Actions, expected results and evidence lines are right-aligned with the longest 'EVIDENCE: ' pattern.

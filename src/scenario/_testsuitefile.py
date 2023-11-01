@@ -67,7 +67,7 @@ class TestSuiteFile(_LoggerImpl):
         """
         Reads and parses the test suite file.
 
-        :raise ._errcodes.ErrorCodeError: With :const:`._error.ErrorCode.INPUT_FORMAT_ERROR`, when the file could not be parsed.
+        :raise ._errcodes.ErrorCodeError: With :attr:`._errcodes.ErrorCode.INPUT_FORMAT_ERROR`, when the file could not be parsed.
         """
         from ._errcodes import ErrorCode, ErrorCodeError
         from ._path import Path

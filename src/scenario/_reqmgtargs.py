@@ -25,8 +25,14 @@ if True:
 
 
 class ReqManagementArgs(_ArgsImpl):
+    """
+    Requirement management program arguments.
+    """
 
     def __init__(self):  # type: (...) -> None
+        """
+        Defines program arguments for :class:`._reqmgt.ReqManagement`.
+        """
         from ._path import Path
 
         _ArgsImpl.__init__(self, class_debugging=True)
@@ -59,6 +65,11 @@ class ReqManagementArgs(_ArgsImpl):
             self,
             args,  # type: typing.Any
     ):  # type: (...) -> bool
+        """
+        Checks requirement management arguments once parsed.
+
+        .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
+        """
         from ._loggermain import MAIN_LOGGER
 
         if not super()._checkargs(args):

@@ -57,6 +57,8 @@ def trackmoduleitems(
         else:
             _fq_name = f"{module.__name__}.{_obj_name}"  # Type already declared above
             _obj_type = "data"  # Type already declared above
+            if inspect.isfunction(getattr(module, _obj_name)):
+                _obj_type = "function"
 
         # Memorize the tracked item.
         if _fq_name not in TRACKED_ITEMS:

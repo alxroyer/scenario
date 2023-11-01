@@ -111,7 +111,7 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         """
         Check campaign arguments once parsed.
 
-        :return: True for success, False otherwise.
+        .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
         from ._loggermain import MAIN_LOGGER
         from ._path import Path

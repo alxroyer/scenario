@@ -206,8 +206,16 @@ class ReqVerifierHelper:
     @staticmethod
     def tolongstring(
             req_verifier,  # type: ReqVerifier
+            *,
             sortable=False,  # type: bool
     ):  # type: (...) -> str
+        """
+        Computes a long string representing the given :class:`ReqVerifier` item.
+
+        :param req_verifier: Scenario or step to compute a string representation for.
+        :param sortable: Set to ``True`` to compute a sortable string.
+        :return: String representation of the scenario or step.
+        """
         from ._scenariodefinition import ScenarioDefinition
         from ._stepdefinition import StepDefinition
 

@@ -32,6 +32,8 @@ if typing.TYPE_CHECKING:
 class CampaignLogging:
     """
     Campaign execution logging management.
+
+    Instantiated once with the :data:`CAMPAIGN_LOGGING` singleton.
     """
 
     class _Call(_StrEnumImpl):

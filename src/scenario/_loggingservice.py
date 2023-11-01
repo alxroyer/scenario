@@ -25,6 +25,8 @@ import typing
 class LoggingService:
     """
     Logging service management class.
+
+    Instantiated once with the :data:`LOGGING_SERVICE` singleton.
     """
 
     def start(self):  # type: (...) -> None

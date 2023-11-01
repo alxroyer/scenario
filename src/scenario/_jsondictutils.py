@@ -36,14 +36,30 @@ if typing.TYPE_CHECKING:
 
 
 class JsonDict(abc.ABC):
+    """
+    Abstract class that provides useful class methods to work with JSON-like dictionaries.
+    """
 
+    #: Recognized JSON file suffixes.
+    #:
+    #: Lower case only.
     JSON_SUFFIXES = (".json", )  # type: typing.Sequence[str]
+
+    #: Recognized YAML file suffixes.
+    #:
+    #: Lower case only.
     YAML_SUFFIXES = (".yml", ".yaml", )  # type: typing.Sequence[str]
 
     @staticmethod
     def assertjsondictinstance(
             obj,  # type: typing.Any
     ):  # type: (...) -> JsonDictType
+        """
+        Checks whether ``obj`` is a JSON-like dictionary.
+
+        :param obj: Object to check.
+        :return: ``obj`` as a JSON-like dictionary.
+        """
         from ._debugutils import saferepr
 
         if isinstance(obj, dict) and all([isinstance(_key, str) for _key in obj]):
@@ -55,6 +71,14 @@ class JsonDict(abc.ABC):
     def isjson(
             path,  # type: _AnyPathType
     ):  # type: (...) -> bool
+        """
+        Determines whether the given file is a JSON file.
+
+        :param path: Path of the file which format to check.
+        :return: ``True`` if the file is a JSON file, ``False`` otherwise.
+
+        Based of file suffix only, not on file content.
+        """
         from ._path import Path
 
         return Path(path).suffix.lower() in JsonDict.JSON_SUFFIXES
@@ -63,6 +87,14 @@ class JsonDict(abc.ABC):
     def isyaml(
             path,  # type: _AnyPathType
     ):  # type: (...) -> bool
+        """
+        Determines whether the given file is a YAML file.
+
+        :param path: Path of the file which format to check.
+        :return: ``True`` if the file is a YAML file, ``False`` otherwise.
+
+        Based of file suffix only, not on file content.
+        """
         from ._path import Path
 
         return Path(path).suffix.lower() in JsonDict.YAML_SUFFIXES
@@ -71,6 +103,12 @@ class JsonDict(abc.ABC):
     def isknwonsuffix(
             path,  # type: _AnyPathType
     ):  # type: (...) -> bool
+        """
+        Tells whether the file is of one of the recognized formats containing JSON-like dictionaries.
+
+        :param path: Path of the file which suffix to check.
+        :return: ``True`` if the file type may contain a JSON-like dictionary.
+        """
         return any([
             JsonDict.isjson(path),
             JsonDict.isyaml(path),
@@ -82,6 +120,15 @@ class JsonDict(abc.ABC):
             *,
             encoding=None,  # type: str
     ):  # type: (...) -> JsonDictType
+        """
+        Reads a JSON-like dictionary from an input file.
+
+        Automatically recognizes the file format from its suffix.
+
+        :param input_path: Path of the file to read.
+        :param encoding: Encoding to use for reading. Automatically determined from the file content by default.
+        :return: JSON-like dictionary read from the input file.
+        """
         from ._debugutils import saferepr
         from ._path import Path
         from ._textfileutils import TextFile
@@ -128,6 +175,29 @@ class JsonDict(abc.ABC):
             encoding=None,  # type: str
             indent=2,  # type: int
     ):  # type: (...) -> None
+        """
+        Writes JSON-like content into a file.
+
+        Adds meta information at the beginning of the ``content`` dictionary when set:
+
+        - ``"$encoding"``,
+        - ``"$schema"`` and ``"$version"`` when ``schema_subpath`` is provided.
+
+        :param content:
+            JSON-like dictionary content.
+        :param output_path:
+            Output file to write.
+
+            Intermediate directories will be created if needed.
+        :param schema_subpath:
+            Optional schema subpath, from the root directory of this repository.
+        :param encoding:
+            Optional encoding specification.
+
+            'utf-8' by default.
+        :param indent:
+            Number of space characters for indentation.
+        """
         from ._path import Path
         from ._pkginfo import PKG_INFO
         from ._textfileutils import TextFile

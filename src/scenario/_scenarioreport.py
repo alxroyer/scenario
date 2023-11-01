@@ -35,6 +35,8 @@ if typing.TYPE_CHECKING:
 class ScenarioReport(_LoggerImpl):
     """
     Scenario report generator.
+
+    Instantiated once with the :data:`SCENARIO_REPORT` singleton.
     """
 
     def __init__(self):  # type: (...) -> None
@@ -57,6 +59,10 @@ class ScenarioReport(_LoggerImpl):
             scenario_definition,  # type: _ScenarioDefinitionType
             report_path,  # type: _AnyPathType
     ):  # type: (...) -> bool
+        """
+        Deprecated.
+        Use :meth:`writescenarioreport()` instead.
+        """
         self.warning(f"ScenarioReport.writejsonreport() deprecated, please use ScenarioReport.writescenarioreport() instead")
         return self.writescenarioreport(
             scenario_definition,
@@ -107,6 +113,10 @@ class ScenarioReport(_LoggerImpl):
             report_path,  # type: _AnyPathType
             feed_reqdb=False,  # type: bool
     ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
+        """
+        Deprecated.
+        Use :meth:`readscenarioreport()` instead.
+        """
         self.warning(f"ScenarioReport.readjsonreport() deprecated, please use ScenarioReport.readscenarioreport() instead")
         return self.readscenarioreport(
             report_path,
@@ -116,6 +126,7 @@ class ScenarioReport(_LoggerImpl):
     def readscenarioreport(
             self,
             report_path,  # type: _AnyPathType
+            *,
             feed_reqdb=False,  # type: bool
     ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
         """

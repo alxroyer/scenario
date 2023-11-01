@@ -39,6 +39,8 @@ class ReqDatabase(_LoggerImpl):
     """
     Requirement database.
 
+    Instantiated once with the :data:`REQ_DB` singleton.
+
     Stores requirements and links with verifiers (:meth:`push()`).
 
     Provides a couple of query methods:
@@ -65,6 +67,11 @@ class ReqDatabase(_LoggerImpl):
         self._req_db = {}  # type: typing.Dict[str, _ReqRefType]
 
     def clear(self):  # type: (...) -> None
+        """
+        Clears the database.
+
+        Removes all requirement, requirement references with links and related verifiers.
+        """
         self._req_db.clear()
 
     def load(

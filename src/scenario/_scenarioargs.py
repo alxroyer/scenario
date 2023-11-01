@@ -81,7 +81,7 @@ class CommonExecArgs:
         """
         Check common test execution program arguments once parsed.
 
-        :return: True for success, False otherwise.
+        .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
         from ._scenarioconfig import SCENARIO_CONFIG
 
@@ -193,7 +193,7 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         """
         Checks scenario runner arguments once parsed.
 
-        :return: ``True`` for success, ``False`` otherwise.
+        .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
         from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER

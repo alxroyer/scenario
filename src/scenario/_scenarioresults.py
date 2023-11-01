@@ -31,6 +31,8 @@ if typing.TYPE_CHECKING:
 class ScenarioResults(_LoggerImpl):
     """
     List of scenario execution results.
+
+    Instantiated once with the :data:`SCENARIO_RESULTS` singleton.
     """
 
     def __init__(self):  # type: (...) -> None

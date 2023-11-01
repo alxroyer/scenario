@@ -204,6 +204,12 @@ _non_cached_modules = {}  # type: typing.Dict[str, types.ModuleType]
 def _inspectgetfilehack(
         object,  # type: typing.Any  # noqa  ## Shadows built-in name 'object'
 ):  # type: (...) -> str
+    """
+    Replacement hack function for ``inspect.getfile()``.
+
+    :param object: Object to find the file path from from.
+    :return: File path as a string.
+    """
     # Class defined in modules registered in `_non_cached_modules`.
     if inspect.isclass(object):
         if hasattr(object, "__module__") and (object.__module__ in _non_cached_modules):
@@ -215,7 +221,10 @@ def _inspectgetfilehack(
     return _inspect_getfile_origin(object)
 
 
+#: Original `inspect.getfile()` implementation.
 _inspect_getfile_origin = inspect.getfile  # type: typing.Callable[[typing.Any], str]
+
+# Install `_inspectgetfilehack()`.
 inspect.getfile = _inspectgetfilehack
 
 

@@ -38,6 +38,8 @@ class ConfigDatabase(_LoggerImpl):
     """
     Configuration management.
 
+    Instantiated once with the :data:`CONFIG_DB` singleton.
+
     This class loads a list of configuration files,
     and aggregates all configuration read in a single configuration tree.
 

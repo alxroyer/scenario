@@ -170,9 +170,19 @@ class ReqRef:
         return self.join(sub)
 
     def ismain(self):  # type: (...) -> bool
+        """
+        Tells whether this requirement reference describes the main part of the requirement.
+
+        :return: ``True`` for a main requirement reference, ``False`` otherwise.
+        """
         return not self.subs
 
     def issubref(self):  # type: (...) -> bool
+        """
+        Tells whether this requirement reference describes a subpart of the requirement.
+
+        :return: ``True`` for a reference to a subpart of the requirement, ``False`` otherwise.
+        """
         return not not self.subs
 
     def matches(

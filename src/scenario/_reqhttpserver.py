@@ -31,13 +31,30 @@ if True:
 
 
 class ReqHttpServer(_LoggerImpl):
+    """
+    .. todo::
+        Refactor this class into a general HTTP server that:
+
+        - displays test texts,
+        - displays campaign results,
+        - displays req traceability,
+        - ...
+
+    Instantiated once with the :data:`REQ_HTTP_SERVER` singleton.
+    """
 
     def __init__(self):  # type: (...) -> None
+        """
+        Configures logging for the :class:`ReqHttpServer` class.
+        """
         from ._debugclasses import DebugClass
 
         _LoggerImpl.__init__(self, DebugClass.REQ_HTTP_SERVER)
 
     def serve(self):  # type: (...) -> None
+        """
+        Launches the HTTP server.
+        """
         class _HTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             """
             This class will be instantiated for each request.
@@ -58,6 +75,11 @@ class ReqHttpServer(_LoggerImpl):
             self,
             request,  # type: http.server.BaseHTTPRequestHandler
     ):  # type: (...) -> None
+        """
+        Processes GET request.
+
+        :param request: GET request to process.
+        """
         from ._testerrors import ExceptionError
 
         self.debug("request.path = %r", request.path)
@@ -95,4 +117,5 @@ class ReqHttpServer(_LoggerImpl):
             f.close()
 
 
+#: Main instance of :class:`ReqHttpServer`.
 REQ_HTTP_SERVER = ReqHttpServer()  # type: ReqHttpServer

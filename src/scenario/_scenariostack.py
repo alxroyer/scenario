@@ -36,6 +36,8 @@ if typing.TYPE_CHECKING:
 class BuildingContext:
     """
     Storage of instances under construction.
+
+    Instantiated once with the :data:`SCENARIO_STACK` singleton.
     """
 
     def __init__(self):  # type: (...) -> None

@@ -71,6 +71,8 @@ class Handler:
 class Handlers(_LoggerImpl):
     """
     Handler manager.
+
+    Instantiated once with the :data:`HANDLERS` singleton.
     """
 
     def __init__(self):  # type: (...) -> None

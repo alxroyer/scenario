@@ -57,6 +57,12 @@ class ErrorCode(enum.IntEnum):
     def fromexception(
             exception,  # type: Exception
     ):  # type: (...) -> ErrorCode
+        """
+        Computes a :class:`ErrorCode` value from an exception.
+
+        :param exception: Exception to compute a :class:`ErrorCode` value for.
+        :return: Error code computed.
+        """
         from ._testerrors import TestError
 
         if isinstance(exception, ErrorCodeError):
@@ -89,11 +95,20 @@ class ErrorCode(enum.IntEnum):
 
 
 class ErrorCodeError(Exception):
+    """
+    Exception that holds a :class:`ErrorCode` value.
+    """
 
     @staticmethod
     def fromexception(
             exception,  # type: Exception
     ):  # type: (...) -> ErrorCodeError
+        """
+        Builds a :class:`ErrorCodeError` from a cause exception.
+
+        :param exception: Exception to create a :class:`ErrorCodeError` from.
+        :return: :class:`ErrorCodeError` exception created.
+        """
         return ErrorCodeError(
             error_code=ErrorCode.fromexception(exception),
             message=str(exception),
@@ -104,9 +119,19 @@ class ErrorCodeError(Exception):
             self,
             error_code,  # type: ErrorCode
             message,  # type: str
+            *,
             exception=None,  # type: Exception
     ):  # type: (...) -> None
+        """
+        Initializes error code and message, with optional exception.
+
+        :param error_code: Error code to save with this :class:`ErrorCodeError`.
+        :param message: Descriptive message.
+        :param exception: Optional related exception.
+        """
         Exception.__init__(self, f"{error_code.name}({error_code.value}): {message}")
 
+        #: Error code held by the exception.
         self.error_code = error_code  # type: ErrorCode
+        #: Optional related exception.
         self.exception = exception  # type: typing.Optional[Exception]

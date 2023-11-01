@@ -271,7 +271,7 @@ The following table describes the `scenario` configurable keys & values.
         ``%(level)`` being one of (``error``, ``warning``, ``info``, ``debug``)
       - Integer
       - Console color code per log level.
-        See :py:class:`scenario._console.Console.Color` for a list useful color codes.
+        See :py:class:`scenario._consoleutils.Console.Color` for a list useful color codes.
       - scenario.log_error_color: red(91),
         scenario.log_warning_color: yellow(33),
         scenario.log_info_color: white(1),

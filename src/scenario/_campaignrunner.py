@@ -38,7 +38,7 @@ class CampaignRunner(_LoggerImpl):
     """
     Campaign execution engine: runs test scenarios from input files.
 
-    Only one instance, accessible through the :data:`CAMPAIGN_RUNNER` singleton.
+    Instantiated once with the :data:`CAMPAIGN_RUNNER` singleton.
 
     This class works with the following helper classes, with their respected purpose:
 

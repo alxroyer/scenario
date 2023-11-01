@@ -24,10 +24,17 @@ import typing
 class PackageInfo:
     """
     Package information.
+
+    Instantiated once with the :data:`PKG_INFO` singleton.
     """
 
     @property
     def repo_url(self):  # type: () -> str
+        """
+        Main repository URL for the :mod:`scenario` package.
+
+        :return: URL string, without a trailing slash.
+        """
         return "https://github.com/alxroyer/scenario"
 
     @property
