@@ -18,8 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Issue #74: Rename "JSON reports" into "scenario reports":
-        - Check YAML writing with indentation.
     - Improve the way to display an exception stacktrace.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Check docstrings.
