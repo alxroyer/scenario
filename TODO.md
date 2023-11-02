@@ -19,16 +19,15 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Check docstrings.
+        - Make `CampaignRunner` generate upstream and downstream traceability reports.
+        - Make *req-db*, upstream and downstream traceability file names configurable.
+        - Add 'req-mgt.py' arguments to select input data: reqdb files, test suite files, campaign results.
+        - Make `ReqTraceability` load campaign results.
         - Refactor `req-mgt.py --serve` into a general HTTP server that:
             - displays test texts,
             - displays campaign results,
             - displays req traceability,
             - ...
-        - Add a `scenario.unit_tests` configuration, used in `ReqManagement` and `CampaignRunner`.
-        - Make `ReqManagement` load campaign results.
-        - Make `CampaignRunner` generate upstream and downstream traceability reports.
-        - Make *req-db*, upstream and downstream traceability file names configurable.
         - Implement `ReqHttpServer`.
     - Implement JSON schemas.
     - Implement *expect-step-req-refinement* option.

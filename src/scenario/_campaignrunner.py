@@ -83,6 +83,10 @@ class CampaignRunner(_LoggerImpl):
                 CampaignArgs.setinstance(CampaignArgs())
                 if not CampaignArgs.getinstance().parse(sys.argv[1:]):
                     return CampaignArgs.getinstance().error_code
+            _test_suite_files = SCENARIO_CONFIG.testsuitefiles()  # type: typing.Sequence[Path]
+            if not _test_suite_files:
+                MAIN_LOGGER.error("No test suite files")
+                return ErrorCode.INPUT_MISSING_ERROR
 
             # Create the date/time output directory (if required).
             if CampaignArgs.getinstance().create_dt_subdir:
@@ -109,7 +113,7 @@ class CampaignRunner(_LoggerImpl):
             CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
             _campaign_execution.time.setstarttime()
 
-            for _test_suite_path in CampaignArgs.getinstance().test_suite_paths:  # type: Path
+            for _test_suite_path in _test_suite_files:  # type: Path
                 self._exectestsuitefile(_campaign_execution, _test_suite_path)
 
             _campaign_execution.time.setendtime()

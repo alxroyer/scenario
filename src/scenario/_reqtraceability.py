@@ -81,33 +81,37 @@ class ReqTraceability(_LoggerImpl):
             reqdb_file_paths, test_suite_paths, campaign_dir_path,
         )
 
-        # Ensure persistent and countable input lists.
-        if reqdb_file_paths:
-            reqdb_file_paths = list(reqdb_file_paths)
-        if test_suite_paths:
-            test_suite_paths = list(test_suite_paths)
+        if campaign_dir_path is None:
+            # Check input arguments.
+            if reqdb_file_paths:
+                # Ensure persistent and countable list.
+                reqdb_file_paths = list(reqdb_file_paths)
+            else:
+                # Default configuration.
+                reqdb_file_paths = SCENARIO_CONFIG.reqdbfiles()
+            if test_suite_paths:
+                # Ensure persistent and countable list.
+                test_suite_paths = list(test_suite_paths)
+            else:
+                # Default configuration.
+                test_suite_paths = SCENARIO_CONFIG.testsuitefiles()
 
-        self.info("Loading requirements")
-        with self.pushindentation("  "):
-            REQ_DB.clear()
+            self.info("Loading requirements")
+            with self.pushindentation("  "):
+                REQ_DB.clear()
 
-            if reqdb_file_paths is not None:
+                self.debug("Reading %d reqdb file(s)", len(list(reqdb_file_paths)))
                 for _reqdb_file_path in reqdb_file_paths:  # type: _PathType
                     self.info(f"Loading '{_reqdb_file_path}'")
                     REQ_DB.load(_reqdb_file_path)
-            else:
-                for _reqdb_file_path in SCENARIO_CONFIG.reqdbfiles():  # Type already declared above.
-                    self.info(f"Loading '{_reqdb_file_path}'")
-                    REQ_DB.load(_reqdb_file_path)
 
-            _req_ref_count = len(REQ_DB.getallrefs())  # type: int
-            self.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+                _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+                self.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
 
-        self.info("Loading scenarios")
-        with self.pushindentation("  "):
-            self.scenarios.clear()
+            self.info("Loading scenarios")
+            with self.pushindentation("  "):
+                self.scenarios.clear()
 
-            if test_suite_paths is not None:
                 self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
                 for _test_suite_path in test_suite_paths:  # type: _PathType
                     self.info("Loading '%s'", _test_suite_path)
@@ -127,8 +131,14 @@ class ReqTraceability(_LoggerImpl):
                             self.debug("_scenario=%r", _scenario)
                             self.scenarios.append(_scenario)
 
-            _scenario_count = len(self.scenarios)  # type: int
-            self.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+                _scenario_count = len(self.scenarios)  # type: int
+                self.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+
+        else:
+            if (reqdb_file_paths is not None) or (test_suite_paths is not None):
+                raise ValueError("ReqTraceability.loaddata(): Incompatible `reqdb_file_paths` or `test_suite_paths` with `campaign_dir_path` parameter")
+
+            raise NotImplementedError("ReqTraceability.loaddata() not implemented for campaign results")
 
     class Downstream(abc.ABC):
         """

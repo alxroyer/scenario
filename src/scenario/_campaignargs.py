@@ -41,8 +41,12 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         Defines program arguments for :class:`._campaignrunner.CampaignRunner`.
 
         :param positional_args:
+            Deprecated.
+
             ``False`` to disable the scenario path positional arguments definition.
-            Useful for user programs that wish to redefine it.
+
+            Formerly defined for user programs that wished to redefine it.
+            Now use :attr:`._scenarioconfig.ScenarioConfig.Key.TEST_SUITE_FILES` configuration instead.
         :param default_outdir_cwd:
             ``False`` to disable the use of the current directory by default.
         """
@@ -86,14 +90,17 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
                  "This option may be called several times to display more info.",
         )
 
-        #: Campaign file path.
+        #: Test suite file paths.
         self.test_suite_paths = []  # type: typing.List[Path]
         if positional_args:
             self.addarg("Test suite files", "test_suite_paths", Path).define(
-                metavar="TEST_SUITE_PATH", nargs="+",
+                metavar="TEST_SUITE_PATH", nargs="*",
                 action="store", type=str, default=[],
-                help="Test suite file(s) to execute.",
+                help="Test suite file(s) to execute. "
+                     "Defaults to 'scenario.test_suite_files' configuration.",
             )
+        else:
+            print(f"CampaignArgs: Deprecated `positional_args` argument. Please use 'scenario.test_suite_files' configuration instead.")
 
     @property
     def outdir(self):  # type: () -> _PathType

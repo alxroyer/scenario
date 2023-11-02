@@ -80,6 +80,8 @@ class ScenarioConfig(_LoggerImpl):
         DELAY_BETWEEN_STEPS = "scenario.delay_between_steps"
         #: Runner script path. Default is 'bin/run-test.py'.
         RUNNER_SCRIPT_PATH = "scenario.runner_script_path"
+        #: Test suite files. List of strings, or comma-separated string.
+        TEST_SUITE_FILES = "scenario.test_suite_files"
         #: Maximum time for a scenario execution. Useful when executing campaigns. Float value.
         SCENARIO_TIMEOUT = "scenario.scenario_timeout"
 
@@ -89,7 +91,7 @@ class ScenarioConfig(_LoggerImpl):
         #: after a campaign execution, or when executing several tests in a single command line.
         #: List of strings, or comma-separated string.
         RESULTS_EXTRA_INFO = "scenario.results_extra_info"
-        #: Scenario report suffix.
+        #: Scenario report suffix. Default is '.json'.
         SCENARIO_REPORT_SUFFIX = "scenario.scenario_report_suffix"
 
         # Known issues and issue levels.
@@ -264,18 +266,10 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: List of requirement files.
         """
-        from ._confignode import ConfigNode
-        from ._path import Path
-
-        _reqdb_files = []  # type: typing.List[Path]
-        for _string, _node in self._readstringlistfromconf(self.Key.REQDB_FILES):  # type: str, ConfigNode
-            if Path.is_absolute(_string):
-                _reqdb_files.append(Path(_string))
-            elif _node.source_file:
-                _reqdb_files.append(Path(_string, relative_to=_node.source_file))
-            else:
-                raise ValueError(_node.errmsg(f"Invalid requirement file path {_string!r}"))
-
+        _reqdb_files = self._readpathlistfromconf(self.Key.REQDB_FILES)  # type: typing.Sequence[_PathType]
+        self.debug("reqdbfiles() -> %d files", len(_reqdb_files))
+        for _reqdb_file in _reqdb_files:  # type: _PathType
+            self.debug(" -> %r", _reqdb_file)
         return _reqdb_files
 
     def expectedscenarioattributes(self):  # type: (...) -> typing.List[str]
@@ -339,6 +333,32 @@ class ScenarioConfig(_LoggerImpl):
         _abspath = CONFIG_DB.get(self.Key.RUNNER_SCRIPT_PATH, type=str, default=Path(__file__).parents[2] / "bin" / "run-test.py")  # type: str
         self.debug("runnerscriptpath() -> %r", Path(_abspath))
         return Path(_abspath)
+
+    def testsuitefiles(self):  # type: (...) -> typing.Sequence[_PathType]
+        """
+        Test suite files to process.
+
+        Useful for campaign execution or requirement management.
+
+        Read from campaign arguments (when applicable), or :attr:`ScenarioConfig.Key.TEST_SUITE_FILES` default configuration.
+
+        :return: Test suite files.
+        """
+        from ._campaignargs import CampaignArgs
+
+        # Determine test suite files to process from...
+        _test_suite_files = []  # type: typing.List[_PathType]
+        # ...campaign arguments first (when applicable),
+        if CampaignArgs.isset():
+            if CampaignArgs.getinstance().test_suite_paths:
+                _test_suite_files.extend(CampaignArgs.getinstance().test_suite_paths)
+        # ...or default configuration otherwise.
+        if not _test_suite_files:
+            _test_suite_files.extend(self._readpathlistfromconf(self.Key.TEST_SUITE_FILES))
+        self.debug("testsuitefiles() -> %d files", len(_test_suite_files))
+        for _test_suite_file in _test_suite_files:  # type: _PathType
+            self.debug(" -> %r", _test_suite_file)
+        return _test_suite_files
 
     def scenariotimeout(self):  # type: (...) -> float
         """
@@ -533,6 +553,38 @@ class ScenarioConfig(_LoggerImpl):
         if len(_strings) != len(_nodes):
             raise RuntimeError("Internal error")
         return list(zip(_strings, _nodes))
+
+    def _readpathlistfromconf(
+            self,
+            config_key,  # type: ScenarioConfig.Key
+    ):  # type: (...) -> typing.Sequence[_PathType]
+        """
+        Reads a path list from the configuration database.
+
+        :param config_key:
+            Configuration key for the path list.
+
+            The configuration node pointed by ``config_key`` may be either a list of strings, or a comma-separated string.
+
+            Each string may describe either an absolute path,
+            or a relative path from the source configuration file.
+        :return:
+            List of paths.
+        :raise FileNotFoundError:
+            In case of relative path not described in a configuration file.
+        """
+        from ._confignode import ConfigNode
+        from ._path import Path
+
+        _paths = []  # type: typing.List[Path]
+        for _string, _node in self._readstringlistfromconf(config_key):  # type: str, ConfigNode
+            if Path.is_absolute(_string):
+                _paths.append(Path(_string))
+            elif _node.source_file:
+                _paths.append(Path(_string, relative_to=_node.source_file))
+            else:
+                raise FileNotFoundError(_node.errmsg(f"Invalid file path {_string!r}"))
+        return _paths
 
 
 #: Main instance of :class:`ScenarioConfig`.

@@ -69,6 +69,7 @@ class ReqManagement(_LoggerImpl):
         # Requirement & scenario loading.
         try:
             REQ_TRACEABILITY.loaddata(
+                # TODO: Add arguments for reqdb files, test suite files or campaign results.
             )
         except Exception as _err:
             MAIN_LOGGER.logexceptiontraceback(_err)

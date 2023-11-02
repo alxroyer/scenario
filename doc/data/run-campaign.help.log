@@ -4,12 +4,13 @@ usage: run-campaign.py [-h] [--config-file CONFIG_PATH]
                        [--issue-level-ignored ISSUE_LEVEL]
                        [--outdir OUTDIR_PATH] [--dt-subdir]
                        [--extra-info ATTRIBUTE_NAME]
-                       TEST_SUITE_PATH [TEST_SUITE_PATH ...]
+                       [TEST_SUITE_PATH [TEST_SUITE_PATH ...]]
 
 Scenario campaign execution.
 
 positional arguments:
-  TEST_SUITE_PATH       Test suite file(s) to execute.
+  TEST_SUITE_PATH       Test suite file(s) to execute. Defaults to
+                        'scenario.test_suite_files' configuration.
 
 optional arguments:
   -h, --help            Show this help message and exit.
