@@ -22,6 +22,7 @@ import sys
 import typing
 
 if True:
+    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
@@ -44,6 +45,21 @@ class CampaignReport(_LoggerImpl):
     - Other useful resource: https://stackoverflow.com/questions/442556/spec-for-junit-xml-output
     """
 
+    class LinkPurpose(_StrEnumImpl):
+        """
+        ``<link/>`` reference purposes.
+        """
+        #: Requirement database file link.
+        REQ_DB = "req-db"
+        #: Downstream traceability file link.
+        DOWNSTREAM_TRACEABILITY = "req-downstream-traceability"
+        #: Upstream traceability file link.
+        UPSTREAM_TRACEABILITY = "req-upstream-traceability"
+        #: Scenario log file link.
+        SCENARIO_LOG = "log"
+        #: Scenario report file link.
+        SCENARIO_REPORT = "report"
+
     def __init__(self):  # type: (...) -> None
         """
         Configures logging for the :class:`CampaignReport` class.
@@ -53,8 +69,15 @@ class CampaignReport(_LoggerImpl):
 
         _LoggerImpl.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
 
-        #: JUnit report path being written or read.
-        self._junit_path = Path()  # type: Path
+        #: Campaign report path being written or read.
+        self._report_path = Path()  # type: Path
+
+        #: Flag set to ``True`` when the requirement database should be fed with the requirement database file read from campaign results.
+        self._feed_reqdb = False  # type: bool
+        #: Flag set to ``True`` when scenario log files should be automatically read.
+        self._read_scenario_logs = False  # type: bool
+        #: Falg set to ``True`` when scenario report files should be automatically read.
+        self._read_scenario_reports = False  # type: bool
 
     def writejunitreport(
             self,
@@ -62,10 +85,25 @@ class CampaignReport(_LoggerImpl):
             junit_path,  # type: _AnyPathType
     ):  # type: (...) -> bool
         """
-        Generates a JUnit XML report output file.
+        Deprecated.
+        Use :meth:`writecampaignreport()` instead.
+        """
+        self.warning("CampaignReport.writejunitreport() deprecated, please use CampaignReport.writecampaignreport() instead")
+        return self.writecampaignreport(
+            campaign_execution,
+            junit_path,
+        )
+
+    def writecampaignreport(
+            self,
+            campaign_execution,  # type: _CampaignExecutionType
+            report_path,  # type: _AnyPathType
+    ):  # type: (...) -> bool
+        """
+        Generates a JUnit XML campaign report file.
 
         :param campaign_execution: Campaign execution to generate the report for.
-        :param junit_path: Path to write the JUnit report into.
+        :param report_path: Path to write the campaign report into.
         :return: ``True`` for success, ``False`` otherwise.
         """
         from ._loggermain import MAIN_LOGGER
@@ -74,33 +112,62 @@ class CampaignReport(_LoggerImpl):
 
         try:
             self.resetindentation()
-            self.debug("Writing campaign results to JUnit report '%s'", junit_path)
+            self.debug("Writing campaign results to report '%s'", report_path)
 
             # Create an XML document.
             _xml_doc = Xml.Document()  # type: Xml.Document
             # Create the top <testsuites/> node.
-            self._junit_path = Path(junit_path)
+            self._report_path = Path(report_path)
             _xml_doc.root = self._campaign2xml(_xml_doc, campaign_execution)
 
             # Generate the JUnit XML outfile.
-            _xml_doc.write(junit_path)
+            _xml_doc.write(self._report_path)
 
             return True
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not write JUnit report '{junit_path}': {_err}")
+            MAIN_LOGGER.error(f"Could not write report '{report_path}': {_err}")
             self.debug("Exception", exc_info=sys.exc_info())
             return False
         finally:
+            # Reset logging indentation and member variables.
             self.resetindentation()
+            self._report_path = Path()
 
     def readjunitreport(
             self,
             junit_path,  # type: _AnyPathType
     ):  # type: (...) -> typing.Optional[_CampaignExecutionType]
         """
-        Reads the JUnit report.
+        Deprecated.
+        Use :meth:`readcampaignreport()` instead.
+        """
+        self.warning(f"CampaignReport.readjunitreport() deprecated, please use CampaignReport.readcampaignreport() instead")
+        return self.readcampaignreport(
+            junit_path,
+            feed_reqdb=False,
+            read_scenario_logs=True,
+            read_scenario_reports=True,
+        )
 
-        :param junit_path: Path of the JUnit file to read.
+    def readcampaignreport(
+            self,
+            report_path,  # type: _AnyPathType
+            *,
+            feed_reqdb=False,  # type: bool
+            read_scenario_logs=False,  # type: bool
+            read_scenario_reports=False,  # type: bool
+    ):  # type: (...) -> typing.Optional[_CampaignExecutionType]
+        """
+        Reads a JUnit XML campaign report file.
+
+        :param report_path:
+            Path of the campaign report file to read.
+        :param feed_reqdb:
+            ``True`` to feed automatically the requirement database with verified requirement references.
+        :param read_scenario_logs:
+            ``True`` to read automatically scenario log files.
+        :param read_scenario_reports:
+            ``True`` to read automatically scenario report files.
         :return:
             Campaign execution data read from the JUnit file.
             ``None`` when the file could not be read, or its content could not be parsed successfully.
@@ -111,22 +178,30 @@ class CampaignReport(_LoggerImpl):
 
         try:
             self.resetindentation()
-            self.debug("Reading campaign results from JUnit report '%s'", junit_path)
+            self.debug("Reading campaign results from report '%s'", report_path)
 
             # Read and parse the JUnit XML file.
-            _xml_doc = Xml.Document.read(junit_path)  # type: Xml.Document
+            self._report_path = Path(report_path)
+            _xml_doc = Xml.Document.read(self._report_path)  # type: Xml.Document
 
-            # Analyze the scenario report content.
-            self._junit_path = Path(junit_path)
+            # Analyze the JUnit XML content.
+            self._feed_reqdb = feed_reqdb
+            self._read_scenario_logs = read_scenario_logs
+            self._read_scenario_reports = read_scenario_reports
             _campaign_execution = self._xml2campaign(_xml_doc)  # type: _CampaignExecutionType
 
             return _campaign_execution
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not read JUnit report '{junit_path}': {_err}")
+            MAIN_LOGGER.error(f"Could not read campaign report '{report_path}': {_err}")
             self.debug("Exception", exc_info=sys.exc_info())
             return None
         finally:
+            # Reset logging indentation and member variables.
             self.resetindentation()
+            self._report_path = Path()
+            self._feed_reqdb = False
+            self._read_scenario_logs = False
+            self._read_scenario_reports = False
 
     def _campaign2xml(
             self,
@@ -181,6 +256,29 @@ class CampaignReport(_LoggerImpl):
         _xml_test_suites.setattr("results-executed", str(campaign_execution.results.executed))
         _xml_test_suites.setattr("results-total", str(campaign_execution.results.total))
 
+        # /testsuites/link nodes (note: non JUnit standard):
+        # /testsuites/link[@rel='req-db']:
+        if campaign_execution.reqdb_path.is_file():
+            _xml_reqdb_link = _xml_test_suites.appendchild(self._path2xmllink(
+                xml_doc,
+                campaign_execution.reqdb_path,
+                CampaignReport.LinkPurpose.REQ_DB,
+            ))  # type: Xml.Node
+        # /testsuites/link[@rel='req-downstream-traceability']:
+        if campaign_execution.downstream_traceability_path.is_file():
+            _xml_downstream_traceability = _xml_test_suites.appendchild(self._path2xmllink(
+                xml_doc,
+                campaign_execution.downstream_traceability_path,
+                CampaignReport.LinkPurpose.DOWNSTREAM_TRACEABILITY,
+            ))  # type: Xml.Node
+        # /testsuites/link[@rel='req-upstream-traceability']:
+        if campaign_execution.upstream_traceability_path.is_file():
+            _xml_upstream_traceability = _xml_test_suites.appendchild(self._path2xmllink(
+                xml_doc,
+                campaign_execution.upstream_traceability_path,
+                CampaignReport.LinkPurpose.UPSTREAM_TRACEABILITY,
+            ))  # type: Xml.Node
+
         # /testsuites/testsuite nodes:
         # [CUBIC]: "testsuite can appear multiple times, if contained in a testsuites element. It can also be the root element."
         _test_suite_id = 0  # type: int
@@ -201,9 +299,11 @@ class CampaignReport(_LoggerImpl):
         :return: Campaign execution data.
         """
         from ._campaignexecution import CampaignExecution
+        from ._reqdb import REQ_DB
         from ._xmlutils import Xml
 
-        _campaign_execution = CampaignExecution(outdir=self._junit_path.parent)  # type: CampaignExecution
+        _campaign_execution = CampaignExecution(outdir=self._report_path.parent)  # type: CampaignExecution
+        _campaign_execution.campaign_report_path = self._report_path
 
         _xml_test_suites = xml_doc.root  # type: Xml.Node
         assert _xml_test_suites.tag_name == "testsuites", "Root node should be a <testsuites/> node"
@@ -223,6 +323,24 @@ class CampaignReport(_LoggerImpl):
         if _xml_test_suites.hasattr("time"):
             _campaign_execution.time.elapsed = float(_xml_test_suites.getattr("time"))
             self.debug("testsuites/@time = %f", _campaign_execution.time.elapsed)
+
+        for _xml_link in _xml_test_suites.getchildren("link"):  # type: Xml.Node
+            _link_purpose = _xml_link.getattr("rel")  # type: str
+            if _link_purpose == CampaignReport.LinkPurpose.REQ_DB:
+                _campaign_execution.reqdb_path = self._xmlattr2path(_xml_link, "href")
+                self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.reqdb_path)
+                if self._feed_reqdb:
+                    # Read the requirement database file by the way.
+                    self.debug("Feeding requirement database from '%s'", _campaign_execution.reqdb_path)
+                    REQ_DB.load(_campaign_execution.reqdb_path)
+            elif _link_purpose == CampaignReport.LinkPurpose.DOWNSTREAM_TRACEABILITY:
+                _campaign_execution.downstream_traceability_path = self._xmlattr2path(_xml_link, "href")
+                self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.downstream_traceability_path)
+            elif _link_purpose == CampaignReport.LinkPurpose.UPSTREAM_TRACEABILITY:
+                _campaign_execution.upstream_traceability_path = self._xmlattr2path(_xml_link, "href")
+                self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.upstream_traceability_path)
+            else:
+                self.warning(f"Unknown testsuites/link/@rel value {_link_purpose!r}")
 
         for _xml_test_suite in _xml_test_suites.getchildren("testsuite"):  # type: Xml.Node
             self.debug("New testsuites/testsuite")
@@ -402,7 +520,6 @@ class CampaignReport(_LoggerImpl):
         :param test_case_execution: Test case execution to generate the JUnit XML for.
         :return: Test case JUnit XML.
         """
-        from ._jsondictutils import JsonDict
         from ._knownissues import KnownIssue
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
@@ -437,26 +554,21 @@ class CampaignReport(_LoggerImpl):
         _xml_test_case.setattr("results-executed", str(test_case_execution.results.executed))
         _xml_test_case.setattr("results-total", str(test_case_execution.results.total))
 
-        # Set references to the log and scenario report outfiles.
-        # Non JUnit standard...
-        # Syntax inspired from HTML '<link rel="stylesheet" type="text/css" href=""/>' items.
+        # Set references to the log and scenario report outfiles (note: non JUnit standard).
         # testcase/link[@rel='log']:
-        _xml_log_link = _xml_test_case.appendchild(xml_doc.createnode("link"))  # type: Xml.Node
-        _xml_log_link.setattr("rel", "log")
-        _xml_log_link.setattr("type", "text/plain")
-        if test_case_execution.log.path is not None:
-            self._path2xmlattr(_xml_log_link, "href", test_case_execution.log.path)
+        if test_case_execution.log.path and test_case_execution.log.path.is_file():
+            _xml_log_link = _xml_test_case.appendchild(self._path2xmllink(
+                xml_doc,
+                test_case_execution.log.path,
+                rel=CampaignReport.LinkPurpose.SCENARIO_LOG,
+            ))  # type: Xml.Node
         # testcase/link[@rel='report']:
         if test_case_execution.report.path is not None:
-            _xml_report_link = _xml_test_case.appendchild(xml_doc.createnode("link"))  # type: Xml.Node
-            _xml_report_link.setattr("rel", "report")
-            if JsonDict.isjson(test_case_execution.report.path):
-                _xml_report_link.setattr("type", "application/json")
-            elif JsonDict.isyaml(test_case_execution.report.path):
-                _xml_report_link.setattr("type", "application/yaml")
-            else:
-                raise ValueError(f"Unknwon scenario report file type '{test_case_execution.report.path}'")
-            self._path2xmlattr(_xml_report_link, "href", test_case_execution.report.path)
+            _xml_report_link = _xml_test_case.appendchild(self._path2xmllink(
+                xml_doc,
+                test_case_execution.report.path,
+                rel=CampaignReport.LinkPurpose.SCENARIO_REPORT,
+            ))  # type: Xml.Node
 
         # Create a <failure/> node for each test error.
         for _error in test_case_execution.errors:  # type: TestError
@@ -536,17 +648,24 @@ class CampaignReport(_LoggerImpl):
             _test_case_execution.time.elapsed = float(xml_test_case.getattr("time"))
             self.debug("testcase/@time = %f", _test_case_execution.time.elapsed)
 
-        for _xml_link in xml_test_case.getchildren("link"):
-            if _xml_link.getattr("rel") == "log":
+        for _xml_link in xml_test_case.getchildren("link"):  # type: Xml.Node
+            _link_purpose = _xml_link.getattr("rel")  # type: str
+            if _link_purpose == CampaignReport.LinkPurpose.SCENARIO_LOG:
                 _test_case_execution.log.path = self._xmlattr2path(_xml_link, "href")
-                self.debug("testcase/link[@rel='log']/@href = '%s'", _test_case_execution.log.path)
-                # Read the log file by the way.
-                _test_case_execution.log.read()
-            if _xml_link.getattr("rel") == "report":
+                self.debug("testcase/link[@rel=%r]/@href = '%s'", _link_purpose, _test_case_execution.log.path)
+                if self._read_scenario_logs:
+                    # Read the log file by the way.
+                    self.debug("Reading scenario log from '%s'", _test_case_execution.log.path)
+                    _test_case_execution.log.read()
+            elif _link_purpose == CampaignReport.LinkPurpose.SCENARIO_REPORT:
                 _test_case_execution.report.path = self._xmlattr2path(_xml_link, "href")
-                self.debug("testcase/link[@rel='report']/@href = '%s'", _test_case_execution.report.path)
-                # Read the scenario report by the way.
-                _test_case_execution.report.read()
+                self.debug("testcase/link[@rel=%r]/@href = '%s'", _link_purpose, _test_case_execution.report.path)
+                if self._read_scenario_reports:
+                    # Read the scenario report by the way.
+                    self.debug("Reading scenario report from '%s'", _test_case_execution.report.path)
+                    _test_case_execution.report.read()
+            else:
+                self.warning(f"Unknown testcase/link/@rel value {_link_purpose!r}")
 
         # Failures have already been filled by reading the scenario report above.
         # Let's reset them, and build them again (at the scenario level only), this time from the JUnit report information.
@@ -649,6 +768,45 @@ class CampaignReport(_LoggerImpl):
         from ._path import Path
 
         return Path(xml_node.getattr(attr_name), relative_to=Path.getmainpath() or Path.cwd())
+
+    def _path2xmllink(
+            self,
+            xml_doc,  # type: _XmlType.Document
+            path,  # type: _PathType
+            rel,  # type: CampaignReport.LinkPurpose
+    ):  # type: (...) -> _XmlType.Node
+        """
+        Creates a ``<link/>`` item.
+
+        Non JUnit standard.
+        Syntax inspired from HTML ``<link rel="stylesheet" type="text/css" href=""/>`` items.
+
+        :param xml_doc: XML document to create the new node with.
+        :param path: Path of the document to link.
+        :param rel: Purpose of the document.
+        :return: New ``<link/>`` node created.
+        """
+        from ._jsondictutils import JsonDict
+
+        _xml_link = xml_doc.createnode("link")  # type: _XmlType.Node
+
+        # Path of the file.
+        self._path2xmlattr(_xml_link, "href", path)
+
+        # Purpose of the file.
+        _xml_link.setattr("rel", rel)
+
+        # Set content type depending on file suffix.
+        if path.suffix.lower() in [".log"]:
+            _xml_link.setattr("type", "text/plain")
+        elif JsonDict.isjson(path):
+            _xml_link.setattr("type", "application/json")
+        elif JsonDict.isyaml(path):
+            _xml_link.setattr("type", "application/yaml")
+        else:
+            raise ValueError(f"Unknwon content type '{path}'")
+
+        return _xml_link
 
     def _xmlcheckstats(
             self,

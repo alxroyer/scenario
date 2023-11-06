@@ -24,7 +24,7 @@ if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
 
 
-class CheckCampaignJunitReport(scenario.test.VerificationStep):
+class CheckCampaignReport(scenario.test.VerificationStep):
 
     def __init__(
             self,
@@ -38,15 +38,15 @@ class CheckCampaignJunitReport(scenario.test.VerificationStep):
     def step(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign
 
-        self.STEP("JUnit report")
+        self.STEP("Campaign report")
 
         scenario.logging.resetindentation()
 
         _campaign_execution = scenario.CampaignExecution(outdir=None)  # type: scenario.CampaignExecution
         if self.ACTION("Read the .xml campaign report file."):
-            self.evidence(f"Campaign report path: '{self.getexecstep(ExecCampaign).junit_report_path}'")
+            self.evidence(f"Campaign report path: '{self.getexecstep(ExecCampaign).campaign_report_path}'")
             _campaign_execution = self.assertisnotnone(
-                scenario.campaign_report.readjunitreport(self.getexecstep(ExecCampaign).junit_report_path),
+                scenario.campaign_report.readcampaignreport(self.getexecstep(ExecCampaign).campaign_report_path),
                 evidence="Campaign report successfully read",
             )
 

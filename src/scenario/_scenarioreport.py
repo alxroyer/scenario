@@ -106,7 +106,9 @@ class ScenarioReport(_LoggerImpl):
             self.debug("Exception", exc_info=sys.exc_info())
             return False
         finally:
+            # Reset logging indentation and member variables.
             self.resetindentation()
+            self._report_path = Path()
 
     def readjsonreport(
             self,
@@ -145,7 +147,6 @@ class ScenarioReport(_LoggerImpl):
         from ._path import Path
 
         try:
-            self._feed_reqdb = feed_reqdb
             self.resetindentation()
             self.debug("Reading scenario report from '%s'", report_path)
 
@@ -154,6 +155,7 @@ class ScenarioReport(_LoggerImpl):
             _json = JsonDict.readfile(self._report_path)  # type: _JsonDictType
 
             # Analyze the JSON content.
+            self._feed_reqdb = feed_reqdb
             _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
 
             return _scenario_definition
@@ -162,7 +164,9 @@ class ScenarioReport(_LoggerImpl):
             self.debug("Exception", exc_info=sys.exc_info())
             return None
         finally:
+            # Reset logging indentation and member variables.
             self.resetindentation()
+            self._report_path = Path()
             self._feed_reqdb = False
 
     def _scenario2json(

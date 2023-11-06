@@ -68,7 +68,7 @@ class ExecCampaign(_ExecCommonArgsImpl):
         return self._final_outdir_path
 
     @property
-    def junit_report_path(self):  # type: () -> scenario.Path
+    def campaign_report_path(self):  # type: () -> scenario.Path
         return self.final_outdir_path / "campaign.xml"
 
     @property

@@ -51,6 +51,7 @@ class ReqManagement(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
+        from ._path import Path
         from ._reqhttpserver import REQ_HTTP_SERVER
         from ._reqmgtargs import ReqManagementArgs
         from ._reqtraceability import REQ_TRACEABILITY
@@ -68,9 +69,14 @@ class ReqManagement(_LoggerImpl):
 
         # Requirement & scenario loading.
         try:
-            REQ_TRACEABILITY.loaddata(
-                # TODO: Add arguments for reqdb files, test suite files or campaign results.
-            )
+            _campaign_results_path = ReqManagementArgs.getinstance().campaign_results_path  # type: typing.Optional[Path]
+            if _campaign_results_path:
+                REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_results_path)
+            else:
+                REQ_TRACEABILITY.loaddatafromfiles(
+                    reqdb_file_paths=ReqManagementArgs.getinstance().reqdb_paths or None,
+                    test_suite_paths=ReqManagementArgs.getinstance().test_suite_paths or None,
+                )
         except Exception as _err:
             MAIN_LOGGER.logexceptiontraceback(_err)
             _errors.append(ErrorCode.fromexception(_err))
@@ -78,23 +84,19 @@ class ReqManagement(_LoggerImpl):
         # Execute `ReqManagementArgs` options.
         if not _errors:
             # Downstream traceability report.
-            if not ReqManagementArgs.getinstance().downstream_traceability_outfile.is_void():
+            _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[Path]
+            if _downstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writedownstream(
-                        downstream_traceability=REQ_TRACEABILITY.getdownstream(),
-                        outfile=ReqManagementArgs.getinstance().downstream_traceability_outfile,
-                    )
+                    REQ_TRACEABILITY.writedownstream(_downstream_traceability_path)
                 except Exception as _err:
                     MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))
 
             # Upstream traceability report.
-            if not ReqManagementArgs.getinstance().upstream_traceability_outfile.is_void():
+            _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[Path]
+            if _upstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writeupstream(
-                        upstream_traceability=REQ_TRACEABILITY.getupstream(),
-                        outfile=ReqManagementArgs.getinstance().upstream_traceability_outfile,
-                    )
+                    REQ_TRACEABILITY.writeupstream(_upstream_traceability_path)
                 except Exception as _err:
                     MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))

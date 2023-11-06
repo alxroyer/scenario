@@ -37,20 +37,49 @@ class ReqManagementArgs(_ArgsImpl):
 
         _ArgsImpl.__init__(self, class_debugging=True)
 
+        #: Input requirement database files.
+        self.reqdb_paths = []  # type: typing.List[Path]
+        self.addarg("Req-db files", "reqdb_paths", Path).define(
+            "--req-db", metavar="PATH",
+            action="append", type=str, default=[],
+            help="Requirement database file to load. "
+                 "May be called several times. "
+                 "Defaults to 'scenario.reqdb_files' configuration if not set.",
+        )
+
+        #: Test suite files to load scenarios from.
+        self.test_suite_paths = []  # type: typing.List[Path]
+        self.addarg("Test suite files", "test_suite_paths", Path).define(
+            "--test-suite", metavar="PATH",
+            action="append", type=str, default=[],
+            help="Test suite file to load scenarios from. "
+                 "May be called several times. "
+                 "Defaults to 'scenario.test_suite_files' configuration if not set.",
+        )
+
+        #: Campaign results to load data from.
+        self.campaign_results_path = None  # type: typing.Optional[Path]
+        self.addarg("Campaign results path", "campaign_results_path", Path).define(
+            "--campaign", metavar="PATH",
+            action="store", type=str,
+            help="Campaign directory or JUnit report file to load data from. "
+                 "Incompatible with --req-db and --test-suite options.",
+        )
+
         #: Downstream traceability option.
-        self.downstream_traceability_outfile = Path()  # type: Path
+        self.downstream_traceability_outfile = None  # type: typing.Optional[Path]
         self.addarg("Downstream traceability", "downstream_traceability_outfile", Path).define(
             "--downstream-traceability", metavar="PATH",
             action="store", type=str, default=None,
-            help="Generate downstream traceability, i.e. from requirements with subreferences to scenarios with related steps.",
+            help="Generate downstream traceability, i.e. from requirements to scenarios.",
         )
 
         #: Upstream traceability option.
-        self.upstream_traceability_outfile = Path()  # type: Path
+        self.upstream_traceability_outfile = None  # type: typing.Optional[Path]
         self.addarg("Upstream traceability", "upstream_traceability_outfile", Path).define(
             "--upstream-traceability", metavar="PATH",
             action="store", type=str, default=None,
-            help="Generate upstream traceability, i.e. from scenarios with related steps to requirements with subreferences.",
+            help="Generate upstream traceability, i.e. from scenarios to requirements.",
         )
 
         #: ``--serve`` option.
@@ -75,17 +104,26 @@ class ReqManagementArgs(_ArgsImpl):
         if not super()._checkargs(args):
             return False
 
-        _is_traceability_outfile = any([
-            not self.downstream_traceability_outfile.is_void(),
-            not self.upstream_traceability_outfile.is_void(),
-        ])  # type: bool
+        # Input options.
+        if self.campaign_results_path:
+            if self.reqdb_paths:
+                MAIN_LOGGER.error("Can't use --req-db with --campaign")
+            if self.test_suite_paths:
+                MAIN_LOGGER.error("Can't use --test-suite with --campaign")
+            if self.reqdb_paths or self.test_suite_paths:
+                return False
 
-        if not any([_is_traceability_outfile, self.serve]):
-            MAIN_LOGGER.error("Please use one option at least")
+        # Output options.
+        if not any([self.downstream_traceability_outfile, self.upstream_traceability_outfile, self.serve]):
+            MAIN_LOGGER.error("Please use one option of --downstream-traceability, --upstream-traceability or --serve at least")
             return False
 
-        if self.serve and _is_traceability_outfile:
-            MAIN_LOGGER.error("Can't use --serve with other options")
+        # --serve option.
+        if self.serve and (self.reqdb_paths or self.test_suite_paths or self.campaign_results_path):
+            MAIN_LOGGER.error("Can't use --serve with --req-db, --test-suite or --campaign input options")
+            return False
+        if self.serve and (self.downstream_traceability_outfile or self.upstream_traceability_outfile):
+            MAIN_LOGGER.error("Can't use --serve with --downstream-traceability or --upstream-traceability output options")
             return False
 
         return True

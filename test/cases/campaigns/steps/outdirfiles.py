@@ -65,8 +65,8 @@ class CampaignOutdirFilesManager:
         return self._scenario_results[script_path.prettypath]
 
     @property
-    def junit_report_path(self):  # type: () -> scenario.Path
-        return self._campaign_execution.junit_report_path
+    def campaign_report_path(self):  # type: () -> scenario.Path
+        return self._campaign_execution.campaign_report_path
 
     @property
     def reqdb_path(self):  # type: () -> scenario.Path
@@ -114,7 +114,7 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
         # Campaign report.
         if self.RESULT("The directory contains a '.xml' campaign report file."):
             self._assertoutfile(
-                self._outfiles.junit_report_path,
+                self._outfiles.campaign_report_path,
                 evidence="Campaign report",
             )
 

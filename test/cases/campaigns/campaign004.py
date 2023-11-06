@@ -20,8 +20,8 @@ import scenario.test
 class Campaign004(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.campaignreport import CheckCampaignReport
         from campaigns.steps.execution import ExecCampaign
-        from campaigns.steps.junitreport import CheckCampaignJunitReport
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
 
         scenario.test.TestCase.__init__(
@@ -38,11 +38,11 @@ class Campaign004(scenario.test.TestCase):
         _regular_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
         scenario.test.data.testsuiteexpectations(_regular_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE, stats=True, doc_only=False)
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(0), _regular_expectations))
-        self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(0), _regular_expectations))
+        self.addstep(CheckCampaignReport(ExecCampaign.getinstance(0), _regular_expectations))
 
         self.section("--doc-only option set")
         self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], doc_only=True))
         _doc_only_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
         scenario.test.data.testsuiteexpectations(_doc_only_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE, stats=True, doc_only=True)
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(1), _doc_only_expectations))
-        self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(1), _doc_only_expectations))
+        self.addstep(CheckCampaignReport(ExecCampaign.getinstance(1), _doc_only_expectations))

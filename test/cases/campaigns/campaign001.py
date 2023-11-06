@@ -20,8 +20,8 @@ import scenario.test
 class Campaign001(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.campaignreport import CheckCampaignReport
         from campaigns.steps.execution import ExecCampaign
-        from campaigns.steps.junitreport import CheckCampaignJunitReport
         from campaigns.steps.log import CheckCampaignLogExpectations
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
         from campaigns.steps.reqdbfile import CheckCampaignReqdbFile
@@ -110,7 +110,7 @@ class Campaign001(scenario.test.TestCase):
             (scenario.test.reqs.ERROR_HANDLING, "Scenario errors saved in scenario reports in campaign output files"),
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues saved in scenario reports in campaign output files"),
         )
-        self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+        self.addstep(CheckCampaignReport(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
             (scenario.test.reqs.CAMPAIGN_REPORTS, "Campaign report content"),
             (scenario.test.reqs.STATISTICS, "Statistics saved in campaign report content"),
             (scenario.test.reqs.ERROR_HANDLING, "Scenario errors saved in campaign report content"),

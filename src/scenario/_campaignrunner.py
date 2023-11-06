@@ -73,6 +73,7 @@ class CampaignRunner(_LoggerImpl):
         from ._loggingservice import LOGGING_SERVICE
         from ._path import Path
         from ._reqdb import REQ_DB
+        from ._reqtraceability import REQ_TRACEABILITY
         from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
@@ -119,17 +120,25 @@ class CampaignRunner(_LoggerImpl):
             _campaign_execution.time.setendtime()
             CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
 
-            # Write the JUnit campaign report.
-            CAMPAIGN_REPORT.writejunitreport(_campaign_execution, _campaign_execution.junit_path)
-            # Dump the requirement file (only when there are requirements).
+            # Dump requirement files (only when there are requirements).
             if REQ_DB.getallreqs():
+                # Requirement database.
                 REQ_DB.dump(_campaign_execution.reqdb_path)
+                # Downstream & upstream traceability reports.
+                REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_execution)
+                REQ_TRACEABILITY.writedownstream(_campaign_execution.downstream_traceability_path)
+                REQ_TRACEABILITY.writeupstream(_campaign_execution.upstream_traceability_path)
 
-            # *after-campaign* handlers.
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
+            # Eventually write the JUnit campaign report (depends on requirement files generated before).
+            if not CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path):
+                MAIN_LOGGER.error(f"Error while writing '{_campaign_execution.campaign_report_path}'")
+                return ErrorCode.INTERNAL_ERROR
 
             # Display final results.
             SCENARIO_RESULTS.display()
+
+            # *after-campaign* handlers.
+            HANDLERS.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
 
             # Terminate log features.
             LOGGING_SERVICE.stop()

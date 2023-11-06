@@ -53,6 +53,14 @@ class CampaignExecution:
 
         #: Output directory path.
         self.outdir = Path(outdir)  # type: Path
+        #: Campaign report path, when explicitly set.
+        self._campaign_report_path = None  # type: typing.Optional[Path]
+        #: Requirement database file path, when explicitly set.
+        self._reqdb_path = None  # type: typing.Optional[Path]
+        #: Downstream traceability file path, when explicitly set.
+        self._downstream_traceability_path = None  # type: typing.Optional[Path]
+        #: Upstream traceability file path, when explicitly set.
+        self._upstream_traceability_path = None  # type: typing.Optional[Path]
         #: Test suite results.
         self.test_suite_executions = []  # type: typing.List[TestSuiteExecution]
         #: Time statistics.
@@ -66,18 +74,76 @@ class CampaignExecution:
         return super().__repr__()
 
     @property
-    def junit_path(self):  # type: () -> _PathType
+    def campaign_report_path(self):  # type: () -> _PathType
         """
-        JUnit path.
+        Campaign report path getter.
+
+        Default path when not set yet.
         """
+        if self._campaign_report_path is not None:
+            return self._campaign_report_path
         return self.outdir / "campaign.xml"
+
+    @campaign_report_path.setter
+    def campaign_report_path(self, path):  # type: (_PathType) -> None
+        """
+        Campaign report path setter.
+        """
+        self._campaign_report_path = path
 
     @property
     def reqdb_path(self):  # type: () -> _PathType
         """
-        Requirement database JSON dump path.
+        Requirement database file path getter.
+
+        Default path when not set yet.
         """
-        return self.outdir / "reqdb.json"
+        if self._reqdb_path is not None:
+            return self._reqdb_path
+        return self.outdir / "req-db.json"
+
+    @reqdb_path.setter
+    def reqdb_path(self, path):  # type: (_PathType) -> None
+        """
+        Requirement database file path setter.
+        """
+        self._reqdb_path = path
+
+    @property
+    def downstream_traceability_path(self):  # type: () -> _PathType
+        """
+        Downstream traceability file path getter.
+
+        Default path when not set yet.
+        """
+        if self._downstream_traceability_path is not None:
+            return self._downstream_traceability_path
+        return self.outdir / "req-downstream-traceability.json"
+
+    @downstream_traceability_path.setter
+    def downstream_traceability_path(self, path):  # type: (_PathType) -> None
+        """
+        Downstream traceability file path setter.
+        """
+        self._downstream_traceability_path = path
+
+    @property
+    def upstream_traceability_path(self):  # type: () -> _PathType
+        """
+        Upstream traceability file path getter.
+
+        Default path when not set yet.
+        """
+        if self._upstream_traceability_path is not None:
+            return self._upstream_traceability_path
+        return self.outdir / "req-upstream-traceability.json"
+
+    @upstream_traceability_path.setter
+    def upstream_traceability_path(self, path):  # type: (_PathType) -> None
+        """
+        Upstream traceability file path setter.
+        """
+        self._upstream_traceability_path = path
 
     @property
     def steps(self):  # type: () -> _ExecTotalStatsType

@@ -19,10 +19,17 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Make `CampaignRunner` generate upstream and downstream traceability reports.
+        - Leading indentation not removed from requirement texts.
+        - Clarify "reqdb" v/s "req_db" terminology.
+        - Make `ScenarioReport.readscenarioreport()` and `CampaignReport.readcampaignreport()` not return `None` but raise exceptions.
+        - Issue #xxx: Reduce campaign results time: don't repeat scenario log if already given in a .log file.
+        - Issue #xxx: Invalid XML Junit report files when reading with a regular browser (but not from Python...):
+            - From 'run-unit-campaign.py' campaign reports:
+              > Erreur d’analyse XML : données incompréhensibles après l’élément de document
+              > Emplacement : http://localhost:63342/scenario/test/results/2023-11-02_20-05-37/campaign.xml?_ijt=oe6gp5n7g5nj7o90asbpdocksv&_ij_reload
+              > Numéro de ligne 31337, Colonne 1 :
         - Make *req-db*, upstream and downstream traceability file names configurable.
         - Add 'req-mgt.py' arguments to select input data: reqdb files, test suite files, campaign results.
-        - Make `ReqTraceability` load campaign results.
         - Refactor `req-mgt.py --serve` into a general HTTP server that:
             - displays test texts,
             - displays campaign results,

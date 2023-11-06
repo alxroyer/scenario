@@ -24,6 +24,7 @@ import typing
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
     from ._req import Req as _ReqType
@@ -48,18 +49,18 @@ class ReqTraceability(_LoggerImpl):
 
         _LoggerImpl.__init__(self, DebugClass.REQ_TRACEABILITY)
 
-        #: Scenarios loaded with :meth:`loaddata()`.
+        #: Scenarios loaded with :meth:`loaddatafromfiles()` or :meth:`loaddatafromcampaignresults()`.
         self.scenarios = []  # type: typing.List[_ScenarioDefinitionType]
 
-    def loaddata(
+    def loaddatafromfiles(
             self,
             *,
             reqdb_file_paths=None,  # type: typing.Iterable[_PathType]
             test_suite_paths=None,  # type: typing.Iterable[_PathType]
-            campaign_dir_path=None,  # type: _PathType
     ):  # type: (...) -> None
         """
-        Loads or reloads input data for requirement traceability computation.
+        Loads or reloads input data for requirement traceability computation,
+        from requirement and/or test suite files.
 
         :param reqdb_file_paths:
             Optional requirement database file to load.
@@ -69,76 +70,141 @@ class ReqTraceability(_LoggerImpl):
             Optional test suite paths to load scenarios from.
 
             If not set, the :meth:`._scenarioconfig.ScenarioConfig.testsuitefiles()` will be taken into account.
-        :param campaign_dir_path:
         """
+        from ._loggermain import MAIN_LOGGER
         from ._reqdb import REQ_DB
         from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenariodefinition import ScenarioDefinition, ScenarioDefinitionHelper
         from ._testsuitefile import TestSuiteFile
 
-        self.debug(
-            "ReqTraceability.loaddata(reqdb_file_paths=%r, test_suite_paths=%r, campaign_dir_path=%r)",
-            reqdb_file_paths, test_suite_paths, campaign_dir_path,
-        )
+        self.debug("ReqTraceability.loaddatafromfiles(reqdb_file_paths=%r, test_suite_paths=%r)", reqdb_file_paths, test_suite_paths)
 
-        if campaign_dir_path is None:
-            # Check input arguments.
-            if reqdb_file_paths:
-                # Ensure persistent and countable list.
-                reqdb_file_paths = list(reqdb_file_paths)
-            else:
-                # Default configuration.
-                reqdb_file_paths = SCENARIO_CONFIG.reqdbfiles()
-            if test_suite_paths:
-                # Ensure persistent and countable list.
-                test_suite_paths = list(test_suite_paths)
-            else:
-                # Default configuration.
-                test_suite_paths = SCENARIO_CONFIG.testsuitefiles()
+        # Check input arguments.
+        if reqdb_file_paths:
+            # Ensure persistent and countable list.
+            reqdb_file_paths = list(reqdb_file_paths)
+        else:
+            # Default configuration.
+            reqdb_file_paths = SCENARIO_CONFIG.reqdbfiles()
+        if test_suite_paths:
+            # Ensure persistent and countable list.
+            test_suite_paths = list(test_suite_paths)
+        else:
+            # Default configuration.
+            test_suite_paths = SCENARIO_CONFIG.testsuitefiles()
 
-            self.info("Loading requirements")
-            with self.pushindentation("  "):
+        MAIN_LOGGER.info("Loading requirements")
+        with self.pushindentation("  "):
+            if REQ_DB.getallreqs():
+                MAIN_LOGGER.info("Resetting requirement database")
                 REQ_DB.clear()
 
-                self.debug("Reading %d reqdb file(s)", len(list(reqdb_file_paths)))
-                for _reqdb_file_path in reqdb_file_paths:  # type: _PathType
-                    self.info(f"Loading '{_reqdb_file_path}'")
-                    REQ_DB.load(_reqdb_file_path)
+            self.debug("Reading %d reqdb file(s)", len(list(reqdb_file_paths)))
+            for _reqdb_file_path in reqdb_file_paths:  # type: _PathType
+                MAIN_LOGGER.info(f"Loading '{_reqdb_file_path}'")
+                REQ_DB.load(_reqdb_file_path)
 
-                _req_ref_count = len(REQ_DB.getallrefs())  # type: int
-                self.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+            _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
 
-            self.info("Loading scenarios")
-            with self.pushindentation("  "):
-                self.scenarios.clear()
+        MAIN_LOGGER.info("Loading scenarios")
+        with self.pushindentation("  "):
+            self.scenarios.clear()
 
-                self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
-                for _test_suite_path in test_suite_paths:  # type: _PathType
-                    self.info("Loading '%s'", _test_suite_path)
-                    with self.pushindentation("  "):
-                        _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
-                        _test_suite_file.read()
-                        for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
-                            self.info("Loading '%s'", _test_script_path)
-                            _scenario_definition_class = ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(
-                                _test_script_path,
-                                # Avoid loaded module being saved in `sys.modules`,
-                                # so that the function can be called again, and traceability refreshed.
-                                sys_modules_cache=False,
-                            )  # type: typing.Type[ScenarioDefinition]
-                            self.debug("_scenario_definition_class=%r", _scenario_definition_class)
-                            _scenario = _scenario_definition_class()  # type: ScenarioDefinition
-                            self.debug("_scenario=%r", _scenario)
-                            self.scenarios.append(_scenario)
+            self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
+            for _test_suite_path in test_suite_paths:  # type: _PathType
+                MAIN_LOGGER.info("Loading '%s'", _test_suite_path)
+                with self.pushindentation("  "):
+                    _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
+                    _test_suite_file.read()
+                    for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
+                        MAIN_LOGGER.info("Loading '%s'", _test_script_path)
+                        _scenario_definition_class = ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(
+                            _test_script_path,
+                            # Avoid loaded module being saved in `sys.modules`,
+                            # so that the function can be called again, and traceability refreshed.
+                            sys_modules_cache=False,
+                        )  # type: typing.Type[ScenarioDefinition]
+                        self.debug("_scenario_definition_class=%r", _scenario_definition_class)
+                        _scenario = _scenario_definition_class()  # type: ScenarioDefinition
+                        self.debug("_scenario=%r", _scenario)
+                        self.scenarios.append(_scenario)
 
-                _scenario_count = len(self.scenarios)  # type: int
-                self.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+            _scenario_count = len(self.scenarios)  # type: int
+            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
+    def loaddatafromcampaignresults(
+            self,
+            campaign_results,  # type: typing.Union[_PathType, _CampaignExecutionType]
+    ):  # type: (...) -> None
+        """
+        Loads or reloads input data for requirement traceability computation,
+        from campaign execution results.
+
+        :param campaign_results:
+            Campaign results to load data from.
+
+            The campaign may have been executed with ``--doc-only``.
+        """
+        from ._assertions import Assertions
+        from ._errcodes import ErrorCode, ErrorCodeError
+        from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
+        from ._campaignreport import CAMPAIGN_REPORT
+        from ._loggermain import MAIN_LOGGER
+        from ._path import Path
+        from ._reqdb import REQ_DB
+
+        self.debug("ReqTraceability.loaddatafromcampaignresults(campaign_results='%s')", campaign_results)
+
+        if isinstance(campaign_results, Path):
+            # Determine the path of the campaign report file.
+            _campaign_report_path = campaign_results  # type: Path
+            if _campaign_report_path.is_dir():
+                _campaign_report_path = CampaignExecution(_campaign_report_path).campaign_report_path
+                if not _campaign_report_path.is_file():
+                    raise FileNotFoundError(f"No campaign file  found in '{campaign_results}'")
+            self.debug("Campaign report file: '%s'", _campaign_report_path)
+
+            # Clear the requirement database before reloading it while reading campaign results.
+            if REQ_DB.getallreqs():
+                MAIN_LOGGER.info("Resetting requirement database")
+                REQ_DB.clear()
+
+            MAIN_LOGGER.info(f"Loading campaign results from '{_campaign_report_path}'")
+            try:
+                _campaign_execution = Assertions.assertisnotnone(CAMPAIGN_REPORT.readcampaignreport(
+                    _campaign_report_path,
+                    feed_reqdb=True,
+                    read_scenario_reports=True,
+                ))  # type: CampaignExecution
+            except AssertionError:
+                raise ErrorCodeError(ErrorCode.INPUT_FORMAT_ERROR, f"Error while loading data from '{_campaign_report_path}'")
+
+            _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
         else:
-            if (reqdb_file_paths is not None) or (test_suite_paths is not None):
-                raise ValueError("ReqTraceability.loaddata(): Incompatible `reqdb_file_paths` or `test_suite_paths` with `campaign_dir_path` parameter")
+            _campaign_report_path = campaign_results.campaign_report_path  # Type already declared above.
+            _campaign_execution = campaign_results  # Type already declared above.
 
-            raise NotImplementedError("ReqTraceability.loaddata() not implemented for campaign results")
+        self.debug("Saving scenarios from %r", _campaign_execution)
+        with self.pushindentation("  "):
+            self.scenarios.clear()
+
+            self.debug("Walking through %d test suite execution(s)", len(_campaign_execution.test_suite_executions))
+            for _test_suite_execution in _campaign_execution.test_suite_executions:  # type: TestSuiteExecution
+                self.debug("Test suite '%s': Walking through %d test case execution(s)",
+                           _test_suite_execution.test_suite_file.path, len(_test_suite_execution.test_case_executions))
+                with self.pushindentation("  "):
+                    for _test_case_execution in _test_suite_execution.test_case_executions:  # type: TestCaseExecution
+                        if _test_case_execution.scenario_execution:
+                            self.scenarios.append(_test_case_execution.scenario_execution.definition)
+                        elif _test_case_execution.report.path:
+                            self.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}'")
+                        else:
+                            self.warning(f"Can't load scenario {_test_case_execution.name!r}")
+
+        _scenario_count = len(self.scenarios)  # type: int
+        MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
     class Downstream(abc.ABC):
         """
@@ -326,7 +392,7 @@ class ReqTraceability(_LoggerImpl):
 
     def getdownstream(self):  # type: (...) -> ReqDownstreamTraceabilityType
         """
-        Computes downstream traceability from data previously loaded with :meth:`loaddata()`.
+        Computes downstream traceability from data previously loaded with :meth:`loaddatafromfiles()` or :meth:`loaddatafromcampaignresults()`.
 
         :return: Downstream traceability.
         """
@@ -379,18 +445,27 @@ class ReqTraceability(_LoggerImpl):
 
     def writedownstream(
             self,
-            downstream_traceability,  # type: ReqDownstreamTraceabilityType
             outfile,  # type: _PathType
+            downstream_traceability=None,  # type: ReqDownstreamTraceabilityType
     ):  # type: (...) -> None
         """
         Writes downstream tracebility to a file.
 
-        :param downstream_traceability: Downtream traceability to save into a file.
-        :param outfile: Path of the file to write.
+        :param outfile:
+            Path of the file to write.
+        :param downstream_traceability:
+            Downtream traceability to save into a file.
+
+            Automatically computed when not set.
         """
         from ._jsondictutils import JsonDict
+        from ._loggermain import MAIN_LOGGER
 
-        self.info(f"Saving downstream traceability in '{outfile}'")
+        MAIN_LOGGER.info(f"Saving downstream traceability in '{outfile}'")
+
+        # Automatically compute upstream tracebility if needed.
+        if downstream_traceability is None:
+            downstream_traceability = self.getdownstream()
 
         JsonDict.writefile(
             # Build a JSON content from the computed traceability.
@@ -587,7 +662,7 @@ class ReqTraceability(_LoggerImpl):
 
     def getupstream(self):  # type: (...) -> ReqUpstreamTraceabilityType
         """
-        Computes upstream traceability from data previously loaded with :meth:`loaddata()`.
+        Computes upstream traceability from data previously loaded with :meth:`loaddatafromfiles()` or :meth:`loaddatafromcampaignresults()`.
 
         :return: Upstream traceability.
         """
@@ -635,18 +710,27 @@ class ReqTraceability(_LoggerImpl):
 
     def writeupstream(
             self,
-            upstream_traceability,  # type: ReqUpstreamTraceabilityType
             outfile,  # type: _PathType
+            upstream_traceability=None,  # type: ReqUpstreamTraceabilityType
     ):  # type: (...) -> None
         """
         Writes upstream tracebility to a file.
 
-        :param upstream_traceability: Upstream traceability to save into a file.
-        :param outfile: Path of the file to write.
+        :param outfile:
+            Path of the file to write.
+        :param upstream_traceability:
+            Upstream traceability to save into a file.
+
+            Automatically computed when not set.
         """
         from ._jsondictutils import JsonDict
+        from ._loggermain import MAIN_LOGGER
 
-        self.info(f"Saving upstream traceability in '{outfile}'")
+        MAIN_LOGGER.info(f"Saving upstream traceability in '{outfile}'")
+
+        # Automatically compute upstream tracebility if needed.
+        if upstream_traceability is None:
+            upstream_traceability = self.getupstream()
 
         JsonDict.writefile(
             # Build a JSON content from the computed traceability.

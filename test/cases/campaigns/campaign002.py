@@ -20,8 +20,8 @@ import scenario.test
 class Campaign002(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
+        from campaigns.steps.campaignreport import CheckCampaignReport
         from campaigns.steps.execution import ExecCampaign
-        from campaigns.steps.junitreport import CheckCampaignJunitReport
         from campaigns.steps.log import CheckCampaignLogExpectations
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
         from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
@@ -50,4 +50,4 @@ class Campaign002(scenario.test.TestCase):
         self.addstep(ParseFinalResultsLog(ExecCampaign.getinstance()))
         self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(), _campaign_expectations.all_test_case_expectations))
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations))
-        self.addstep(CheckCampaignJunitReport(ExecCampaign.getinstance(), _campaign_expectations))
+        self.addstep(CheckCampaignReport(ExecCampaign.getinstance(), _campaign_expectations))

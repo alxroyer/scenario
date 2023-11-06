@@ -181,8 +181,13 @@ class CampaignLogging:
 
         MAIN_LOGGER.rawoutput("END OF CAMPAIGN")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
-        MAIN_LOGGER.rawoutput(f"          JUnit campaign report: {campaign_execution.junit_path}")
-        MAIN_LOGGER.rawoutput(f"                   Requirements: {campaign_execution.reqdb_path}")
+        MAIN_LOGGER.rawoutput(f"          JUnit campaign report: {campaign_execution.campaign_report_path}")
+        if campaign_execution.reqdb_path.is_file():
+            MAIN_LOGGER.rawoutput(f"                   Requirements: {campaign_execution.reqdb_path}")
+        if campaign_execution.downstream_traceability_path.is_file():
+            MAIN_LOGGER.rawoutput(f"        Downstream traceability: {campaign_execution.downstream_traceability_path}")
+        if campaign_execution.upstream_traceability_path.is_file():
+            MAIN_LOGGER.rawoutput(f"          Upstream traceability: {campaign_execution.upstream_traceability_path}")
         MAIN_LOGGER.rawoutput(f"          Number of test suites: {len(campaign_execution.test_suite_executions)}")
         if len(campaign_execution.test_suite_executions) > 1:
             MAIN_LOGGER.rawoutput(f"           Number of test cases: {campaign_execution.counts.total}")
@@ -193,8 +198,6 @@ class CampaignLogging:
             MAIN_LOGGER.rawoutput(f"              Number of results: {campaign_execution.results}")
             MAIN_LOGGER.rawoutput(f"                           Time: {f2strduration(campaign_execution.time.elapsed)}")
         MAIN_LOGGER.rawoutput("")
-
-        MAIN_LOGGER.debug("JUnit report: '%s'", campaign_execution.junit_path)
 
         self._calls.append(CampaignLogging._Call.END_CAMPAIGN)
 
