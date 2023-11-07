@@ -80,9 +80,15 @@ class CampaignExecution:
 
         Default path when not set yet.
         """
-        if self._campaign_report_path is not None:
-            return self._campaign_report_path
-        return self.outdir / "campaign.xml"
+        from ._scenarioconfig import SCENARIO_CONFIG
+
+        if self._campaign_report_path is None:
+            self._campaign_report_path = self._guessfilepath(
+                file_description=".xml",
+                default_filename=SCENARIO_CONFIG.campaignreportfilename(),
+                match_file=lambda path: path.suffix.lower() == ".xml",
+            )
+        return self._campaign_report_path
 
     @campaign_report_path.setter
     def campaign_report_path(self, path):  # type: (_PathType) -> None
@@ -98,9 +104,17 @@ class CampaignExecution:
 
         Default path when not set yet.
         """
-        if self._reqdb_path is not None:
-            return self._reqdb_path
-        return self.outdir / "req-db.json"
+        from ._jsondictutils import JsonDict
+        from ._reqdb import ReqDatabase
+        from ._scenarioconfig import SCENARIO_CONFIG
+
+        if self._reqdb_path is None:
+            self._reqdb_path = self._guessfilepath(
+                file_description="requirement database",
+                default_filename=SCENARIO_CONFIG.reqdbfilename(),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
+            )
+        return self._reqdb_path
 
     @reqdb_path.setter
     def reqdb_path(self, path):  # type: (_PathType) -> None
@@ -116,9 +130,17 @@ class CampaignExecution:
 
         Default path when not set yet.
         """
-        if self._downstream_traceability_path is not None:
-            return self._downstream_traceability_path
-        return self.outdir / "req-downstream-traceability.json"
+        from ._jsondictutils import JsonDict
+        from ._reqtraceability import ReqTraceability
+        from ._scenarioconfig import SCENARIO_CONFIG
+
+        if self._downstream_traceability_path is None:
+            self._downstream_traceability_path = self._guessfilepath(
+                file_description="downstream traceability",
+                default_filename=SCENARIO_CONFIG.downstreamtraceabilityfilename(),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH),
+            )
+        return self._downstream_traceability_path
 
     @downstream_traceability_path.setter
     def downstream_traceability_path(self, path):  # type: (_PathType) -> None
@@ -134,9 +156,17 @@ class CampaignExecution:
 
         Default path when not set yet.
         """
-        if self._upstream_traceability_path is not None:
-            return self._upstream_traceability_path
-        return self.outdir / "req-upstream-traceability.json"
+        from ._jsondictutils import JsonDict
+        from ._reqtraceability import ReqTraceability
+        from ._scenarioconfig import SCENARIO_CONFIG
+
+        if self._upstream_traceability_path is None:
+            self._upstream_traceability_path = self._guessfilepath(
+                file_description="upstream traceability",
+                default_filename=SCENARIO_CONFIG.upstreamtraceabilityfilename(),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH),
+            )
+        return self._upstream_traceability_path
 
     @upstream_traceability_path.setter
     def upstream_traceability_path(self, path):  # type: (_PathType) -> None
@@ -144,6 +174,42 @@ class CampaignExecution:
         Upstream traceability file path setter.
         """
         self._upstream_traceability_path = path
+
+    def _guessfilepath(
+            self,
+            file_description,  # type: str
+            default_filename,  # type: str
+            match_file,  # type: typing.Callable[[_PathType], bool]
+    ):  # type: (...) -> _PathType
+        """
+        Finds out a file name in campaign result files.
+
+        Either for reading or writing.
+
+        :param file_description: Description of the file being searched.
+        :param default_filename: Default file name.
+        :param match_file: Handler that tells whether a given path is an acceptable candidate.
+        :return: Path of the file searched.
+        """
+        from ._campaignreport import CAMPAIGN_REPORT
+
+        _default_file = self.outdir / default_filename  # type: _PathType
+        if _default_file.exists():
+            # The default file already exists, take it (for reading obviously).
+            CAMPAIGN_REPORT.debug("%s file: '%s'", file_description, _default_file)
+            return _default_file
+        elif self.outdir.is_dir():
+            # Check for a matching candidate for reading in existing files.
+            CAMPAIGN_REPORT.debug("Listing %s files in '%s'", file_description, self.outdir)
+            _candidate_files = list(filter(match_file, self.outdir.glob("*")))  # type: typing.Sequence[_PathType]
+            if len(_candidate_files) == 1:
+                # Single file, take it.
+                CAMPAIGN_REPORT.debug("%s file: '%s'", file_description, _candidate_files[0])
+                return _candidate_files[0]
+            elif len(_candidate_files) > 1:
+                raise FileNotFoundError(f"Too many {file_description} files in '{self.outdir}'")
+        # Consider the default file in the end (for future writing, don't log).
+        return _default_file
 
     @property
     def steps(self):  # type: () -> _ExecTotalStatsType

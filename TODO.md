@@ -28,7 +28,6 @@
               > Erreur d’analyse XML : données incompréhensibles après l’élément de document
               > Emplacement : http://localhost:63342/scenario/test/results/2023-11-02_20-05-37/campaign.xml?_ijt=oe6gp5n7g5nj7o90asbpdocksv&_ij_reload
               > Numéro de ligne 31337, Colonne 1 :
-        - Make *req-db*, upstream and downstream traceability file names configurable.
         - Add 'req-mgt.py' arguments to select input data: reqdb files, test suite files, campaign results.
         - Refactor `req-mgt.py --serve` into a general HTTP server that:
             - displays test texts,

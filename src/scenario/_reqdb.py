@@ -55,6 +55,9 @@ class ReqDatabase(_LoggerImpl):
         See :class:`._reqverifier.ReqVerifier`.
     """
 
+    #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
+    JSON_SCHEMA_SUBPATH = "schema/reqdb.schema.json"  # type: str
+
     def __init__(self):  # type: (...) -> None
         """
         Initializes a empty database.
@@ -143,7 +146,7 @@ class ReqDatabase(_LoggerImpl):
         # Write the JSON file.
         self.debug(f"Writing {reqdb_file}")
         JsonDict.writefile(
-            schema_subpath="schema/reqdb.schema.json",
+            schema_subpath=ReqDatabase.JSON_SCHEMA_SUBPATH,
             content=_reqdb_json,
             output_path=reqdb_file,
         )

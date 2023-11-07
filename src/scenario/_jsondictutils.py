@@ -22,6 +22,7 @@ Applicable to YAML by the way.
 
 import abc
 import json
+import re
 import typing
 
 if typing.TYPE_CHECKING:
@@ -113,6 +114,34 @@ class JsonDict(abc.ABC):
             JsonDict.isjson(path),
             JsonDict.isyaml(path),
         ])
+
+    @staticmethod
+    def isschema(
+            path,  # type: _AnyPathType
+            schema_subpath,  # type: str
+    ):  # type: (...) -> bool
+        """
+        Tells whether an existing file corresponds to an expected JSON schema.
+
+        Schema will be search in the first lines of the file content.
+
+        :param path: File which schema to check.
+        :param schema_subpath: Schema subpath, from the root directory of this repository.
+        :return: ``True`` when the file matches the given schema, ``False`` otherwise.
+        """
+        from ._pkginfo import PKG_INFO
+
+        _file = open(path, "rb")  # type: typing.BinaryIO
+        try:
+            # Read the 5 first lines only.
+            for _ in range(5):
+                _line = _file.readline()  # type: bytes
+                _regex = r'%s/(.*/)*%s' % (PKG_INFO.repo_url, schema_subpath)  # type: str
+                if re.search(_regex.encode("utf-8"), _line):
+                    return True
+            return False
+        finally:
+            _file.close()
 
     @staticmethod
     def readfile(

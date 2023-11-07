@@ -394,11 +394,43 @@ The following table describes the `scenario` configurable keys & values.
 
         :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.SCENARIO_REPORT_SUFFIX`
       - ``scenario.scenario_report_suffix``
-      - String.
+      - String
       - Scenario report suffix.
 
         Used when executing campaigns.
       - '.json'
+
+    * - .. _config-db.scenario.campaign_report_filename:
+
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.CAMPAIGN_REPORT_FILENAME`
+      - ``scenario.campaign_report_filename``
+      - String
+      - Campaign report file name used when reading / writing campaign results.
+      - 'campaign.xml'
+
+    * - .. _config-db.scenario.reqdb_filename:
+
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQDB_FILENAME`
+      - ``scenario.reqdb_filename``
+      - String
+      - Requirement database file name used when reading / writing campaign results.
+      - 'req-db.json'
+
+    * - .. _config-db.scenario.downstream_traceability_filename:
+
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.DOWNSTREAM_TRACEABILITY_FILENAME`
+      - ``scenario.downstream_traceability_filename``
+      - String
+      - Downstream traceability report file name used when reading / writing campaign results.
+      - 'req-downstream-traceability.json'
+
+    * - .. _config-db.scenario.upstream_traceability_filename:
+
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.UPSTREAM_TRACEABILITY_FILENAME`
+      - ``scenario.upstream_traceability_filename``
+      - String
+      - Upstream traceability report file name used when reading / writing campaign results.
+      - 'req-upstream-traceability.json'
 
     * - `Known issues and issue levels`
       -

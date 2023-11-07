@@ -93,6 +93,14 @@ class ScenarioConfig(_LoggerImpl):
         RESULTS_EXTRA_INFO = "scenario.results_extra_info"
         #: Scenario report suffix. Default is '.json'.
         SCENARIO_REPORT_SUFFIX = "scenario.scenario_report_suffix"
+        #: Campaign report file name used when reading / writing campaign results. String value. Default is 'campaign.xml'.
+        CAMPAIGN_REPORT_FILENAME = "scenario.campaign_report_filename"
+        #: Requirement database file name used when reading / writing campaign results. String value. Default is 'req-db-json'.
+        REQDB_FILENAME = "scenario.reqdb_filename"
+        #: Downstream traceability report file name used when reading / writing campaign results. String value. Default is 'req-downstream-traceability.json'.
+        DOWNSTREAM_TRACEABILITY_FILENAME = "scenario.downstream_traceability_filename"
+        #: Upstream traceability report file name used when reading / writing campaign results. String value. Default is 'req-upstream-traceability.json'.
+        UPSTREAM_TRACEABILITY_FILENAME = "scenario.upstream_traceability_filename"
 
         # Known issues and issue levels.
 
@@ -182,7 +190,7 @@ class ScenarioConfig(_LoggerImpl):
 
         _log_outpath = None  # type: typing.Optional[Path]
         _config = CONFIG_DB.get(self.Key.LOG_FILE, type=str)  # type: typing.Optional[str]
-        if _config is not None:
+        if _config:  # Neither `None` nor empty!
             _log_outpath = Path(_config)
 
         # Don't debug `logoutpath()`, otherwise it may cause infinite recursions when logging (tbc).
@@ -223,14 +231,13 @@ class ScenarioConfig(_LoggerImpl):
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
         _config_node = CONFIG_DB.getnode(_key)  # type: typing.Optional[ConfigNode]
         if _config_node:
-            _color_number = _config_node.cast(type=int)  # type: int
-            if _color_number is not None:
-                try:
-                    # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
-                    # self.debug("logcolor(level=%r, default=%r) -> %r", level, default, Console.Color(_color_number))
-                    return Console.Color(_color_number)
-                except ValueError:
-                    self.warning(_config_node.errmsg(f"Invalid color number {_color_number!r}"))
+            try:
+                _color_number = _config_node.cast(type=int)  # type: int
+                # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
+                # self.debug("logcolor(level=%r, default=%r) -> %r", level, default, Console.Color(_color_number))
+                return Console.Color(_color_number)
+            except ValueError:
+                self.warning(_config_node.errmsg(f"Invalid color number {_config_node.data!r}"))
         # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
         # self.debug("logcolor(level=%r, default=%r) -> %r (default)", level, default, default)
         return default
@@ -330,7 +337,11 @@ class ScenarioConfig(_LoggerImpl):
         from ._configdb import CONFIG_DB
         from ._path import Path
 
-        _abspath = CONFIG_DB.get(self.Key.RUNNER_SCRIPT_PATH, type=str, default=Path(__file__).parents[2] / "bin" / "run-test.py")  # type: str
+        # Note: Using the `or` fallback below ensures our default value will hide empty strings.
+        _abspath = (
+            CONFIG_DB.get(self.Key.RUNNER_SCRIPT_PATH, type=str)
+            or (Path(__file__).parents[2] / "bin" / "run-test.py").abspath
+        )  # type: str
         self.debug("runnerscriptpath() -> %r", Path(_abspath))
         return Path(_abspath)
 
@@ -415,15 +426,91 @@ class ScenarioConfig(_LoggerImpl):
         """
         Scenario report suffix to use.
 
-        Useful when executing campaigns.
+        Used when writing campaign results.
 
         '.json' by default.
-
-        :return: Scenario report suffix.
         """
         from ._configdb import CONFIG_DB
 
-        return CONFIG_DB.get(self.Key.SCENARIO_REPORT_SUFFIX, type=str, default=".json")
+        # Note: Using the `or` fallback below ensures our default value will hide empty strings.
+        _scenario_report_suffix = (
+            CONFIG_DB.get(self.Key.SCENARIO_REPORT_SUFFIX, type=str)
+            or ".json"
+        )  # type: str
+        self.debug("scenarioreportsuffix() -> %r", _scenario_report_suffix)
+        return _scenario_report_suffix
+
+    def campaignreportfilename(self):  # type: (...) -> str
+        """
+        Campaign report file name used when reading / writing campaign results.
+
+        Used when reading or writing campaign results.
+
+        'campaign.xml' by default.
+        """
+        from ._configdb import CONFIG_DB
+
+        # Note: Using the `or` fallback below ensures our default value will hide empty strings.
+        _campaign_report_filename = (
+            CONFIG_DB.get(self.Key.CAMPAIGN_REPORT_FILENAME, type=str)
+            or "campaign.xml"
+        )  # type: str
+        self.debug("campaignreportfilename() -> %r", _campaign_report_filename)
+        return _campaign_report_filename
+
+    def reqdbfilename(self):  # type: (...) -> str
+        """
+        Requirement database file name.
+
+        Used when reading or writing campaign results.
+
+        Configurable through :const:`Key.REQDB_FILENAME`.
+        """
+        from ._configdb import CONFIG_DB
+
+        # Note: Using the `or` fallback below ensures our default value will hide empty strings.
+        _reqdb_filename = (
+            CONFIG_DB.get(self.Key.REQDB_FILENAME, type=str)
+            or "req-db.json"
+        )  # type: str
+        self.debug("reqdbfilename() -> %r", _reqdb_filename)
+        return _reqdb_filename
+
+    def downstreamtraceabilityfilename(self):  # type: (...) -> str
+        """
+        Downstream traceability report file name.
+
+        Used when reading or writing campaign results.
+
+        Configurable through :const:`Key.DOWNSTREAM_TRACEABILITY_FILENAME`.
+        """
+        from ._configdb import CONFIG_DB
+
+        # Note: Using the `or` fallback below ensures our default value will hide empty strings.
+        _downstream_traceability_filename = (
+            CONFIG_DB.get(self.Key.DOWNSTREAM_TRACEABILITY_FILENAME, type=str)
+            or "req-downstream-traceability.json"
+        )  # type: str
+        self.debug("downstreamtraceabilityfilename() -> %r", _downstream_traceability_filename)
+        return _downstream_traceability_filename
+
+    def upstreamtraceabilityfilename(self):  # type: (...) -> str
+        """
+        Upstream traceability report file name.
+
+        Used when reading or writing campaign results.
+
+        Configurable through :const:`Key.UPSTREAM_TRACEABILITY_FILENAME`.
+        """
+        from ._configdb import CONFIG_DB
+
+        # Note: Using the `or` fallback below ensures our default value will hide empty strings.
+        _upstream_traceability_filename = (
+            CONFIG_DB.get(self.Key.UPSTREAM_TRACEABILITY_FILENAME, type=str)
+            or "req-upstream-traceability.json"
+        )  # type: str
+        self.debug("upstreamtraceabilityfilename() -> %r", _upstream_traceability_filename)
+        return _upstream_traceability_filename
 
     def loadissuelevelnames(self):  # type: (...) -> None
         """
