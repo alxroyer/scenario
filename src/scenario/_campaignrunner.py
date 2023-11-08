@@ -110,31 +110,31 @@ class CampaignRunner(_LoggerImpl):
             # *before-campaign* handlers.
             HANDLERS.callhandlers(ScenarioEvent.BEFORE_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
 
-            # Execute the campaign.
+            # Start logging.
             CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
-            _campaign_execution.time.setstarttime()
 
+            # Execute the campaign.
+            _campaign_execution.time.setstarttime()
             for _test_suite_path in _test_suite_files:  # type: Path
                 self._exectestsuitefile(_campaign_execution, _test_suite_path)
-
             _campaign_execution.time.setendtime()
-            CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
 
             # Dump requirement files (only when there are requirements).
             if REQ_DB.getallreqs():
                 # Requirement database.
                 REQ_DB.dump(_campaign_execution.reqdb_path)
                 # Downstream & upstream traceability reports.
-                REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_execution)
-                REQ_TRACEABILITY.writedownstream(_campaign_execution.downstream_traceability_path)
-                REQ_TRACEABILITY.writeupstream(_campaign_execution.upstream_traceability_path)
+                REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_execution, log_info=False)
+                REQ_TRACEABILITY.writedownstream(_campaign_execution.downstream_traceability_path, log_info=False)
+                REQ_TRACEABILITY.writeupstream(_campaign_execution.upstream_traceability_path, log_info=False)
 
             # Eventually write the JUnit campaign report (depends on requirement files generated before).
             if not CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path):
                 MAIN_LOGGER.error(f"Error while writing '{_campaign_execution.campaign_report_path}'")
                 return ErrorCode.INTERNAL_ERROR
 
-            # Display final results.
+            # Final logging (after reports generation).
+            CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
             SCENARIO_RESULTS.display()
 
             # *after-campaign* handlers.

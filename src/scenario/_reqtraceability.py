@@ -57,6 +57,7 @@ class ReqTraceability(_LoggerImpl):
             *,
             reqdb_file_paths=None,  # type: typing.Iterable[_PathType]
             test_suite_paths=None,  # type: typing.Iterable[_PathType]
+            log_info=True,  # type: bool
     ):  # type: (...) -> None
         """
         Loads or reloads input data for requirement traceability computation,
@@ -70,6 +71,8 @@ class ReqTraceability(_LoggerImpl):
             Optional test suite paths to load scenarios from.
 
             If not set, the :meth:`._scenarioconfig.ScenarioConfig.testsuitefiles()` will be taken into account.
+        :param log_info:
+            ``True`` (by default) to generate info logging.
         """
         from ._loggermain import MAIN_LOGGER
         from ._reqdb import REQ_DB
@@ -93,32 +96,39 @@ class ReqTraceability(_LoggerImpl):
             # Default configuration.
             test_suite_paths = SCENARIO_CONFIG.testsuitefiles()
 
-        MAIN_LOGGER.info("Loading requirements")
+        if log_info:
+            MAIN_LOGGER.info("Loading requirements")
         with self.pushindentation("  "):
             if REQ_DB.getallreqs():
-                MAIN_LOGGER.info("Resetting requirement database")
+                if log_info:
+                    MAIN_LOGGER.info("Resetting requirement database")
                 REQ_DB.clear()
 
             self.debug("Reading %d reqdb file(s)", len(list(reqdb_file_paths)))
             for _reqdb_file_path in reqdb_file_paths:  # type: _PathType
-                MAIN_LOGGER.info(f"Loading '{_reqdb_file_path}'")
+                if log_info:
+                    MAIN_LOGGER.info(f"Loading '{_reqdb_file_path}'")
                 REQ_DB.load(_reqdb_file_path)
 
             _req_ref_count = len(REQ_DB.getallrefs())  # type: int
-            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+            if log_info:
+                MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
 
-        MAIN_LOGGER.info("Loading scenarios")
+        if log_info:
+            MAIN_LOGGER.info("Loading scenarios")
         with self.pushindentation("  "):
             self.scenarios.clear()
 
             self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
             for _test_suite_path in test_suite_paths:  # type: _PathType
-                MAIN_LOGGER.info("Loading '%s'", _test_suite_path)
+                if log_info:
+                    MAIN_LOGGER.info("Loading '%s'", _test_suite_path)
                 with self.pushindentation("  "):
                     _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
                     _test_suite_file.read()
                     for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
-                        MAIN_LOGGER.info("Loading '%s'", _test_script_path)
+                        if log_info:
+                            MAIN_LOGGER.info("Loading '%s'", _test_script_path)
                         _scenario_definition_class = ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(
                             _test_script_path,
                             # Avoid loaded module being saved in `sys.modules`,
@@ -131,11 +141,13 @@ class ReqTraceability(_LoggerImpl):
                         self.scenarios.append(_scenario)
 
             _scenario_count = len(self.scenarios)  # type: int
-            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+            if log_info:
+                MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
     def loaddatafromcampaignresults(
             self,
             campaign_results,  # type: typing.Union[_PathType, _CampaignExecutionType]
+            log_info=True,  # type: bool
     ):  # type: (...) -> None
         """
         Loads or reloads input data for requirement traceability computation,
@@ -145,6 +157,8 @@ class ReqTraceability(_LoggerImpl):
             Campaign results to load data from.
 
             The campaign may have been executed with ``--doc-only``.
+        :param log_info:
+            ``True`` (by default) to generate info logging.
         """
         from ._assertions import Assertions
         from ._errcodes import ErrorCode, ErrorCodeError
@@ -167,10 +181,12 @@ class ReqTraceability(_LoggerImpl):
 
             # Clear the requirement database before reloading it while reading campaign results.
             if REQ_DB.getallreqs():
-                MAIN_LOGGER.info("Resetting requirement database")
+                if log_info:
+                    MAIN_LOGGER.info("Resetting requirement database")
                 REQ_DB.clear()
 
-            MAIN_LOGGER.info(f"Loading campaign results from '{_campaign_report_path}'")
+            if log_info:
+                MAIN_LOGGER.info(f"Loading campaign results from '{_campaign_report_path}'")
             try:
                 _campaign_execution = Assertions.assertisnotnone(CAMPAIGN_REPORT.readcampaignreport(
                     _campaign_report_path,
@@ -180,8 +196,9 @@ class ReqTraceability(_LoggerImpl):
             except AssertionError:
                 raise ErrorCodeError(ErrorCode.INPUT_FORMAT_ERROR, f"Error while loading data from '{_campaign_report_path}'")
 
-            _req_ref_count = len(REQ_DB.getallrefs())  # type: int
-            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+            if log_info:
+                _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+                MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
         else:
             _campaign_report_path = campaign_results.campaign_report_path  # Type already declared above.
             _campaign_execution = campaign_results  # Type already declared above.
@@ -199,12 +216,13 @@ class ReqTraceability(_LoggerImpl):
                         if _test_case_execution.scenario_execution:
                             self.scenarios.append(_test_case_execution.scenario_execution.definition)
                         elif _test_case_execution.report.path:
-                            self.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}'")
+                            MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}'")
                         else:
-                            self.warning(f"Can't load scenario {_test_case_execution.name!r}")
+                            MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r}")
 
-        _scenario_count = len(self.scenarios)  # type: int
-        MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+        if log_info:
+            _scenario_count = len(self.scenarios)  # type: int
+            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
     class Downstream(abc.ABC):
         """
@@ -447,6 +465,8 @@ class ReqTraceability(_LoggerImpl):
             self,
             outfile,  # type: _PathType
             downstream_traceability=None,  # type: ReqDownstreamTraceabilityType
+            *,
+            log_info=True,  # type: bool
     ):  # type: (...) -> None
         """
         Writes downstream tracebility to a file.
@@ -457,11 +477,14 @@ class ReqTraceability(_LoggerImpl):
             Downtream traceability to save into a file.
 
             Automatically computed when not set.
+        :param log_info:
+            ``True`` (by default) to generate info logging.
         """
         from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.info(f"Saving downstream traceability in '{outfile}'")
+        if log_info:
+            MAIN_LOGGER.info(f"Saving downstream traceability in '{outfile}'")
 
         # Automatically compute upstream tracebility if needed.
         if downstream_traceability is None:
@@ -712,6 +735,8 @@ class ReqTraceability(_LoggerImpl):
             self,
             outfile,  # type: _PathType
             upstream_traceability=None,  # type: ReqUpstreamTraceabilityType
+            *,
+            log_info=True,  # type: bool
     ):  # type: (...) -> None
         """
         Writes upstream tracebility to a file.
@@ -722,11 +747,14 @@ class ReqTraceability(_LoggerImpl):
             Upstream traceability to save into a file.
 
             Automatically computed when not set.
+        :param log_info:
+            ``True`` (by default) to generate info logging.
         """
         from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.info(f"Saving upstream traceability in '{outfile}'")
+        if log_info:
+            MAIN_LOGGER.info(f"Saving upstream traceability in '{outfile}'")
 
         # Automatically compute upstream tracebility if needed.
         if upstream_traceability is None:
