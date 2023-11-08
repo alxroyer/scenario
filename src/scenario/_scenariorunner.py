@@ -401,7 +401,7 @@ class ScenarioRunner(_LoggerImpl):
             # Check and display that the main scenario attributes.
             # (main scenario only)
             if SCENARIO_STACK.ismainscenario(scenario_definition):
-                SCENARIO_LOGGING.beginattributes()
+                SCENARIO_LOGGING.beginheadinginfo()
 
                 # Display scenario attributes.
                 for _attribute_name in scenario_definition.getattributenames():  # type: str
@@ -419,7 +419,10 @@ class ScenarioRunner(_LoggerImpl):
                         self.popindentation()
                         return ErrorCode.INPUT_FORMAT_ERROR
 
-                SCENARIO_LOGGING.endattributes()
+                # Requirement verifications.
+                SCENARIO_LOGGING.reqcoverage(scenario_definition)
+
+                SCENARIO_LOGGING.endheadinginfo()
 
             # Start execution time.
             assert scenario_definition.execution is not None

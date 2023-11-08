@@ -49,9 +49,10 @@ class ScenarioLogging:
         :class:`ScenarioLogging` call identifiers.
         """
         BEGIN_SCENARIO = "beginscenario"
-        BEGIN_ATTRIBUTES = "beginattributes"
+        BEGIN_HEADING_INFO = "beginheadinginfo"
         ATTRIBUTE = "attribute"
-        END_ATTRIBUTES = "endattributes"
+        REQ_COVERAGE = "reqcoverage"
+        END_HEADING_INFO = "endheadinginfo"
         STEP_DESCRIPTION = "stepdescription"
         ACTION = "action"
         RESULT = "result"
@@ -87,11 +88,11 @@ class ScenarioLogging:
 
         self._calls.append(ScenarioLogging._Call.BEGIN_SCENARIO)
 
-    def beginattributes(self):  # type: (...) -> None
+    def beginheadinginfo(self):  # type: (...) -> None
         """
-        Marks the beginning of scenario attributes.
+        Marks the beginning of scenario heading information.
         """
-        self._calls.append(ScenarioLogging._Call.BEGIN_ATTRIBUTES)
+        self._calls.append(ScenarioLogging._Call.BEGIN_HEADING_INFO)
 
     def attribute(
             self,
@@ -112,16 +113,44 @@ class ScenarioLogging:
 
         self._calls.append(ScenarioLogging._Call.ATTRIBUTE)
 
-    def endattributes(self):  # type: (...) -> None
+    def reqcoverage(
+            self,
+            scenario_definition,  # type: _ScenarioDefinitionType
+    ):  # type: (...) -> None
         """
-        Marks the end of scenario attributes,
+        Displays requirement coverage for the scenario, if any.
+
+        :param scenario_definition: Scenario to display requirement verifications for.
+        """
+        from ._loggermain import MAIN_LOGGER
+        from ._req import Req
+
+        _reqs = list(scenario_definition.getreqs(walk_steps=True))  # type: typing.Sequence[Req]
+        if _reqs:
+            if not any([_req.title for _req in _reqs]):
+                # Display requirement identifiers in a single line, separated with commas.
+                MAIN_LOGGER.rawoutput("  VERIFIES: " + ", ".join([_req.id for _req in _reqs]))
+            else:
+                # Display each requirement on a separate line, with its title when available.
+                MAIN_LOGGER.rawoutput("  VERIFIES:")
+                for _req in _reqs:  # type: Req
+                    if _req.title:
+                        MAIN_LOGGER.rawoutput(f"    {_req.id}: {_req.title}")
+                    else:
+                        MAIN_LOGGER.rawoutput(f"    {_req.id}")
+
+        self._calls.append(ScenarioLogging._Call.REQ_COVERAGE)
+
+    def endheadinginfo(self):  # type: (...) -> None
+        """
+        Marks the beginning of scenario heading information,
         and the beginning of the test steps by the way.
         """
         from ._loggermain import MAIN_LOGGER
 
         MAIN_LOGGER.rawoutput("")
 
-        self._calls.append(ScenarioLogging._Call.END_ATTRIBUTES)
+        self._calls.append(ScenarioLogging._Call.END_HEADING_INFO)
 
     def stepsectiondescription(
             self,
