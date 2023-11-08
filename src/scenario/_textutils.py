@@ -18,6 +18,7 @@
 Types and functions for text maagement.
 """
 
+import re
 import typing
 
 
@@ -37,10 +38,37 @@ def anylongtext2str(
     """
     Converts (if need) a :obj:`AnyLongTextType` to ``str``.
 
-    :param any_text:  Single string, or multiline string
+    :param any_text: Single string, or multiline string.
     :return: Simple string.
     """
+    from ._assertions import Assertions
+
+    # Convert `any_text` as a modifiable list of lines.
     if isinstance(any_text, str):
-        return any_text
-    else:
-        return "\n".join(any_text)
+        any_text = any_text.splitlines()
+    any_text = list(any_text)
+
+    # Remove empty heading and tailing lines.
+    while any_text and (not any_text[0].strip()):
+        any_text.pop(0)
+    while any_text and (not any_text[-1].strip()):
+        any_text.pop()
+
+    # Determine the left blank indentation to remove from non-empty lines.
+    _left_blank_indentation = min([
+        # Compute the number of leading spaces or tabs.
+        len(Assertions.assertisnotnone(re.search(r"^([ \t]*)", _line)).group(1))
+        # Iterate over `any_text` lines...
+        for _line in filter(
+            # ...except empty lines.
+            lambda line: True if line.strip() else False,
+            any_text,
+        )
+    ])  # type: int
+
+    # Eventually (re)join the lines with '\n' characters...
+    return "\n".join(map(
+        # ...by removing the left blank indentation computed just before.
+        lambda line: line[_left_blank_indentation:],
+        any_text,
+    ))

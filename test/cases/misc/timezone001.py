@@ -34,7 +34,7 @@ class Timezone001(scenario.test.TestCase):
             ),
         )
         # No specific requirement.
-        # self.covers()
+        # self.verifies()
 
         self.addstep(CheckFromIso8601())
         self.addstep(CheckToIso8601())

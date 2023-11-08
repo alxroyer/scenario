@@ -32,7 +32,7 @@ class Issue45(scenario.test.TestCase):
             description="Check that test scripts are loaded respecting their package belonging.",
         )
         # No specific requirement.
-        # self.covers()
+        # self.verifies()
 
         self.addstep(ExecScenario(scenario.test.paths.PACKAGE_SCENARIO))
         self.addstep(CheckModuleName(ExecScenario.getinstance()))

@@ -28,7 +28,7 @@ class DateTime001(scenario.test.TestCase):
             description="Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()` functions.",
         )
         # No specific requirement.
-        # self.covers()
+        # self.verifies()
 
     def step001(self):  # type: (...) -> None
         self.STEP("ISO8601 (UTC) -> float -> ISO8601 (UTC)")

@@ -28,6 +28,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
+    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class Req:
@@ -57,7 +58,7 @@ class Req:
             *,
             id,  # type: str  # noqa  ## Shadows built-in name 'id'
             title="",  # type: str
-            text="",  # type: str
+            text="",  # type: _AnyLongTextType
     ):  # type: (...) -> None
         """
         Initializes a requirement instance with the given input data,
@@ -69,6 +70,8 @@ class Req:
         :param title: Short title for the requirement.
         :param text: Full text of the requirement.
         """
+        from ._textutils import anylongtext2str
+
         #: Requirement identifier.
         #:
         #: Mandatory.
@@ -82,7 +85,7 @@ class Req:
         #: Requirement full text.
         #:
         #: Optional.
-        self.text = text  # type: str
+        self.text = anylongtext2str(text)  # type: str
 
     def __repr__(self):  # type: () -> str
         """

@@ -18,8 +18,8 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Use `anylongtext2str()` wherever relevant.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Leading indentation not removed from requirement texts.
         - Clarify "reqdb" v/s "req_db" terminology.
         - Make `ScenarioReport.readscenarioreport()` and `CampaignReport.readcampaignreport()` not return `None` but raise exceptions.
         - Issue #xxx: Reduce campaign results time: don't repeat scenario log if already given in a .log file.
