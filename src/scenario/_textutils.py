@@ -55,7 +55,7 @@ def anylongtext2str(
         any_text.pop()
 
     # Determine the left blank indentation to remove from non-empty lines.
-    _left_blank_indentation = min([
+    _left_blank_indentations = [
         # Compute the number of leading spaces or tabs.
         len(Assertions.assertisnotnone(re.search(r"^([ \t]*)", _line)).group(1))
         # Iterate over `any_text` lines...
@@ -64,7 +64,11 @@ def anylongtext2str(
             lambda line: True if line.strip() else False,
             any_text,
         )
-    ])  # type: int
+    ]  # type: typing.List[int]
+    if not _left_blank_indentations:
+        # In case of non-relevant lines.
+        _left_blank_indentations.append(0)
+    _left_blank_indentation = min(_left_blank_indentations)  # type: int
 
     # Eventually (re)join the lines with '\n' characters...
     return "\n".join(map(

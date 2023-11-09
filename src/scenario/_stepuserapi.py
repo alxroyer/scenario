@@ -24,6 +24,7 @@ import typing
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
+    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class StepUserApi(abc.ABC):
@@ -79,7 +80,7 @@ class StepUserApi(abc.ABC):
 
     def ACTION(  # noqa  ## PEP8: Function name should be lower case
             self,
-            action,  # type: str
+            action,  # type: _AnyLongTextType
     ):  # type: (...) -> bool
         """
         Describes a test action.
@@ -98,7 +99,7 @@ class StepUserApi(abc.ABC):
 
     def RESULT(  # noqa  ## PEP8: Function name should be lower case
             self,
-            result,  # type: str
+            result,  # type: _AnyLongTextType
     ):  # type: (...) -> bool
         """
         Describes an expected result.
@@ -130,7 +131,7 @@ class StepUserApi(abc.ABC):
 
     def evidence(
             self,
-            evidence,  # type: str
+            evidence,  # type: _AnyLongTextType
     ):  # type: (...) -> None
         """
         Saves an evidence for the current action or expected result.
@@ -138,10 +139,17 @@ class StepUserApi(abc.ABC):
         :param evidence: Evidence text.
         """
         from ._scenariorunner import SCENARIO_RUNNER
+        from ._textutils import anylongtext2str
 
-        if not isinstance(evidence, str):
+        if isinstance(evidence, str):
+            # Text as a string (possibly long).
+            evidence = anylongtext2str(evidence)
+        elif isinstance(evidence, list) and evidence and all([isinstance(_item, str) for _item in evidence]):
+            # Long text as a non-empty list of strings.
+            evidence = anylongtext2str(evidence)
+        else:
             # In case the user provides something that is not a regular string.
-            evidence = repr(evidence)  # type: ignore[unreachable]
+            evidence = repr(evidence)
         SCENARIO_RUNNER.onevidence(evidence)
 
     def goto(

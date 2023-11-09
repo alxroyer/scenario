@@ -61,7 +61,7 @@ class CheckFullScenarioLogOutput(scenario.test.VerificationStep):
 
         for _line_index in range(len(_lines_ref)):  # type: int
             _line_ref = _lines_ref[_line_index]  # type: bytes
-            if _line_ref.endswith(b'Time: 0.0 s'):
+            if _line_ref.endswith(b'Time: 00:00:00.000000'):
                 if self.RESULT(f"Line {_line_index + 1} matches pattern 'Time: HH:MM:SS.uuuuuu'."):
                     self.assertgreater(len(_lines), _line_index, f"No such line {_line_index + 1}: {_line_ref!r}")
                     self.assertregex(

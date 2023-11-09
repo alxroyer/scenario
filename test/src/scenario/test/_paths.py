@@ -41,6 +41,7 @@ KNOWN_ISSUE_DETAILS_SCENARIO = DATA_PATH / "knownissuedetailsscenario.py"  # typ
 KNOWN_ISSUES_SCENARIO = DATA_PATH / "knownissuesscenario.py"  # type: scenario.Path
 LOGGER_SCENARIO = DATA_PATH / "loggerscenario.py"  # type: scenario.Path
 LOGGING_INDENTATION_SCENARIO = DATA_PATH / "loggingindentationscenario.py"  # type: scenario.Path
+LONG_TEXTS_SCENARIO = DATA_PATH / "longtextsscenario.py"  # type: scenario.Path
 MISSING_SCENARIO_CLASS_SCENARIO = DATA_PATH / "errors" / "missingscenarioclassscenario.py"  # type: scenario.Path
 NO_SUCH_FILE_SCENARIO = DATA_PATH / "errors" / "nosuchfilescenario.py"  # type: scenario.Path
 PACKAGE_SCENARIO = DATA_PATH / "xyz" / "packagescenario.py"  # type: scenario.Path

@@ -31,13 +31,14 @@ class Campaign001(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Campaign execution & reports",
-            description=(
+            description=[
                 "Check that the campaign runner can execute a test suite file (CAMPAIGNS), "
                 "gather the test case log files (LOGGING), reports (SCENARIO_REPORT) and statistics (STATISTICS), "
-                "and produce the campaign report (CAMPAIGNS) and requirement file (REQUIREMENT_MANAGEMENT). "
+                "and produce the campaign report (CAMPAIGNS) and requirement file (REQUIREMENT_MANAGEMENT).",
+
                 "Check furthermore that error display makes it easy to investigate on errors and warnings "
-                "(MULTIPLE_SCENARIO_EXECUTION, ERROR_HANDLING & KNOWN_ISSUES)."
-            ),
+                "(MULTIPLE_SCENARIO_EXECUTION, ERROR_HANDLING & KNOWN_ISSUES).",
+            ],
         )
         self.expectstepreqrefinement(True).verifies(
             (scenario.test.reqs.CAMPAIGNS, "Single test suite"),

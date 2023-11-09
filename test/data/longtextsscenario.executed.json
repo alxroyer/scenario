@@ -17,14 +17,15 @@
   "$schema": "https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/scenario-report.schema.json",
   "$version": "0.2.2",
 
-  "name": "test/data/simplescenario.py",
+  "name": "test/data/longtextsscenario.py",
   "attributes": {
-    "TITLE": "Simple scenario sample"
+    "DESCRIPTION": "Scenario description line#1.\n\nScenario description line#2.",
+    "TITLE": "Long texts scenario sample"
   },
   "steps": [
     {
-      "location": "test/data/simplescenario.py:31:SimpleScenario.step010",
-      "description": "step#10",
+      "location": "test/data/longtextsscenario.py:47:LongTextsScenario.step010",
+      "description": "Multiline strings",
       "executions": [
         {
           "number": 1,
@@ -36,12 +37,12 @@
       "actions-results": [
         {
           "type": "ACTION",
-          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+          "description": "Action line#1.\n\nAction line#2.",
           "executions": [
             {
               "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
               "evidence": [
-                "Lorem ipsum..."
+                "Action evidence line#1.\n\nAction evidence line#2."
               ],
               "errors": [],
               "warnings": [],
@@ -51,12 +52,12 @@
         },
         {
           "type": "RESULT",
-          "description": "Et leo duis ut diam.",
+          "description": "Expected result line#1.\n\nExpected result line#2.",
           "executions": [
             {
               "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
               "evidence": [
-                "Et leo..."
+                "Expected result evidence line#1.\n\nExpected result evidence line#2."
               ],
               "errors": [],
               "warnings": [],
@@ -67,8 +68,8 @@
       ]
     },
     {
-      "location": "test/data/simplescenario.py:39:SimpleScenario.step020",
-      "description": "step#20",
+      "location": "test/data/longtextsscenario.py:72:LongTextsScenario.step020",
+      "description": "List of strings",
       "executions": [
         {
           "number": 2,
@@ -80,12 +81,12 @@
       "actions-results": [
         {
           "type": "ACTION",
-          "description": "Vitae turpis massa sed elementum.",
+          "description": "Action line#1.\n\nAction line#2.",
           "executions": [
             {
               "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
               "evidence": [
-                "Vitae turpis..."
+                "Action evidence line#1.\n\nAction evidence line#2."
               ],
               "errors": [],
               "warnings": [],
@@ -95,56 +96,12 @@
         },
         {
           "type": "RESULT",
-          "description": "Faucibus a pellentesque sit amet.",
+          "description": "Expected result line#1.\n\nExpected result line#2.",
           "executions": [
             {
               "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
               "evidence": [
-                "Faucibus a pellentesque..."
-              ],
-              "errors": [],
-              "warnings": [],
-              "subscenarios": []
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "location": "test/data/simplescenario.py:47:SimpleScenario.step030",
-      "description": "step#30",
-      "executions": [
-        {
-          "number": 3,
-          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
-          "errors": [],
-          "warnings": []
-        }
-      ],
-      "actions-results": [
-        {
-          "type": "ACTION",
-          "description": "Quam id leo in vitae turpis massa sed elementum.",
-          "executions": [
-            {
-              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
-              "evidence": [
-                "Quam id leo..."
-              ],
-              "errors": [],
-              "warnings": [],
-              "subscenarios": []
-            }
-          ]
-        },
-        {
-          "type": "RESULT",
-          "description": "In aliquam sem fringilla ut morbi tincidunt augue interdum velit.",
-          "executions": [
-            {
-              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
-              "evidence": [
-                "In aliquam sem..."
+                "Expected result evidence line#1.\n\nExpected result evidence line#2."
               ],
               "errors": [],
               "warnings": [],
@@ -160,8 +117,8 @@
   "warnings": [],
   "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
   "stats": {
-    "steps": {"executed": 3, "total": 3},
-    "actions": {"executed": 3, "total": 3},
-    "results": {"executed": 3, "total": 3}
+    "steps": {"executed": 2, "total": 2},
+    "actions": {"executed": 2, "total": 2},
+    "results": {"executed": 2, "total": 2}
   }
 }

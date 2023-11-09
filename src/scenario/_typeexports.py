@@ -51,6 +51,14 @@ if typing.TYPE_CHECKING:
     __all__.append("OrderedSet")
 
     __doc__ += """
+    .. py:attribute:: AnyLongText
+
+        .. seealso:: :obj:`._textutils.AnyLongTextType` implementation.
+    """
+    from ._textutils import AnyLongTextType as AnyLongText
+    __all__.append("AnyLongText")
+
+    __doc__ += """
     .. py:attribute:: VarItem
 
         .. seealso:: :obj:`._typeutils.VarItemType` implementation.

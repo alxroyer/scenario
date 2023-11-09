@@ -14,8 +14,8 @@
     "See the License for the specific language governing permissions and",
     "limitations under the License."
   ],
-
-  "$schema": "https://github.com/alxroyer/scenario/blob/master/schema/scenario-report-v1.schema.json",
+  "$schema": "https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/scenario-report.schema.json",
+  "$version": "0.2.2",
 
   "name": "test/data/superscenario.py",
   "attributes": {

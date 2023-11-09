@@ -39,6 +39,9 @@ class ScenarioReport(_LoggerImpl):
     Instantiated once with the :data:`SCENARIO_REPORT` singleton.
     """
 
+    #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
+    JSON_SCHEMA_SUBPATH = "schemas/scenario-report.schema.json"  # type: str
+
     def __init__(self):  # type: (...) -> None
         """
         Configures logging for the :class:`ScenarioReport` class.
@@ -95,7 +98,7 @@ class ScenarioReport(_LoggerImpl):
 
             # Write the report file.
             JsonDict.writefile(
-                schema_subpath="schema/scenario-report.schema.json",
+                schema_subpath=ScenarioReport.JSON_SCHEMA_SUBPATH,
                 content=_json,
                 output_path=self._report_path,
             )
@@ -558,10 +561,7 @@ class ScenarioReport(_LoggerImpl):
                    extra=self.longtext(max_lines=10))
 
         with self.pushindentation():
-            _action_result_type = ActionResultDefinition.Type.ACTION  # type: ActionResultDefinition.Type
-            for _action_result_type in ActionResultDefinition.Type:
-                if str(_action_result_type) == json_action_result_definition["type"]:
-                    break
+            _action_result_type = ActionResultDefinition.Type(json_action_result_definition["type"])  # type: ActionResultDefinition.Type
             self.debug("Type: %s", _action_result_type)
 
             _action_result_definition = ActionResultDefinition(

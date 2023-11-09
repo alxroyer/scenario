@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
+    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class MetaScenarioDefinition(abc.ABCMeta):
@@ -193,7 +194,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
     def __init__(
             self,
             title=None,  # type: typing.Optional[str]
-            description=None,  # type: typing.Optional[str]
+            description=None,  # type: typing.Optional[_AnyLongTextType]
     ):  # type: (...) -> None
         """
         Initializes a scenario instance with optional title and description.
@@ -208,6 +209,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         from ._locations import CodeLocation
         from ._path import Path
         from ._scenarioexecution import ScenarioExecution
+        from ._textutils import anylongtext2str
 
         #: Scenario title, optional.
         #:
@@ -219,7 +221,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         #:
         #: More detailed explanation about the scenario than :attr:`title`.
         #: Commonly describes the purpose or objectives of the test.
-        self.description = description or ""  # type: str
+        self.description = anylongtext2str(description or "")  # type: str
 
         #: Definition location.
         self.location = CodeLocation.fromclass(type(self))  # type: CodeLocation

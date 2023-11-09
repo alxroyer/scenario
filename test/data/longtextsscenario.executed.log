@@ -1,0 +1,48 @@
+SCENARIO 'test/data/longtextsscenario.py'
+------------------------------------------------
+  TITLE: Long texts scenario sample
+  DESCRIPTION:
+    Scenario description line#1.
+
+    Scenario description line#2.
+  VERIFIES:
+    REQ-001: Ping / Main path
+
+
+STEP#1: Multiline strings (test/data/longtextsscenario.py:47:LongTextsScenario.step001)
+------------------------------------------------
+    ACTION: Action line#1.
+
+            Action line#2.
+  EVIDENCE:   -> Action evidence line#1.
+
+                 Action evidence line#2.
+    RESULT: Expected result line#1.
+
+            Expected result line#2.
+  EVIDENCE:   -> Expected result evidence line#1.
+
+                 Expected result evidence line#2.
+
+STEP#2: List of strings (test/data/longtextsscenario.py:72:LongTextsScenario.step002)
+------------------------------------------------
+    ACTION: Action line#1.
+
+            Action line#2.
+  EVIDENCE:   -> Action evidence line#1.
+
+                 Action evidence line#2.
+    RESULT: Expected result line#1.
+
+            Expected result line#2.
+  EVIDENCE:   -> Expected result evidence line#1.
+
+                 Expected result evidence line#2.
+
+END OF 'test/data/longtextsscenario.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 2/2
+  Number of ACTIONs: 2/2
+  Number of RESULTs: 2/2
+               Time: 00:00:00.000000

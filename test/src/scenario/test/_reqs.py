@@ -25,6 +25,8 @@ SCENARIO_EXECUTION = scenario.Req(
     text="""
         A scenario is an assertive context that defines an ordered list of test steps.
 
+        Each step contains a description, test actions and expected results.
+
         A scenario execution gives a final status:
 
         - SUCCESS,
@@ -255,6 +257,11 @@ ATTRIBUTES = scenario.Req(
         They may be displayed with scenario results,
         when executing multiple scenarios (see MULTIPLE_SCENARIO_EXECUTION),
         or when executing a campaign (see CAMPAIGNS).
+
+        The `scenario` framework defines the following core attributes:
+
+        - TITLE: short title (displayed by default with MULTIPLE_SCENARIO_EXECUTION),
+        - DESCRIPTION: more detailed description for the scenario.
     """,
 )  # type: scenario.Req
 

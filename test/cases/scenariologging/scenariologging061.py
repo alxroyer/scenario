@@ -17,7 +17,7 @@
 import scenario.test
 
 
-class ScenarioLogging011(scenario.test.TestCase):
+class ScenarioLogging061(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
         from scenariologging.steps.full import CheckFullScenarioLogOutput
@@ -25,16 +25,17 @@ class ScenarioLogging011(scenario.test.TestCase):
 
         scenario.test.TestCase.__init__(
             self,
-            title="Scenario logging simple scenario --doc-only",
-            description="Check the scenario logging output is generated as expected for a simple scenario, executed with the --doc-only option set.",
+            title="Scenario logging long texts --doc-only",
+            description="Check the scenario logging output is generated as expected for a scenario with long texts, executed with the --doc-only option set.",
         )
         self.verifies(
-            # Main features:
             scenario.test.reqs.SCENARIO_LOGGING,
+            (scenario.test.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
+            (scenario.test.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
+            # No REQUIREMENT_MANAGEMENT: Long texts for requirements link comments not displayed with scenario logging.
+            # No EVIDENCE: No evidence displayed in --doc-only.
             scenario.test.reqs.DOC_ONLY,
-            # Additional coverage:
-            (scenario.test.reqs.ATTRIBUTES, "Attribute display in scenario logging --doc-only"),
         )
 
-        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, doc_only=True))
+        self.addstep(ExecScenario(scenario.test.paths.LONG_TEXTS_SCENARIO, doc_only=True))
         self.addstep(CheckFullScenarioLogOutput(ExecScenario.getinstance()))

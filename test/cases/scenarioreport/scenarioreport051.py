@@ -26,7 +26,7 @@ class ScenarioReport051(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario report known issues --doc-only",
-            description="Check the scenario report is generated as expected for a scenario with known issues executed with the --doc-only option set.",
+            description="Check the scenario report is generated as expected for a scenario with known issues, executed with the --doc-only option set.",
         )
         self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,

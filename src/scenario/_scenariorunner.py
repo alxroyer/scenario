@@ -36,6 +36,7 @@ if typing.TYPE_CHECKING:
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
     from ._stepuserapi import StepUserApi as _StepUserApiType
     from ._testerrors import TestError as _TestErrorType
+    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class ScenarioRunner(_LoggerImpl):
@@ -632,7 +633,7 @@ class ScenarioRunner(_LoggerImpl):
     def onactionresult(
             self,
             action_result_type,  # type: _ActionResultDefinitionType.Type
-            description,  # type: str
+            description,  # type: _AnyLongTextType
     ):  # type: (...) -> None
         """
         Call redirection from :meth:`._stepuserapi.StepUserApi.ACTION()` or :meth:`._stepuserapi.StepUserApi.RESULT()`.
@@ -645,6 +646,7 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenariologging import SCENARIO_LOGGING
         from ._scenariostack import SCENARIO_STACK
         from ._stepexecution import StepExecutionHelper
+        from ._textutils import anylongtext2str
 
         self.debug("onactionresult(action_result_type=%s, description=%r)", action_result_type, description)
 
@@ -657,7 +659,7 @@ class ScenarioRunner(_LoggerImpl):
                 ActionResultDefinition(
                     type=action_result_type,
                     description=description,
-                )
+                ),
             )
 
         else:
@@ -670,7 +672,7 @@ class ScenarioRunner(_LoggerImpl):
             # Switch to this action/result.
             _step_execution_helper = StepExecutionHelper(SCENARIO_STACK.current_step_execution)  # type: StepExecutionHelper
             _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
-            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != description):
+            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != anylongtext2str(description)):
                 SCENARIO_STACK.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
 
             # Create the action/result execution instance (in EXECUTE mode only).
@@ -678,7 +680,7 @@ class ScenarioRunner(_LoggerImpl):
                 _action_result_definition.executions.append(ActionResultExecution(_action_result_definition))
 
             # Display.
-            SCENARIO_LOGGING.actionresult(_action_result_definition, description)
+            SCENARIO_LOGGING.actionresult(_action_result_definition)
 
     def _endcurrentactionresult(self):  # type: (...) -> None
         """

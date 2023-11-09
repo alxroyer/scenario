@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Use `anylongtext2str()` wherever relevant.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Clarify "reqdb" v/s "req_db" terminology.
         - Make `ScenarioReport.readscenarioreport()` and `CampaignReport.readcampaignreport()` not return `None` but raise exceptions.
@@ -41,12 +40,14 @@
     - Fix test regressions.
     - Implement tests:
         - Add req expectations. Check in scenario log & report.
+        - Check full scenario log & report with requirements.
         - Complete scenario001 with SCENARIO_LOGGING testing.
         - Req management & subscenarios.
         - Req management & scenario reports.
         - Campaign reports: req-db, traceability reports.
         - Traceability reports: from suites and from campaign reports.
         - Test scenario reports in YAML: single scenario & campaign executions (#74).
+        - Check step requirement refinement.
     - Documentation:
         - Add demo for requirement management.
         - Req management: command line & HTTP server.

@@ -1,6 +1,6 @@
 {
   "$encoding": "utf-8",
-  "$schema": "https://github.com/alxroyer/scenario/blob/v0.2.2/schema/scenario-report.schema.json",
+  "$schema": "https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/scenario-report.schema.json",
   "$version": "0.2.2",
   "name": "demo/loggingdemo.py",
   "href": "demo/loggingdemo.py",

@@ -22,6 +22,8 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` use for inheritance.
+if typing.TYPE_CHECKING:
+    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class ActionResultDefinition:
@@ -41,7 +43,7 @@ class ActionResultDefinition:
     def __init__(
             self,
             type,  # type: ActionResultDefinition.Type  # noqa  ## Shadows built-in name 'type'
-            description,  # type: str
+            description,  # type: _AnyLongTextType
     ):  # type: (...) -> None
         """
         :param type: Action/result type.
@@ -51,11 +53,12 @@ class ActionResultDefinition:
         """
         from ._actionresultexecution import ActionResultExecution
         from ._stepdefinition import StepDefinition
+        from ._textutils import anylongtext2str
 
         #: Action/result type.
         self.type = type  # type: ActionResultDefinition.Type
         #: Action/result textual description.
-        self.description = description  # type: str
+        self.description = anylongtext2str(description)  # type: str
         #: Owner step.
         #:
         #: Initially set with a void reference.

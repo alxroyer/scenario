@@ -17,30 +17,44 @@
   "$schema": "https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/scenario-report.schema.json",
   "$version": "0.2.2",
 
-  "name": "test/data/failingscenario.py",
+  "name": "test/data/longtextsscenario.py",
   "attributes": {
-    "TITLE": "Failing scenario sample"
+    "DESCRIPTION": "Scenario description line#1.\n\nScenario description line#2.",
+    "TITLE": "Long texts scenario sample"
   },
   "steps": [
     {
-      "location": "test/data/failingscenario.py:32:FailingScenario.step010",
-      "description": "Step in failure",
+      "location": "test/data/longtextsscenario.py:47:LongTextsScenario.step010",
+      "description": "Multiline strings",
       "executions": [],
       "actions-results": [
-        {"type": "ACTION", "description": "Memorize 'step010-1' as the last checkpoint.", "executions": []},
-        {"type": "ACTION", "description": "Generate an exception without catching it.", "executions": []},
-        {"type": "RESULT", "description": "The exception is thrown.", "executions": []},
-        {"type": "ACTION", "description": "Memorize 'step010-2' as the last checkpoint.", "executions": []}
+        {
+          "type": "ACTION",
+          "description": "Action line#1.\n\nAction line#2.",
+          "executions": []
+        },
+        {
+          "type": "RESULT",
+          "description": "Expected result line#1.\n\nExpected result line#2.",
+          "executions": []
+        }
       ]
     },
     {
-      "location": "test/data/failingscenario.py:48:FailingScenario.step020",
-      "description": "Successful step",
+      "location": "test/data/longtextsscenario.py:72:LongTextsScenario.step020",
+      "description": "List of strings",
       "executions": [],
       "actions-results": [
-        {"type": "ACTION", "description": "Check the last checkpoint.", "executions": []},
-        {"type": "RESULT", "description": "The last checkpoint is... whatever.", "executions": []},
-        {"type": "ACTION", "description": "Memorize 'step020-1' as the last checkpoint.", "executions": []}
+        {
+          "type": "ACTION",
+          "description": "Action line#1.\n\nAction line#2.",
+          "executions": []
+        },
+        {
+          "type": "RESULT",
+          "description": "Expected result line#1.\n\nExpected result line#2.",
+          "executions": []
+        }
       ]
     }
   ],
@@ -50,7 +64,7 @@
   "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
   "stats": {
     "steps": {"executed": 0, "total": 2},
-    "actions": {"executed": 0, "total": 5},
+    "actions": {"executed": 0, "total": 2},
     "results": {"executed": 0, "total": 2}
   }
 }

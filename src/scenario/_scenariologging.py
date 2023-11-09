@@ -109,7 +109,13 @@ class ScenarioLogging:
         """
         from ._loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.rawoutput(f"  {name}: {value}")
+        if len(value.splitlines()) <= 1:
+            # One-line display.
+            MAIN_LOGGER.rawoutput(f"  {name}: {value}")
+        else:
+            # Multiline display.
+            MAIN_LOGGER.rawoutput(f"  {name}:")
+            self._displaylongtext(left="    ", long_text=value)
 
         self._calls.append(ScenarioLogging._Call.ATTRIBUTE)
 
@@ -202,13 +208,11 @@ class ScenarioLogging:
     def actionresult(
             self,
             actionresult,  # type: _ActionResultDefinitionType
-            description,  # type: str
     ):  # type: (...) -> None
         """
         Displays an action or an expected result being executed.
 
         :param actionresult: Action or expected result being executed.
-        :param description: Action/result description.
         """
         from ._actionresultdefinition import ActionResultDefinition
         from ._loggermain import MAIN_LOGGER
@@ -217,7 +221,10 @@ class ScenarioLogging:
             # Add space before an action only after results.
             MAIN_LOGGER.rawoutput("")
 
-        MAIN_LOGGER.rawoutput(f"  {str(actionresult.type).upper():>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}{description}")
+        self._displaylongtext(
+            left=f"  {str(actionresult.type).upper():>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}",
+            long_text=actionresult.description,
+        )
 
         # Note: `str(actionresult.type)` is either 'ACTION' or 'RESULT'.
         self._calls.append(ScenarioLogging._Call(str(actionresult.type).lower()))
@@ -267,7 +274,11 @@ class ScenarioLogging:
         """
         from ._loggermain import MAIN_LOGGER
 
-        MAIN_LOGGER.rawoutput(f"  {'EVIDENCE':>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}  -> {evidence}")
+        self._displaylongtext(
+            left=f"  {'EVIDENCE':>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}  -> ",
+            long_text=evidence,
+        )
+
         # Do not append 'evidence' to :attr:`_calls` in order not to break the 'action'/'result' sequences.
 
     def endscenario(
@@ -320,6 +331,34 @@ class ScenarioLogging:
         MAIN_LOGGER.rawoutput(f"  Number of RESULTs: {scenario_execution.result_stats}")
         MAIN_LOGGER.rawoutput(f"               Time: {f2strduration(scenario_execution.time.elapsed)}")
         MAIN_LOGGER.rawoutput("")
+
+    def _displaylongtext(
+            self,
+            left,  # type: str
+            long_text,  # type: str
+    ):  # type: (...) -> None
+        """
+        Displays long text.
+
+        :param left:
+            Left part of the first line.
+
+            Determines the length of left blank indentation for consecutive lines.
+        :param long_text:
+            Long text to display, possibly on several lines.
+        """
+        from ._loggermain import MAIN_LOGGER
+
+        for _line in long_text.splitlines():  # type: str
+            if _line or left.strip():
+                # Regular line display.
+                MAIN_LOGGER.rawoutput(f"{left}{_line}")
+            else:
+                # Avoid printing out the left blank indentation only.
+                MAIN_LOGGER.rawoutput("")
+
+            # Replace `left` by blank indentation for consecutive lines.
+            left = " " * len(left)
 
 
 #: Main instance of :class:`ScenarioLogging`.

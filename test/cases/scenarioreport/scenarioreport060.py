@@ -17,7 +17,7 @@
 import scenario.test
 
 
-class ScenarioReport011(scenario.test.TestCase):
+class ScenarioReport060(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
         from scenarioreport.steps.full import CheckFullScenarioReport
@@ -25,13 +25,20 @@ class ScenarioReport011(scenario.test.TestCase):
 
         scenario.test.TestCase.__init__(
             self,
-            title="Scenario report simple scenario --doc-only",
-            description="Check the scenario report is generated as expected for a simple scenario, executed with the --doc-only option set.",
+            title="Scenario report long texts",
+            description="Check the scenario report is generated as expected for a scenario with long texts.",
         )
         self.verifies(
             scenario.test.reqs.SCENARIO_REPORT,
-            scenario.test.reqs.DOC_ONLY,
+            (scenario.test.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
+            (scenario.test.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
+            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Long texts for requirements link comments"),
+            (scenario.test.reqs.EVIDENCE, "Long texts for evidence"),
         )
 
-        self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, generate_report=True, doc_only=True))
+        self.addstep(ExecScenario(scenario.test.paths.LONG_TEXTS_SCENARIO, generate_report=True))
+        self.knownissue(
+            level=scenario.test.IssueLevel.TEST, id="#83",
+            message="Verification missing for requirement link comments",
+        )
         self.addstep(CheckFullScenarioReport(ExecScenario.getinstance()))

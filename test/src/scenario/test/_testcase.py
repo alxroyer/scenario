@@ -29,7 +29,7 @@ class TestCase(scenario.Scenario):
     def __init__(
             self,
             title,  # type: str
-            description,  # type: str
+            description,  # type: scenario.types.AnyLongText
     ):  # type: (...) -> None
         from ._paths import ROOT_SCENARIO_PATH
 

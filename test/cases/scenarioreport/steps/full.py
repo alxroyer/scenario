@@ -92,6 +92,12 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
                     json_scenario, "$schema", ref=json_scenario_ref,
                     evidence="Schema reference",
                 )
+        if "$version" in json_scenario_ref:
+            if self.RESULT(f"The scenario report gives the file format version it follows."):
+                self.assertjson(
+                    json_scenario, "$version", ref=json_scenario_ref,
+                    evidence="File format version",
+                )
 
         if self.RESULT(f"The scenario report gives the expected test name: '{self._assertjsonref(json_scenario_ref, 'name', type=str)}'."):
             self.assertjson(
@@ -174,6 +180,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
                         evidence=f"Total number of {_executed_stat_types_txt.plural}",
                     )
         else:
+            # Subscenarios.
             if self.RESULT("The report contains no statistics information."):
                 self.assertnotin(
                     "stats", json_scenario,
@@ -389,7 +396,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
         if _start_ref is None:
             if self.RESULT("Start time is not set."):
                 self.assertjson(
-                    json_time, "start", type=None, value=None,
+                    json_time, "start", type=type(None),
                     evidence="Start time",
                 )
         else:
@@ -403,7 +410,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
         if _end_ref is None:
             if self.RESULT("End time is not set."):
                 self.assertjson(
-                    json_time, "end", type=None, value=None,
+                    json_time, "end", type=type(None),
                     evidence="End time",
                 )
         else:
@@ -417,7 +424,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
         if _elapsed_ref is None:
             if self.RESULT("Elapsed time is not set."):
                 self.assertjson(
-                    json_time, "elapsed", type=None, value=None,
+                    json_time, "elapsed", type=type(None),
                     evidence="Elapsed",
                 )
         else:
