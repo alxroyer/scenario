@@ -38,13 +38,13 @@ class ReqManagementArgs(_ArgsImpl):
         _ArgsImpl.__init__(self, class_debugging=True)
 
         #: Input requirement database files.
-        self.reqdb_paths = []  # type: typing.List[Path]
-        self.addarg("Req-db files", "reqdb_paths", Path).define(
+        self.req_db_paths = []  # type: typing.List[Path]
+        self.addarg("Req-db files", "req_db_paths", Path).define(
             "--req-db", metavar="PATH",
             action="append", type=str, default=[],
             help="Requirement database file to load. "
                  "May be called several times. "
-                 "Defaults to 'scenario.reqdb_files' configuration if not set.",
+                 "Defaults to 'scenario.req_db_files' configuration if not set.",
         )
 
         #: Test suite files to load scenarios from.
@@ -106,11 +106,11 @@ class ReqManagementArgs(_ArgsImpl):
 
         # Input options.
         if self.campaign_results_path:
-            if self.reqdb_paths:
+            if self.req_db_paths:
                 MAIN_LOGGER.error("Can't use --req-db with --campaign")
             if self.test_suite_paths:
                 MAIN_LOGGER.error("Can't use --test-suite with --campaign")
-            if self.reqdb_paths or self.test_suite_paths:
+            if self.req_db_paths or self.test_suite_paths:
                 return False
 
         # Output options.
@@ -119,7 +119,7 @@ class ReqManagementArgs(_ArgsImpl):
             return False
 
         # --serve option.
-        if self.serve and (self.reqdb_paths or self.test_suite_paths or self.campaign_results_path):
+        if self.serve and (self.req_db_paths or self.test_suite_paths or self.campaign_results_path):
             MAIN_LOGGER.error("Can't use --serve with --req-db, --test-suite or --campaign input options")
             return False
         if self.serve and (self.downstream_traceability_outfile or self.upstream_traceability_outfile):

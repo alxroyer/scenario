@@ -24,7 +24,7 @@ if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
 
 
-class CheckCampaignReqdbFile(scenario.test.VerificationStep):
+class CheckCampaignReqDbFile(scenario.test.VerificationStep):
 
     def __init__(
             self,
@@ -42,39 +42,39 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
         self.STEP("Requirement database file content")
 
         # Expected requirements.
-        assert isinstance(self.campaign_expectations.reqdb_file, scenario.Path), "Requirement file missing in campaign expectations"
-        _expected_reqdb = JsonDict.readfile(self.campaign_expectations.reqdb_file)  # type: scenario.types.JsonDict
+        assert isinstance(self.campaign_expectations.req_db_file, scenario.Path), "Requirement file missing in campaign expectations"
+        _expected_req_db = JsonDict.readfile(self.campaign_expectations.req_db_file)  # type: scenario.types.JsonDict
 
-        _reqdb = {}  # type: scenario.types.JsonDict
+        _req_db = {}  # type: scenario.types.JsonDict
         if self.ACTION("Read the requirement file."):
-            self.evidence(f"Requirement file: {self.getexecstep(ExecCampaign).reqdb_path}")
-            _reqdb = JsonDict.readfile(self.getexecstep(ExecCampaign).reqdb_path)
+            self.evidence(f"Requirement file: {self.getexecstep(ExecCampaign).req_db_path}")
+            _req_db = JsonDict.readfile(self.getexecstep(ExecCampaign).req_db_path)
 
-        def _reqids(reqdb_json):  # type: (scenario.types.JsonDict) -> typing.List[str]
+        def _reqids(req_db_json):  # type: (scenario.types.JsonDict) -> typing.List[str]
             return list(
                 filter(
                     lambda key: key not in ["$license", "$schema", "$version"],
-                    reqdb_json.keys(),
+                    req_db_json.keys(),
                 ),
             )
 
-        _reqs_txt = scenario.text.Countable("requirement", _reqids(_expected_reqdb))  # type: scenario.text.Countable
+        _reqs_txt = scenario.text.Countable("requirement", _reqids(_expected_req_db))  # type: scenario.text.Countable
         if self.RESULT(f"The requirement file contains {len(_reqs_txt)} {_reqs_txt}{_reqs_txt.ifany(':', '.')}"):
             self.assertlen(
-                _reqids(_reqdb), len(_reqids(_expected_reqdb)),
+                _reqids(_req_db), len(_reqids(_expected_req_db)),
                 evidence=True,
             )
 
-        for _req_id in _reqids(_expected_reqdb):  # type: str
-            _expected_req = _expected_reqdb[_req_id]  # type: scenario.types.JsonDict
+        for _req_id in _reqids(_expected_req_db):  # type: str
+            _expected_req = _expected_req_db[_req_id]  # type: scenario.types.JsonDict
             _req = {}  # type: scenario.types.JsonDict
             if self.RESULT(f"- {_req_id}"):
                 self.assertin(
-                    _req_id, _reqdb,
+                    _req_id, _req_db,
                     evidence=True,
                 )
-                _req = _reqdb[_req_id]
-                del _reqdb[_req_id]
+                _req = _req_db[_req_id]
+                del _req_db[_req_id]
             with scenario.logging.pushindentation("  "):
                 if self.RESULT(f"with id: {_expected_req['id']}"):
                     self.assertin("id", _req, evidence=False)
@@ -82,7 +82,7 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
                         _req["id"], _expected_req["id"],
                         evidence=True,
                     )
-                if self.campaign_expectations.reqdb_file_titles_and_texts is True:
+                if self.campaign_expectations.req_db_file_titles_and_texts is True:
                     if self.RESULT(f"with title: {_expected_req['title']}"):
                         self.assertin("title", _req, evidence=False)
                         self.assertequal(
@@ -95,7 +95,7 @@ class CheckCampaignReqdbFile(scenario.test.VerificationStep):
                             _req["text"], _expected_req["text"],
                             evidence=True,
                         )
-                elif self.campaign_expectations.reqdb_file_titles_and_texts is False:
+                elif self.campaign_expectations.req_db_file_titles_and_texts is False:
                     if self.RESULT(f"without title"):
                         if "title" in _req:
                             self.assertisempty(

@@ -24,7 +24,7 @@ class Campaign001(scenario.test.TestCase):
         from campaigns.steps.execution import ExecCampaign
         from campaigns.steps.log import CheckCampaignLogExpectations
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
-        from campaigns.steps.reqdbfile import CheckCampaignReqdbFile
+        from campaigns.steps.reqdbfile import CheckCampaignReqDbFile
         from campaigns.steps.scenarioreports import CheckCampaignScenarioReports
         from steps.common import CheckFinalResultsLogExpectations, ParseFinalResultsLog
 
@@ -69,7 +69,7 @@ class Campaign001(scenario.test.TestCase):
             error_details=True, stats=True,
         )
         assert _campaign_expectations.all_test_case_expectations
-        _campaign_expectations.reqdbfile(scenario.test.paths.REQDB_FILE)
+        _campaign_expectations.reqdbfile(scenario.test.paths.REQ_DB_FILE)
 
         # Verifications.
         self.addstep(CheckCampaignLogExpectations(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
@@ -117,7 +117,7 @@ class Campaign001(scenario.test.TestCase):
             (scenario.test.reqs.ERROR_HANDLING, "Scenario errors saved in campaign report content"),
             (scenario.test.reqs.KNOWN_ISSUES, "Known issues saved in campaign report content"),
         )
-        self.addstep(CheckCampaignReqdbFile(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
+        self.addstep(CheckCampaignReqDbFile(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
             (scenario.test.reqs.CAMPAIGN_REPORTS, "Requirement file content in campaign output files"),
             (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirement file content in campaign output files"),
         )

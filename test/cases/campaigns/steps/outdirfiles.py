@@ -69,8 +69,8 @@ class CampaignOutdirFilesManager:
         return self._campaign_execution.campaign_report_path
 
     @property
-    def reqdb_path(self):  # type: () -> scenario.Path
-        return self._campaign_execution.reqdb_path
+    def req_db_path(self):  # type: () -> scenario.Path
+        return self._campaign_execution.req_db_path
 
 
 class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
@@ -119,23 +119,23 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
             )
 
         # Requirement file.
-        if self.campaign_expectations.reqdb_file:
+        if self.campaign_expectations.req_db_file:
             if self.RESULT("The directory contains a '.json' requirement file."):
                 self._assertoutfile(
-                    self._outfiles.reqdb_path,
+                    self._outfiles.req_db_path,
                     evidence="Requirement file",
                 )
-        elif self.campaign_expectations.reqdb_file is False:
+        elif self.campaign_expectations.req_db_file is False:
             if self.RESULT("The directory contains no '.json' requirement file."):
                 self.assertnotexists(
-                    self._outfiles.reqdb_path,
+                    self._outfiles.req_db_path,
                     evidence="Requirement file",
                 )
 
         # No other file.
         if all([
             self.campaign_expectations.test_suite_expectations is not None,
-            self.campaign_expectations.reqdb_file,
+            self.campaign_expectations.req_db_file,
         ]):
             if self.RESULT("The directory contains no other file."):
                 self.assertisempty(

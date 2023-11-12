@@ -23,7 +23,7 @@ class Campaign006(scenario.test.TestCase):
     def __init__(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign
         from campaigns.steps.outdirfiles import CheckCampaignOutdirFiles
-        from campaigns.steps.reqdbfile import CheckCampaignReqdbFile
+        from campaigns.steps.reqdbfile import CheckCampaignReqDbFile
 
         scenario.test.TestCase.__init__(
             self,
@@ -43,25 +43,25 @@ class Campaign006(scenario.test.TestCase):
 
         self.section("Tests without requirements, input requirement file")
         _2 = self.addstep(ExecCampaign([scenario.test.paths.DEMO_TEST_SUITE], config_values={
-            scenario.ConfigKey.REQDB_FILES: scenario.test.paths.REQDB_FILE,
+            scenario.ConfigKey.REQ_DB_FILES: scenario.test.paths.REQ_DB_FILE,
         }))
         _campaign_expectations = scenario.test.CampaignExpectations()  # Type already declared above.
-        _campaign_expectations.reqdbfile(scenario.test.paths.REQDB_FILE, titles_and_texts=True)
+        _campaign_expectations.reqdbfile(scenario.test.paths.REQ_DB_FILE, titles_and_texts=True)
         self.addstep(CheckCampaignOutdirFiles(_2, _campaign_expectations))
-        self.addstep(CheckCampaignReqdbFile(_2, _campaign_expectations))
+        self.addstep(CheckCampaignReqDbFile(_2, _campaign_expectations))
 
         self.section("Tests with requirements, no input requirement file")
         _3 = self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE]))
         _campaign_expectations = scenario.test.CampaignExpectations()  # Type already declared above.
-        _campaign_expectations.reqdbfile(scenario.test.paths.REQDB_FILE, titles_and_texts=False)
+        _campaign_expectations.reqdbfile(scenario.test.paths.REQ_DB_FILE, titles_and_texts=False)
         self.addstep(CheckCampaignOutdirFiles(_3, _campaign_expectations))
-        self.addstep(CheckCampaignReqdbFile(_3, _campaign_expectations))
+        self.addstep(CheckCampaignReqDbFile(_3, _campaign_expectations))
 
         self.section("Tests with requirements, input requirement file")
         _4 = self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], config_values={
-            scenario.ConfigKey.REQDB_FILES: scenario.test.paths.REQDB_FILE,
+            scenario.ConfigKey.REQ_DB_FILES: scenario.test.paths.REQ_DB_FILE,
         }))
         _campaign_expectations = scenario.test.CampaignExpectations()  # Type already declared above.
-        _campaign_expectations.reqdbfile(scenario.test.paths.REQDB_FILE, titles_and_texts=True)
+        _campaign_expectations.reqdbfile(scenario.test.paths.REQ_DB_FILE, titles_and_texts=True)
         self.addstep(CheckCampaignOutdirFiles(_4, _campaign_expectations))
-        self.addstep(CheckCampaignReqdbFile(_4, _campaign_expectations))
+        self.addstep(CheckCampaignReqDbFile(_4, _campaign_expectations))

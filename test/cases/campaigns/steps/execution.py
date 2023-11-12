@@ -72,8 +72,8 @@ class ExecCampaign(_ExecCommonArgsImpl):
         return self.final_outdir_path / "campaign.xml"
 
     @property
-    def reqdb_path(self):  # type: () -> scenario.Path
-        return self.final_outdir_path / "reqdb.json"
+    def req_db_path(self):  # type: () -> scenario.Path
+        return self.final_outdir_path / "req-db.json"
 
     def step(self):  # type: (...) -> None
         # Description already set programmatically.

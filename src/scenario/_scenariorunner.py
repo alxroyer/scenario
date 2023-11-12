@@ -116,9 +116,9 @@ class ScenarioRunner(_LoggerImpl):
             LOGGING_SERVICE.start()
 
             # Load requirements.
-            for _reqdb_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
-                MAIN_LOGGER.info(f"Loading requirements from '{_reqdb_file}'")
-                REQ_DB.load(_reqdb_file)
+            for _req_db_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
+                MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
+                REQ_DB.load(_req_db_file)
 
             # Execute tests.
             _errors = []  # type: typing.List[ErrorCode]

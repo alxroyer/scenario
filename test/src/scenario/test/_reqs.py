@@ -273,7 +273,7 @@ REQUIREMENT_MANAGEMENT = scenario.Req(
 
         Requirements are defined in a requirement database.
         This database can be saved and reloaded throught requirement files
-        (format: JSON or YAML, schema: schema/reqdb.schema.json).
+        (format: JSON or YAML, schema: schema/req-db.schema.json).
 
         Requirements may be traced at different levels:
 

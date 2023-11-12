@@ -55,7 +55,7 @@ class ScenarioReport(_LoggerImpl):
         self._report_path = Path()  # type: Path
 
         #: ``True`` to feed automatically the requirement database with verified requirement references.
-        self._feed_reqdb = False  # type: bool
+        self._feed_req_db = False  # type: bool
 
     def writejsonreport(
             self,
@@ -116,7 +116,7 @@ class ScenarioReport(_LoggerImpl):
     def readjsonreport(
             self,
             report_path,  # type: _AnyPathType
-            feed_reqdb=False,  # type: bool
+            feed_req_db=False,  # type: bool
     ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
         """
         Deprecated.
@@ -125,21 +125,21 @@ class ScenarioReport(_LoggerImpl):
         self.warning(f"ScenarioReport.readjsonreport() deprecated, please use ScenarioReport.readscenarioreport() instead")
         return self.readscenarioreport(
             report_path,
-            feed_reqdb=feed_reqdb,
+            feed_req_db=feed_req_db,
         )
 
     def readscenarioreport(
             self,
             report_path,  # type: _AnyPathType
             *,
-            feed_reqdb=False,  # type: bool
+            feed_req_db=False,  # type: bool
     ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
         """
         Reads the scenario report file.
 
         :param report_path:
             Scenario report path to read.
-        :param feed_reqdb:
+        :param feed_req_db:
             ``True`` to feed automatically the requirement database with verified requirement references.
         :return:
             Scenario data read from the scenario report file.
@@ -158,7 +158,7 @@ class ScenarioReport(_LoggerImpl):
             _json = JsonDict.readfile(self._report_path)  # type: _JsonDictType
 
             # Analyze the JSON content.
-            self._feed_reqdb = feed_reqdb
+            self._feed_req_db = feed_req_db
             _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
 
             return _scenario_definition
@@ -170,7 +170,7 @@ class ScenarioReport(_LoggerImpl):
             # Reset logging indentation and member variables.
             self.resetindentation()
             self._report_path = Path()
-            self._feed_reqdb = False
+            self._feed_req_db = False
 
     def _scenario2json(
             self,
@@ -477,9 +477,9 @@ class ScenarioReport(_LoggerImpl):
             for _json_req_link in json_req_verifier["reqs"]:  # type: _JsonDictType
                 _req_ref_id = _json_req_link["ref"]  # type: str
                 try:
-                    _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_reqdb)  # type: ReqRef
+                    _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: ReqRef
                 except KeyError:
-                    if self._feed_reqdb:
+                    if self._feed_req_db:
                         # Requirement reference should have been added automatically.
                         raise
                     else:

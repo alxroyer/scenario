@@ -66,7 +66,7 @@ class ScenarioConfig(_LoggerImpl):
         # Requirement management.
 
         #: Requirement files to load at the beginning of tests and campaigns. List of strings, or comma-separated string.
-        REQDB_FILES = "scenario.reqdb_files"
+        REQ_DB_FILES = "scenario.req_db_files"
         #: Should the scenario requirement coverage be refined on steps? Boolean value.
         EXPECT_STEP_REQ_REFINEMENT = "scenario.expect_step_req_refinement"
 
@@ -96,7 +96,7 @@ class ScenarioConfig(_LoggerImpl):
         #: Campaign report file name used when reading / writing campaign results. String value. Default is 'campaign.xml'.
         CAMPAIGN_REPORT_FILENAME = "scenario.campaign_report_filename"
         #: Requirement database file name used when reading / writing campaign results. String value. Default is 'req-db-json'.
-        REQDB_FILENAME = "scenario.reqdb_filename"
+        REQ_DB_FILENAME = "scenario.req_db_filename"
         #: Downstream traceability report file name used when reading / writing campaign results. String value. Default is 'req-downstream-traceability.json'.
         DOWNSTREAM_TRACEABILITY_FILENAME = "scenario.downstream_traceability_filename"
         #: Upstream traceability report file name used when reading / writing campaign results. String value. Default is 'req-upstream-traceability.json'.
@@ -273,11 +273,11 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: List of requirement files.
         """
-        _reqdb_files = self._readpathlistfromconf(self.Key.REQDB_FILES)  # type: typing.Sequence[_PathType]
-        self.debug("reqdbfiles() -> %d files", len(_reqdb_files))
-        for _reqdb_file in _reqdb_files:  # type: _PathType
-            self.debug(" -> %r", _reqdb_file)
-        return _reqdb_files
+        _req_db_files = self._readpathlistfromconf(self.Key.REQ_DB_FILES)  # type: typing.Sequence[_PathType]
+        self.debug("reqdbfiles() -> %d files", len(_req_db_files))
+        for _req_db_file in _req_db_files:  # type: _PathType
+            self.debug(" -> %r", _req_db_file)
+        return _req_db_files
 
     def expectedscenarioattributes(self):  # type: (...) -> typing.List[str]
         """
@@ -464,17 +464,17 @@ class ScenarioConfig(_LoggerImpl):
 
         Used when reading or writing campaign results.
 
-        Configurable through :const:`Key.REQDB_FILENAME`.
+        Configurable through :const:`Key.REQ_DB_FILENAME`.
         """
         from ._configdb import CONFIG_DB
 
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
-        _reqdb_filename = (
-            CONFIG_DB.get(self.Key.REQDB_FILENAME, type=str)
+        _req_db_filename = (
+            CONFIG_DB.get(self.Key.REQ_DB_FILENAME, type=str)
             or "req-db.json"
         )  # type: str
-        self.debug("reqdbfilename() -> %r", _reqdb_filename)
-        return _reqdb_filename
+        self.debug("reqdbfilename() -> %r", _req_db_filename)
+        return _req_db_filename
 
     def downstreamtraceabilityfilename(self):  # type: (...) -> str
         """

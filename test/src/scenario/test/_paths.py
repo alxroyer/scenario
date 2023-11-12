@@ -58,7 +58,7 @@ DEMO_TEST_SUITE = DEMO_PATH / "demo.suite"  # type: scenario.Path
 TEST_DATA_TEST_SUITE = DATA_PATH / "test-data.suite"  # type: scenario.Path
 
 # Requirement files.
-REQDB_FILE = DATA_PATH / "reqdb.json"  # type: scenario.Path
+REQ_DB_FILE = DATA_PATH / "req-db.json"  # type: scenario.Path
 
 
 def datapath(

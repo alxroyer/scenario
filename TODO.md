@@ -19,7 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Clarify "reqdb" v/s "req_db" terminology.
         - Make `ScenarioReport.readscenarioreport()` and `CampaignReport.readcampaignreport()` not return `None` but raise exceptions.
         - Issue #xxx: Reduce campaign results time: don't repeat scenario log if already given in a .log file.
         - Issue #xxx: Invalid XML Junit report files when reading with a regular browser (but not from Python...):

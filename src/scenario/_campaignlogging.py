@@ -182,8 +182,8 @@ class CampaignLogging:
         MAIN_LOGGER.rawoutput("END OF CAMPAIGN")
         MAIN_LOGGER.rawoutput("------------------------------------------------")
         MAIN_LOGGER.rawoutput(f"          JUnit campaign report: {campaign_execution.campaign_report_path}")
-        if campaign_execution.reqdb_path.is_file():
-            MAIN_LOGGER.rawoutput(f"                   Requirements: {campaign_execution.reqdb_path}")
+        if campaign_execution.req_db_path.is_file():
+            MAIN_LOGGER.rawoutput(f"                   Requirements: {campaign_execution.req_db_path}")
         if campaign_execution.downstream_traceability_path.is_file():
             MAIN_LOGGER.rawoutput(f"        Downstream traceability: {campaign_execution.downstream_traceability_path}")
         if campaign_execution.upstream_traceability_path.is_file():

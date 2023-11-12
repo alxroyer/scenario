@@ -74,7 +74,7 @@ class ReqManagement(_LoggerImpl):
                 REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_results_path)
             else:
                 REQ_TRACEABILITY.loaddatafromfiles(
-                    reqdb_file_paths=ReqManagementArgs.getinstance().reqdb_paths or None,
+                    req_db_file_paths=ReqManagementArgs.getinstance().req_db_paths or None,
                     test_suite_paths=ReqManagementArgs.getinstance().test_suite_paths or None,
                 )
         except Exception as _err:

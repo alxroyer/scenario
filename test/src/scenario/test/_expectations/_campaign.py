@@ -27,8 +27,8 @@ if typing.TYPE_CHECKING:
 class CampaignExpectations:
     def __init__(self):  # type: (...) -> None
         self.test_suite_expectations = None  # type: typing.Optional[typing.List[_TestSuiteExpectationsType]]
-        self.reqdb_file = None  # type: typing.Optional[typing.Union[scenario.Path, bool]]
-        self.reqdb_file_titles_and_texts = None  # type: typing.Optional[bool]
+        self.req_db_file = None  # type: typing.Optional[typing.Union[scenario.Path, bool]]
+        self.req_db_file_titles_and_texts = None  # type: typing.Optional[bool]
 
     def addtestsuite(
             self,
@@ -47,8 +47,8 @@ class CampaignExpectations:
             titles_and_texts=None,  # type: bool
     ):  # type: (...) -> None
         assert expect is not True, f"Please provide a requirement file"
-        self.reqdb_file = expect
-        self.reqdb_file_titles_and_texts = titles_and_texts
+        self.req_db_file = expect
+        self.req_db_file_titles_and_texts = titles_and_texts
 
     @property
     def all_test_case_expectations(self):  # type: () -> typing.Optional[typing.List[_ScenarioExpectationsType]]

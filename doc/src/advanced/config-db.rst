@@ -305,10 +305,10 @@ The following table describes the `scenario` configurable keys & values.
       -
       -
 
-    * - .. _config-db.scenario.reqdb_files:
+    * - .. _config-db.scenario.req_db_files:
 
-        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQDB_FILES`
-      - ``scenario.reqdb_files``
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILES`
+      - ``scenario.req_db_files``
       - List of strings (or comma-separated string)
       - List of requirement files to load.
 
@@ -408,10 +408,10 @@ The following table describes the `scenario` configurable keys & values.
       - Campaign report file name used when reading / writing campaign results.
       - 'campaign.xml'
 
-    * - .. _config-db.scenario.reqdb_filename:
+    * - .. _config-db.scenario.req_db_filename:
 
-        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQDB_FILENAME`
-      - ``scenario.reqdb_filename``
+        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILENAME`
+      - ``scenario.req_db_filename``
       - String
       - Requirement database file name used when reading / writing campaign results.
       - 'req-db.json'

@@ -56,7 +56,7 @@ class CampaignExecution:
         #: Campaign report path, when explicitly set.
         self._campaign_report_path = None  # type: typing.Optional[Path]
         #: Requirement database file path, when explicitly set.
-        self._reqdb_path = None  # type: typing.Optional[Path]
+        self._req_db_path = None  # type: typing.Optional[Path]
         #: Downstream traceability file path, when explicitly set.
         self._downstream_traceability_path = None  # type: typing.Optional[Path]
         #: Upstream traceability file path, when explicitly set.
@@ -98,7 +98,7 @@ class CampaignExecution:
         self._campaign_report_path = path
 
     @property
-    def reqdb_path(self):  # type: () -> _PathType
+    def req_db_path(self):  # type: () -> _PathType
         """
         Requirement database file path getter.
 
@@ -108,20 +108,20 @@ class CampaignExecution:
         from ._reqdb import ReqDatabase
         from ._scenarioconfig import SCENARIO_CONFIG
 
-        if self._reqdb_path is None:
-            self._reqdb_path = self._guessfilepath(
+        if self._req_db_path is None:
+            self._req_db_path = self._guessfilepath(
                 file_description="requirement database",
                 default_filename=SCENARIO_CONFIG.reqdbfilename(),
                 match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
             )
-        return self._reqdb_path
+        return self._req_db_path
 
-    @reqdb_path.setter
-    def reqdb_path(self, path):  # type: (_PathType) -> None
+    @req_db_path.setter
+    def req_db_path(self, path):  # type: (_PathType) -> None
         """
         Requirement database file path setter.
         """
-        self._reqdb_path = path
+        self._req_db_path = path
 
     @property
     def downstream_traceability_path(self):  # type: () -> _PathType
@@ -582,7 +582,7 @@ class ReportFileReader:
         from ._scenarioreport import SCENARIO_REPORT
 
         if self.path:
-            self.content = SCENARIO_REPORT.readscenarioreport(self.path, feed_reqdb=True)
+            self.content = SCENARIO_REPORT.readscenarioreport(self.path, feed_req_db=True)
         else:
             MAIN_LOGGER.error("No scenario report path to read")
         return self.content is not None

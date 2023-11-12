@@ -25,7 +25,7 @@ class ReqScenario1(scenario.Scenario):
         try:
             scenario.req_db.getreq("REQ-001")
         except KeyError:
-            scenario.req_db.load(scenario.test.paths.datapath("reqdb.json"))
+            scenario.req_db.load(scenario.test.paths.REQ_DB_FILE)
 
         scenario.Scenario.__init__(
             self,

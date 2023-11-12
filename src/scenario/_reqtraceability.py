@@ -55,7 +55,7 @@ class ReqTraceability(_LoggerImpl):
     def loaddatafromfiles(
             self,
             *,
-            reqdb_file_paths=None,  # type: typing.Iterable[_PathType]
+            req_db_file_paths=None,  # type: typing.Iterable[_PathType]
             test_suite_paths=None,  # type: typing.Iterable[_PathType]
             log_info=True,  # type: bool
     ):  # type: (...) -> None
@@ -63,7 +63,7 @@ class ReqTraceability(_LoggerImpl):
         Loads or reloads input data for requirement traceability computation,
         from requirement and/or test suite files.
 
-        :param reqdb_file_paths:
+        :param req_db_file_paths:
             Optional requirement database file to load.
 
             If not set, the :meth:`._scenarioconfig.ScenarioConfig.reqdbfiles()` will be taken into account.
@@ -80,15 +80,15 @@ class ReqTraceability(_LoggerImpl):
         from ._scenariodefinition import ScenarioDefinition, ScenarioDefinitionHelper
         from ._testsuitefile import TestSuiteFile
 
-        self.debug("ReqTraceability.loaddatafromfiles(reqdb_file_paths=%r, test_suite_paths=%r)", reqdb_file_paths, test_suite_paths)
+        self.debug("ReqTraceability.loaddatafromfiles(req_db_file_paths=%r, test_suite_paths=%r)", req_db_file_paths, test_suite_paths)
 
         # Check input arguments.
-        if reqdb_file_paths:
+        if req_db_file_paths:
             # Ensure persistent and countable list.
-            reqdb_file_paths = list(reqdb_file_paths)
+            req_db_file_paths = list(req_db_file_paths)
         else:
             # Default configuration.
-            reqdb_file_paths = SCENARIO_CONFIG.reqdbfiles()
+            req_db_file_paths = SCENARIO_CONFIG.reqdbfiles()
         if test_suite_paths:
             # Ensure persistent and countable list.
             test_suite_paths = list(test_suite_paths)
@@ -104,11 +104,11 @@ class ReqTraceability(_LoggerImpl):
                     MAIN_LOGGER.info("Resetting requirement database")
                 REQ_DB.clear()
 
-            self.debug("Reading %d reqdb file(s)", len(list(reqdb_file_paths)))
-            for _reqdb_file_path in reqdb_file_paths:  # type: _PathType
+            self.debug("Reading %d req-db file(s)", len(list(req_db_file_paths)))
+            for _req_db_file_path in req_db_file_paths:  # type: _PathType
                 if log_info:
-                    MAIN_LOGGER.info(f"Loading '{_reqdb_file_path}'")
-                REQ_DB.load(_reqdb_file_path)
+                    MAIN_LOGGER.info(f"Loading '{_req_db_file_path}'")
+                REQ_DB.load(_req_db_file_path)
 
             _req_ref_count = len(REQ_DB.getallrefs())  # type: int
             if log_info:
@@ -190,7 +190,7 @@ class ReqTraceability(_LoggerImpl):
             try:
                 _campaign_execution = Assertions.assertisnotnone(CAMPAIGN_REPORT.readcampaignreport(
                     _campaign_report_path,
-                    feed_reqdb=True,
+                    feed_req_db=True,
                     read_scenario_reports=True,
                 ))  # type: CampaignExecution
             except AssertionError:

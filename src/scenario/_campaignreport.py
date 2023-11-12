@@ -73,7 +73,7 @@ class CampaignReport(_LoggerImpl):
         self._report_path = Path()  # type: Path
 
         #: Flag set to ``True`` when the requirement database should be fed with the requirement database file read from campaign results.
-        self._feed_reqdb = False  # type: bool
+        self._feed_req_db = False  # type: bool
         #: Flag set to ``True`` when scenario log files should be automatically read.
         self._read_scenario_logs = False  # type: bool
         #: Falg set to ``True`` when scenario report files should be automatically read.
@@ -144,7 +144,7 @@ class CampaignReport(_LoggerImpl):
         self.warning(f"CampaignReport.readjunitreport() deprecated, please use CampaignReport.readcampaignreport() instead")
         return self.readcampaignreport(
             junit_path,
-            feed_reqdb=False,
+            feed_req_db=False,
             read_scenario_logs=True,
             read_scenario_reports=True,
         )
@@ -153,7 +153,7 @@ class CampaignReport(_LoggerImpl):
             self,
             report_path,  # type: _AnyPathType
             *,
-            feed_reqdb=False,  # type: bool
+            feed_req_db=False,  # type: bool
             read_scenario_logs=False,  # type: bool
             read_scenario_reports=False,  # type: bool
     ):  # type: (...) -> typing.Optional[_CampaignExecutionType]
@@ -162,7 +162,7 @@ class CampaignReport(_LoggerImpl):
 
         :param report_path:
             Path of the campaign report file to read.
-        :param feed_reqdb:
+        :param feed_req_db:
             ``True`` to feed automatically the requirement database with verified requirement references.
         :param read_scenario_logs:
             ``True`` to read automatically scenario log files.
@@ -185,7 +185,7 @@ class CampaignReport(_LoggerImpl):
             _xml_doc = Xml.Document.read(self._report_path)  # type: Xml.Document
 
             # Analyze the JUnit XML content.
-            self._feed_reqdb = feed_reqdb
+            self._feed_req_db = feed_req_db
             self._read_scenario_logs = read_scenario_logs
             self._read_scenario_reports = read_scenario_reports
             _campaign_execution = self._xml2campaign(_xml_doc)  # type: _CampaignExecutionType
@@ -199,7 +199,7 @@ class CampaignReport(_LoggerImpl):
             # Reset logging indentation and member variables.
             self.resetindentation()
             self._report_path = Path()
-            self._feed_reqdb = False
+            self._feed_req_db = False
             self._read_scenario_logs = False
             self._read_scenario_reports = False
 
@@ -258,10 +258,10 @@ class CampaignReport(_LoggerImpl):
 
         # /testsuites/link nodes (note: non JUnit standard):
         # /testsuites/link[@rel='req-db']:
-        if campaign_execution.reqdb_path.is_file():
-            _xml_reqdb_link = _xml_test_suites.appendchild(self._path2xmllink(
+        if campaign_execution.req_db_path.is_file():
+            _xml_req_db_link = _xml_test_suites.appendchild(self._path2xmllink(
                 xml_doc,
-                campaign_execution.reqdb_path,
+                campaign_execution.req_db_path,
                 CampaignReport.LinkPurpose.REQ_DB,
             ))  # type: Xml.Node
         # /testsuites/link[@rel='req-downstream-traceability']:
@@ -327,12 +327,12 @@ class CampaignReport(_LoggerImpl):
         for _xml_link in _xml_test_suites.getchildren("link"):  # type: Xml.Node
             _link_purpose = _xml_link.getattr("rel")  # type: str
             if _link_purpose == CampaignReport.LinkPurpose.REQ_DB:
-                _campaign_execution.reqdb_path = self._xmlattr2path(_xml_link, "href")
-                self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.reqdb_path)
-                if self._feed_reqdb:
+                _campaign_execution.req_db_path = self._xmlattr2path(_xml_link, "href")
+                self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.req_db_path)
+                if self._feed_req_db:
                     # Read the requirement database file by the way.
-                    self.debug("Feeding requirement database from '%s'", _campaign_execution.reqdb_path)
-                    REQ_DB.load(_campaign_execution.reqdb_path)
+                    self.debug("Feeding requirement database from '%s'", _campaign_execution.req_db_path)
+                    REQ_DB.load(_campaign_execution.req_db_path)
             elif _link_purpose == CampaignReport.LinkPurpose.DOWNSTREAM_TRACEABILITY:
                 _campaign_execution.downstream_traceability_path = self._xmlattr2path(_xml_link, "href")
                 self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.downstream_traceability_path)

@@ -56,7 +56,7 @@ class ReqDatabase(_LoggerImpl):
     """
 
     #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
-    JSON_SCHEMA_SUBPATH = "schemas/reqdb.schema.json"  # type: str
+    JSON_SCHEMA_SUBPATH = "schemas/req-db.schema.json"  # type: str
 
     def __init__(self):  # type: (...) -> None
         """
@@ -79,33 +79,33 @@ class ReqDatabase(_LoggerImpl):
 
     def load(
             self,
-            reqdb_file,  # type: _PathType
+            req_db_file,  # type: _PathType
     ):  # type: (...) -> None
         """
         Load requirements from a JSON file.
 
-        :param reqdb_file: JSON file to read.
+        :param req_db_file: JSON file to read.
         """
         from ._jsondictutils import JsonDict
         from ._req import Req
         from ._reqref import ReqRef
 
         # Read the JSON file.
-        self.debug("Reading '%s'", reqdb_file)
-        _reqdb_json = JsonDict.readfile(reqdb_file)  # type: _JsonDictType
+        self.debug("Reading '%s'", req_db_file)
+        _req_db_json = JsonDict.readfile(req_db_file)  # type: _JsonDictType
 
         # Feed the database from the JSON content.
-        for _key in _reqdb_json:  # type: str
+        for _key in _req_db_json:  # type: str
             if _key.startswith("$"):
                 continue
             _req_id = _key  # type: str
 
-            _req_json = _reqdb_json[_req_id]  # type: _JsonDictType
+            _req_json = _req_db_json[_req_id]  # type: _JsonDictType
 
             # Check requirement id redundancy in the input file.
             if _req_id != _req_json["id"]:
                 self.warning(
-                    f"{reqdb_file}: Requirement id mismatch: {_req_id!r} (JSON key) != {_req_json['id']!r} (\"id\" field), "
+                    f"{req_db_file}: Requirement id mismatch: {_req_id!r} (JSON key) != {_req_json['id']!r} (\"id\" field), "
                     f"keeping {_req_json['id']!r}"
                 )
 
@@ -123,20 +123,20 @@ class ReqDatabase(_LoggerImpl):
 
     def dump(
             self,
-            reqdb_file,  # type: _PathType
+            req_db_file,  # type: _PathType
     ):  # type: (...) -> None
         """
         Dump the requirement database to a JSON file.
 
-        :param reqdb_file: JSON file to write.
+        :param req_db_file: JSON file to write.
         """
         from ._jsondictutils import JsonDict
 
         # Build JSON content from requirement information stored in the database.
-        _reqdb_json = {}  # type: _JsonDictType
+        _req_db_json = {}  # type: _JsonDictType
 
         for _req in self.getallreqs():  # type: _ReqType
-            _reqdb_json[_req.id] = {
+            _req_db_json[_req.id] = {
                 "id": _req.id,
                 "title": _req.title,
                 "text": _req.text,
@@ -144,11 +144,11 @@ class ReqDatabase(_LoggerImpl):
             }
 
         # Write the JSON file.
-        self.debug(f"Writing {reqdb_file}")
+        self.debug(f"Writing {req_db_file}")
         JsonDict.writefile(
             schema_subpath=ReqDatabase.JSON_SCHEMA_SUBPATH,
-            content=_reqdb_json,
-            output_path=reqdb_file,
+            content=_req_db_json,
+            output_path=req_db_file,
         )
 
     @typing.overload
