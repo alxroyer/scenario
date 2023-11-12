@@ -45,10 +45,7 @@ class CheckCampaignReport(scenario.test.VerificationStep):
         _campaign_execution = scenario.CampaignExecution(outdir=None)  # type: scenario.CampaignExecution
         if self.ACTION("Read the .xml campaign report file."):
             self.evidence(f"Campaign report path: '{self.getexecstep(ExecCampaign).campaign_report_path}'")
-            _campaign_execution = self.assertisnotnone(
-                scenario.campaign_report.readcampaignreport(self.getexecstep(ExecCampaign).campaign_report_path),
-                evidence="Campaign report successfully read",
-            )
+            _campaign_execution = scenario.campaign_report.readcampaignreport(self.getexecstep(ExecCampaign).campaign_report_path)
 
         if self.campaign_expectations.test_suite_expectations is not None:
             _test_suites_txt = scenario.text.Countable("test suite", self.campaign_expectations.test_suite_expectations)  # type: scenario.text.Countable

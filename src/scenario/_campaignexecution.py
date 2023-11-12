@@ -572,17 +572,12 @@ class ReportFileReader:
         #: Scenario execution data read from the test case JSON file.
         self.content = None  # type: typing.Optional[ScenarioDefinition]
 
-    def read(self):  # type: (...) -> bool
+    def read(self):  # type: (...) -> None
         """
         Read the scenario report.
-
-        :return: ``True`` when the scenario report file could be read and parsed successfully, ``False`` otherwise.
         """
-        from ._loggermain import MAIN_LOGGER
         from ._scenarioreport import SCENARIO_REPORT
 
-        if self.path:
-            self.content = SCENARIO_REPORT.readscenarioreport(self.path, feed_req_db=True)
-        else:
-            MAIN_LOGGER.error("No scenario report path to read")
-        return self.content is not None
+        if not self.path:
+            raise FileNotFoundError("No scenario report to read")
+        self.content = SCENARIO_REPORT.readscenarioreport(self.path, feed_req_db=True)

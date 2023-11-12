@@ -129,9 +129,11 @@ class CampaignRunner(_LoggerImpl):
                 REQ_TRACEABILITY.writeupstream(_campaign_execution.upstream_traceability_path, log_info=False)
 
             # Eventually write the JUnit campaign report (depends on requirement files generated before).
-            if not CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path):
-                MAIN_LOGGER.error(f"Error while writing '{_campaign_execution.campaign_report_path}'")
-                return ErrorCode.INTERNAL_ERROR
+            try:
+                CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
+            except Exception as _err:
+                MAIN_LOGGER.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
+                return ErrorCode.fromexception(_err)
 
             # Final logging (after reports generation).
             CAMPAIGN_LOGGING.endcampaign(_campaign_execution)

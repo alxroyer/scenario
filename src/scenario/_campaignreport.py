@@ -88,25 +88,31 @@ class CampaignReport(_LoggerImpl):
         Deprecated.
         Use :meth:`writecampaignreport()` instead.
         """
+        from ._loggermain import MAIN_LOGGER
+
         self.warning("CampaignReport.writejunitreport() deprecated, please use CampaignReport.writecampaignreport() instead")
-        return self.writecampaignreport(
-            campaign_execution,
-            junit_path,
-        )
+        try:
+            self.writecampaignreport(
+                campaign_execution,
+                junit_path,
+            )
+            return True
+        except Exception as _err:
+            MAIN_LOGGER.error(f"Could not write report '{junit_path}': {_err}")
+            self.debug("Exception", exc_info=sys.exc_info())
+            return False
 
     def writecampaignreport(
             self,
             campaign_execution,  # type: _CampaignExecutionType
             report_path,  # type: _AnyPathType
-    ):  # type: (...) -> bool
+    ):  # type: (...) -> None
         """
         Generates a JUnit XML campaign report file.
 
         :param campaign_execution: Campaign execution to generate the report for.
         :param report_path: Path to write the campaign report into.
-        :return: ``True`` for success, ``False`` otherwise.
         """
-        from ._loggermain import MAIN_LOGGER
         from ._path import Path
         from ._xmlutils import Xml
 
@@ -122,12 +128,6 @@ class CampaignReport(_LoggerImpl):
 
             # Generate the JUnit XML outfile.
             _xml_doc.write(self._report_path)
-
-            return True
-        except Exception as _err:
-            MAIN_LOGGER.error(f"Could not write report '{report_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
-            return False
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
@@ -141,13 +141,20 @@ class CampaignReport(_LoggerImpl):
         Deprecated.
         Use :meth:`readcampaignreport()` instead.
         """
+        from ._loggermain import MAIN_LOGGER
+
         self.warning(f"CampaignReport.readjunitreport() deprecated, please use CampaignReport.readcampaignreport() instead")
-        return self.readcampaignreport(
-            junit_path,
-            feed_req_db=False,
-            read_scenario_logs=True,
-            read_scenario_reports=True,
-        )
+        try:
+            return self.readcampaignreport(
+                junit_path,
+                feed_req_db=False,
+                read_scenario_logs=True,
+                read_scenario_reports=True,
+            )
+        except Exception as _err:
+            MAIN_LOGGER.error(f"Could not read campaign report '{junit_path}': {_err}")
+            self.debug("Exception", exc_info=sys.exc_info())
+            return None
 
     def readcampaignreport(
             self,
@@ -156,7 +163,7 @@ class CampaignReport(_LoggerImpl):
             feed_req_db=False,  # type: bool
             read_scenario_logs=False,  # type: bool
             read_scenario_reports=False,  # type: bool
-    ):  # type: (...) -> typing.Optional[_CampaignExecutionType]
+    ):  # type: (...) -> _CampaignExecutionType
         """
         Reads a JUnit XML campaign report file.
 
@@ -170,9 +177,7 @@ class CampaignReport(_LoggerImpl):
             ``True`` to read automatically scenario report files.
         :return:
             Campaign execution data read from the JUnit file.
-            ``None`` when the file could not be read, or its content could not be parsed successfully.
         """
-        from ._loggermain import MAIN_LOGGER
         from ._path import Path
         from ._xmlutils import Xml
 
@@ -191,10 +196,6 @@ class CampaignReport(_LoggerImpl):
             _campaign_execution = self._xml2campaign(_xml_doc)  # type: _CampaignExecutionType
 
             return _campaign_execution
-        except Exception as _err:
-            MAIN_LOGGER.error(f"Could not read campaign report '{report_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
-            return None
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()

@@ -160,8 +160,6 @@ class ReqTraceability(_LoggerImpl):
         :param log_info:
             ``True`` (by default) to generate info logging.
         """
-        from ._assertions import Assertions
-        from ._errcodes import ErrorCode, ErrorCodeError
         from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
         from ._campaignreport import CAMPAIGN_REPORT
         from ._loggermain import MAIN_LOGGER
@@ -187,14 +185,11 @@ class ReqTraceability(_LoggerImpl):
 
             if log_info:
                 MAIN_LOGGER.info(f"Loading campaign results from '{_campaign_report_path}'")
-            try:
-                _campaign_execution = Assertions.assertisnotnone(CAMPAIGN_REPORT.readcampaignreport(
-                    _campaign_report_path,
-                    feed_req_db=True,
-                    read_scenario_reports=True,
-                ))  # type: CampaignExecution
-            except AssertionError:
-                raise ErrorCodeError(ErrorCode.INPUT_FORMAT_ERROR, f"Error while loading data from '{_campaign_report_path}'")
+            _campaign_execution = CAMPAIGN_REPORT.readcampaignreport(
+                _campaign_report_path,
+                feed_req_db=True,
+                read_scenario_reports=True,
+            )  # type: CampaignExecution
 
             if log_info:
                 _req_ref_count = len(REQ_DB.getallrefs())  # type: int

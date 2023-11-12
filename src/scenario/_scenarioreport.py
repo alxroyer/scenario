@@ -66,26 +66,32 @@ class ScenarioReport(_LoggerImpl):
         Deprecated.
         Use :meth:`writescenarioreport()` instead.
         """
+        from ._loggermain import MAIN_LOGGER
+
         self.warning(f"ScenarioReport.writejsonreport() deprecated, please use ScenarioReport.writescenarioreport() instead")
-        return self.writescenarioreport(
-            scenario_definition,
-            report_path,
-        )
+        try:
+            self.writescenarioreport(
+                scenario_definition,
+                report_path,
+            )
+            return True
+        except Exception as _err:
+            MAIN_LOGGER.error(f"Could not write report '{self._report_path}': {_err}")
+            self.debug("Exception", exc_info=sys.exc_info())
+            return False
 
     def writescenarioreport(
             self,
             scenario_definition,  # type: _ScenarioDefinitionType
             report_path,  # type: _AnyPathType
-    ):  # type: (...) -> bool
+    ):  # type: (...) -> None
         """
         Generates the scenario report output file for the given scenario execution.
 
         :param scenario_definition: Scenario to generate the scenario report for.
         :param report_path: Path to write the scenario report into.
-        :return: ``True`` for success, ``False`` otherwise.
         """
         from ._jsondictutils import JsonDict
-        from ._loggermain import MAIN_LOGGER
         from ._path import Path
 
         try:
@@ -102,12 +108,6 @@ class ScenarioReport(_LoggerImpl):
                 content=_json,
                 output_path=self._report_path,
             )
-
-            return True
-        except Exception as _err:
-            MAIN_LOGGER.error(f"Could not write report '{self._report_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
-            return False
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
@@ -122,18 +122,25 @@ class ScenarioReport(_LoggerImpl):
         Deprecated.
         Use :meth:`readscenarioreport()` instead.
         """
+        from ._loggermain import MAIN_LOGGER
+
         self.warning(f"ScenarioReport.readjsonreport() deprecated, please use ScenarioReport.readscenarioreport() instead")
-        return self.readscenarioreport(
-            report_path,
-            feed_req_db=feed_req_db,
-        )
+        try:
+            return self.readscenarioreport(
+                report_path,
+                feed_req_db=feed_req_db,
+            )
+        except Exception as _err:
+            MAIN_LOGGER.error(f"Could not read report '{self._report_path}': {_err}")
+            self.debug("Exception", exc_info=sys.exc_info())
+            return None
 
     def readscenarioreport(
             self,
             report_path,  # type: _AnyPathType
             *,
             feed_req_db=False,  # type: bool
-    ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
+    ):  # type: (...) -> _ScenarioDefinitionType
         """
         Reads the scenario report file.
 
@@ -143,10 +150,8 @@ class ScenarioReport(_LoggerImpl):
             ``True`` to feed automatically the requirement database with verified requirement references.
         :return:
             Scenario data read from the scenario report file.
-            ``None`` when the file could not be read, or its content could not be parsed successfully.
         """
         from ._jsondictutils import JsonDict
-        from ._loggermain import MAIN_LOGGER
         from ._path import Path
 
         try:
@@ -162,10 +167,6 @@ class ScenarioReport(_LoggerImpl):
             _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
 
             return _scenario_definition
-        except Exception as _err:
-            MAIN_LOGGER.error(f"Could not read report '{self._report_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
-            return None
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
