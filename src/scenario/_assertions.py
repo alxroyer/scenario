@@ -165,12 +165,32 @@ class Assertions:
         return obj  # type: ignore[return-value]  ## "Optional[VarItemType]", expected "VarItemType"
 
     @staticmethod
+    @typing.overload
     def assertisinstance(
-            obj,  # type: typing.Optional[_VarItemType]
-            type,  # type: _TypeOrTypesType  # noqa  ## Shadows built-in name 'type'
+            obj,  # type: typing.Any
+            type,  # type: typing.Type[_VarItemType]  # noqa  ## Shadows built-in name 'type'
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
     ):  # type: (...) -> _VarItemType
+        ...
+
+    @staticmethod
+    @typing.overload
+    def assertisinstance(
+            obj,  # type: typing.Optional[_VarItemType]
+            type,  # type: typing.Sequence[type]  # noqa  ## Shadows built-in name 'type'
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
+    ):  # type: (...) -> _VarItemType
+        ...
+
+    @staticmethod
+    def assertisinstance(
+            obj,  # type: typing.Any
+            type,  # type: _TypeOrTypesType  # noqa  ## Shadows built-in name 'type'
+            err=None,  # type: _ErrParamType
+            evidence=False,  # type: _EvidenceParamType
+    ):  # type: (...) -> typing.Any
         """
         Checks whether the object is of the given type, or one of the given types.
 
@@ -193,7 +213,7 @@ class Assertions:
             evidence,
             "%s is an instance of %s", saferepr(obj), saferepr(type),
         )
-        return obj  # type: ignore[return-value]  ## "Optional[VarItemType]", expected "VarItemType"
+        return obj
 
     @staticmethod
     def assertisnotinstance(
