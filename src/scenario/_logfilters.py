@@ -60,13 +60,13 @@ class LoggerLogFilter(logging.Filter):
 
         Checks whether the log record should be filtered out due to the attached :class:`._logger.Logger` configuration.
         """
-        from ._logextradata import LogExtraData
+        from ._logextradata import LogExtraData, LogExtraDataHelper
 
         # Ensure the current logger reference is set in the record as an extra data so that `LogFormatter` knows about it.
         # Ensure class loggers prevail on the main logger.
-        _logger = LogExtraData.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
+        _logger = LogExtraDataHelper.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
         if (not _logger) or (not _logger.log_class):
-            LogExtraData.set(record, LogExtraData.CURRENT_LOGGER, self._logger)
+            LogExtraDataHelper.set(record, LogExtraData.CURRENT_LOGGER, self._logger)
 
         # Log level filtering.
         if record.levelno <= logging.DEBUG:

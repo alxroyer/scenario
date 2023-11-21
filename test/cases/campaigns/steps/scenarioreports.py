@@ -61,7 +61,7 @@ class CheckCampaignScenarioReports(scenario.test.VerificationStep):
                     assert _report_path is not None
                     _json = JsonDict.readfile(_report_path)
                     self.debug("%s", scenario.debug.jsondump(_json, indent=2),
-                               extra=self.longtext(max_lines=10))
+                               extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
                 self._scenario_report_checker.checkscenarioreport(
                     json_scenario=_json,

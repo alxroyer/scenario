@@ -30,7 +30,18 @@ if typing.TYPE_CHECKING:
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._xmlutils import Xml as _XmlType
+
+
+if typing.TYPE_CHECKING:
+    #: Any object type that provide statistics.
+    _StatObjectType = typing.Union[
+        _CampaignExecutionType,
+        _TestSuiteExecutionType,
+        _TestCaseExecutionType,
+        _ScenarioExecutionType,
+    ]
 
 
 class CampaignReport(_LoggerImpl):
@@ -59,6 +70,17 @@ class CampaignReport(_LoggerImpl):
         SCENARIO_LOG = "log"
         #: Scenario report file link.
         SCENARIO_REPORT = "report"
+
+    class StatAttrName(_StrEnumImpl):
+        """
+        `scenario` specific attribute names for statistics.
+        """
+        STEPS_EXECUTED = "steps-executed"
+        STEPS_TOTAL = "steps-total"
+        ACTIONS_EXECUTED = "actions-executed"
+        ACTIONS_TOTAL = "actions-total"
+        RESULTS_EXECUTED = "results-executed"
+        RESULTS_TOTAL = "results-total"
 
     def __init__(self):  # type: (...) -> None
         """
@@ -250,12 +272,7 @@ class CampaignReport(_LoggerImpl):
         _xml_test_suites.setattr("time", str(campaign_execution.time.elapsed))
 
         # `scenario` statistics, non JUnit standard...
-        _xml_test_suites.setattr("steps-executed", str(campaign_execution.steps.executed))
-        _xml_test_suites.setattr("steps-total", str(campaign_execution.steps.total))
-        _xml_test_suites.setattr("actions-executed", str(campaign_execution.actions.executed))
-        _xml_test_suites.setattr("actions-total", str(campaign_execution.actions.total))
-        _xml_test_suites.setattr("results-executed", str(campaign_execution.results.executed))
-        _xml_test_suites.setattr("results-total", str(campaign_execution.results.total))
+        self._objectstats2xmlattr(_xml_test_suites, campaign_execution)
 
         # /testsuites/link nodes (note: non JUnit standard):
         # /testsuites/link[@rel='req-db']:
@@ -349,12 +366,7 @@ class CampaignReport(_LoggerImpl):
                 _campaign_execution.test_suite_executions.append(self._xml2testsuite(_campaign_execution, _xml_test_suite))
 
         # Eventually check the `scenario` statistics, which are properties of `CampaignExecution`.
-        self._xmlcheckstats(_xml_test_suites, "steps-executed", _campaign_execution.test_suite_executions)
-        self._xmlcheckstats(_xml_test_suites, "steps-total", _campaign_execution.test_suite_executions)
-        self._xmlcheckstats(_xml_test_suites, "actions-total", _campaign_execution.test_suite_executions)
-        self._xmlcheckstats(_xml_test_suites, "actions-executed", _campaign_execution.test_suite_executions)
-        self._xmlcheckstats(_xml_test_suites, "results-total", _campaign_execution.test_suite_executions)
-        self._xmlcheckstats(_xml_test_suites, "results-executed", _campaign_execution.test_suite_executions)
+        self._xmlcheckstats(self._report_path.prettypath, _xml_test_suites, _campaign_execution.test_suite_executions)
 
         return _campaign_execution
 
@@ -380,6 +392,7 @@ class CampaignReport(_LoggerImpl):
         # testsuite/@name:
         # [CUBIC]: "Full (class) name of the test for non-aggregated testsuite documents. Class name without the package for aggregated testsuites documents.
         #           Required"
+        # Only field where we can give the test suite path.
         self._path2xmlattr(_xml_test_suite, "name", test_suite_execution.test_suite_file.path)
 
         # testsuite/@tests:
@@ -425,12 +438,7 @@ class CampaignReport(_LoggerImpl):
         _xml_test_suite.setattr("timestamp", toiso8601(test_suite_execution.time.start) if test_suite_execution.time.start else "")
 
         # `scenario` statistics, non JUnit standard...
-        _xml_test_suite.setattr("steps-executed", str(test_suite_execution.steps.executed))
-        _xml_test_suite.setattr("steps-total", str(test_suite_execution.steps.total))
-        _xml_test_suite.setattr("actions-executed", str(test_suite_execution.actions.executed))
-        _xml_test_suite.setattr("actions-total", str(test_suite_execution.actions.total))
-        _xml_test_suite.setattr("results-executed", str(test_suite_execution.results.executed))
-        _xml_test_suite.setattr("results-total", str(test_suite_execution.results.total))
+        self._objectstats2xmlattr(_xml_test_suite, test_suite_execution)
 
         # /testsuites/testsuite/testcase nodes:
         # [CUBIC]: "testcase can appear multiple times, see /testsuites/testsuite@tests"
@@ -500,12 +508,7 @@ class CampaignReport(_LoggerImpl):
                 _test_suite_execution.test_case_executions.append(self._xml2testcase(_test_suite_execution, _xml_test_case))
 
         # Eventually check the `scenario` statistics, which are properties of `TestSuite`.
-        self._xmlcheckstats(xml_test_suite, "steps-executed", _test_suite_execution.test_case_executions)
-        self._xmlcheckstats(xml_test_suite, "steps-total", _test_suite_execution.test_case_executions)
-        self._xmlcheckstats(xml_test_suite, "actions-total", _test_suite_execution.test_case_executions)
-        self._xmlcheckstats(xml_test_suite, "actions-executed", _test_suite_execution.test_case_executions)
-        self._xmlcheckstats(xml_test_suite, "results-total", _test_suite_execution.test_case_executions)
-        self._xmlcheckstats(xml_test_suite, "results-executed", _test_suite_execution.test_case_executions)
+        self._xmlcheckstats(_test_suite_execution.name, xml_test_suite, _test_suite_execution.test_case_executions)
 
         return _test_suite_execution
 
@@ -548,12 +551,7 @@ class CampaignReport(_LoggerImpl):
         _xml_test_case.setattr("time", str(test_case_execution.time.elapsed))
 
         # `scenario` statistics, non JUnit standard...
-        _xml_test_case.setattr("steps-executed", str(test_case_execution.steps.executed))
-        _xml_test_case.setattr("steps-total", str(test_case_execution.steps.total))
-        _xml_test_case.setattr("actions-executed", str(test_case_execution.actions.executed))
-        _xml_test_case.setattr("actions-total", str(test_case_execution.actions.total))
-        _xml_test_case.setattr("results-executed", str(test_case_execution.results.executed))
-        _xml_test_case.setattr("results-total", str(test_case_execution.results.total))
+        self._objectstats2xmlattr(_xml_test_case, test_case_execution)
 
         # Set references to the log and scenario report outfiles (note: non JUnit standard).
         # testcase/link[@rel='log']:
@@ -585,7 +583,9 @@ class CampaignReport(_LoggerImpl):
                 # which will be set in testcase/failure/@type.
                 _xml_failure.setattr("message", _error.message)
             else:
-                _xml_failure.setattr("message", str(_error))
+                # Don't set the testcase/failure/@message attribute in other cases.
+                # That would just result in duplicating the error text with the node content generated below.
+                pass
 
             # testcase/failure/@type:
             # [CUBIC]: "# The type of the assert."
@@ -610,11 +610,18 @@ class CampaignReport(_LoggerImpl):
         # testcase/system-out:
         # [CUBIC]: "Data that was written to standard out while the test was executed. optional"
         if test_case_execution.log.content is not None:
-            _xml_system_out = _xml_test_case.appendchild(xml_doc.createnode("system-out"))  # type: Xml.Node
-            _xml_system_out.appendchild(xml_doc.createtextnode(self._safestr2xml(test_case_execution.log.content.decode("utf-8"))))
+            # Don't duplicate the information if testcase/link[@rel='log'] already given, with a local file.
+            if not (
+                test_case_execution.log.path
+                and test_case_execution.log.path.is_file()
+                and test_case_execution.log.path.is_relative_to(self._report_path.parent)
+            ):
+                _xml_system_out = _xml_test_case.appendchild(xml_doc.createnode("system-out"))  # type: Xml.Node
+                _xml_system_out.appendchild(xml_doc.createtextnode(self._safestr2xml(test_case_execution.log.content.decode("utf-8"))))
 
         # testcase/system-err:
         # [CUBIC]: "Data that was written to standard error while the test was executed. optional"
+        # Due to `CampaignRunner` implementation, stderr will be given as a testcase/failure node.
 
         return _xml_test_case
 
@@ -657,14 +664,14 @@ class CampaignReport(_LoggerImpl):
                 if self._read_scenario_logs:
                     # Read the log file by the way.
                     self.debug("Reading scenario log from '%s'", _test_case_execution.log.path)
-                    _test_case_execution.log.read()
+                    _test_case_execution.log.read()  # Let exceptions raise up.
             elif _link_purpose == CampaignReport.LinkPurpose.SCENARIO_REPORT:
                 _test_case_execution.report.path = self._xmlattr2path(_xml_link, "href")
                 self.debug("testcase/link[@rel=%r]/@href = '%s'", _link_purpose, _test_case_execution.report.path)
                 if self._read_scenario_reports:
                     # Read the scenario report by the way.
                     self.debug("Reading scenario report from '%s'", _test_case_execution.report.path)
-                    _test_case_execution.report.read()
+                    _test_case_execution.report.read()  # Let exceptions raise up.
             else:
                 self.warning(f"Unknown testcase/link/@rel value {_link_purpose!r}")
 
@@ -694,20 +701,18 @@ class CampaignReport(_LoggerImpl):
                             self.debug("testcase/failure/@location = '%s'", _error.location.tolongstring())
                     _test_case_execution.scenario_execution.errors.append(_error)
         if xml_test_case.hasattr("status"):
-            self.debug("testcase/@status = %r", xml_test_case.getattr("status"))
-            if _test_case_execution.errors and (xml_test_case.getattr("status") != str(ExecutionStatus.FAIL)):
-                self.warning(f"Mismatching status {xml_test_case.getattr('status')!r} with {len(_test_case_execution.errors)} error count")
-            if (not _test_case_execution.errors) and (xml_test_case.getattr("status") == str(ExecutionStatus.FAIL)):
-                self.warning(f"Mismatching status {xml_test_case.getattr('status')!r} while no error")
+            _status = xml_test_case.getattr("status")  # type: str
+            self.debug("testcase/@status = %r", _status)
+            # Don't check testcase/@status v/s errors when the scenario report has not been read.
+            if _test_case_execution.report.content is not None:
+                if _test_case_execution.errors and (_status != str(ExecutionStatus.FAIL)):
+                    self.warning(f"{_test_case_execution.name}: Mismatching status {_status!r} with {len(_test_case_execution.errors)} error count")
+                if (not _test_case_execution.errors) and (_status == str(ExecutionStatus.FAIL)):
+                    self.warning(f"{_test_case_execution.name}: Mismatching status {_status!r} while no error")
 
         if _test_case_execution.scenario_execution:
             # Check the `scenario` statistics, which are properties of `TestCase`.
-            self._xmlcheckstats(xml_test_case, "steps-executed", [_test_case_execution.scenario_execution])
-            self._xmlcheckstats(xml_test_case, "steps-total", [_test_case_execution.scenario_execution])
-            self._xmlcheckstats(xml_test_case, "actions-total", [_test_case_execution.scenario_execution])
-            self._xmlcheckstats(xml_test_case, "actions-executed", [_test_case_execution.scenario_execution])
-            self._xmlcheckstats(xml_test_case, "results-total", [_test_case_execution.scenario_execution])
-            self._xmlcheckstats(xml_test_case, "results-executed", [_test_case_execution.scenario_execution])
+            self._xmlcheckstats(_test_case_execution.name, xml_test_case, [_test_case_execution.scenario_execution])
 
         return _test_case_execution
 
@@ -743,13 +748,7 @@ class CampaignReport(_LoggerImpl):
         :param attr_name: Attribute name.
         :param path: Path object to use to set the attribute value.
         """
-        from ._path import Path
-
-        _main_path = Path.getmainpath() or Path.cwd()  # type: Path
-        if path.is_relative_to(_main_path):
-            xml_node.setattr(attr_name, path.relative_to(_main_path))
-        else:
-            xml_node.setattr(attr_name, path.abspath)
+        xml_node.setattr(attr_name, path.relative_to(self._report_path.parent))
 
     def _xmlattr2path(
             self,
@@ -768,7 +767,7 @@ class CampaignReport(_LoggerImpl):
         """
         from ._path import Path
 
-        return Path(xml_node.getattr(attr_name), relative_to=Path.getmainpath() or Path.cwd())
+        return Path(xml_node.getattr(attr_name), relative_to=self._report_path.parent)
 
     def _path2xmllink(
             self,
@@ -809,38 +808,86 @@ class CampaignReport(_LoggerImpl):
 
         return _xml_link
 
-    def _xmlcheckstats(
+    def _objectstats2xmlattr(
             self,
             xml_node,  # type: _XmlType.Node
-            attr_name,  # type: str
-            objects,  # type: typing.List[typing.Any]
+            stat_object,  # type: _StatObjectType
+    ):  # type: (...) -> None
+        """
+        Creates `scenario` statistics attributes.
+
+        Non JUnit standard...
+
+        :param xml_node: XML node to set attributes for.
+        :param stat_object: Object to read statistics from.
+        """
+        for _stat_name in CampaignReport.StatAttrName:  # type: CampaignReport.StatAttrName
+            xml_node.setattr(_stat_name, str(CampaignReport._getobjectstat(stat_object, _stat_name)))
+
+    def _xmlcheckstats(
+            self,
+            node_name,  # type: str
+            xml_node,  # type: _XmlType.Node
+            stat_subobjects,  # type: typing.Sequence[_StatObjectType]
     ):  # type: (...) -> None
         """
         Statistics consistency checking between an upper level and its children.
 
+        :param node_name: Name of the object corresponding to ``xml_node``.
         :param xml_node: Upper XML node which statistics to check.
-        :param attr_name: Statistics attribute to check.
-        :param objects: Execution objects to check statistics with.
+        :param stat_subobjects: Subobjects to check statistics with.
 
         Displays warnings when the statistics mismatch.
         """
-        from ._campaignexecution import TestCaseExecution, TestSuiteExecution
+        # Don't check statistics if scenario reports have not been read.
+        if not self._read_scenario_reports:
+            return
+
+        class _StatResult:
+            def __init__(self, stat_name):  # type: (CampaignReport.StatAttrName) -> None
+                self.stat_name = stat_name  # type: CampaignReport.StatAttrName
+                self.match = False  # type: bool
+                self.top_count = 0  # type: int
+                self.sum_count = 0  # type: int
+
+                if xml_node.hasattr(self.stat_name):
+                    self.top_count = int(xml_node.getattr(self.stat_name))
+                    self.sum_count = sum([CampaignReport._getobjectstat(_stat_subobject, self.stat_name) for _stat_subobject in stat_subobjects])
+                    self.match = (self.top_count == self.sum_count)
+        _stats = [
+            _StatResult(_stat_name)  # noqa  ## Bad IDE type checking on `_stat_attr_name`
+            for _stat_name in CampaignReport.StatAttrName
+        ]  # type: typing.Sequence[_StatResult]
+        if not all(map(lambda res: res.match, _stats)):
+            _errors = ", ".join(map(
+                lambda res: f"{res.stat_name}: {res.top_count} != {res.sum_count}",
+                filter(lambda res: not res.match, _stats),
+            ))  # type: str
+            self.warning(f"{node_name}: Mismatching statistics ({_errors})")
+
+    @staticmethod
+    def _getobjectstat(
+            stat_object,  # type: _StatObjectType
+            stat_name,  # type: CampaignReport.StatAttrName
+    ):  # type: (...) -> int
+        """
+        Retrieves the expected statistic from a given object.
+
+        :param stat_object: Object to read statistics from.
+        :param stat_name: Statistic name to read.
+        :return: Statistic read from ``stat_object``.
+        """
+        from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
         from ._scenarioexecution import ScenarioExecution
 
-        assert attr_name.count("-") == 1
-        _stat_type, _exec_total = attr_name.split("-")  # type: str, str
-        if xml_node.hasattr(attr_name):
-            _top_count = int(xml_node.getattr(attr_name))  # type: int
-            _sum = 0  # type int
-            _object_type = ""  # type: str
-            for _object in objects:
-                _object_type = type(_object).__name__ + " "
-                if isinstance(_object, ScenarioExecution):
-                    _sum += getattr(getattr(_object, _stat_type[:-1] + "_stats"), _exec_total)
-                elif isinstance(_object, (TestSuiteExecution, TestCaseExecution)):
-                    _sum += getattr(getattr(_object, _stat_type), _exec_total)
-            if _top_count != _sum:
-                self.warning(f"Mismatching @{attr_name} counts between <{xml_node.tag_name}/> (count={_top_count}) and {_object_type}sub-objects (sum={_sum})")
+        assert stat_name.count("-") == 1, f"Bad stat name {stat_name!r}"
+        _stat_type, _exec_total = stat_name.split("-")  # type: str, str
+        if isinstance(stat_object, ScenarioExecution):
+            return int(getattr(getattr(stat_object, _stat_type[:-1] + "_stats"), _exec_total))
+        elif isinstance(stat_object, (CampaignExecution, TestSuiteExecution, TestCaseExecution)):
+            return int(getattr(getattr(stat_object, _stat_type), _exec_total))
+        else:
+            raise TypeError(f"Unhandled object type {stat_object!r}")
 
 
 #: Main instance of :class:`CampaignReport`.

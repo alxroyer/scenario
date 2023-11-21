@@ -58,13 +58,13 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
         # Read the reference scenario report file.
         if self.doexecute():
             self.debug("step(): _json_ref = %s", scenario.debug.jsondump(self._json_ref, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         # Read the scenario report file.
         if self.ACTION("Read the scenario report file."):
             self.json = JsonDict.readfile(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         # Check the JSON data against reference.
         self.resetindentation()
@@ -82,9 +82,9 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
         # It's usually been debugged previously.
         if self.doexecute() and ("$schema" not in json_scenario_ref):
             self.debug("_checkscenario(): json_scenario = %s", scenario.debug.jsondump(json_scenario, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
             self.debug("_checkscenario(): json_scenario_ref = %s", scenario.debug.jsondump(json_scenario_ref, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         if "$schema" in json_scenario_ref:
             if self.RESULT("The scenario report gives the JSON schema it follows."):
@@ -162,7 +162,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
                     evidence="Test statistics",
                 )  # type: scenario.types.JsonDict
                 self.debug("%s", scenario.debug.jsondump(_stats, indent=2),
-                           extra=self.longtext(max_lines=20))
+                           extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
             for _stat_path in ("steps", "actions", "results"):  # type: str
                 _executed_stat_types_txt = scenario.text.Countable(
@@ -194,9 +194,9 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkstepdefinition(): json_step_definition = %s", scenario.debug.jsondump(json_step_definition, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
             self.debug("_checkstepdefinition(): json_step_definition_ref = %s", scenario.debug.jsondump(json_step_definition_ref, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         if self.RESULT(f"The step location is '{self._assertjsonref(json_step_definition_ref, 'location', type=str)}'."):
             self.assertjson(
@@ -252,9 +252,9 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkstepexecution(): json_step_execution = %s", scenario.debug.jsondump(json_step_execution, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
             self.debug("_checkstepexecution(): json_step_execution_ref = %s", scenario.debug.jsondump(json_step_execution_ref, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         if self.RESULT(f"The step execution number is {self._assertjsonref(json_step_execution_ref, 'number')}."):
             self.assertjson(
@@ -286,10 +286,10 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
         if self.doexecute():
             self.debug("_checkactionresultdefinition(): json_action_result_definition = %s",
                        scenario.debug.jsondump(json_action_result_definition, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
             self.debug("_checkactionresultdefinition(): json_action_result_definition_ref = %s",
                        scenario.debug.jsondump(json_action_result_definition_ref, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         if self.RESULT(f"The action/result type is {self._assertjsonref(json_action_result_definition_ref, 'type', type=str)}."):
             self.assertjson(
@@ -325,10 +325,10 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
         if self.doexecute():
             self.debug("_checkactionresultexecution(): json_action_result_execution = %s",
                        scenario.debug.jsondump(json_action_result_execution, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
             self.debug("_checkactionresultexecution(): json_action_result_execution_ref = %s",
                        scenario.debug.jsondump(json_action_result_execution_ref, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         self._checktimes(
             json_time=self.testdatafromjson(json_action_result_execution, "time", type=dict),

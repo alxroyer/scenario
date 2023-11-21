@@ -248,15 +248,23 @@ class ConfigNode:
 
         if isinstance(self._data, dict):
             if self.key:
-                CONFIG_DB.log(log_level, f"{self.key}:")
+                CONFIG_DB.log(
+                    log_level, f"{self.key}:",
+                    extra={CONFIG_DB.Extra.CLASS_LOGGER_INDENTATION: True},
+                )
             for _direct_subkey in sorted(self._data.keys()):  # type: str
                 with CONFIG_DB.pushindentation("  "):
+                    # Recursive call.
                     self._data[_direct_subkey].show(log_level)
         elif isinstance(self._data, list):
             for _index in range(len(self._data)):  # type: int
+                # Recursive call.
                 self._data[_index].show(log_level)
         else:
-            CONFIG_DB.log(log_level, f"{self.key}: {self._data!r}  # from {', '.join(str(_origin) for _origin in self.origins)}")
+            CONFIG_DB.log(
+                log_level, f"{self.key}: {self._data!r}  # from {', '.join(str(_origin) for _origin in self.origins)}",
+                extra={CONFIG_DB.Extra.CLASS_LOGGER_INDENTATION: True},
+            )
 
     def getkeys(self):  # type: (...) -> typing.List[str]
         """

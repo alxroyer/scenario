@@ -129,7 +129,9 @@ class MkDoc:
             _tmp_outdir = None  # type: typing.Optional[scenario.Path]
             if positionals:
                 if sum([_positional.name.endswith(".py") for _positional in positionals]) == 0:
-                    _tmp_outdir = _paths.ROOT_SCENARIO_PATH / "out"
+                    # Define a temporary directory at the same level as DOC_DATA_PATH,
+                    # so that relative paths to test scripts remain the same.
+                    _tmp_outdir = _paths.DOC_DATA_PATH.parent / (_paths.DOC_DATA_PATH.name + ".tmp")
             _campaign_report_outpath = _paths.DOC_DATA_PATH / (_basename_no_ext + ".xml")  # type: scenario.Path
 
             scenario.logging.info(f"Updating '{_log_outpath}'")
@@ -155,8 +157,11 @@ class MkDoc:
             for _log_line in _subprocess.stdout.splitlines():  # type: bytes
                 scenario.logging.debug("Log line: %r", _log_line)
 
-                # Ensure the local 'scenario' path is not displayed in the documentation.
+                # Ensure the local `scenario` path is not displayed in the documentation.
                 _log_line = re.sub(rb'^(INFO +)Main path: \'.*\'$', b'\\1Main path: \'/path/to/scenario\'', _log_line)
+                if _tmp_outdir:
+                    # Fix `_tmp_outdir` pretty path with 'out/'.
+                    _log_line = re.sub(rb'%s/' % _tmp_outdir.prettypath.encode("utf-8"), b'out/', _log_line)
 
                 # Ensure the execution time does not fluctuate in the output log, for documentation purpose.
                 _log_line = re.sub(_str_duration_regex, _str_duration_subst, _log_line)

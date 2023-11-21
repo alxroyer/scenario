@@ -445,7 +445,7 @@ That's the reason why the :py:mod:`scenario.debug` package gathers a couple of f
 
             self.debug(
                 "JSON data: %s", scenario.debug.jsondump(data, indent=2),
-                extra=self.longtext(max_lines=10),
+                extra={self.Extra.LONG_TEXT_MAX_LINES: 10},
             )
 
         .. tip:: :py:func:`scenario._debugutils.jsondump()` may basically be displayed as :ref:`long texts <logging.long-text>`.
@@ -470,20 +470,28 @@ Long texts
 
 The `scenario` logging feature provides a way to log long texts on several lines.
 
-To do so, set the ``extra`` parameter using the :py:meth:`scenario._logger.Logger.longtext()` method when logging some text:
+To do so, set the ``extra`` parameter with :py:const:`scenario._logextradata.LogExtraData.LONG_TEXT`
+and/or :py:const:`scenario._logextradata.LogExtraData.LONG_TEXT_MAX_LINES` options
+when logging some text:
 
 .. code-block:: python
 
-    self.debug(scenario.jsondump(_json_data, indent=2),
-               extra=self.longtext(max_lines=10))
+    self.debug(
+        scenario.debug.jsondump(_json_data, indent=2),
+        extra={
+            self.Extra.LONG_TEXT: True,  # `True` or `False`
+            self.Extra.LONG_TEXT_MAX_LINES: 10,  # `int` value.
+        },
+    )
+
+.. note::
+    :py:const:`scenario._logextradata.LogExtraData.LONG_TEXT_MAX_LINES` autoamtically enables :py:const:`scenario._logextradata.LogExtraData.LONG_TEXT`.
 
 This feature has primarily been designed for debugging, but it works with the
 :py:meth:`scenario._logger.Logger.info()`,
 :py:meth:`scenario._logger.Logger.warning()` and
 :py:meth:`scenario._logger.Logger.error()`
 methods as well.
-
-The ``max_lines`` parameter may be set to ``None`` in order to display the full text.
 
 
 .. _logging.outfile:

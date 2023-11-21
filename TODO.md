@@ -17,8 +17,15 @@
 
 ## Roadmap to v0.2.3
 
+- 'mkdoc.py' does not track undocumented class members.
+- Improve `Path`:
+    - Memo: '//void/path' may lead to long network path resolutions...
+    - Use a relative `pathlib.Path()` as `self._innerpath` for *void* paths.
+    - Make `Path` methods fail for *void* paths.
 - Issue #83: Add the ability to track requirements.
+    - Fix campaign tests (no stats defined for new tests).
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
+        - Include test results (when available) in downstream taceability reports.
         - Issue #xxx: Reduce campaign results time: don't repeat scenario log if already given in a .log file.
         - Issue #xxx: Invalid XML Junit report files when reading with a regular browser (but not from Python...):
             - From 'run-unit-campaign.py' campaign reports:

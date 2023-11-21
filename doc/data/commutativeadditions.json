@@ -3,7 +3,7 @@
   "$schema": "https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/scenario-report.schema.json",
   "$version": "0.2.2",
   "name": "demo/commutativeadditions.py",
-  "href": "demo/commutativeadditions.py",
+  "href": "../../demo/commutativeadditions.py",
   "attributes": {
     "TITLE": "Commutative additions",
     "DESCRIPTION": "Call the CommutativeAddition scenario with different inputs."
@@ -31,7 +31,7 @@
               "subscenarios": [
                 {
                   "name": "demo/commutativeaddition.py",
-                  "href": "demo/commutativeaddition.py",
+                  "href": "../../demo/commutativeaddition.py",
                   "attributes": {
                     "TITLE": "Commutative addition",
                     "DESCRIPTION": "Addition of two members, swapping orders."
@@ -257,7 +257,7 @@
               "subscenarios": [
                 {
                   "name": "demo/commutativeaddition.py",
-                  "href": "demo/commutativeaddition.py",
+                  "href": "../../demo/commutativeaddition.py",
                   "attributes": {
                     "TITLE": "Commutative addition",
                     "DESCRIPTION": "Addition of two members, swapping orders."
@@ -483,7 +483,7 @@
               "subscenarios": [
                 {
                   "name": "demo/commutativeaddition.py",
-                  "href": "demo/commutativeaddition.py",
+                  "href": "../../demo/commutativeaddition.py",
                   "attributes": {
                     "TITLE": "Commutative addition",
                     "DESCRIPTION": "Addition of two members, swapping orders."

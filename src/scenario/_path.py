@@ -75,9 +75,29 @@ class Path:
     @staticmethod
     def getmainpath():  # type: (...) -> typing.Optional[Path]
         """
-        :return: Main path, i.e. base path for :attr:`prettypath` computations.
+        :return:
+            Main path, i.e. base path for :attr:`prettypath` computations.
+
+            Either the path configured with :meth:`setmainpath()`,
+            or the main git repository directory from the current directory (if any) by default.
         """
-        return Path._main_path
+        # Path configured with `setmainpath()`.
+        if Path._main_path is not None:
+            return Path._main_path
+
+        # Try to find out a main git repository.
+        _path = Path.cwd()  # type: Path
+        while True:
+            if (_path / ".git").is_dir():
+                # Main git repository found!
+                return _path
+
+            if _path.parent == _path:
+                # Not found.
+                return None
+
+            # Move to the upper directory.
+            _path = _path.parent
 
     @staticmethod
     def cwd():  # type: (...) -> Path
@@ -122,11 +142,13 @@ class Path:
 
             Makes the :class:`Path` instance *void* when not set.
         :param relative_to:
-            Base directory or file to consider as the root, when the path given is a relative path.
+            Base directory to consider as the root, when ``path`` describes a relative path.
 
-            Giving a file path as ``relative_to`` is equivalent to giving its owner directory.
-
-        If the path given is relative, it is transformed in its absolute form from the current working directory.
+        .. warning::
+            When ``path`` describes a relative path,
+            it is transformed in its absolute form from the current working directory (or ``relative_to`` when set),
+            AT THE TIME OF THE :class:`Path` INSTANCE CREATION,
+            which is a main difference with the ``pathlib`` library.
         """
         #: ``pathlib.Path`` instance used to store the absolute path described by this :class:`Path` instance.
         self._abspath = pathlib.Path("//void/path")  # type: pathlib.Path
@@ -135,15 +157,10 @@ class Path:
             # The latter can be shared between the two `scenario.Path` instances.
             self._abspath = path._abspath
         elif path:
-            # Find out whether `path` is relative, and `relative_to` is set.
             path = pathlib.Path(path)
-            if (not path.is_absolute()) and relative_to:
-                # Note:
-                # Use of an intermediate `pathlib.Path` object in order to help type checkings.
-                # `is_file()` may not be known yet for `scenario.Path`.
-                if pathlib.Path(relative_to).is_file():
-                    relative_to = relative_to.parent
-                self._abspath = pathlib.Path(relative_to) / path
+            if not path.is_absolute():
+                # Resolve relative path.
+                self._abspath = pathlib.Path(relative_to or pathlib.Path.cwd()).resolve() / path
             else:
                 # Let's resolve `path` as is otherwise.
                 self._abspath = path.resolve()
@@ -400,9 +417,12 @@ class Path:
                 # ``other`` cannot be interpreted as a path.
                 return False
 
-        if self.exists() and other.exists():
+        if self.is_void() or other.is_void():
+            return False
+
+        try:
             return self._abspath.samefile(other._abspath)
-        else:
+        except OSError:
             return os.fspath(self) == os.fspath(other)
 
     def __truediv__(
@@ -466,7 +486,7 @@ class Path:
 
         :return: ``True`` when the path is void, ``False`` otherwise.
         """
-        return self == Path()
+        return self._abspath == Path()._abspath
 
     @staticmethod
     def is_absolute(
@@ -510,19 +530,32 @@ class Path:
         """
         Computes a relative path.
 
-        :param other: Reference path to compute the relative path from.
-        :return: Relative path from ``other`` in the POSIX style.
+        :param other:
+            Reference path to compute the relative path from.
+        :return:
+            Relative path from ``other`` in the POSIX style,
+            or absolute path if not relative to ``other`` or :meth:`getmainpath()`.
 
         .. note::
             The behaviour of this method differs from the one of ``pathlib.PurePath.relative_to()``.
 
             ``pathlib.PurePath.relative_to()`` raises a ``ValueError`` as soon as this path is not a sub-path of ``other``.
-            In order te be able compute relative paths beginning with "../", we use ``os.path.relpath()`` instead.
+            In order te be able to compute relative paths beginning with "../", we use ``os.path.relpath()`` instead.
 
         See `pathlib.PurePath.relative_to() <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.relative_to>`_.
         """
         if not isinstance(other, Path):
             other = Path(other)
+
+        # First check whether the path is actually relative to
+        # - either the `other` path,
+        # - or the *main* path if configured.
+        if not self.is_relative_to(other):
+            _main_path = Path.getmainpath()  # type: typing.Optional[Path]
+            if (not _main_path) or (not self.is_relative_to(_main_path)):
+                # If not, return the absolute path.
+                return self.abspath
+
         # Use `os.path.relpath()` instead of `pathlib.PurePath.relative_to()`.
         return pathlib.Path(os.path.relpath(self._abspath, other)).as_posix()
 

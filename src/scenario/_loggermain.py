@@ -79,12 +79,12 @@ class MainLogger(_LoggerImpl):
 
         self.info(
             message,
-            extra=LogExtraData.extradata({
+            extra={
                 LogExtraData.LOG_LEVEL: False,
                 LogExtraData.COLOR: False,
                 LogExtraData.MAIN_LOGGER_INDENTATION: False,
                 LogExtraData.ACTION_RESULT_MARGIN: False,
-            }),
+            },
         )
 
 

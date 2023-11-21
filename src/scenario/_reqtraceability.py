@@ -188,7 +188,8 @@ class ReqTraceability(_LoggerImpl):
             _campaign_execution = CAMPAIGN_REPORT.readcampaignreport(
                 _campaign_report_path,
                 feed_req_db=True,
-                read_scenario_reports=True,
+                # Let's read scenario reports one by one after.
+                read_scenario_reports=False,
             )  # type: CampaignExecution
 
             if log_info:
@@ -208,12 +209,16 @@ class ReqTraceability(_LoggerImpl):
                            _test_suite_execution.test_suite_file.path, len(_test_suite_execution.test_case_executions))
                 with self.pushindentation("  "):
                     for _test_case_execution in _test_suite_execution.test_case_executions:  # type: TestCaseExecution
-                        if _test_case_execution.scenario_execution:
+                        try:
+                            if not _test_case_execution.scenario_execution:
+                                _test_case_execution.report.read()
+                                assert _test_case_execution.scenario_execution
                             self.scenarios.append(_test_case_execution.scenario_execution.definition)
-                        elif _test_case_execution.report.path:
-                            MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}'")
-                        else:
-                            MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r}")
+                        except Exception as _err:
+                            if _test_case_execution.report.path:
+                                MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}': {_err}")
+                            else:
+                                MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r}: {_err}")
 
         if log_info:
             _scenario_count = len(self.scenarios)  # type: int

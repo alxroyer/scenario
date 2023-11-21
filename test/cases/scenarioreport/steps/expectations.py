@@ -104,7 +104,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
         if self.ACTION("Read the scenario report file."):
             self.json = JsonDict.readfile(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
-                       extra=self.longtext(max_lines=10))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         self.checkscenarioreport(self.json, self.scenario_expectations)
 
@@ -134,7 +134,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
         # It has usually been debugged previously.
         if self.doexecute() and (len(self._scenario_tested_items) > 1):
             self.debug("_checkscenario(): json_scenario = %s", scenario.debug.jsondump(json_scenario, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
         if scenario_expectations.name:
             if self.RESULT(f"The test name is '{scenario_expectations.name}'."):
@@ -227,7 +227,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
                         break
                     if not _json_searched_step_definition:
                         self.error("No such %s in %s", _step_expectations, scenario.debug.jsondump(json_scenario, indent=2),
-                                   extra=self.longtext(max_lines=10))
+                                   extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
                         self.fail(f"Could not check {_step_expectations} definition")
                 with scenario.logging.pushindentation():
                     self._checkstepdefinition(
@@ -342,7 +342,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
 
         if self.doexecute():
             self.debug("_checkstepdefinition(): json_step_definition = %s", scenario.debug.jsondump(json_step_definition, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
         if step_expectations.name:
             if self.RESULT(f"The step location corresponds to '{step_expectations.name}'."):
@@ -367,7 +367,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
                         break
                 if not _json_searched_step_execution:
                     self.error("No step execution left in %s", scenario.debug.jsondump(json_step_definition, indent=2),
-                               extra=self.longtext(max_lines=10))
+                               extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
                     self.fail(f"Could not check {step_expectations} execution")
             self._checkstepexecution(
                 json_step_execution=_json_searched_step_execution,
@@ -421,7 +421,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkstepexecution(): json_step_execution = %s", scenario.debug.jsondump(json_step_execution, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
         self._scenario_tested_items[-1].step_executions.append(json_step_execution)
 
         if step_expectations.number is not None:
@@ -456,7 +456,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
 
         if self.doexecute():
             self.debug("_checkactionresultdefinition(): json_action_result_definition = %s", scenario.debug.jsondump(json_action_result_definition, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
         _type_desc = "action" if action_result_expectations.type == scenario.ActionResult.Type.ACTION else "expected result"  # type: str
 
@@ -481,7 +481,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
                         break
                 if not _json_searched_action_result_execution:
                     self.error("No %s execution in %s", _type_desc, scenario.debug.jsondump(json_action_result_definition, indent=2),
-                               extra=self.longtext(max_lines=10))
+                               extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
                     self.fail(f"Could not check {_type_desc} execution")
             self._checkactionresultexecution(
                 json_action_result_execution=_json_searched_action_result_execution,
@@ -506,7 +506,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
     ):  # type: (...) -> None
         if self.doexecute():
             self.debug("_checkactionresultexecution(): json_action_result_execution = %s", scenario.debug.jsondump(json_action_result_execution, indent=2),
-                       extra=self.longtext(max_lines=20))
+                       extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
         self._scenario_tested_items[-1].action_result_executions.append(json_action_result_execution)
 
         _type_desc = "action" if action_result_expectations.type == scenario.ActionResult.Type.ACTION else "expected result"  # type: str

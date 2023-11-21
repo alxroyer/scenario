@@ -292,8 +292,10 @@ class TestSuiteExecution:
 
         #: Owner campaign execution.
         self.campaign_execution = campaign_execution  # type: CampaignExecution
-        #: Campaign file.
+        #: Test suite file.
         self.test_suite_file = TestSuiteFile(Path(test_suite_path))  # type: TestSuiteFile
+        #: Test suite name: i.e. test suite file pretty path.
+        self.name = self.test_suite_file.path.prettypath  # type: str
         #: Test cases.
         self.test_case_executions = []  # type: typing.List[TestCaseExecution]
         #: Time statistics.
@@ -536,23 +538,13 @@ class LogFileReader:
         #: Test case log file content.
         self.content = None  # type: typing.Optional[bytes]
 
-    def read(self):  # type: (...) -> bool
+    def read(self):  # type: (...) -> None
         """
         Read the log file.
-
-        :return: ``True`` when the log file could be read successfully, ``False`` otherwise.
         """
-        from ._loggermain import MAIN_LOGGER
-
-        try:
-            if self.path:
-                self.content = self.path.read_bytes()
-                return True
-            else:
-                MAIN_LOGGER.error("No log path to read")
-        except Exception as _err:
-            MAIN_LOGGER.error(f"Could not read log file '{self.path}': {_err}")
-        return False
+        if not self.path:
+            raise FileNotFoundError("No log path to read")
+        self.content = self.path.read_bytes()
 
 
 class ReportFileReader:

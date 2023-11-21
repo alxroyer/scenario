@@ -23,6 +23,8 @@ import logging
 import traceback
 import typing
 
+if True:
+    from ._logextradata import LogExtraData as _LogExtraDataImpl
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
@@ -45,6 +47,31 @@ class Logger:
     programmatically (see :meth:`enabledebug()`)
     or by configuration (see :meth:`._scenarioconfig.ScenarioConfig.debugclasses()`).
     """
+
+    #: Shortcut to :class:`._logextradata.LogExtraData` ``extra`` options keys.
+    #:
+    #: As ``logging`` supports a ``extra`` ``{str: Any}`` optional parameter with its logging functions,
+    #: may be used as ``extra`` keys with :meth:`error()`, :meth:`warning()`, :meth:`info()`, :meth:`debug()` and :meth:`log()`.
+    #:
+    #: Example:
+    #:
+    #: .. code-block:: python
+    #:
+    #:     _long_text = """
+    #:         Very long text,
+    #:         on several lines...
+    #:     """
+    #:     _logger.info(
+    #:         _long_text
+    #:         extra={
+    #:             logger.Extra.LONG_TEXT: True,
+    #:             logger.Extra.LONG_TEXT_MAX_LINES: 10,
+    #:         },
+    #:     )
+    #:
+    #: May also be configured for good for the logger.
+    #: See :meth:`setextraflag()` and :meth:`getextraflag()`.
+    Extra = _LogExtraDataImpl
 
     def __init__(
             self,
@@ -72,7 +99,8 @@ class Logger:
             # Main logger.
             global _main_loggers
             # Note: A second dummy main logger may be instanciated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
-            assert (_main_loggers < 1) or typing.TYPE_CHECKING, "Only one main logger"
+            if (_main_loggers >= 1) and (not typing.TYPE_CHECKING):
+                raise RuntimeError("Only one main logger")
             _main_loggers += 1
         else:
             # Child logger.
@@ -340,7 +368,8 @@ class Logger:
         from ._logextradata import LogExtraData
 
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
-        assert isinstance(self, Logger), f"{self!r} is not of type {Logger!r}"
+        if not isinstance(self, Logger):
+            raise TypeError(f"{self!r} is not of type {Logger!r}")
 
         # Check that the arguments have been parsed.
         if not Args.isset():
@@ -352,13 +381,32 @@ class Logger:
             _exc_info = kwargs["exc_info"]
             del kwargs["exc_info"]
 
-        if ("extra" in kwargs) and (str(LogExtraData.LONG_TEXT_MAX_LINES) in kwargs["extra"]):
-            _long_text_max_lines = kwargs["extra"][str(LogExtraData.LONG_TEXT_MAX_LINES)]  # type: typing.Any
-            assert isinstance(_long_text_max_lines, (int, type(None))), (
-                f"Invalid extra data '{LogExtraData.LONG_TEXT_MAX_LINES}' {_long_text_max_lines!r}, "
-                f"should be an int or None"
-            )
-            del kwargs["extra"][str(LogExtraData.LONG_TEXT_MAX_LINES)]
+        # Log extra data.
+        _extra = {}  # type: typing.Dict[str, typing.Any]
+        if "extra" in kwargs:
+            _extra = kwargs["extra"]
+            if (
+                (not isinstance(_extra, dict))  # type: ignore[redundant-expr]  ## Left operand of "or" is always false
+                or (not all([isinstance(_key, str) for _key in _extra]))
+            ):
+                raise TypeError(f"Invalid `extra` parameter type {_extra!r}, should be a {{str: Any}} dictionary")
+
+        # Long text mode.
+        _long_text_mode = None  # type: typing.Any
+        _long_text_max_lines = None  # type: typing.Any
+        if LogExtraData.LONG_TEXT in _extra:
+            _long_text_mode = _extra[LogExtraData.LONG_TEXT]
+            del _extra[LogExtraData.LONG_TEXT]
+            if not isinstance(_long_text_mode, bool):
+                raise TypeError(f"Invalid extra data '{LogExtraData.LONG_TEXT}', {_long_text_mode!r}, should be a `bool` value")
+        if LogExtraData.LONG_TEXT_MAX_LINES in _extra:
+            # Automatically activates the *long text mode*.
+            _long_text_mode = True
+            _long_text_max_lines = _extra[LogExtraData.LONG_TEXT_MAX_LINES]
+            del _extra[LogExtraData.LONG_TEXT_MAX_LINES]
+            if not isinstance(_long_text_max_lines, int):
+                raise TypeError(f"Invalid extra data '{LogExtraData.LONG_TEXT_MAX_LINES}' {_long_text_max_lines!r}, should be an `int` value")
+        if _long_text_mode:
             self._loglongtext(level, msg, args, _long_text_max_lines, **kwargs)
         else:
             self._torecord(level, msg, args, **kwargs)
@@ -367,9 +415,7 @@ class Logger:
         if _exc_info:
             _traceback = "".join(traceback.format_exception(*_exc_info))  # str
             if not _traceback.startswith("None"):
-                for _line in _traceback.splitlines():  # type: str
-                    if _line:
-                        self.log(level, _line)
+                self._loglongtext(level, _traceback, (), None)
 
     def _torecord(
             self,
@@ -389,24 +435,6 @@ class Logger:
         # Propagate the call to the :class:`logging.Logger` member instance.
         logging.Logger._log(self._logger, level, msg, args, **kwargs)  # noqa  ## Access to a protected member
 
-    def longtext(
-            self,
-            max_lines,  # type: typing.Optional[int]
-    ):  # type: (...) -> typing.Dict[str, int]
-        """
-        Builds the *long text* `extra` option in order to display the log message as several lines.
-
-        :param max_lines: Maximum number of lines.
-        :return: *long text* `extra` option.
-
-        See the :ref:`long text logging <logging.long-text>` section for more details.
-        """
-        from ._logextradata import LogExtraData
-
-        return LogExtraData.extradata({
-            LogExtraData.LONG_TEXT_MAX_LINES: max_lines,
-        })
-
     def _loglongtext(
             self,
             level,  # type: int
@@ -416,12 +444,12 @@ class Logger:
             **kwargs  # type: typing.Any
     ):  # type: (...) -> None
         """
-        Logs the beginning of a long text on multiple lines.
+        Logs a long text on multiple lines.
 
         :param level: Log level.
         :param msg: Log message.
         :param args: Other positional arguments as a tuple.
-        :param max_lines: Maximum number of lines to display. All lines when set to ``None``.
+        :param max_lines: Maximum number of first lines to display. All lines when set to ``None``.
         :param kwargs: Named parameter arguments.
         """
         _long_text = msg % args  # type: str

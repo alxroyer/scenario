@@ -98,6 +98,20 @@ class Xml:
             _xml_stream = self._xml_doc.toprettyxml(encoding="utf-8")  # type: bytes
             Path(path).write_bytes(_xml_stream)
 
+        def createcomment(
+                self,
+                text,  # type: str
+        ):  # type: (...) -> Xml.CommentNode
+            """
+            Create a comment node.
+
+            :param text: Content
+            :return: New comment node.
+            """
+            return Xml.CommentNode(
+                xml_comment=self._xml_doc.createComment(text),
+            )
+
         def createnode(
                 self,
                 tag_name,  # type: str
@@ -131,6 +145,40 @@ class Xml:
         Abstract interface for regular nodes and text nodes.
         """
         pass
+
+    class CommentNode(INode):
+        """
+        Comment node.
+        """
+
+        def __init__(
+                self,
+                xml_comment,  # type: xml.dom.minidom.Comment
+        ):  # type: (...) -> None
+            """
+            :param xml_comment: Underlying library comment reference.
+            """
+            #: Underlying library comment reference.
+            self._xml_comment = xml_comment  # type: xml.dom.minidom.Comment
+
+        @property
+        def data(self):  # type: () -> str
+            """
+            Text content.
+            """
+            _data = self._xml_comment.data  # type: str
+            return _data
+
+        def append(
+                self,
+                data,  # type: str
+        ):  # type: (...) -> None
+            """
+            Adds some text to the comment node.
+
+            :param data: Additional text.
+            """
+            self._xml_comment.data += data
 
     class Node(INode):
         """
@@ -210,8 +258,9 @@ class Xml:
             :return: List of children nodes.
             """
             _children = []  # type: typing.List[Xml.Node]
-            for _xml_child in self._xml_element.getElementsByTagName(tag_name):  # xml.dom.minidom.Element
-                _children.append(Xml.Node(_xml_child))
+            for _xml_child in self._xml_element.childNodes:  # type: xml.dom.minidom.Node
+                if isinstance(_xml_child, xml.dom.minidom.Element) and (_xml_child.tagName == tag_name):
+                    _children.append(Xml.Node(_xml_child))
             return _children
 
         def gettextnodes(self):  # type: (...) -> typing.List[Xml.TextNode]
@@ -236,9 +285,11 @@ class Xml:
             :param child: New node or text node to set as a child.
             :return: The child just added.
             """
-            assert isinstance(child, (Xml.Node, Xml.TextNode))
+            if not isinstance(child, (Xml.CommentNode, Xml.Node, Xml.TextNode)):
+                raise TypeError(f"Unknown child node {child!r}")
             self._xml_element.appendChild(  # type: ignore[no-untyped-call]  ## Untyped function "appendChild"
-                getattr(child, "_xml_element") if isinstance(child, Xml.Node)
+                getattr(child, "_xml_comment") if isinstance(child, Xml.CommentNode)
+                else getattr(child, "_xml_element") if isinstance(child, Xml.Node)
                 else getattr(child, "_xml_text"),
             )
             return child  # type: ignore[return-value]  ## "Union[Node, TextNode]", expected "VarNodeType"

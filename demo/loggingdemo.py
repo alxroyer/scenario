@@ -57,23 +57,23 @@ class LoggingScenario(scenario.Scenario):
     def step110(self):
         self.STEP("Class logger indentation")
 
-        if self.ACTION("Log something with the class logger."):
-            self.class_logger.info("Hello")
+        if self.ACTION("Log something with the class logger (with CLASS_LOGGER_INDENTATION enabled, for all actions in this step)."):
+            self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
         try:
             for _ in range(3):
                 if self.ACTION("Push indentation to the class logger."):
                     self.class_logger.pushindentation()
                 if self.ACTION("Log something with the class logger."):
-                    self.class_logger.info("Hello")
+                    self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
             if self.ACTION("Pop indentation from the class logger."):
                 self.class_logger.popindentation()
             if self.ACTION("Log something with the class logger."):
-                self.class_logger.info("Hello")
+                self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
         finally:
             if self.ACTION("Reset the class logger indentation."):
                 self.class_logger.resetindentation()
             if self.ACTION("Log something with the class logger."):
-                self.class_logger.info("Hello")
+                self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
 
     def step120(self):
         self.STEP("Main logger indentation")

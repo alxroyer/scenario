@@ -288,9 +288,14 @@ class CampaignRunner(_LoggerImpl):
 
             def _fallbackerror(
                     error_message,  # type: str
+                    *,
+                    extend_last_line=False,  # type: bool
             ):  # type: (...) -> None
                 assert _fallback_errors.execution
-                _fallback_errors.execution.errors.append(TestError(error_message))
+                if extend_last_line and _fallback_errors.execution.errors:
+                    _fallback_errors.execution.errors[-1].message += f"\n{error_message}"
+                else:
+                    _fallback_errors.execution.errors.append(TestError(error_message))
 
             # Execute the scenario.
             _exec_times_logger.tick("Executing the sub-process")
@@ -311,43 +316,63 @@ class CampaignRunner(_LoggerImpl):
 
             # Read the log outfile.
             if test_case_execution.log.path.is_file():
-                # Don't bother with errors, keep going on.
                 self.debug("Reading '%s'", test_case_execution.log.path)
-                test_case_execution.log.read()
+                try:
+                    test_case_execution.log.read()
+                except Exception as _err:
+                    # Don't bother with errors, just debug and keep going on.
+                    self.debug("Error while reading %s log file: %s", test_case_execution.name, _err)
             else:
                 self.debug("No such file '%s'", test_case_execution.log.path)
             _exec_times_logger.tick("After reading the log file")
 
             # Read the scenario report outfile.
             if test_case_execution.report.path.is_file():
-                # Don't bother with errors, keep going on.
                 self.debug("Reading '%s'", test_case_execution.report.path)
-                test_case_execution.report.read()
+                try:
+                    test_case_execution.report.read()
+                except Exception as _err:
+                    # Don't bother with errors, just debug and keep going on.
+                    self.debug("Error while reading %s scenario report: %s", test_case_execution.name, _err)
             else:
                 self.debug("No such file '%s'", test_case_execution.report.path)
             _exec_times_logger.tick("After reading the scenario report file")
 
             # Fix the scenario definition and execution instances, if not successfully read from the scenario report above.
             if not test_case_execution.scenario_execution:
+                self.debug("Using fallback scenario instances")
                 test_case_execution.report.content = _fallback_errors
 
-                # Read error lines from stdout.
+                # Read error lines from log output.
+                self.debug("Reading error lines from log output")
                 if test_case_execution.log.content:
-                    for _stdout_line in test_case_execution.log.content.splitlines():  # type: bytes
+                    _last_line_index = -1  # type: int
+                    for _line_index, _stdout_line in enumerate(test_case_execution.log.content.splitlines()):  # type: int, bytes
                         _match = re.match(
                             # Note:
-                            # 4 spaces after 'ERROR' in general
-                            # 2 more spaces due to `ExceptionError.logerror()`
+                            # 4 spaces after 'ERROR' in general.
+                            # Possibly 2 more spaces due to `ExceptionError.logerror()`.
                             rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % ISO8601_REGEX.encode("utf-8"),
                             _stdout_line,
                         )  # type: typing.Optional[typing.Match[bytes]]
                         if _match:
-                            _fallbackerror(_match.group(3).decode("utf-8"))
+                            self.debug("  %r (_line_index=%d, _last_line_index=%d)", _match.group(3), _line_index, _last_line_index)
+                            _fallbackerror(
+                                _match.group(3).decode("utf-8"),
+                                extend_last_line=(_last_line_index >= 0) and (_line_index == _last_line_index + 1),
+                            )
+                            _last_line_index = _line_index
 
-                # Save stderr lines as well.
-                for _stderr_line in _subprocess.stderr.splitlines():  # type: bytes
-                    if _stderr_line:
-                        _fallbackerror(_stderr_line.decode("utf-8"))
+                # Stdout should normally be empty.
+                # If any, save it as an error.
+                self.debug("Checking stdout: %r", _subprocess.stdout)
+                if _subprocess.stdout:
+                    _fallbackerror(_subprocess.stdout.decode("utf-8"))
+
+                # Save stderr as well.
+                self.debug("Checking stderr: %r", _subprocess.stderr)
+                if _subprocess.stderr:
+                    _fallbackerror(_subprocess.stderr.decode("utf-8"))
 
                 # Specific case when the file does not exist:
                 # it causes a ARGUMENTS_ERROR that displays its error while the logging service is not started up yet,

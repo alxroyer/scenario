@@ -18,6 +18,7 @@
 Logging extra data handling.
 """
 
+import abc
 import logging
 import typing
 
@@ -41,9 +42,16 @@ class LogExtraData(_StrEnumImpl):
 
     #: Long text mode option.
     #:
-    #: When set, activates the *long text mode*.
+    #: When ``True``, activates the *long text mode*.
     #:
-    #: ``int`` that gives the maximum number of lines to display.
+    #: ``False`` by default.
+    LONG_TEXT = "_long_text_"
+
+    #: Long text maximum lines limitation.
+    #:
+    #: ``int`` that gives the maximum number of lines to display in *long text mode*.
+    #:
+    #: When set, implicitly activates :const:`LogExtraData.LONG_TEXT`.
     LONG_TEXT_MAX_LINES = "_long_text_max_lines_"
 
     # === Extra flags ===
@@ -77,9 +85,9 @@ class LogExtraData(_StrEnumImpl):
     #: ``True`` by default.
     MAIN_LOGGER_INDENTATION = "_main_logger_indentation_"
 
-    #: Extra flag: Should the main logger indentation be displayed?
+    #: Extra flag: Should the class logger indentation be displayed?
     #:
-    #: ``True`` by default.
+    #: ``False`` by default, unless debugging is enabled for the given class logger.
     CLASS_LOGGER_INDENTATION = "_class_logger_indentation_"
 
     #: Extra flag: Should the log be applied a margin that makes it indented within the action/result block it belongs to?
@@ -87,22 +95,13 @@ class LogExtraData(_StrEnumImpl):
     #: ``True`` by default.
     ACTION_RESULT_MARGIN = "_action_result_margin_"
 
-    @staticmethod
-    def extradata(
-            extra,  # type: typing.Dict[LogExtraData, typing.Any]
-    ):  # type: (...) -> typing.Dict[str, typing.Any]
-        """
-        Translates a `{ExtraFlag: Any}` dictionary into a ``logging`` compatible dictionary.
 
-        The resulting dictionary basically deserves the ``extra`` parameter of ``logging`` functions.
+class LogExtraDataHelper(abc.ABC):
+    """
+    Extra data helper methods.
 
-        :param extra: Enum dictionary to translate.
-        :return: ``logging`` compatible dictionary.
-        """
-        _dict = {}  # type: typing.Dict[str, typing.Any]
-        for _enum in extra:  # type: LogExtraData
-            _dict[str(_enum)] = extra[_enum]
-        return _dict
+    Avoids the public exposition of methods for internal implementation only.
+    """
 
     @staticmethod
     def get(

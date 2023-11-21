@@ -114,10 +114,11 @@ class TestError(Exception):
         :param level: Log level.
         :param indent: Indentation to use.
         """
-        if self.location:
-            logger.log(level, "%s%s (%s)", indent, str(self), self.location.tolongstring())
-        else:
-            logger.log(level, "%s%s", indent, str(self))
+        for _index, _line in enumerate(str(self).splitlines()):  # type: int, str
+            if self.location and (_index == 0):
+                logger.log(level, "%s%s (%s)", indent, _line, self.location.tolongstring())
+            else:
+                logger.log(level, "%s%s", indent, _line)
 
     def tojson(self):  # type: (...) -> _JsonDictType
         """

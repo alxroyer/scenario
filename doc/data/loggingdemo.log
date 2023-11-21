@@ -32,7 +32,7 @@ STEP#3: Logging with a class logger (demo/loggingdemo.py:42:LoggingScenario.step
 
 STEP#4: Class logger indentation (demo/loggingdemo.py:57:LoggingScenario.step110)
 ------------------------------------------------
-    ACTION: Log something with the class logger.
+    ACTION: Log something with the class logger (with CLASS_LOGGER_INDENTATION enabled, for all actions in this step).
               INFO     [My logger] Hello
     ACTION: Push indentation to the class logger.
     ACTION: Log something with the class logger.

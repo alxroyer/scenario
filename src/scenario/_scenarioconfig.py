@@ -668,7 +668,7 @@ class ScenarioConfig(_LoggerImpl):
             if Path.is_absolute(_string):
                 _paths.append(Path(_string))
             elif _node.source_file:
-                _paths.append(Path(_string, relative_to=_node.source_file))
+                _paths.append(Path(_string, relative_to=_node.source_file.parent))
             else:
                 raise FileNotFoundError(_node.errmsg(f"Invalid file path {_string!r}"))
         return _paths

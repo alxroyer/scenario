@@ -45,7 +45,7 @@ class CheckScenarioLogExpectations(scenario.test.VerificationStep):
 
         if self.doexecute():
             self.debug("%s", scenario.debug.jsondump(self.getexecstep(ParseScenarioLog).json_main_scenario, indent=2),
-                       extra=self.longtext(max_lines=None))
+                       extra={self.Extra.LONG_TEXT: True})
         self._checkscenario(self.getexecstep(ParseScenarioLog).json_main_scenario, self.scenario_expectations)
 
     def _checkscenario(
