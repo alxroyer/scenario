@@ -133,6 +133,7 @@ class CampaignRunner(_LoggerImpl):
                 CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
             except Exception as _err:
                 MAIN_LOGGER.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
+                MAIN_LOGGER.logexceptiontraceback(_err)
                 return ErrorCode.fromexception(_err)
 
             # Final logging (after reports generation).

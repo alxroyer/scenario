@@ -479,9 +479,12 @@ class Logger:
         :param level: Log level.
         :param indent: Indentation to use.
         """
-        from ._testerrors import ExceptionError
+        from ._testerrors import ExceptionError, TestError
 
-        ExceptionError(exception).logerror(self, level=level, indent=indent)
+        # Use a `ExceptionError` instance to display the exception (except for `TestError`s).
+        if not isinstance(exception, TestError):
+            exception = ExceptionError(exception)
+        exception.logerror(self, level=level, indent=indent)
 
 
 if typing.TYPE_CHECKING:

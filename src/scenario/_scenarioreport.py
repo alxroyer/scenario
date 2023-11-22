@@ -18,7 +18,6 @@
 Scenario reports.
 """
 
-import sys
 import typing
 
 if True:
@@ -66,8 +65,6 @@ class ScenarioReport(_LoggerImpl):
         Deprecated.
         Use :meth:`writescenarioreport()` instead.
         """
-        from ._loggermain import MAIN_LOGGER
-
         self.warning(f"ScenarioReport.writejsonreport() deprecated, please use ScenarioReport.writescenarioreport() instead")
         try:
             self.writescenarioreport(
@@ -76,8 +73,8 @@ class ScenarioReport(_LoggerImpl):
             )
             return True
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not write report '{self._report_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
+            self.error(f"Could not write report '{self._report_path}': {_err}")
+            self.logexceptiontraceback(_err)
             return False
 
     def writescenarioreport(
@@ -122,8 +119,6 @@ class ScenarioReport(_LoggerImpl):
         Deprecated.
         Use :meth:`readscenarioreport()` instead.
         """
-        from ._loggermain import MAIN_LOGGER
-
         self.warning(f"ScenarioReport.readjsonreport() deprecated, please use ScenarioReport.readscenarioreport() instead")
         try:
             return self.readscenarioreport(
@@ -131,8 +126,8 @@ class ScenarioReport(_LoggerImpl):
                 feed_req_db=feed_req_db,
             )
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not read report '{self._report_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
+            self.error(f"Could not read report '{self._report_path}': {_err}")
+            self.logexceptiontraceback(_err)
             return None
 
     def readscenarioreport(

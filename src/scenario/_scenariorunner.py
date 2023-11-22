@@ -101,7 +101,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenarioreport import SCENARIO_REPORT
         from ._scenarioresults import SCENARIO_RESULTS
         from ._scenariostack import SCENARIO_STACK
-        from ._testerrors import ExceptionError, TestError
 
         _exec_times_logger = ExecTimesLogger("ScenarioRunner.main()")  # type: ExecTimesLogger
 
@@ -151,7 +150,12 @@ class ScenarioRunner(_LoggerImpl):
                 # Generate scenario report if required.
                 _scenario_report = ScenarioArgs.getinstance().scenario_report  # type: typing.Optional[Path]
                 if _scenario_report:
-                    SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)
+                    try:
+                        SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)
+                    except Exception as _err:
+                        MAIN_LOGGER.error(f"Error while writing '{_scenario_report}': {_err}")
+                        # Note: Full traceback will be displayed in the main `except` block below.
+                        raise
                     _exec_times_logger.tick("After scenario report generation")
 
             # Display final results (when applicable).
@@ -165,10 +169,7 @@ class ScenarioRunner(_LoggerImpl):
             return ErrorCode.worst(_errors)
 
         except Exception as _err:
-            # Use a `ExceptionError` instance to display the exception (except for `TestError`s).
-            (_err if isinstance(_err, TestError) else ExceptionError(_err)) \
-                .logerror(MAIN_LOGGER, logging.ERROR)
-
+            MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.fromexception(_err)
         finally:
             _exec_times_logger.finish()
@@ -239,7 +240,8 @@ class ScenarioRunner(_LoggerImpl):
             _exec_times_logger.tick("Once the definition class has been instanciated")
         except Exception as _err:
             # Unexpected exception.
-            MAIN_LOGGER.error(f"Unexpected exception: {_err}", exc_info=sys.exc_info())
+            MAIN_LOGGER.error(f"Unexpected exception: {_err}")
+            MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.INTERNAL_ERROR
 
         _exec_times_logger.tick("Before executing the step")

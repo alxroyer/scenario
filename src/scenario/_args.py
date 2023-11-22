@@ -208,7 +208,10 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
 
         # Copy arguments from the untyped `_parsed_args` object to `self`.
         for _member_name in self.__arg_infos:  # type: str
-            if not self.__arg_infos[_member_name].process(self, _parsed_args):
+            try:
+                self.__arg_infos[_member_name].process(self, _parsed_args)
+            except Exception as _err:
+                MAIN_LOGGER.logexceptiontraceback(_err)
                 return False
 
         # Load configurations:
@@ -217,7 +220,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
             try:
                 CONFIG_DB.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                MAIN_LOGGER.error(str(_err))
+                MAIN_LOGGER.logexceptiontraceback(_err)
                 return False
         # - 2) load configuration files,
         for _config_path in self.config_paths:  # type: Path
@@ -226,25 +229,32 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
                 CONFIG_DB.loadfile(_config_path)
             except EnvironmentError as _env_err:
                 self.error_code = ErrorCode.ENVIRONMENT_ERROR
+                # Don't log the full traceback for an environment error, just the error message.
                 MAIN_LOGGER.error(str(_env_err))
                 return False
             except Exception as _err:
-                MAIN_LOGGER.error(str(_err))
+                MAIN_LOGGER.logexceptiontraceback(_err)
                 return False
         # - 3) reload the single configuration values, so that they prevail on configuration files.
         for _key in self.config_values:  # Type already declared above.
             try:
                 CONFIG_DB.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                MAIN_LOGGER.error(str(_err))
+                MAIN_LOGGER.logexceptiontraceback(_err)
                 return False
 
         # Configure unclassed debugging.
         MAIN_LOGGER.enabledebug(self.debug_main)
 
         # Post-check arguments.
-        if not self._checkargs(_parsed_args):
-            self.__arg_parser.print_usage()
+        try:
+            if not self._checkargs(_parsed_args):
+                # Show argument usage.
+                self.__arg_parser.print_usage()
+                return False
+        except Exception as _err:
+            # Unexpected error: print the exception traceback, don't show argument usage.
+            MAIN_LOGGER.logexceptiontraceback(_err)
             return False
 
         self.error_code = ErrorCode.SUCCESS
@@ -342,13 +352,12 @@ class ArgInfo:
             self,
             args_instance,  # type: Args
             parsed_args,  # type: typing.Any
-    ):  # type: (...) -> bool
+    ):  # type: (...) -> None
         """
         Process the argument value once parsed by ``argparse`` and feed the :class:`Args` instance.
 
         :param args_instance: :class:`Args` instance to feed.
         :param parsed_args: Opaque parsed object returned by the ``argparse`` library.
-        :return: ``True`` when the operation succeeded, ``False`` otherwise.
         """
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
@@ -356,19 +365,17 @@ class ArgInfo:
 
         # Retrieve and check members from both: the :class:`Args` instance on the one hand, and the opaque parsed object on the other hand.
         if self.member_name not in vars(args_instance):
-            MAIN_LOGGER.error(f"No such attribute '{self.member_name}' in {qualname(type(args_instance))}")
-            return False
+            raise KeyError(f"No such attribute '{self.member_name}' in {qualname(type(args_instance))}")
         _args_member = getattr(args_instance, self.member_name)  # type: typing.Any
         _parsed_member = getattr(parsed_args, self.member_name)  # type: typing.Any
         args_instance.debug("ArgInfo['%s'].process(): _parsed_member = %r", self.member_name, _parsed_member)
         if _parsed_member is None:
             # No value => nothing to do.
             # Things will be checked later on with the :meth:`Args._checkargs()` handler.
-            return True
+            return
         if self.key_type is not None:
             if not isinstance(_args_member, dict):
-                MAIN_LOGGER.error(f"Attribute '{self.member_name}' in {qualname(type(args_instance))} should be a dictionary")
-                return False
+                raise TypeError(f"Attribute '{self.member_name}' in {qualname(type(args_instance))} should be a dictionary")
 
         # Build the list of parsed values to process.
         _parsed_values = []  # type: typing.List[typing.Any]
@@ -383,8 +390,7 @@ class ArgInfo:
             _parsed_key = ""  # type: str
             if self.key_type is not None:
                 if (not isinstance(_parsed_value, list)) or (len(_parsed_value) != 2) or (not isinstance(_parsed_value[0], str)):
-                    MAIN_LOGGER.error(f"{_parsed_value!r} should be a [str, ANY] list")
-                    return False
+                    raise TypeError(f"{_parsed_value!r} should be a [str, ANY] list")
                 _parsed_key = _parsed_value[0]
                 _parsed_value = _parsed_value[1]
 
@@ -397,8 +403,7 @@ class ArgInfo:
                 _parsed_value = self.value_type(_parsed_value)
             if _parsed_value is not None:
                 if (not inspect.isfunction(self.value_type)) and (not isinstance(_parsed_value, typing.cast(type, self.value_type))):
-                    MAIN_LOGGER.error(f"Wrong type {_parsed_value!r}, {qualname(self.value_type)} expected")
-                    return False
+                    raise TypeError(f"Wrong type {_parsed_value!r}, {qualname(self.value_type)} expected")
 
             # Save the value in the :class:`Args` instance.
             if self.key_type is not None:
@@ -410,8 +415,6 @@ class ArgInfo:
             else:
                 args_instance.debug("%s: %r", self.member_desc, _parsed_value)
                 setattr(args_instance, self.member_name, _parsed_value)
-
-        return True
 
 
 if typing.TYPE_CHECKING:

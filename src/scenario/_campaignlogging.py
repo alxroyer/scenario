@@ -125,9 +125,9 @@ class CampaignLogging:
             MAIN_LOGGER.debug("Scenario report: '%s'", test_case_execution.report.path)
 
         if test_case_execution.status == ExecutionStatus.WARNINGS:
-            MAIN_LOGGER.warning(str(test_case_execution.status))
+            MAIN_LOGGER.warning(test_case_execution.status)
         elif test_case_execution.status != ExecutionStatus.SUCCESS:
-            MAIN_LOGGER.error(str(test_case_execution.status))
+            MAIN_LOGGER.error(test_case_execution.status)
 
         for _warning in test_case_execution.warnings:  # type: TestError
             _warning.logerror(MAIN_LOGGER, level=logging.WARNING)

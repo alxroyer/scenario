@@ -18,7 +18,6 @@
 Campaign reports.
 """
 
-import sys
 import typing
 
 if True:
@@ -110,8 +109,6 @@ class CampaignReport(_LoggerImpl):
         Deprecated.
         Use :meth:`writecampaignreport()` instead.
         """
-        from ._loggermain import MAIN_LOGGER
-
         self.warning("CampaignReport.writejunitreport() deprecated, please use CampaignReport.writecampaignreport() instead")
         try:
             self.writecampaignreport(
@@ -120,8 +117,8 @@ class CampaignReport(_LoggerImpl):
             )
             return True
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not write report '{junit_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
+            self.error(f"Could not write report '{junit_path}': {_err}")
+            self.logexceptiontraceback(_err)
             return False
 
     def writecampaignreport(
@@ -163,8 +160,6 @@ class CampaignReport(_LoggerImpl):
         Deprecated.
         Use :meth:`readcampaignreport()` instead.
         """
-        from ._loggermain import MAIN_LOGGER
-
         self.warning(f"CampaignReport.readjunitreport() deprecated, please use CampaignReport.readcampaignreport() instead")
         try:
             return self.readcampaignreport(
@@ -174,8 +169,8 @@ class CampaignReport(_LoggerImpl):
                 read_scenario_reports=True,
             )
         except Exception as _err:
-            MAIN_LOGGER.error(f"Could not read campaign report '{junit_path}': {_err}")
-            self.debug("Exception", exc_info=sys.exc_info())
+            self.error(f"Could not read report '{junit_path}': {_err}")
+            self.logexceptiontraceback(_err)
             return None
 
     def readcampaignreport(

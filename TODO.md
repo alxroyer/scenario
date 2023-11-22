@@ -17,11 +17,6 @@
 
 ## Roadmap to v0.2.3
 
-- 'mkdoc.py' does not track undocumented class members.
-- Improve `Path`:
-    - Memo: '//void/path' may lead to long network path resolutions...
-    - Use a relative `pathlib.Path()` as `self._innerpath` for *void* paths.
-    - Make `Path` methods fail for *void* paths.
 - Issue #83: Add the ability to track requirements.
     - Fix campaign tests (no stats defined for new tests).
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
@@ -65,6 +60,11 @@
         - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
         - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
         - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
+- Issue #xxx: Improve `Path`:
+    - Memo: '//void/path' may lead to long network path resolutions...
+    - Use a relative `pathlib.Path()` as `self._innerpath` for *void* paths.
+    - Make `Path` methods fail for *void* paths.
+- Issue #xxx: 'mkdoc.py' does not track undocumented class members.
 - Issue #xxx: Don't use console colors directly, but use meta tags (like `<strong>` or `<span class=''>`).
 - Issue #xxx: Main logging indentation should be saved in scenario reports.
     - As displayed in logging.
