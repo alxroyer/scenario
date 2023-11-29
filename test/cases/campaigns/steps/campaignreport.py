@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import time
 import typing
 
 import scenario
@@ -42,10 +43,19 @@ class CheckCampaignReport(scenario.test.VerificationStep):
 
         scenario.logging.resetindentation()
 
+        # Ensure the `CampaignExpectations` object knows the campaign output directory path.
+        if self.doexecute():
+            self.campaign_expectations.outdir_path = self.getexecstep(ExecCampaign).final_outdir_path
+
         _campaign_execution = scenario.CampaignExecution(outdir=None)  # type: scenario.CampaignExecution
-        if self.ACTION("Read the .xml campaign report file."):
-            self.evidence(f"Campaign report path: '{self.getexecstep(ExecCampaign).campaign_report_path}'")
-            _campaign_execution = scenario.campaign_report.readcampaignreport(self.getexecstep(ExecCampaign).campaign_report_path)
+        if self.ACTION("Read the .xml campaign report file (with scenario reports)."):
+            self.evidence(f"Campaign report path: '{self.campaign_expectations.campaign_report_path}'")
+            _t0 = time.time()  # type: float
+            _campaign_execution = scenario.campaign_report.readcampaignreport(
+                self.campaign_expectations.campaign_report_path,
+                read_scenario_reports=True,
+            )
+            self.evidence(f"Campaign report read in {time.time() - _t0:.2f} seconds")
 
         if self.campaign_expectations.test_suite_expectations is not None:
             _test_suites_txt = scenario.text.Countable("test suite", self.campaign_expectations.test_suite_expectations)  # type: scenario.text.Countable

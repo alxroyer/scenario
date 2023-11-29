@@ -23,54 +23,40 @@ if typing.TYPE_CHECKING:
     from .execution import ExecCampaign as _ExecCampaignType
 
 
-class CampaignOutdirFilesManager:
+class CampaignScenarioResultsReader:
     """
-    Base class for objects (and step objects among others) that need to manipulate campaign results.
+    Helper class for reading scenario log and reports in campaign results.
     """
+
+    def __init__(
+            self,
+            outdir_path,  # type: scenario.Path
+    ):  # type: (...) -> None
+        self._outdir_path = outdir_path  # type: scenario.Path
+        #: {*Pretty path*: :class:`CampaignOutdirFilesManager.ScenarioResults`} dictionary.
+        self._scenario_results = {}  # type: typing.Dict[str, CampaignScenarioResultsReader.ScenarioResults]
+
+    def get(
+            self,
+            script_path,  # type: scenario.Path
+    ):  # type: (...) -> CampaignScenarioResultsReader.ScenarioResults
+        if script_path.prettypath not in self._scenario_results:
+            self._scenario_results[script_path.prettypath] = CampaignScenarioResultsReader.ScenarioResults(self._outdir_path, script_path)
+        return self._scenario_results[script_path.prettypath]
 
     class ScenarioResults:
         def __init__(
                 self,
-                campaign_execution,  # type: _ExecCampaignType
+                outdir_path,  # type: scenario.Path
                 scenario_path,  # type: scenario.Path
         ):  # type: (...) -> None
             from scenario._campaignexecution import LogFileReader, ReportFileReader  # noqa  ## Access to protected module
 
             self.scenario_path = scenario_path  # type: scenario.Path
             self.log = LogFileReader()  # type: LogFileReader
-            self.log.path = campaign_execution.final_outdir_path / scenario_path.name.replace(".py", ".log")
+            self.log.path = outdir_path / scenario_path.name.replace(".py", ".log")
             self.report = ReportFileReader()  # type: ReportFileReader
-            self.report.path = campaign_execution.final_outdir_path / scenario_path.name.replace(".py", ".json")
-
-        @property
-        def scenario_report(self):  # type: () -> typing.Optional[scenario.ScenarioExecution]
-            if self.report.content:
-                return self.report.content.execution
-            return None
-
-    def __init__(
-            self,
-            campaign_execution,  # type: _ExecCampaignType
-    ):  # type: (...) -> None
-        self._campaign_execution = campaign_execution  # type: _ExecCampaignType
-        #: *Pretty path* => :class:`CampaignOutdirFilesManager.ScenarioResults` dictionary.
-        self._scenario_results = {}  # type: typing.Dict[str, CampaignOutdirFilesManager.ScenarioResults]
-
-    def getscenarioresults(
-            self,
-            script_path,  # type: scenario.Path
-    ):  # type: (...) -> CampaignOutdirFilesManager.ScenarioResults
-        if script_path.prettypath not in self._scenario_results:
-            self._scenario_results[script_path.prettypath] = CampaignOutdirFilesManager.ScenarioResults(self._campaign_execution, script_path)
-        return self._scenario_results[script_path.prettypath]
-
-    @property
-    def campaign_report_path(self):  # type: () -> scenario.Path
-        return self._campaign_execution.campaign_report_path
-
-    @property
-    def req_db_path(self):  # type: () -> scenario.Path
-        return self._campaign_execution.req_db_path
+            self.report.path = outdir_path / scenario_path.name.replace(".py", ".json")
 
 
 class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
@@ -83,7 +69,6 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
         scenario.test.VerificationStep.__init__(self, exec_step)
 
         self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
-        self._outfiles = CampaignOutdirFilesManager(exec_step)  # type: CampaignOutdirFilesManager
         self._outdir_content = []  # type: typing.List[scenario.Path]
 
     def step(self):  # type: (...) -> None
@@ -91,57 +76,98 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
 
         self.STEP("Output directory content")
 
+        # Ensure the `CampaignExpectations` object knows the campaign output directory path.
+        if self.doexecute():
+            self.campaign_expectations.outdir_path = self.getexecstep(ExecCampaign).final_outdir_path
+
+        _outfiles_expectation = {}  # type: typing.Dict[str, bool]
+
         if self.ACTION("Read the directory containing the campaign results."):
-            self.evidence(f"Reading '{self.getexecstep(ExecCampaign).final_outdir_path}'")
-            self._outdir_content = list(self.getexecstep(ExecCampaign).final_outdir_path.iterdir())
+            self.evidence(f"Reading '{self.campaign_expectations.outdir_path}'")
+            self._outdir_content = list(self.campaign_expectations.outdir_path.iterdir())
 
         # Scenario reports.
+        _outfiles_expectation["scenario reports"] = self.campaign_expectations.test_suite_expectations is not None
         if self.campaign_expectations.test_suite_expectations is not None:
             if self.RESULT("This directory contains 1 '.log' and 1 '.json' file for each scenario executed."):
+                _scenario_results = CampaignScenarioResultsReader(self.campaign_expectations.outdir_path)  # type: CampaignScenarioResultsReader
                 for _test_suite_expectations in self.campaign_expectations.test_suite_expectations:  # type: scenario.test.TestSuiteExpectations
                     assert _test_suite_expectations.test_case_expectations is not None
                     for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: scenario.test.ScenarioExpectations
                         assert _test_case_expectations.script_path is not None
                         self._assertoutfile(
-                            self._outfiles.getscenarioresults(_test_case_expectations.script_path).log.path,
+                            _scenario_results.get(_test_case_expectations.script_path).log.path,
                             evidence=f"'{_test_case_expectations.script_path}' '.log' file",
                         )
                         self._assertoutfile(
-                            self._outfiles.getscenarioresults(_test_case_expectations.script_path).report.path,
+                            _scenario_results.get(_test_case_expectations.script_path).report.path,
                             evidence=f"'{_test_case_expectations.script_path}' '.json' file",
                         )
 
         # Campaign report.
-        if self.RESULT("The directory contains a '.xml' campaign report file."):
+        if self.RESULT("The directory contains a campaign report file."):
             self._assertoutfile(
-                self._outfiles.campaign_report_path,
+                self.campaign_expectations.campaign_report_path,
                 evidence="Campaign report",
             )
 
-        # Requirement file.
-        if self.campaign_expectations.req_db_file:
-            if self.RESULT("The directory contains a '.json' requirement file."):
+        # Requirement file and traceability reports.
+        _outfiles_expectation["requirement database file"] = self.campaign_expectations.req_db_file.generated is not None
+        if self.campaign_expectations.req_db_file.generated is True:
+            if self.RESULT("The directory contains a requirement file."):
                 self._assertoutfile(
-                    self._outfiles.req_db_path,
+                    self.campaign_expectations.req_db_file.path,
                     evidence="Requirement file",
                 )
-        elif self.campaign_expectations.req_db_file is False:
-            if self.RESULT("The directory contains no '.json' requirement file."):
+        elif self.campaign_expectations.req_db_file.generated is False:
+            if self.RESULT("The directory contains no requirement file."):
                 self.assertnotexists(
-                    self._outfiles.req_db_path,
+                    self.campaign_expectations.req_db_file.path,
                     evidence="Requirement file",
+                )
+        _outfiles_expectation["downstream traceability"] = self.campaign_expectations.downstream_traceability.generated is not None
+        if self.campaign_expectations.downstream_traceability.generated is True:
+            if self.RESULT("The directory contains a downstream traceability report."):
+                self._assertoutfile(
+                    self.campaign_expectations.downstream_traceability.path,
+                    evidence="Downstream traceability report",
+                )
+        elif self.campaign_expectations.downstream_traceability.generated is False:
+            if self.RESULT("The directory contains no downstream traceability report."):
+                self.assertnotexists(
+                    self.campaign_expectations.downstream_traceability.path,
+                    evidence="Downstream traceability report",
+                )
+        _outfiles_expectation["upstream traceability"] = self.campaign_expectations.upstream_traceability.generated is not None
+        if self.campaign_expectations.upstream_traceability.generated is True:
+            if self.RESULT("The directory contains an upstream traceability report."):
+                self._assertoutfile(
+                    self.campaign_expectations.upstream_traceability.path,
+                    evidence="Upstream traceability report",
+                )
+        elif self.campaign_expectations.upstream_traceability.generated is False:
+            if self.RESULT("The directory contains no upstream traceability report."):
+                self.assertnotexists(
+                    self.campaign_expectations.upstream_traceability.path,
+                    evidence="Upstream traceability report",
                 )
 
         # No other file.
-        if all([
-            self.campaign_expectations.test_suite_expectations is not None,
-            self.campaign_expectations.req_db_file,
-        ]):
+        if all(_outfiles_expectation.values()):
             if self.RESULT("The directory contains no other file."):
                 self.assertisempty(
                     self._outdir_content,
                     evidence="Remaining files",
                 )
+        elif not any(_outfiles_expectation.values()):
+            raise ValueError("".join([
+                "Please specify either all or none of the following outfile expectations: ",
+                ", ".join(_outfiles_expectation.keys()),
+                " (only %s given)" % ", ".join(map(
+                    lambda item: item[0],
+                    filter(lambda item: item[1], _outfiles_expectation.items()),
+                )),
+            ]))
 
     def _assertoutfile(
             self,

@@ -127,8 +127,9 @@ def scenarioexpectations(
 
     if script_path.samefile(_paths.ACTION_RESULT_LOOP_SCENARIO):
         def _actionresultloopscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Action/result loop sample scenario"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Action/result loop sample scenario")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.stats():
                 if doc_only:
                     _scenario_expectations.setstats(steps=1, actions=10, results=10)
@@ -144,8 +145,9 @@ def scenarioexpectations(
 
     elif script_path.samefile(_paths.CONFIG_DB_SCENARIO):
         def _configdbscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Configuration database sample scenario"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Configuration database sample scenario")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.stats():
                 if doc_only:
                     _scenario_expectations.setstats(steps=3, actions=3, results=0)
@@ -155,8 +157,9 @@ def scenarioexpectations(
 
     elif script_path.samefile(_paths.FAILING_SCENARIO):
         def _failingscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Failing scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Failing scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.steps():
                 _scenario_expectations.addstep(number=1, name="step010")
                 if doc_only or continue_on_error:
@@ -192,8 +195,9 @@ def scenarioexpectations(
 
     elif script_path.samefile(_paths.GOTO_SCENARIO):
         def _gotoscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Goto scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Goto scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.steps():
                 if doc_only:
                     _scenario_expectations.addstep(number=1, name="step000")
@@ -217,8 +221,9 @@ def scenarioexpectations(
 
     elif script_path.samefile(_paths.INHERITING_SCENARIO):
         def _inheritingscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Inheriting scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Inheriting scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.steps():
                 _scenario_expectations.addstep(number=1, name="step010")
                 _scenario_expectations.addstep(number=2, name="step015")
@@ -242,8 +247,9 @@ def scenarioexpectations(
             _issue_level_ignored = _configvalues.getint(config_values, scenario.ConfigKey.ISSUE_LEVEL_IGNORED, default=0) or None  # type: typing.Optional[int]
             _issue_level_error = _configvalues.getint(config_values, scenario.ConfigKey.ISSUE_LEVEL_ERROR, default=0) or None  # type: typing.Optional[int]
 
+            _scenario_expectations.title = "Known issue details scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Known issue details scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.steps():
                 _scenario_expectations.addstep(number=1, name="step010")
             # Memo: Known issue is generated inside an action bloc.
@@ -290,8 +296,9 @@ def scenarioexpectations(
             )  # type: int
             _raise_exceptions = _configvalues.getbool(config_values, KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS, default=False)  # type: bool
 
+            _scenario_expectations.title = "Known issue scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Known issue scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.steps():
                 _scenario_expectations.addstep(number=1, name="KnownIssuesScenario.KnownIssuesStep")
                 if (not _raise_exceptions) or doc_only or continue_on_error:
@@ -389,8 +396,9 @@ def scenarioexpectations(
 
     elif script_path.samefile(_paths.LOGGER_SCENARIO):
         def _loggerscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Logger scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Logger scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.stats():
                 if doc_only:
                     _scenario_expectations.setstats(steps=2, actions=8, results=0)
@@ -400,8 +408,9 @@ def scenarioexpectations(
 
     elif script_path.samefile(_paths.LOGGING_INDENTATION_SCENARIO):
         def _loggingindentationscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Logging indentation scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Logging indentation scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.stats():
                 if doc_only:
                     _scenario_expectations.setstats(steps=1, actions=31, results=0)
@@ -409,26 +418,42 @@ def scenarioexpectations(
                     _scenario_expectations.setstats(steps=(1, 1), actions=(31, 31), results=(0, 0))
         _loggingindentationscenario()
 
+    elif script_path.samefile(_paths.LONG_TEXTS_SCENARIO):
+        def _longtextsscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Long texts scenario sample"
+            if _reqs.attributes():
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.DESCRIPTION, "Scenario description line#1.\n\nScenario description line#2.")
+            if _reqs.stats():
+                if doc_only:
+                    _scenario_expectations.setstats(steps=2, actions=2, results=2)
+                else:
+                    _scenario_expectations.setstats(steps=(2, 2), actions=(2, 2), results=(2, 2))
+        _longtextsscenario()
+
     elif script_path.samefile(_paths.REQ_SCENARIO1):
         def _reqscenario1():  # type: (...) -> None
+            _scenario_expectations.title = "Requirement scenario 1"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Requirement scenario 1")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.stats():
                 _scenario_expectations.setstats(steps=0, actions=0, results=0)
         _reqscenario1()
 
     elif script_path.samefile(_paths.REQ_SCENARIO2):
         def _reqscenario2():  # type: (...) -> None
+            _scenario_expectations.title = "Requirement scenario 2"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Requirement scenario 2")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.stats():
                 _scenario_expectations.setstats(steps=1, actions=1, results=1)
         _reqscenario2()
 
     elif script_path.samefile(_paths.SCENARIO_LOGGING_SCENARIO):
         def _scenariologgingscenario():  # type: (...) -> None
+            _scenario_expectations.title = "Scenario logging scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Scenario logging scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.stats():
                 if doc_only:
                     _scenario_expectations.setstats(steps=1, actions=1, results=1)
@@ -438,8 +463,9 @@ def scenarioexpectations(
 
     elif script_path.samefile(_paths.SIMPLE_SCENARIO):
         def _simplescenario():  # type: (...) -> None
+            _scenario_expectations.title = "Simple scenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Simple scenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.steps():
                 _scenario_expectations.addstep(number=1, name="step010")
                 _scenario_expectations.addstep(number=2, name="step020")
@@ -478,8 +504,9 @@ def scenarioexpectations(
             )  # type: ScenarioExpectations
             assert _subscenario_expectations.status
 
+            _scenario_expectations.title = "Subscenario sample"
             if _reqs.attributes():
-                _scenario_expectations.addattribute("TITLE", "Subscenario sample")
+                _scenario_expectations.addattribute(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)
             if _reqs.steps():
                 # One single step.
                 _scenario_expectations.addstep(number=1, name="step001", description="Subscenario execution")

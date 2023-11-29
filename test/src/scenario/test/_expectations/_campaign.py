@@ -25,10 +25,48 @@ if typing.TYPE_CHECKING:
 
 
 class CampaignExpectations:
+    class ReqOutfile:
+        def __init__(
+                self,
+                campaign_expectations,  # type: CampaignExpectations
+                default_basename,  # type: str
+        ):  # type: (...) -> None
+            self._campaign_expectations = campaign_expectations  # type: CampaignExpectations
+            self.generated = None  # type: typing.Optional[bool]
+            self.basename = default_basename  # type: str
+            self.with_titles_and_texts = None  # type: typing.Optional[bool]
+            self.content_path = None  # type: typing.Optional[scenario.Path]
+
+        def set(
+                self,
+                generated,  # type: bool
+                *,
+                basename=None,  # type: str
+                with_titles_and_texts=None,  # type: bool
+                content=None,  # type: scenario.Path
+        ):  # type: (...) -> None
+            self.generated = generated
+            if basename is not None:
+                self.basename = basename
+            self.with_titles_and_texts = with_titles_and_texts
+            self.content_path = content
+
+        @property
+        def path(self):  # type: () -> scenario.Path
+            return self._campaign_expectations.outdir_path / self.basename
+
     def __init__(self):  # type: (...) -> None
         self.test_suite_expectations = None  # type: typing.Optional[typing.List[_TestSuiteExpectationsType]]
-        self.req_db_file = None  # type: typing.Optional[typing.Union[scenario.Path, bool]]
-        self.req_db_file_titles_and_texts = None  # type: typing.Optional[bool]
+        self.req_db_file = CampaignExpectations.ReqOutfile(self, "req-db.json")  # type: CampaignExpectations.ReqOutfile
+        self.downstream_traceability = CampaignExpectations.ReqOutfile(self, "req-downstream-traceability.json")  # type: CampaignExpectations.ReqOutfile
+        self.upstream_traceability = CampaignExpectations.ReqOutfile(self, "req-upstream-traceability.json")  # type: CampaignExpectations.ReqOutfile
+
+        # Should be set during test execution.
+        self._outdir_path = None  # type: typing.Optional[scenario.Path]
+
+    @property
+    def campaign_report_path(self):  # type: () -> scenario.Path
+        return self.outdir_path / "campaign.xml"
 
     def addtestsuite(
             self,
@@ -40,15 +78,6 @@ class CampaignExpectations:
             self.test_suite_expectations = []
         self.test_suite_expectations.append(TestSuiteExpectations(self, test_suite_path=test_suite_path))
         return self.test_suite_expectations[-1]
-
-    def reqdbfile(
-            self,
-            expect,  # type: typing.Union[scenario.Path, bool]
-            titles_and_texts=None,  # type: bool
-    ):  # type: (...) -> None
-        assert expect is not True, f"Please provide a requirement file"
-        self.req_db_file = expect
-        self.req_db_file_titles_and_texts = titles_and_texts
 
     @property
     def all_test_case_expectations(self):  # type: () -> typing.Optional[typing.List[_ScenarioExpectationsType]]
@@ -79,3 +108,13 @@ class CampaignExpectations:
         from ._stats import StatExpectations
 
         return StatExpectations.sum("results", self.test_suite_expectations)
+
+    @property
+    def outdir_path(self):  # type: () -> scenario.Path
+        if not self._outdir_path:
+            raise RuntimeError("Campaign output directory missing, please set at the beginning of the current step (in execution mode)")
+        return self._outdir_path
+
+    @outdir_path.setter
+    def outdir_path(self, outdir_path):  # type: (scenario.Path) -> None
+        self._outdir_path = outdir_path

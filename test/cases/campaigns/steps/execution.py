@@ -67,14 +67,6 @@ class ExecCampaign(_ExecCommonArgsImpl):
         assert self._final_outdir_path is not None
         return self._final_outdir_path
 
-    @property
-    def campaign_report_path(self):  # type: () -> scenario.Path
-        return self.final_outdir_path / "campaign.xml"
-
-    @property
-    def req_db_path(self):  # type: () -> scenario.Path
-        return self.final_outdir_path / "req-db.json"
-
     def step(self):  # type: (...) -> None
         # Description already set programmatically.
         # self.STEP()

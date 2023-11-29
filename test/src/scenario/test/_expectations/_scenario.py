@@ -36,6 +36,7 @@ class ScenarioExpectations:
 
         self.test_suite_expectations = test_suite_expectations  # type: typing.Optional[_TestSuiteExpectationsType]
 
+        self.title = None  # type: typing.Optional[str]
         self.class_name = class_name  # type: typing.Optional[str]
         self.script_path = script_path  # type: typing.Optional[scenario.Path]
         self.attributes = None  # type: typing.Optional[typing.Dict[str, str]]

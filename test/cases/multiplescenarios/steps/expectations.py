@@ -407,32 +407,36 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
         from steps.common import ExecCommonArgs
 
         _scenario_expectations = scenario_data.expectations  # type: scenario.test.ScenarioExpectations
-        if _scenario_expectations.attributes is not None:
-            assert scenario.ConfigKey.RESULTS_EXTRA_INFO in self.getexecstep(ExecCommonArgs).config_values
-            _extra_info_option = scenario.test.configvalues.getstr(
-                self.getexecstep(ExecCommonArgs).config_values, scenario.ConfigKey.RESULTS_EXTRA_INFO,
-                default="",
-            )  # type: str
-            if not _extra_info_option:
-                if self.RESULT(f"No extra info is displayed with the '{_scenario_expectations.name}' scenario."):
-                    assert scenario_data.json
-                    self.assertisempty(
-                        scenario_data.json["extra-info"] or "",
-                        evidence=f"'{_scenario_expectations.name}' extra info",
-                    )
+        _extra_info_option = scenario.test.configvalues.getstr(
+            self.getexecstep(ExecCommonArgs).config_values, scenario.ConfigKey.RESULTS_EXTRA_INFO,
+            default=scenario.ScenarioAttributes.TITLE,
+        )  # type: str
+        for _attribute_name in _extra_info_option.split(","):  # type: str
+            _attribute_name = _attribute_name.strip()
+            self.assertisnotempty(_attribute_name, f"Invalid attribute name {_attribute_name!r} in extra info option")
+
+            _attribute_value = ""  # type: str
+            if scenario.ConfigKey.RESULTS_EXTRA_INFO in self.getexecstep(ExecCommonArgs).config_values:
+                _expected_attributes = self.assertisnotnone(
+                    _scenario_expectations.attributes,
+                    f"Attribute expectations missing for {_scenario_expectations.name!r}",
+                )  # type: typing.Dict[str, str]
+                self.assertin(
+                    _attribute_name, _expected_attributes,
+                    f"No such attribute '{_attribute_name}' in {_scenario_expectations.name!r} attribute expectations",
+                )
+                _attribute_value = _expected_attributes[_attribute_name]
             else:
-                for _attribute_name in _extra_info_option.split(","):  # type: str
-                    _attribute_name = _attribute_name.strip()
-                    self.assertisnotempty(_attribute_name, f"Invalid attribute name '{_attribute_name}' in extra info option")
-                    self.assertin(
-                        _attribute_name, _scenario_expectations.attributes,
-                        f"No such attribute '{_attribute_name}' in '{_scenario_expectations.name}' attribute expectations",
-                    )
-                    if self.RESULT(f"The '{_attribute_name}' attribute of the '{_scenario_expectations.name}' scenario, "
-                                   f"i.e. {_scenario_expectations.attributes[_attribute_name]!r}, "
-                                   "is displayed with its extra info."):
-                        assert scenario_data.json
-                        self.assertin(
-                            _scenario_expectations.attributes[_attribute_name], scenario_data.json["extra-info"],
-                            evidence=f"'{_scenario_expectations.name}' extra info - '{_attribute_name}' attribute",
-                        )
+                _attribute_name = self.assertisnotnone(
+                    _scenario_expectations.title,
+                    f"Title expectation missing for {_scenario_expectations.name!r}",
+                )
+
+            if self.RESULT(f"The {_attribute_name!r} attribute of the {_scenario_expectations.name!r} scenario, "
+                           f"i.e. {_attribute_value!r}, "
+                           "is displayed with its extra info."):
+                assert scenario_data.json
+                self.assertin(
+                    _attribute_value, scenario_data.json["extra-info"],
+                    evidence=f"{_scenario_expectations.name!r} extra info - {_attribute_name!r} attribute",
+                )

@@ -30,20 +30,20 @@ class CheckCampaignScenarioReports(scenario.test.VerificationStep):
             exec_step,  # type: _ExecCampaignType
             campaign_expectations,  # type: scenario.test.CampaignExpectations
     ):  # type: (...) -> None
-        from campaigns.steps.outdirfiles import CampaignOutdirFilesManager
         from scenarioexecution.steps.execution import ExecScenario
         from scenarioreport.steps.expectations import CheckScenarioReportExpectations
 
         scenario.test.VerificationStep.__init__(self, exec_step)
 
         self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
-        self._outfiles = CampaignOutdirFilesManager(exec_step)  # type: CampaignOutdirFilesManager
         self._scenario_report_checker = CheckScenarioReportExpectations(
             exec_step=ExecScenario(scenario.Path(), doc_only=exec_step.doc_only),  # Unused, but the *doc-only* property.
             scenario_expectations=scenario.test.ScenarioExpectations(),  # Unused.
         )  # type: CheckScenarioReportExpectations
 
     def step(self):  # type: (...) -> None
+        from campaigns.steps.execution import ExecCampaign
+        from campaigns.steps.outdirfiles import CampaignScenarioResultsReader
         from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
 
         self.STEP("Scenario reports")
@@ -57,8 +57,9 @@ class CheckCampaignScenarioReports(scenario.test.VerificationStep):
                 _json = {}  # type: scenario.types.JsonDict
                 assert _test_case_expectations.script_path is not None
                 if self.ACTION(f"Read the scenario report file for '{_test_case_expectations.script_path}'."):
-                    _report_path = self._outfiles.getscenarioresults(_test_case_expectations.script_path).report.path  # type: typing.Optional[scenario.Path]
-                    assert _report_path is not None
+                    _scenario_results = CampaignScenarioResultsReader(self.getexecstep(ExecCampaign).final_outdir_path)  # type: CampaignScenarioResultsReader
+                    _report_path = _scenario_results.get(_test_case_expectations.script_path).report.path  # type: typing.Optional[scenario.Path]
+                    assert _report_path is not None, f"Report path missing for '{_test_case_expectations.script_path}'"
                     _json = JsonDict.readfile(_report_path)
                     self.debug("%s", scenario.debug.jsondump(_json, indent=2),
                                extra={self.Extra.LONG_TEXT_MAX_LINES: 10})

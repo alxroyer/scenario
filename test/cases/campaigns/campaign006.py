@@ -38,7 +38,9 @@ class Campaign006(scenario.test.TestCase):
         self.section("Tests without requirements, no input requirement file")
         _1 = self.addstep(ExecCampaign([scenario.test.paths.DEMO_TEST_SUITE]))
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
-        _campaign_expectations.reqdbfile(False)
+        _campaign_expectations.req_db_file.set(False)
+        _campaign_expectations.downstream_traceability.set(False)
+        _campaign_expectations.upstream_traceability.set(False)
         self.addstep(CheckCampaignOutdirFiles(_1, _campaign_expectations))
 
         self.section("Tests without requirements, input requirement file")
@@ -46,14 +48,18 @@ class Campaign006(scenario.test.TestCase):
             scenario.ConfigKey.REQ_DB_FILES: scenario.test.paths.REQ_DB_FILE,
         }))
         _campaign_expectations = scenario.test.CampaignExpectations()  # Type already declared above.
-        _campaign_expectations.reqdbfile(scenario.test.paths.REQ_DB_FILE, titles_and_texts=True)
+        _campaign_expectations.req_db_file.set(True, content=scenario.test.paths.REQ_DB_FILE, with_titles_and_texts=True)
+        _campaign_expectations.downstream_traceability.set(True)
+        _campaign_expectations.upstream_traceability.set(True)
         self.addstep(CheckCampaignOutdirFiles(_2, _campaign_expectations))
         self.addstep(CheckCampaignReqDbFile(_2, _campaign_expectations))
 
         self.section("Tests with requirements, no input requirement file")
         _3 = self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE]))
         _campaign_expectations = scenario.test.CampaignExpectations()  # Type already declared above.
-        _campaign_expectations.reqdbfile(scenario.test.paths.REQ_DB_FILE, titles_and_texts=False)
+        _campaign_expectations.req_db_file.set(True, content=scenario.test.paths.REQ_DB_FILE, with_titles_and_texts=False)
+        _campaign_expectations.downstream_traceability.set(True)
+        _campaign_expectations.upstream_traceability.set(True)
         self.addstep(CheckCampaignOutdirFiles(_3, _campaign_expectations))
         self.addstep(CheckCampaignReqDbFile(_3, _campaign_expectations))
 
@@ -62,6 +68,8 @@ class Campaign006(scenario.test.TestCase):
             scenario.ConfigKey.REQ_DB_FILES: scenario.test.paths.REQ_DB_FILE,
         }))
         _campaign_expectations = scenario.test.CampaignExpectations()  # Type already declared above.
-        _campaign_expectations.reqdbfile(scenario.test.paths.REQ_DB_FILE, titles_and_texts=True)
+        _campaign_expectations.req_db_file.set(True, content=scenario.test.paths.REQ_DB_FILE, with_titles_and_texts=True)
+        _campaign_expectations.downstream_traceability.set(True)
+        _campaign_expectations.upstream_traceability.set(True)
         self.addstep(CheckCampaignOutdirFiles(_4, _campaign_expectations))
         self.addstep(CheckCampaignReqDbFile(_4, _campaign_expectations))

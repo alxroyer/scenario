@@ -160,7 +160,7 @@ class Path:
             path = pathlib.Path(path)
             if not path.is_absolute():
                 # Resolve relative path.
-                self._abspath = pathlib.Path(relative_to or pathlib.Path.cwd()).resolve() / path
+                self._abspath = (pathlib.Path(relative_to or pathlib.Path.cwd()).resolve() / path).resolve()
             else:
                 # Let's resolve `path` as is otherwise.
                 self._abspath = path.resolve()
