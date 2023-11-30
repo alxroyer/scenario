@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Fix campaign tests (no stats defined for new tests).
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Include test results (when available) in downstream taceability reports.
         - Issue #xxx: Reduce campaign results time: don't repeat scenario log if already given in a .log file.

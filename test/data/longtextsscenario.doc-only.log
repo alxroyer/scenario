@@ -9,7 +9,7 @@ SCENARIO 'test/data/longtextsscenario.py'
     REQ-001: Ping / Main path
 
 
-STEP#1: Multiline strings (test/data/longtextsscenario.py:47:LongTextsScenario.step001)
+STEP#1: Multiline strings (test/data/longtextsscenario.py:47:LongTextsScenario.step010)
 ------------------------------------------------
     ACTION: Action line#1.
 
@@ -18,7 +18,7 @@ STEP#1: Multiline strings (test/data/longtextsscenario.py:47:LongTextsScenario.s
 
             Expected result line#2.
 
-STEP#2: List of strings (test/data/longtextsscenario.py:72:LongTextsScenario.step002)
+STEP#2: List of strings (test/data/longtextsscenario.py:72:LongTextsScenario.step020)
 ------------------------------------------------
     ACTION: Action line#1.
 
