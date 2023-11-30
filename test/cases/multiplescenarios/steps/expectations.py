@@ -409,40 +409,67 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
     ):  # type: (...) -> None
         from steps.common import ExecCommonArgs
 
+        # Shortcut to scenario expectations.
         _scenario_expectations = scenario_data.expectations  # type: scenario.test.ScenarioExpectations
-        _extra_info_option = scenario.test.configvalues.getstr(
+
+        # Depending on whether the test or campaign has been launched with *extra-info* configurations,
+        # determine the list of expected attribute (name, value) tuples.
+        _expected_names_and_values = None  # type: typing.Optional[typing.List[typing.Tuple[str, str]]]
+        _extra_info_config = scenario.test.configvalues.getstr(
             self.getexecstep(ExecCommonArgs).config_values, scenario.ConfigKey.RESULTS_EXTRA_INFO,
-            default=scenario.ScenarioAttributes.TITLE,
+            default="",
         )  # type: str
-        for _attribute_name in _extra_info_option.split(","):  # type: str
-            _attribute_name = _attribute_name.strip()
-            self.assertisnotempty(_attribute_name, f"Invalid attribute name {_attribute_name!r} in extra info option")
+        if _extra_info_config:
+            # In case of *extra-info* configurations, check attribute expectations are set.
+            assert _scenario_expectations.attributes is not None, f"Attribute expectations missing for {_scenario_expectations.name!r}"
 
-            _attribute_value = None  # type: typing.Optional[str]
-            if scenario.ConfigKey.RESULTS_EXTRA_INFO in self.getexecstep(ExecCommonArgs).config_values:
-                _expected_attributes = self.assertisnotnone(
-                    _scenario_expectations.attributes,
-                    f"Attribute expectations missing for {_scenario_expectations.name!r}",
-                )  # type: typing.Dict[str, str]
-                self.assertin(
-                    _attribute_name, _expected_attributes,
-                    f"No such attribute {_attribute_name!r} in {_scenario_expectations.name!r} attribute expectations",
-                )
-                _attribute_value = _expected_attributes[_attribute_name]
+            # Feed the expected attribute names and values.
+            _expected_names_and_values = []
+            for _expected_name in _extra_info_config.split(","):  # type: str
+                _expected_name = _expected_name.strip()
+                self.assertisnotempty(_expected_name, f"Invalid attribute name {_expected_name!r} in extra info option")
+                if _expected_name in _scenario_expectations.attributes:
+                    _expected_value = _scenario_expectations.attributes[_expected_name]  # type: str
+                    if len(_expected_value.splitlines()) > 1:
+                        _expected_value = str(scenario.debug.saferepr(_expected_value))
+                    _expected_names_and_values.append((_expected_name, _expected_value))
+                else:
+                    self.debug("No %r attribute for %r", _expected_name, _scenario_expectations.name)
+        else:
+            # In case of no *extra-info* configurations, default should be TITLE.
+            if _scenario_expectations.script_path and _scenario_expectations.script_path.is_relative_to(scenario.test.paths.DEMO_PATH):
+                # No title expectations for 'demo/' scripts.
+                self.debug("No title expectation for '%s' script %r", scenario.test.paths.DEMO_PATH, _scenario_expectations.name)
             else:
-                _attribute_name = _scenario_expectations.title
-                if not (_scenario_expectations.script_path and _scenario_expectations.script_path.is_relative_to(scenario.test.paths.DEMO_PATH)):
-                    self.assertisnotnone(_attribute_name, f"Title expectation missing for {_scenario_expectations.name!r}")
+                assert _scenario_expectations.title, f"Title expectation missing for {_scenario_expectations.name!r}"
+                _expected_names_and_values = [(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)]
 
-            if _attribute_value is not None:
-                if self.RESULT(f"The {_attribute_name!r} attribute of the {_scenario_expectations.name!r} scenario, "
-                               f"i.e. {_attribute_value!r}, "
-                               "is displayed with its extra info."):
-                    assert scenario_data.json
-                    self.assertin(
-                        _attribute_value, scenario_data.json["extra-info"],
-                        evidence=f"{_scenario_expectations.name!r} extra info - {_attribute_name!r} attribute",
+        if _expected_names_and_values is None:
+            if self.doexecute():
+                self.debug("Extra info not checked for %r", _scenario_expectations.name)
+        else:
+            # Extra info values read from scenario results.
+            _extra_info_values = ""  # type: str
+            if self.doexecute():
+                assert scenario_data.json is not None, f"Missing JSON extra info for {_scenario_expectations.name!r}"
+                _extra_info_values = scenario_data.json["extra-info"]
+
+            # Check expected attribute values.
+            while _expected_names_and_values:
+                _expected_name, _expected_value = _expected_names_and_values.pop(0)  # Type already declared above.
+                if self.RESULT(f"The {_expected_name!r} attribute of the {_scenario_expectations.name!r} scenario, "
+                               f"i.e. {_expected_value!r}, "
+                               f"is displayed with its extra info."):
+                    self.assertstartswith(
+                        _extra_info_values, _expected_value,
+                        evidence=f"{_scenario_expectations.name!r} extra info - {_expected_name!r} attribute",
                     )
-            else:
-                if self.doexecute():
-                    self.debug("Extra info not checked for %r", _scenario_expectations.name)
+                    # Remove the attribute value read from `_extra_info_values`.
+                    _extra_info_values = _extra_info_values[len(_expected_value):].lstrip(",").lstrip()
+
+            # Check no more extra info.
+            if self.RESULT(f"The scenario extra info for {_scenario_expectations.name!r} contains no more info."):
+                self.assertisempty(
+                    _extra_info_values,
+                    evidence=f"{_scenario_expectations.name!r} remaining extra info",
+                )

@@ -38,11 +38,25 @@ class Campaign005(scenario.test.TestCase):
         assert _campaign_expectations.all_test_case_expectations
 
         self.section("No extra info")
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: ""}))
-        self.addstep(ParseFinalResultsLog(ExecCampaign.getinstance(0)))
-        self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(0), _campaign_expectations.all_test_case_expectations))
+        _e1 = self.addstep(ExecCampaign(
+            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: ""},
+        ))
+        _p1 = self.addstep(ParseFinalResultsLog(_e1))
+        self.addstep(CheckFinalResultsLogExpectations(_p1, _campaign_expectations.all_test_case_expectations))
 
-        self.section("Extra info = 'TITLE'")
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: "TITLE"}))
-        self.addstep(ParseFinalResultsLog(ExecCampaign.getinstance(1)))
-        self.addstep(CheckFinalResultsLogExpectations(ParseFinalResultsLog.getinstance(1), _campaign_expectations.all_test_case_expectations))
+        self.section("Extra info = TITLE")
+        _e2 = self.addstep(ExecCampaign(
+            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: "TITLE"},
+        ))
+        _p2 = self.addstep(ParseFinalResultsLog(_e2))
+        self.addstep(CheckFinalResultsLogExpectations(_p2, _campaign_expectations.all_test_case_expectations))
+
+        self.section("Extra info = TITLE and DESCRIPTION")
+        _e3 = self.addstep(ExecCampaign(
+            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: "TITLE, DESCRIPTION"},
+        ))
+        _p3 = self.addstep(ParseFinalResultsLog(_e3))
+        self.addstep(CheckFinalResultsLogExpectations(_p3, _campaign_expectations.all_test_case_expectations))

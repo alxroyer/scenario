@@ -157,6 +157,7 @@ class ScenarioResults(_LoggerImpl):
         :param scenario_execution: Scenario to display.
         """
         from ._datetimeutils import f2strduration
+        from ._debugutils import saferepr
         from ._loggermain import MAIN_LOGGER
         from ._scenarioconfig import SCENARIO_CONFIG
 
@@ -164,8 +165,14 @@ class ScenarioResults(_LoggerImpl):
         _extra_info = []  # type: typing.List[str]
         for _attribute_name in SCENARIO_CONFIG.resultsextrainfo():  # type: str
             if _attribute_name in scenario_execution.definition.getattributenames():
-                _extra_info.append(str(scenario_execution.definition.getattribute(_attribute_name)))
-        self.debug("Extra info configuration: %r", _extra_info)
+                _attribute_value = str(scenario_execution.definition.getattribute(_attribute_name))  # type: str
+                # Avoid attribute display on several lines.
+                if len(_attribute_value.splitlines()) > 1:
+                    _attribute_value = str(saferepr(_attribute_value))
+                # Avoid displaying empty attributes.
+                if _attribute_value:
+                    _extra_info.append(_attribute_value)
+        self.debug("Extra info: %r", _extra_info)
 
         # Log the scenario line.
         MAIN_LOGGER.log(log_level, fmt % (
