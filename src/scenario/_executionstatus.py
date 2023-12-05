@@ -35,4 +35,4 @@ class ExecutionStatus(_StrEnumImpl):
     #: Test skipped.
     SKIPPED = "SKIPPED"
     #: Unknown status.
-    UNKOWN = "UNKNOWN"
+    UNKNOWN = "UNKNOWN"

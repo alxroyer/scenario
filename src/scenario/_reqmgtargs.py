@@ -82,6 +82,14 @@ class ReqManagementArgs(_ArgsImpl):
             help="Generate upstream traceability, i.e. from scenarios to requirements.",
         )
 
+        #: Allow test results in traceability reports option.
+        self.allow_results = True  # type: bool
+        self.addarg("No results", "allow_results", bool).define(
+            "--no-results",
+            action="store_false", default=True,
+            help="Prevent test results in traceability reports.",
+        )
+
         #: ``--serve`` option.
         self.serve = False  # type: bool
         self.addarg("Serve", "serve", bool).define(

@@ -87,7 +87,10 @@ class ReqManagement(_LoggerImpl):
             _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[Path]
             if _downstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writedownstream(_downstream_traceability_path)
+                    REQ_TRACEABILITY.writedownstream(
+                        _downstream_traceability_path,
+                        allow_results=ReqManagementArgs.getinstance().allow_results,
+                    )
                 except Exception as _err:
                     MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))
@@ -96,7 +99,9 @@ class ReqManagement(_LoggerImpl):
             _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[Path]
             if _upstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writeupstream(_upstream_traceability_path)
+                    REQ_TRACEABILITY.writeupstream(
+                        _upstream_traceability_path,
+                    )
                 except Exception as _err:
                     MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))

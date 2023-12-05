@@ -124,9 +124,19 @@ class CampaignRunner(_LoggerImpl):
                 # Requirement database.
                 REQ_DB.dump(_campaign_execution.req_db_path)
                 # Downstream & upstream traceability reports.
-                REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_execution, log_info=False)
-                REQ_TRACEABILITY.writedownstream(_campaign_execution.downstream_traceability_path, log_info=False)
-                REQ_TRACEABILITY.writeupstream(_campaign_execution.upstream_traceability_path, log_info=False)
+                REQ_TRACEABILITY.loaddatafromcampaignresults(
+                    _campaign_execution,
+                    log_info=False,  # Don't log info messages.
+                )
+                REQ_TRACEABILITY.writedownstream(
+                    _campaign_execution.downstream_traceability_path,
+                    log_info=False,  # Don't log info messages.
+                    allow_results=True,  # Save test results in traceability reports.
+                )
+                REQ_TRACEABILITY.writeupstream(
+                    _campaign_execution.upstream_traceability_path,
+                    log_info=False,  # Don't log info messages.
+                )
 
             # Eventually write the JUnit campaign report (depends on requirement files generated before).
             try:

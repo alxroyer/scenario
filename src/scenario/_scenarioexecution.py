@@ -161,10 +161,13 @@ class ScenarioExecution:
         """
         Scenario execution status.
 
-        :attr:`._executionstatus.ExecutionStatus.FAIL` when an exception is set,
-        :attr:`._executionstatus.ExecutionStatus.SUCCESS` otherwise.
+        :return:
+            Scenario execution status:
 
-        :return: Scenario execution status.
+            - :attr:`._executionstatus.ExecutionStatus.FAIL` when at least one error is set.
+            - :attr:`._executionstatus.ExecutionStatus.WARNINGS` when at least one warning is set.
+            - :attr:`._executionstatus.ExecutionStatus.SUCCESS` if the execution has passed without errors or warnings.
+            - :attr:`._executionstatus.ExecutionStatus.UNKNOWN` if the execution is not terminated.
         """
         from ._executionstatus import ExecutionStatus
 
@@ -172,8 +175,10 @@ class ScenarioExecution:
             return ExecutionStatus.FAIL
         elif self.warnings:
             return ExecutionStatus.WARNINGS
-        else:
+        elif self.time.end is not None:
             return ExecutionStatus.SUCCESS
+        else:
+            return ExecutionStatus.UNKNOWN
 
     @property
     def step_stats(self):  # type: () -> _ExecTotalStatsType
@@ -270,7 +275,7 @@ class ScenarioExecution:
                 ExecutionStatus.SUCCESS: 0,
                 ExecutionStatus.SKIPPED: 1,
                 ExecutionStatus.WARNINGS: 2,
-                ExecutionStatus.UNKOWN: 3,
+                ExecutionStatus.UNKNOWN: 3,
                 ExecutionStatus.FAIL: 4,
             }[scenario_execution.status]
 

@@ -18,11 +18,11 @@
 Step execution management.
 """
 
-import time
 import typing
 
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
@@ -81,31 +81,29 @@ class StepExecution:
 
         return f"<{qualname(type(self))}#{self.number} of {self.definition!r}>"
 
-    def getstarttime(self):  # type: (...) -> float
+    @property
+    def status(self):  # type: () -> _ExecutionStatusType
         """
-        Retrieves the starting time of the step execution.
+        Step execution status.
 
-        :return: Step execution start time.
-        """
-        assert self.time.start is not None, f"{self.definition} not started"
-        return self.time.start
+        :return:
+            Step execution status:
 
-    def getendtime(
-            self,
-            expect,  # type: bool
-    ):  # type: (...) -> float
+            - :attr:`._executionstatus.ExecutionStatus.FAIL` when at least one error is set.
+            - :attr:`._executionstatus.ExecutionStatus.WARNINGS` when at least one warning is set.
+            - :attr:`._executionstatus.ExecutionStatus.SUCCESS` if the execution has passed without errors or warnings.
+            - :attr:`._executionstatus.ExecutionStatus.UNKNOWN` if the execution is not terminated.
         """
-        Retrieves the ending time of the step execution.
+        from ._executionstatus import ExecutionStatus
 
-        :param expect: ``True`` when this step execution is expected to be terminated. Otherwise, the current time is returned.
-        :return: Step execution end time, or current time.
-        """
-        if self.time.end is not None:
-            return self.time.end
-        elif expect:
-            raise AssertionError(f"{self.definition} not terminated")
+        if self.errors:
+            return ExecutionStatus.FAIL
+        elif self.warnings:
+            return ExecutionStatus.WARNINGS
+        elif self.time.end is not None:
+            return ExecutionStatus.SUCCESS
         else:
-            return time.time()
+            return ExecutionStatus.UNKNOWN
 
 
 class StepExecutionHelper:

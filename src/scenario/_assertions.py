@@ -20,8 +20,10 @@ Assertion methods.
 The :class:`Assertions` class defines a collection of assertion methods.
 """
 
+import abc
 import builtins
 import re
+import time
 import typing
 
 if True:
@@ -38,7 +40,7 @@ if typing.TYPE_CHECKING:
     from ._typeutils import VarItemType as _VarItemType
 
 
-class Assertions:
+class Assertions(abc.ABC):
     """
     The :class:`Assertions` class gathers static assertion methods.
 
@@ -763,7 +765,7 @@ class Assertions:
 
     @staticmethod
     def asserttimeinstep(
-            time,  # type: typing.Optional[float]
+            time,  # type: typing.Optional[float]  # noqa  ## Shadows name 'time' from outer scope
             step,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
@@ -790,8 +792,8 @@ class Assertions:
 
         _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
-        _start = _step_execution.getstarttime()  # type: float
-        _end = _step_execution.getendtime(expect=expect_end_time)  # type: float
+        _start = _AssertionHelperFunctions.getstepstarttime(_step_execution)  # type: float
+        _end = _AssertionHelperFunctions.getstependtime(_step_execution, expect=expect_end_time)  # type: float
         assert _start <= time <= _end, _assertionhelpers.errmsg(
             err,
             "%s not in %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
@@ -805,7 +807,7 @@ class Assertions:
 
     @staticmethod
     def asserttimeinsteps(
-            time,  # type: typing.Optional[float]
+            time,  # type: typing.Optional[float]  # noqa  ## Shadows name 'time' from outer scope
             start,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             end,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
@@ -838,12 +840,12 @@ class Assertions:
 
         _step_execution1 = start.expect()  # type: _StepExecutionType
         _step_desc1 = str(_step_execution1.definition)  # type: str
-        _start1 = _step_execution1.getstarttime()  # type: float
-        _end1 = _step_execution1.getendtime(expect=True)  # type: float
+        _start1 = _AssertionHelperFunctions.getstepstarttime(_step_execution1)  # type: float
+        _end1 = _AssertionHelperFunctions.getstependtime(_step_execution1, expect=True)  # type: float
         _step_execution2 = end.expect()  # type: _StepExecutionType
         _step_desc2 = str(_step_execution2.definition)  # type: str
-        _start2 = _step_execution2.getstarttime()  # type: float
-        _end2 = _step_execution2.getendtime(expect=expect_end_time)  # type: float
+        _start2 = _AssertionHelperFunctions.getstepstarttime(_step_execution2)  # type: float
+        _end2 = _AssertionHelperFunctions.getstependtime(_step_execution2, expect=expect_end_time)  # type: float
         _all = TimeStats()  # type: TimeStats
         _all.start = _start1
         _all.end = _end2
@@ -864,7 +866,7 @@ class Assertions:
 
     @staticmethod
     def asserttimebeforestep(
-            time,  # type: typing.Optional[float]
+            time,  # type: typing.Optional[float]  # noqa  ## Shadows name 'time' from outer scope
             step,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
@@ -889,7 +891,7 @@ class Assertions:
 
         _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
-        _start = _step_execution.getstarttime()  # type: float
+        _start = _AssertionHelperFunctions.getstepstarttime(_step_execution)  # type: float
         assert time < _start, _assertionhelpers.errmsg(
             err,
             "%s is not before %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
@@ -903,7 +905,7 @@ class Assertions:
 
     @staticmethod
     def asserttimeafterstep(
-            time,  # type: typing.Optional[float]
+            time,  # type: typing.Optional[float]  # noqa  ## Shadows name 'time' from outer scope
             step,  # type: typing.Optional[_AnyStepExecutionSpecificationType]
             err=None,  # type: _ErrParamType
             evidence=False,  # type: _EvidenceParamType
@@ -928,7 +930,7 @@ class Assertions:
 
         _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
-        _end = _step_execution.getendtime(expect=True)  # type: float
+        _end = _AssertionHelperFunctions.getstependtime(_step_execution, expect=True)  # type: float
         assert time > _end, _assertionhelpers.errmsg(
             err,
             "%s is not after %s %s", callback(f2strtime, time), _step_desc, _step_execution.time,
@@ -961,7 +963,7 @@ class Assertions:
         assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
         assert isiterable(obj), _assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", saferepr(obj))
 
-        assert not _assertionhelpers.safecontainer(obj), _assertionhelpers.errmsg(
+        assert not _AssertionHelperFunctions.safecontainer(obj), _assertionhelpers.errmsg(
             err,
             "%s is not empty", saferepr(obj),
         )
@@ -990,7 +992,7 @@ class Assertions:
         assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
         assert isiterable(obj), _assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", saferepr(obj))
 
-        assert _assertionhelpers.safecontainer(obj), _assertionhelpers.errmsg(
+        assert _AssertionHelperFunctions.safecontainer(obj), _assertionhelpers.errmsg(
             err,
             "%s is empty", saferepr(obj),
         )
@@ -1022,7 +1024,7 @@ class Assertions:
         assert isiterable(obj), _assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", saferepr(obj))
         assert length is not None, _assertionhelpers.isnonemsg("assertlen()", "length")
 
-        _len = len(_assertionhelpers.safecontainer(obj))  # type: int
+        _len = len(_AssertionHelperFunctions.safecontainer(obj))  # type: int
         assert _len == length, _assertionhelpers.errmsg(
             err,
             "len(%s) is %d, not %d", saferepr(obj), _len, length,
@@ -1129,7 +1131,7 @@ class Assertions:
         assert count is not None, _assertionhelpers.isnonemsg("assertcount()", "count")
 
         # Note 2: Hard to make typings work with the `count()` method and the type of `obj`. Use a `typing.cast(Any)` for the purpose.
-        _found = _assertionhelpers.safecontainer(container).count(typing.cast(typing.Any, obj))  # type: int
+        _found = _AssertionHelperFunctions.safecontainer(container).count(typing.cast(typing.Any, obj))  # type: int
         assert _found == count, _assertionhelpers.errmsg(
             err,
             "%s should contain %d count of %s (%d found)", saferepr(container), count, saferepr(obj), _found,
@@ -1489,3 +1491,72 @@ class Assertions:
             evidence,
             "'%s' is not a sub-path of '%s'", path, dir,
         )
+
+
+class _AssertionHelperFunctions(abc.ABC):
+    """
+    Assertion helper functions.
+
+    Set in a private class to avoid public exposure.
+    """
+
+    @staticmethod
+    def safecontainer(
+            obj,  # type: typing.Iterable[_VarItemType]
+    ):  # type: (...) -> typing.Union[str, bytes, typing.List[_VarItemType]]
+        """
+        Ensures working with a string or list-like object.
+
+        :param obj:
+            Input iterable object.
+        :return:
+            String or list-like object:
+
+            - may be used as is, in order to check its emptiness,
+            - may be applied ``len()`` on it,
+            - has a ``count()`` method,
+            - ...
+        """
+        if isinstance(obj, (str, bytes, list)):
+            return obj
+        else:
+            return list(obj)
+
+    @staticmethod
+    def getstepstarttime(
+            step_execution,  # type: _StepExecutionType
+    ):  # type: (...) -> float
+        """
+        Retrieves the expected starting time of the step execution.
+
+        :param step_execution:
+            Step execution to retrieve the start time for.
+        :return:
+            Step execution start time.
+        """
+        assert step_execution.time.start is not None, f"{step_execution.definition} not started"
+        return step_execution.time.start
+
+    @staticmethod
+    def getstependtime(
+            step_execution,  # type: _StepExecutionType
+            *,
+            expect,  # type: bool
+    ):  # type: (...) -> float
+        """
+        Retrieves the ending time of the step execution.
+
+        :param step_execution:
+            Step execution to retrieve the end time for.
+        :param expect:
+            ``True`` when this step execution is expected to be terminated.
+            Otherwise, if not terminated, the current time will be returned by default.
+        :return:
+            Step execution end time, or current time.
+        """
+        if step_execution.time.end is not None:
+            return step_execution.time.end
+        elif expect:
+            raise AssertionError(f"{step_execution.definition} not terminated")
+        else:
+            return time.time()

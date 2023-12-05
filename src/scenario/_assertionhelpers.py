@@ -17,7 +17,8 @@
 """
 Assertion helpers.
 
-Functions, types and constants for the :class:`._assertions.Assertions` class.
+Helper functions, types and constants for :class:`._assertions.Assertions`,
+publicly exposed for assertion routine definitions in user code.
 """
 
 import typing
@@ -25,7 +26,6 @@ import unittest as _unittestmod
 
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
-    from ._typeutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:
@@ -38,28 +38,6 @@ if typing.TYPE_CHECKING:
 
 #: ``unittest.TestCase`` instance used to call ``unittest`` assertion functions.
 unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
-
-
-def safecontainer(
-        obj,  # type: typing.Iterable[_VarItemType]
-):  # type: (...) -> typing.Union[str, bytes, typing.List[_VarItemType]]
-    """
-    Ensures working with a string or list-like object.
-
-    :param obj:
-        Input iterable object.
-    :return:
-        String or list-like object:
-
-        - may be used as is, in order to check its emptiness,
-        - may be applied ``len()`` on it,
-        - has a ``count()`` method,
-        - ...
-    """
-    if isinstance(obj, (str, bytes, list)):
-        return obj
-    else:
-        return list(obj)
 
 
 def errmsg(

@@ -87,8 +87,8 @@ class CheckCampaignDtOutdir(scenario.test.VerificationStep):
             #     evidence="Timestamp",
             # )
             _step_execution = scenario.StepExecutionSpecification(self.exec_step).expect()  # type: scenario.StepExecution
-            _start = math.floor(_step_execution.getstarttime())  # type: float
-            _end = math.ceil(_step_execution.getendtime(expect=True))  # type: float
+            _start = math.floor(self.assertisnotnone(_step_execution.time.start, f"Step {_step_execution.definition} not started yet"))  # type: float
+            _end = math.ceil(self.assertisnotnone(_step_execution.time.end, f"Step {_step_execution.definition} not terminated yet"))  # type: float
             self.assertbetweenorequal(
                 _timestamp, _start, _end,
                 err=scenario.debug.FmtAndArgs(

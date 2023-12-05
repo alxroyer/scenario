@@ -237,16 +237,19 @@ class ReqTraceability(_LoggerImpl):
         @staticmethod
         def tojson(
                 downstream_traceability,  # type: ReqDownstreamTraceabilityType
+                *,
+                allow_results=True,  # type: bool
         ):  # type: (...) -> _JsonDictType
             """
             JSON content generation for a downstream traceability.
 
             :param downstream_traceability: Downstream traceability to generate JSON content for.
+            :param allow_results: ``False`` to prevent test results in the JSON content.
             :return: Downstream traceability JSON content.
             """
             _json = {}  # type: _JsonDictType
             for _downstream_req_ref in downstream_traceability:  # type: ReqTraceability.Downstream.ReqRef
-                _json[_downstream_req_ref.req_ref.id] = _downstream_req_ref.tojson()
+                _json[_downstream_req_ref.req_ref.id] = _downstream_req_ref.tojson(allow_results=allow_results)
             return _json
 
         class ReqRef:
@@ -270,10 +273,15 @@ class ReqTraceability(_LoggerImpl):
                 #: Scenarios verifying this requirement reference.
                 self.scenarios = []  # type: typing.List[ReqTraceability.Downstream.Scenario]
 
-            def tojson(self):  # type: (...) -> _JsonDictType
+            def tojson(
+                    self,
+                    *,
+                    allow_results,  # type: bool
+            ):  # type: (...) -> _JsonDictType
                 """
                 Downstream traceability JSON content generation for this requirement reference.
 
+                :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
                 _json_req_ref = {
@@ -288,7 +296,7 @@ class ReqTraceability(_LoggerImpl):
                         _json_req_ref["text"] = self.req_ref.req.text
 
                 for _downstream_scenario in self.scenarios:  # type: ReqTraceability.Downstream.Scenario
-                    _json_req_ref["scenarios"][_downstream_scenario.scenario.name] = _downstream_scenario.tojson()
+                    _json_req_ref["scenarios"][_downstream_scenario.scenario.name] = _downstream_scenario.tojson(allow_results=allow_results)
 
                 return _json_req_ref
 
@@ -341,10 +349,15 @@ class ReqTraceability(_LoggerImpl):
 
                 self.downstream_req_ref.scenarios.append(self)
 
-            def tojson(self):  # type: (...) -> _JsonDictType
+            def tojson(
+                    self,
+                    *,
+                    allow_results,  # type: bool
+            ):  # type: (...) -> _JsonDictType
                 """
                 Downstream traceability JSON content generation for this scenario.
 
+                :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
                 _json_scenario = {
@@ -356,8 +369,15 @@ class ReqTraceability(_LoggerImpl):
                 if self.scenario.title:
                     _json_scenario["title"] = self.scenario.title
 
+                if allow_results and (self.scenario.execution is not None):
+                    _json_scenario["results"] = {
+                        "status": str(self.scenario.execution.status),
+                        "errors": [str(_error) for _error in self.scenario.execution.errors],
+                        "warnings": [str(_warning) for _warning in self.scenario.execution.warnings],
+                    }
+
                 for _downstream_step in self.steps:  # type: ReqTraceability.Downstream.Step
-                    _json_scenario["steps"][f"step#{_downstream_step.step.number}"] = _downstream_step.tojson()
+                    _json_scenario["steps"][f"step#{_downstream_step.step.number}"] = _downstream_step.tojson(allow_results=allow_results)
 
                 return _json_scenario
 
@@ -396,17 +416,38 @@ class ReqTraceability(_LoggerImpl):
 
                 self.downstream_scenario.steps.append(self)
 
-            def tojson(self):  # type: (...) -> _JsonDictType
+            def tojson(
+                    self,
+                    *,
+                    allow_results,  # type: bool
+            ):  # type: (...) -> _JsonDictType
                 """
-                Downstream traceability JSON content generation for this scenario.
+                Downstream traceability JSON content generation for this step.
 
+                :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
-                return {
+                from ._stepexecution import StepExecution
+
+                _json_step = {
                     "number": self.step.number,
                     "name": self.step.name,
                     "comments": self.comments,
-                }
+                }  # type: _JsonDictType
+
+                # Note:
+                #  Don't generate test results for an empty step execution list
+                #  if the scenario has not been executed at all.
+                if allow_results and (self.step.scenario.execution is not None):
+                    _json_step["results"] = []
+                    for _step_execution in self.step.executions:  # type: StepExecution
+                        _json_step["results"].append({
+                            "status": str(_step_execution.status),
+                            "errors": [str(_error) for _error in _step_execution.errors],
+                            "warnings": [str(_warning) for _warning in _step_execution.warnings],
+                        })
+
+                return _json_step
 
     def getdownstream(self):  # type: (...) -> ReqDownstreamTraceabilityType
         """
@@ -467,6 +508,7 @@ class ReqTraceability(_LoggerImpl):
             downstream_traceability=None,  # type: ReqDownstreamTraceabilityType
             *,
             log_info=True,  # type: bool
+            allow_results=True,  # type: bool
     ):  # type: (...) -> None
         """
         Writes downstream tracebility to a file.
@@ -479,6 +521,8 @@ class ReqTraceability(_LoggerImpl):
             Automatically computed when not set.
         :param log_info:
             ``True`` (by default) to generate info logging.
+        :param allow_results:
+            ``False`` to prevent test results in the downstream traceability report.
         """
         from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER
@@ -493,7 +537,7 @@ class ReqTraceability(_LoggerImpl):
         JsonDict.writefile(
             # Build a JSON content from the computed traceability.
             schema_subpath=ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH,
-            content=ReqTraceability.Downstream.tojson(downstream_traceability),
+            content=ReqTraceability.Downstream.tojson(downstream_traceability, allow_results=allow_results),
             # Save it to the given outfile.
             output_path=outfile,
         )
