@@ -57,7 +57,7 @@ class CheckCampaignReqDbFile(scenario.test.VerificationStep):
         def _reqids(req_db_json):  # type: (scenario.types.JsonDict) -> typing.List[str]
             return list(
                 filter(
-                    lambda key: key not in ["$license", "$schema", "$version"],
+                    lambda key: key not in ["$encoding", "$license", "$schema", "$version"],
                     req_db_json.keys(),
                 ),
             )
