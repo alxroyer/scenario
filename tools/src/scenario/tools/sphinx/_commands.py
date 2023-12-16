@@ -97,29 +97,32 @@ def sphinxapidoc():  # type: (...) -> None
     _subprocess.onstderrline(lambda line: _logger.error(line.decode("utf-8")))
     _subprocess.run()
 
-    # Fix 'scenario.rst'.
-    _scenario_rst_path = _doc_src_py_path / "scenario.rst"  # type: scenario.Path
-    _logger.info(f"Fixing {_scenario_rst_path}")
-    _scenario_rst_lines = _scenario_rst_path.read_bytes().splitlines()  # type: typing.List[bytes]
-    _line_index = 0  # type: int
-    while _line_index < len(_scenario_rst_lines):
-        _line = _scenario_rst_lines[_line_index]  # type: bytes
-        _match = re.search(rb'(:.*members:)', _line)  # type: typing.Optional[typing.Match[bytes]]
-        if _match:
-            # Avoid documenting module members for 'scenario/__init__.py',
-            # otherwise Sphinx repeats documentation for each exported symbol at the end of the module.
-            # This causes "more than one target found for cross-reference" errors,
-            # and is moreover contradictory with the `--private` and `--separate` *apidoc* options used above.
-            _logger.debug("Disabling autodoc `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
-            _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*):(no-|)(.*members):(.*)$', rb'\1:no-\3:\4', _line)
-        if b':maxdepth:' in _line:
-            # Limit private module TOC depth to 1,
-            # otherwise all symbols contained in each are displayed with this TOC,
-            # which is heavy and useless.
-            _logger.debug("Fixing submodule toc depth to 1")
-            _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*:maxdepth:) *(\d+)$', rb'\1 1', _line)
-        _line_index += 1
-    _scenario_rst_path.write_bytes(b'\n'.join(_scenario_rst_lines))
+    # Fix '__init__.py' .rst outputs.
+    for _pkg_rst_path in [
+        _doc_src_py_path / "scenario.rst",
+        _doc_src_py_path / "scenario.ui.rst",
+    ]:  # type: scenario.Path
+        _logger.info(f"Fixing {_pkg_rst_path}")
+        _scenario_rst_lines = _pkg_rst_path.read_bytes().splitlines()  # type: typing.List[bytes]
+        _line_index = 0  # type: int
+        while _line_index < len(_scenario_rst_lines):
+            _line = _scenario_rst_lines[_line_index]  # type: bytes
+            _match = re.search(rb'(:.*members:)', _line)  # type: typing.Optional[typing.Match[bytes]]
+            if _match:
+                # Avoid documenting module members for 'scenario/__init__.py',
+                # otherwise Sphinx repeats documentation for each exported symbol at the end of the module.
+                # This causes "more than one target found for cross-reference" errors,
+                # and is moreover contradictory with the `--private` and `--separate` *apidoc* options used above.
+                _logger.debug("Disabling autodoc `%s` option for 'scenario'", _match.group(1).decode("utf-8"))
+                _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*):(no-|)(.*members):(.*)$', rb'\1:no-\3:\4', _line)
+            if b':maxdepth:' in _line:
+                # Limit private module TOC depth to 1,
+                # otherwise all symbols contained in each are displayed with this TOC,
+                # which is heavy and useless.
+                _logger.debug("Fixing submodule toc depth to 1")
+                _scenario_rst_lines[_line_index] = _line = re.sub(rb'^(.*:maxdepth:) *(\d+)$', rb'\1 1', _line)
+            _line_index += 1
+        _pkg_rst_path.write_bytes(b'\n'.join(_scenario_rst_lines))
 
 
 def sphinxbuild():  # type: (...) -> None

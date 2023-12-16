@@ -46,8 +46,6 @@ class DebugClass(_StrEnumImpl):
     REFLECTION = "scenario.reflection"
     #: Requirement database debugging.
     REQ_DATABASE = "scenario.ReqDatabase"
-    #: Requirement HTTP server debugging.
-    REQ_HTTP_SERVER = "scenario.ReqHttpServer"
     #: Requirement management runner debugging.
     REQ_MANAGEMENT = "scenario.ReqManagement"
     #: Requirement traceability debugging.
@@ -64,6 +62,11 @@ class DebugClass(_StrEnumImpl):
     SCENARIO_STACK = "scenario.ScenarioStack"
     #: Test suite file debugging.
     TEST_SUITE_FILE = "scenario.TestSuiteFile"
+
+    #: UI HTTP server debugging.
+    UI_HTTP_SERVER = "scenario.ui.HttpServer"
+    #: UI HTML document debugging.
+    UI_HTML_DOCUMENT = "scenario.ui.HtmlDocument"
 
     #: Issue#65 debugging: execution times.
     EXECUTION_TIMES = "scenario.#65.exec-times"

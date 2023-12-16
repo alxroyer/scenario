@@ -97,12 +97,13 @@ class CampaignLogging:
 
         :param test_case_execution: Test case being executed.
         """
+        from ._logextradata import LogExtraData
         from ._loggermain import MAIN_LOGGER
 
         MAIN_LOGGER.rawoutput(f"    Executing '{test_case_execution.name}'")
 
         # Ensure consecutive loggings will be indented below the line before.
-        MAIN_LOGGER.pushindentation("      ")
+        MAIN_LOGGER.setextradata(LogExtraData.HEAD_INDENTATION, "      ")
 
         self._calls.append(CampaignLogging._Call.BEGIN_TEST_CASE)
 
@@ -116,6 +117,7 @@ class CampaignLogging:
         :param test_case_execution:Test case being executed.
         """
         from ._executionstatus import ExecutionStatus
+        from ._logextradata import LogExtraData
         from ._loggermain import MAIN_LOGGER
         from ._testerrors import TestError
 
@@ -135,7 +137,7 @@ class CampaignLogging:
             _error.logerror(MAIN_LOGGER, level=logging.ERROR)
 
         # Break the test case logging indentation set in :meth:`begintestcase()`.
-        MAIN_LOGGER.popindentation("      ")
+        MAIN_LOGGER.setextradata(LogExtraData.HEAD_INDENTATION, None)
 
         self._calls.append(CampaignLogging._Call.END_TEST_CASE)
 

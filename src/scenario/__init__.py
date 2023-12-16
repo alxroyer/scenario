@@ -48,10 +48,10 @@ __all__ = []  # type: typing.List[str]
 # Documentation management
 # ========================
 
-# Private constants in this modules are named with double leading underscores
+# Private constants in this module (if any) are named with double leading underscores
 # in order to avoid 'mkdoc.py' list them as an undocumented attribute.
 
-# As introduced in 'doc/src/devel.coding-rules.doc.rst',
+# As introduced in 'doc/src/devel/coding-rules/doc/reexports.rst',
 # we choose to disable member documentation for this module ('doc/src/py/scenario.rst' fixed after `sphinx-apidoc` execution),
 # and document exported symbols with explicit `.. py:attribute::` directives in the docstring of this module.
 

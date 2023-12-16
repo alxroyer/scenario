@@ -188,7 +188,7 @@ class ScenarioStack(_LoggerImpl):
         from ._logextradata import LogExtraData
 
         _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_STACK)
-        self.setextraflag(LogExtraData.ACTION_RESULT_MARGIN, False)
+        self.setextradata(LogExtraData.ACTION_RESULT_MARGIN, False)
 
         #: Instances under construction.
         self.building = BuildingContext()  # type: BuildingContext

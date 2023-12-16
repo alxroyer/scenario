@@ -233,7 +233,7 @@ class ReqLink:
             REQ_DB.push(self.req_ref)
         # - ensure the link is saved in the requirement reference link set,
         if self not in self.req_ref.req_links:
-            self.req_ref._req_links.add(self)  # noqa  ## Access to protected member.
+            self.req_ref._req_links.add(self)  # noqa  ## Access to protected member
 
         # Try to save the requirement verifier with this link.
         if req_verifier not in self.req_verifiers:

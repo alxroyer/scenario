@@ -126,7 +126,7 @@ Debugging is enabled by default for such user-defined scenario and step instance
 .. literalinclude:: ../../../demo/loggingdemo.py
     :language: python
     :start-at: def step020(self):
-    :end-at: self.debug("This is debug.")
+    :end-at: self.debug("(This is debug.)")
     :dedent:
 
 .. Step `LoggingScenario.step020()` console output.
@@ -530,23 +530,29 @@ but saves it into the 'doc/data/commutativeaddition.log' file
 
 .. _logging.extra-flags:
 
-Extra flags
------------
+Extra data & flags
+------------------
 
-The :py:class:`scenario._logextradata.LogExtraData` define a set of flags
+The :py:class:`scenario._logextradata.LogExtraData` enum defines a set of extra data
 that can be set to specialize the behaviour of each :py:class:`scenario._logger.Logger`.
 
 For instance, the :py:class:`scenario._scenariorunner.ScenarioRunner` and :py:class:`scenario._scenariostack.ScenarioStack` classes
 disable the :py:const:`scenario._logextradata.LogExtraData.ACTION_RESULT_MARGIN` flag,
 so that their related log lines remain aligned on the left whatever the current action / expected result context is.
 
-Please, refer the following links for details on extra flags:
+Please, refer to the following links for details on extra flags:
 
 - :py:class:`scenario._logextradata.LogExtraData`
-- :py:meth:`scenario._logger.Logger.setextraflag()`
+- :py:meth:`scenario._logger.Logger.setextradata()`
+- ``extra`` named parameter of
+  :py:meth:`scenario._logger.Logger.debug()`,
+  :py:meth:`scenario._logger.Logger.info()`,
+  :py:meth:`scenario._logger.Logger.warning()`,
+  :py:meth:`scenario._logger.Logger.error()`
+  and :py:meth:`scenario._logger.Logger.log()`,
 
 .. warning::
-    Setting extra flags on class loggers, or even worse on the main logger, may lead to unpredictable behaviours.
+    Setting extra data on class loggers, or even worse on the main logger, may lead to unpredictable behaviours.
 
     Nevertheless, this advanced feature is provided as is.
     To be used with parsimony.

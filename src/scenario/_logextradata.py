@@ -54,6 +54,11 @@ class LogExtraData(_StrEnumImpl):
     #: When set, implicitly activates :const:`LogExtraData.LONG_TEXT`.
     LONG_TEXT_MAX_LINES = "_long_text_max_lines_"
 
+    #: Head indentation.
+    #:
+    #: ``str`` indentation to display between date/time and scenario stack indentation.
+    HEAD_INDENTATION = "_head_indentation_"
+
     # === Extra flags ===
 
     #: Extra flag: Should date/time be displayed?
@@ -111,12 +116,19 @@ class LogExtraDataHelper(abc.ABC):
         """
         Retrieves extra data from a record.
 
+        Either in the record, or in the current logger if set.
+
         :param record: Record to look for extra data in.
         :param key: Extra data name to look for.
         :return: Extra data value if set, or ``None`` otherwise.
         """
+        from ._logger import Logger
+
         if hasattr(record, str(key)):
             return getattr(record, str(key))
+        if hasattr(record, str(LogExtraData.CURRENT_LOGGER)):
+            _logger = getattr(record, str(LogExtraData.CURRENT_LOGGER))  # type: Logger
+            return _logger.getextradata(key)
         return None
 
     @staticmethod

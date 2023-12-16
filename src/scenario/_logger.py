@@ -70,7 +70,7 @@ class Logger:
     #:     )
     #:
     #: May also be configured for good for the logger.
-    #: See :meth:`setextraflag()` and :meth:`getextraflag()`.
+    #: See :meth:`setextradata()` and :meth:`getextradata()`.
     Extra = _LogExtraDataImpl
 
     def __init__(
@@ -123,8 +123,8 @@ class Logger:
         #: Logger indentation stack.
         self._indentations = []  # type: typing.List[str]
 
-        #: Extra flags configurations.
-        self._extra_flags = {}  # type: typing.Dict[_LogExtraDataType, bool]
+        #: Extra data configurations.
+        self._extra_data = {}  # type: typing.Dict[_LogExtraDataType, typing.Any]
 
     @property
     def logging_instance(self):  # type: () -> logging.Logger
@@ -231,9 +231,10 @@ class Logger:
         """
         Removes indentation for the :class:`Logger` instance.
 
-        :param indentation: Optional indentation pattern.
-                            Must be the same as the indentation pattern passed on with the matching :meth:`pushindentation()` call
-                            on a LIFO basis (Last-In First-Out).
+        :param indentation:
+            Optional indentation pattern.
+            Must be the same as the indentation pattern passed on with the matching :meth:`pushindentation()` call
+            on a LIFO basis (Last-In First-Out).
         """
         if self._indentations and (self._indentations[-1] == indentation):
             self._indentations.pop()
@@ -254,34 +255,34 @@ class Logger:
         """
         return "".join(self._indentations)
 
-    def setextraflag(
+    def setextradata(
             self,
-            extra_flag,  # type: _LogExtraDataType
-            value,  # type: typing.Optional[bool]
+            extra_data,  # type: _LogExtraDataType
+            value,  # type: typing.Optional[typing.Any]
     ):  # type: (...) -> None
         """
-        Sets or unsets an extra flag configuration.
+        Sets or unsets an extra data configuration.
 
-        :param extra_flag: Extra flag name.
-        :param value: Extra flag configuration. ``None`` to unset the extra flag configuration.
+        :param extra_data: Extra data name.
+        :param value: Extra data configuration. ``None`` to unset the extra data configuration.
         """
         if value is not None:
-            self._extra_flags[extra_flag] = value
-        elif extra_flag in self._extra_flags:
-            del self._extra_flags[extra_flag]
+            self._extra_data[extra_data] = value
+        elif extra_data in self._extra_data:
+            del self._extra_data[extra_data]
 
-    def getextraflag(
+    def getextradata(
             self,
-            extra_flag,  # type: _LogExtraDataType
-    ):  # type: (...) -> typing.Optional[bool]
+            extra_data,  # type: _LogExtraDataType
+    ):  # type: (...) -> typing.Optional[typing.Any]
         """
         Returns the extra flag configuration set (or not).
 
-        :param extra_flag: Extra flag name.
-        :return: ``True`` or ``False`` when the configuration is set, or ``None`` otherwise.
+        :param extra_data: Extra data name.
+        :return: Configuration value if set, ``None`` otherwise.
         """
-        if extra_flag in self._extra_flags:
-            return self._extra_flags[extra_flag]
+        if extra_data in self._extra_data:
+            return self._extra_data[extra_data]
         return None
 
     def error(

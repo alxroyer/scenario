@@ -81,7 +81,7 @@ class ScenarioRunner(_LoggerImpl):
         from ._logextradata import LogExtraData
 
         _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
-        self.setextraflag(LogExtraData.ACTION_RESULT_MARGIN, False)
+        self.setextradata(LogExtraData.ACTION_RESULT_MARGIN, False)
 
     def main(self):  # type: (...) -> _ErrorCodeType
         """

@@ -54,7 +54,7 @@ STEP#2: Logging with the scenario instance (demo/loggingdemo.py:33:LoggingScenar
               ERROR    [demo/loggingdemo.py] This is an error!!!
               WARNING  [demo/loggingdemo.py] This is a warning!
               INFO     [demo/loggingdemo.py] This is information.
-              DEBUG    [demo/loggingdemo.py] This is debug.
+              DEBUG    [demo/loggingdemo.py] (This is debug.)
 
 STEP#3: Logging with a class logger (demo/loggingdemo.py:42:LoggingScenario.step030)
 ------------------------------------------------
@@ -64,7 +64,7 @@ STEP#3: Logging with a class logger (demo/loggingdemo.py:42:LoggingScenario.step
               INFO     [My logger] This is information.
     ACTION: Activate debugging for the class logger instance.
     ACTION: Log a debug message again with the class logger instance.
-              DEBUG    [My logger] This is debug again.
+              DEBUG    [My logger] (This is debug again.)
 
 STEP#4: Class logger indentation (demo/loggingdemo.py:57:LoggingScenario.step110)
 ------------------------------------------------
@@ -92,16 +92,16 @@ STEP#5: Main logger indentation (demo/loggingdemo.py:78:LoggingScenario.step120)
               INFO     Hello
     ACTION: Push indentation to the main logger.
     ACTION:     Log something with the main logger.
-                  INFO     Hello
+              INFO         Hello
     ACTION:     Push indentation to the main logger.
     ACTION:         Log something with the main logger.
-                      INFO     Hello
+              INFO             Hello
     ACTION:         Push indentation to the main logger.
     ACTION:             Log something with the main logger.
-                          INFO     Hello
+              INFO                 Hello
     ACTION:             Pop indentation from the main logger.
     ACTION:         Log something with the main logger.
-                      INFO     Hello
+              INFO             Hello
     ACTION:         Reset the main logger indentation.
     ACTION: Log something with the main logger.
               INFO     Hello

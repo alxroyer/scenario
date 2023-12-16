@@ -58,8 +58,10 @@ class ModuleDeps(_ErrorTrackerLoggerImpl):
         return self.parser.path
 
     @property
-    def basename(self):  # type: () -> str
-        return self.path.name
+    def display_name(self):  # type: () -> str
+        from .._paths import SRC_PATH
+
+        return self.path.relative_to(SRC_PATH / "scenario")
 
     @property
     def deps(self):  # type: () -> typing.Sequence[ModuleDeps]

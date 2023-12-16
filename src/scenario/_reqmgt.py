@@ -52,7 +52,6 @@ class ReqManagement(_LoggerImpl):
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
         from ._path import Path
-        from ._reqhttpserver import REQ_HTTP_SERVER
         from ._reqmgtargs import ReqManagementArgs
         from ._reqtraceability import REQ_TRACEABILITY
 
@@ -102,16 +101,6 @@ class ReqManagement(_LoggerImpl):
                     REQ_TRACEABILITY.writeupstream(
                         _upstream_traceability_path,
                     )
-                except Exception as _err:
-                    MAIN_LOGGER.logexceptiontraceback(_err)
-                    _errors.append(ErrorCode.fromexception(_err))
-
-            # HTTP server.
-            if ReqManagementArgs.getinstance().serve:
-                try:
-                    REQ_HTTP_SERVER.serve()
-                except InterruptedError as _err:
-                    self.debug("InterruptedError: %s", _err)
                 except Exception as _err:
                     MAIN_LOGGER.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))

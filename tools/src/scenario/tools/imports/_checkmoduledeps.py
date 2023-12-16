@@ -41,17 +41,24 @@ class CheckModuleDeps:
 
         return scenario.ErrorCode.SUCCESS
 
-    def _parseimports(self):  # type: (...) -> None
+    def _parseimports(
+            self,
+            dir_path=None,  # type: scenario.Path
+    ):  # type: (...) -> None
         from .. import _paths
         from ._moduledeps import ModuleDeps
 
-        scenario.logging.debug("Walking through '%s'", _paths.SRC_PATH / "scenario")
-        for _src_path in (_paths.SRC_PATH / "scenario").iterdir():  # type: scenario.Path
+        dir_path = dir_path or (_paths.SRC_PATH / "scenario")
+
+        scenario.logging.debug("Walking through '%s'", dir_path)
+        for _src_path in dir_path.iterdir():  # type: scenario.Path
             if _src_path.is_file() and _src_path.name.endswith(".py"):
                 _current_module = ModuleDeps.get(_src_path)  # type: ModuleDeps
                 _current_module.parser.parse()
-            elif _src_path.is_dir() and (_src_path.name == "__pycache__"):
-                pass
+            elif _src_path.is_dir():
+                if _src_path.name != "__pycache__":
+                    with scenario.logging.pushindentation("  "):
+                        self._parseimports(_src_path)
             else:
                 raise FileExistsError(f"Unexpected file or directory '{_src_path}'")
 
@@ -60,7 +67,7 @@ class CheckModuleDeps:
 
         scenario.logging.debug("Computing deps")
         for _module in ModuleDeps.all.values():  # type: ModuleDeps
-            scenario.logging.debug("%s: %d", _module.basename, _module.getscore())
+            scenario.logging.debug("%s: %d", _module.display_name, _module.getscore())
 
     def _sortdeps(self):  # type: (...) -> None
         from ._moduledeps import ModuleDeps
@@ -71,16 +78,16 @@ class CheckModuleDeps:
             _deps,
             # Use a combination of score + basename, so that items are ordered by scores, then by basenames.
             # Artificially reverse the scores so that the higher scores get sorted first.
-            key=lambda deps: f"{1000000 - deps.getscore():06d}-{deps.basename}",
+            key=lambda deps: f"{1000000 - deps.getscore():06d}-{deps.display_name}",
         )
 
         scenario.logging.debug("Displaying deps")
-        _max_basename_len = max(len(_dep.basename) for _dep in _deps)  # type: int
+        _max_display_name_len = max(len(_dep.display_name) for _dep in _deps)  # type: int
         for _dep in _deps:  # type: ModuleDeps
             # Build the full line.
             # Note: The '>' format specifier makes the basenames right-aligned.
-            _left = f"<{_dep.getscore():02d}> {_dep.basename:>{_max_basename_len}} => ["  # type: str
-            _line = f"{_left}{', '.join(sorted(_dep2.basename for _dep2 in _dep.deps))}]"  # type: str
+            _left = f"<{_dep.getscore():02d}> {_dep.display_name:>{_max_display_name_len}} => ["  # type: str
+            _line = f"{_left}{', '.join(sorted(_dep2.display_name for _dep2 in _dep.deps))}]"  # type: str
 
             # Display it on several lines if it is more than 120 characters long.
             while _line:

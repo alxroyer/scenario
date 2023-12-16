@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import typing
+
 import scenario
 import scenario.test
 
@@ -66,9 +68,17 @@ class CheckUserIndentation(_LogVerificationStepImpl):
     ):  # type: (...) -> None
         _LogVerificationStepImpl.__init__(self, exec_step)
 
+        #: Action/result margin.
+        #: Determined from the first action/result line encountered.
         self._action_result_margin = -1  # type: int
+        #: Evidence margin.
+        #: Determined from the first evidence line encountered.
         self._evidence_margin = -1  # type: int
+        #: Logging margin, i.e. the margin before the 'INFO' log level pattern.
+        #: Determined from the first INFO line encountered.
         self._logging_margin = -1  # type: int
+        #: Length of log level pattern ('DEBUG', 'INFO', 'WARNING', 'ERROR') + additional spacing before the log message starts.
+        #: Determined from the first INFO line encountered.
         self._log_level_len = -1  # type: int
 
     def step(self):  # type: (...) -> None
@@ -120,78 +130,81 @@ class CheckUserIndentation(_LogVerificationStepImpl):
                     continue
                 self.evidence(f"Line: {_line!r}")
 
-                if "ACTION: " in _line:
-                    if self._action_result_margin < 0:
-                        self._action_result_margin = _line.find("ACTION: ") - len(self.exec_step.scenario_stack_indentation) - main_indentation
-                        self.evidence(f"Action/result margin: {self._action_result_margin}")
-                    self.assertregex(
-                        r"".join([
-                            r"^",
-                            _scenario_stack_indentation_rgx,
-                            r" {%d}" % self._action_result_margin,
-                            r"ACTION: ",
-                            _main_indentation_rgx,
-                            r"%s: [A-Z]" % search_pattern,
-                        ]),
-                        _line,
-                        evidence="Action indentation",
-                    )
-                elif "EVIDENCE: " in _line:
-                    if self._evidence_margin < 0:
-                        self._evidence_margin = _line.find("EVIDENCE: ") - len(self.exec_step.scenario_stack_indentation) - main_indentation
-                        self.evidence(f"Evidence margin: {self._evidence_margin}")
-                    self.assertregex(
-                        r"".join([
-                            _scenario_stack_indentation_rgx,
-                            r" {%d}" % self._evidence_margin,
-                            r"EVIDENCE: ",
-                            _main_indentation_rgx,
-                            r"  -> %s: [A-Z]" % search_pattern,
-                        ]),
-                        _line,
-                        evidence="Evidence indentation",
-                    )
-                elif "INFO" in _line:
-                    if self._logging_margin < 0:
-                        self._logging_margin = _line.find("INFO") - len(self.exec_step.scenario_stack_indentation) - main_indentation
-                        self.evidence(f"Logging margin: {self._logging_margin}")
-                    if self._log_level_len < 0:
-                        _non_stripped = _line[(
-                            # Starting position computation.
-                            len(self.exec_step.scenario_stack_indentation)
-                            + main_indentation
-                            + self._logging_margin
-                            + len("INFO")
-                            # Keep the end of the line from the position computed above.
-                        ):]  # type: str
-                        self._log_level_len = len("INFO") + len(_non_stripped) - len(_non_stripped.lstrip())
-                        self.evidence(f"Log level field length: {self._log_level_len}")
+                with scenario.logging.pushindentation("  "):
+                    if "ACTION: " in _line:
+                        # Determine the action/result margin from the first action line encountered.
+                        if self._action_result_margin < 0:
+                            self._action_result_margin = _line.find("ACTION: ") - len(self.exec_step.scenario_stack_indentation) - main_indentation
+                            self.evidence(f"Action/result margin: {self._action_result_margin}")
 
-                    if f"[{scenario.test.paths.LOGGING_INDENTATION_SCENARIO}] " not in _line:
                         self.assertregex(
                             r"".join([
+                                r"^",
                                 _scenario_stack_indentation_rgx,
+                                r" {%d}" % self._action_result_margin,
+                                r"ACTION: ",
                                 _main_indentation_rgx,
-                                r" {%d}" % self._logging_margin,
-                                r".{%d}" % self._log_level_len,
                                 r"%s: [A-Z]" % search_pattern,
                             ]),
                             _line,
-                            evidence="Main logger indentation",
+                            evidence="Action indentation",
                         )
+                    elif "EVIDENCE: " in _line:
+                        # Determine the evidence margin from the first evidence line encountered.
+                        if self._evidence_margin < 0:
+                            self._evidence_margin = _line.find("EVIDENCE: ") - len(self.exec_step.scenario_stack_indentation) - main_indentation
+                            self.evidence(f"Evidence margin: {self._evidence_margin}")
+
+                        self.assertregex(
+                            r"".join([
+                                _scenario_stack_indentation_rgx,
+                                r" {%d}" % self._evidence_margin,
+                                r"EVIDENCE: ",
+                                _main_indentation_rgx,
+                                r"  -> %s: [A-Z]" % search_pattern,
+                            ]),
+                            _line,
+                            evidence="Evidence indentation",
+                        )
+                    elif "INFO" in _line:
+                        # Determine logging margin from the first INFO line encountered.
+                        if self._logging_margin < 0:
+                            self._logging_margin = _line.find("INFO") - len(self.exec_step.scenario_stack_indentation) - main_indentation
+                            self.evidence(f"Logging margin: {self._logging_margin}")
+                        # Determine the length of log level pattern + additional spacing before the log message starts.
+                        if self._log_level_len < 0:
+                            _match = self.assertregex(
+                                r"(INFO +)[^ ]",
+                                _line,
+                            )  # type: typing.Match[str]
+                            self._log_level_len = len(_match.group(1))
+                            self.evidence(f"Log level + spacing length: {self._log_level_len}")
+
+                        if f"[{scenario.test.paths.LOGGING_INDENTATION_SCENARIO}] " not in _line:
+                            self.assertregex(
+                                r"".join([
+                                    _scenario_stack_indentation_rgx,
+                                    r" {%d}" % self._logging_margin,
+                                    r".{%d}" % self._log_level_len,
+                                    _main_indentation_rgx,
+                                    r"%s: [A-Z]" % search_pattern,
+                                ]),
+                                _line,
+                                evidence="Main logger indentation",
+                            )
+                        else:
+                            self.assertregex(
+                                r"".join([
+                                    _scenario_stack_indentation_rgx,
+                                    r" {%d}" % self._logging_margin,
+                                    r".{%d}" % self._log_level_len,
+                                    _main_indentation_rgx,
+                                    r"\[%s\] " % scenario.test.paths.LOGGING_INDENTATION_SCENARIO.prettypath,
+                                    _class_logger_indentation_rgx,
+                                    r"%s: [A-Z]" % search_pattern,
+                                ]),
+                                _line,
+                                evidence="Class logger indentation",
+                            )
                     else:
-                        self.assertregex(
-                            r"".join([
-                                _scenario_stack_indentation_rgx,
-                                _main_indentation_rgx,
-                                r" {%d}" % self._logging_margin,
-                                r".{%d}" % self._log_level_len,
-                                r"\[%s\] " % scenario.test.paths.LOGGING_INDENTATION_SCENARIO.prettypath,
-                                _class_logger_indentation_rgx,
-                                r"%s: [A-Z]" % search_pattern,
-                            ]),
-                            _line,
-                            evidence="Class logger indentation",
-                        )
-                else:
-                    self.fail(f"Invalid line: {_line!r}")
+                        self.fail(f"Invalid line: {_line!r}")

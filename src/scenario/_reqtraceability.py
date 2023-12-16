@@ -66,11 +66,17 @@ class ReqTraceability(_LoggerImpl):
         :param req_db_file_paths:
             Optional requirement database file to load.
 
-            If not set, the :meth:`._scenarioconfig.ScenarioConfig.reqdbfiles()` will be taken into account.
+            If not set, the :attr:`._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILES` configuration will be taken into account.
+
+            If :attr:`._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILES` configuration is not set,
+            the requirement database is left as is.
         :param test_suite_paths:
             Optional test suite paths to load scenarios from.
 
-            If not set, the :meth:`._scenarioconfig.ScenarioConfig.testsuitefiles()` will be taken into account.
+            If not set, the :attr:`._scenarioconfig.ScenarioConfig.Key.TEST_SUITE_FILES` configuration will be taken into account.
+
+            If :attr:`._scenarioconfig.ScenarioConfig.Key.TEST_SUITE_FILES` configuration is not set,
+            the scenario list is left as is.
         :param log_info:
             ``True`` (by default) to generate info logging.
         """
@@ -82,13 +88,38 @@ class ReqTraceability(_LoggerImpl):
 
         self.debug("ReqTraceability.loaddatafromfiles(req_db_file_paths=%r, test_suite_paths=%r)", req_db_file_paths, test_suite_paths)
 
-        # Check input arguments.
+        # Requirements.
+
         if req_db_file_paths:
             # Ensure persistent and countable list.
             req_db_file_paths = list(req_db_file_paths)
         else:
             # Default configuration.
             req_db_file_paths = SCENARIO_CONFIG.reqdbfiles()
+
+        if req_db_file_paths:
+            if log_info:
+                MAIN_LOGGER.info("Loading requirements")
+            with MAIN_LOGGER.pushindentation("  "):
+                if REQ_DB.getallreqs():
+                    if log_info:
+                        MAIN_LOGGER.info("Resetting requirement database")
+                    REQ_DB.clear()
+
+                self.debug("Reading %d req-db file(s)", len(list(req_db_file_paths)))
+                for _req_db_file_path in req_db_file_paths:  # type: _PathType
+                    if log_info:
+                        MAIN_LOGGER.info(f"Loading '{_req_db_file_path}'")
+                    REQ_DB.load(_req_db_file_path)
+        else:
+            self.debug("Requirement database left as is")
+
+        if log_info:
+            _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+
+        # Test suites.
+
         if test_suite_paths:
             # Ensure persistent and countable list.
             test_suite_paths = list(test_suite_paths)
@@ -96,53 +127,38 @@ class ReqTraceability(_LoggerImpl):
             # Default configuration.
             test_suite_paths = SCENARIO_CONFIG.testsuitefiles()
 
-        if log_info:
-            MAIN_LOGGER.info("Loading requirements")
-        with self.pushindentation("  "):
-            if REQ_DB.getallreqs():
-                if log_info:
-                    MAIN_LOGGER.info("Resetting requirement database")
-                REQ_DB.clear()
-
-            self.debug("Reading %d req-db file(s)", len(list(req_db_file_paths)))
-            for _req_db_file_path in req_db_file_paths:  # type: _PathType
-                if log_info:
-                    MAIN_LOGGER.info(f"Loading '{_req_db_file_path}'")
-                REQ_DB.load(_req_db_file_path)
-
-            _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+        if test_suite_paths:
             if log_info:
-                MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+                MAIN_LOGGER.info("Loading scenarios")
+            with MAIN_LOGGER.pushindentation("  "):
+                self.scenarios.clear()
+
+                self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
+                for _test_suite_path in test_suite_paths:  # type: _PathType
+                    if log_info:
+                        MAIN_LOGGER.info("Loading '%s'", _test_suite_path)
+                    with MAIN_LOGGER.pushindentation("  "):
+                        _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
+                        _test_suite_file.read()
+                        for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
+                            if log_info:
+                                MAIN_LOGGER.info("Loading '%s'", _test_script_path)
+                            _scenario_definition_class = ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(
+                                _test_script_path,
+                                # Avoid loaded module being saved in `sys.modules`,
+                                # so that the function can be called again, and traceability refreshed.
+                                sys_modules_cache=False,
+                            )  # type: typing.Type[ScenarioDefinition]
+                            self.debug("_scenario_definition_class=%r", _scenario_definition_class)
+                            _scenario = _scenario_definition_class()  # type: ScenarioDefinition
+                            self.debug("_scenario=%r", _scenario)
+                            self.scenarios.append(_scenario)
+        else:
+            self.debug("Scenario list left as is")
 
         if log_info:
-            MAIN_LOGGER.info("Loading scenarios")
-        with self.pushindentation("  "):
-            self.scenarios.clear()
-
-            self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
-            for _test_suite_path in test_suite_paths:  # type: _PathType
-                if log_info:
-                    MAIN_LOGGER.info("Loading '%s'", _test_suite_path)
-                with self.pushindentation("  "):
-                    _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
-                    _test_suite_file.read()
-                    for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
-                        if log_info:
-                            MAIN_LOGGER.info("Loading '%s'", _test_script_path)
-                        _scenario_definition_class = ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(
-                            _test_script_path,
-                            # Avoid loaded module being saved in `sys.modules`,
-                            # so that the function can be called again, and traceability refreshed.
-                            sys_modules_cache=False,
-                        )  # type: typing.Type[ScenarioDefinition]
-                        self.debug("_scenario_definition_class=%r", _scenario_definition_class)
-                        _scenario = _scenario_definition_class()  # type: ScenarioDefinition
-                        self.debug("_scenario=%r", _scenario)
-                        self.scenarios.append(_scenario)
-
             _scenario_count = len(self.scenarios)  # type: int
-            if log_info:
-                MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
     def loaddatafromcampaignresults(
             self,

@@ -19,17 +19,7 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Issue #xxx: Invalid XML Junit report files when reading with a regular browser (but not from Python...):
-            - From 'run-unit-campaign.py' campaign reports:
-              > Erreur d’analyse XML : données incompréhensibles après l’élément de document
-              > Emplacement : http://localhost:63342/scenario/test/results/2023-11-02_20-05-37/campaign.xml?_ijt=oe6gp5n7g5nj7o90asbpdocksv&_ij_reload
-              > Numéro de ligne 31337, Colonne 1 :
-        - Refactor `req-mgt.py --serve` into a general HTTP server that:
-            - displays test texts,
-            - displays campaign results,
-            - displays req traceability,
-            - ...
-        - Implement `ReqHttpServer`.
+        - Avoid scenario debugging logging by default.
     - Implement JSON schemas.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
@@ -57,6 +47,7 @@
         - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
         - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
         - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
+- Issue #xxx: Remove `scenario` specific statistics in JUnit reports by default.
 - Issue #xxx: Improve `Path`:
     - Memo: '//void/path' may lead to long network path resolutions...
     - Use a relative `pathlib.Path()` as `self._innerpath` for *void* paths.

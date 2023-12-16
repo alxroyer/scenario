@@ -74,11 +74,17 @@ class CampaignReport(_LoggerImpl):
         """
         `scenario` specific attribute names for statistics.
         """
+        #: Number of steps executed.
         STEPS_EXECUTED = "steps-executed"
+        #: Total number of steps.
         STEPS_TOTAL = "steps-total"
+        #: Number of actions executed.
         ACTIONS_EXECUTED = "actions-executed"
+        #: Total number of actions.
         ACTIONS_TOTAL = "actions-total"
+        #: Number of expected results executed.
         RESULTS_EXECUTED = "results-executed"
+        #: Total number of expected results.
         RESULTS_TOTAL = "results-total"
 
     def __init__(self):  # type: (...) -> None
@@ -146,7 +152,7 @@ class CampaignReport(_LoggerImpl):
             _xml_doc.root = self._campaign2xml(_xml_doc, campaign_execution)
 
             # Generate the JUnit XML outfile.
-            _xml_doc.write(self._report_path)
+            _xml_doc.writefile(self._report_path)
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
@@ -204,7 +210,7 @@ class CampaignReport(_LoggerImpl):
 
             # Read and parse the JUnit XML file.
             self._report_path = Path(report_path)
-            _xml_doc = Xml.Document.read(self._report_path)  # type: Xml.Document
+            _xml_doc = Xml.Document.readfile(self._report_path)  # type: Xml.Document
 
             # Analyze the JUnit XML content.
             self._feed_req_db = feed_req_db

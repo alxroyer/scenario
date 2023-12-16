@@ -172,6 +172,10 @@ class MkDoc:
 
                 _log_lines.append(_log_line)
 
+            # Ensure a final end of line.
+            if _log_lines and _log_lines[-1]:
+                _log_lines.append(b'')
+
             # scenario.logging.info(f"Updating '{_log_outpath}'")  # Already logged above
             _dumptext(_log_outpath, b'\n'.join(_log_lines))
 

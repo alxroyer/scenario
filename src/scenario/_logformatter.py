@@ -110,13 +110,12 @@ class LogFormatter(logging.Formatter):
             _log_line += toiso8601(record.created)
             _log_line += " - "
 
+        # Head indentation.
+        _log_line += (LogExtraDataHelper.get(record, LogExtraData.HEAD_INDENTATION) or "")
+
         # Scenario stack indentation.
         if self._with(record, LogExtraData.SCENARIO_STACK_INDENTATION, default=True):
             _log_line += ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN * (SCENARIO_STACK.size - 1)
-
-        # Main logger indentation.
-        if self._with(record, LogExtraData.MAIN_LOGGER_INDENTATION, default=True):
-            _log_line += MAIN_LOGGER.getindentation()
 
         # Action / result margin.
         if self._with(record, LogExtraData.ACTION_RESULT_MARGIN, default=True):
@@ -135,6 +134,10 @@ class LogFormatter(logging.Formatter):
             _max_level_len = max(len(logging.getLevelName(x)) for x in range(0, logging.CRITICAL + 1))  # type: int
             _log_line += f"{' ':>{_max_level_len - len(record.levelname)}}"
             _log_line += " "
+
+        # Main logger indentation.
+        if self._with(record, LogExtraData.MAIN_LOGGER_INDENTATION, default=True):
+            _log_line += MAIN_LOGGER.getindentation()
 
         # Log message color (begin).
         _message_color = None  # type: typing.Optional[Console.Color]
@@ -201,25 +204,16 @@ class LogFormatter(logging.Formatter):
         3. The current execution state.
         """
         from ._logextradata import LogExtraData, LogExtraDataHelper
-        from ._logger import Logger
         from ._loghandler import LogHandler
         from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenariostack import SCENARIO_STACK
 
-        # 1. Check whether the record has the given flag set.
-        _value = LogExtraDataHelper.get(record, extra_flag)  # type: typing.Optional[bool]
-        if _value is not None:
+        # 1. Check whether the record or the attached logger has the given flag set.
+        _value = LogExtraDataHelper.get(record, extra_flag)  # type: typing.Any
+        if isinstance(_value, bool):
             return _value
 
-        # 2. Check whether the logger holds a configuration for the given flag.
-        # Memo: Logger reference as extra data set by :class:`logfilters.LoggerLogFilter`.
-        _logger = LogExtraDataHelper.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[Logger]
-        if _logger:
-            _value = _logger.getextraflag(extra_flag)
-            if _value is not None:
-                return _value
-
-        # 3. Check whether a scenario configuration or execution state gives an answer for the given flag.
+        # 2. Check whether a scenario configuration or execution state gives an answer for the given flag.
         if extra_flag == LogExtraData.DATE_TIME:
             return SCENARIO_CONFIG.logdatetimeenabled()
         if extra_flag == LogExtraData.COLOR:
@@ -232,7 +226,7 @@ class LogFormatter(logging.Formatter):
             # Action/result margin only when there is a current action or expected result.
             return SCENARIO_STACK.current_action_result_execution is not None
 
-        # Otherwise, return the default value.
+        # 3. Otherwise, return the default value.
         return default
 
     @staticmethod

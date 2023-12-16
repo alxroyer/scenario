@@ -37,7 +37,7 @@ class LoggingScenario(scenario.Scenario):
             self.error("This is an error!!!")
             self.warning("This is a warning!")
             self.info("This is information.")
-            self.debug("This is debug.")
+            self.debug("(This is debug.)")
 
     def step030(self):
         self.STEP("Logging with a class logger")
@@ -46,13 +46,13 @@ class LoggingScenario(scenario.Scenario):
             self.class_logger.error("This is an error!!!")
             self.class_logger.warning("This is a warning!")
             self.class_logger.info("This is information.")
-            self.class_logger.debug("This is debug.")
+            self.class_logger.debug("(This is debug.)")
 
         if self.ACTION("Activate debugging for the class logger instance."):
             self.class_logger.enabledebug(True)
 
         if self.ACTION("Log a debug message again with the class logger instance."):
-            self.class_logger.debug("This is debug again.")
+            self.class_logger.debug("(This is debug again.)")
 
     def step110(self):
         self.STEP("Class logger indentation")

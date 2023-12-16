@@ -90,14 +90,6 @@ class ReqManagementArgs(_ArgsImpl):
             help="Prevent test results in traceability reports.",
         )
 
-        #: ``--serve`` option.
-        self.serve = False  # type: bool
-        self.addarg("Serve", "serve", bool).define(
-            "--serve",
-            action="store_true",
-            help="Launch the requirement management server.",
-        )
-
     def _checkargs(
             self,
             args,  # type: typing.Any
@@ -122,16 +114,8 @@ class ReqManagementArgs(_ArgsImpl):
                 return False
 
         # Output options.
-        if not any([self.downstream_traceability_outfile, self.upstream_traceability_outfile, self.serve]):
-            MAIN_LOGGER.error("Please use one option of --downstream-traceability, --upstream-traceability or --serve at least")
-            return False
-
-        # --serve option.
-        if self.serve and (self.req_db_paths or self.test_suite_paths or self.campaign_results_path):
-            MAIN_LOGGER.error("Can't use --serve with --req-db, --test-suite or --campaign input options")
-            return False
-        if self.serve and (self.downstream_traceability_outfile or self.upstream_traceability_outfile):
-            MAIN_LOGGER.error("Can't use --serve with --downstream-traceability or --upstream-traceability output options")
+        if not any([self.downstream_traceability_outfile, self.upstream_traceability_outfile]):
+            MAIN_LOGGER.error("Please use one option of --downstream-traceability or --upstream-traceability at least")
             return False
 
         return True

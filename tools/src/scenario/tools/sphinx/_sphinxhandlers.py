@@ -309,6 +309,8 @@ class SphinxHandlers:
                 # `enum` names.
                 ("enum.Enum", "class"),
                 ("enum.IntEnum", "class"),
+                # `html` names.
+                ("http.server.BaseHTTPRequestHandler", "class"),
                 # `logging` names.
                 ("logging.Filter", "class"),
                 ("logging.Formatter", "class"),

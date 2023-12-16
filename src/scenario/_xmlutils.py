@@ -19,6 +19,7 @@ XML DOM utils.
 """
 
 import abc
+import gc
 import typing
 import xml.dom.minidom
 
@@ -26,7 +27,7 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
 
 
-class Xml:
+class Xml(abc.ABC):
     """
     Because:
 
@@ -41,6 +42,25 @@ class Xml:
         """
         XML document.
         """
+
+        @staticmethod
+        def fromunderlyingref(
+                xml_doc,  # type: xml.dom.minidom.Document
+        ):  # type: (...) -> Xml.Document
+            """
+            Retrieves the :class:`Xml.Document` instance from its underlying reference.
+
+            :param xml_doc: Underlying document reference.
+            :return: :class:`Xml.Document` instance found.
+
+            .. warning::
+                Possibly inefficient implementation
+                in as much as all objects in the garbage collector are scanned for the purpose.
+            """
+            for _doc in filter(lambda obj: isinstance(obj, Xml.Document), gc.get_objects()):  # type: Xml.Document
+                if _doc._xml_doc is xml_doc.ownerDocument:
+                    return _doc
+            raise KeyError(f"No such document {xml_doc!r}")
 
         def __init__(self):  # type: (...) -> None
             """
@@ -65,11 +85,11 @@ class Xml:
             :param root: Root node for the document.
             """
             self._xml_doc.appendChild(  # type: ignore[no-untyped-call]  ## Untyped function "appendChild"
-                getattr(root, "_xml_element"),
+                root._xml_node,  # noqa  # Access to protected member
             )
 
         @staticmethod
-        def read(
+        def readfile(
                 path,  # type: _AnyPathType
         ):  # type: (...) -> Xml.Document
             """
@@ -84,7 +104,7 @@ class Xml:
             _doc._xml_doc = xml.dom.minidom.parseString(Path(path).read_bytes())
             return _doc
 
-        def write(
+        def writefile(
                 self,
                 path,  # type: _AnyPathType
         ):  # type: (...) -> None
@@ -95,8 +115,20 @@ class Xml:
             """
             from ._path import Path
 
-            _xml_stream = self._xml_doc.toprettyxml(encoding="utf-8")  # type: bytes
-            Path(path).write_bytes(_xml_stream)
+            Path(path).write_bytes(self.dumpstream())
+
+        def dumpstream(
+                self,
+                encoding="utf-8",  # type: str
+        ):  # type: (...) -> bytes
+            """
+            Dumps the document as bytes.
+
+            :param encoding: Desired encoding.
+            :return: XML document as bytes.
+            """
+            _xml_stream = self._xml_doc.toprettyxml(encoding=encoding)  # type: bytes
+            return _xml_stream
 
         def createcomment(
                 self,
@@ -140,11 +172,81 @@ class Xml:
                 xml_text=self._xml_doc.createTextNode(text),
             )
 
+        def parsestream(
+                self,
+                stream,  # type: typing.Union[str, bytes]
+        ):  # type: (...) -> Xml.INode
+            """
+            Parse an XML stream into DOM nodes.
+
+            :param stream: XML stream to parse.
+            :return: XML node created from ``string``, owned by this document.
+            """
+            # Parse the XML stream as a DOM document.
+            try:
+                _xml_content = xml.dom.minidom.parseString(stream)  # type: typing.Any
+            except Exception as _err:
+                raise ValueError(f"Error while parsing XML string {stream!r}: {_err}")
+            if not isinstance(_xml_content, xml.dom.minidom.Document):
+                raise ValueError(f"Unexpected XML string {stream!r}, parsed as {_xml_content!r}")
+
+            # Fix owner document reference for each nodes.
+            def _fixdoc(
+                    xml_node,  # type: xml.dom.minidom.Node
+            ):  # type: (...) -> None
+                # Fix owner document
+                xml_node.ownerDocument = self._xml_doc
+
+                # Recursive calls.
+                if isinstance(xml_node, xml.dom.minidom.Element):
+                    for _xml_child in xml_node.childNodes:  # type: xml.dom.minidom.Node
+                        _fixdoc(_xml_child)
+            _fixdoc(_xml_content.documentElement)
+
+            # Return an `Xml.INode` object of the corresponding type.
+            if isinstance(_xml_content.documentElement, xml.dom.minidom.Comment):
+                return Xml.CommentNode(_xml_content.documentElement)
+            if isinstance(_xml_content.documentElement, xml.dom.minidom.Element):
+                return Xml.Node(_xml_content.documentElement)
+            if isinstance(_xml_content.documentElement, xml.dom.minidom.Text):
+                return Xml.TextNode(_xml_content.documentElement)
+            raise ValueError(f"Unexpected root XML content {stream!r}, parsed as {_xml_content.documentElement!r}")
+
     class INode(abc.ABC):
         """
         Abstract interface for regular nodes and text nodes.
         """
-        pass
+        def __init__(
+                self,
+                xml_node,  # type: xml.dom.minidom.Node
+        ):  # type: (...) -> None
+            """
+            :param xml_node: Underlying library generic node reference.
+            """
+            #: Underlying library generic node reference.
+            #:
+            #: Type should be refined in subclasses.
+            self._xml_node = xml_node  # type: xml.dom.minidom.Node
+
+        @property
+        def doc(self):  # type: () -> Xml.Document
+            """
+            :return: Owner document.
+
+            .. warning::
+                Possibly inefficient implementation.
+                See :meth:`Xml.Document.fromunderlyingref()`.
+            """
+            return Xml.Document.fromunderlyingref(self._xml_node.ownerDocument)
+
+        @property
+        def parent(self):  # type: () -> typing.Optional[Xml.Node]
+            """
+            :return: Parent node. ``None`` for root or detached nodes.
+            """
+            if self._xml_node.parentNode:
+                return Xml.Node(self._xml_node.parentNode)
+            return None
 
     class CommentNode(INode):
         """
@@ -158,27 +260,25 @@ class Xml:
             """
             :param xml_comment: Underlying library comment reference.
             """
+            Xml.INode.__init__(self, xml_comment)
+
             #: Underlying library comment reference.
-            self._xml_comment = xml_comment  # type: xml.dom.minidom.Comment
+            self._xml_node = xml_comment  # type: xml.dom.minidom.Comment
 
         @property
         def data(self):  # type: () -> str
             """
-            Text content.
+            Text content getter.
             """
-            _data = self._xml_comment.data  # type: str
+            _data = self._xml_node.data  # type: str
             return _data
 
-        def append(
-                self,
-                data,  # type: str
-        ):  # type: (...) -> None
+        @data.setter
+        def data(self, data):  # type: (str) -> None
             """
-            Adds some text to the comment node.
-
-            :param data: Additional text.
+            Text content setter.
             """
-            self._xml_comment.data += data
+            self._xml_node.data = data
 
     class Node(INode):
         """
@@ -192,15 +292,17 @@ class Xml:
             """
             :param xml_element: Underlying library node reference.
             """
+            Xml.INode.__init__(self, xml_element)
+
             #: Underlying library node reference.
-            self._xml_element = xml_element  # type: xml.dom.minidom.Element
+            self._xml_node = xml_element  # type: xml.dom.minidom.Element
 
         @property
         def tag_name(self):  # type: () -> str
             """
             :return: Tag name of the node.
             """
-            return self._xml_element.tagName
+            return self._xml_node.tagName
 
         def hasattr(
                 self,
@@ -213,7 +315,7 @@ class Xml:
             :return: ``True`` when the node has an attribute of the given name, ``False`` otherwise.
             """
             # "If no such attribute exists, an empty string is returned, as if the attribute had no value."
-            _attr_value = self._xml_element.getAttribute(name)  # type: str
+            _attr_value = self._xml_node.getAttribute(name)  # type: str
             if _attr_value:
                 return True
             else:
@@ -229,7 +331,7 @@ class Xml:
             :param name: Attribute name.
             :return: Attribute value, or possibly an empty string if the attribute does not exist.
             """
-            _attr_value = self._xml_element.getAttribute(name)  # type: str
+            _attr_value = self._xml_node.getAttribute(name)  # type: str
             return _attr_value
 
         def setattr(
@@ -244,13 +346,13 @@ class Xml:
             :param value: Attribute value.
             :return: ``self``
             """
-            self._xml_element.setAttribute(name, value)
+            self._xml_node.setAttribute(name, value)
             return self
 
         def getchildren(
                 self,
                 tag_name,  # type: str
-        ):  # type: (...) -> typing.List[Xml.Node]
+        ):  # type: (...) -> typing.Sequence[Xml.Node]
             """
             Retrieves direct children with the given tag name.
 
@@ -258,19 +360,19 @@ class Xml:
             :return: List of children nodes.
             """
             _children = []  # type: typing.List[Xml.Node]
-            for _xml_child in self._xml_element.childNodes:  # type: xml.dom.minidom.Node
+            for _xml_child in self._xml_node.childNodes:  # type: xml.dom.minidom.Node
                 if isinstance(_xml_child, xml.dom.minidom.Element) and (_xml_child.tagName == tag_name):
                     _children.append(Xml.Node(_xml_child))
             return _children
 
-        def gettextnodes(self):  # type: (...) -> typing.List[Xml.TextNode]
+        def gettextnodes(self):  # type: (...) -> typing.Sequence[Xml.TextNode]
             """
             Retrieves direct children text nodes.
 
             :return: List of children text nodes.
             """
             _text_nodes = []  # type: typing.List[Xml.TextNode]
-            for _xml_child in self._xml_element.childNodes:  # type: xml.dom.minidom.Node
+            for _xml_child in self._xml_node.childNodes:  # type: xml.dom.minidom.Node
                 if isinstance(_xml_child, xml.dom.minidom.Text):
                     _text_nodes.append(Xml.TextNode(_xml_child))
             return _text_nodes
@@ -287,10 +389,8 @@ class Xml:
             """
             if not isinstance(child, (Xml.CommentNode, Xml.Node, Xml.TextNode)):
                 raise TypeError(f"Unknown child node {child!r}")
-            self._xml_element.appendChild(  # type: ignore[no-untyped-call]  ## Untyped function "appendChild"
-                getattr(child, "_xml_comment") if isinstance(child, Xml.CommentNode)
-                else getattr(child, "_xml_element") if isinstance(child, Xml.Node)
-                else getattr(child, "_xml_text"),
+            self._xml_node.appendChild(  # type: ignore[no-untyped-call]  ## Untyped function "appendChild"
+                child._xml_node,  # noqa  # Access to protected member
             )
             return child  # type: ignore[return-value]  ## "Union[Node, TextNode]", expected "VarNodeType"
 
@@ -306,29 +406,27 @@ class Xml:
             """
             :param xml_text: Underlying library text node reference.
             """
+            Xml.INode.__init__(self, xml_text)
+
             #: Underlying library text node reference.
-            self._xml_text = xml_text  # type: xml.dom.minidom.Text
+            self._xml_node = xml_text  # type: xml.dom.minidom.Text
 
         @property
         def data(self):  # type: () -> str
             """
-            Text content.
+            Text content getter.
             """
-            _data = self._xml_text.data  # type: str
+            _data = self._xml_node.data  # type: str
             return _data
 
-        def append(
-                self,
-                data,  # type: str
-        ):  # type: (...) -> None
+        @data.setter
+        def data(self, data):  # type: (str) -> None
             """
-            Adds some text to the text node.
-
-            :param data: Additional text.
+            Text content setter.
             """
-            self._xml_text.data += data
+            self._xml_node.data = data
 
 
 if typing.TYPE_CHECKING:
-    #: Variable step definition type.
+    #: Variable XML node type.
     VarNodeType = typing.TypeVar("VarNodeType", bound=Xml.INode)
