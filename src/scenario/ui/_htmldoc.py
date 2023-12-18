@@ -167,8 +167,8 @@ class HtmlDocument(_LoggerImpl):
         # Return a context that positions the new child as the current node.
         return HtmlDocument.NodeContext(self, _child)
 
+    @staticmethod
     def encode(
-            self,
             text,  # type: str
     ):  # type: (...) -> str
         """

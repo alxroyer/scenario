@@ -185,15 +185,19 @@ class ScenarioRunner(_LoggerImpl):
         1) the scenario stack building context,
         and 2) the scenario args --doc-only option.
         """
+        from ._args import Args
         from ._scenarioargs import ScenarioArgs
         from ._scenariostack import SCENARIO_STACK
 
         if SCENARIO_STACK.building.scenario_definition:
             return ScenarioRunner.ExecutionMode.BUILD_OBJECTS
-        elif ScenarioArgs.getinstance().doc_only:
-            return ScenarioRunner.ExecutionMode.DOC_ONLY
+        elif isinstance(Args.getinstance(), ScenarioArgs):
+            if ScenarioArgs.getinstance().doc_only:
+                return ScenarioRunner.ExecutionMode.DOC_ONLY
+            else:
+                return ScenarioRunner.ExecutionMode.EXECUTE
         else:
-            return ScenarioRunner.ExecutionMode.EXECUTE
+            return ScenarioRunner.ExecutionMode.BUILD_OBJECTS
 
     def executepath(
             self,

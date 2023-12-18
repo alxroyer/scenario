@@ -48,6 +48,7 @@ class Scenarios(_RequestHandlerImpl):
     ):  # type: (...) -> None
         from .._reqtraceability import REQ_TRACEABILITY
         from .._scenariodefinition import ScenarioDefinition
+        from ._scenariodetails import ScenarioDetails
 
         html.settitle("Scenarios")
 
@@ -55,7 +56,8 @@ class Scenarios(_RequestHandlerImpl):
             with html.addcontent('<ul></ul>'):
                 for _scenario in REQ_TRACEABILITY.scenarios:  # type: ScenarioDefinition
                     with html.addcontent('<li class="scenario"></li>'):
-                        html.addcontent(f'<span class="scenario name">{html.encode(_scenario.name)}</span>')
+                        with html.addcontent(f'<span class="scenario name"></span>'):
+                            html.addcontent(f'<a href="{ScenarioDetails.mkurl(_scenario)}">{html.encode(_scenario.name)}</a>')
                         if _scenario.title:
                             html.addcontent('<span class="scenario sep">:</span>')
                             html.addcontent(f'<span class="scenario title">{html.encode(_scenario.title)}</span>')

@@ -46,6 +46,7 @@ class HttpServer(_LoggerImpl):
         from ._homepage import Homepage
         from ._requesthandler import RequestHandler
         from ._requirements import Requirements
+        from ._scenariodetails import ScenarioDetails
         from ._scenarios import Scenarios
 
         _LoggerImpl.__init__(self, DebugClass.UI_HTTP_SERVER)
@@ -56,6 +57,7 @@ class HttpServer(_LoggerImpl):
             Configuration,
             Requirements,
             Scenarios,
+            ScenarioDetails,
         ]  # type: typing.Sequence[typing.Type[RequestHandler]]
 
     def serve(self):  # type: (...) -> None

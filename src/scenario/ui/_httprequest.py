@@ -205,3 +205,16 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         from ._httpserver import HTTP_SERVER
 
         HTTP_SERVER.info(format, *args)
+
+    @staticmethod
+    def encodeurl(
+            base_path,  # type: str
+            get_args,  # type: typing.Dict[str, str]
+    ):  # type: (...) -> str
+        """
+        Encodes an URL with GET parameters.
+
+        :param base_path: Base path of the URL.
+        :param get_args: GET parameters to encode.
+        """
+        return f"{base_path}?{urllib.parse.urlencode(get_args)}"
