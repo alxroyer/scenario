@@ -71,50 +71,8 @@ class Configuration(_RequestHandlerImpl):
             self._applyform(request, html)
 
         # General page content.
-        self._currentconfiguration(html)
         self._form1(html)
         self._form2(html)
-
-    def _currentconfiguration(
-            self,
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
-        """
-        Displays the current configuration in the page.
-
-        Requirements and scenarios currently loaded.
-
-        :param html: Output HTML document.
-        """
-        from .._reqdb import REQ_DB
-        from .._reqref import ReqRef
-        from .._reqtraceability import REQ_TRACEABILITY
-        from .._scenariodefinition import ScenarioDefinition
-
-        with html.addcontent('<div id="current"></div>'):
-            html.addcontent('<h2>Current configuration</h2>')
-
-            # Requirements.
-            with html.addcontent('<div id="requirements"></div>'):
-                html.addcontent('<p>Requirements:</p>')
-                with html.addcontent('<ul></ul>'):
-                    for _req_ref in REQ_DB.getallrefs():  # type: ReqRef
-                        with html.addcontent('<li class="req-ref"></li>'):
-                            html.addcontent(f'<span class="req-ref id">{html.encode(_req_ref.id)}</span>')
-                            if _req_ref.ismain() and _req_ref.req.title:
-                                html.addcontent('<span class="req-ref sep">:</span>')
-                                html.addcontent(f'<span class="req-ref title">{html.encode(_req_ref.req.title)}</span>')
-
-            # Scenarios.
-            with html.addcontent('<div id="scenarios"></div>'):
-                html.addcontent('<p>Scenarios:</p>')
-                with html.addcontent('<ul></ul>'):
-                    for _scenario in REQ_TRACEABILITY.scenarios:  # type: ScenarioDefinition
-                        with html.addcontent('<li class="scenario"></li>'):
-                            html.addcontent(f'<span class="scenario name">{html.encode(_scenario.name)}</span>')
-                            if _scenario.title:
-                                html.addcontent('<span class="scenario sep">:</span>')
-                                html.addcontent(f'<span class="scenario title">{html.encode(_scenario.title)}</span>')
 
     def _form1(
             self,

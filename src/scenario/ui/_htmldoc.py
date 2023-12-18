@@ -83,8 +83,6 @@ class HtmlDocument(_LoggerImpl):
         """
         from .._debugclasses import DebugClass
         from .._xmlutils import Xml
-        from ._configuration import Configuration
-        from ._homepage import Homepage
 
         _LoggerImpl.__init__(self, DebugClass.UI_HTML_DOCUMENT)
 
@@ -110,15 +108,28 @@ class HtmlDocument(_LoggerImpl):
             self._h1 = self.addcontent('<h1>...</h1>').new_child   # type: Xml.Node
 
             # Menu.
-            with self.addcontent('<div id="menu"></div>'):
-                self.addcontent(f'<a class="menu" href="{Homepage.URL}">Home</a>')
-                self.addcontent(f'<a class="menu" href="{Configuration.URL}">Configuration</a>')
+            self._buildmenu()
 
             #: Main ``<div/>`` node, which page content will be added to by :class:`._requesthandler.RequestHandler` subclasses.
             self.main_div = self.addcontent('<div id="main"></div>').new_child  # type: Xml.Node
 
         # Set main <div/> as the current node in the end.
         self.current_node = self.main_div
+
+    def _buildmenu(self):  # type: (...) -> None
+        """
+        Builds the navigation menu.
+        """
+        from ._configuration import Configuration
+        from ._homepage import Homepage
+        from ._requirements import Requirements
+        from ._scenarios import Scenarios
+
+        with self.addcontent('<div id="menu"></div>'):
+            self.addcontent(f'<a class="menu" href="{Homepage.URL}">Home</a>')
+            self.addcontent(f'<a class="menu" href="{Configuration.URL}">Configuration</a>')
+            self.addcontent(f'<a class="menu" href="{Requirements.URL}">Requirements</a>')
+            self.addcontent(f'<a class="menu" href="{Scenarios.URL}">Scenarios</a>')
 
     def settitle(
             self,
