@@ -52,7 +52,7 @@ class ScenarioDetails(_RequestHandlerImpl):
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(ScenarioDetails.URL, {'name': scenario.name})
+        return HttpRequest.encodeurl(ScenarioDetails.URL, args={'name': scenario.name})
 
     def _getscenario(
             self,
@@ -115,24 +115,24 @@ class ScenarioDetails(_RequestHandlerImpl):
 
         with html.addcontent('<div id="scenario"></div>'):
             if _scenario.getattributenames():
-                self._scenarioattributes(html, _scenario)
+                self._scenarioattributes2html(_scenario, html)
 
             _req_refs = _scenario.getreqrefs(walk_steps=True)  # type: _SetWithReqLinksType[_ReqRefType]
             if _req_refs:
-                self._reqrefs(html, _scenario, _req_refs)
+                self._reqrefs2html(_scenario, _req_refs, html)
 
-            self._steps(html, _scenario)
+            self._steps2html(_scenario, html)
 
-    def _scenarioattributes(
+    def _scenarioattributes2html(
             self,
-            html,  # type: _HtmlDocumentType
             scenario,  # type: _ScenarioDefinitionType
+            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Builds the HTML content for scenario attributes.
 
-        :param html: HTML output page to feed.
         :param scenario: Scenario which attributes to build HTML content for.
+        :param html: HTML output page to feed.
         """
         with html.addcontent('<div class="scenario attributes"></div>'):
             html.addcontent('<p>Attributes:</p>')
@@ -143,33 +143,33 @@ class ScenarioDetails(_RequestHandlerImpl):
                         html.addcontent('<span class="scenario attribute sep">:</span>')
                         html.addcontent(f'<span class="scenario attribute value">{html.encode(scenario.getattribute(_attr_name))}</span>')
 
-    def _steps(
+    def _steps2html(
             self,
-            html,  # type: _HtmlDocumentType
             scenario,  # type: _ScenarioDefinitionType
+            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Builds the HTML content for scenario steps.
 
-        :param html: HTML output page to feed.
         :param scenario: Scenario which steps to build HTML content for.
+        :param html: HTML output page to feed.
         """
         with html.addcontent('<div id="steps"></div>'):
             html.addcontent('<p>Steps:</p>')
             with html.addcontent('<ul></ul>'):
                 for _step in scenario.steps:  # type: _StepDefinitionType
-                    self._step(html, _step)
+                    self._step2html(_step, html)
 
-    def _step(
+    def _step2html(
             self,
-            html,  # type: _HtmlDocumentType
             step,  # type: _StepDefinitionType
+            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Builds the HTML content for the given step.
 
-        :param html: HTML output page to feed.
         :param step: Step to build HTML content for.
+        :param html: HTML output page to feed.
         """
         from .._stepsection import StepSectionDescription
 
@@ -185,45 +185,47 @@ class ScenarioDetails(_RequestHandlerImpl):
 
                 _req_refs = step.getreqrefs()  # type: _SetWithReqLinksType[_ReqRefType]
                 if _req_refs:
-                    self._reqrefs(html, step, _req_refs)
+                    self._reqrefs2html(step, _req_refs, html)
 
                 with html.addcontent(f'<div class="actions-results"></div>'):
                     with html.addcontent('<ul></ul>'):
                         for _action_result in step.actions_results:  # type: _ActionResultDefinitionType
-                            self._actionresult(html, _action_result)
+                            self._actionresult2html(_action_result, html)
 
-    def _actionresult(
+    def _actionresult2html(
             self,
-            html,  # type: _HtmlDocumentType
             action_result,  # type: _ActionResultDefinitionType
+            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Builds the HTML content for the given action / expected result.
 
-        :param html: HTML output page to feed.
         :param action_result: Action / expected result to build HTML content for.
+        :param html: HTML output page to feed.
         """
         with html.addcontent(f'<li class="{action_result.type.lower()}"></li>'):
             html.addcontent(f'<span class="{action_result.type.lower()} type">{action_result.type.upper()}</span>')
             html.addcontent(f'<span class="{action_result.type.lower()} sep">:</span>')
             html.addcontent(f'<span class="{action_result.type.lower()} text">{html.encode(action_result.description)}</span>')
 
-    def _reqrefs(
+    def _reqrefs2html(
             self,
-            html,  # type: _HtmlDocumentType
             req_verifier,  # type: typing.Union[_ScenarioDefinitionType, _StepDefinitionType]
             req_refs,  # type: _SetWithReqLinksType[_ReqRefType]
+            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Buils the HTML content for a scenario or step requirement coverage.
 
-        :param html: HTML output page to feed.
         :param req_verifier: Scenario or step to process requirement coverage for.
         :param req_refs: Scenario or step requirement coverage.
+        :param html: HTML output page to feed.
         """
         from .._reqlink import ReqLink
         from .._scenariodefinition import ScenarioDefinition
         from .._stepdefinition import StepDefinition
+        from ._downstreamtraceability import DownstreamTraceability
+        from ._requirements import Requirements
 
         # Determine the HTML object class depending on the type of `req_verifier`.
         _obj_class = ""  # type: str
@@ -237,7 +239,13 @@ class ScenarioDetails(_RequestHandlerImpl):
             with html.addcontent('<ul></ul>'):
                 for _req_ref in req_refs:  # type: _ReqRefType
                     with html.addcontent(f'<li class="{_obj_class} req-ref"></li>'):
-                        html.addcontent(f'<span class="{_obj_class} req-ref id">{html.encode(_req_ref.id)}</span>')
+                        # Requirement reference id.
+                        with html.addcontent(f'<span class="{_obj_class} req-ref id"></span>'):
+                            html.addcontent(f'<a href="{Requirements.mkurl(_req_ref)}">{html.encode(_req_ref.id)}</a>')
+
+                        # Downstream traceability link.
+                        with html.addcontent(f'<span class="{_obj_class} req-ref coverage"></span>'):
+                            DownstreamTraceability.reqref2unnamedhtmllink(_req_ref, html)
 
                         # Find out the req-links which comments to display.
                         _req_links = list(filter(

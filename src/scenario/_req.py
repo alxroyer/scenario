@@ -141,9 +141,9 @@ class Req:
         return REQ_DB.getreqref(self)
 
     @property
-    def sub_refs(self):  # type: () -> _OrderedSetType[_ReqRefType]
+    def subrefs(self):  # type: () -> _OrderedSetType[_ReqRefType]
         """
-        References to sub-parts of this requirement.
+        References to subparts of this requirement.
 
         See :meth:`._reqref.ReqRef.orderedset()` for order details.
         """
@@ -151,7 +151,7 @@ class Req:
         from ._reqref import ReqRef
 
         return ReqRef.orderedset(
-            # Filter requirement references that point to sub-parts of this requirement.
+            # Filter requirement references that point to subparts of this requirement.
             filter(
                 lambda req_ref: (req_ref.req is self) and req_ref.issubref(),
                 REQ_DB.getallrefs(),
@@ -162,7 +162,7 @@ class Req:
             self,
             req_verifier=None,  # type: _ReqVerifierType
             *,
-            walk_sub_refs=False,  # type: bool
+            walk_subrefs=False,  # type: bool
             walk_steps=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
@@ -174,10 +174,10 @@ class Req:
 
             Optional.
             All requirement links when ``None``.
-        :param walk_sub_refs:
-            Option to include requirement sub-reference links.
+        :param walk_subrefs:
+            Option to include requirement subreference links.
 
-            If ``True``, links held by the requirement sub-references will be included in the result.
+            If ``True``, links held by the requirement subreferences will be included in the result.
 
             ``False`` by default.
 
@@ -194,10 +194,10 @@ class Req:
         """
         from ._reqlink import ReqLink
 
-        # Compute requirement references depending on `sub_ref_links`.
+        # Compute requirement references depending on `walk_subrefs`.
         _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
-        if walk_sub_refs:
-            _req_refs.extend(self.sub_refs)
+        if walk_subrefs:
+            _req_refs.extend(self.subrefs)
 
         # Walk through requirement references.
         _req_links = []  # type: typing.List[_ReqLinkType]
@@ -213,15 +213,15 @@ class Req:
     def getverifiers(
             self,
             *,
-            walk_sub_refs=False,  # type: bool
+            walk_subrefs=False,  # type: bool
     ):  # type: (...) -> _SetWithReqLinksType[_ReqVerifierType]
         """
         Returns verifiers linked with this requirement, with related links.
 
-        :param walk_sub_refs:
-            Option to include requirement sub-reference verifiers.
+        :param walk_subrefs:
+            Option to include requirement subreference verifiers.
 
-            If ``True``, verifiers tracing sub-references of the requirement will be included in the result.
+            If ``True``, verifiers tracing subreferences of the requirement will be included in the result.
 
             ``False`` by default.
 
@@ -237,8 +237,8 @@ class Req:
         from ._reqlink import ReqLinkHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Determine the list of requirement references to walk through, depending on `walk_sub_refs`.
-            [self.main_ref] if not walk_sub_refs else [self.main_ref, *self.sub_refs],
+            # Determine the list of requirement references to walk through, depending on `walk_subrefs`.
+            [self.main_ref] if not walk_subrefs else [self.main_ref, *self.subrefs],
             # Get requirement verifiers from each link.
             lambda req_link: req_link.req_verifiers,
         )
@@ -246,15 +246,15 @@ class Req:
     def getscenarios(
             self,
             *,
-            walk_sub_refs=False,  # type: bool
+            walk_subrefs=False,  # type: bool
     ):  # type: (...) -> _SetWithReqLinksType[_ScenarioDefinitionType]
         """
         Returns all scenarios linked with this requirement, with related links.
 
-        :param walk_sub_refs:
-            Option to include requirement sub-reference scenarios.
+        :param walk_subrefs:
+            Option to include requirement subreference scenarios.
 
-            If ``True``, scenarios verifying sub-references of the requirement will be included in the result.
+            If ``True``, scenarios verifying subreferences of the requirement will be included in the result.
 
             ``False`` by default.
 
@@ -270,8 +270,8 @@ class Req:
         from ._reqverifier import ReqVerifierHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Determine the list of requirement references to walk through, depending on `walk_sub_refs`.
-            [self.main_ref] if not walk_sub_refs else [self.main_ref, *self.sub_refs],
+            # Determine the list of requirement references to walk through, depending on `walk_subrefs`.
+            [self.main_ref] if not walk_subrefs else [self.main_ref, *self.subrefs],
             # Get scenarios from each link.
             lambda req_link: map(ReqVerifierHelper.getscenario, req_link.req_verifiers),
         )

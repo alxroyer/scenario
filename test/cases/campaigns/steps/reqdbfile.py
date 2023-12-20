@@ -122,16 +122,16 @@ class CheckCampaignReqDbFile(scenario.test.VerificationStep):
                                 "text", _req,
                                 evidence=True,
                             )
-                _sub_refs_txt = scenario.text.Countable("sub-reference", _expected_req["sub-refs"])  # type: scenario.text.Countable
-                if self.RESULT(f"with {len(_sub_refs_txt)} {_sub_refs_txt}{_sub_refs_txt.ifany(':', '.')}"):
-                    self.assertin("sub-refs", _req, evidence=False)
+                _subrefs_txt = scenario.text.Countable("subreference", _expected_req["subrefs"])  # type: scenario.text.Countable
+                if self.RESULT(f"with {len(_subrefs_txt)} {_subrefs_txt}{_subrefs_txt.ifany(':', '.')}"):
+                    self.assertin("subrefs", _req, evidence=False)
                     self.assertlen(
-                        _req["sub-refs"], len(_expected_req["sub-refs"]),
+                        _req["subrefs"], len(_expected_req["subrefs"]),
                         evidence=True,
                     )
-                for _index, _expected_sub_ref_id in enumerate(_expected_req["sub-refs"]):  # type: int, str
-                    if self.RESULT(f"- {_expected_sub_ref_id}"):
+                for _index, _expected_subref_id in enumerate(_expected_req["subrefs"]):  # type: int, str
+                    if self.RESULT(f"- {_expected_subref_id}"):
                         self.assertequal(
-                            _req["sub-refs"][_index], _expected_sub_ref_id,
+                            _req["subrefs"][_index], _expected_subref_id,
                             evidence=True,
                         )

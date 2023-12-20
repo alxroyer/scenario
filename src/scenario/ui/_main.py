@@ -57,6 +57,7 @@ def main():  # type: (...) -> _ErrorCodeType
 
     # Launch the HTTP server.
     try:
+        MAIN_LOGGER.info("")
         HTTP_SERVER.serve()
     except KeyboardInterrupt as _err:
         HTTP_SERVER.debug("KeyboardInterrupt: %s", _err)

@@ -121,6 +121,7 @@ class HtmlDocument(_LoggerImpl):
         Builds the navigation menu.
         """
         from ._configuration import Configuration
+        from ._downstreamtraceability import DownstreamTraceability
         from ._homepage import Homepage
         from ._requirements import Requirements
         from ._scenarios import Scenarios
@@ -130,6 +131,7 @@ class HtmlDocument(_LoggerImpl):
             self.addcontent(f'<a class="menu" href="{Configuration.URL}">Configuration</a>')
             self.addcontent(f'<a class="menu" href="{Requirements.URL}">Requirements</a>')
             self.addcontent(f'<a class="menu" href="{Scenarios.URL}">Scenarios</a>')
+            self.addcontent(f'<a class="menu" href="{DownstreamTraceability.URL}">Downstream traceability</a>')
 
     def settitle(
             self,

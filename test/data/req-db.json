@@ -19,7 +19,7 @@
     "id": "REQ-001",
     "title": "Ping / Main path",
     "text": "1. SUT receives a PING message.\n2. SUT responds a PONG message.",
-    "sub-refs": [
+    "subrefs": [
       "REQ-001/1"
     ]
   },
@@ -27,6 +27,6 @@
     "id": "REQ-002",
     "title": "Ping / Querier black list",
     "text": "Alternate of REQ-001/1.\n\nIf the querier is part of the black list,\nthen SUT responds nothing.",
-    "sub-refs": []
+    "subrefs": []
   }
 }

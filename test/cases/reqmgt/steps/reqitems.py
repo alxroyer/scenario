@@ -22,7 +22,7 @@ import scenario
 if typing.TYPE_CHECKING:
     #: Either:
     #:
-    #: - a detailed tuple of reference id and sub-part specifications,
+    #: - a detailed tuple of reference id and subpart specifications,
     #: - a simple requirement reference id,
     #: - or a full :class:`scenario.ReqRef` object.
     AnyExpectedReqRefType = typing.Union[
@@ -55,9 +55,9 @@ class CheckReqItemStep(scenario.Step):
         else:
             self.assertequal(req_ref1.req.id, req_ref2[0], evidence=evidence and "Requirement id")
             if not req_ref2[1]:
-                self.assertisempty(req_ref1.subs, evidence=evidence and "Requirement sub-part specification")
+                self.assertisempty(req_ref1.subs, evidence=evidence and "Requirement subpart specification")
             else:
-                self.assertequal(req_ref1.subs, req_ref2[1], evidence=evidence and "Requirement sub-part specification")
+                self.assertequal(req_ref1.subs, req_ref2[1], evidence=evidence and "Requirement subpart specification")
             self.assertequal(req_ref1.id, "/".join([req_ref2[0], *req_ref2[1]]), evidence=evidence and "Requirement reference id")
 
     def checkreqlink(

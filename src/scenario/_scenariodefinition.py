@@ -373,7 +373,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         from ._reqlink import ReqLinkHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Determine the list of requirement verifiers to walk through, depending on `walk_sub_refs`.
+            # Determine the list of requirement verifiers to walk through, depending on `walk_steps`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement for each link.
             lambda req_link: [req_link.req],
@@ -399,7 +399,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         from ._reqlink import ReqLinkHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
-            # Determine the list of requirement verifiers to walk through, depending on `walk_sub_refs`.
+            # Determine the list of requirement verifiers to walk through, depending on `walk_steps`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement reference for each link.
             lambda req_link: [req_link.req_ref],
@@ -410,7 +410,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             req_ref=None,  # type: _AnyReqRefType
             *,
             walk_steps=False,  # type: bool
-            walk_sub_refs=False,  # type: bool
+            walk_subrefs=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         :meth:`._reqverifier.ReqVerifier.getreqlinks()` override for the ``walk_steps`` option augmentation.
@@ -427,9 +427,9 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             .. tip::
                 Retrieving the direct requirement links from the current verifier
                 can also be done through the :attr:`._reqverifier.ReqVerifier.req_links` attribute.
-        :param walk_sub_refs:
+        :param walk_subrefs:
             When ``req_ref`` is a main requirement,
-            ``True`` makes the links match if they trace a sub-reference of the requirement.
+            ``True`` makes the links match if they trace a subreference of the requirement.
 
             Ignored when ``req_ref`` is not set.
         :return:
@@ -446,7 +446,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         return ReqLink.orderedset(
             # Filter this list with the requirement predicates.
             filter(
-                lambda req_link: req_link.matches(req_ref=req_ref, walk_sub_refs=walk_sub_refs),
+                lambda req_link: req_link.matches(req_ref=req_ref, walk_subrefs=walk_subrefs),
                 _req_links,
             ),
         )

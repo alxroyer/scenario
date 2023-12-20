@@ -71,10 +71,10 @@ class Configuration(_RequestHandlerImpl):
             self._applyform(request, html)
 
         # General page content.
-        self._form1(html)
-        self._form2(html)
+        self._form1html(html)
+        self._form2html(html)
 
-    def _form1(
+    def _form1html(
             self,
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
@@ -123,7 +123,7 @@ class Configuration(_RequestHandlerImpl):
                 # Submit.
                 html.addcontent('<input type="submit" value="Apply" />')
 
-    def _form2(
+    def _form2html(
             self,
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None

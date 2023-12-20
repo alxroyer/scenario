@@ -129,7 +129,7 @@ class ReqVerifier(abc.ABC):
             self,
             req_ref=None,  # type: _AnyReqRefType
             *,
-            walk_sub_refs=False,  # type: bool
+            walk_subrefs=False,  # type: bool
     ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this verifier,
@@ -140,9 +140,9 @@ class ReqVerifier(abc.ABC):
 
             Optional.
             All requirement links when ``None``.
-        :param walk_sub_refs:
+        :param walk_subrefs:
             When ``req_ref`` is a main requirement,
-            ``True`` makes the links match if they trace a sub-reference of the requirement.
+            ``True`` makes the links match if they trace a subreference of the requirement.
 
             Ignored when ``req_ref`` is not set.
         :return:
@@ -153,7 +153,7 @@ class ReqVerifier(abc.ABC):
         return ReqLink.orderedset(
             # Filter requirement links with the requirement predicates.
             filter(
-                lambda req_link: req_link.matches(req_ref=req_ref, walk_sub_refs=walk_sub_refs),
+                lambda req_link: req_link.matches(req_ref=req_ref, walk_subrefs=walk_subrefs),
                 self._req_links,
             ),
         )
@@ -185,7 +185,7 @@ class ReqVerifier(abc.ABC):
 
         :return:
             Requirements traced by this verifier,
-            either directly or through a sub-reference of it,
+            either directly or through a subreference of it,
             with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
         from ._reqlink import ReqLinkHelper

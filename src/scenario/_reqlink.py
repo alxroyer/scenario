@@ -160,7 +160,7 @@ class ReqLink:
             self,
             *,
             req_ref=None,  # type: _AnyReqRefType
-            walk_sub_refs=False,  # type: bool
+            walk_subrefs=False,  # type: bool
             req_verifier=None,  # type: _ReqVerifierType
             walk_steps=False,  # type: bool
     ):  # type: (...) -> bool
@@ -169,9 +169,9 @@ class ReqLink:
 
         :param req_ref:
             Optional requirement reference predicate.
-        :param walk_sub_refs:
+        :param walk_subrefs:
             When ``req_ref`` is a main requirement,
-            ``True`` makes the link match if it traces a sub-reference of the requirement.
+            ``True`` makes the link match if it traces a subreference of the requirement.
 
             Ignored when ``req_ref`` is not set.
         :param req_verifier:
@@ -194,9 +194,9 @@ class ReqLink:
             req_ref = REQ_DB.getreqref(req_ref)
             if not self.req_ref.matches(req_ref):
                 # Requirement reference mismatch.
-                if walk_sub_refs and req_ref.ismain():
-                    # Main requirement reference and `walk_sub_refs`.
-                    if not any([self.req_ref.matches(_sub_ref) for _sub_ref in req_ref.req.sub_refs]):
+                if walk_subrefs and req_ref.ismain():
+                    # Main requirement reference and `walk_subrefs`.
+                    if not any([self.req_ref.matches(_subref) for _subref in req_ref.req.subrefs]):
                         return False
                 else:
                     return False

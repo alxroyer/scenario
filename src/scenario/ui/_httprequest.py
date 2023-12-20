@@ -209,12 +209,20 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
     @staticmethod
     def encodeurl(
             base_path,  # type: str
-            get_args,  # type: typing.Dict[str, str]
+            *,
+            args=None,  # type: typing.Optional[typing.Dict[str, str]]
+            anchor=None,  # type: typing.Optional[str]
     ):  # type: (...) -> str
         """
         Encodes an URL with GET parameters.
 
         :param base_path: Base path of the URL.
-        :param get_args: GET parameters to encode.
+        :param args: GET parameters to encode.
+        :param anchor: Optional anchor name.
         """
-        return f"{base_path}?{urllib.parse.urlencode(get_args)}"
+        _url = base_path  # type: str
+        if args:
+            _url += f"?{urllib.parse.urlencode(args)}"
+        if anchor:
+            _url += f"#{anchor}"
+        return _url

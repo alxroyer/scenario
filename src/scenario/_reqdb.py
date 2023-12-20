@@ -115,7 +115,7 @@ class ReqDatabase(_LoggerImpl):
                 text=_req_json["text"],
             ))  # type: Req
 
-            for _reqref_id in _req_json["sub-refs"]:  # type: str
+            for _reqref_id in _req_json["subrefs"]:  # type: str
                 self.push(ReqRef(
                     _req,
                     *_reqref_id.split("/")[1:],
@@ -140,7 +140,7 @@ class ReqDatabase(_LoggerImpl):
                 "id": _req.id,
                 "title": _req.title,
                 "text": _req.text,
-                "sub-refs": [_sub_ref.id for _sub_ref in _req.sub_refs],
+                "subrefs": [_subref.id for _subref in _req.subrefs],
             }
 
         # Write the JSON file.
