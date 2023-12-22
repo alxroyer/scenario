@@ -99,7 +99,7 @@ class Configuration(_RequestHandlerImpl):
                     'placeholder="List of requirement files (absolute paths)"></textarea>',
                 ):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
-                    _text_node = html.current_node.appendchild(html.xml_doc.createtextnode(""))  # type: Xml.TextNode
+                    _text_node = html.addtext("")  # type: Xml.TextNode
                     # Then add a line for each requirement file.
                     for _req_db_path in SCENARIO_CONFIG.reqdbfiles():  # type: Path
                         if _text_node.data:
@@ -113,7 +113,7 @@ class Configuration(_RequestHandlerImpl):
                     'placeholder="List of test suite file (absolute paths)"></textarea>',
                 ):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
-                    _text_node = html.current_node.appendchild(html.xml_doc.createtextnode(""))  # Type already defined above.
+                    _text_node = html.addtext("")  # Type already defined above.
                     # Then add a line for each test suite.
                     for _test_suite_path in SCENARIO_CONFIG.testsuitefiles():  # type: Path
                         if _text_node.data:

@@ -42,17 +42,25 @@ class ScenarioDetails(_RequestHandlerImpl):
 
     @staticmethod
     def mkurl(
-            scenario,  # type: _ScenarioDefinitionType
+            req_verifier,  # type: typing.Union[_ScenarioDefinitionType, _StepDefinitionType]
     ):  # type: (...) -> str
         """
         Builds a scenario details URL for the given scenario.
 
-        :param scenario: Scenario to build the URL for.
+        :param req_verifier: Scenario or step to build the URL for.
         :return: Scenario details URL for the given scenario.
         """
+        from .._scenariodefinition import ScenarioDefinition
+        from .._stepdefinition import StepDefinition
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(ScenarioDetails.URL, args={'name': scenario.name})
+        _scenario = req_verifier if isinstance(req_verifier, ScenarioDefinition) else req_verifier.scenario  # type: ScenarioDefinition
+
+        _step_anchor = None  # type: typing.Optional[str]
+        if isinstance(req_verifier, StepDefinition):
+            _step_anchor = f"step#{req_verifier.number}"
+
+        return HttpRequest.encodeurl(ScenarioDetails.URL, args={'name': _scenario.name}, anchor=_step_anchor)
 
     def _getscenario(
             self,
@@ -177,16 +185,22 @@ class ScenarioDetails(_RequestHandlerImpl):
             if isinstance(step, StepSectionDescription) and step.description:
                 html.addcontent(f'<h2 class="step">{html.encode(step.description)}</h2>')
             else:
+                # Step anchor.
+                html.addcontent(f'<a name="step#{step.number}" />')
+
+                # Step number, description and name.
                 html.addcontent(f'<span class="step number">step#{step.number}</span>')
                 if step.description:
                     html.addcontent('<span class="step sep">:</span>')
                     html.addcontent(f'<span class="step description">{step.description}</span>')
                 html.addcontent(f'<span class="step name">({step.name})</span>')
 
+                # Step requirements coverage.
                 _req_refs = step.getreqrefs()  # type: _SetWithReqLinksType[_ReqRefType]
                 if _req_refs:
                     self._reqrefs2html(step, _req_refs, html)
 
+                # Actions & expected results.
                 with html.addcontent(f'<div class="actions-results"></div>'):
                     with html.addcontent('<ul></ul>'):
                         for _action_result in step.actions_results:  # type: _ActionResultDefinitionType
@@ -226,6 +240,7 @@ class ScenarioDetails(_RequestHandlerImpl):
         from .._stepdefinition import StepDefinition
         from ._downstreamtraceability import DownstreamTraceability
         from ._requirements import Requirements
+        from ._upstreamtraceability import UpstreamTraceability
 
         # Determine the HTML object class depending on the type of `req_verifier`.
         _obj_class = ""  # type: str
@@ -241,7 +256,8 @@ class ScenarioDetails(_RequestHandlerImpl):
                     with html.addcontent(f'<li class="{_obj_class} req-ref"></li>'):
                         # Requirement reference id.
                         with html.addcontent(f'<span class="{_obj_class} req-ref id"></span>'):
-                            html.addcontent(f'<a href="{Requirements.mkurl(_req_ref)}">{html.encode(_req_ref.id)}</a>')
+                            with html.addcontent(f'<a href="{Requirements.mkurl(_req_ref)}"></a>'):
+                                html.addtext(_req_ref.id)
 
                         # Downstream traceability link.
                         with html.addcontent(f'<span class="{_obj_class} req-ref coverage"></span>'):
@@ -260,3 +276,7 @@ class ScenarioDetails(_RequestHandlerImpl):
 
                         html.addcontent(f'<span class="{_obj_class} req-ref sep">:</span>')
                         html.addcontent(f'<span class="{_obj_class} req-ref comments">{html.encode(_comments)}</span>')
+
+            # Upstream traceability link.
+            if isinstance(req_verifier, ScenarioDefinition):
+                UpstreamTraceability.scenario2unnamedhtmllink(req_verifier, html)

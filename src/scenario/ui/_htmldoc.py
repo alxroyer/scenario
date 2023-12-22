@@ -125,6 +125,7 @@ class HtmlDocument(_LoggerImpl):
         from ._homepage import Homepage
         from ._requirements import Requirements
         from ._scenarios import Scenarios
+        from ._upstreamtraceability import UpstreamTraceability
 
         with self.addcontent('<div id="menu"></div>'):
             self.addcontent(f'<a class="menu" href="{Homepage.URL}">Home</a>')
@@ -132,6 +133,7 @@ class HtmlDocument(_LoggerImpl):
             self.addcontent(f'<a class="menu" href="{Requirements.URL}">Requirements</a>')
             self.addcontent(f'<a class="menu" href="{Scenarios.URL}">Scenarios</a>')
             self.addcontent(f'<a class="menu" href="{DownstreamTraceability.URL}">Downstream traceability</a>')
+            self.addcontent(f'<a class="menu" href="{UpstreamTraceability.URL}">Upstream traceability</a>')
 
     def settitle(
             self,
@@ -152,8 +154,12 @@ class HtmlDocument(_LoggerImpl):
         """
         Adds HTML content to the current node.
 
-        :param content: HTML content.
-        :return: Context manager that controls the current node further content will be added to.
+        :param content:
+            HTML content.
+
+            .. note:: The :meth:`encode()` method shall be used to ensure HTML encoding for text data.
+        :return:
+            Context manager that controls the current node further content will be added to.
         """
         from .._xmlutils import Xml
 
@@ -168,6 +174,27 @@ class HtmlDocument(_LoggerImpl):
 
         # Return a context that positions the new child as the current node.
         return HtmlDocument.NodeContext(self, _child)
+
+    def addtext(
+            self,
+            text,  # type: str
+    ):  # type: (...) -> _XmlType.TextNode
+        """
+        Adds text to the current node.
+
+        :param text:
+            Text to add.
+
+            Not HTML-encoded. Will be encoded by this function
+        :return:
+            Text node created.
+        """
+        return self.current_node.appendchild(
+            self.xml_doc.createtextnode(
+                # HTML encoding.
+                self.encode(text),
+            ),
+        )
 
     @staticmethod
     def encode(

@@ -49,6 +49,7 @@ class HttpServer(_LoggerImpl):
         from ._requirements import Requirements
         from ._scenariodetails import ScenarioDetails
         from ._scenarios import Scenarios
+        from ._upstreamtraceability import UpstreamTraceability
 
         _LoggerImpl.__init__(self, DebugClass.UI_HTTP_SERVER)
 
@@ -60,6 +61,7 @@ class HttpServer(_LoggerImpl):
             Scenarios,
             ScenarioDetails,
             DownstreamTraceability,
+            UpstreamTraceability,
         ]  # type: typing.Sequence[typing.Type[RequestHandler]]
 
     def serve(self):  # type: (...) -> None

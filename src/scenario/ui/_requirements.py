@@ -97,9 +97,6 @@ class Requirements(_RequestHandlerImpl):
                 html.addcontent('<span class="req sep">:</span>')
                 html.addcontent(f'<span class="req title">{html.encode(req.title)}</span>')
 
-            # Downstream traceability link.
-            DownstreamTraceability.reqref2unnamedhtmllink(req.main_ref, html)
-
             # Text.
             if req.text:
                 with html.addcontent('<div class="req text"></div>'):
@@ -112,9 +109,14 @@ class Requirements(_RequestHandlerImpl):
                     )  # type: str
                     html.addcontent(f'<p>{_html_encoded_text}</p>')
 
+            # Downstream traceability link.
+            with html.addcontent('<div class="req downstream-traceability"></div>'):
+                DownstreamTraceability.reqref2unnamedhtmllink(req.main_ref, html)
+
             # Subreferences.
             if req.subrefs:
                 with html.addcontent('<div class="subrefs"></div>'):
+                    html.addcontent('<p>Subreferences:</p>')
                     with html.addcontent('<ul></ul>'):
                         for _req_ref in req.subrefs:  # type: _ReqRefType
                             self._reqsubref2html(_req_ref, html)
@@ -130,9 +132,15 @@ class Requirements(_RequestHandlerImpl):
         :param req_subref: Requirement subreference to build HTML content for.
         :param html: HTML output page to feed.
         """
+        from ._downstreamtraceability import DownstreamTraceability
+
         with html.addcontent('<li class="req-subref"></li>'):
             # Anchor.
             html.addcontent(f'<a name="{html.encode(req_subref.id)}" />')
 
             # Requirement reference id.
             html.addcontent(f'<span class="req-subref id">{html.encode(req_subref.id)}</span>')
+
+            # Downstream traceability link.
+            with html.addcontent('<span class="req-subref downstream-traceabiliy"></span>'):
+                DownstreamTraceability.reqref2unnamedhtmllink(req_subref, html)

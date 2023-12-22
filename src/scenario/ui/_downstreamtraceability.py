@@ -62,7 +62,7 @@ class DownstreamTraceability(_RequestHandlerImpl):
         :param req_ref: Requirement reference to build a downstream traceability link for.
         :param html: HTML output page to feed.
         """
-        html.addcontent(f'<a class="unnamed downstream-traceability" href="{DownstreamTraceability.mkurl(req_ref)}">{html.encode("<<")}</a>')
+        html.addcontent(f'<a class="unnamed downstream-traceability" href="{DownstreamTraceability.mkurl(req_ref)}">(downstream traceability)</a>')
 
     def matches(
             self,
@@ -112,7 +112,8 @@ class DownstreamTraceability(_RequestHandlerImpl):
                 # With anchor.
                 html.addcontent(f'<a name="{html.encode(downstream_req_ref.req_ref.id)}" />')
                 # With link to requirements page.
-                html.addcontent(f'<a href="{Requirements.mkurl(downstream_req_ref.req_ref)}">{html.encode(downstream_req_ref.req_ref.id)}</a>')
+                with html.addcontent(f'<a href="{Requirements.mkurl(downstream_req_ref.req_ref)}"></a>'):
+                    html.addtext(downstream_req_ref.req_ref.id)
 
             # Title.
             _title = downstream_req_ref.req_ref.req.title if downstream_req_ref.req_ref.ismain() else ""  # type: str
@@ -136,12 +137,17 @@ class DownstreamTraceability(_RequestHandlerImpl):
         :param html: HTML output page to feed.
         """
         from ._scenariodetails import ScenarioDetails
+        from ._upstreamtraceability import UpstreamTraceability
 
         with html.addcontent('<li class="req-verifier scenario"></li>'):
             # Scenario name.
             with html.addcontent('<span class="req-verifier scenario name"></span>'):
                 # With link to scenario details page.
-                html.addcontent(f'<a href="{ScenarioDetails.mkurl(downstream_scenario.scenario)}">{html.encode(downstream_scenario.scenario.name)}</a>')
+                with html.addcontent(f'<a href="{ScenarioDetails.mkurl(downstream_scenario.scenario)}"></a>'):
+                    html.addtext(downstream_scenario.scenario.name)
+
+            # Upstream traceability link.
+            UpstreamTraceability.scenario2unnamedhtmllink(downstream_scenario.scenario, html)
 
             # Traceability comments.
             if downstream_scenario.comments:
@@ -165,9 +171,14 @@ class DownstreamTraceability(_RequestHandlerImpl):
         :param downstream_step: Step to build HTML content for.
         :param html: HTML output page to feed.
         """
+        from ._scenariodetails import ScenarioDetails
+
         with html.addcontent('<li class="req-verifier step"></li>'):
-            # Step name.
-            html.addcontent(f'<span class="req-verifier step name">step#{downstream_step.step.number} ({html.encode(downstream_step.step.name)})</span>')
+            # Step number and name.
+            with html.addcontent(f'<span class="req-verifier step name"></span>'):
+                # With link to scenario details.
+                with html.addcontent(f'<a href="{ScenarioDetails.mkurl(downstream_step.step)}"></a>'):
+                    html.addtext(f"step#{downstream_step.step.number} ({downstream_step.step.name})")
 
             # Traceability comments.
             if downstream_step.comments:

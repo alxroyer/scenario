@@ -220,9 +220,9 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         :param args: GET parameters to encode.
         :param anchor: Optional anchor name.
         """
-        _url = base_path  # type: str
+        _url = urllib.parse.quote(base_path)  # type: str
         if args:
             _url += f"?{urllib.parse.urlencode(args)}"
         if anchor:
-            _url += f"#{anchor}"
+            _url += f"#{urllib.parse.quote(anchor)}"
         return _url

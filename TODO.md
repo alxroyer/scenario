@@ -19,7 +19,14 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
+        - Add a reload button.
         - Avoid scenario debugging logging by default.
+        - Improve test suites loading.
+        - Issue #xxx: Main logging indentation should be saved in scenario reports.
+            - As displayed in logging.
+            - Make main logging indentation not shift the logging level?
+        - Display known issues.
+        - Check campaign results display.
     - Implement JSON schemas.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
@@ -54,9 +61,6 @@
     - Make `Path` methods fail for *void* paths.
 - Issue #xxx: 'mkdoc.py' does not track undocumented class members.
 - Issue #xxx: Don't use console colors directly, but use meta tags (like `<strong>` or `<span class=''>`).
-- Issue #xxx: Main logging indentation should be saved in scenario reports.
-    - As displayed in logging.
-    - Make main logging indentation not shift the logging level?
 - Issue #xxx: Improve assertion error messages with evidence introductory text.
     - When `evidence` is fed with a text, error messages from assertions shall be prefixed with `f"{evidence}: ".
 - Issue #xxx: Strengthen JSON reading & writing:
