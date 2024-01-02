@@ -39,11 +39,23 @@ if __name__ == "__main__":
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
-    # Load requirements (no requirement file configuration).
+    # Load requirements:
+    # - No requirements file by default, load requirements programmatically first.
     scenario.test.reqs.load()
+    # - Save the requirement database as a JSON file.
+    _req_db_path = scenario.Path(__file__).with_suffix(".req-db.json")  # type: scenario.Path
+    scenario.req_db.dump(_req_db_path)
+    # - Configure this file as the default requirement file.
+    scenario.conf.set(scenario.ConfigKey.REQ_DB_FILES, [_req_db_path])
+
     # Configure default test suites.
     scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, list(scenario.test.paths.UNIT_TESTS_PATH.glob("*/*.suite")))
 
     # UI execution.
-    _res = scenario.ui.main()  # type: scenario.ErrorCode
+    try:
+        _res = scenario.ui.main()  # type: scenario.ErrorCode
+    finally:
+        # Remove the temporary requirement file in the end.
+        if _req_db_path.exists():
+            _req_db_path.unlink()
     sys.exit(int(_res))

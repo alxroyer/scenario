@@ -104,11 +104,12 @@ class HtmlDocument(_LoggerImpl):
         #: HTML ``<body/>`` section node.
         self.body = self.xml_doc.createnode("body")  # type: Xml.Node
         with self.addcontent('<body></body>') as self.body:
+            # Menu and reload button.
+            self._menu2html()
+            self._reloadbutton2html()
+
             #: Main ``<h1/>`` node, which text content will be set with :meth:`settitle()`.
             self._h1 = self.addcontent('<h1>...</h1>').new_child   # type: Xml.Node
-
-            # Menu.
-            self._buildmenu()
 
             #: Main ``<div/>`` node, which page content will be added to by :class:`._requesthandler.RequestHandler` subclasses.
             self.main_div = self.addcontent('<div id="main"></div>').new_child  # type: Xml.Node
@@ -116,9 +117,9 @@ class HtmlDocument(_LoggerImpl):
         # Set main <div/> as the current node in the end.
         self.current_node = self.main_div
 
-    def _buildmenu(self):  # type: (...) -> None
+    def _menu2html(self):  # type: (...) -> None
         """
-        Builds the navigation menu.
+        Builds the navigation menu HTML.
         """
         from ._configuration import Configuration
         from ._downstreamtraceability import DownstreamTraceability
@@ -134,6 +135,15 @@ class HtmlDocument(_LoggerImpl):
             self.addcontent(f'<a class="menu" href="{Scenarios.URL}">Scenarios</a>')
             self.addcontent(f'<a class="menu" href="{DownstreamTraceability.URL}">Downstream traceability</a>')
             self.addcontent(f'<a class="menu" href="{UpstreamTraceability.URL}">Upstream traceability</a>')
+
+    def _reloadbutton2html(self):  # type: (...) -> None
+        """
+        Builds the reload button HTML.
+        """
+        from ._configuration import Configuration
+
+        with self.addcontent('<div id="reload-default"></div>'):
+            self.addcontent(f'<a href="{Configuration.mkreloaddefaulturl()}">Reload default data</a>')
 
     def settitle(
             self,

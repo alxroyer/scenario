@@ -12,11 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-/.idea/
-/.mypy_cache/
-/doc/src/py/
-/doc/html/
+# Test results output directory.
 /test/results/
 
+# Temporary UI requirement file:
+/test/launch-unit-ui.req-db.json
+
+# Sphinx output directories.
+/doc/src/py/
+/doc/html/
+
+# Python intermediate files.
 __pycache__/
 *.pyc
+
+# Tier tool working directories.
+/.idea/
+/.mypy_cache/

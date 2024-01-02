@@ -36,12 +36,25 @@ class Configuration(_RequestHandlerImpl):
     #: Base URL for the configuration page.
     URL = "/configuration"
 
-    class InputName(_StrEnumImpl):
+    @staticmethod
+    def mkreloaddefaulturl():  # type: (...) -> str
         """
-        Form input names.
+        Builds an URL to reload default data.
+
+        :return: URL to reload default data.
         """
-        #: Name of the hidden input that gives the id of the form actually executed: either "1" or "2".
-        FORM_ID = "form-id"
+        from ._httprequest import HttpRequest
+
+        return HttpRequest.encodeurl(Configuration.URL, args={Configuration.Arg.ACTION: Configuration.Action.RELOAD_DEFAULT})
+
+    class Arg(_StrEnumImpl):
+        """
+        GET parameter or form input names.
+        """
+        #: GET action parameter or hidden POST input that gives the id of the form executed.
+        #:
+        #: See :class:`Configuration.Action` for possible values.
+        ACTION = "action"
 
         #: Form#1: Multiline input text that gives requirement file paths.
         REQ_DB_PATHS = "req-db-path"
@@ -50,6 +63,17 @@ class Configuration(_RequestHandlerImpl):
 
         #: Form#2: Input text that gives a path for a campaign directory or report file.
         CAMPAIGN_PATH = "campaign-path"
+
+    class Action(_StrEnumImpl):
+        """
+        :attr:`Configuration.Arg.ACTION` values.
+        """
+        #: Reload default data.
+        RELOAD_DEFAULT = "reload-default"
+        #: Execute form#1.
+        FORM1 = "form#1"
+        #: Execute form#2.
+        FORM2 = "form#2"
 
     def matches(
             self,
@@ -62,13 +86,11 @@ class Configuration(_RequestHandlerImpl):
             request,  # type: _HttpRequestType
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
-        from ._httprequest import HttpRequest
-
         html.settitle("Configuration")
 
-        # Form application.
-        if request.method == HttpRequest.Method.POST:
-            self._applyform(request, html)
+        # Execution.
+        if request.getarg(Configuration.Arg.ACTION, default=""):
+            self._loaddata(request, html)
 
         # General page content.
         self._form1html(html)
@@ -87,15 +109,15 @@ class Configuration(_RequestHandlerImpl):
         from .._scenarioconfig import SCENARIO_CONFIG
         from .._xmlutils import Xml
 
-        with html.addcontent('<div id="conf1"></div>'):
+        with html.addcontent(f'<div id="{html.encode(Configuration.Action.FORM1)}"></div>'):
             with html.addcontent(f'<form action="{Configuration.URL}" method="post"></form>'):
                 # Form id.
-                html.addcontent(f'<input type="hidden" name="{Configuration.InputName.FORM_ID}" value="1" />')
+                html.addcontent(f'<input type="hidden" name="{Configuration.Arg.ACTION}" value="{html.encode(Configuration.Action.FORM1)}" />')
 
                 # Requirements file.
                 html.addcontent('<p>Requirements:</p>')
                 with html.addcontent(
-                    f'<textarea name="{Configuration.InputName.REQ_DB_PATHS}" rows="10" '
+                    f'<textarea name="{Configuration.Arg.REQ_DB_PATHS}" rows="10" '
                     'placeholder="List of requirement files (absolute paths)"></textarea>',
                 ):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
@@ -109,7 +131,7 @@ class Configuration(_RequestHandlerImpl):
                 # Test suite files.
                 html.addcontent('<p>Test suites:</p>')
                 with html.addcontent(
-                    f'<textarea name="{Configuration.InputName.TEST_SUITE_PATHS}" rows="10" '
+                    f'<textarea name="{Configuration.Arg.TEST_SUITE_PATHS}" rows="10" '
                     'placeholder="List of test suite file (absolute paths)"></textarea>',
                 ):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
@@ -132,19 +154,19 @@ class Configuration(_RequestHandlerImpl):
 
         :param html: Output HTML document.
         """
-        with html.addcontent('<div id="conf2"></div>'):
+        with html.addcontent(f'<div id="{html.encode(Configuration.Action.FORM2)}"></div>'):
             with html.addcontent('<form action="/configuration" method="post"></form>'):
                 # Form id.
-                html.addcontent(f'<input type="hidden" name="{Configuration.InputName.FORM_ID}" value="2" />')
+                html.addcontent(f'<input type="hidden" name="{Configuration.Arg.ACTION}" value="{html.encode(Configuration.Action.FORM2)}" />')
 
                 # Campaign path (directory or campaign report).
                 html.addcontent('<p>Campaign:</p>')
-                html.addcontent(f'<input type="text" name="{Configuration.InputName.CAMPAIGN_PATH}" />')
+                html.addcontent(f'<input type="text" name="{Configuration.Arg.CAMPAIGN_PATH}" />')
 
                 # Submit.
                 html.addcontent('<input type="submit" value="Apply" />')
 
-    def _applyform(
+    def _loaddata(
             self,
             request,  # type: _HttpRequestType
             html,  # type: _HtmlDocumentType
@@ -158,38 +180,47 @@ class Configuration(_RequestHandlerImpl):
         from .._path import Path
         from .._reqdb import REQ_DB
         from .._reqtraceability import REQ_TRACEABILITY
+        from .._scenarioconfig import SCENARIO_CONFIG
 
         _req_db_paths = []  # type: typing.List[Path]
         _test_suite_paths = []  # type: typing.List[Path]
         _campaign_path = None  # type: typing.Optional[Path]
 
-        if request.getarg(Configuration.InputName.FORM_ID) == "1":
-            for _req_db_path in request.getarg(Configuration.InputName.REQ_DB_PATHS, default="").splitlines():  # type: str
+        # Determine the data to reload.
+        if request.getarg(Configuration.Arg.ACTION) == Configuration.Action.RELOAD_DEFAULT:
+            _req_db_paths = list(SCENARIO_CONFIG.reqdbfiles())
+            _test_suite_paths = list(SCENARIO_CONFIG.testsuitefiles())
+
+        elif request.getarg(Configuration.Arg.ACTION) == Configuration.Action.FORM1:
+            for _req_db_path in request.getarg(Configuration.Arg.REQ_DB_PATHS, default="").splitlines():  # type: str
                 if _req_db_path.strip():
                     _req_db_paths.append(Path(_req_db_path.strip()))
 
-            for _test_suite_path in request.getarg(Configuration.InputName.TEST_SUITE_PATHS, default="").splitlines():  # type: str
+            for _test_suite_path in request.getarg(Configuration.Arg.TEST_SUITE_PATHS, default="").splitlines():  # type: str
                 if _test_suite_path.strip():
                     _test_suite_paths.append(Path(_test_suite_path.strip()))
 
+        elif request.getarg(Configuration.Arg.ACTION) == Configuration.Action.FORM2:
+            if request.getarg(Configuration.Arg.CAMPAIGN_PATH).strip():
+                _campaign_path = Path(request.getarg(Configuration.Arg.CAMPAIGN_PATH).strip())
+
+        else:
+            raise KeyError(f"Unexpected action {request.getarg(Configuration.Arg.ACTION)!r}")
+
+        # Reload data.
+        if _req_db_paths or _test_suite_paths:
             REQ_TRACEABILITY.loaddatafromfiles(
                 req_db_file_paths=_req_db_paths or None,
                 test_suite_paths=_test_suite_paths or None,
                 log_info=True,
             )
+        elif _campaign_path:
+            REQ_TRACEABILITY.loaddatafromcampaignresults(
+                campaign_results=_campaign_path,
+                log_info=True,
+            )
 
-        elif request.getarg(Configuration.InputName.FORM_ID) == "2":
-            if request.getarg(Configuration.InputName.CAMPAIGN_PATH).strip():
-                _campaign_path = Path(request.getarg(Configuration.InputName.CAMPAIGN_PATH).strip())
-
-                REQ_TRACEABILITY.loaddatafromcampaignresults(
-                    campaign_results=_campaign_path,
-                    log_info=True,
-                )
-
-        else:
-            raise KeyError(f"Unexpected form identifier {request.getarg(Configuration.InputName.FORM_ID)!r}")
-
+        # Execution results.
         with html.addcontent('<div class="exec-result"></div>'):
             html.addcontent('<h2>Execution result</h2>')
             if _req_db_paths or _campaign_path:
