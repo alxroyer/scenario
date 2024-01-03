@@ -80,6 +80,7 @@ class ReqTraceability(_LoggerImpl):
         :param log_info:
             ``True`` (by default) to generate info logging.
         """
+        from ._configdb import CONFIG_DB
         from ._loggermain import MAIN_LOGGER
         from ._reqdb import REQ_DB
         from ._scenarioconfig import SCENARIO_CONFIG
@@ -143,6 +144,8 @@ class ReqTraceability(_LoggerImpl):
                         for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
                             if log_info:
                                 MAIN_LOGGER.info("Loading '%s'", _test_script_path)
+
+                            # Find the scenario class.
                             _scenario_definition_class = ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(
                                 _test_script_path,
                                 # Avoid loaded module being saved in `sys.modules`,
@@ -150,7 +153,19 @@ class ReqTraceability(_LoggerImpl):
                                 sys_modules_cache=False,
                             )  # type: typing.Type[ScenarioDefinition]
                             self.debug("_scenario_definition_class=%r", _scenario_definition_class)
-                            _scenario = _scenario_definition_class()  # type: ScenarioDefinition
+
+                            try:
+                                # Disable scenario debug logging.
+                                _initial_scenario_debug_logging = (
+                                    CONFIG_DB.get(SCENARIO_CONFIG.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
+                                )  # type: typing.Optional[bool]
+                                CONFIG_DB.set(SCENARIO_CONFIG.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
+
+                                # Create the scenario instance.
+                                _scenario = _scenario_definition_class()  # type: ScenarioDefinition
+                            finally:
+                                # Restore initial scenario debug logging configuration.
+                                CONFIG_DB.set(SCENARIO_CONFIG.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
                             self.debug("_scenario=%r", _scenario)
                             self.scenarios.append(_scenario)
         else:

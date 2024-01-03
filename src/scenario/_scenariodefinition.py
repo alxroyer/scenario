@@ -208,6 +208,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         """
         from ._locations import CodeLocation
         from ._path import Path
+        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioexecution import ScenarioExecution
         from ._textutils import anylongtext2str
 
@@ -237,8 +238,8 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         _LoggerImpl.__init__(self, log_class=self.name)
         _ReqVerifierImpl.__init__(self)
 
-        # Activate debugging by default for scenario definitions.
-        self.enabledebug(True)
+        # Depending on `SCENARIO_CONFIG.scenariodebugloggingenabled()`, enable debug logging for scenarios.
+        self.enabledebug(SCENARIO_CONFIG.scenariodebugloggingenabled())
 
         #: Continue on error option.
         #:

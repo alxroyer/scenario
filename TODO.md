@@ -19,7 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Avoid scenario debug logging by default.
         - Improve test suites loading.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.

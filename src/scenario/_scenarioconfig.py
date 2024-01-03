@@ -62,6 +62,8 @@ class ScenarioConfig(_LoggerImpl):
         LOG_FILE = "scenario.log_file"
         #: Which debug classes to display? List of strings, or comma-separated string.
         DEBUG_CLASSES = "scenario.debug_classes"
+        #: Should scenario debug logging be enabled by default? Boolean value.
+        SCENARIO_DEBUG_LOGGING_ENABLED = "scenario.scenario_debug_logging_enabled"
 
         # Requirement management.
 
@@ -266,6 +268,20 @@ class ScenarioConfig(_LoggerImpl):
         # Don't debug `debugclasses()`, otherwise it may cause infinite recursions when logging.
         # self.debug("debugclasses() -> %r", _debug_classes)
         return _debug_classes
+
+    def scenariodebugloggingenabled(self):  # type: (...) -> bool
+        """
+        Tells whether scenario should enable debug logging.
+
+        :return: ``True`` (default) enables scenario debug logging, ``False`` not.
+
+        Configurable through :attr:`Key.SCENARIO_DEBUG_LOGGING_ENABLED`.
+        """
+        from ._configdb import CONFIG_DB
+
+        _debug_logging_enabled = CONFIG_DB.get(ScenarioConfig.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool, default=True)  # type: bool
+        self.debug("scenariodebugloggingenabled() -> %r", _debug_logging_enabled)
+        return _debug_logging_enabled
 
     def reqdbfiles(self):  # type: (...) -> typing.Sequence[_PathType]
         """

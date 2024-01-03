@@ -83,9 +83,7 @@ class ExecKnownIssueLevelScenarios(_ExecScenarioImpl, _KnownIssueLevelUtilsImpl)
     def step(self):  # type: (...) -> None
         # Memo: Description already set.
 
-        self._createscenariofilesactions(
-            scenario_paths=self.scenario_paths,
-        )
+        self._createscenariofilesactions(self.scenario_paths)
 
         # Execute `ExecScenario.step()`.
         super().step()
