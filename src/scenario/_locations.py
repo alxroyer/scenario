@@ -82,6 +82,9 @@ class CodeLocation:
             qualname=qualname(method),
         )
 
+    #: Cache for :meth:`fromclass()`.
+    _class_locations_cache = {}  # type: typing.Dict[type, CodeLocation]
+
     @staticmethod
     def fromclass(
             cls,  # type: type
@@ -91,17 +94,36 @@ class CodeLocation:
 
         :param cls: Class to locate.
         :return: :class:`CodeLocation` instance.
+
+        .. note::
+            Method a bit slow (probably due to ``inspect`` calls).
+            In order to speed up consecutive calls for the same class,
+            this method caches results in :attr:`_class_locations_cache`.
         """
         from ._path import Path
         from ._reflection import qualname
 
+        # First, search for the class location in the cache.
+        if cls in CodeLocation._class_locations_cache:
+            return CodeLocation._class_locations_cache[cls]
+
+        # Get the source file of the class.
         _source_file = inspect.getsourcefile(cls)  # type: typing.Optional[str]
-        assert _source_file
-        return CodeLocation(
+        if not _source_file:
+            raise RuntimeError(f"Can't determine source file for class {cls!r}")
+        # Find the code location of the class in the source file.
+        _line = inspect.getsourcelines(cls)[1]  # type: int
+
+        # Build a `CodeLocation` instance.
+        _location = CodeLocation(
             file=Path(_source_file),
-            line=inspect.getsourcelines(cls)[1],
+            line=_line,
             qualname=qualname(cls),
-        )
+        )  # type: CodeLocation
+
+        # Save it in the cache and return.
+        CodeLocation._class_locations_cache[cls] = _location
+        return _location
 
     def __init__(
             self,
