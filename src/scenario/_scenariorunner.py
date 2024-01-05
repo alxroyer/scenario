@@ -18,7 +18,6 @@
 Scenario execution management.
 """
 
-import logging
 import sys
 import time
 import typing
@@ -89,7 +88,6 @@ class ScenarioRunner(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._debugloggers import ExecTimesLogger
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
@@ -101,8 +99,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenarioreport import SCENARIO_REPORT
         from ._scenarioresults import SCENARIO_RESULTS
         from ._scenariostack import SCENARIO_STACK
-
-        _exec_times_logger = ExecTimesLogger("ScenarioRunner.main()")  # type: ExecTimesLogger
 
         try:
             # Analyze program arguments, if not already set.
@@ -124,7 +120,6 @@ class ScenarioRunner(_LoggerImpl):
             for _scenario_path in ScenarioArgs.getinstance().scenario_paths:  # type: Path
                 self.debug("Executing '%s'...", _scenario_path)
 
-                _exec_times_logger.tick("Before executepath()")
                 _res = self.executepath(_scenario_path)  # type: ErrorCode
                 if _res != ErrorCode.SUCCESS:
                     # The `executepath()` and `execute()` methods don't return `ErrorCode.TEST_ERROR`.
@@ -145,7 +140,6 @@ class ScenarioRunner(_LoggerImpl):
 
                 # Feed the `SCENARIO_RESULTS` instance.
                 SCENARIO_RESULTS.add(_scenario_execution)
-                _exec_times_logger.tick("After executepath()")
 
                 # Generate scenario report if required.
                 _scenario_report = ScenarioArgs.getinstance().scenario_report  # type: typing.Optional[Path]
@@ -156,7 +150,6 @@ class ScenarioRunner(_LoggerImpl):
                         MAIN_LOGGER.error(f"Error while writing '{_scenario_report}': {_err}")
                         # Note: Full traceback will be displayed in the main `except` block below.
                         raise
-                    _exec_times_logger.tick("After scenario report generation")
 
             # Display final results (when applicable).
             if SCENARIO_RESULTS.count > 1:
@@ -171,8 +164,6 @@ class ScenarioRunner(_LoggerImpl):
         except Exception as _err:
             MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.fromexception(_err)
-        finally:
-            _exec_times_logger.finish()
 
     # Scenario execution.
 
@@ -213,12 +204,10 @@ class ScenarioRunner(_LoggerImpl):
 
         Feeds the :data:`._scenarioresults.SCENARIO_RESULTS` instance.
         """
-        from ._debugloggers import ExecTimesLogger
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._scenariodefinition import ScenarioDefinitionHelper
 
-        _exec_times_logger = ExecTimesLogger("ScenarioRunner.executepath()")  # type: ExecTimesLogger
         # Save the current time before loading the scenario script
         # and the `ScenarioDefinition` instance has been eventually created.
         _t0 = time.time()  # type: float
@@ -228,7 +217,6 @@ class ScenarioRunner(_LoggerImpl):
             _scenario_definition_class = (
                 ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(scenario_path)
             )  # type: typing.Type[_ScenarioDefinitionType]
-            _exec_times_logger.tick("Once the definition class has been found")
         except ImportError as _err:
             MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.INPUT_MISSING_ERROR
@@ -241,23 +229,19 @@ class ScenarioRunner(_LoggerImpl):
 
         try:
             _scenario_definition = _scenario_definition_class()  # type: _ScenarioDefinitionType
-            _exec_times_logger.tick("Once the definition class has been instanciated")
         except Exception as _err:
             # Unexpected exception.
             MAIN_LOGGER.error(f"Unexpected exception: {_err}")
             MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.INTERNAL_ERROR
 
-        _exec_times_logger.tick("Before executing the step")
         _err_code = self.executescenario(
             _scenario_definition,
             # Instanciation sometimes takes a while.
             # Ensure the starting time is set to when this method has actually been called.
             start_time=_t0,
         )  # type: ErrorCode
-        _exec_times_logger.tick("After executing the step")
 
-        _exec_times_logger.finish()
         return _err_code
 
     def executescenario(
@@ -277,21 +261,16 @@ class ScenarioRunner(_LoggerImpl):
         :return:
             Error code, but no :attr:`._errcodes.ErrorCode.TEST_ERROR`.
         """
-        from ._debugloggers import ExecTimesLogger
         from ._errcodes import ErrorCode
-
-        _exec_times_logger = ExecTimesLogger("ScenarioRunner.executescenario()")  # type: ExecTimesLogger
 
         self.debug("Executing scenario %r", scenario_definition)
 
         # Build and begin the scenario.
         _res = self._buildscenario(scenario_definition)  # type: ErrorCode
-        _exec_times_logger.tick("After _buildscenario()")
         if _res != ErrorCode.SUCCESS:
             return _res
         assert scenario_definition.execution
         _res = self._beginscenario(scenario_definition)
-        _exec_times_logger.tick("After _beginscenario()")
         if _res != ErrorCode.SUCCESS:
             return _res
         if start_time is not None:
@@ -308,16 +287,13 @@ class ScenarioRunner(_LoggerImpl):
             # Move to next step.
             if scenario_definition.execution.current_step_definition is not None:
                 scenario_definition.execution.nextstep()
-        _exec_times_logger.tick("After step executions")
 
         # End the scenario.
         _res = self._endscenario(scenario_definition)
         if _res != ErrorCode.SUCCESS:
             return _res
-        _exec_times_logger.tick("After _endscenario()")
 
         # Whether a test error occurred or not, return SUCCESS in this method.
-        _exec_times_logger.finish()
         return ErrorCode.SUCCESS
 
     def _buildscenario(

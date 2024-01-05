@@ -231,7 +231,6 @@ class CampaignRunner(_LoggerImpl):
         from ._configdb import CONFIG_DB
         from ._confignode import ConfigNode
         from ._datetimeutils import ISO8601_REGEX
-        from ._debugloggers import ExecTimesLogger
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._path import Path
@@ -243,13 +242,9 @@ class CampaignRunner(_LoggerImpl):
         from ._subprocess import SubProcess
         from ._testerrors import TestError
 
-        _exec_times_logger = ExecTimesLogger("CampaignRunner._exectestcase()")  # type: ExecTimesLogger
-
         HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
-        _exec_times_logger.tick("After *before-test-case* handlers")
 
         CAMPAIGN_LOGGING.begintestcase(test_case_execution)
-        _exec_times_logger.tick("Starting test case")
         test_case_execution.time.setstarttime()
 
         try:
@@ -309,9 +304,7 @@ class CampaignRunner(_LoggerImpl):
                     _fallback_errors.execution.errors.append(TestError(error_message))
 
             # Execute the scenario.
-            _exec_times_logger.tick("Executing the sub-process")
             _subprocess.setlogger(self).run(timeout=SCENARIO_CONFIG.scenariotimeout())
-            _exec_times_logger.tick("After sub-process execution")
             self.debug("%s returned %r", _subprocess, _subprocess.returncode)
 
             # Analyze scenario return code.
@@ -323,7 +316,6 @@ class CampaignRunner(_LoggerImpl):
                 except ValueError as _err:
                     _returncode_desc = str(_err)  # Type already declared above.
                 _fallbackerror(f"'{test_case_execution.script_path}' failed with error code {_subprocess.returncode!r} ({_returncode_desc})")
-            _exec_times_logger.tick("After post-analyses")
 
             # Read the log outfile.
             if test_case_execution.log.path.is_file():
@@ -335,7 +327,6 @@ class CampaignRunner(_LoggerImpl):
                     self.debug("Error while reading %s log file: %s", test_case_execution.name, _err)
             else:
                 self.debug("No such file '%s'", test_case_execution.log.path)
-            _exec_times_logger.tick("After reading the log file")
 
             # Read the scenario report outfile.
             if test_case_execution.report.path.is_file():
@@ -347,7 +338,6 @@ class CampaignRunner(_LoggerImpl):
                     self.debug("Error while reading %s scenario report: %s", test_case_execution.name, _err)
             else:
                 self.debug("No such file '%s'", test_case_execution.report.path)
-            _exec_times_logger.tick("After reading the scenario report file")
 
             # Fix the scenario definition and execution instances, if not successfully read from the scenario report above.
             if not test_case_execution.scenario_execution:
@@ -394,13 +384,11 @@ class CampaignRunner(_LoggerImpl):
 
                 # Terminate the fake scenario execution.
                 _fallback_errors.execution.time.setendtime()
-                _exec_times_logger.tick("After execution error management")
             # From now, the scenario execution instance necessarily exists.
             assert test_case_execution.scenario_execution
 
         finally:
             # Terminate the test case instance.
-            _exec_times_logger.tick("Ending test case")
             test_case_execution.time.setendtime()
             CAMPAIGN_LOGGING.endtestcase(test_case_execution)
 
@@ -409,13 +397,10 @@ class CampaignRunner(_LoggerImpl):
                 for _error in test_case_execution.scenario_execution.errors:  # type: TestError
                     HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
             HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
-            _exec_times_logger.tick("After *after-test-case* handlers")
 
             # Feed the `SCENARIO_RESULTS` instance.
             if test_case_execution.scenario_execution is not None:
                 SCENARIO_RESULTS.add(test_case_execution.scenario_execution)
-
-            _exec_times_logger.finish()
 
 
 #: Main instance of :class:`CampaignRunner`.

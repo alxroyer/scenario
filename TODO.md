@@ -20,6 +20,10 @@
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Improve test suites loading.
+            - Check scenario instance creation for:
+                - test/cases/knownissues/knownissues110.py (1.464652 >> 0.360425 seconds)
+                - test/cases/campaigns/campaign001.py (0.831571 seconds)
+            - Get rid of `DebugClass.EXECUTION_TIMES` in the end?
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.
             - Make main logging indentation not shift the logging level?

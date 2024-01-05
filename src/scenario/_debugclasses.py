@@ -67,6 +67,3 @@ class DebugClass(_StrEnumImpl):
     UI_HTTP_SERVER = "scenario.ui.HttpServer"
     #: UI HTML document debugging.
     UI_HTML_DOCUMENT = "scenario.ui.HtmlDocument"
-
-    #: Issue#65 debugging: execution times.
-    EXECUTION_TIMES = "scenario.#65.exec-times"
