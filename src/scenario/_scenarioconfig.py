@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._fastpath import FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
@@ -253,14 +254,13 @@ class ScenarioConfig(_LoggerImpl):
         Adds debug classes defined by the program arguments (see :attr:`._loggingargs.CommonLoggingArgs.debug_classes`)
         plus those defined by the configurations (see :const:`Key.DEBUG_CLASSES`).
         """
-        from ._args import Args
-
         # Merge debug classes from...
         _debug_classes = []  # type: typing.List[str]
         # ...arguments,
-        for _debug_class in Args.getinstance().debug_classes:  # type: str
-            if _debug_class not in _debug_classes:
-                _debug_classes.append(_debug_class)
+        if FAST_PATH.args:
+            for _debug_class in FAST_PATH.args.getinstance().debug_classes:  # type: str
+                if _debug_class not in _debug_classes:
+                    _debug_classes.append(_debug_class)
         # ...and configuration database.
         for _debug_class, _ in self._readstringlistfromconf(self.Key.DEBUG_CLASSES):  # Type already declared above.
             if _debug_class not in _debug_classes:
@@ -413,7 +413,6 @@ class ScenarioConfig(_LoggerImpl):
         Returns a 1-item list with :attr:`._scenarioattributes.CoreScenarioAttributes.TITLE`
         by default in case nothing is configured.
         """
-        from ._args import Args
         from ._campaignargs import CampaignArgs
         from ._scenarioargs import ScenarioArgs
         from ._scenarioattributes import CoreScenarioAttributes
@@ -421,11 +420,11 @@ class ScenarioConfig(_LoggerImpl):
         # Merge attribute names from...
         _attribute_names = []  # type: typing.List[str]
         # ...arguments,
-        _args = Args.getinstance()  # type: Args
-        if isinstance(_args, (ScenarioArgs, CampaignArgs)):
-            for _attribute_name in _args.extra_info:  # type: str
-                if _attribute_name not in _attribute_names:
-                    _attribute_names.append(_attribute_name)
+        if FAST_PATH.args:
+            if isinstance(FAST_PATH.args, (ScenarioArgs, CampaignArgs)):
+                for _attribute_name in FAST_PATH.args.extra_info:  # type: str
+                    if _attribute_name not in _attribute_names:
+                        _attribute_names.append(_attribute_name)
         # ...and configuration database.
         for _attribute_name, _ in self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO):  # Type already declared above.
             if _attribute_name not in _attribute_names:
@@ -566,16 +565,15 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Error issue level if set, ``None`` otherwise.
         """
-        from ._args import Args
         from ._configdb import CONFIG_DB
         from ._issuelevels import IssueLevel
         from ._scenarioargs import CommonExecArgs
 
-        _args = Args.getinstance()  # type: Args
-        if isinstance(_args, CommonExecArgs):
-            if _args.issue_level_error is not None:
-                self.debug("issuelevelerror() -> %r (from args)", _args.issue_level_error)
-                return _args.issue_level_error
+        if FAST_PATH.args:
+            if isinstance(FAST_PATH.args, CommonExecArgs):
+                if FAST_PATH.args.issue_level_error is not None:
+                    self.debug("issuelevelerror() -> %r (from args)", FAST_PATH.args.issue_level_error)
+                    return FAST_PATH.args.issue_level_error
 
         _issue_level_error = IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_ERROR, type=int))  # type: typing.Optional[_AnyIssueLevelType]
         self.debug("issuelevelerror() -> %r (from config-db)", _issue_level_error)
@@ -587,16 +585,15 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Ignored issue level if set, ``None`` otherwise.
         """
-        from ._args import Args
         from ._configdb import CONFIG_DB
         from ._issuelevels import IssueLevel
         from ._scenarioargs import CommonExecArgs
 
-        _args = Args.getinstance()  # type: Args
-        if isinstance(_args, CommonExecArgs):
-            if _args.issue_level_ignored is not None:
-                self.debug("issuelevelignored() -> %r (from args)", _args.issue_level_ignored)
-                return _args.issue_level_ignored
+        if FAST_PATH.args:
+            if isinstance(FAST_PATH.args, CommonExecArgs):
+                if FAST_PATH.args.issue_level_ignored is not None:
+                    self.debug("issuelevelignored() -> %r (from args)", FAST_PATH.args.issue_level_ignored)
+                    return FAST_PATH.args.issue_level_ignored
 
         _issue_level_ignored = IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_IGNORED, type=int))  # type: typing.Optional[_AnyIssueLevelType]
         self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)

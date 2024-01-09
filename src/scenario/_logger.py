@@ -24,6 +24,7 @@ import traceback
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
@@ -155,11 +156,10 @@ class Logger:
 
         :return: ``True`` when debug logging is enabled, ``False`` otherwise.
         """
-        from ._args import Args
         from ._scenarioconfig import SCENARIO_CONFIG
 
         # Try to update `self._debug_enabled` if not already set.
-        if (self._debug_enabled is None) and Args.getinstance().parsed:
+        if (self._debug_enabled is None) and FAST_PATH.args and FAST_PATH.args.parsed:
             self._debug_enabled = (self.log_class in SCENARIO_CONFIG.debugclasses())
 
         return self._debug_enabled or False
@@ -365,7 +365,6 @@ class Logger:
 
         Handles appropriately the optional ``exc_info`` parameter.
         """
-        from ._args import Args
         from ._logextradata import LogExtraData
 
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
@@ -373,7 +372,8 @@ class Logger:
             raise TypeError(f"{self!r} is not of type {Logger!r}")
 
         # Check that the arguments have been parsed.
-        if not Args.isset():
+        # Note: Since `Args` does log a couple of things before arguments are declared to be parsed, just check an instance has been installed.
+        if not FAST_PATH.args:
             raise RuntimeError("Avoid logging anything before arguments have been parsed")
 
         # Remove the exception info from the named arguments if any.

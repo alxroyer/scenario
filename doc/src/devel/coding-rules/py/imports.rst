@@ -411,7 +411,8 @@ the fewer project imports shall be placed at the module level:
 
       - Classes used for inheritance,
       - Classes used for global instanciations,
-      - Functions executed in the module level context.
+      - Functions executed in the module level context,
+      - Performance concerns (see :mod:`scenario._perfutils` and :mod:`scenario._fastpath` for further details).
 
   :Typing imports [typing-proj]:
       As for implementation imports, we will not to define more type checking imports than necessary.

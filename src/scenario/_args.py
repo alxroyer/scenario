@@ -60,11 +60,15 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         When consecutive calls occur, the latest overwrites the previous,
         and a warning is displayed unless ``warn_reset`` is set to ``False``.
         """
+        from ._fastpath import FAST_PATH
         from ._loggermain import MAIN_LOGGER
 
         if Args._instance and (instance is not Args._instance) and warn_reset:
             MAIN_LOGGER.warning(f"Multiple instances of argument parser: {instance!r} takes place of {Args._instance!r}")
         Args._instance = instance
+
+        # Set `FAST_PATH.args`.
+        FAST_PATH.args = Args._instance
 
     @classmethod
     def getinstance(
@@ -80,8 +84,10 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         """
         from ._reflection import qualname
 
-        assert Args._instance is not None, f"No {qualname(cls)} instance available"
-        assert isinstance(Args._instance, cls), f"Wrong type {qualname(type(Args._instance))}, {qualname(cls)} expected"
+        if Args._instance is None:
+            raise ValueError(f"No {qualname(cls)} instance available")
+        if not isinstance(Args._instance, cls):
+            raise TypeError(f"Wrong type {qualname(type(Args._instance))}, {qualname(cls)} expected")
         return Args._instance
 
     @classmethod
@@ -312,12 +318,10 @@ class ArgInfo:
         #: Key type, when the argument feeds a dictionary.
         self.key_type = None  # type: typing.Optional[typing.Type[str]]
         if isinstance(member_type, tuple):
-            assert len(member_type) == 2
             self.key_type = member_type[0]
         #: Base type of the program argument(s).
         self.value_type = str  # type: typing.Union[type, typing.Callable[[str], typing.Any]]
         if isinstance(member_type, tuple):
-            assert len(member_type) == 2
             self.value_type = member_type[1]
         else:
             self.value_type = member_type
@@ -342,7 +346,8 @@ class ArgInfo:
 
         .. seealso:: :meth:`Args.addarg()`
         """
-        assert "dest" not in kwargs
+        if "dest" in kwargs:
+            raise KeyError(f"Unexpected 'dest' parameter in {kwargs!r}")
         if len(args) > 0:
             self.arg_parser.add_argument(*args, dest=self.member_name, **kwargs)
         else:
@@ -359,7 +364,6 @@ class ArgInfo:
         :param args_instance: :class:`Args` instance to feed.
         :param parsed_args: Opaque parsed object returned by the ``argparse`` library.
         """
-        from ._loggermain import MAIN_LOGGER
         from ._path import Path
         from ._reflection import qualname
 
