@@ -22,6 +22,8 @@ either a requirement, or a requiremnt with a sub-item specification.
 import abc
 import typing
 
+if True:
+    from ._req import Req as _ReqImpl  # `Req` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -111,11 +113,9 @@ class ReqRef:
         """
         Requirement reference identifier.
         """
-        from ._req import Req
-
         return "/".join([
             # Don't sollicitate the requirement database if we already have a `Req` instance for `_any_req`.
-            self._any_req.id if isinstance(self._any_req, Req) else self.req.id,
+            self._any_req.id if isinstance(self._any_req, _ReqImpl) else self.req.id,
             *self.subs,
         ])
 
@@ -206,9 +206,7 @@ class ReqRef:
         """
         Redirects to :meth:`matches()`.
         """
-        from ._req import Req
-
-        if isinstance(other, (ReqRef, Req, str)):
+        if isinstance(other, (ReqRef, _ReqImpl, str)):
             return self.matches(other)
         else:
             raise TypeError(f"Can't compare {self!r} with {other!r}")
