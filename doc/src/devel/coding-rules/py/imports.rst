@@ -398,7 +398,7 @@ Cyclic dependencies
 In order to avoid cyclic module dependencies in a package,
 the fewer project imports shall be placed at the module level:
 
-- Postpone as much as possible the imports with :ref:`local imports <coding-rules.py.imports.local>`.
+- Postpone as much as possible the imports with :ref:`local imports <coding-rules.py.imports.local>` [#local-import-perf-limitation]_.
 - Discriminate remaining project imports:
   :ref:`implementation imports [impl-proj] <coding-rules.py.imports.impl>`
   v/s :ref:`type checking imports [typing-proj] <coding-rules.py.imports.type-checking>`.
@@ -412,7 +412,7 @@ the fewer project imports shall be placed at the module level:
       - Classes used for inheritance,
       - Classes used for global instanciations,
       - Functions executed in the module level context,
-      - Performance concerns (see :mod:`scenario._perfutils` and :mod:`scenario._fastpath` for further details).
+      - Performance concerns.
 
   :Typing imports [typing-proj]:
       As for implementation imports, we will not to define more type checking imports than necessary.
@@ -428,6 +428,31 @@ The 'tools/check-module-deps.py' script helps visualizing `scenario` module depe
 
 .. literalinclude:: ../../../../data/check-module-deps.log
     :language: none
+
+.. Footnotes.
+
+---
+
+.. [#local-import-perf-limitation] About local imports and performance:
+
+    .. admonition:: Performance limitations due to local imports
+        :class: note
+
+        On the one hand, local imports avoid cyclic module dependencies.
+        But on the other hand, they may cause performance issues, especially when used in low-level functions called numerous times.
+        By the way, our local import strategy may lead to performance limitations.
+
+        Nevertheless, the general strategy remains:
+        1) use local imports first,
+        then 2) use :ref:`implementation imports <coding-rules.py.imports.impl>` **in case or performance issues only!**
+
+        .. tip::
+            The :class:`scenario._perfutils.PerfImportWrapper` util may be used to determine which modules are imported the most
+            during a given code execution.
+
+        .. tip::
+            When reintroducing :ref:`implementation imports <coding-rules.py.imports.impl>` for performance concerns,
+            if a risk of cyclic dependency come up, use fast-path data (see :attr:`scenario._fastpath.FAST_PATH`).
 
 
 .. _coding-rules.py.imports.check:
