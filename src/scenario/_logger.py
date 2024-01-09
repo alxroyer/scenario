@@ -25,7 +25,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logextradata import LogExtraData as _LogExtraDataImpl
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` used for class member initialization, imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
@@ -365,8 +365,6 @@ class Logger:
 
         Handles appropriately the optional ``exc_info`` parameter.
         """
-        from ._logextradata import LogExtraData
-
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
         if not isinstance(self, Logger):
             raise TypeError(f"{self!r} is not of type {Logger!r}")
@@ -395,18 +393,18 @@ class Logger:
         # Long text mode.
         _long_text_mode = None  # type: typing.Any
         _long_text_max_lines = None  # type: typing.Any
-        if LogExtraData.LONG_TEXT in _extra:
-            _long_text_mode = _extra[LogExtraData.LONG_TEXT]
-            del _extra[LogExtraData.LONG_TEXT]
+        if _LogExtraDataImpl.LONG_TEXT in _extra:
+            _long_text_mode = _extra[_LogExtraDataImpl.LONG_TEXT]
+            del _extra[_LogExtraDataImpl.LONG_TEXT]
             if not isinstance(_long_text_mode, bool):
-                raise TypeError(f"Invalid extra data '{LogExtraData.LONG_TEXT}', {_long_text_mode!r}, should be a `bool` value")
-        if LogExtraData.LONG_TEXT_MAX_LINES in _extra:
+                raise TypeError(f"Invalid extra data '{_LogExtraDataImpl.LONG_TEXT}', {_long_text_mode!r}, should be a `bool` value")
+        if _LogExtraDataImpl.LONG_TEXT_MAX_LINES in _extra:
             # Automatically activates the *long text mode*.
             _long_text_mode = True
-            _long_text_max_lines = _extra[LogExtraData.LONG_TEXT_MAX_LINES]
-            del _extra[LogExtraData.LONG_TEXT_MAX_LINES]
+            _long_text_max_lines = _extra[_LogExtraDataImpl.LONG_TEXT_MAX_LINES]
+            del _extra[_LogExtraDataImpl.LONG_TEXT_MAX_LINES]
             if not isinstance(_long_text_max_lines, int):
-                raise TypeError(f"Invalid extra data '{LogExtraData.LONG_TEXT_MAX_LINES}' {_long_text_max_lines!r}, should be an `int` value")
+                raise TypeError(f"Invalid extra data '{_LogExtraDataImpl.LONG_TEXT_MAX_LINES}' {_long_text_max_lines!r}, should be an `int` value")
         if _long_text_mode:
             self._loglongtext(level, msg, args, _long_text_max_lines, **kwargs)
         else:

@@ -22,6 +22,9 @@ import logging
 import re
 import typing
 
+if True:
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
+    from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
@@ -91,7 +94,6 @@ class LogFormatter(logging.Formatter):
         """
         from ._consoleutils import Console
         from ._datetimeutils import toiso8601
-        from ._logextradata import LogExtraData, LogExtraDataHelper
         from ._logger import Logger
         from ._loggermain import MAIN_LOGGER
         from ._scenariologging import ScenarioLogging
@@ -99,33 +101,33 @@ class LogFormatter(logging.Formatter):
 
         # Retrieve the logger reference from the record.
         # Memo: Logger reference as extra data set by :class:`logfilters.LoggerLogFilter`.
-        _logger = LogExtraDataHelper.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[Logger]
+        _logger = _LogExtraDataHelperImpl.get(record, _LogExtraDataImpl.CURRENT_LOGGER)  # type: typing.Optional[Logger]
 
         # Build the log line.
         _log_line = ""  # type: str
 
         # Date / time.
-        if self._with(record, LogExtraData.DATE_TIME, default=True):
+        if self._with(record, _LogExtraDataImpl.DATE_TIME, default=True):
             # Compute an ISO8601 time representation.
             _log_line += toiso8601(record.created)
             _log_line += " - "
 
         # Head indentation.
-        _log_line += (LogExtraDataHelper.get(record, LogExtraData.HEAD_INDENTATION) or "")
+        _log_line += (_LogExtraDataHelperImpl.get(record, _LogExtraDataImpl.HEAD_INDENTATION) or "")
 
         # Scenario stack indentation.
-        if self._with(record, LogExtraData.SCENARIO_STACK_INDENTATION, default=True):
+        if self._with(record, _LogExtraDataImpl.SCENARIO_STACK_INDENTATION, default=True):
             _log_line += ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN * (SCENARIO_STACK.size - 1)
 
         # Action / result margin.
-        if self._with(record, LogExtraData.ACTION_RESULT_MARGIN, default=True):
+        if self._with(record, _LogExtraDataImpl.ACTION_RESULT_MARGIN, default=True):
             _log_line += ((" " * ScenarioLogging.ACTION_RESULT_MARGIN) + "  ")
 
         # Log level, with color, when applicable.
         _level_color = None  # type: typing.Optional[Console.Color]
-        if self._with(record, LogExtraData.COLOR, default=True):
+        if self._with(record, _LogExtraDataImpl.COLOR, default=True):
             _level_color = self._levelcolor(record.levelno)
-        if self._with(record, LogExtraData.LOG_LEVEL, default=True):
+        if self._with(record, _LogExtraDataImpl.LOG_LEVEL, default=True):
             if _level_color:
                 _log_line += f"\033[{_level_color}m"
             _log_line += record.levelname
@@ -136,12 +138,12 @@ class LogFormatter(logging.Formatter):
             _log_line += " "
 
         # Main logger indentation.
-        if self._with(record, LogExtraData.MAIN_LOGGER_INDENTATION, default=True):
+        if self._with(record, _LogExtraDataImpl.MAIN_LOGGER_INDENTATION, default=True):
             _log_line += MAIN_LOGGER.getindentation()
 
         # Log message color (begin).
         _message_color = None  # type: typing.Optional[Console.Color]
-        if self._with(record, LogExtraData.COLOR, default=True):
+        if self._with(record, _LogExtraDataImpl.COLOR, default=True):
             if isinstance(_logger, Logger):
                 _message_color = _logger.getlogcolor()
             if _message_color is None:
@@ -153,7 +155,7 @@ class LogFormatter(logging.Formatter):
         if isinstance(_logger, Logger) and _logger.log_class:
             _log_line += f"[{_logger.log_class}] "
             # Note: Don't duplicate main logger indentation. That's the reason why `_logger.log_class` is checked above.
-            if self._with(record, LogExtraData.CLASS_LOGGER_INDENTATION, default=_logger.isdebugenabled()):
+            if self._with(record, _LogExtraDataImpl.CLASS_LOGGER_INDENTATION, default=_logger.isdebugenabled()):
                 _log_line += _logger.getindentation()
 
         # Log message.
@@ -203,26 +205,25 @@ class LogFormatter(logging.Formatter):
         2. The scenario configuration,
         3. The current execution state.
         """
-        from ._logextradata import LogExtraData, LogExtraDataHelper
         from ._loghandler import LogHandler
         from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenariostack import SCENARIO_STACK
 
         # 1. Check whether the record or the attached logger has the given flag set.
-        _value = LogExtraDataHelper.get(record, extra_flag)  # type: typing.Any
+        _value = _LogExtraDataHelperImpl.get(record, extra_flag)  # type: typing.Any
         if isinstance(_value, bool):
             return _value
 
         # 2. Check whether a scenario configuration or execution state gives an answer for the given flag.
-        if extra_flag == LogExtraData.DATE_TIME:
+        if extra_flag == _LogExtraDataImpl.DATE_TIME:
             return SCENARIO_CONFIG.logdatetimeenabled()
-        if extra_flag == LogExtraData.COLOR:
+        if extra_flag == _LogExtraDataImpl.COLOR:
             # Use colors in the console handler only.
             if (self._handler is LogHandler.console_handler) and SCENARIO_CONFIG.logcolorenabled():
                 return True
             else:
                 return False
-        if extra_flag == LogExtraData.ACTION_RESULT_MARGIN:
+        if extra_flag == _LogExtraDataImpl.ACTION_RESULT_MARGIN:
             # Action/result margin only when there is a current action or expected result.
             return SCENARIO_STACK.current_action_result_execution is not None
 
