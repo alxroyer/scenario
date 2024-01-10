@@ -98,6 +98,8 @@ class ReqTraceability(_LoggerImpl):
             # Default configuration.
             req_db_file_paths = SCENARIO_CONFIG.reqdbfiles()
 
+        import time
+        _t0 = time.time()  # type: float
         if req_db_file_paths:
             if log_info:
                 MAIN_LOGGER.info("Loading requirements")
@@ -117,10 +119,12 @@ class ReqTraceability(_LoggerImpl):
 
         if log_info:
             _req_ref_count = len(REQ_DB.getallrefs())  # type: int
-            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+            # MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
 
         # Test suites.
 
+        _t0 = time.time()  # Type already declared above.
         if test_suite_paths:
             # Ensure persistent and countable list.
             test_suite_paths = list(test_suite_paths)
@@ -173,7 +177,8 @@ class ReqTraceability(_LoggerImpl):
 
         if log_info:
             _scenario_count = len(self.scenarios)  # type: int
-            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+            # MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
 
     def loaddatafromcampaignresults(
             self,
