@@ -22,6 +22,7 @@ import logging
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -115,14 +116,13 @@ class HandlerLogFilter(logging.Filter):
         depending on the handler attached.
         """
         from ._loghandler import LogHandler
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         # Handler filtering.
         if self._handler is LogHandler.console_handler:
-            if not SCENARIO_CONFIG.logconsoleenabled():
+            if not _FAST_PATH.scenario_config.logconsoleenabled():
                 return False
         if self._handler is LogHandler.file_handler:
-            if SCENARIO_CONFIG.logoutpath() is None:
+            if _FAST_PATH.scenario_config.logoutpath() is None:
                 return False
 
         # Fall back to the :class:`logging.Filter` parent implementation.

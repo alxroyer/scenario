@@ -23,6 +23,7 @@ import re
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -206,7 +207,6 @@ class LogFormatter(logging.Formatter):
         3. The current execution state.
         """
         from ._loghandler import LogHandler
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenariostack import SCENARIO_STACK
 
         # 1. Check whether the record or the attached logger has the given flag set.
@@ -216,10 +216,10 @@ class LogFormatter(logging.Formatter):
 
         # 2. Check whether a scenario configuration or execution state gives an answer for the given flag.
         if extra_flag == _LogExtraDataImpl.DATE_TIME:
-            return SCENARIO_CONFIG.logdatetimeenabled()
+            return _FAST_PATH.scenario_config.logdatetimeenabled()
         if extra_flag == _LogExtraDataImpl.COLOR:
             # Use colors in the console handler only.
-            if (self._handler is LogHandler.console_handler) and SCENARIO_CONFIG.logcolorenabled():
+            if (self._handler is LogHandler.console_handler) and _FAST_PATH.scenario_config.logcolorenabled():
                 return True
             else:
                 return False
@@ -241,16 +241,15 @@ class LogFormatter(logging.Formatter):
         :return: Log color corresponding to the given log level.
         """
         from ._consoleutils import Console
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         if level < logging.INFO:
-            return SCENARIO_CONFIG.logcolor(logging.getLevelName(logging.DEBUG), Console.Color.DARKGREY02)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.DEBUG), Console.Color.DARKGREY02)
         elif level < logging.WARNING:
-            return SCENARIO_CONFIG.logcolor(logging.getLevelName(logging.INFO), Console.Color.WHITE01)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.INFO), Console.Color.WHITE01)
         elif level < logging.ERROR:
-            return SCENARIO_CONFIG.logcolor(logging.getLevelName(logging.WARNING), Console.Color.YELLOW33)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.WARNING), Console.Color.YELLOW33)
         else:
-            return SCENARIO_CONFIG.logcolor(logging.getLevelName(logging.ERROR), Console.Color.RED91)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.ERROR), Console.Color.RED91)
 
     @staticmethod
     def nocolor(

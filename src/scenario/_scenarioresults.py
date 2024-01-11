@@ -22,6 +22,7 @@ import logging
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
@@ -75,7 +76,6 @@ class ScenarioResults(_LoggerImpl):
         """
         from ._datetimeutils import f2strduration
         from ._loggermain import MAIN_LOGGER
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._stats import ExecTotalStats
 
         _total_step_stats = ExecTotalStats()  # type: ExecTotalStats
@@ -127,7 +127,7 @@ class ScenarioResults(_LoggerImpl):
             "TOTAL", "Status",
             "Steps", "Actions", "Results",
             "Time",
-            ", ".join(SCENARIO_CONFIG.resultsextrainfo()).capitalize(),
+            ", ".join(_FAST_PATH.scenario_config.resultsextrainfo()).capitalize(),
         ))
         MAIN_LOGGER.info(_fmt % (
             _total_name_field, "",
@@ -159,11 +159,10 @@ class ScenarioResults(_LoggerImpl):
         from ._datetimeutils import f2strduration
         from ._debugutils import saferepr
         from ._loggermain import MAIN_LOGGER
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         # Build extra info.
         _extra_info = []  # type: typing.List[str]
-        for _attribute_name in SCENARIO_CONFIG.resultsextrainfo():  # type: str
+        for _attribute_name in _FAST_PATH.scenario_config.resultsextrainfo():  # type: str
             if _attribute_name in scenario_execution.definition.getattributenames():
                 _attribute_value = str(scenario_execution.definition.getattribute(_attribute_name))  # type: str
                 # Avoid attribute display on several lines.

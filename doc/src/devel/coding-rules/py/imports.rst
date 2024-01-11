@@ -142,10 +142,10 @@ we choose to set them below a ``if True:`` block.
 
 In order to discriminate :ref:`[impl-proj] <coding-rules.py.imports.impl>` v/s :ref:`[typing-proj] <coding-rules.py.imports.type-checking>` imports
 (see explanation for the :ref:`type checking dilemma <coding-rules.py.imports.type-checking.dilemma>` below),
-symbols imported at the module level for execution shall be suffixed with ``Impl``.
+classes imported at the module level for execution shall be suffixed with ``Impl``.
 
 .. admonition:: Memo: leading underscore
-    :class: tip
+    :class: note
 
     As explained :ref:`after <coding-rules.py.imports.no-reexports>`,
     implementation imports shall also be prefixed with a leading underscore.

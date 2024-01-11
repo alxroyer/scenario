@@ -24,6 +24,7 @@ import time
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
@@ -74,7 +75,6 @@ class CampaignRunner(_LoggerImpl):
         from ._path import Path
         from ._reqdb import REQ_DB
         from ._reqtraceability import REQ_TRACEABILITY
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
 
@@ -84,7 +84,7 @@ class CampaignRunner(_LoggerImpl):
                 CampaignArgs.setinstance(CampaignArgs())
                 if not CampaignArgs.getinstance().parse(sys.argv[1:]):
                     return CampaignArgs.getinstance().error_code
-            _test_suite_files = SCENARIO_CONFIG.testsuitefiles()  # type: typing.Sequence[Path]
+            _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[Path]
             if not _test_suite_files:
                 MAIN_LOGGER.error("No test suite files")
                 return ErrorCode.INPUT_MISSING_ERROR
@@ -101,7 +101,7 @@ class CampaignRunner(_LoggerImpl):
             LOGGING_SERVICE.start()
 
             # Load requirements.
-            for _req_db_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
+            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: Path
                 MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
                 REQ_DB.load(_req_db_file)
 
@@ -234,7 +234,6 @@ class CampaignRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._path import Path
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenariodefinition import ScenarioDefinition
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioexecution import ScenarioExecution
@@ -260,11 +259,11 @@ class CampaignRunner(_LoggerImpl):
                 """
                 return test_case_execution.test_suite_execution.campaign_execution.outdir / (test_case_execution.script_path.stem + ext)
 
-            test_case_execution.report.path = _mkoutpath(SCENARIO_CONFIG.scenarioreportsuffix())
+            test_case_execution.report.path = _mkoutpath(_FAST_PATH.scenario_config.scenarioreportsuffix())
             test_case_execution.log.path = _mkoutpath(".log")
 
             # Prepare the command line.
-            _subprocess = SubProcess(sys.executable, SCENARIO_CONFIG.runnerscriptpath())  # type: SubProcess
+            _subprocess = SubProcess(sys.executable, _FAST_PATH.scenario_config.runnerscriptpath())  # type: SubProcess
             # Report configuration files and single configuration values from campaign to scenario execution.
             for _config_path in CampaignArgs.getinstance().config_paths:  # type: Path
                 _subprocess.addargs("--config-file", _config_path)
@@ -275,13 +274,13 @@ class CampaignRunner(_LoggerImpl):
             # --scenario-report option.
             _subprocess.addargs("--scenario-report", test_case_execution.report.path)
             # Log outfile specification.
-            _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_FILE), test_case_execution.log.path)
+            _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_FILE), test_case_execution.log.path)
             # No log console specification.
-            _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_CONSOLE), "0")
+            _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_CONSOLE), "0")
             # Log date/time option propagation.
-            _log_datetime_config = CONFIG_DB.getnode(SCENARIO_CONFIG.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
+            _log_datetime_config = CONFIG_DB.getnode(_FAST_PATH.scenario_config.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
             if _log_datetime_config:
-                _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
+                _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
             # Script path.
             _subprocess.addargs(test_case_execution.script_path)
 
@@ -304,7 +303,7 @@ class CampaignRunner(_LoggerImpl):
                     _fallback_errors.execution.errors.append(TestError(error_message))
 
             # Execute the scenario.
-            _subprocess.setlogger(self).run(timeout=SCENARIO_CONFIG.scenariotimeout())
+            _subprocess.setlogger(self).run(timeout=_FAST_PATH.scenario_config.scenariotimeout())
             self.debug("%s returned %r", _subprocess, _subprocess.returncode)
 
             # Analyze scenario return code.

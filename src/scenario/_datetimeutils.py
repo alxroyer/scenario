@@ -29,6 +29,9 @@ import sys
 import time
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+
 
 #: Regular expression matching a duration as displayed by `scenario` (i.e. last part of ISO8601).
 DURATION_REGEX = r"[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3,}"  # type: str
@@ -49,7 +52,6 @@ def toiso8601(
     :return: ISO8601 string.
     :raise ValueError: When the operation could not be completed.
     """
-    from ._scenarioconfig import SCENARIO_CONFIG
     from ._timezoneutils import fromstr as _tzfromstr
 
     # Create a `datetime.datetime` instance from the timestamp.
@@ -58,7 +60,7 @@ def toiso8601(
     # Make it timezone-aware.
     _tz = None  # type: typing.Optional[datetime.tzinfo]
     if timezone is None:
-        timezone = SCENARIO_CONFIG.timezone()
+        timezone = _FAST_PATH.scenario_config.timezone()
     if isinstance(timezone, datetime.tzinfo):
         _tz = timezone
     elif isinstance(timezone, str):

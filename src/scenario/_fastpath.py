@@ -27,11 +27,14 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
+    from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
 
 
 class FastPath:
     """
     Fast path data container.
+
+    Avoids numerous local imports, especially in low-level functions (like logging functions for instance).
     """
 
     def __init__(self):  # type: (...) -> None
@@ -40,9 +43,23 @@ class FastPath:
         """
         #: :class:`._args.Args` instance installed.
         #:
-        #: Making this information global avoids numerous local imports,
-        #: especially for logging management.
+        #: Reference set by :meth:`._args.Args.setinstance()`.
         self.args = None  # type: typing.Optional[_ArgsType]
+
+        #: :class:`._scenarioconfig.ScenarioConfig` instance installed.
+        #:
+        #: Singleton reference resolved by :meth:`scenario_config()` property.
+        self._scenario_config = None  # type: typing.Optional[_ScenarioConfigType]
+
+    @property
+    def scenario_config(self):  # type: () -> _ScenarioConfigType
+        """
+        :class:`._scenarioconfig.ScenarioConfig` instance installed.
+        """
+        if self._scenario_config is None:
+            from ._scenarioconfig import SCENARIO_CONFIG
+            self._scenario_config = SCENARIO_CONFIG
+        return self._scenario_config
 
 
 #: Main instance of :class:`FastPath`.

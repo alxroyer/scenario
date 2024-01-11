@@ -23,6 +23,7 @@ import re
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._testerrors import TestError as _TestErrorImpl  # `TestError` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
@@ -195,9 +196,7 @@ class KnownIssue(_TestErrorImpl):
         return False
 
     def iserror(self):  # type: (...) -> bool
-        from ._scenarioconfig import SCENARIO_CONFIG
-
-        _issue_level_error = SCENARIO_CONFIG.issuelevelerror()  # type: typing.Optional[int]
+        _issue_level_error = _FAST_PATH.scenario_config.issuelevelerror()  # type: typing.Optional[int]
         if _issue_level_error is None:
             # When the error issue level is not set, do not consider known issues as errors by default.
             return False
@@ -218,13 +217,11 @@ class KnownIssue(_TestErrorImpl):
         return True
 
     def isignored(self):  # type: (...) -> bool
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         # Cannot ignore an error!
         if self.iserror():
             return False
 
-        _issue_level_ignored = SCENARIO_CONFIG.issuelevelignored()  # type: typing.Optional[int]
+        _issue_level_ignored = _FAST_PATH.scenario_config.issuelevelignored()  # type: typing.Optional[int]
         if _issue_level_ignored is None:
             # When the ignored issue level is not set, known issues are not ignored by default.
             return False

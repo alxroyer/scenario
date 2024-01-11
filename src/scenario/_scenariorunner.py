@@ -24,6 +24,7 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
@@ -94,7 +95,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._path import Path
         from ._reqdb import REQ_DB
         from ._scenarioargs import ScenarioArgs
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioexecution import ScenarioExecution
         from ._scenarioreport import SCENARIO_REPORT
         from ._scenarioresults import SCENARIO_RESULTS
@@ -111,7 +111,7 @@ class ScenarioRunner(_LoggerImpl):
             LOGGING_SERVICE.start()
 
             # Load requirements.
-            for _req_db_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
+            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: Path
                 MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
                 REQ_DB.load(_req_db_file)
 
@@ -361,7 +361,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._handlers import HANDLERS
         from ._loggermain import MAIN_LOGGER
         from ._scenarioattributes import CoreScenarioAttributes
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenariologging import SCENARIO_LOGGING
         from ._scenariostack import SCENARIO_STACK
@@ -394,7 +393,7 @@ class ScenarioRunner(_LoggerImpl):
                     SCENARIO_LOGGING.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
 
                 # Check expected scenario attributes.
-                _expected_attribute_names = SCENARIO_CONFIG.expectedscenarioattributes()  # type: typing.List[str]
+                _expected_attribute_names = _FAST_PATH.scenario_config.expectedscenarioattributes()  # type: typing.List[str]
                 self.debug("Expected attributes: %r", _expected_attribute_names)
                 for _expected_attribute_name in _expected_attribute_names:  # type: str
                     if _expected_attribute_name not in scenario_definition.getattributenames():
@@ -482,7 +481,6 @@ class ScenarioRunner(_LoggerImpl):
         :param step_definition: Step definition to execute.
         """
         from ._handlers import HANDLERS
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenariologging import SCENARIO_LOGGING
         from ._scenariostack import SCENARIO_STACK
@@ -566,7 +564,7 @@ class ScenarioRunner(_LoggerImpl):
 
         # Delay between steps.
         if self._execution_mode == ScenarioRunner.ExecutionMode.EXECUTE:
-            _delay = SCENARIO_CONFIG.delaybetweensteps()  # type: float
+            _delay = _FAST_PATH.scenario_config.delaybetweensteps()  # type: float
             if self.doexecute() and (_delay > 0.0):
                 time.sleep(_delay)
 
@@ -808,7 +806,6 @@ class ScenarioRunner(_LoggerImpl):
         :return: ``True`` when the scenario execution should stop, ``False`` when the scenario execution should continue on.
         """
         from ._knownissues import KnownIssue
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenariostack import SCENARIO_STACK
 
         if SCENARIO_STACK.current_scenario_execution and SCENARIO_STACK.current_scenario_execution.errors:
@@ -830,7 +827,7 @@ class ScenarioRunner(_LoggerImpl):
                 return False
 
             # Check for a global configuration.
-            if SCENARIO_CONFIG.continueonerror():
+            if _FAST_PATH.scenario_config.continueonerror():
                 return False
 
             # Ok, let's stop then.

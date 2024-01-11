@@ -23,6 +23,8 @@ import os
 import re
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._configtypes import OriginType as _OriginType
@@ -184,7 +186,6 @@ class ConfigNode:
         :param data: Node's data being set.
         """
         from ._configdb import CONFIG_DB
-        from ._scenarioconfig import ScenarioConfig, SCENARIO_CONFIG
 
         # Apply automatic conversions:
         # - path-likes to strings,
@@ -204,8 +205,8 @@ class ConfigNode:
         CONFIG_DB.debug("%r: data = %r", self, data)
 
         # When the `scenario` TIMEZONE configuration is modified, invalidate the related cache value.
-        if self.key == ScenarioConfig.Key.TIMEZONE:
-            SCENARIO_CONFIG.invalidatetimezonecache()
+        if self.key == _FAST_PATH.scenario_config.Key.TIMEZONE:
+            _FAST_PATH.scenario_config.invalidatetimezonecache()
 
     def remove(self):  # type: (...) -> None
         """

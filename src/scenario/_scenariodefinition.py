@@ -26,6 +26,7 @@ import typing
 
 if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
@@ -208,7 +209,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         """
         from ._locations import CodeLocation
         from ._path import Path
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenarioexecution import ScenarioExecution
         from ._textutils import anylongtext2str
 
@@ -239,7 +239,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         _ReqVerifierImpl.__init__(self)
 
         # Depending on `SCENARIO_CONFIG.scenariodebugloggingenabled()`, enable debug logging for scenarios.
-        self.enabledebug(SCENARIO_CONFIG.scenariodebugloggingenabled())
+        self.enabledebug(_FAST_PATH.scenario_config.scenariodebugloggingenabled())
 
         #: Continue on error option.
         #:
@@ -479,12 +479,10 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Takes the local configuration set with :meth:`expectstepreqrefinement()` at first,
         then the :meth:`._scenarioconfig.ScenarioConfig.expectstepreqrefinement()` global configuration.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         if self.__expect_step_req_refinement is not None:
             return self.__expect_step_req_refinement
         else:
-            return SCENARIO_CONFIG.expectstepreqrefinement()
+            return _FAST_PATH.scenario_config.expectstepreqrefinement()
 
     def section(
             self,
@@ -586,12 +584,10 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Takes the local configuration at first,
         then the :meth:`._scenarioconfig.ScenarioConfig.continueonerror()` global configuration.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         if self.__continue_on_error is not None:
             return self.__continue_on_error
         else:
-            return SCENARIO_CONFIG.continueonerror()
+            return _FAST_PATH.scenario_config.continueonerror()
 
     @continue_on_error.setter
     def continue_on_error(self, continue_on_error):  # type: (typing.Optional[bool]) -> None

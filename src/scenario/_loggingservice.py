@@ -21,6 +21,9 @@ Logging service.
 import logging
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+
 
 class LoggingService:
     """
@@ -38,10 +41,9 @@ class LoggingService:
         from ._loggermain import MAIN_LOGGER
         from ._loghandler import LogHandler
         from ._path import Path
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         # Start file logging if required.
-        _log_outpath = SCENARIO_CONFIG.logoutpath()  # type: typing.Optional[Path]
+        _log_outpath = _FAST_PATH.scenario_config.logoutpath()  # type: typing.Optional[Path]
         if _log_outpath is not None:
             LogHandler.file_handler = logging.FileHandler(_log_outpath, mode="w", encoding="utf-8")
             LogHandler.file_handler.addFilter(HandlerLogFilter(handler=LogHandler.file_handler))

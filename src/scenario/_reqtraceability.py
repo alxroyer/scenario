@@ -22,6 +22,7 @@ import abc
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
@@ -83,7 +84,6 @@ class ReqTraceability(_LoggerImpl):
         from ._configdb import CONFIG_DB
         from ._loggermain import MAIN_LOGGER
         from ._reqdb import REQ_DB
-        from ._scenarioconfig import SCENARIO_CONFIG
         from ._scenariodefinition import ScenarioDefinition, ScenarioDefinitionHelper
         from ._testsuitefile import TestSuiteFile
 
@@ -96,7 +96,7 @@ class ReqTraceability(_LoggerImpl):
             req_db_file_paths = list(req_db_file_paths)
         else:
             # Default configuration.
-            req_db_file_paths = SCENARIO_CONFIG.reqdbfiles()
+            req_db_file_paths = _FAST_PATH.scenario_config.reqdbfiles()
 
         import time
         _t0 = time.time()  # type: float
@@ -130,7 +130,7 @@ class ReqTraceability(_LoggerImpl):
             test_suite_paths = list(test_suite_paths)
         else:
             # Default configuration.
-            test_suite_paths = SCENARIO_CONFIG.testsuitefiles()
+            test_suite_paths = _FAST_PATH.scenario_config.testsuitefiles()
 
         if test_suite_paths:
             if log_info:
@@ -161,15 +161,15 @@ class ReqTraceability(_LoggerImpl):
                             try:
                                 # Disable scenario debug logging.
                                 _initial_scenario_debug_logging = (
-                                    CONFIG_DB.get(SCENARIO_CONFIG.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
+                                    CONFIG_DB.get(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
                                 )  # type: typing.Optional[bool]
-                                CONFIG_DB.set(SCENARIO_CONFIG.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
+                                CONFIG_DB.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
 
                                 # Create the scenario instance.
                                 _scenario = _scenario_definition_class()  # type: ScenarioDefinition
                             finally:
                                 # Restore initial scenario debug logging configuration.
-                                CONFIG_DB.set(SCENARIO_CONFIG.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
+                                CONFIG_DB.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
                             self.debug("_scenario=%r", _scenario)
                             self.scenarios.append(_scenario)
         else:

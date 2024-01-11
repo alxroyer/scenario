@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._subprocess import SubProcess as _SubProcessType
 
@@ -83,10 +84,8 @@ class CommonExecArgs:
 
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         # Just ensure issue names from configuration files are loaded.
-        SCENARIO_CONFIG.loadissuelevelnames()
+        _FAST_PATH.scenario_config.loadissuelevelnames()
 
         return True
 

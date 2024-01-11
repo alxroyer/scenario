@@ -24,6 +24,8 @@ which owns a list of :class:`TestCaseExecution` instances (one test case per sce
 
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType
@@ -80,12 +82,10 @@ class CampaignExecution:
 
         Default path when not set yet.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         if self._campaign_report_path is None:
             self._campaign_report_path = self._guessfilepath(
                 file_description=".xml",
-                default_filename=SCENARIO_CONFIG.campaignreportfilename(),
+                default_filename=_FAST_PATH.scenario_config.campaignreportfilename(),
                 match_file=lambda path: path.suffix.lower() == ".xml",
             )
         return self._campaign_report_path
@@ -106,12 +106,11 @@ class CampaignExecution:
         """
         from ._jsondictutils import JsonDict
         from ._reqdb import ReqDatabase
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         if self._req_db_path is None:
             self._req_db_path = self._guessfilepath(
                 file_description="requirement database",
-                default_filename=SCENARIO_CONFIG.reqdbfilename(),
+                default_filename=_FAST_PATH.scenario_config.reqdbfilename(),
                 match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
             )
         return self._req_db_path
@@ -132,12 +131,11 @@ class CampaignExecution:
         """
         from ._jsondictutils import JsonDict
         from ._reqtraceability import ReqTraceability
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         if self._downstream_traceability_path is None:
             self._downstream_traceability_path = self._guessfilepath(
                 file_description="downstream traceability",
-                default_filename=SCENARIO_CONFIG.downstreamtraceabilityfilename(),
+                default_filename=_FAST_PATH.scenario_config.downstreamtraceabilityfilename(),
                 match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH),
             )
         return self._downstream_traceability_path
@@ -158,12 +156,11 @@ class CampaignExecution:
         """
         from ._jsondictutils import JsonDict
         from ._reqtraceability import ReqTraceability
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         if self._upstream_traceability_path is None:
             self._upstream_traceability_path = self._guessfilepath(
                 file_description="upstream traceability",
-                default_filename=SCENARIO_CONFIG.upstreamtraceabilityfilename(),
+                default_filename=_FAST_PATH.scenario_config.upstreamtraceabilityfilename(),
                 match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH),
             )
         return self._upstream_traceability_path
