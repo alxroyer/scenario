@@ -31,6 +31,7 @@ if True:
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -652,14 +653,13 @@ class ScenarioDefinitionHelper:
 
         :param definition: Scenario definition instance this helper works for.
         """
-        from ._logger import Logger
         from ._scenariorunner import SCENARIO_RUNNER
 
         #: Related scenario definition.
         self.definition = definition  # type: ScenarioDefinition
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
-        self._logger = SCENARIO_RUNNER  # type: Logger
+        self._logger = SCENARIO_RUNNER  # type: _LoggerType
 
     def buildsteps(self):  # type: (...) -> None
         """

@@ -22,6 +22,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
+    from ._logger import Logger as _LoggerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -44,7 +45,6 @@ class ScenarioExecution:
             Related scenario definition under execution.
             May be ``None`` when the :class:`ScenarioExecution` instance is created as a data container only.
         """
-        from ._logger import Logger
         from ._scenariorunner import SCENARIO_RUNNER
         from ._stats import TimeStats
         from ._testerrors import TestError
@@ -66,7 +66,7 @@ class ScenarioExecution:
         self.warnings = []  # type: typing.List[TestError]
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
-        self._logger = SCENARIO_RUNNER  # type: Logger
+        self._logger = SCENARIO_RUNNER  # type: _LoggerType
 
     def __repr__(self):  # type: () -> str
         """

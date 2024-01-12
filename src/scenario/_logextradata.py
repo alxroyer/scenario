@@ -24,6 +24,8 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+if typing.TYPE_CHECKING:
+    from ._logger import Logger as _LoggerType
 
 
 class LogExtraData(_StrEnumImpl):
@@ -122,12 +124,10 @@ class LogExtraDataHelper(abc.ABC):
         :param key: Extra data name to look for.
         :return: Extra data value if set, or ``None`` otherwise.
         """
-        from ._logger import Logger
-
         if hasattr(record, str(key)):
             return getattr(record, str(key))
         if hasattr(record, str(LogExtraData.CURRENT_LOGGER)):
-            _logger = getattr(record, str(LogExtraData.CURRENT_LOGGER))  # type: Logger
+            _logger = getattr(record, str(LogExtraData.CURRENT_LOGGER))  # type: _LoggerType
             return _logger.getextradata(key)
         return None
 

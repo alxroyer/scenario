@@ -26,9 +26,11 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
+    from ._logger import Logger as _LoggerImpl  # `Logger` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
+    from ._logger import Logger as _LoggerType
 
 
 class LogFormatter(logging.Formatter):
@@ -95,14 +97,13 @@ class LogFormatter(logging.Formatter):
         """
         from ._consoleutils import Console
         from ._datetimeutils import toiso8601
-        from ._logger import Logger
         from ._loggermain import MAIN_LOGGER
         from ._scenariologging import ScenarioLogging
         from ._scenariostack import SCENARIO_STACK
 
         # Retrieve the logger reference from the record.
         # Memo: Logger reference as extra data set by :class:`logfilters.LoggerLogFilter`.
-        _logger = _LogExtraDataHelperImpl.get(record, _LogExtraDataImpl.CURRENT_LOGGER)  # type: typing.Optional[Logger]
+        _logger = _LogExtraDataHelperImpl.get(record, _LogExtraDataImpl.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
 
         # Build the log line.
         _log_line = ""  # type: str
@@ -145,7 +146,7 @@ class LogFormatter(logging.Formatter):
         # Log message color (begin).
         _message_color = None  # type: typing.Optional[Console.Color]
         if self._with(record, _LogExtraDataImpl.COLOR, default=True):
-            if isinstance(_logger, Logger):
+            if isinstance(_logger, _LoggerImpl):
                 _message_color = _logger.getlogcolor()
             if _message_color is None:
                 _message_color = _level_color
@@ -153,7 +154,7 @@ class LogFormatter(logging.Formatter):
             _log_line += f"\033[{_message_color}m"
 
         # Log class, with indentation.
-        if isinstance(_logger, Logger) and _logger.log_class:
+        if isinstance(_logger, _LoggerImpl) and _logger.log_class:
             _log_line += f"[{_logger.log_class}] "
             # Note: Don't duplicate main logger indentation. That's the reason why `_logger.log_class` is checked above.
             if self._with(record, _LogExtraDataImpl.CLASS_LOGGER_INDENTATION, default=_logger.isdebugenabled()):

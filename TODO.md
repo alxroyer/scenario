@@ -84,6 +84,7 @@
     - `--stop-fail` option: makes a campaign / test loop stop as soon as a test fails.
     - `--stop-success` option: makes a campaign / test loop stop as soon as a test succeeds.
 - Issue #78: Contribute to sphinx-autodoc-typehints#22, replying to https://github.com/tox-dev/sphinx-autodoc-typehints/issues/22#issuecomment-423289499
+- Spelling: prefer "instantiate" to "instanciate".
 
 
 ## Roadmap to v0.3.0

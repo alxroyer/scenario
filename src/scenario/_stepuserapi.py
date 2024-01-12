@@ -21,6 +21,8 @@ User API methods for user :class:`._scenariodefinition.ScenarioDefinition` or :c
 import abc
 import typing
 
+if True:
+    from ._logger import Logger as _LoggerImpl  # `Logger` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
@@ -207,12 +209,11 @@ class StepUserApi(abc.ABC):
         General implementation for related overloads.
         """
         from ._knownissues import KnownIssue
-        from ._logger import Logger
         from ._scenariorunner import SCENARIO_RUNNER
 
         # Positional parameters (deprecated).
         if (len(args) == 2) and (not kwargs):
-            if isinstance(self, Logger):
+            if isinstance(self, _LoggerImpl):
                 self.warning(f"knownissue(): Positional parameters deprecated, please use named parameters")
             SCENARIO_RUNNER.onerror(KnownIssue(id=args[0], message=args[1]), originator=self)
             return
