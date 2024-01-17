@@ -110,7 +110,6 @@ class ConfigNode:
             Origin of the configuration data: either a simple string, or the path of the configuration file it was defined in.
             Defaults to code location when not set.
         """
-        from ._configdb import CONFIG_DB
         from ._debugutils import saferepr
         from ._locations import EXECUTION_LOCATIONS
 
@@ -118,8 +117,8 @@ class ConfigNode:
         if (not subkey) and (data is None):
             return self.remove()
 
-        with CONFIG_DB.pushindentation():
-            CONFIG_DB.debug("%r: set(subkey=%r, data=%r, origin=%r)", self, subkey, data, origin)
+        with _FAST_PATH.config_db.pushindentation():
+            _FAST_PATH.config_db.debug("%r: set(subkey=%r, data=%r, origin=%r)", self, subkey, data, origin)
 
             # Default ``origin`` to code location.
             if origin is None:
@@ -129,7 +128,7 @@ class ConfigNode:
             if subkey:
                 # Retrieve or create the target sub-node.
                 _target_node = self._getsubnode(subkey, create_missing=True, origin=origin)  # type: typing.Optional[ConfigNode]
-                CONFIG_DB.debug("%r: _target_node = %r", self, _target_node)
+                _FAST_PATH.config_db.debug("%r: _target_node = %r", self, _target_node)
                 assert _target_node, "Sub-node should have been created"
                 # Set the data on it.
                 _target_node.set(data=data, origin=origin)
@@ -185,8 +184,6 @@ class ConfigNode:
 
         :param data: Node's data being set.
         """
-        from ._configdb import CONFIG_DB
-
         # Apply automatic conversions:
         # - path-likes to strings,
         if isinstance(data, os.PathLike):
@@ -202,7 +199,7 @@ class ConfigNode:
             self._data = data
 
         # Debug the new data being stored.
-        CONFIG_DB.debug("%r: data = %r", self, data)
+        _FAST_PATH.config_db.debug("%r: data = %r", self, data)
 
         # When the `scenario` TIMEZONE configuration is modified, invalidate the related cache value.
         if self.key == _FAST_PATH.scenario_config.Key.TIMEZONE:
@@ -214,8 +211,6 @@ class ConfigNode:
 
         Note: Does nothing on the root node (no parent for the root node, by definition).
         """
-        from ._configdb import CONFIG_DB
-
         if self.parent:
             # Remove the node from its parent.
             _parent_data = getattr(self.parent, "_data")  # type: typing.Any
@@ -227,7 +222,7 @@ class ConfigNode:
                 _parent_data.remove(self)
 
             # Debug the configuration key removal.
-            CONFIG_DB.debug("%r: removed", self)
+            _FAST_PATH.config_db.debug("%r: removed", self)
 
             # Check whether the parent node should be removed as a consequence.
             if _parent_data in ([], {}):
@@ -245,16 +240,14 @@ class ConfigNode:
 
         :param log_level: ``logging`` log level.
         """
-        from ._configdb import CONFIG_DB
-
         if isinstance(self._data, dict):
             if self.key:
-                CONFIG_DB.log(
+                _FAST_PATH.config_db.log(
                     log_level, f"{self.key}:",
-                    extra={CONFIG_DB.Extra.CLASS_LOGGER_INDENTATION: True},
+                    extra={_FAST_PATH.config_db.Extra.CLASS_LOGGER_INDENTATION: True},
                 )
             for _direct_subkey in sorted(self._data.keys()):  # type: str
-                with CONFIG_DB.pushindentation("  "):
+                with _FAST_PATH.config_db.pushindentation("  "):
                     # Recursive call.
                     self._data[_direct_subkey].show(log_level)
         elif isinstance(self._data, list):
@@ -262,9 +255,9 @@ class ConfigNode:
                 # Recursive call.
                 self._data[_index].show(log_level)
         else:
-            CONFIG_DB.log(
+            _FAST_PATH.config_db.log(
                 log_level, f"{self.key}: {self._data!r}  # from {', '.join(str(_origin) for _origin in self.origins)}",
-                extra={CONFIG_DB.Extra.CLASS_LOGGER_INDENTATION: True},
+                extra={_FAST_PATH.config_db.Extra.CLASS_LOGGER_INDENTATION: True},
             )
 
     def getkeys(self):  # type: (...) -> typing.List[str]
@@ -326,13 +319,12 @@ class ConfigNode:
         :param origin: Origin info to set for each sub-node walked through or created, starting from this one.
         :return: Sub-node if found, ``None`` otherwise.
         """
-        from ._configdb import CONFIG_DB
         from ._configkey import ConfigKey
         from ._debugutils import saferepr
         from ._enumutils import enum2str
 
         if create_missing:
-            CONFIG_DB.debug("%r: _getsubnode(subkey=%r, create_missing=%r, origin=%r)", self, subkey, create_missing, origin)
+            _FAST_PATH.config_db.debug("%r: _getsubnode(subkey=%r, create_missing=%r, origin=%r)", self, subkey, create_missing, origin)
 
         # Set origin info on the current node.
         if origin and (origin not in self.origins):
@@ -376,7 +368,7 @@ class ConfigNode:
             _index = int(_match.group(1))  # type: int
             if create_missing and (_index == len(self._data)):
                 self._data.append(ConfigNode(parent=self, key=ConfigKey.join(self.key, f"[{_index}]")))
-                CONFIG_DB.debug("  New %r", self._data[-1])
+                _FAST_PATH.config_db.debug("  New %r", self._data[-1])
             try:
                 _subnode = self._data[_index]
             except IndexError:
@@ -399,11 +391,11 @@ class ConfigNode:
                 # Create it when missing and applicable.
                 elif create_missing:
                     _subnode = self._data[_first] = ConfigNode(parent=self, key=ConfigKey.join(self.key, _first))
-                    CONFIG_DB.debug("  New %r", _subnode)
+                    _FAST_PATH.config_db.debug("  New %r", _subnode)
 
         # Walk through the sub-node.
         if _subnode:
-            with CONFIG_DB.pushindentation():
+            with _FAST_PATH.config_db.pushindentation():
                 return _subnode._getsubnode(
                     subkey=_remaining,
                     create_missing=create_missing,

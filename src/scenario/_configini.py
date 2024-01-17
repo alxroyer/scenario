@@ -22,6 +22,8 @@ import configparser
 import os
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._path import AnyPathType as _AnyPathType
@@ -43,10 +45,9 @@ class ConfigIni:
         :param path: Path of the INI file to load.
         :param root: Root key to load the INI file from.
         """
-        from ._configdb import CONFIG_DB
         from ._textfileutils import guessencoding
 
-        CONFIG_DB.debug("Loading INI file '%s'", path)
+        _FAST_PATH.config_db.debug("Loading INI file '%s'", path)
 
         _config_parser = configparser.ConfigParser()  # type: configparser.ConfigParser
         # Override the optionxform member in ordre to make the ConfigParser case sensitive.
@@ -60,16 +61,16 @@ class ConfigIni:
         # Build a dictionary from the INI file content.
         _data = {}  # type: typing.Dict[str, typing.Any]
         for _section in _config_parser.sections():  # type: str
-            CONFIG_DB.debug(f"  Section '{_section}'")
+            _FAST_PATH.config_db.debug(f"  Section '{_section}'")
             _data[_section] = {}
             for _option in _config_parser.options(_section):  # Type already declared above.
                 _data[_section][_option] = _config_parser.get(_section, _option)
-                CONFIG_DB.debug(f"    Option '{_option}' = {_data[_section][_option]!r}")
+                _FAST_PATH.config_db.debug(f"    Option '{_option}' = {_data[_section][_option]!r}")
 
         # Push the dictionary to the configuration database.
-        CONFIG_DB.set(root, _data, origin=path)
+        _FAST_PATH.config_db.set(root, _data, origin=path)
 
-        CONFIG_DB.debug("INI file '%s' successfully read", path)
+        _FAST_PATH.config_db.debug("INI file '%s' successfully read", path)
 
     @staticmethod
     def savefile(
@@ -84,11 +85,10 @@ class ConfigIni:
 
         .. warning:: Works only for `Dict[str, Dict[str, Union[str, int, bool, float]]]` dictionaries (i.e. *[section]/key = value* structures).
         """
-        from ._configdb import CONFIG_DB
         from ._configkey import ConfigKey
         from ._debugutils import saferepr
 
-        CONFIG_DB.debug("Saving INI file '%s'", path)
+        _FAST_PATH.config_db.debug("Saving INI file '%s'", path)
 
         _config_parser = configparser.ConfigParser()  # type: configparser.ConfigParser
         # Override the optionxform member in ordre to make the ConfigParser case sensitive.
@@ -119,9 +119,9 @@ class ConfigIni:
                 _ini_section = parent_node_key.replace("[", ".").replace("]", "")  # type: str
                 if _ini_section not in _config_parser.sections():
                     _config_parser.add_section(_ini_section)
-                CONFIG_DB.debug(f"Feeding INI with [{_ini_section}]/{current_node_subkey} = '{current_node}'")
+                _FAST_PATH.config_db.debug(f"Feeding INI with [{_ini_section}]/{current_node_subkey} = '{current_node}'")
                 _config_parser.set(_ini_section, current_node_subkey, f"{current_node}")
-        _dict = CONFIG_DB.get(root)  # type: typing.Any
+        _dict = _FAST_PATH.config_db.get(root)  # type: typing.Any
         assert isinstance(_dict, dict), f"Configuration at '{root}' is not a dictionary ({saferepr(_dict)})"
         _feedini("", "", _dict)
 
@@ -130,4 +130,4 @@ class ConfigIni:
             _config_parser.write(_file)
             _file.close()
 
-        CONFIG_DB.debug("INI file '%s' successfully saved", path)
+        _FAST_PATH.config_db.debug("INI file '%s' successfully saved", path)

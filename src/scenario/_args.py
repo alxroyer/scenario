@@ -28,6 +28,7 @@ import typing
 
 if True:
     from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # `CommonConfigArgs` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # `CommonLoggingArgs` used for inheritance.
 
@@ -60,7 +61,6 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         When consecutive calls occur, the latest overwrites the previous,
         and a warning is displayed unless ``warn_reset`` is set to ``False``.
         """
-        from ._fastpath import FAST_PATH
         from ._loggermain import MAIN_LOGGER
 
         if Args._instance and (instance is not Args._instance) and warn_reset:
@@ -68,7 +68,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         Args._instance = instance
 
         # Set `FAST_PATH.args`.
-        FAST_PATH.args = Args._instance
+        _FAST_PATH.args = Args._instance
 
     @classmethod
     def getinstance(
@@ -81,6 +81,8 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
 
         .. warning:: The main :class:`Args` instance is not created automatically by this method,
                      and should be set with :meth:`setinstance()` prior to any :meth:`getinstance()` call.
+
+        .. note:: Also available (but untyped) as :attr:`._fastpath.FastPath.args`.
         """
         from ._reflection import qualname
 
@@ -204,7 +206,6 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         :param args: Argument list, without the program name.
         :return: ``True`` for success, ``False`` otherwise.
         """
-        from ._configdb import CONFIG_DB
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._path import Path
@@ -224,7 +225,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         # - 1) load the single configuration values so that they are taken in account immediately,
         for _key in self.config_values:  # type: str
             try:
-                CONFIG_DB.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
+                _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
                 MAIN_LOGGER.logexceptiontraceback(_err)
                 return False
@@ -232,7 +233,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         for _config_path in self.config_paths:  # type: Path
             try:
                 MAIN_LOGGER.info(f"Loading '{_config_path}'")
-                CONFIG_DB.loadfile(_config_path)
+                _FAST_PATH.config_db.loadfile(_config_path)
             except EnvironmentError as _env_err:
                 self.error_code = ErrorCode.ENVIRONMENT_ERROR
                 # Don't log the full traceback for an environment error, just the error message.
@@ -244,7 +245,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         # - 3) reload the single configuration values, so that they prevail on configuration files.
         for _key in self.config_values:  # Type already declared above.
             try:
-                CONFIG_DB.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
+                _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
                 MAIN_LOGGER.logexceptiontraceback(_err)
                 return False

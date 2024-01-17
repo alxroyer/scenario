@@ -228,7 +228,6 @@ class CampaignRunner(_LoggerImpl):
         """
         from ._campaignargs import CampaignArgs
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._configdb import CONFIG_DB
         from ._confignode import ConfigNode
         from ._datetimeutils import ISO8601_REGEX
         from ._errcodes import ErrorCode
@@ -278,7 +277,7 @@ class CampaignRunner(_LoggerImpl):
             # No log console specification.
             _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_CONSOLE), "0")
             # Log date/time option propagation.
-            _log_datetime_config = CONFIG_DB.getnode(_FAST_PATH.scenario_config.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
+            _log_datetime_config = _FAST_PATH.config_db.getnode(_FAST_PATH.scenario_config.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
             if _log_datetime_config:
                 _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
             # Script path.

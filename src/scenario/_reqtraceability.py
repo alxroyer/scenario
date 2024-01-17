@@ -81,7 +81,6 @@ class ReqTraceability(_LoggerImpl):
         :param log_info:
             ``True`` (by default) to generate info logging.
         """
-        from ._configdb import CONFIG_DB
         from ._loggermain import MAIN_LOGGER
         from ._reqdb import REQ_DB
         from ._scenariodefinition import ScenarioDefinition, ScenarioDefinitionHelper
@@ -161,15 +160,15 @@ class ReqTraceability(_LoggerImpl):
                             try:
                                 # Disable scenario debug logging.
                                 _initial_scenario_debug_logging = (
-                                    CONFIG_DB.get(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
+                                    _FAST_PATH.config_db.get(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
                                 )  # type: typing.Optional[bool]
-                                CONFIG_DB.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
+                                _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
 
                                 # Create the scenario instance.
                                 _scenario = _scenario_definition_class()  # type: ScenarioDefinition
                             finally:
                                 # Restore initial scenario debug logging configuration.
-                                CONFIG_DB.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
+                                _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
                             self.debug("_scenario=%r", _scenario)
                             self.scenarios.append(_scenario)
         else:

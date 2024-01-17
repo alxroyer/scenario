@@ -20,6 +20,8 @@ JSON / YAML configuration file management.
 
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._path import AnyPathType as _AnyPathType
@@ -41,20 +43,19 @@ class ConfigJsonDict:
         :param path: Path of the file to load.
         :param root: Root key to load the file from.
         """
-        from ._configdb import CONFIG_DB
         from ._jsondictutils import JsonDict
         if typing.TYPE_CHECKING:
             from ._jsondictutils import JsonDictType
 
-        CONFIG_DB.debug("Loading JSON / YAML file '%s'", path)
+        _FAST_PATH.config_db.debug("Loading JSON / YAML file '%s'", path)
 
         # Read the file.
         _data = JsonDict.readfile(path)  # type: JsonDictType
 
         # Push the data to the configuration database.
-        CONFIG_DB.set(root, _data, origin=path)
+        _FAST_PATH.config_db.set(root, _data, origin=path)
 
-        CONFIG_DB.debug("JSON / YAML file '%s' successfully read", path)
+        _FAST_PATH.config_db.debug("JSON / YAML file '%s' successfully read", path)
 
     @staticmethod
     def savefile(
@@ -67,18 +68,17 @@ class ConfigJsonDict:
         :param path: Path of the file to save.
         :param root: Root key to save data from.
         """
-        from ._configdb import CONFIG_DB
         from ._debugutils import saferepr
         from ._jsondictutils import JsonDict
 
-        CONFIG_DB.debug("Saving JSON / YAML file '%s'", path)
+        _FAST_PATH.config_db.debug("Saving JSON / YAML file '%s'", path)
 
         # Save the file.
-        _content = CONFIG_DB.get(root)  # type: typing.Optional[typing.Any]
+        _content = _FAST_PATH.config_db.get(root)  # type: typing.Optional[typing.Any]
         if _content is None:
             raise KeyError(f"No content for config key {root!r}, can't save file '{path}'")
         if not isinstance(_content, dict):
             raise ValueError(f"Not a dictionary {saferepr(_content)} for config key {root!r}, can't save file '{path}'")
         JsonDict.writefile(_content, path)
 
-        CONFIG_DB.debug("JSON / YAML file '%s' successfully saved", path)
+        _FAST_PATH.config_db.debug("JSON / YAML file '%s' successfully saved", path)

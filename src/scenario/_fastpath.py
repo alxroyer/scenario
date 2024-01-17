@@ -27,6 +27,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
+    from ._configdb import ConfigDatabase as _ConfigDatabaseType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
 
 
@@ -46,10 +47,25 @@ class FastPath:
         #: Reference set by :meth:`._args.Args.setinstance()`.
         self.args = None  # type: typing.Optional[_ArgsType]
 
+        #: :class:`._configdb.ConfigDatabase` instance installed.
+        #:
+        #: Singleton reference resolved by :meth:`config_db()` property.
+        self._config_db = None  # type: typing.Optional[_ConfigDatabaseType]
+
         #: :class:`._scenarioconfig.ScenarioConfig` instance installed.
         #:
         #: Singleton reference resolved by :meth:`scenario_config()` property.
         self._scenario_config = None  # type: typing.Optional[_ScenarioConfigType]
+
+    @property
+    def config_db(self):  # type: () -> _ConfigDatabaseType
+        """
+        :class:`._configdb.ConfigDatabase` instance installed.
+        """
+        if self._config_db is None:
+            from ._configdb import CONFIG_DB
+            self._config_db = CONFIG_DB
+        return self._config_db
 
     @property
     def scenario_config(self):  # type: () -> _ScenarioConfigType

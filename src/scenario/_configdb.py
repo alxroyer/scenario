@@ -288,4 +288,7 @@ class ConfigDatabase(_LoggerImpl):
 
 
 #: Main instance of :class:`ConfigDatabase`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.config_db`.
+#: Please prefer the latter instead of using local imports of this module.
 CONFIG_DB = ConfigDatabase()  # type: ConfigDatabase
