@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
@@ -641,7 +642,6 @@ class CampaignReport(_LoggerImpl):
         from ._campaignexecution import TestCaseExecution
         from ._executionstatus import ExecutionStatus
         from ._knownissues import KnownIssue
-        from ._locations import CodeLocation
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
@@ -698,7 +698,7 @@ class CampaignReport(_LoggerImpl):
                     for _xml_text in _xml_failure.gettextnodes():  # type: Xml.TextNode
                         _last_line = _xml_text.data.splitlines()[-1]  # type: str
                         if _last_line.count(":") >= 3:
-                            _error.location = CodeLocation.fromlongstring(":".join(_last_line.split(":")[:3]))
+                            _error.location = _FAST_PATH.code_location.fromlongstring(":".join(_last_line.split(":")[:3]))
                             self.debug("testcase/failure/@location = '%s'", _error.location.tolongstring())
                     _test_case_execution.scenario_execution.errors.append(_error)
         if xml_test_case.hasattr("status"):

@@ -31,6 +31,7 @@ if True:
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
+    from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
     from ._req import Req as _ReqType
@@ -208,7 +209,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
 
         Activates debugging by default.
         """
-        from ._locations import CodeLocation
         from ._path import Path
         from ._scenarioexecution import ScenarioExecution
         from ._textutils import anylongtext2str
@@ -226,7 +226,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         self.description = anylongtext2str(description or "")  # type: str
 
         #: Definition location.
-        self.location = CodeLocation.fromclass(type(self))  # type: CodeLocation
+        self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType
 
         #: Script path.
         self.script_path = Path(self.location.file)  # type: Path

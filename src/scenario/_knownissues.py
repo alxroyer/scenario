@@ -28,6 +28,7 @@ if True:
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._jsondictutils import JsonDictType as _JsonDictType
+    from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
     from ._testerrors import TestError as _TestErrorType
 
@@ -88,12 +89,11 @@ class KnownIssue(_TestErrorImpl):
         :param url: Issue URL. Optional.
         """
         from ._issuelevels import IssueLevel
-        from ._locations import CodeLocation, EXECUTION_LOCATIONS
 
         _TestErrorImpl.__init__(
             self,
             message=message,
-            location=EXECUTION_LOCATIONS.fromcurrentstack(limit=1, fqn=True)[-1],
+            location=_FAST_PATH.execution_locations.fromcurrentstack(limit=1, fqn=True)[-1],
         )
 
         #: Issue level.
@@ -109,7 +109,7 @@ class KnownIssue(_TestErrorImpl):
         self._url = url  # type: typing.Optional[str]
 
         #: Redefinition of :attr:`._testerrors.TestError.location` in order to explicitize it cannot be ``None`` for :class:`KnownIssue` instances.
-        self.location = self.location  # type: CodeLocation
+        self.location = self.location  # type: _CodeLocationType
 
     def __str__(self):  # type: () -> str
         """
@@ -279,13 +279,12 @@ class KnownIssue(_TestErrorImpl):
         :return: New :class:`KnownIssue` instance.
         """
         from ._issuelevels import IssueLevel
-        from ._locations import CodeLocation
 
         # Mandatory fields.
         _known_issue = KnownIssue(
             message=json_data["message"],
         )  # type: KnownIssue
-        _known_issue.location = CodeLocation.fromlongstring(json_data["location"])
+        _known_issue.location = _FAST_PATH.code_location.fromlongstring(json_data["location"])
 
         # Optional fields.
         if "level" in json_data:

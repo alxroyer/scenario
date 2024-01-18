@@ -21,6 +21,7 @@ Scenario reports.
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
@@ -367,7 +368,6 @@ class ScenarioReport(_LoggerImpl):
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
         from ._debugutils import jsondump
-        from ._locations import CodeLocation
         from ._stats import TimeStats
         from ._stepdefinition import StepDefinition
         from ._stepexecution import StepExecution
@@ -380,7 +380,7 @@ class ScenarioReport(_LoggerImpl):
         with self.pushindentation():
             _step_definition = StepDefinition()  # type: StepDefinition
 
-            _step_definition.location = CodeLocation.fromlongstring(json_step_definition["location"])
+            _step_definition.location = _FAST_PATH.code_location.fromlongstring(json_step_definition["location"])
             self.debug("Location: %s", _step_definition.location.tolongstring())
 
             _step_definition.description = json_step_definition["description"]

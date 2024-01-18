@@ -111,7 +111,6 @@ class ConfigNode:
             Defaults to code location when not set.
         """
         from ._debugutils import saferepr
-        from ._locations import EXECUTION_LOCATIONS
 
         # Redirect to `remove()` when `None` is set.
         if (not subkey) and (data is None):
@@ -122,7 +121,7 @@ class ConfigNode:
 
             # Default ``origin`` to code location.
             if origin is None:
-                origin = EXECUTION_LOCATIONS.fromcurrentstack(limit=1, fqn=True)[0].tolongstring()
+                origin = _FAST_PATH.execution_locations.fromcurrentstack(limit=1, fqn=True)[0].tolongstring()
 
             # When a sub-key is given, set the data on the sub-node described by the sub-key.
             if subkey:

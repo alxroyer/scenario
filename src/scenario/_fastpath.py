@@ -28,6 +28,8 @@ import typing
 if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
+    from ._locations import CodeLocation as _CodeLocationType
+    from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
 
 
@@ -42,25 +44,55 @@ class FastPath:
         """
         Declares fast path data.
         """
+        #: :class:`._locations.CodeLocation` class reference.
+        #:
+        #: Reference resolved by :meth:`code_location()` property.
+        self._code_location_cls = None  # type: typing.Optional[typing.Type[_CodeLocationType]]
+
+        #: :class:`._locations.ExecutionLocations` singleton reference.
+        #:
+        #: Reference resolved by :meth:`execution_locations()` property.
+        self._execution_locations = None  # type: typing.Optional[_ExecutionLocationsType]
+
         #: :class:`._args.Args` instance installed.
         #:
         #: Reference set by :meth:`._args.Args.setinstance()`.
         self.args = None  # type: typing.Optional[_ArgsType]
 
-        #: :class:`._configdb.ConfigDatabase` instance installed.
+        #: :class:`._configdb.ConfigDatabase` singleton reference.
         #:
-        #: Singleton reference resolved by :meth:`config_db()` property.
+        #: Reference resolved by :meth:`config_db()` property.
         self._config_db = None  # type: typing.Optional[_ConfigDatabaseType]
 
-        #: :class:`._scenarioconfig.ScenarioConfig` instance installed.
+        #: :class:`._scenarioconfig.ScenarioConfig` singleton reference.
         #:
-        #: Singleton reference resolved by :meth:`scenario_config()` property.
+        #: Reference resolved by :meth:`scenario_config()` property.
         self._scenario_config = None  # type: typing.Optional[_ScenarioConfigType]
+
+    @property
+    def code_location(self):  # type: () -> typing.Type[_CodeLocationType]
+        """
+        Container for :class:`._locations.CodeLocation` static methods.
+        """
+        if self._code_location_cls is None:
+            from ._locations import CodeLocation
+            self._code_location_cls = CodeLocation
+        return self._code_location_cls
+
+    @property
+    def execution_locations(self):  # type: () -> _ExecutionLocationsType
+        """
+        :class:`._locations.ExecutionLocations` singleton.
+        """
+        if self._execution_locations is None:
+            from ._locations import EXECUTION_LOCATIONS
+            self._execution_locations = EXECUTION_LOCATIONS
+        return self._execution_locations
 
     @property
     def config_db(self):  # type: () -> _ConfigDatabaseType
         """
-        :class:`._configdb.ConfigDatabase` instance installed.
+        :class:`._configdb.ConfigDatabase` singleton.
         """
         if self._config_db is None:
             from ._configdb import CONFIG_DB
@@ -70,7 +102,7 @@ class FastPath:
     @property
     def scenario_config(self):  # type: () -> _ScenarioConfigType
         """
-        :class:`._scenarioconfig.ScenarioConfig` instance installed.
+        :class:`._scenarioconfig.ScenarioConfig` singleton.
         """
         if self._scenario_config is None:
             from ._scenarioconfig import SCENARIO_CONFIG

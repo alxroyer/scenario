@@ -24,12 +24,14 @@ import typing
 
 if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType
+    from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
 
 
@@ -86,7 +88,6 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         :param method: Method that defines the step, when applicable. Optional.
         """
-        from ._locations import CodeLocation
         from ._scenariodefinition import ScenarioDefinition
         from ._stepexecution import StepExecution
 
@@ -100,9 +101,9 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         self.method = method  # type: typing.Optional[types.MethodType]
 
         #: Definition location.
-        self.location = CodeLocation.fromclass(type(self))  # type: CodeLocation
+        self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType
         if self.method:
-            self.location = CodeLocation.frommethod(self.method)
+            self.location = _FAST_PATH.code_location.frommethod(self.method)
 
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
