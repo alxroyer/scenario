@@ -42,9 +42,12 @@ Memo for python profiling with ``cProfile`` and ``pstats``:
 import builtins
 import importlib
 import time
+import traceback
 import types
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
@@ -203,6 +206,9 @@ class PerfImportWrapper:
         PerfImportWrapper.Stats.show(self, logging.WARNING)
     """
 
+    #: Import name to debug callers for.
+    refine_import = None  # type: typing.Optional[str]
+
     class Stats:
         """
         Import statistics for a given module name.
@@ -221,6 +227,8 @@ class PerfImportWrapper:
             self.count = 0  # type: int
             #: Total time taken for related imports.
             self.total_time = 0.0  # type: float
+            #: Caller statistics.
+            self.callers = {}  # type: typing.Dict[str, int]
 
         @staticmethod
         def clear():  # type: (...) -> None
@@ -246,6 +254,8 @@ class PerfImportWrapper:
                     f"total_time={_import_stats.total_time:.3f}",
                     f"average={_import_stats.total_time / float(_import_stats.count):.3f}",
                 ]))
+                for _location_count in sorted(_import_stats.callers.items(), key=lambda t: t[1], reverse=True):  # type: typing.Tuple[str, int]
+                    logger.log(level, f"  {_location_count[0]}: {_location_count[1]}")
 
     #: Import statistics.
     _stats = {}  # type: typing.Dict[str, PerfImportWrapper.Stats]
@@ -297,6 +307,15 @@ class PerfImportWrapper:
         _stats = PerfImportWrapper._stats[name]  # type: PerfImportWrapper.Stats
         _stats.count += 1
         _stats.total_time += (time.time() - _t0)
+
+        # Refined statistics.
+        if name == PerfImportWrapper.refine_import:
+            # Memo: Skip
+            #   (-1) => `PerfImportWrapper._wrapper()` (this method)
+            _location = _FAST_PATH.code_location.fromtbitem(traceback.extract_stack()[-2]).tolongstring()  # type: str
+            if _location not in _stats.callers:
+                _stats.callers[_location] = 0
+            _stats.callers[_location] += 1
 
         # Return the imported module.
         return _module

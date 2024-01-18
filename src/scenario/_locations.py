@@ -223,7 +223,7 @@ class ExecutionLocations(_LoggerImpl):
 
         :param limit: Maximum number of backward items.
         :param fqn: ``True`` to ensure fully qualified names.
-        :return: Stack of :class:`CodeLocation`.
+        :return: Stack of :class:`CodeLocation`, from first to last call.
         """
         return self._fromtbitems(traceback.extract_stack(), limit=limit, fqn=fqn)
 
@@ -253,7 +253,7 @@ class ExecutionLocations(_LoggerImpl):
         Builds a stack of :class:`CodeLocation` from traceback items.
 
         :param tb_items: Traceback items to build the stack from.
-        :return: Stack of :class:`CodeLocation`.
+        :return: Stack of :class:`CodeLocation`, from first to last call.
         """
         from ._path import Path
         from ._reflection import checkfuncqualname
