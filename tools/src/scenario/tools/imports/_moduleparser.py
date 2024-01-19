@@ -35,6 +35,7 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
 
         self.path = path  # type: scenario.Path
         self.module_level_imports = []  # type: typing.List[Import]
+        self.local_imports = []  # type: typing.List[Import]
 
     def parse(self):  # type: (...) -> None
         from ._import import Import
@@ -78,7 +79,8 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
                     self.module_level_imports.append(_import)
                     _import.debug("Module level import detected: %r", _import)
                 else:
-                    _import.debug("Import ignored: %r", _import)
+                    self.local_imports.append(_import)
+                    _import.debug("Local import detected: %r", _import)
 
                 continue
 

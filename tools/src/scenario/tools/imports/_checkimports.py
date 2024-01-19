@@ -22,6 +22,9 @@ import typing
 import scenario
 import scenario.text
 
+if typing.TYPE_CHECKING:
+    from ._moduleparser import ModuleParser as _ModuleParserType
+
 
 class CheckImports:
 
@@ -39,9 +42,7 @@ class CheckImports:
             )
 
     def __init__(self):  # type: (...) -> None
-        from ._moduleparser import ModuleParser
-
-        self.modules = []  # type: typing.List[ModuleParser]
+        self.modules = []  # type: typing.List[_ModuleParserType]
 
     def run(self):  # type: (...) -> scenario.ErrorCode
         from .. import _paths
@@ -93,8 +94,6 @@ class CheckImports:
             self,
             path,  # type: scenario.Path
     ):  # type: (...) -> None
-        from .. import _paths
-        from ._import import Import
         from ._moduleparser import ModuleParser
 
         _module_parser = ModuleParser(path)
@@ -105,9 +104,19 @@ class CheckImports:
             _module_parser.error(f"{_err}")
             return
 
-        # Check module imports.
-        _module_parser.debug("%d module level import(s)", len(_module_parser.module_level_imports))
-        for _import in _module_parser.module_level_imports:  # type: Import
+        self._checkmodulelevelimports(_module_parser)
+        self._checklocalimports(_module_parser)
+
+    def _checkmodulelevelimports(
+            self,
+            module_parser,  # type: _ModuleParserType
+    ):  # type: (...) -> None
+        from .. import _paths
+        from ._import import Import
+
+        # Check module level imports.
+        module_parser.debug("%d module level import(s)", len(module_parser.module_level_imports))
+        for _import in module_parser.module_level_imports:  # type: Import
 
             # === Import context ===
 
@@ -217,7 +226,12 @@ class CheckImports:
                     elif _imported_symbol.local_name == _imported_symbol.original_name:
                         # Regular reexport.
                         _import.debug("Regular reexport for %r: %r", _imported_symbol.original_name, _import.src)
-                    elif path.name == "__init__.py":
+                    elif any([
+                        _import.importer_module_path.name == "__init__.py",
+                        _import.importer_module_path in [
+                            _paths.SRC_PATH / "scenario" / "_typeexports.py",
+                        ],
+                    ]):
                         # Renamed reexport.
                         _import.debug("Renamed reexport for %r: %r", _imported_symbol.original_name, _import.src)
                     else:
@@ -250,3 +264,31 @@ class CheckImports:
                                 _import.debug("%r suffixed with 'Type as expected: %r", _imported_symbol.original_name, _import.src)
                             else:
                                 _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.src)
+
+    def _checklocalimports(
+            self,
+            module_parser,  # type: _ModuleParserType
+    ):  # type: (...) -> None
+        from .. import _paths
+        from ._import import Import
+        from ._optimized import OPTIMIZED_PATHS
+
+        # Check all files in `OPTIMIZED_MODULES` correspond to actual files.
+        for _path in OPTIMIZED_PATHS:  # type: scenario.Path
+            scenario.Assertions.assertisfile(_path)
+
+        # Check local imports.
+        module_parser.debug("%d local import(s)", len(module_parser.local_imports))
+        for _import in module_parser.local_imports:  # type: Import
+            # ---
+            # RULE: Avoid local imports for optimized modules in main `scenario` modules
+            #       (except for imports from `scenario.ui` to `scenario` modules).
+            # ---
+            if _import.importer_module_path.is_relative_to(_paths.SRC_PATH) and (_import.imported_module_path in OPTIMIZED_PATHS):
+                if (
+                    _import.importer_module_path.is_relative_to(_paths.SRC_PATH / "scenario" / "ui")
+                    and _import.imported_module_path and (_import.imported_module_path.parent == (_paths.SRC_PATH / "scenario"))
+                ):
+                    _import.debug("Ignored local import for optimized %r from `scenario.ui`", _import.imported_module_original_name)
+                else:
+                    _import.error("Avoid local import for optimized %r", _import.imported_module_original_name)
