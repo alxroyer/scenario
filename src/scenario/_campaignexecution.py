@@ -30,6 +30,7 @@ if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
     from ._testerrors import TestError as _TestErrorType
@@ -553,13 +554,12 @@ class ReportFileReader:
         """
         Initializes :attr:`path` and :attr:`content` attributes with ``None``.
         """
-        from ._scenariodefinition import ScenarioDefinition
         from ._path import Path
 
         #: Test case JSON file path.
         self.path = None  # type: typing.Optional[Path]
         #: Scenario execution data read from the test case JSON file.
-        self.content = None  # type: typing.Optional[ScenarioDefinition]
+        self.content = None  # type: typing.Optional[_ScenarioDefinitionType]
 
     def read(self):  # type: (...) -> None
         """

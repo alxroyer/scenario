@@ -21,6 +21,8 @@ Requirement / test coverage links.
 import abc
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqref import ReqRef as _ReqRefType
@@ -187,7 +189,6 @@ class ReqLink:
             ``True`` by default when no predicates are set.
         """
         from ._reqdb import REQ_DB
-        from ._scenariodefinition import ScenarioDefinition
 
         # Requirement reference predicates.
         if req_ref is not None:
@@ -205,9 +206,12 @@ class ReqLink:
         if req_verifier is not None:
             if req_verifier not in self._req_verifiers:
                 # Requirement verifier mismatch.
-                if walk_steps and isinstance(req_verifier, ScenarioDefinition):
+                if walk_steps and isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
                     # Scenario and `walk_steps`.
-                    if not any([(_step in self._req_verifiers) for _step in req_verifier.steps]):
+                    if not any([
+                        (_step in self._req_verifiers)
+                        for _step in req_verifier.steps  # noqa  ## Unresolved attribute reference 'steps' for class 'ReqVerifier'
+                    ]):
                         return False
                 else:
                     return False

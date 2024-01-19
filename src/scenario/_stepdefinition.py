@@ -33,6 +33,7 @@ if typing.TYPE_CHECKING:
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
 class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl):
@@ -88,14 +89,13 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         :param method: Method that defines the step, when applicable. Optional.
         """
-        from ._scenariodefinition import ScenarioDefinition
         from ._stepexecution import StepExecution
 
         #: Owner scenario.
         #:
         #: Initially set with a void reference.
         #: Fixed when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
-        self.scenario = ScenarioDefinition.__new__(ScenarioDefinition)  # type: ScenarioDefinition
+        self.scenario = _FAST_PATH.scenario_definition_cls.__new__(_FAST_PATH.scenario_definition_cls)  # type: _ScenarioDefinitionType
 
         #: Step method, if any.
         self.method = method  # type: typing.Optional[types.MethodType]

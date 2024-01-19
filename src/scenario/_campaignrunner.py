@@ -26,12 +26,14 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import AnyPathType as _AnyPathType
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
 class CampaignRunner(_LoggerImpl):
@@ -233,7 +235,6 @@ class CampaignRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._path import Path
-        from ._scenariodefinition import ScenarioDefinition
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioexecution import ScenarioExecution
         from ._scenarioresults import SCENARIO_RESULTS
@@ -285,7 +286,7 @@ class CampaignRunner(_LoggerImpl):
 
             # In case no execution data is available in the end,
             # create `ScenarioDefinition` and `ScenarioExecution` instances from scratch in order to save error details.
-            _fallback_errors = ScenarioDefinition()  # type: ScenarioDefinition
+            _fallback_errors = _ScenarioDefinitionImpl()  # type: _ScenarioDefinitionType
             _fallback_errors.name = test_case_execution.name
             _fallback_errors.execution = ScenarioExecution(_fallback_errors)
             _fallback_errors.execution.time.setstarttime()

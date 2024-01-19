@@ -21,6 +21,7 @@ Requirement database.
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._req import Req as _ReqImpl  # `Req` imported once for performance concerns.
     from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
@@ -345,16 +346,15 @@ class ReqDatabase(_LoggerImpl):
         :return: :class:`._scenariodefinition.ScenarioDefinition` ordered set (see :meth:`._reqverifier.ReqVerifier.orderedset()` for order details).
         """
         from ._reqverifier import ReqVerifierHelper
-        from ._scenariodefinition import ScenarioDefinition
 
-        _scenario_list = []  # type: typing.List[ScenarioDefinition]
+        _scenario_list = []  # type: typing.List[_ScenarioDefinitionType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _scenario_list.extend(
                     # Ensure `ScenarioDefinition` from `ReqVerifier` objects.
                     map(ReqVerifierHelper.getscenario, _req_link.req_verifiers),
                 )
-        _scenarios = ScenarioDefinition.orderedset(_scenario_list)  # type: _OrderedSetType[ScenarioDefinition]
+        _scenarios = _FAST_PATH.scenario_definition_cls.orderedset(_scenario_list)  # type: _OrderedSetType[_ScenarioDefinitionType]
 
         self.debug("getallscenarios() -> %r", _scenarios)
         return _scenarios

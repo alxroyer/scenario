@@ -31,6 +31,7 @@ if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
 class FastPath:
@@ -68,6 +69,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_config()` property.
         self._scenario_config = None  # type: typing.Optional[_ScenarioConfigType]
+
+        #: :class:`._scenariodefinition.ScenarioDefinition` class reference.
+        #:
+        #: Reference resolved by :meth:`scenario_definition_cls()` property.
+        self._scenario_definition_cls = None  # type: typing.Optional[typing.Type[_ScenarioDefinitionType]]
 
     @property
     def code_location(self):  # type: () -> typing.Type[_CodeLocationType]
@@ -108,6 +114,24 @@ class FastPath:
             from ._scenarioconfig import SCENARIO_CONFIG
             self._scenario_config = SCENARIO_CONFIG
         return self._scenario_config
+
+    @property
+    def scenario_definition_cls(self):  # type: () -> typing.Type[_ScenarioDefinitionType]
+        """
+        #: :class:`._scenariodefinition.ScenarioDefinition` class reference.
+
+        Provided through a :class:`FastPath` attribute so that it can be accessed
+        without making a local import to :mod:`._scenariodefinition`,
+        and without creating a cyclic module dependency.
+
+        To be used with parcimony.
+        Prefer importing :mod:`._scenariodefinition` with implementation imports when relevant
+        (i.e. not risky regarding possible future cyclic module dependency).
+        """
+        if self._scenario_definition_cls is None:
+            from ._scenariodefinition import ScenarioDefinition
+            self._scenario_definition_cls = ScenarioDefinition
+        return self._scenario_definition_cls
 
 
 #: Main instance of :class:`FastPath`.

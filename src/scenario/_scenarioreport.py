@@ -23,6 +23,7 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._jsondictutils import JsonDictType as _JsonDictType
@@ -252,7 +253,6 @@ class ScenarioReport(_LoggerImpl):
         """
         from ._debugutils import jsondump
         from ._path import Path
-        from ._scenariodefinition import ScenarioDefinition
         from ._scenarioexecution import ScenarioExecution
         from ._stats import TimeStats
         from ._testerrors import TestError
@@ -262,7 +262,7 @@ class ScenarioReport(_LoggerImpl):
 
         with self.pushindentation():
             # Create the scenario definition instance.
-            _scenario_definition = ScenarioDefinition()  # type: ScenarioDefinition
+            _scenario_definition = _ScenarioDefinitionImpl()  # type: _ScenarioDefinitionType
 
             # Scenario name.
             _scenario_definition.name = json_scenario["name"]

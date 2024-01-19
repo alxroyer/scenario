@@ -24,6 +24,8 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
+    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Same for `ScenarioDefinitionHelper`.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
@@ -83,7 +85,6 @@ class ReqTraceability(_LoggerImpl):
         """
         from ._loggermain import MAIN_LOGGER
         from ._reqdb import REQ_DB
-        from ._scenariodefinition import ScenarioDefinition, ScenarioDefinitionHelper
         from ._testsuitefile import TestSuiteFile
 
         self.debug("ReqTraceability.loaddatafromfiles(req_db_file_paths=%r, test_suite_paths=%r)", req_db_file_paths, test_suite_paths)
@@ -149,12 +150,12 @@ class ReqTraceability(_LoggerImpl):
                                 MAIN_LOGGER.info("Loading '%s'", _test_script_path)
 
                             # Find the scenario class.
-                            _scenario_definition_class = ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(
+                            _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(
                                 _test_script_path,
                                 # Avoid loaded module being saved in `sys.modules`,
                                 # so that the function can be called again, and traceability refreshed.
                                 sys_modules_cache=False,
-                            )  # type: typing.Type[ScenarioDefinition]
+                            )  # type: typing.Type[_ScenarioDefinitionType]
                             self.debug("_scenario_definition_class=%r", _scenario_definition_class)
 
                             try:
@@ -165,7 +166,7 @@ class ReqTraceability(_LoggerImpl):
                                 _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
 
                                 # Create the scenario instance.
-                                _scenario = _scenario_definition_class()  # type: ScenarioDefinition
+                                _scenario = _scenario_definition_class()  # type: _ScenarioDefinitionType
                             finally:
                                 # Restore initial scenario debug logging configuration.
                                 _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
@@ -495,7 +496,6 @@ class ReqTraceability(_LoggerImpl):
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
         from ._reqverifier import ReqVerifier
-        from ._scenariodefinition import ScenarioDefinition
         from ._stepdefinition import StepDefinition
 
         self.debug("ReqTraceability.getdownstream(): Computing downstream traceability from %d requirement references in database", len(REQ_DB.getallrefs()))
@@ -509,7 +509,7 @@ class ReqTraceability(_LoggerImpl):
             _req_verifiers_set = _req_ref.getverifiers()  # type: SetWithReqLinksType[ReqVerifier]
             for _req_verifier in ReqVerifier.orderedset(_req_verifiers_set):  # type: ReqVerifier
                 for _req_link in _req_verifiers_set[_req_verifier]:  # type: _ReqLinkType
-                    if isinstance(_req_verifier, ScenarioDefinition):
+                    if isinstance(_req_verifier, _ScenarioDefinitionImpl):
                         if (not _downstream_scenario) or (_downstream_scenario.scenario is not _req_verifier):
                             _downstream_scenario = ReqTraceability.Downstream.Scenario(
                                 _downstream_req_ref,  # Memo: `_downstream_scenario` automatically added to `_downstream_req_ref`.

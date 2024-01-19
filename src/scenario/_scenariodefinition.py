@@ -98,9 +98,10 @@ class MetaScenarioDefinition(abc.ABCMeta):
 
             :param init_method: Original ``__init__()`` method.
             """
-            # Note: `mypy` (as of 0.910) seems to mess up between `types.FunctionType` and `types.MethodType`
-            #       when assigning the `init_method` member variable below.
-            #       Let's use `typing.cast(Any)` to work around it.
+            # Note:
+            #   `mypy` (as of 0.910 to 1.0.1) seems to mess up between `types.FunctionType` and `types.MethodType`
+            #   when assigning the `init_method` member variable below.
+            #   Let's use `typing.cast(Any)` to work around it.
 
             #: Original ``__init__()`` method.
             self.init_method = typing.cast(typing.Any, init_method)  # type: types.FunctionType

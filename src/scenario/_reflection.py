@@ -28,8 +28,10 @@ import typing
 if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # `DebugClass` used to instanciate global variable.
     from ._logger import Logger as _LoggerImpl  # `Logger` used to instanciate global variable.
+    from ._scenariodefinition import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
+    from ._scenariodefinition import MetaScenarioDefinition as _MetaScenarioDefinitionType
 
 
 #: Logger instance for reflective programming.
@@ -299,8 +301,6 @@ def checkfuncqualname(
     :param func_name: Short name of the function.
     :return: Fully qualified name of the function, or ``func_name`` as is by default.
     """
-    from ._scenariodefinition import MetaScenarioDefinition
-
     # === Inner functions ===
 
     def _walkmodule(
@@ -345,9 +345,9 @@ def checkfuncqualname(
                 if _res is not None:
                     return _res
             # `ScenarioDefinition.__init__()` wrappers.
-            for _wrapper_name, _wrapper in inspect.getmembers(cls, lambda obj: isinstance(obj, MetaScenarioDefinition.InitWrapper)):  \
-                    # type: str, MetaScenarioDefinition.InitWrapper
-                _res = _walkfunction(_wrapper.init_method)
+            for _wrapper_name, _wrapper in inspect.getmembers(cls, lambda obj: isinstance(obj, _MetaScenarioDefinitionImpl.InitWrapper)):  \
+                    # type: str, _MetaScenarioDefinitionType.InitWrapper
+                _res = _walkfunction(_wrapper.init_method)  # noqa  ## Expected type 'FunctionType', got 'MethodType' instead
                 if _res is not None:
                     return _res
             # Member methods.

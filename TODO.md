@@ -20,7 +20,6 @@
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Improve test suites loading.
-            - _scenariodefinition: count=5104, total_time=0.028, average=0.000
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.
             - Make main logging indentation not shift the logging level?

@@ -26,6 +26,7 @@ if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -206,7 +207,6 @@ class ScenarioRunner(_LoggerImpl):
         """
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
-        from ._scenariodefinition import ScenarioDefinitionHelper
 
         # Save the current time before loading the scenario script
         # and the `ScenarioDefinition` instance has been eventually created.
@@ -214,9 +214,8 @@ class ScenarioRunner(_LoggerImpl):
 
         # Create a test instance.
         try:
-            _scenario_definition_class = (
-                ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(scenario_path)
-            )  # type: typing.Type[_ScenarioDefinitionType]
+            _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(scenario_path) \
+                # type: typing.Type[_ScenarioDefinitionType]
         except ImportError as _err:
             MAIN_LOGGER.logexceptiontraceback(_err)
             return ErrorCode.INPUT_MISSING_ERROR
@@ -307,7 +306,6 @@ class ScenarioRunner(_LoggerImpl):
         :return: Error code.
         """
         from ._errcodes import ErrorCode
-        from ._scenariodefinition import ScenarioDefinitionHelper
         from ._scenarioexecution import ScenarioExecution
         from ._scenariostack import SCENARIO_STACK
         from ._stepdefinition import StepDefinitionHelper
@@ -316,7 +314,7 @@ class ScenarioRunner(_LoggerImpl):
 
         with self.pushindentation():
             # Inspect the scenario definition class to build step definitions from methods
-            ScenarioDefinitionHelper(scenario_definition).buildsteps()
+            _ScenarioDefinitionHelperImpl(scenario_definition).buildsteps()
 
             # Feed the building context of the scenario stack with the scenario definition being built.
             SCENARIO_STACK.building.pushscenariodefinition(scenario_definition)
