@@ -21,6 +21,8 @@ Requirement class definition.
 import abc
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
@@ -127,9 +129,7 @@ class Req:
         :param sub: Requirement sub-item specification.
         :return: :class:`._reqref.ReqRef` instance computed from the current :class:`Req` and the given requirement sub-item specification.
         """
-        from ._reqref import ReqRef
-
-        return ReqRef(self, sub)
+        return _FAST_PATH.req_ref_cls(self, sub)
 
     @property
     def main_ref(self):  # type: () -> _ReqRefType
@@ -148,9 +148,8 @@ class Req:
         See :meth:`._reqref.ReqRef.orderedset()` for order details.
         """
         from ._reqdb import REQ_DB
-        from ._reqref import ReqRef
 
-        return ReqRef.orderedset(
+        return _FAST_PATH.req_ref_cls.orderedset(
             # Filter requirement references that point to subparts of this requirement.
             filter(
                 lambda req_ref: (req_ref.req is self) and req_ref.issubref(),

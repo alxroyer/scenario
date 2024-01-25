@@ -21,6 +21,7 @@ Scenario execution stack.
 import typing
 
 if True:
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -184,10 +185,9 @@ class ScenarioStack(_LoggerImpl):
         Initializes an empty scenario execution stack.
         """
         from ._debugclasses import DebugClass
-        from ._logextradata import LogExtraData
 
         _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_STACK)
-        self.setextradata(LogExtraData.ACTION_RESULT_MARGIN, False)
+        self.setextradata(_LogExtraDataImpl.ACTION_RESULT_MARGIN, False)
 
         #: Instances under construction.
         self.building = BuildingContext()  # type: BuildingContext

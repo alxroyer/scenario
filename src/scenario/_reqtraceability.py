@@ -24,6 +24,7 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Same for `ScenarioDefinitionHelper`.
 if typing.TYPE_CHECKING:
@@ -769,7 +770,6 @@ class ReqTraceability(_LoggerImpl):
         :return: Upstream traceability.
         """
         from ._reflection import qualname
-        from ._reqref import ReqRef
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
 
@@ -782,7 +782,7 @@ class ReqTraceability(_LoggerImpl):
             _upstream_req = None  # type: typing.Optional[ReqTraceability.Upstream.Req]
 
             _req_ref_set = _scenario.getreqrefs(walk_steps=True)  # type: SetWithReqLinksType[_ReqRefType]
-            for _req_ref in ReqRef.orderedset(_req_ref_set):  # type: _ReqRefType
+            for _req_ref in _ReqRefImpl.orderedset(_req_ref_set):  # type: _ReqRefType
                 for _req_link in _req_ref_set[_req_ref]:  # type: _ReqLinkType
                     if _req_ref.ismain():
                         if (not _upstream_req) or (_upstream_req.req is not _req_ref.req):

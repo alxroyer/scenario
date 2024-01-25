@@ -23,8 +23,10 @@ import time
 import typing
 
 if True:
+    from ._args import Args as _ArgsImpl  # `Args` imported once for performance concerns.
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -79,10 +81,9 @@ class ScenarioRunner(_LoggerImpl):
         Sets up logging for the :class:`ScenarioRunner` class, and member variables.
         """
         from ._debugclasses import DebugClass
-        from ._logextradata import LogExtraData
 
         _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
-        self.setextradata(LogExtraData.ACTION_RESULT_MARGIN, False)
+        self.setextradata(_LogExtraDataImpl.ACTION_RESULT_MARGIN, False)
 
     def main(self):  # type: (...) -> _ErrorCodeType
         """
@@ -177,13 +178,12 @@ class ScenarioRunner(_LoggerImpl):
         1) the scenario stack building context,
         and 2) the scenario args --doc-only option.
         """
-        from ._args import Args
         from ._scenarioargs import ScenarioArgs
         from ._scenariostack import SCENARIO_STACK
 
         if SCENARIO_STACK.building.scenario_definition:
             return ScenarioRunner.ExecutionMode.BUILD_OBJECTS
-        elif isinstance(Args.getinstance(), ScenarioArgs):
+        elif isinstance(_ArgsImpl.getinstance(), ScenarioArgs):
             if ScenarioArgs.getinstance().doc_only:
                 return ScenarioRunner.ExecutionMode.DOC_ONLY
             else:

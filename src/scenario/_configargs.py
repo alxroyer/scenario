@@ -30,10 +30,11 @@ class CommonConfigArgs:
         """
         Installs common configuration program arguments.
         """
-        from ._args import Args
         from ._path import Path
 
-        assert isinstance(self, Args)
+        if typing.TYPE_CHECKING:
+            from ._args import Args  # check-imports: ignore  ## Non-executable local import, in type-checking mode only, to avoid cyclic module dependency.
+            assert isinstance(self, Args)
 
         #: Configuration files.
         self.config_paths = []  # type: typing.List[Path]

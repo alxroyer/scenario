@@ -25,6 +25,7 @@ if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._req import Req as _ReqType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -129,9 +130,8 @@ class ScenarioLogging:
         :param scenario_definition: Scenario to display requirement verifications for.
         """
         from ._loggermain import MAIN_LOGGER
-        from ._req import Req
 
-        _reqs = list(scenario_definition.getreqs(walk_steps=True))  # type: typing.Sequence[Req]
+        _reqs = list(scenario_definition.getreqs(walk_steps=True))  # type: typing.Sequence[_ReqType]
         if _reqs:
             if not any([_req.title for _req in _reqs]):
                 # Display requirement identifiers in a single line, separated with commas.
@@ -139,7 +139,7 @@ class ScenarioLogging:
             else:
                 # Display each requirement on a separate line, with its title when available.
                 MAIN_LOGGER.rawoutput("  VERIFIES:")
-                for _req in _reqs:  # type: Req
+                for _req in _reqs:  # type: _ReqType
                     if _req.title:
                         MAIN_LOGGER.rawoutput(f"    {_req.id}: {_req.title}")
                     else:

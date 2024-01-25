@@ -23,7 +23,7 @@ import abc
 import typing
 
 if True:
-    from ._req import Req as _ReqImpl  # `Req` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -115,7 +115,7 @@ class ReqRef:
         """
         return "/".join([
             # Don't sollicitate the requirement database if we already have a `Req` instance for `_any_req`.
-            self._any_req.id if isinstance(self._any_req, _ReqImpl) else self.req.id,
+            self._any_req.id if isinstance(self._any_req, _FAST_PATH.req_cls) else self.req.id,
             *self.subs,
         ])
 
@@ -206,7 +206,7 @@ class ReqRef:
         """
         Redirects to :meth:`matches()`.
         """
-        if isinstance(other, (ReqRef, _ReqImpl, str)):
+        if isinstance(other, (ReqRef, _FAST_PATH.req_cls, str)):
             return self.matches(other)
         else:
             raise TypeError(f"Can't compare {self!r} with {other!r}")

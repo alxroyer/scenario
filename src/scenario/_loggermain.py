@@ -24,6 +24,7 @@ import sys
 import typing
 
 if True:
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 
 
@@ -75,15 +76,13 @@ class MainLogger(_LoggerImpl):
 
         :param message: Log message to output.
         """
-        from ._logextradata import LogExtraData
-
         self.info(
             message,
             extra={
-                LogExtraData.LOG_LEVEL: False,
-                LogExtraData.COLOR: False,
-                LogExtraData.MAIN_LOGGER_INDENTATION: False,
-                LogExtraData.ACTION_RESULT_MARGIN: False,
+                _LogExtraDataImpl.LOG_LEVEL: False,
+                _LogExtraDataImpl.COLOR: False,
+                _LogExtraDataImpl.MAIN_LOGGER_INDENTATION: False,
+                _LogExtraDataImpl.ACTION_RESULT_MARGIN: False,
             },
         )
 

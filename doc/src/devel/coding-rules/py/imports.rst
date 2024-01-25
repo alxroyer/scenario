@@ -442,9 +442,10 @@ The 'tools/check-module-deps.py' script helps visualizing `scenario` module depe
         But on the other hand, they may cause performance issues, especially when used in low-level functions called numerous times.
         By the way, our local import strategy may lead to performance limitations.
 
-        Nevertheless, the general strategy remains:
-        1) use local imports first,
-        then 2) use :ref:`implementation imports <coding-rules.py.imports.impl>` **in case or performance issues only!**
+        That's the reason why a couple of modules have been identified for optimization,
+        and are expected to be imported at the module level, not through local imports.
+
+        The :ref:`'tools/check-imports.py script <coding-rules.py.imports.check>` checks this list of optimized modules.
 
         .. tip::
             The :class:`scenario._perfutils.PerfImportWrapper` util may be used to determine which modules are imported the most
@@ -461,3 +462,7 @@ Import checkings
 ----------------
 
 The 'tools/check-imports.py' script helps checking imports in the whole `scenario` project.
+
+.. tip::
+    The ``# check-import: ignore`` pattern may be used to hide an import error reported by the 'tools/check-imports.py'.
+    This may be particularly useful for optimized imports in local imports (with additional ``##`` justification).

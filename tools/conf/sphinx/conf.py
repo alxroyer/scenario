@@ -146,7 +146,8 @@ todo_emit_warnings = True  # type: bool
 # ===================
 
 # Make `scenario.tools.sphinx.setup()` be called automatically by Sphinx.
-import scenario.tools.sphinx  # noqa  ## Module level import not at top of file
+if True:
+    import scenario.tools.sphinx
 setup = scenario.tools.sphinx.setup  # type: typing.Callable[[sphinx.application.Sphinx], None]
 
 

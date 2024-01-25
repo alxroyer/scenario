@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -58,7 +59,7 @@ class CampaignLogging:
 
     def begincampaign(
             self,
-            campaign_execution,  # type: _CampaignExecutionType
+            campaign_execution,  # type: _CampaignExecutionType  # noqa  ## Parameter unused
     ):  # type: (...) -> None
         """
         Displays the beginning of the campaign.
@@ -97,13 +98,12 @@ class CampaignLogging:
 
         :param test_case_execution: Test case being executed.
         """
-        from ._logextradata import LogExtraData
         from ._loggermain import MAIN_LOGGER
 
         MAIN_LOGGER.rawoutput(f"    Executing '{test_case_execution.name}'")
 
         # Ensure consecutive loggings will be indented below the line before.
-        MAIN_LOGGER.setextradata(LogExtraData.HEAD_INDENTATION, "      ")
+        MAIN_LOGGER.setextradata(_LogExtraDataImpl.HEAD_INDENTATION, "      ")
 
         self._calls.append(CampaignLogging._Call.BEGIN_TEST_CASE)
 
@@ -117,7 +117,6 @@ class CampaignLogging:
         :param test_case_execution:Test case being executed.
         """
         from ._executionstatus import ExecutionStatus
-        from ._logextradata import LogExtraData
         from ._loggermain import MAIN_LOGGER
         from ._testerrors import TestError
 
@@ -137,7 +136,7 @@ class CampaignLogging:
             _error.logerror(MAIN_LOGGER, level=logging.ERROR)
 
         # Break the test case logging indentation set in :meth:`begintestcase()`.
-        MAIN_LOGGER.setextradata(LogExtraData.HEAD_INDENTATION, None)
+        MAIN_LOGGER.setextradata(_LogExtraDataImpl.HEAD_INDENTATION, None)
 
         self._calls.append(CampaignLogging._Call.END_TEST_CASE)
 

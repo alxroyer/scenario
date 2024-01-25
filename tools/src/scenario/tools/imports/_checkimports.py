@@ -166,38 +166,39 @@ class CheckImports:
                         ]),
                     ]),
                 ]):
-                    _import.debug("Pure module level system import %r", _import.src)
+                    _import.debug("Pure module level system import %r", _import.stripped_src)
 
                     # ---
                     # RULE: Don't import symbols from system imports
                     # ---
                     if _import.imported_symbols:
-                        _import.error("Don't import symbols from system imports: %r", _import.src)
+                        _import.error("Don't import symbols from system imports: %r", _import.stripped_src)
                     else:
-                        _import.debug("System import without symbols: %r", _import.src)
+                        _import.debug("System import without symbols: %r", _import.stripped_src)
                 else:
-                    _import.error("Only system imports at pure module level: %r", _import.src)
+                    _import.error("Only system imports at pure module level: %r", _import.stripped_src)
 
             # ---
-            # RULE: Avoid `# noqa` on module level imports.
+            # RULE: Avoid `# noqa` on module level imports
+            #       (except for main blocks and for reexports).
             # ---
-            if re.search(rb'# *noqa', _import.src):
-                _import.error("Avoid `# noqa` on module level imports: %r", _import.src)
+            if re.search(rb'# *noqa', _import.raw_src) and (not _import.context.isifblockmain()) and (not _import.isreexport()):
+                _import.error("Avoid `# noqa` on module level imports: %r", _import.raw_src)
 
             # ---
             # RULE: Avoid unqualified `if` blocks.
             # ---
             if _import.context.isunqualifiedifblock():
-                _import.error("Import made from an unqualified `if` block: %r", _import.src)
+                _import.error("Import made from an unqualified `if` block: %r", _import.stripped_src)
 
             # ---
             # RULE: Avoid `try` blocks, except for reexports.
             # ---
             if _import.context.istryblock():
                 if _import.isreexport():
-                    _import.debug("Reexport in a `try` block: %r", _import.src)
+                    _import.debug("Reexport in a `try` block: %r", _import.stripped_src)
                 else:
-                    _import.error("Avoid `try` blocks, except for reexports: %r", _import.src)
+                    _import.error("Avoid `try` blocks, except for reexports: %r", _import.stripped_src)
 
             # === Import syntax ===
 
@@ -205,11 +206,11 @@ class CheckImports:
             # RULE: Only one symbol per import line.
             # ---
             if len(_import.imported_symbols) == 0:
-                _import.debug("Module import without symbols: %r", _import.src)
+                _import.debug("Module import without symbols: %r", _import.stripped_src)
             elif len(_import.imported_symbols) == 1:
-                _import.debug("Only one imported symbol: %r", _import.src)
+                _import.debug("Only one imported symbol: %r", _import.stripped_src)
             else:
-                _import.error("Several symbols imported in a single line: %r", _import.src)
+                _import.error("Several symbols imported in a single line: %r", _import.stripped_src)
 
             # === Imported symbols ===
 
@@ -222,48 +223,45 @@ class CheckImports:
                         # ---
                         # RULE: Module level imports should be renamed.
                         # ---
-                        _import.error("Imported symbol %r should be renamed: %r", _imported_symbol.original_name, _import.src)
+                        _import.error("Imported symbol %r should be renamed: %r", _imported_symbol.original_name, _import.stripped_src)
                     elif _imported_symbol.local_name == _imported_symbol.original_name:
                         # Regular reexport.
-                        _import.debug("Regular reexport for %r: %r", _imported_symbol.original_name, _import.src)
-                    elif any([
-                        _import.importer_module_path.name == "__init__.py",
-                        _import.importer_module_path in [
-                            _paths.SRC_PATH / "scenario" / "_typeexports.py",
-                        ],
-                    ]):
+                        _import.debug("Regular reexport for %r: %r", _imported_symbol.original_name, _import.stripped_src)
+                    elif _import.isreexport():
                         # Renamed reexport.
-                        _import.debug("Renamed reexport for %r: %r", _imported_symbol.original_name, _import.src)
+                        _import.debug("Renamed reexport for %r: %r", _imported_symbol.original_name, _import.stripped_src)
                     else:
                         # ---
                         # RULE: Symbols imported at module level should renamed as private.
                         # ---
                         if _imported_symbol.local_name.startswith("_"):
-                            _import.debug("Symbol %r imported as private %r: %r", _imported_symbol.original_name, _imported_symbol.local_name, _import.src)
+                            _import.debug("Symbol %r imported as private %r: %r",
+                                          _imported_symbol.original_name, _imported_symbol.local_name, _import.stripped_src)
                         else:
-                            _import.error("Imported symbol %r should be prefixed with '_': %r", _imported_symbol.original_name, _import.src)
+                            _import.error("Imported symbol %r should be prefixed with '_': %r",
+                                          _imported_symbol.original_name, _import.stripped_src)
 
                         # ---
                         # RULE: Symbols imported at module level for execution should suffixed with 'Impl'.
                         # ---
                         if not _import.context.isifblocktype():
                             if _imported_symbol.ismodule():
-                                _import.debug("%r module import does not require a suffix: %r", _imported_symbol.original_name, _import.src)
+                                _import.debug("%r module import does not require a suffix: %r", _imported_symbol.original_name, _import.stripped_src)
                             elif _imported_symbol.isconstant():
-                                _import.debug("%r constant import does not require a suffix: %r", _imported_symbol.original_name, _import.src)
+                                _import.debug("%r constant import does not require a suffix: %r", _imported_symbol.original_name, _import.stripped_src)
                             elif _imported_symbol.local_name.endswith("Impl"):
-                                _import.debug("%r suffixed with 'Impl' as expected: %r", _imported_symbol.original_name, _import.src)
+                                _import.debug("%r suffixed with 'Impl' as expected: %r", _imported_symbol.original_name, _import.stripped_src)
                             else:
-                                _import.error("%r should be suffixed with 'Impl': %r", _imported_symbol.original_name, _import.src)
+                                _import.error("%r should be suffixed with 'Impl': %r", _imported_symbol.original_name, _import.stripped_src)
 
                         # ---
                         # RULE: Symbols imported at module level for typings should suffixed with 'Type' (if not already named so).
                         # ---
                         if _import.context.isifblocktype():
                             if _imported_symbol.local_name.endswith("Type"):
-                                _import.debug("%r suffixed with 'Type as expected: %r", _imported_symbol.original_name, _import.src)
+                                _import.debug("%r suffixed with 'Type as expected: %r", _imported_symbol.original_name, _import.stripped_src)
                             else:
-                                _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.src)
+                                _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.stripped_src)
 
     def _checklocalimports(
             self,
@@ -289,6 +287,6 @@ class CheckImports:
                     _import.importer_module_path.is_relative_to(_paths.SRC_PATH / "scenario" / "ui")
                     and _import.imported_module_path and (_import.imported_module_path.parent == (_paths.SRC_PATH / "scenario"))
                 ):
-                    _import.debug("Ignored local import for optimized %r from `scenario.ui`", _import.imported_module_original_name)
+                    _import.debug("Local import for optimized module ignored from `scenario.ui`: %r", _import.stripped_src)
                 else:
-                    _import.error("Avoid local import for optimized %r", _import.imported_module_original_name)
+                    _import.error("Avoid local import for optimized module: %r", _import.stripped_src)

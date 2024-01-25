@@ -37,9 +37,9 @@ class CommonLoggingArgs:
 
         When per-class debugging is enabled, the main logger debugging is enabled by default.
         """
-        from ._args import Args
-
-        assert isinstance(self, Args)
+        if typing.TYPE_CHECKING:
+            from ._args import Args  # check-imports: ignore  ## Non-executable local import, in type-checking mode only, to avoid cyclic module dependency.
+            assert isinstance(self, Args)
 
         #: Main logger debugging.
         self.debug_main = False  # type: bool

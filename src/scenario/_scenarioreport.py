@@ -28,6 +28,7 @@ if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
+    from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -459,7 +460,6 @@ class ScenarioReport(_LoggerImpl):
         :param req_verifier: Requirement verifier to update. Either a scenario or a step.
         """
         from ._reqdb import REQ_DB
-        from ._reqref import ReqRef
         if typing.TYPE_CHECKING:
             from ._reqtypes import ReqLinkDefType
 
@@ -468,7 +468,7 @@ class ScenarioReport(_LoggerImpl):
             for _json_req_link in json_req_verifier["reqs"]:  # type: _JsonDictType
                 _req_ref_id = _json_req_link["ref"]  # type: str
                 try:
-                    _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: ReqRef
+                    _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: _ReqRefType
                 except KeyError:
                     if self._feed_req_db:
                         # Requirement reference should have been added automatically.

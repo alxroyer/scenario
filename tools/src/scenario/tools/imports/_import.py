@@ -62,7 +62,8 @@ class Import(_ErrorTrackerLoggerImpl):
         self.importer_module_path = importer_module_path  # type: scenario.Path
         self.importer_module_line = importer_module_line  # type: int
         self.context = context  # type: _ModuleLevelContextType
-        self.src = ModuleParser.stripsrc(src)  # type: bytes
+        self.raw_src = src  # type: bytes
+        self.stripped_src = ModuleParser.stripsrc(src)  # type: bytes
         self._imported_module_original_name = ""  # type: str
         self._imported_module_local_name = None  # type: typing.Optional[str]
         self._imported_module_path = None  # type: typing.Optional[scenario.Path]
@@ -77,13 +78,13 @@ class Import(_ErrorTrackerLoggerImpl):
             f"<Import",
             f" context={self.context!r}",
             f" {self.importer_module_path}:{self.importer_module_line}:",
-            f" {self.src!r}",
+            f" {self.stripped_src!r}",
             f" => {self._imported_module_path}" if self._imported_module_path else "",
             f">",
         ])
 
     def isfromsyntax(self):  # type: (...) -> bool
-        return self.src.startswith(b'from ')
+        return self.stripped_src.startswith(b'from ')
 
     @property
     def imported_module_original_name(self):  # type: () -> str
@@ -123,6 +124,17 @@ class Import(_ErrorTrackerLoggerImpl):
         return self._imported_symbols
 
     def isreexport(self):  # type: (...) -> bool
+        from .. import _paths
+
+        if not any([
+            self.importer_module_path.name == "__init__.py",
+            self.importer_module_path in [
+                _paths.SRC_PATH / "scenario" / "_typeexports.py",
+                _paths.TEST_CASES_PATH / "steps" / "common.py",
+                _paths.TEST_SRC_PATH / "scenario" / "test" / "_datascenarios.py",
+            ],
+        ]):
+            return False
         if self.imported_symbols:
             return all([_symbol.isreexport() for _symbol in self.imported_symbols])
         return False
@@ -137,13 +149,13 @@ class Import(_ErrorTrackerLoggerImpl):
 
         _match = None  # type: typing.Optional[typing.Match[bytes]]
 
-        _match = re.match(rb'^import +([^ ,]+)( +as +([^ ,]*))?$', self.src)
+        _match = re.match(rb'^import +([^ ,]+)( +as +([^ ,]*))?$', self.stripped_src)
         if _match:
             self._imported_module_original_name = _match.group(1).decode("utf-8")
             if _match.group(3):
                 self._imported_module_local_name = _match.group(3).decode("utf-8")
 
-        _match = re.match(rb'^from +([^ ,]+) +import +([^ ,].*)$', self.src)
+        _match = re.match(rb'^from +([^ ,]+) +import +([^ ,].*)$', self.stripped_src)
         if _match:
             self._imported_module_original_name = _match.group(1).decode("utf-8")
             if _match.group(2):
@@ -158,7 +170,7 @@ class Import(_ErrorTrackerLoggerImpl):
                         self._imported_symbols[-1].local_name = _match.group(3).decode("utf-8")
 
         if not self._imported_module_original_name:
-            self.raiseerror(SyntaxError, f"Failed to parse {self.src!r}")
+            self.raiseerror(SyntaxError, f"Failed to parse {self.stripped_src!r}")
 
     def _ensureresolved(self):  # type: (...) -> None
         from .. import _paths
@@ -227,3 +239,24 @@ class Import(_ErrorTrackerLoggerImpl):
 
         # No error: save resolved final path (if any).
         self._imported_module_final_path = _path
+
+    def error(
+            self,
+            msg,  # type: str
+            *args,  # type: typing.Any
+            **kwargs  # type: typing.Any
+    ):  # type: (...) -> None
+        """
+        :class:`scenario._logger.Logger.error()` override, for ``'# check-imports: ignore'`` pattern management.
+
+        Automatically redirected to :class:`scenario._logger.Logger.debug()` when ignored.
+        """
+        if b'# check-imports: ignore' not in self.raw_src:
+            # Error not ignored.
+            super().error(msg, *args, **kwargs)
+        else:
+            # Error ignored.
+            _args = list(args)  # type: typing.List[typing.Any]
+            while self.stripped_src in _args:
+                _args[_args.index(self.stripped_src)] = self.raw_src
+            self.debug("(Ignored) " + msg, *_args, **kwargs)
