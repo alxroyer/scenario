@@ -27,6 +27,7 @@ if True:
     from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Same for `ScenarioDefinitionHelper`.
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
@@ -497,7 +498,6 @@ class ReqTraceability(_LoggerImpl):
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
         from ._reqverifier import ReqVerifier
-        from ._stepdefinition import StepDefinition
 
         self.debug("ReqTraceability.getdownstream(): Computing downstream traceability from %d requirement references in database", len(REQ_DB.getallrefs()))
         _downstream_req_refs = []  # type: typing.List[ReqTraceability.Downstream.ReqRef]
@@ -521,7 +521,7 @@ class ReqTraceability(_LoggerImpl):
                                 f"{_req_ref!r} -> {_req_verifier!r} already known through {_downstream_scenario.req_link!r}, "
                                 f"{_req_link!r} ignored"
                             )
-                    elif isinstance(_req_verifier, StepDefinition):
+                    elif isinstance(_req_verifier, _StepDefinitionImpl):
                         # Ensure the owner scenario is set.
                         if (not _downstream_scenario) or (_downstream_scenario.scenario is not _req_verifier.scenario):
                             _downstream_scenario = ReqTraceability.Downstream.Scenario(

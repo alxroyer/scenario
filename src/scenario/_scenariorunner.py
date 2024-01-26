@@ -29,6 +29,8 @@ if True:
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Imported once for performance concerns.
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # Imported once for performance concerns.
+    from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # Imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -308,7 +310,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._scenarioexecution import ScenarioExecution
         from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinitionHelper
 
         self.debug("_buildscenario(scenario_definition=%r)", scenario_definition)
 
@@ -331,7 +332,7 @@ class ScenarioRunner(_LoggerImpl):
                     # Save *init* known issues for this step definition
                     # before executing the step and collecting other known issues registered at the definition level.
                     # These known issues shall be notified before the step is actually executed.
-                    StepDefinitionHelper(scenario_definition.execution.current_step_definition).saveinitknownissues()
+                    _StepDefinitionHelperImpl(scenario_definition.execution.current_step_definition).saveinitknownissues()
 
                     # Execute the step method in the `BUILD_OBJECTS` exection mode.
                     self._execstep(scenario_definition.execution.current_step_definition)
@@ -482,7 +483,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenariologging import SCENARIO_LOGGING
         from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinitionHelper
         from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import ExceptionError, TestError
@@ -519,7 +519,7 @@ class ScenarioRunner(_LoggerImpl):
                 SCENARIO_LOGGING.stepdescription(step_definition)
 
             # Notify *init* known issues saved for this step before executing it.
-            self._notifyknownissuedefinitions(step_definition, StepDefinitionHelper(step_definition).getinitknownissues())
+            self._notifyknownissuedefinitions(step_definition, _StepDefinitionHelperImpl(step_definition).getinitknownissues())
 
             # Method execution.
             self.debug("Executing %r in %s mode", step_definition, self._execution_mode.name)
@@ -726,7 +726,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenarioexecution import ScenarioExecution
         from ._scenariologging import SCENARIO_LOGGING
         from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinition
         from ._stepexecution import StepExecution
 
         self.debug("onerror(error=%r, originator=%r)", error, originator)
@@ -750,7 +749,7 @@ class ScenarioRunner(_LoggerImpl):
         else:
             # Discard duplicate `KnownIssue` instances created on consecutive `StepDefinition.step()` calls.
             # Stick with the first instance registered at definition level.
-            if isinstance(error, KnownIssue) and isinstance(originator, StepDefinition):
+            if isinstance(error, KnownIssue) and isinstance(originator, _StepDefinitionImpl):
                 for _known_issue in originator.known_issues:  # type: KnownIssue
                     if _known_issue == error:
                         self.debug(f"%r: discarding %r in favor of %r", originator, error, _known_issue)

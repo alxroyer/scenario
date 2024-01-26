@@ -22,6 +22,8 @@ Eases the way to define and retrieve a step definition or execution.
 
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -44,8 +46,6 @@ class StepDefinitionSpecification:
 
         :param step_specification: Input specification.
         """
-        from ._stepdefinition import StepDefinition
-
         #: Single match specification (s-spec).
         self._s_spec = None  # type: typing.Optional[typing.Union[_StepDefinitionType, int]]
         #: Multiple match specification (m-spec).
@@ -58,7 +58,7 @@ class StepDefinitionSpecification:
             self._s_spec = step_specification._s_spec
             self._m_spec = step_specification._m_spec
             self._m_spec_index = step_specification._m_spec_index
-        elif isinstance(step_specification, (StepDefinition, int)):
+        elif isinstance(step_specification, (_FAST_PATH.step_definition_cls, int)):
             # Single match specifications (s-spec).
             self._s_spec = step_specification
         elif isinstance(step_specification, (str, type)):
@@ -80,10 +80,9 @@ class StepDefinitionSpecification:
         :return: String representation.
         """
         from ._reflection import qualname
-        from ._stepdefinition import StepDefinition
 
         # Single match specifications (s-spec).
-        if isinstance(self._s_spec, StepDefinition):
+        if bool(isinstance(self._s_spec, _FAST_PATH.scenario_definition_cls)):  # Cast with `bool()` to avoid a "Statement is unreachable" error.
             return str(self._s_spec)
         if isinstance(self._s_spec, int):
             return f"step#{self._s_spec}"
@@ -130,7 +129,6 @@ class StepDefinitionSpecification:
         """
         from ._scenariorunner import SCENARIO_RUNNER
         from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinition
 
         # Ensure a scenario definition reference.
         if not scenario:
@@ -142,7 +140,7 @@ class StepDefinitionSpecification:
         _matching_step_definitions = []  # type: typing.List[_StepDefinitionType]
         for _step_definition in scenario.steps:  # type: _StepDefinitionType
             if any([
-                isinstance(self._s_spec, StepDefinition) and (_step_definition is self._s_spec),
+                isinstance(self._s_spec, _FAST_PATH.step_definition_cls) and (_step_definition is self._s_spec),
                 isinstance(self._s_spec, int) and (_step_definition.number == self._s_spec),
                 isinstance(self._m_spec, str) and _step_definition.name.endswith(self._m_spec),
                 isinstance(self._m_spec, type) and isinstance(_step_definition, self._m_spec),

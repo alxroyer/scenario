@@ -28,10 +28,10 @@ import typing
 if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # `DebugClass` used to instanciate global variable.
     from ._logger import Logger as _LoggerImpl  # `Logger` used to instanciate global variable.
-    from ._scenariodefinition import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` imported once for performance concerns.
+    from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` imported once for perf. concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
-    from ._scenariodefinition import MetaScenarioDefinition as _MetaScenarioDefinitionType
+    from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionType
 
 
 #: Logger instance for reflective programming.

@@ -34,6 +34,7 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
 class FastPath:
@@ -90,6 +91,11 @@ class FastPath:
         #: Reference resolved by :meth:`scenario_definition_cls()` property.
         self._scenario_definition_cls = None  # type: typing.Optional[typing.Type[_ScenarioDefinitionType]]
 
+        #: :class:`._stepdefinition.StepDefinition` class reference.
+        #:
+        #: Reference resolved by :meth:`step_definition_cls()` property.
+        self._step_definition_cls = None  # type: typing.Optional[typing.Type[_StepDefinitionType]]
+
         #: :class:`._req.Req` class reference.
         #:
         #: Reference resolved by :meth:`req_cls()` property.
@@ -143,12 +149,22 @@ class FastPath:
     @property
     def scenario_definition_cls(self):  # type: () -> typing.Type[_ScenarioDefinitionType]
         """
-        #: :class:`._scenariodefinition.ScenarioDefinition` class reference.
+        :class:`._scenariodefinition.ScenarioDefinition` class reference.
         """
         if self._scenario_definition_cls is None:
             from ._scenariodefinition import ScenarioDefinition  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_definition_cls = ScenarioDefinition
         return self._scenario_definition_cls
+
+    @property
+    def step_definition_cls(self):  # type: () -> typing.Type[_StepDefinitionType]
+        """
+        :class:`._stepdefinition.StepDefinition` class reference.
+        """
+        if self._step_definition_cls is None:
+            from ._stepdefinition import StepDefinition  # check-imports: ignore  ## `FastPath` local import.
+            self._step_definition_cls = StepDefinition
+        return self._step_definition_cls
 
     @property
     def req_cls(self):  # type: () -> typing.Type[_ReqType]

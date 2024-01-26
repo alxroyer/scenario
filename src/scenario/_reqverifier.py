@@ -68,11 +68,9 @@ class ReqVerifier(abc.ABC):
         Checks that only :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`
         inherit from :class:`ReqVerifier`.
         """
-        from ._stepdefinition import StepDefinition
-
         if not any([
             isinstance(self, _FAST_PATH.scenario_definition_cls),
-            isinstance(self, StepDefinition),
+            isinstance(self, _FAST_PATH.step_definition_cls),
         ]):
             raise TypeError(f"Cannot subclass ReqVerifier if not a scenario nor step definition")
 
@@ -217,11 +215,19 @@ class ReqVerifierHelper:
         :param sortable: Set to ``True`` to compute a sortable string.
         :return: String representation of the scenario or step.
         """
-        from ._stepdefinition import StepDefinition
-
         if isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
-            return req_verifier.name  # noqa  ## Unresolved attribute reference 'name' for class 'ReqVerifier'
-        elif isinstance(req_verifier, StepDefinition):
+            # Redundant assertion for type checking concerns.
+            if typing.TYPE_CHECKING:
+                from ._scenariodefinition import ScenarioDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
+                assert isinstance(req_verifier, ScenarioDefinition)
+
+            return req_verifier.name
+        elif isinstance(req_verifier, _FAST_PATH.step_definition_cls):
+            # Redundant assertion for type checking concerns.
+            if typing.TYPE_CHECKING:
+                from ._stepdefinition import StepDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
+                assert isinstance(req_verifier, StepDefinition)
+
             _step_number_fmt = "d"  # type: str
             if sortable:
                 # Find out the number of digits to consider to format the step number.
@@ -255,10 +261,18 @@ class ReqVerifierHelper:
         :param req_verifier: Scenario or step definition as a :class:`ReqVerifier` instance.
         :return: Scenario definition.
         """
-        from ._stepdefinition import StepDefinition
-
         if isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
-            return req_verifier  # noqa  ## Expected type 'ScenarioDefinition', got 'ReqVerifier' instead
-        if isinstance(req_verifier, StepDefinition):
+            # Redundant assertion for type checking concerns.
+            if typing.TYPE_CHECKING:
+                from ._scenariodefinition import ScenarioDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
+                assert isinstance(req_verifier, ScenarioDefinition)
+
+            return req_verifier
+        if isinstance(req_verifier, _FAST_PATH.step_definition_cls):
+            # Redundant assertion for type checking concerns.
+            if typing.TYPE_CHECKING:
+                from ._stepdefinition import StepDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
+                assert isinstance(req_verifier, StepDefinition)
+
             return req_verifier.scenario
         raise TypeError(f"Unexpected requirement verifier type {req_verifier!r}")

@@ -447,6 +447,8 @@ The 'tools/check-module-deps.py' script helps visualizing `scenario` module depe
 
         The :ref:`'tools/check-imports.py script <coding-rules.py.imports.check>` checks this list of optimized modules.
 
+        The list of optimized modules is defined in 'scenario/tools/imports/_optimized.py'.
+
         .. tip::
             The :class:`scenario._perfutils.PerfImportWrapper` util may be used to determine which modules are imported the most
             during a given code execution.

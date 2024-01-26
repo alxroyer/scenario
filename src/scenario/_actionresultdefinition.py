@@ -23,6 +23,7 @@ import typing
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` use for inheritance.
 if typing.TYPE_CHECKING:
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
@@ -52,7 +53,6 @@ class ActionResultDefinition:
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
         from ._actionresultexecution import ActionResultExecution
-        from ._stepdefinition import StepDefinition
         from ._textutils import anylongtext2str
 
         #: Action/result type.
@@ -61,9 +61,8 @@ class ActionResultDefinition:
         self.description = anylongtext2str(description)  # type: str
         #: Owner step.
         #:
-        #: Initially set with a void reference.
-        #: Fixed when :meth:`._stepdefinition.StepDefinition.addactionresult()` is called.
-        self.step = StepDefinition.__new__(StepDefinition)  # type: StepDefinition
+        #: Set when :meth:`._stepdefinition.StepDefinition.addactionresult()` is called.
+        self._step = None  # type: typing.Optional[_StepDefinitionType]
         #: Executions.
         self.executions = []  # type: typing.List[ActionResultExecution]
 
@@ -78,3 +77,23 @@ class ActionResultDefinition:
         Printable string representation.
         """
         return f"{self.type} {self.description!r}"
+
+    @property
+    def step(self):  # type: () -> _StepDefinitionType
+        """
+        Owner step.
+        """
+        if self._step is None:
+            raise RuntimeError(f"Owner step not set yet for {self!r}")
+        return self._step
+
+    @step.setter
+    def step(self, step):  # type: (_StepDefinitionType) -> None
+        """
+        Owner step setter.
+
+        Called once by :meth:`._stepdefinition.StepDefinition.addactionresult()`.
+        """
+        if self._step is not None:
+            raise RuntimeError(f"Owner step already set for {self!r} with {self._step!r}, can't set {step!r}")
+        self._step = step

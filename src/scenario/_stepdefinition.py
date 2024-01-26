@@ -18,7 +18,6 @@
 Step definition.
 """
 
-import inspect
 import types
 import typing
 
@@ -32,7 +31,6 @@ if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._locations import CodeLocation as _CodeLocationType
-    from ._logger import Logger as _LoggerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
@@ -93,9 +91,8 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
 
         #: Owner scenario.
         #:
-        #: Initially set with a void reference.
-        #: Fixed when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
-        self.scenario = _FAST_PATH.scenario_definition_cls.__new__(_FAST_PATH.scenario_definition_cls)  # type: _ScenarioDefinitionType
+        #: Set when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
+        self._scenario = None  # type: typing.Optional[_ScenarioDefinitionType]
 
         #: Step method, if any.
         self.method = method  # type: typing.Optional[types.MethodType]
@@ -144,6 +141,24 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         Step name, i.e. the fully qualified name of the class or method defining it.
         """
         return self.location.qualname
+
+    @property
+    def scenario(self):  # type: () -> _ScenarioDefinitionType
+        """
+        Owner scenario.
+        """
+        if self._scenario is None:
+            raise RuntimeError(f"Owner scenario not set yet for {self!r}")
+        return self._scenario
+
+    @scenario.setter
+    def scenario(self, scenario):  # type: (_ScenarioDefinitionType) -> None
+        """
+        Owner scenario setter.
+        """
+        if self._scenario is not None:
+            raise RuntimeError(f"Owner scenario already set for {self!r} with {self._scenario!r}, can't set {scenario!r}")
+        self._scenario = scenario
 
     @property
     def number(self):  # type: () -> int
@@ -263,109 +278,3 @@ class StepDefinitionHelper:
             if isinstance(_init_known_issues, list):
                 return _init_known_issues
         return []
-
-
-class StepMethods:
-    """
-    Collection of static methods to help manipulating step methods.
-    """
-
-    @staticmethod
-    def _hierarchycount(
-            logger,  # type: _LoggerType
-            method,  # type: types.MethodType
-    ):  # type: (...) -> int
-        """
-        Returns the number of classes in class hierarchy that have this method being declared.
-
-        :param logger: Logger to use for debugging.
-        :param method: Method to look for accessibility in class hierarchy.
-        :return: Count. The higher, the upper class the method is defined into.
-
-        Used by the :meth:`sortbyhierarchythennames()` and :meth:`sortbyreversehierarchythennames()` methods.
-        """
-        from ._reflection import qualname
-
-        _count = 0  # type: int
-        for _cls in inspect.getmro(method.__self__.__class__):  # type: type
-            for _method_name, _method in inspect.getmembers(_cls, predicate=inspect.isfunction):  # type: str, types.MethodType
-                if _method_name == method.__name__:
-                    _count += 1
-
-        logger.debug("StepMethods._hierarchycount(%s) -> %d", qualname(method), _count)
-        return _count
-
-    @staticmethod
-    def _dispmethodlist(
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> str
-        """
-        Computes a debug representation of a method list.
-
-        :param methods: Array of methods to debug.
-        :return: Debug representation.
-        """
-        from ._reflection import qualname
-
-        return f"[{', '.join(qualname(_method) for _method in methods)}]"
-
-    @staticmethod
-    def sortbynames(
-            logger,  # type: _LoggerType
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> None
-        """
-        Sorts an array of methods by method names.
-
-        :param logger: Logger to use for debugging.
-        :param methods: Array of methods to sort.
-        """
-        logger.debug("StepMethods.sortbynames(%s)", StepMethods._dispmethodlist(methods))
-        methods.sort(key=lambda method: method.__name__)
-        logger.debug("                     -> %s", StepMethods._dispmethodlist(methods))
-
-    @staticmethod
-    def sortbyhierarchythennames(
-            logger,  # type: _LoggerType
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> None
-        """
-        Sorts an array of methods by hierarchy at first, then by method names.
-
-        :param logger: Logger to use for debugging.
-        :param methods: Array of methods to sort.
-
-        Makes the methods defined in the higher classes be executed prior to those defined in the lower classes,
-        i.e. makes the most specific methods be executed at last.
-
-        Formerly used by *before-test* and *before-step* steps.
-        """
-        logger.debug("StepMethods.sortbyhierarchythennames(%s)", StepMethods._dispmethodlist(methods))
-        # We want to execute the higher class methods at first.
-        # When a method is defined in an upper class, its hierarchy count is high.
-        # Let's negate the result of :meth:`StepMethods._hierarchycount()` in order to sort the higher class methods at the beginning of the list.
-        methods.sort(key=lambda method: (- StepMethods._hierarchycount(logger, method), method.__name__))
-        logger.debug("                                  -> %s", StepMethods._dispmethodlist(methods))
-
-    @staticmethod
-    def sortbyreversehierarchythennames(
-            logger,  # type: _LoggerType
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> None
-        """
-        Sorts an array of methods by reverse hierarchy first, then by method names.
-
-        :param logger: Logger to use for debugging.
-        :param methods: Array of methods to sort.
-
-        Makes the methods defined in the lower classes be executed prior to those defined in the upper classes,
-        i.e. makes the most specific methods be executed at first.
-
-        Formerly used by *after-test* and *after-step* steps.
-        """
-        logger.debug("StepMethods.sortbyreversehierarchythennames(%s)", StepMethods._dispmethodlist(methods))
-        # We want to execute the lower class methods at first.
-        # When a method is defined in a lower class, its hierarchy count is low.
-        # Do not negate the result of :meth:`StepMethods._hierarchycount()` in order to sort the lower class methods at the beginning of the list.
-        methods.sort(key=lambda method: (StepMethods._hierarchycount(logger, method), method.__name__))
-        logger.debug("                                         -> %s", StepMethods._dispmethodlist(methods))

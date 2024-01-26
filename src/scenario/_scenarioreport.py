@@ -24,6 +24,7 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._jsondictutils import JsonDictType as _JsonDictType
@@ -370,7 +371,6 @@ class ScenarioReport(_LoggerImpl):
         """
         from ._debugutils import jsondump
         from ._stats import TimeStats
-        from ._stepdefinition import StepDefinition
         from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
@@ -379,7 +379,7 @@ class ScenarioReport(_LoggerImpl):
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         with self.pushindentation():
-            _step_definition = StepDefinition()  # type: StepDefinition
+            _step_definition = _StepDefinitionImpl()  # type: _StepDefinitionType
 
             _step_definition.location = _FAST_PATH.code_location.fromlongstring(json_step_definition["location"])
             self.debug("Location: %s", _step_definition.location.tolongstring())
