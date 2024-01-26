@@ -111,7 +111,7 @@ class StepDefinitionSpecification:
         :return: Step definition instance when resolved, ``None`` otherwise.
         """
         try:
-            return self.expect()
+            return self.expect(scenario=scenario)
         except LookupError:
             # Default to `None`.
             return None
@@ -221,7 +221,7 @@ class StepExecutionSpecification:
         :return: Step execution instance when resolved, ``None`` otherwise.
         """
         try:
-            return self.expect()
+            return self.expect(scenario=scenario)
         except LookupError:
             # Default to `None`.
             return None
