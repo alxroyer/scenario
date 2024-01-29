@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._scenarioargs import CommonExecArgs as _CommonExecArgsImpl  # `CommonExecArgs` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
@@ -50,8 +51,6 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         :param default_outdir_cwd:
             ``False`` to disable the use of the current directory by default.
         """
-        from ._path import Path
-
         _ArgsImpl.__init__(self, class_debugging=True)
 
         self.setdescription("Scenario campaign execution.")
@@ -64,8 +63,8 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         #:
         #: Inner attribute.
         #: ``None`` until actually set, either with the ``--outdir`` option, or programmatically in subclasses.
-        self._outdir = None  # type: typing.Optional[Path]
-        self.addarg("Output directory", "_outdir", Path).define(
+        self._outdir = None  # type: typing.Optional[_PathType]
+        self.addarg("Output directory", "_outdir", _PathImpl).define(
             "--outdir", metavar="OUTDIR_PATH",
             action="store", type=str,
             help=f"Output directory to store test results into.{' Defaults to the current directory.' if self._default_outdir_cwd else ''}",
@@ -91,9 +90,9 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         )
 
         #: Test suite file paths.
-        self.test_suite_paths = []  # type: typing.List[Path]
+        self.test_suite_paths = []  # type: typing.List[_PathType]
         if positional_args:
-            self.addarg("Test suite files", "test_suite_paths", Path).define(
+            self.addarg("Test suite files", "test_suite_paths", _PathImpl).define(
                 metavar="TEST_SUITE_PATH", nargs="*",
                 action="store", type=str, default=[],
                 help="Test suite file(s) to execute. "
@@ -121,7 +120,6 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
         from ._loggermain import MAIN_LOGGER
-        from ._path import Path
 
         if not _ArgsImpl._checkargs(self, args):
             return False
@@ -131,13 +129,13 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         if self._outdir is None:
             if self._default_outdir_cwd:
                 self.debug("Using current working directory for output directory by default")
-                self._outdir = Path.cwd()
+                self._outdir = _PathImpl.cwd()
             else:
                 MAIN_LOGGER.error("Output directory missing")
                 return False
         self._outdir.mkdir(parents=True, exist_ok=True)
 
-        for _test_suite_path in self.test_suite_paths:  # type: Path
+        for _test_suite_path in self.test_suite_paths:  # type: _PathType
             if not _test_suite_path.is_file():
                 MAIN_LOGGER.error(f"No such file '{_test_suite_path}'")
                 return False

@@ -32,8 +32,10 @@ import typing
 
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
 
 
 class CodeLocation:
@@ -52,11 +54,9 @@ class CodeLocation:
         :param tb_item: Traceback item.
         :return: :class:`CodeLocation` instance.
         """
-        from ._path import Path
-
         assert tb_item.lineno is not None, f"Invalid traceback item {tb_item!r} (line missing)"
         return CodeLocation(
-            file=Path(tb_item.filename),
+            file=_PathImpl(tb_item.filename),
             line=tb_item.lineno,
             qualname=tb_item.name,
         )
@@ -71,13 +71,12 @@ class CodeLocation:
         :param method: Method to locate.
         :return: :class:`CodeLocation` instance.
         """
-        from ._path import Path
         from ._reflection import qualname
 
         _source_file = inspect.getsourcefile(method)  # type: typing.Optional[str]
         assert _source_file
         return CodeLocation(
-            file=Path(_source_file),
+            file=_PathImpl(_source_file),
             line=inspect.getsourcelines(method)[1],
             qualname=qualname(method),
         )
@@ -100,7 +99,6 @@ class CodeLocation:
             In order to speed up consecutive calls for the same class,
             this method caches results in :attr:`_class_locations_cache`.
         """
-        from ._path import Path
         from ._reflection import qualname
 
         # First, search for the class location in the cache.
@@ -116,7 +114,7 @@ class CodeLocation:
 
         # Build a `CodeLocation` instance.
         _location = CodeLocation(
-            file=Path(_source_file),
+            file=_PathImpl(_source_file),
             line=_line,
             qualname=qualname(cls),
         )  # type: CodeLocation
@@ -138,14 +136,12 @@ class CodeLocation:
         :param line: Line in the file where the execution takes place.
         :param qualname: Qualified name of the class/function pointed.
         """
-        from ._path import Path
-
         #: File path.
         #:
         #: Set as a :class:`._path.Path` when ``file`` is passed on as a :class:`._path.Path`.
         #: Set as a ``pathlib.Path`` otherwise, possibly a relative path in that case.
-        self.file = pathlib.Path(file)  # type: typing.Union[pathlib.Path, Path]
-        if isinstance(file, Path):
+        self.file = pathlib.Path(file)  # type: typing.Union[pathlib.Path, _PathType]
+        if isinstance(file, _PathImpl):
             self.file = file
         #: Line number in the file.
         self.line = line  # type: int
@@ -171,9 +167,7 @@ class CodeLocation:
         """
         Long text representation.
         """
-        from ._path import Path
-
-        if isinstance(self.file, Path):
+        if isinstance(self.file, _PathImpl):
             return f"{self.file.prettypath}:{self.line}:{self.qualname}"
         else:
             return f"{self.file.as_posix()}:{self.line}:{self.qualname}"
@@ -255,7 +249,6 @@ class ExecutionLocations(_LoggerImpl):
         :param tb_items: Traceback items to build the stack from.
         :return: Stack of :class:`CodeLocation`, from first to last call.
         """
-        from ._path import Path
         from ._reflection import checkfuncqualname
 
         self.debug("Computing test location:")
@@ -283,7 +276,7 @@ class ExecutionLocations(_LoggerImpl):
                 # Filter-out stack trace elements based on file paths:
                 _keep = True
                 # - Avoid 'src/scenario' sources.
-                if isinstance(_location.file, Path) and _location.file.is_relative_to(pathlib.Path(__file__).parent):
+                if isinstance(_location.file, _PathImpl) and _location.file.is_relative_to(pathlib.Path(__file__).parent):
                     _keep = False
                 for _skipped_path in (
                     # - Avoid unittest sources.

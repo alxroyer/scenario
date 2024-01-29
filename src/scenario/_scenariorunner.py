@@ -36,6 +36,7 @@ if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
@@ -96,7 +97,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
-        from ._path import Path
         from ._reqdb import REQ_DB
         from ._scenarioargs import ScenarioArgs
         from ._scenarioexecution import ScenarioExecution
@@ -115,13 +115,13 @@ class ScenarioRunner(_LoggerImpl):
             LOGGING_SERVICE.start()
 
             # Load requirements.
-            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: Path
+            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
                 MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
                 REQ_DB.load(_req_db_file)
 
             # Execute tests.
             _errors = []  # type: typing.List[ErrorCode]
-            for _scenario_path in ScenarioArgs.getinstance().scenario_paths:  # type: Path
+            for _scenario_path in ScenarioArgs.getinstance().scenario_paths:  # type: _PathType
                 self.debug("Executing '%s'...", _scenario_path)
 
                 _res = self.executepath(_scenario_path)  # type: ErrorCode
@@ -146,7 +146,7 @@ class ScenarioRunner(_LoggerImpl):
                 SCENARIO_RESULTS.add(_scenario_execution)
 
                 # Generate scenario report if required.
-                _scenario_report = ScenarioArgs.getinstance().scenario_report  # type: typing.Optional[Path]
+                _scenario_report = ScenarioArgs.getinstance().scenario_report  # type: typing.Optional[_PathType]
                 if _scenario_report:
                     try:
                         SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)

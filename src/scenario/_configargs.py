@@ -20,6 +20,11 @@ Common configuration program arguments.
 
 import typing
 
+if True:
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+if typing.TYPE_CHECKING:
+    from ._path import Path as _PathType
+
 
 class CommonConfigArgs:
     """
@@ -30,15 +35,13 @@ class CommonConfigArgs:
         """
         Installs common configuration program arguments.
         """
-        from ._path import Path
-
         if typing.TYPE_CHECKING:
             from ._args import Args  # check-imports: ignore  ## Non-executable local import, in type-checking mode only, to avoid cyclic module dependency.
             assert isinstance(self, Args)
 
         #: Configuration files.
-        self.config_paths = []  # type: typing.List[Path]
-        self.addarg("Configuration files", "config_paths", Path).define(
+        self.config_paths = []  # type: typing.List[_PathType]
+        self.addarg("Configuration files", "config_paths", _PathImpl).define(
             "--config-file", metavar="CONFIG_PATH",
             action="append", type=str, default=[],
             help="Input configuration file path. "

@@ -31,6 +31,9 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # `CommonLoggingArgs` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+if typing.TYPE_CHECKING:
+    from ._path import Path as _PathType
 
 
 class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
@@ -208,7 +211,6 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         """
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
-        from ._path import Path
 
         # Parse command line arguments.
         _parsed_args = self.__arg_parser.parse_args(args)  # type: typing.Any
@@ -230,7 +232,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
                 MAIN_LOGGER.logexceptiontraceback(_err)
                 return False
         # - 2) load configuration files,
-        for _config_path in self.config_paths:  # type: Path
+        for _config_path in self.config_paths:  # type: _PathType
             try:
                 MAIN_LOGGER.info(f"Loading '{_config_path}'")
                 _FAST_PATH.config_db.loadfile(_config_path)
@@ -365,7 +367,6 @@ class ArgInfo:
         :param args_instance: :class:`Args` instance to feed.
         :param parsed_args: Opaque parsed object returned by the ``argparse`` library.
         """
-        from ._path import Path
         from ._reflection import qualname
 
         # Retrieve and check members from both: the :class:`Args` instance on the one hand, and the opaque parsed object on the other hand.
@@ -400,8 +401,8 @@ class ArgInfo:
                 _parsed_value = _parsed_value[1]
 
             # Check and convert parsed item values.
-            if (self.value_type is Path) and isinstance(_parsed_value, str):
-                _parsed_value = Path(_parsed_value)
+            if (self.value_type is _PathImpl) and isinstance(_parsed_value, str):
+                _parsed_value = _PathImpl(_parsed_value)
             elif isinstance(self.value_type, type):
                 _parsed_value = self.value_type(_parsed_value)
             elif inspect.isfunction(self.value_type) and isinstance(_parsed_value, str):

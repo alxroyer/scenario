@@ -25,6 +25,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._configtypes import OriginType as _OriginType
@@ -507,10 +508,8 @@ class ConfigNode:
 
         .. seealso:: :attr:`origin`.
         """
-        from ._path import Path
-
         try:
-            _path = Path(self.origin)  # type: Path
+            _path = _PathImpl(self.origin)  # type: _PathType
             if _path.is_file():
                 return _path
         except:  # noqa  ## Too broad exception clause.

@@ -26,6 +26,7 @@ import typing
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._configtypes import KeyType as _KeyType
@@ -88,10 +89,9 @@ class ConfigDatabase(_LoggerImpl):
         from ._configini import ConfigIni
         from ._configjsondict import ConfigJsonDict
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         if format is None:
-            if Path(path).suffix.lower() == ".ini":
+            if _PathImpl(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
             elif JsonDict.isknwonsuffix(path):
                 format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'
@@ -126,10 +126,9 @@ class ConfigDatabase(_LoggerImpl):
         from ._configini import ConfigIni
         from ._configjsondict import ConfigJsonDict
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         if format is None:
-            if Path(path).suffix.lower() == ".ini":
+            if _PathImpl(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
             elif JsonDict.isknwonsuffix(path):
                 format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'

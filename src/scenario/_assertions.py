@@ -28,6 +28,7 @@ import typing
 
 if True:
     from . import _assertionhelpers as _assertionhelpers  # `_assertionhelpers` used for global instanciation.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType as _ErrParamType
     from ._assertionhelpers import EvidenceParamType as _EvidenceParamType
@@ -1294,11 +1295,9 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._path import Path
-
         assert path is not None, _assertionhelpers.isnonemsg("assertexists()", "path")
-        if not isinstance(path, Path):
-            path = Path(path)
+        if not isinstance(path, _PathImpl):
+            path = _PathImpl(path)
 
         assert path.exists(), _assertionhelpers.errmsg(
             err,
@@ -1322,11 +1321,9 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._path import Path
-
         assert path is not None, _assertionhelpers.isnonemsg("assertnotexists()", "path")
-        if not isinstance(path, Path):
-            path = Path(path)
+        if not isinstance(path, _PathImpl):
+            path = _PathImpl(path)
 
         assert not path.exists(), _assertionhelpers.errmsg(
             err,
@@ -1350,11 +1347,9 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._path import Path
-
         assert path is not None, _assertionhelpers.isnonemsg("assertisfile()", "path")
-        if not isinstance(path, Path):
-            path = Path(path)
+        if not isinstance(path, _PathImpl):
+            path = _PathImpl(path)
 
         assert path.is_file(), _assertionhelpers.errmsg(
             err,
@@ -1378,11 +1373,9 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._path import Path
-
         assert path is not None, _assertionhelpers.isnonemsg("assertisdir()", "path")
-        if not isinstance(path, Path):
-            path = Path(path)
+        if not isinstance(path, _PathImpl):
+            path = _PathImpl(path)
 
         assert path.is_dir(), _assertionhelpers.errmsg(
             err,
@@ -1408,14 +1401,12 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._path import Path
-
         assert path1 is not None, _assertionhelpers.isnonemsg("assertsamepaths()", "path1")
         assert path2 is not None, _assertionhelpers.isnonemsg("assertsamepaths()", "path2")
-        if not isinstance(path1, Path):
-            path1 = Path(path1)
-        if not isinstance(path2, Path):
-            path2 = Path(path2)
+        if not isinstance(path1, _PathImpl):
+            path1 = _PathImpl(path1)
+        if not isinstance(path2, _PathImpl):
+            path2 = _PathImpl(path2)
 
         assert path1.samefile(path2), _assertionhelpers.errmsg(
             err,
@@ -1441,14 +1432,12 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._path import Path
-
         assert path is not None, _assertionhelpers.isnonemsg("assertisrelativeto()", "path")
         assert dir is not None, _assertionhelpers.isnonemsg("assertisrelativeto()", "dir")
-        if not isinstance(path, Path):
-            path = Path(path)
-        if not isinstance(dir, Path):
-            dir = Path(dir)  # noqa  ## Shadows built-in name 'dir'
+        if not isinstance(path, _PathImpl):
+            path = _PathImpl(path)
+        if not isinstance(dir, _PathImpl):
+            dir = _PathImpl(dir)  # noqa  ## Shadows built-in name 'dir'
 
         assert path.is_relative_to(dir), _assertionhelpers.errmsg(
             err,
@@ -1474,14 +1463,12 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._path import Path
-
         assert path is not None, _assertionhelpers.isnonemsg("assertisnotrelativeto()", "path")
         assert dir is not None, _assertionhelpers.isnonemsg("assertisnotrelativeto()", "dir")
-        if not isinstance(path, Path):
-            path = Path(path)
-        if not isinstance(dir, Path):
-            dir = Path(dir)  # noqa  ## Shadows built-in name 'dir'
+        if not isinstance(path, _PathImpl):
+            path = _PathImpl(path)
+        if not isinstance(dir, _PathImpl):
+            dir = _PathImpl(dir)  # noqa  ## Shadows built-in name 'dir'
 
         assert not path.is_relative_to(dir), _assertionhelpers.errmsg(
             err,

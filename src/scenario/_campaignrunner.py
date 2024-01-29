@@ -33,6 +33,7 @@ if typing.TYPE_CHECKING:
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
@@ -74,7 +75,6 @@ class CampaignRunner(_LoggerImpl):
         from ._handlers import HANDLERS
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
-        from ._path import Path
         from ._reqdb import REQ_DB
         from ._reqtraceability import REQ_TRACEABILITY
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
@@ -86,7 +86,7 @@ class CampaignRunner(_LoggerImpl):
                 CampaignArgs.setinstance(CampaignArgs())
                 if not CampaignArgs.getinstance().parse(sys.argv[1:]):
                     return CampaignArgs.getinstance().error_code
-            _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[Path]
+            _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[_PathType]
             if not _test_suite_files:
                 MAIN_LOGGER.error("No test suite files")
                 return ErrorCode.INPUT_MISSING_ERROR
@@ -94,7 +94,7 @@ class CampaignRunner(_LoggerImpl):
             # Create the date/time output directory (if required).
             if CampaignArgs.getinstance().create_dt_subdir:
                 _outdir_basename = toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
-                _outdir = CampaignArgs.getinstance().outdir / _outdir_basename  # type: Path
+                _outdir = CampaignArgs.getinstance().outdir / _outdir_basename  # type: _PathType
             else:
                 _outdir = CampaignArgs.getinstance().outdir
             _outdir.mkdir(parents=True, exist_ok=True)
@@ -103,7 +103,7 @@ class CampaignRunner(_LoggerImpl):
             LOGGING_SERVICE.start()
 
             # Load requirements.
-            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: Path
+            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
                 MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
                 REQ_DB.load(_req_db_file)
 
@@ -117,7 +117,7 @@ class CampaignRunner(_LoggerImpl):
 
             # Execute the campaign.
             _campaign_execution.time.setstarttime()
-            for _test_suite_path in _test_suite_files:  # type: Path
+            for _test_suite_path in _test_suite_files:  # type: _PathType
                 self._exectestsuitefile(_campaign_execution, _test_suite_path)
             _campaign_execution.time.setendtime()
 
@@ -195,7 +195,6 @@ class CampaignRunner(_LoggerImpl):
         from ._campaignexecution import TestCaseExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
         from ._handlers import HANDLERS
-        from ._path import Path
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
 
         HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
@@ -206,7 +205,7 @@ class CampaignRunner(_LoggerImpl):
         try:
             test_suite_execution.test_suite_file.read()
 
-            for _test_script_path in test_suite_execution.test_suite_file.script_paths:  # type: Path
+            for _test_script_path in test_suite_execution.test_suite_file.script_paths:  # type: _PathType
                 _test_case_execution = TestCaseExecution(test_suite_execution, _test_script_path)  # type: TestCaseExecution
                 test_suite_execution.test_case_executions.append(_test_case_execution)
 
@@ -234,7 +233,6 @@ class CampaignRunner(_LoggerImpl):
         from ._datetimeutils import ISO8601_REGEX
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
-        from ._path import Path
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioexecution import ScenarioExecution
         from ._scenarioresults import SCENARIO_RESULTS
@@ -250,7 +248,7 @@ class CampaignRunner(_LoggerImpl):
             # Prepare output paths.
             def _mkoutpath(
                     ext,  # type: str
-            ):  # type: (...) -> Path
+            ):  # type: (...) -> _PathType
                 """
                 Output file path builder.
 
@@ -265,7 +263,7 @@ class CampaignRunner(_LoggerImpl):
             # Prepare the command line.
             _subprocess = SubProcess(sys.executable, _FAST_PATH.scenario_config.runnerscriptpath())  # type: SubProcess
             # Report configuration files and single configuration values from campaign to scenario execution.
-            for _config_path in CampaignArgs.getinstance().config_paths:  # type: Path
+            for _config_path in CampaignArgs.getinstance().config_paths:  # type: _PathType
                 _subprocess.addargs("--config-file", _config_path)
             for _config_name in CampaignArgs.getinstance().config_values:  # type: str
                 _subprocess.addargs("--config-value", _config_name, CampaignArgs.getinstance().config_values[_config_name])

@@ -22,6 +22,9 @@ import typing
 
 if True:
     from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+if typing.TYPE_CHECKING:
+    from ._path import Path as _PathType
 
 
 class ReqManagementArgs(_ArgsImpl):
@@ -33,13 +36,11 @@ class ReqManagementArgs(_ArgsImpl):
         """
         Defines program arguments for :class:`._reqmgt.ReqManagement`.
         """
-        from ._path import Path
-
         _ArgsImpl.__init__(self, class_debugging=True)
 
         #: Input requirement database files.
-        self.req_db_paths = []  # type: typing.List[Path]
-        self.addarg("Req-db files", "req_db_paths", Path).define(
+        self.req_db_paths = []  # type: typing.List[_PathType]
+        self.addarg("Req-db files", "req_db_paths", _PathImpl).define(
             "--req-db", metavar="PATH",
             action="append", type=str, default=[],
             help="Requirement database file to load. "
@@ -48,8 +49,8 @@ class ReqManagementArgs(_ArgsImpl):
         )
 
         #: Test suite files to load scenarios from.
-        self.test_suite_paths = []  # type: typing.List[Path]
-        self.addarg("Test suite files", "test_suite_paths", Path).define(
+        self.test_suite_paths = []  # type: typing.List[_PathType]
+        self.addarg("Test suite files", "test_suite_paths", _PathImpl).define(
             "--test-suite", metavar="PATH",
             action="append", type=str, default=[],
             help="Test suite file to load scenarios from. "
@@ -58,8 +59,8 @@ class ReqManagementArgs(_ArgsImpl):
         )
 
         #: Campaign results to load data from.
-        self.campaign_results_path = None  # type: typing.Optional[Path]
-        self.addarg("Campaign results path", "campaign_results_path", Path).define(
+        self.campaign_results_path = None  # type: typing.Optional[_PathType]
+        self.addarg("Campaign results path", "campaign_results_path", _PathImpl).define(
             "--campaign", metavar="PATH",
             action="store", type=str,
             help="Campaign directory or JUnit report file to load data from. "
@@ -67,16 +68,16 @@ class ReqManagementArgs(_ArgsImpl):
         )
 
         #: Downstream traceability option.
-        self.downstream_traceability_outfile = None  # type: typing.Optional[Path]
-        self.addarg("Downstream traceability", "downstream_traceability_outfile", Path).define(
+        self.downstream_traceability_outfile = None  # type: typing.Optional[_PathType]
+        self.addarg("Downstream traceability", "downstream_traceability_outfile", _PathImpl).define(
             "--downstream-traceability", metavar="PATH",
             action="store", type=str, default=None,
             help="Generate downstream traceability, i.e. from requirements to scenarios.",
         )
 
         #: Upstream traceability option.
-        self.upstream_traceability_outfile = None  # type: typing.Optional[Path]
-        self.addarg("Upstream traceability", "upstream_traceability_outfile", Path).define(
+        self.upstream_traceability_outfile = None  # type: typing.Optional[_PathType]
+        self.addarg("Upstream traceability", "upstream_traceability_outfile", _PathImpl).define(
             "--upstream-traceability", metavar="PATH",
             action="store", type=str, default=None,
             help="Generate upstream traceability, i.e. from scenarios to requirements.",

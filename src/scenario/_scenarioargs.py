@@ -23,7 +23,9 @@ import typing
 if True:
     from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
+    from ._path import Path as _PathType
     from ._subprocess import SubProcess as _SubProcessType
 
 
@@ -130,8 +132,6 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
             ``False`` to disable the scenario path positional arguments definition.
             Useful for user programs that wish to redefine it.
         """
-        from ._path import Path
-
         _ArgsImpl.__init__(self, class_debugging=True)
         self.setdescription("Scenario test execution.")
 
@@ -139,8 +139,8 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
 
         #: Scenario report output file path.
         #: No scenario report when ``None``.
-        self.scenario_report = None  # type: typing.Optional[Path]
-        self.addarg("Scenario report output file", "scenario_report", Path).define(
+        self.scenario_report = None  # type: typing.Optional[_PathType]
+        self.addarg("Scenario report output file", "scenario_report", _PathImpl).define(
             "--scenario-report", metavar="SCENARIO_REPORT_PATH",
             action="store", type=str, default=None,
             help="Save the report in the given output file path. "
@@ -160,9 +160,9 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         )
 
         #: Path of the scenario Python script to execute.
-        self.scenario_paths = []  # type: typing.List[Path]
+        self.scenario_paths = []  # type: typing.List[_PathType]
         if positional_args:
-            self.addarg("Scenario path(s)", "scenario_paths", Path).define(
+            self.addarg("Scenario path(s)", "scenario_paths", _PathImpl).define(
                 metavar="SCENARIO_PATH", nargs="+",
                 action="store", type=str, default=[],
                 help="Scenario script(s) to execute.",
@@ -196,7 +196,6 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         """
         from ._jsondictutils import JsonDict
         from ._loggermain import MAIN_LOGGER
-        from ._path import Path
 
         if not _ArgsImpl._checkargs(self, args):
             return False
@@ -215,7 +214,7 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
                 return False
 
         # Scenario paths.
-        for _scenario_path in self.scenario_paths:  # type: Path
+        for _scenario_path in self.scenario_paths:  # type: _PathType
             if not _scenario_path.is_file():
                 MAIN_LOGGER.error(f"No such file '{_scenario_path}'")
                 return False

@@ -26,6 +26,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType
@@ -51,19 +52,18 @@ class CampaignExecution:
 
             ``None`` initializes the output directory path with the current working directory.
         """
-        from ._path import Path
         from ._stats import TimeStats
 
         #: Output directory path.
-        self.outdir = Path(outdir)  # type: Path
+        self.outdir = _PathImpl(outdir)  # type: _PathType
         #: Campaign report path, when explicitly set.
-        self._campaign_report_path = None  # type: typing.Optional[Path]
+        self._campaign_report_path = None  # type: typing.Optional[_PathType]
         #: Requirement database file path, when explicitly set.
-        self._req_db_path = None  # type: typing.Optional[Path]
+        self._req_db_path = None  # type: typing.Optional[_PathType]
         #: Downstream traceability file path, when explicitly set.
-        self._downstream_traceability_path = None  # type: typing.Optional[Path]
+        self._downstream_traceability_path = None  # type: typing.Optional[_PathType]
         #: Upstream traceability file path, when explicitly set.
-        self._upstream_traceability_path = None  # type: typing.Optional[Path]
+        self._upstream_traceability_path = None  # type: typing.Optional[_PathType]
         #: Test suite results.
         self.test_suite_executions = []  # type: typing.List[TestSuiteExecution]
         #: Time statistics.
@@ -284,14 +284,13 @@ class TestSuiteExecution:
             which makes the :attr:`test_suite_file` instance *void* as well.
             This path can be fixed programmatically later on.
         """
-        from ._path import Path
         from ._stats import TimeStats
         from ._testsuitefile import TestSuiteFile
 
         #: Owner campaign execution.
         self.campaign_execution = campaign_execution  # type: CampaignExecution
         #: Test suite file.
-        self.test_suite_file = TestSuiteFile(Path(test_suite_path))  # type: TestSuiteFile
+        self.test_suite_file = TestSuiteFile(_PathImpl(test_suite_path))  # type: TestSuiteFile
         #: Test suite name: i.e. test suite file pretty path.
         self.name = self.test_suite_file.path.prettypath  # type: str
         #: Test cases.
@@ -382,13 +381,12 @@ class TestCaseExecution:
             ``None`` initializes the :attr:`script_path` member with a *void* file path.
             This path can be fixed programmatically later on.
         """
-        from ._path import Path
         from ._stats import TimeStats
 
         #: Owner test suite execution.
         self.test_suite_execution = test_suite_execution  # type: TestSuiteExecution
         #: Scenario script path.
-        self.script_path = Path(script_path)  # type: Path
+        self.script_path = _PathImpl(script_path)  # type: _PathType
         #: Time statistics.
         self.time = TimeStats()  # type: TimeStats
         #: Test case log output.
@@ -554,10 +552,8 @@ class ReportFileReader:
         """
         Initializes :attr:`path` and :attr:`content` attributes with ``None``.
         """
-        from ._path import Path
-
         #: Test case JSON file path.
-        self.path = None  # type: typing.Optional[Path]
+        self.path = None  # type: typing.Optional[_PathType]
         #: Scenario execution data read from the test case JSON file.
         self.content = None  # type: typing.Optional[_ScenarioDefinitionType]
 

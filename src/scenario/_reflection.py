@@ -28,6 +28,7 @@ import typing
 if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # `DebugClass` used to instanciate global variable.
     from ._logger import Logger as _LoggerImpl  # `Logger` used to instanciate global variable.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` imported once for perf. concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
@@ -128,8 +129,6 @@ def importmodulefrompath(
 
         - ``__path__`` definition is missing, preventing usage of `pkgutil.extend_path()` consequently.
     """
-    from ._path import Path
-
     script_path = pathlib.Path(script_path).resolve()
     assert script_path.is_file(), f"No such file '{script_path}'"
     assert script_path.suffix == ".py", f"Not a Python script '{script_path}'"
@@ -144,7 +143,7 @@ def importmodulefrompath(
     # - Then check whether the script is part of a `sys.path`, in order to preserve the module's package belonging.
     for _python_path in sys.path:  # type: str
         # Note: `pathlib.PurePath.is_relative_to()` exists from Python 3.9 only. Use `scenario.Path` for the purpose.
-        if Path(script_path).is_relative_to(_python_path):
+        if _PathImpl(script_path).is_relative_to(_python_path):
             _module_name = script_path.relative_to(
                 # Note: `_python_path` may be a relative path. Ensure an absolute path in order to be able to compute a relative path from it.
                 pathlib.Path(_python_path).resolve()

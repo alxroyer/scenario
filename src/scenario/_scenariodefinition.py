@@ -27,6 +27,7 @@ if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` used as metaclass.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
@@ -34,6 +35,7 @@ if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
@@ -91,7 +93,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
 
         Activates debugging by default.
         """
-        from ._path import Path
         from ._scenarioexecution import ScenarioExecution
         from ._textutils import anylongtext2str
 
@@ -111,7 +112,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType
 
         #: Script path.
-        self.script_path = Path(self.location.file)  # type: Path
+        self.script_path = _PathImpl(self.location.file)  # type: _PathType
 
         #: Scenario name: i.e. script pretty path.
         self.name = self.script_path.prettypath  # type: str
@@ -507,11 +508,10 @@ class ScenarioDefinitionHelper:
         :param sys_modules_cache: See :func:`._reflection.importmodulefrompath()`.
         :return: Scenario definition classes, if any.
         """
-        from ._path import Path
         from ._reflection import importmodulefrompath
 
         # Load the test scenario module.
-        script_path = Path(script_path)
+        script_path = _PathImpl(script_path)
         _module = importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
 
         # Find out the scenario classes in that module.

@@ -25,6 +25,7 @@ if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
+    from ._path import Path as _PathType
 
 
 class ReqManagement(_LoggerImpl):
@@ -51,7 +52,6 @@ class ReqManagement(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
-        from ._path import Path
         from ._reqmgtargs import ReqManagementArgs
         from ._reqtraceability import REQ_TRACEABILITY
 
@@ -68,7 +68,7 @@ class ReqManagement(_LoggerImpl):
 
         # Requirement & scenario loading.
         try:
-            _campaign_results_path = ReqManagementArgs.getinstance().campaign_results_path  # type: typing.Optional[Path]
+            _campaign_results_path = ReqManagementArgs.getinstance().campaign_results_path  # type: typing.Optional[_PathType]
             if _campaign_results_path:
                 REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_results_path)
             else:
@@ -83,7 +83,7 @@ class ReqManagement(_LoggerImpl):
         # Execute `ReqManagementArgs` options.
         if not _errors:
             # Downstream traceability report.
-            _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[Path]
+            _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _downstream_traceability_path:
                 try:
                     REQ_TRACEABILITY.writedownstream(
@@ -95,7 +95,7 @@ class ReqManagement(_LoggerImpl):
                     _errors.append(ErrorCode.fromexception(_err))
 
             # Upstream traceability report.
-            _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[Path]
+            _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _upstream_traceability_path:
                 try:
                     REQ_TRACEABILITY.writeupstream(

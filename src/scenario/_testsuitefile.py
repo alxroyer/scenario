@@ -22,8 +22,10 @@ import typing
 
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
 
 
 class TestSuiteFile(_LoggerImpl):
@@ -41,19 +43,18 @@ class TestSuiteFile(_LoggerImpl):
         :param path: Test suite file path.
         """
         from ._debugclasses import DebugClass
-        from ._path import Path
 
         _LoggerImpl.__init__(self, log_class=DebugClass.TEST_SUITE_FILE)
 
         #: Test suite file path.
-        self.path = Path(path)  # type: Path
+        self.path = _PathImpl(path)  # type: _PathType
 
         #: Script paths describes by the test suite file.
         #:
         #: Filled once the test suite file has been successfully read.
         #:
         #: .. seealso:: :meth:`read()`.
-        self.script_paths = []  # type: typing.List[Path]
+        self.script_paths = []  # type: typing.List[_PathType]
 
     def __repr__(self):  # type: () -> str
         """
@@ -70,7 +71,6 @@ class TestSuiteFile(_LoggerImpl):
         :raise ._errcodes.ErrorCodeError: With :attr:`._errcodes.ErrorCode.INPUT_FORMAT_ERROR`, when the file could not be parsed.
         """
         from ._errcodes import ErrorCode, ErrorCodeError
-        from ._path import Path
         from ._textfileutils import TextFile
 
         # Reset the script path list in case :meth:`parse()` is called several times..
@@ -92,8 +92,8 @@ class TestSuiteFile(_LoggerImpl):
                         _line = _line[1:].strip()
                         self.debug("Black list line: %r", _line)
                         with self.pushindentation():
-                            for _rm_path in self.path.parent.glob(_line):  # type: Path
-                                for _test_script_path in self.script_paths:  # type: Path
+                            for _rm_path in self.path.parent.glob(_line):  # type: _PathType
+                                for _test_script_path in self.script_paths:  # type: _PathType
                                     if _test_script_path.samefile(_rm_path):
                                         self.debug("- '%s'", _test_script_path)
                                         self.script_paths.remove(_test_script_path)
@@ -105,7 +105,7 @@ class TestSuiteFile(_LoggerImpl):
                             if _line.startswith("+"):
                                 _line = _line[1:].strip()
                             if "*" in _line:
-                                for _add_path in self.path.parent.glob(_line):  # type: typing.Optional[Path]
+                                for _add_path in self.path.parent.glob(_line):  # type: typing.Optional[_PathType]
                                     assert _add_path
                                     if not _add_path.is_file():
                                         continue

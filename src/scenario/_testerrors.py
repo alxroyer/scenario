@@ -23,8 +23,9 @@ import traceback
 import typing
 
 if True:
-    from ._locations import CodeLocation as _CodeLocationImpl  # `CodeLocation` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._locations import CodeLocation as _CodeLocationImpl  # `CodeLocation` imported once for performance concerns.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._locations import CodeLocation as _CodeLocationType
@@ -172,8 +173,6 @@ class ExceptionError(TestError):
         """
         :param exception: Root cause exception, if available.
         """
-        from ._path import Path
-
         # Check input parameters.
         if isinstance(exception, BaseException):
             exception = traceback.TracebackException.from_exception(exception)
@@ -181,7 +180,7 @@ class ExceptionError(TestError):
         # Call the `TestError` initializer.
         if exception:
             # Caution: in case of internal error, `fromexception()` may return an empty list.
-            _location = _CodeLocationImpl(Path(), 0, "")
+            _location = _CodeLocationImpl(_PathImpl(), 0, "")
             if _FAST_PATH.execution_locations.fromexception(exception, limit=1):
                 _location = _FAST_PATH.execution_locations.fromexception(exception, limit=1, fqn=True)[-1]
             TestError.__init__(

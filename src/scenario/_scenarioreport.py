@@ -23,12 +23,14 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
@@ -50,12 +52,11 @@ class ScenarioReport(_LoggerImpl):
         Configures logging for the :class:`ScenarioReport` class.
         """
         from ._debugclasses import DebugClass
-        from ._path import Path
 
         _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_REPORT)
 
         #: JSON / YAML report path being written or read.
-        self._report_path = Path()  # type: Path
+        self._report_path = _PathImpl()  # type: _PathType
 
         #: ``True`` to feed automatically the requirement database with verified requirement references.
         self._feed_req_db = False  # type: bool
@@ -93,14 +94,13 @@ class ScenarioReport(_LoggerImpl):
         :param report_path: Path to write the scenario report into.
         """
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         try:
             self.resetindentation()
             self.debug("Writing scenario report to '%s'", report_path)
 
             # Build the JSON content.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _json = self._scenario2json(scenario_definition, is_main=True)  # type: _JsonDictType
 
             # Write the report file.
@@ -112,7 +112,7 @@ class ScenarioReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
 
     def readjsonreport(
             self,
@@ -151,14 +151,13 @@ class ScenarioReport(_LoggerImpl):
             Scenario data read from the scenario report file.
         """
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         try:
             self.resetindentation()
             self.debug("Reading scenario report from '%s'", report_path)
 
             # Read the report file.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _json = JsonDict.readfile(self._report_path)  # type: _JsonDictType
 
             # Analyze the JSON content.
@@ -169,7 +168,7 @@ class ScenarioReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
             self._feed_req_db = False
 
     def _scenario2json(
@@ -254,7 +253,6 @@ class ScenarioReport(_LoggerImpl):
         :return: Scenario data.
         """
         from ._debugutils import jsondump
-        from ._path import Path
         from ._scenarioexecution import ScenarioExecution
         from ._stats import TimeStats
         from ._testerrors import TestError
@@ -271,7 +269,7 @@ class ScenarioReport(_LoggerImpl):
             self.debug("Name: %r", _scenario_definition.name)
 
             # Script path.
-            _scenario_definition.script_path = Path(json_scenario["href"], relative_to=self._report_path.parent)
+            _scenario_definition.script_path = _PathImpl(json_scenario["href"], relative_to=self._report_path.parent)
             self.debug("Script path: '%s'", _scenario_definition.script_path)
 
             # Attributes.

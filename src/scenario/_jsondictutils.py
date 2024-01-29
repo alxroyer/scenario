@@ -25,6 +25,8 @@ import json
 import re
 import typing
 
+if True:
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
 
@@ -80,9 +82,7 @@ class JsonDict(abc.ABC):
 
         Based of file suffix only, not on file content.
         """
-        from ._path import Path
-
-        return Path(path).suffix.lower() in JsonDict.JSON_SUFFIXES
+        return _PathImpl(path).suffix.lower() in JsonDict.JSON_SUFFIXES
 
     @staticmethod
     def isyaml(
@@ -96,9 +96,7 @@ class JsonDict(abc.ABC):
 
         Based of file suffix only, not on file content.
         """
-        from ._path import Path
-
-        return Path(path).suffix.lower() in JsonDict.YAML_SUFFIXES
+        return _PathImpl(path).suffix.lower() in JsonDict.YAML_SUFFIXES
 
     @staticmethod
     def isknwonsuffix(
@@ -159,12 +157,11 @@ class JsonDict(abc.ABC):
         :return: JSON-like dictionary read from the input file.
         """
         from ._debugutils import saferepr
-        from ._path import Path
         from ._textfileutils import TextFile
 
         # Ensure `input_path` is a `Path` instance.
-        if not isinstance(input_path, Path):
-            input_path = Path(input_path)
+        if not isinstance(input_path, _PathImpl):
+            input_path = _PathImpl(input_path)
 
         # Instantiate a `TextFile` object to read from the `input_path` file.
         _text_file = TextFile(input_path, "r", encoding=encoding)  # type: TextFile
@@ -227,13 +224,12 @@ class JsonDict(abc.ABC):
         :param indent:
             Number of space characters for indentation.
         """
-        from ._path import Path
         from ._pkginfo import PKG_INFO
         from ._textfileutils import TextFile
 
         # Ensure `output_path` is a `Path` instance.
-        if not isinstance(output_path, Path):
-            output_path = Path(output_path)
+        if not isinstance(output_path, _PathImpl):
+            output_path = _PathImpl(output_path)
         # Ensure 'utf-8' by default.
         encoding = encoding or "utf-8"
 

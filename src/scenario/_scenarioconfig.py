@@ -24,6 +24,7 @@ if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._consoleutils import Console as _ConsoleType
@@ -182,12 +183,10 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.LOG_FILE`.
         """
-        from ._path import Path
-
-        _log_outpath = None  # type: typing.Optional[Path]
+        _log_outpath = None  # type: typing.Optional[_PathType]
         _config = _FAST_PATH.config_db.get(self.Key.LOG_FILE, type=str)  # type: typing.Optional[str]
         if _config:  # Neither `None` nor empty!
-            _log_outpath = Path(_config)
+            _log_outpath = _PathImpl(_config)
 
         # Don't debug `logoutpath()`, otherwise it may cause infinite recursions when logging (tbc).
         # self.debug("logoutpath() -> %r", _log_outpath)
@@ -332,15 +331,13 @@ class ScenarioConfig(_LoggerImpl):
 
         Useful when executing campaigns.
         """
-        from ._path import Path
-
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _abspath = (
             _FAST_PATH.config_db.get(self.Key.RUNNER_SCRIPT_PATH, type=str)
-            or (Path(__file__).parents[2] / "bin" / "run-test.py").abspath
+            or (_PathImpl(__file__).parents[2] / "bin" / "run-test.py").abspath
         )  # type: str
-        self.debug("runnerscriptpath() -> %r", Path(_abspath))
-        return Path(_abspath)
+        self.debug("runnerscriptpath() -> %r", _PathImpl(_abspath))
+        return _PathImpl(_abspath)
 
     def testsuitefiles(self):  # type: (...) -> typing.Sequence[_PathType]
         """
@@ -639,14 +636,13 @@ class ScenarioConfig(_LoggerImpl):
             In case of relative path not described in a configuration file.
         """
         from ._confignode import ConfigNode
-        from ._path import Path
 
-        _paths = []  # type: typing.List[Path]
+        _paths = []  # type: typing.List[_PathType]
         for _string, _node in self._readstringlistfromconf(config_key):  # type: str, ConfigNode
-            if Path.is_absolute(_string):
-                _paths.append(Path(_string))
+            if _PathImpl.is_absolute(_string):
+                _paths.append(_PathImpl(_string))
             elif _node.source_file:
-                _paths.append(Path(_string, relative_to=_node.source_file.parent))
+                _paths.append(_PathImpl(_string, relative_to=_node.source_file.parent))
             else:
                 raise FileNotFoundError(_node.errmsg(f"Invalid file path {_string!r}"))
         return _paths

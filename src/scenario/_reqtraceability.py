@@ -24,6 +24,7 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Same for `ScenarioDefinitionHelper`.
@@ -201,14 +202,13 @@ class ReqTraceability(_LoggerImpl):
         from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
         from ._campaignreport import CAMPAIGN_REPORT
         from ._loggermain import MAIN_LOGGER
-        from ._path import Path
         from ._reqdb import REQ_DB
 
         self.debug("ReqTraceability.loaddatafromcampaignresults(campaign_results='%s')", campaign_results)
 
-        if isinstance(campaign_results, Path):
+        if isinstance(campaign_results, _PathImpl):
             # Determine the path of the campaign report file.
-            _campaign_report_path = campaign_results  # type: Path
+            _campaign_report_path = campaign_results  # type: _PathType
             if _campaign_report_path.is_dir():
                 _campaign_report_path = CampaignExecution(_campaign_report_path).campaign_report_path
                 if not _campaign_report_path.is_file():

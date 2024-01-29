@@ -24,6 +24,7 @@ if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -93,12 +94,11 @@ class CampaignReport(_LoggerImpl):
         Configures logging for the :class:`CampaignReport` class.
         """
         from ._debugclasses import DebugClass
-        from ._path import Path
 
         _LoggerImpl.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
 
         #: Campaign report path being written or read.
-        self._report_path = Path()  # type: Path
+        self._report_path = _PathImpl()  # type: _PathType
 
         #: Flag set to ``True`` when the requirement database should be fed with the requirement database file read from campaign results.
         self._feed_req_db = False  # type: bool
@@ -139,7 +139,6 @@ class CampaignReport(_LoggerImpl):
         :param campaign_execution: Campaign execution to generate the report for.
         :param report_path: Path to write the campaign report into.
         """
-        from ._path import Path
         from ._xmlutils import Xml
 
         try:
@@ -149,7 +148,7 @@ class CampaignReport(_LoggerImpl):
             # Create an XML document.
             _xml_doc = Xml.Document()  # type: Xml.Document
             # Create the top <testsuites/> node.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _xml_doc.root = self._campaign2xml(_xml_doc, campaign_execution)
 
             # Generate the JUnit XML outfile.
@@ -157,7 +156,7 @@ class CampaignReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
 
     def readjunitreport(
             self,
@@ -202,7 +201,6 @@ class CampaignReport(_LoggerImpl):
         :return:
             Campaign execution data read from the JUnit file.
         """
-        from ._path import Path
         from ._xmlutils import Xml
 
         try:
@@ -210,7 +208,7 @@ class CampaignReport(_LoggerImpl):
             self.debug("Reading campaign results from report '%s'", report_path)
 
             # Read and parse the JUnit XML file.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _xml_doc = Xml.Document.readfile(self._report_path)  # type: Xml.Document
 
             # Analyze the JUnit XML content.
@@ -223,7 +221,7 @@ class CampaignReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
             self._feed_req_db = False
             self._read_scenario_logs = False
             self._read_scenario_reports = False
@@ -766,9 +764,7 @@ class CampaignReport(_LoggerImpl):
         :param attr_name: Attribute name to read.
         :return: Path computed.
         """
-        from ._path import Path
-
-        return Path(xml_node.getattr(attr_name), relative_to=self._report_path.parent)
+        return _PathImpl(xml_node.getattr(attr_name), relative_to=self._report_path.parent)
 
     def _path2xmllink(
             self,
