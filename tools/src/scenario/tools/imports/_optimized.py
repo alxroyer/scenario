@@ -26,6 +26,7 @@ if True:
 OPTIMIZED_PATHS = [
     _SRC_PATH / "scenario" / "_args.py",
     _SRC_PATH / "scenario" / "_configdb.py",
+    _SRC_PATH / "scenario" / "_debugutils.py",
     _SRC_PATH / "scenario" / "_locations.py",
     _SRC_PATH / "scenario" / "_logextradata.py",
     _SRC_PATH / "scenario" / "_logger.py",

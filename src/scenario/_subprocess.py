@@ -27,6 +27,7 @@ import threading
 import typing
 
 if True:
+    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -403,8 +404,6 @@ class SubProcess:
         :return: ``self``
         :raise TimeoutError: When the sub-process did not terminate within ``timeout`` seconds.
         """
-        from ._debugutils import saferepr
-
         if not self._popen:
             raise ValueError(f"{self}: Cannot wait before the process is created")
         try:
@@ -425,7 +424,7 @@ class SubProcess:
 
         self._log(logging.DEBUG, "%s returned %r", self.tolongstring(), self.returncode)
         if self.returncode != 0:
-            self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, saferepr(self.stderr))
+            self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, _saferepr(self.stderr))
 
         return self
 

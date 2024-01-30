@@ -21,6 +21,7 @@ Scenario reports.
 import typing
 
 if True:
+    from ._debugutils import jsondump as _jsondump  # `jsondump()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
@@ -183,7 +184,6 @@ class ScenarioReport(_LoggerImpl):
         :param is_main: True for the main scenario, False otherwise.
         :return: JSON content.
         """
-        from ._debugutils import jsondump
         from ._enumutils import isin
         from ._scenarioattributes import CoreScenarioAttributes
         from ._testerrors import TestError
@@ -238,7 +238,7 @@ class ScenarioReport(_LoggerImpl):
                         "results": scenario_definition.execution.result_stats.tojson(),
                     }
 
-        self.debug("JSON content generated for scenario %r: %s", scenario_definition.name, jsondump(_json_scenario, indent=2),
+        self.debug("JSON content generated for scenario %r: %s", scenario_definition.name, _jsondump(_json_scenario, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
         return _json_scenario
 
@@ -252,12 +252,11 @@ class ScenarioReport(_LoggerImpl):
         :param json_scenario: Scenario JSON content to read.
         :return: Scenario data.
         """
-        from ._debugutils import jsondump
         from ._scenarioexecution import ScenarioExecution
         from ._stats import TimeStats
         from ._testerrors import TestError
 
-        self.debug("Reading scenario from JSON: %s", jsondump(json_scenario, indent=2),
+        self.debug("Reading scenario from JSON: %s", _jsondump(json_scenario, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
         with self.pushindentation():
@@ -312,7 +311,6 @@ class ScenarioReport(_LoggerImpl):
         :param step_definition: Step definition (with execution) to generate JSON content for.
         :return: JSON content.
         """
-        from ._debugutils import jsondump
         from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
@@ -353,7 +351,7 @@ class ScenarioReport(_LoggerImpl):
 
                     _json_step_definition["executions"].append(_json_step_execution)
 
-        self.debug("JSON content generated for %r: %s", step_definition, jsondump(_json_step_definition, indent=2),
+        self.debug("JSON content generated for %r: %s", step_definition, _jsondump(_json_step_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
         return _json_step_definition
 
@@ -367,13 +365,12 @@ class ScenarioReport(_LoggerImpl):
         :param json_step_definition: Step definition JSON content to read.
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
-        from ._debugutils import jsondump
         from ._stats import TimeStats
         from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
-        self.debug("Reading step instance from JSON: %s", jsondump(json_step_definition, indent=2),
+        self.debug("Reading step instance from JSON: %s", _jsondump(json_step_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         with self.pushindentation():
@@ -401,7 +398,7 @@ class ScenarioReport(_LoggerImpl):
 
                 # Executions.
                 for _json_step_execution in json_step_definition["executions"]:  # type: _JsonDictType
-                    self.debug("Building step execution instance from JSON: %s", jsondump(_json_step_execution, indent=2),
+                    self.debug("Building step execution instance from JSON: %s", _jsondump(_json_step_execution, indent=2),
                                extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
                     with self.pushindentation():
@@ -492,7 +489,6 @@ class ScenarioReport(_LoggerImpl):
         :return: JSON content object.
         """
         from ._actionresultexecution import ActionResultExecution
-        from ._debugutils import jsondump
         from ._scenarioexecution import ScenarioExecution
         from ._testerrors import TestError
 
@@ -526,7 +522,7 @@ class ScenarioReport(_LoggerImpl):
                         _json_action_result_execution["subscenarios"].append(self._scenario2json(_subscenario_execution.definition, is_main=False))
                 _json_action_result_definition["executions"].append(_json_action_result_execution)
 
-        self.debug("JSON content generated for %r: %s", action_result_definition, jsondump(_json_action_result_definition, indent=2),
+        self.debug("JSON content generated for %r: %s", action_result_definition, _jsondump(_json_action_result_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
         return _json_action_result_definition
 
@@ -542,11 +538,10 @@ class ScenarioReport(_LoggerImpl):
         """
         from ._actionresultdefinition import ActionResultDefinition
         from ._actionresultexecution import ActionResultExecution
-        from ._debugutils import jsondump
         from ._stats import TimeStats
         from ._testerrors import TestError
 
-        self.debug("Reading action/result instance from JSON: %s", jsondump(json_action_result_definition, indent=2),
+        self.debug("Reading action/result instance from JSON: %s", _jsondump(json_action_result_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         with self.pushindentation():
@@ -560,7 +555,7 @@ class ScenarioReport(_LoggerImpl):
             self.debug("Description: %r", _action_result_definition.description)
 
             for _json_action_result_execution in json_action_result_definition["executions"]:  # type: _JsonDictType
-                self.debug("Reading action/result execution instance from JSON: %s", jsondump(_json_action_result_execution, indent=2),
+                self.debug("Reading action/result execution instance from JSON: %s", _jsondump(_json_action_result_execution, indent=2),
                            extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
                 with self.pushindentation():

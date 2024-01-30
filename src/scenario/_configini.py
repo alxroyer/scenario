@@ -23,6 +23,7 @@ import os
 import typing
 
 if True:
+    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
@@ -86,7 +87,6 @@ class ConfigIni:
         .. warning:: Works only for `Dict[str, Dict[str, Union[str, int, bool, float]]]` dictionaries (i.e. *[section]/key = value* structures).
         """
         from ._configkey import ConfigKey
-        from ._debugutils import saferepr
 
         _FAST_PATH.config_db.debug("Saving INI file '%s'", path)
 
@@ -122,7 +122,7 @@ class ConfigIni:
                 _FAST_PATH.config_db.debug(f"Feeding INI with [{_ini_section}]/{current_node_subkey} = '{current_node}'")
                 _config_parser.set(_ini_section, current_node_subkey, f"{current_node}")
         _dict = _FAST_PATH.config_db.get(root)  # type: typing.Any
-        assert isinstance(_dict, dict), f"Configuration at '{root}' is not a dictionary ({saferepr(_dict)})"
+        assert isinstance(_dict, dict), f"Configuration at '{root}' is not a dictionary ({_saferepr(_dict)})"
         _feedini("", "", _dict)
 
         # Save the file. Use UTF-8 encoding.

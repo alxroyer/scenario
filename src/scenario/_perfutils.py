@@ -47,6 +47,7 @@ import types
 import typing
 
 if True:
+    from ._debugutils import callback as _callback  # `callback()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
@@ -94,15 +95,14 @@ class Timer:
         :param message: Object of this tick.
         """
         from ._datetimeutils import f2strduration
-        from ._debugutils import CallbackStr
 
         _current_time = time.time()  # type: float
         self.logger.log(
             self.log_level,
             "%s: %s: %s (+%s)",
             self.context, message,
-            CallbackStr(f2strduration, _current_time - self.t0),
-            CallbackStr(f2strduration, _current_time - self._last_tick),
+            _callback(f2strduration, _current_time - self.t0),
+            _callback(f2strduration, _current_time - self._last_tick),
         )
         self.ticks.append((message, _current_time - self._last_tick))
         self._last_tick = _current_time
@@ -112,15 +112,14 @@ class Timer:
         Terminates logging for the given timer.
         """
         from ._datetimeutils import f2strduration
-        from ._debugutils import CallbackStr
 
         _current_time = time.time()  # type: float
         self.logger.log(
             self.log_level,
             "%s: Total time: %s (+%s)",
             self.context,
-            CallbackStr(f2strduration, _current_time - self.t0),
-            CallbackStr(f2strduration, _current_time - self._last_tick),
+            _callback(f2strduration, _current_time - self.t0),
+            _callback(f2strduration, _current_time - self._last_tick),
         )
         self._last_tick = _current_time
 

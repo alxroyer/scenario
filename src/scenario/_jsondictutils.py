@@ -26,6 +26,7 @@ import re
 import typing
 
 if True:
+    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
@@ -63,12 +64,10 @@ class JsonDict(abc.ABC):
         :param obj: Object to check.
         :return: ``obj`` as a JSON-like dictionary.
         """
-        from ._debugutils import saferepr
-
         if isinstance(obj, dict) and all([isinstance(_key, str) for _key in obj]):
             return obj
         else:
-            raise TypeError(f"{saferepr(obj)} not a JSON-like dictionary")
+            raise TypeError(f"{_saferepr(obj)} not a JSON-like dictionary")
 
     @staticmethod
     def isjson(
@@ -156,7 +155,6 @@ class JsonDict(abc.ABC):
         :param encoding: Encoding to use for reading. Automatically determined from the file content by default.
         :return: JSON-like dictionary read from the input file.
         """
-        from ._debugutils import saferepr
         from ._textfileutils import TextFile
 
         # Ensure `input_path` is a `Path` instance.
@@ -190,7 +188,7 @@ class JsonDict(abc.ABC):
         try:
             return JsonDict.assertjsondictinstance(_content)
         except TypeError:
-            raise ValueError(f"Bad content {saferepr(_content)}, '{input_path}' should contain a string dictionary")
+            raise ValueError(f"Bad content {_saferepr(_content)}, '{input_path}' should contain a string dictionary")
 
     @staticmethod
     def writefile(

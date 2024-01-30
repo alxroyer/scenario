@@ -198,7 +198,7 @@ Using type checking imports usually leads to writing code that passes type check
 Which is what we call the :ref:`type checking dilemma <coding-rules.py.imports.type-checking.dilemma>`.
 
 In order to work around this dilemma,
-when importing an executable symbol at the global scope,
+when importing a class at the global scope,
 a type checking import shall rename the imported symbol with the ``Type`` suffix.
 
 .. admonition:: Memo: leading underscore
@@ -226,8 +226,9 @@ a type checking import shall rename the imported symbol with the ``Type`` suffix
 Doins so, a difference is made between symbols imported for type checking, and symbols required for execution.
 By the way, type checkers won't miss lacking imports required for execution.
 
-Imported type symbols should normally don't need to be added the ``Type`` suffix,
-in as much as they should already hold it (see :ref:`type naming rules <coding-rules.py.namings.types>`).
+.. note::
+    Imported type symbols should normally don't need to be added the ``Type`` suffix,
+    in as much as they should already hold it (see :ref:`type naming rules <coding-rules.py.namings.types>`).
 
 .. code-block:: python
 

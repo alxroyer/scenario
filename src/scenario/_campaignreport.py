@@ -21,6 +21,7 @@ Campaign reports.
 import typing
 
 if True:
+    from ._debugutils import callback as _callback  # `callback()` imported once for performance concerns.
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
@@ -467,7 +468,6 @@ class CampaignReport(_LoggerImpl):
         """
         from ._campaignexecution import TestSuiteExecution
         from ._datetimeutils import f2strtime, fromiso8601
-        from ._debugutils import callback
         from ._xmlutils import Xml
 
         _test_suite_execution = TestSuiteExecution(campaign_execution, self._xmlattr2path(xml_test_suite, "name"))  # type: TestSuiteExecution
@@ -497,10 +497,10 @@ class CampaignReport(_LoggerImpl):
             self.debug("testsuite/@time = %f", _test_suite_execution.time.elapsed)
         if xml_test_suite.hasattr("timestamp"):
             _test_suite_execution.time.start = fromiso8601(xml_test_suite.getattr("timestamp"))
-            self.debug("testsuite/@timestamp = %s", callback(f2strtime, _test_suite_execution.time.start))
+            self.debug("testsuite/@timestamp = %s", _callback(f2strtime, _test_suite_execution.time.start))
             if _test_suite_execution.time.elapsed is not None:
                 _test_suite_execution.time.end = _test_suite_execution.time.start + _test_suite_execution.time.elapsed
-                self.debug("testsuite/@timestamp + elapsed => end = %s", callback(f2strtime, _test_suite_execution.time.end))
+                self.debug("testsuite/@timestamp + elapsed => end = %s", _callback(f2strtime, _test_suite_execution.time.end))
 
         for _xml_test_case in xml_test_suite.getchildren("testcase"):  # type: Xml.Node
             self.debug("New testsuite/testcase")

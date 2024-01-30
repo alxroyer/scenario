@@ -24,8 +24,11 @@ publicly exposed for assertion routine definitions in user code.
 import typing
 import unittest as _unittestmod
 
+if True:
+    from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # `FmtAndArgs` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
+    from ._debugutils import FmtAndArgs as _FmtAndArgsType
 
 
 if typing.TYPE_CHECKING:
@@ -53,8 +56,6 @@ def errmsg(
     :param args: Standard assertion message arguments.
     :return: Error message.
     """
-    from ._debugutils import FmtAndArgs
-
     # Ensure `optional` is of type `str` (if not `None`).
     if (optional is not None) and (not isinstance(optional, str)):
         optional = str(optional)
@@ -63,7 +64,7 @@ def errmsg(
         standard = str(standard)
     # Format `standard` with `args` if not empty.
     if args:
-        standard = str(FmtAndArgs(standard, *args))
+        standard = str(_FmtAndArgsImpl(standard, *args))
 
     return unittest._formatMessage(optional, standard)  # noqa  ## Access to a protected member
 
@@ -81,14 +82,12 @@ def ctxmsg(
     :param args: Detailed assertion message arguments
     :return: Assertion message.
     """
-    from ._debugutils import FmtAndArgs
-
     # Ensure `err` is of type `str`.
     if not isinstance(err, str):
         err = str(err)
     # Format `err` with `args` if not empty.
     if args:
-        err = str(FmtAndArgs(err, *args))
+        err = str(_FmtAndArgsImpl(err, *args))
 
     return f"{context}: {err}"
 
@@ -119,7 +118,6 @@ def evidence(
     :param regular: Regular proof message.
     :param args: Proof message arguments.
     """
-    from ._debugutils import FmtAndArgs
     from ._scenariorunner import SCENARIO_RUNNER
     from ._scenariostack import SCENARIO_STACK
 
@@ -130,7 +128,7 @@ def evidence(
                 regular = str(regular)
 
             # Build the evidence message.
-            _evidence_message = FmtAndArgs()  # type: FmtAndArgs
+            _evidence_message = _FmtAndArgsImpl()  # type: _FmtAndArgsType
             if isinstance(evidence_enabled, str):
                 _evidence_message.push("%s: ", evidence_enabled)
             _evidence_message.push(regular, *args)

@@ -21,6 +21,7 @@ JSON / YAML configuration file management.
 import typing
 
 if True:
+    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
@@ -68,7 +69,6 @@ class ConfigJsonDict:
         :param path: Path of the file to save.
         :param root: Root key to save data from.
         """
-        from ._debugutils import saferepr
         from ._jsondictutils import JsonDict
 
         _FAST_PATH.config_db.debug("Saving JSON / YAML file '%s'", path)
@@ -78,7 +78,7 @@ class ConfigJsonDict:
         if _content is None:
             raise KeyError(f"No content for config key {root!r}, can't save file '{path}'")
         if not isinstance(_content, dict):
-            raise ValueError(f"Not a dictionary {saferepr(_content)} for config key {root!r}, can't save file '{path}'")
+            raise ValueError(f"Not a dictionary {_saferepr(_content)} for config key {root!r}, can't save file '{path}'")
         JsonDict.writefile(_content, path)
 
         _FAST_PATH.config_db.debug("JSON / YAML file '%s' successfully saved", path)

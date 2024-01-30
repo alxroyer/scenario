@@ -22,6 +22,7 @@ import logging
 import typing
 
 if True:
+    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
@@ -157,7 +158,6 @@ class ScenarioResults(_LoggerImpl):
         :param scenario_execution: Scenario to display.
         """
         from ._datetimeutils import f2strduration
-        from ._debugutils import saferepr
         from ._loggermain import MAIN_LOGGER
 
         # Build extra info.
@@ -167,7 +167,7 @@ class ScenarioResults(_LoggerImpl):
                 _attribute_value = str(scenario_execution.definition.getattribute(_attribute_name))  # type: str
                 # Avoid attribute display on several lines.
                 if len(_attribute_value.splitlines()) > 1:
-                    _attribute_value = str(saferepr(_attribute_value))
+                    _attribute_value = str(_saferepr(_attribute_value))
                 # Avoid displaying empty attributes.
                 if _attribute_value:
                     _extra_info.append(_attribute_value)

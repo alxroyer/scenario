@@ -24,6 +24,7 @@ import re
 import typing
 
 if True:
+    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -111,8 +112,6 @@ class ConfigNode:
             Origin of the configuration data: either a simple string, or the path of the configuration file it was defined in.
             Defaults to code location when not set.
         """
-        from ._debugutils import saferepr
-
         # Redirect to `remove()` when `None` is set.
         if (not subkey) and (data is None):
             return self.remove()
@@ -141,7 +140,7 @@ class ConfigNode:
                     if self._data is None:
                         self._setdata({})
                     if not isinstance(self._data, dict):
-                        raise ValueError(self.errmsg(f"Bad dict data {saferepr(data)} for a non-dict configuration node", origin=origin))
+                        raise ValueError(self.errmsg(f"Bad dict data {_saferepr(data)} for a non-dict configuration node", origin=origin))
                     # Use recursive calls with the ``subkey`` parameter set for each field of the input dictionary.
                     for _field_name in data:  # type: str
                         self.set(subkey=_field_name, data=data[_field_name], origin=origin)
@@ -152,7 +151,7 @@ class ConfigNode:
                     if self._data is None:
                         self._setdata([])
                     if not isinstance(self._data, list):
-                        raise ValueError(self.errmsg(f"Bad list data {saferepr(data)} for a non-list configuration node", origin=origin))
+                        raise ValueError(self.errmsg(f"Bad list data {_saferepr(data)} for a non-list configuration node", origin=origin))
                     # Add sub-nodes for each item of the input list.
                     for _index in range(len(data)):  # type: int
                         self._data.append(ConfigNode(parent=self, key=f"{self.key}[{len(self._data)}]"))
@@ -320,7 +319,6 @@ class ConfigNode:
         :return: Sub-node if found, ``None`` otherwise.
         """
         from ._configkey import ConfigKey
-        from ._debugutils import saferepr
         from ._enumutils import enum2str
 
         if create_missing:
@@ -384,7 +382,7 @@ class ConfigNode:
                 # Find the direct sub-node in the member dictionary.
                 if not isinstance(self._data, dict):
                     raise IndexError(
-                        _errmsg_start + f"Cannot index a non-dictionary node with {_first!r}, data is {saferepr(self._data)} (origin: {self.origin})"
+                        _errmsg_start + f"Cannot index a non-dictionary node with {_first!r}, data is {_saferepr(self._data)} (origin: {self.origin})"
                     )
                 if _first in self._data:
                     _subnode = self._data[_first]
