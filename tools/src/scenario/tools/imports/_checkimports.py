@@ -244,11 +244,13 @@ class CheckImports:
                         # ---
                         # RULE: Symbols imported at module level for execution should suffixed with 'Impl'.
                         # ---
-                        if not _import.context.isifblocktype():
+                        if not _import.context.isifblocktype():  # Note: Not typing import, i.e. implementation import.
                             if _imported_symbol.ismodule():
                                 _import.debug("%r module import does not require a suffix: %r", _imported_symbol.original_name, _import.stripped_src)
                             elif _imported_symbol.isconstant():
                                 _import.debug("%r constant import does not require a suffix: %r", _imported_symbol.original_name, _import.stripped_src)
+                            elif _imported_symbol.isfunction():
+                                _import.debug("%r function import does not require a suffix: %r", _imported_symbol.original_name, _import.stripped_src)
                             elif _imported_symbol.local_name.endswith("Impl"):
                                 _import.debug("%r suffixed with 'Impl' as expected: %r", _imported_symbol.original_name, _import.stripped_src)
                             else:

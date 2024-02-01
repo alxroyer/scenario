@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._debugutils import jsondump as _jsondump  # `jsondump()` imported once for performance concerns.
+    from ._enumutils import isin as _isin  # `isin()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
@@ -184,7 +185,6 @@ class ScenarioReport(_LoggerImpl):
         :param is_main: True for the main scenario, False otherwise.
         :return: JSON content.
         """
-        from ._enumutils import isin
         from ._scenarioattributes import CoreScenarioAttributes
         from ._testerrors import TestError
 
@@ -204,7 +204,7 @@ class ScenarioReport(_LoggerImpl):
             _json_scenario["attributes"] = {}
             for _attribute_name in scenario_definition.getattributenames():  # type: str
                 # Skip empty core attributes.
-                if isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                if _isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
                     continue
                 _json_scenario["attributes"][_attribute_name] = str(scenario_definition.getattribute(_attribute_name))
 

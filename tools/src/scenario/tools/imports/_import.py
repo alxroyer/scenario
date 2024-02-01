@@ -30,17 +30,28 @@ class Import(_ErrorTrackerLoggerImpl):
     class ImportedSymbol:
         def __init__(
                 self,
+                owner_import,  # type: Import
                 src,  # type: bytes
         ):  # type: (...) -> None
+            self.owner_import = owner_import  # type: Import
             self.src = src  # type: bytes
             self.original_name = ""  # type: str
             self.local_name = ""  # type: str
 
         def ismodule(self):  # type: (...) -> bool
-            return re.match(r"^[_a-z]+$", self.original_name) is not None
+            if re.match(r"^[_a-z0-9]+$", self.original_name):
+                _imported_module_path = self.owner_import._imported_module_path  # type: typing.Optional[scenario.Path]  # noqa  ## Access to protected member
+                if _imported_module_path and _imported_module_path.is_dir():
+                    return (_imported_module_path / f"{self.original_name}.py").is_file()
+            return False
+
+        def isfunction(self):  # type: (...) -> bool
+            if re.match(r"^[_a-z0-9]+$", self.original_name):
+                return not self.ismodule()
+            return False
 
         def isconstant(self):  # type: (...) -> bool
-            return re.match(r"^[_A-Z]+$", self.original_name) is not None
+            return re.match(r"^[_A-Z0-9]+$", self.original_name) is not None
 
         def isreexport(self):  # type: (...) -> bool
             return all([
@@ -161,7 +172,7 @@ class Import(_ErrorTrackerLoggerImpl):
             if _match.group(2):
                 for _part in _match.group(2).split(b','):  # type: bytes
                     _part = _part.strip()
-                    self._imported_symbols.append(Import.ImportedSymbol(_part))
+                    self._imported_symbols.append(Import.ImportedSymbol(self, _part))
                     _match = re.match(rb'^([^ ,]+)( +as +([^ ,]+))?$', _part)
                     if not _match:
                         self.raiseerror(SyntaxError, f"Invalid import part {_part!r}")

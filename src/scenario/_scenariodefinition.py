@@ -25,6 +25,7 @@ import typing
 
 if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
+    from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
@@ -177,7 +178,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :param value: Attribute value.
         :return: ``self``
         """
-        from ._enumutils import enum2str
         from ._scenarioattributes import CoreScenarioAttributes
 
         # Core scenario attributes.
@@ -195,7 +195,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
 
         # User scenario attributes.
-        self.__user_attributes[enum2str(name)] = value
+        self.__user_attributes[_enum2str(name)] = value
         return self
 
     def getattribute(
@@ -209,7 +209,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return: Attribute value.
         :raise KeyError: When the attribute name is not defined.
         """
-        from ._enumutils import enum2str
         from ._scenarioattributes import CoreScenarioAttributes
 
         # Core scenario attributes.
@@ -221,7 +220,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
 
         # User scenario attributes.
-        return self.__user_attributes[enum2str(name)]
+        return self.__user_attributes[_enum2str(name)]
 
     def getattributenames(self):  # type: (...) -> typing.Sequence[str]
         """

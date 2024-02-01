@@ -24,6 +24,7 @@ import traceback
 import typing
 
 if True:
+    from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` used for class member initialization, imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -86,11 +87,10 @@ class Logger:
 
         .. seealso:: :meth:`enabledebug()` and :meth:`setlogcolor()`.
         """
-        from ._enumutils import enum2str
         from ._logfilters import LoggerLogFilter
 
         #: Log class.
-        self.log_class = enum2str(log_class)  # type: str
+        self.log_class = _enum2str(log_class)  # type: str
 
         # Build the ``logging.Logger`` instance, and attach a filter.
         #: ``logging.Logger`` instance as a member variable.

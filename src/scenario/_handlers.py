@@ -22,6 +22,7 @@ import enum
 import typing
 
 if True:
+    from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
@@ -108,9 +109,7 @@ class Handlers(_LoggerImpl):
 
             .. warning:: Does not prevent a later handler to be installed before this one.
         """
-        from ._enumutils import enum2str
-
-        event = enum2str(event)
+        event = _enum2str(event)
 
         self.debug("Installing *%s* handler %r, scenario=%r, once=%r, first=%r", event, handler, scenario, once, first)
 
@@ -133,9 +132,7 @@ class Handlers(_LoggerImpl):
         :param event: Event triggered.
         :param handler: Handler function.
         """
-        from ._enumutils import enum2str
-
-        event = enum2str(event)
+        event = _enum2str(event)
 
         self.debug("Removing *%s* handler %r", event, handler)
 
@@ -159,10 +156,9 @@ class Handlers(_LoggerImpl):
         :param event: Event met.
         :param data: Event data to pass on when calling each handler.
         """
-        from ._enumutils import enum2str
         from ._scenariostack import SCENARIO_STACK
 
-        event = enum2str(event)
+        event = _enum2str(event)
 
         self.debug("Executing *%s* handlers", event)
         if event in self._handlers:

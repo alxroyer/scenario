@@ -25,6 +25,7 @@ import typing
 
 if True:
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
+    from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -319,7 +320,6 @@ class ConfigNode:
         :return: Sub-node if found, ``None`` otherwise.
         """
         from ._configkey import ConfigKey
-        from ._enumutils import enum2str
 
         if create_missing:
             _FAST_PATH.config_db.debug("%r: _getsubnode(subkey=%r, create_missing=%r, origin=%r)", self, subkey, create_missing, origin)
@@ -329,7 +329,7 @@ class ConfigNode:
             self.origins.append(origin)
 
         # When the sub-key is empty, it means we have reached the sub-node we are looking for.
-        subkey = enum2str(subkey)
+        subkey = _enum2str(subkey)
         if not subkey:
             return self
 
