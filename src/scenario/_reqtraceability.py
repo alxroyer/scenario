@@ -26,6 +26,7 @@ if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Same for `ScenarioDefinitionHelper`.
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
@@ -36,6 +37,7 @@ if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
+    from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
@@ -497,7 +499,6 @@ class ReqTraceability(_LoggerImpl):
         from ._reqdb import REQ_DB
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
-        from ._reqverifier import ReqVerifier
 
         self.debug("ReqTraceability.getdownstream(): Computing downstream traceability from %d requirement references in database", len(REQ_DB.getallrefs()))
         _downstream_req_refs = []  # type: typing.List[ReqTraceability.Downstream.ReqRef]
@@ -507,8 +508,8 @@ class ReqTraceability(_LoggerImpl):
 
             _downstream_scenario = None  # type: typing.Optional[ReqTraceability.Downstream.Scenario]
 
-            _req_verifiers_set = _req_ref.getverifiers()  # type: SetWithReqLinksType[ReqVerifier]
-            for _req_verifier in ReqVerifier.orderedset(_req_verifiers_set):  # type: ReqVerifier
+            _req_verifiers_set = _req_ref.getverifiers()  # type: SetWithReqLinksType[_ReqVerifierType]
+            for _req_verifier in _ReqVerifierImpl.orderedset(_req_verifiers_set):  # type: _ReqVerifierType
                 for _req_link in _req_verifiers_set[_req_verifier]:  # type: _ReqLinkType
                     if isinstance(_req_verifier, _ScenarioDefinitionImpl):
                         if (not _downstream_scenario) or (_downstream_scenario.scenario is not _req_verifier):

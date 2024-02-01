@@ -100,12 +100,11 @@ class ReqLink:
         Canonical string representation of the requirement link.
         """
         from ._reflection import qualname
-        from ._reqverifier import ReqVerifierHelper
 
         return "".join([
             f"<{qualname(type(self))}",
             f" req_ref={self.req_ref!r}",
-            f" req_verifiers={[ReqVerifierHelper.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
+            f" req_verifiers={[_FAST_PATH.req_verifier_helper_cls.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
             f" comments={self.comments!r}" if self.comments else "",
             ">",
         ])
@@ -114,12 +113,10 @@ class ReqLink:
         """
         Human readable string representation of the requirement link.
         """
-        from ._reqverifier import ReqVerifierHelper
-
         return "".join([
             str(self.req_ref),
             " <- ",
-            "{", ", ".join([ReqVerifierHelper.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]), "}",
+            "{", ", ".join([_FAST_PATH.req_verifier_helper_cls.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]), "}",
             f" | {self.comments}" if self.comments else "",
         ])
 
@@ -154,9 +151,7 @@ class ReqLink:
 
         See :meth:`._reqverifier.ReqVerifier.orderedset()` for order details.
         """
-        from ._reqverifier import ReqVerifier
-
-        return ReqVerifier.orderedset(self._req_verifiers)
+        return _FAST_PATH.req_verifier_cls.orderedset(self._req_verifiers)
 
     def matches(
             self,
@@ -270,11 +265,9 @@ class ReqLinkHelper(abc.ABC):
         :param req_link: Requirement link item to sort.
         :return: Key tuple.
         """
-        from ._reqverifier import ReqVerifierHelper
-
         return (
             req_link.req_ref.id,
-            *[ReqVerifierHelper.sortkeyfunction(_req_verifier) for _req_verifier in req_link.req_verifiers],
+            *[_FAST_PATH.req_verifier_helper_cls.sortkeyfunction(_req_verifier) for _req_verifier in req_link.req_verifiers],
         )
 
     @staticmethod

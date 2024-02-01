@@ -266,13 +266,12 @@ class Req:
         Returns scenarios linked with this requirement, either directly or through one of their steps.
         """
         from ._reqlink import ReqLinkHelper
-        from ._reqverifier import ReqVerifierHelper
 
         return ReqLinkHelper.buildsetwithreqlinks(
             # Determine the list of requirement references to walk through, depending on `walk_subrefs`.
             [self.main_ref] if not walk_subrefs else [self.main_ref, *self.subrefs],
             # Get scenarios from each link.
-            lambda req_link: map(ReqVerifierHelper.getscenario, req_link.req_verifiers),
+            lambda req_link: map(_FAST_PATH.req_verifier_helper_cls.getscenario, req_link.req_verifiers),
         )
 
 

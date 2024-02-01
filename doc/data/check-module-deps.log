@@ -14,8 +14,8 @@ INFO                                            _testerrors.py, _timezoneutils.p
 INFO     <06>              _campaignargs.py => [_args.py, _path.py, _scenarioargs.py]
 INFO     <06>            _campaignrunner.py => [_fastpath.py, _logger.py, _scenariodefinition.py]
 INFO     <06>               _knownissues.py => [_fastpath.py, _testerrors.py]
-INFO     <06>           _reqtraceability.py => [_fastpath.py, _logger.py, _path.py, _reqref.py, _scenariodefinition.py,
-INFO                                            _stepdefinition.py]
+INFO     <06>           _reqtraceability.py => [_fastpath.py, _logger.py, _path.py, _reqref.py, _reqverifier.py,
+INFO                                            _scenariodefinition.py, _stepdefinition.py]
 INFO     <06>            _scenarioreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
 INFO                                            _scenariodefinition.py, _stepdefinition.py]
 INFO     <06>            _scenariorunner.py => [_args.py, _enumutils.py, _fastpath.py, _logextradata.py, _logger.py,
@@ -36,7 +36,7 @@ INFO     <04>                 _locations.py => [_logger.py, _path.py]
 INFO     <04>              _logformatter.py => [_fastpath.py, _logextradata.py, _logger.py]
 INFO     <04>                _loggermain.py => [_logextradata.py, _logger.py]
 INFO     <04>                _reflection.py => [_debugclasses.py, _logger.py, _path.py, _scenariodefinitionmeta.py]
-INFO     <04>                     _reqdb.py => [_fastpath.py, _logger.py, _req.py, _reqref.py]
+INFO     <04>                     _reqdb.py => [_fastpath.py, _logger.py, _req.py, _reqref.py, _reqverifier.py]
 INFO     <04>                    _reqmgt.py => [_logger.py]
 INFO     <04>            _scenarioconfig.py => [_enumutils.py, _fastpath.py, _logger.py, _path.py]
 INFO     <04>           _scenarioresults.py => [_debugutils.py, _fastpath.py, _logger.py]

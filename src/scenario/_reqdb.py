@@ -25,6 +25,8 @@ if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._req import Req as _ReqImpl  # `Req` imported once for performance concerns.
     from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` imported once for performance concerns.
+    from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperImpl  # `ReqVerifierHelper` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
@@ -326,13 +328,11 @@ class ReqDatabase(_LoggerImpl):
 
         :return: :class:`._reqverifier.ReqVerifier` ordered set (see :meth:`._reqverifier.ReqVerifier.orderedset()` for order details).
         """
-        from ._reqverifier import ReqVerifier
-
-        _req_verifier_list = []  # type: typing.List[ReqVerifier]
+        _req_verifier_list = []  # type: typing.List[_ReqVerifierType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _req_verifier_list.extend(_req_link.req_verifiers)
-        _req_verifiers = ReqVerifier.orderedset(_req_verifier_list)  # type: _OrderedSetType[ReqVerifier]
+        _req_verifiers = _ReqVerifierImpl.orderedset(_req_verifier_list)  # type: _OrderedSetType[_ReqVerifierType]
 
         self.debug("getallverifiers() -> %r", _req_verifiers)
         return _req_verifiers
@@ -345,14 +345,12 @@ class ReqDatabase(_LoggerImpl):
 
         :return: :class:`._scenariodefinition.ScenarioDefinition` ordered set (see :meth:`._reqverifier.ReqVerifier.orderedset()` for order details).
         """
-        from ._reqverifier import ReqVerifierHelper
-
         _scenario_list = []  # type: typing.List[_ScenarioDefinitionType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _scenario_list.extend(
                     # Ensure `ScenarioDefinition` from `ReqVerifier` objects.
-                    map(ReqVerifierHelper.getscenario, _req_link.req_verifiers),
+                    map(_ReqVerifierHelperImpl.getscenario, _req_link.req_verifiers),
                 )
         _scenarios = _FAST_PATH.scenario_definition_cls.orderedset(_scenario_list)  # type: _OrderedSetType[_ScenarioDefinitionType]
 

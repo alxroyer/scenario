@@ -32,6 +32,8 @@ if typing.TYPE_CHECKING:
     from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._req import Req as _ReqType
     from ._reqref import ReqRef as _ReqRefType
+    from ._reqverifier import ReqVerifier as _ReqVerifierType
+    from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -105,6 +107,16 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`req_ref_cls()` property.
         self._req_ref_cls = None  # type: typing.Optional[typing.Type[_ReqRefType]]
+
+        #: :class:`._reqverifier.ReqVerifier` class reference.
+        #:
+        #: Reference resolved by :meth:`req_verifier_cls()` property.
+        self._req_verifier_cls = None  # type: typing.Optional[typing.Type[_ReqVerifierType]]
+
+        #: :class:`._reqverifier.ReqVerifierHelper` class reference.
+        #:
+        #: Reference resolved by :meth:`req_verifier_helper_cls()` property.
+        self._req_verifier_helper_cls = None  # type: typing.Optional[typing.Type[_ReqVerifierHelperType]]
 
     @property
     def code_location(self):  # type: () -> typing.Type[_CodeLocationType]
@@ -185,6 +197,26 @@ class FastPath:
             from ._reqref import ReqRef  # check-imports: ignore  ## `FastPath` local import.
             self._req_ref_cls = ReqRef
         return self._req_ref_cls
+
+    @property
+    def req_verifier_cls(self):  # type: () -> typing.Type[_ReqVerifierType]
+        """
+        #: :class:`._reqverifier.ReqVerifier` class reference.
+        """
+        if self._req_verifier_cls is None:
+            from ._reqverifier import ReqVerifier  # check-imports: ignore  ## `FastPath` local import.
+            self._req_verifier_cls = ReqVerifier
+        return self._req_verifier_cls
+
+    @property
+    def req_verifier_helper_cls(self):  # type: () -> typing.Type[_ReqVerifierHelperType]
+        """
+        #: :class:`._reqverifier.ReqVerifierHelper` class reference.
+        """
+        if self._req_verifier_helper_cls is None:
+            from ._reqverifier import ReqVerifierHelper  # check-imports: ignore  ## `FastPath` local import.
+            self._req_verifier_helper_cls = ReqVerifierHelper
+        return self._req_verifier_helper_cls
 
 
 #: Main instance of :class:`FastPath`.
