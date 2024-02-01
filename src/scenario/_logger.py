@@ -27,9 +27,11 @@ if True:
     from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` used for class member initialization, imported once for performance concerns.
+    from ._loggingcontext import LoggingContext as _LoggingContextImpl  # `LoggingContext` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
+    from ._loggingcontext import LoggingContext as _LoggingContextType
 
 
 #: Number of main loggers already created.
@@ -209,14 +211,12 @@ class Logger:
             in order to ensure the expected counter :meth:`popindentation()` is called,
             whatever happens (``return``, ``break``, ``continue`` jumps, or exception raised).
         """
-        from ._loggingcontext import LoggingContext
-
         self._indentations.append(indentation)
 
         # Return a started `LoggingContext` instance that does not push indentation again,
         # but would call `popindentation()` with the appropriate indentation:
         # - Initialize without indentation, and start.
-        _ctx = LoggingContext(logger=self, indentation="")  # type: LoggingContext
+        _ctx = _LoggingContextImpl(logger=self, indentation="")  # type: _LoggingContextType
         _ctx.__enter__()
         # - Fix indentation once started.
         _ctx.indentation = indentation
