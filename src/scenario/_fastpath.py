@@ -55,6 +55,21 @@ class FastPath:
         when there is no risk about potential future cyclic module dependencies.
     """
 
+    # Optimize attribute access for this class.
+    __slots__ = [
+        "_code_location_cls",
+        "_config_db",
+        "_execution_locations",
+        "_req_cls",
+        "_req_ref_cls",
+        "_req_verifier_cls",
+        "_req_verifier_helper_cls",
+        "_scenario_config",
+        "_scenario_definition_cls",
+        "_step_definition_cls",
+        "args",
+    ]
+
     def __init__(self):  # type: (...) -> None
         """
         Declares fast path data.
