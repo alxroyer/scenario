@@ -140,9 +140,7 @@ class ReqLink:
 
         Resolution of :attr:`_any_req_ref`.
         """
-        from ._reqdb import REQ_DB
-
-        return REQ_DB.getreqref(self._any_req_ref, push_unknown=True)
+        return _FAST_PATH.req_db.getreqref(self._any_req_ref, push_unknown=True)
 
     @property
     def req_verifiers(self):  # type: () -> _OrderedSetType[_ReqVerifierType]
@@ -183,11 +181,9 @@ class ReqLink:
 
             ``True`` by default when no predicates are set.
         """
-        from ._reqdb import REQ_DB
-
         # Requirement reference predicates.
         if req_ref is not None:
-            req_ref = REQ_DB.getreqref(req_ref)
+            req_ref = _FAST_PATH.req_db.getreqref(req_ref)
             if not self.req_ref.matches(req_ref):
                 # Requirement reference mismatch.
                 if walk_subrefs and req_ref.ismain():
@@ -224,12 +220,10 @@ class ReqLink:
         :param req_verifier: Requirement verifier that traces the requirement reference with this link.
         :return: ``self``
         """
-        from ._reqdb import REQ_DB
-
         # As soon as the link is actually traced by verifiers:
         # - ensure the database knows the requirement reference (subreferences only),
         if self.req_ref.issubref():
-            REQ_DB.push(self.req_ref)
+            _FAST_PATH.req_db.push(self.req_ref)
         # - ensure the link is saved in the requirement reference link set,
         if self not in self.req_ref.req_links:
             self.req_ref._req_links.add(self)  # noqa  ## Access to protected member
@@ -240,7 +234,7 @@ class ReqLink:
             self._req_verifiers.add(req_verifier)
 
             # Debug the downstream requirement link.
-            REQ_DB.debug("Requirement link: %s -> %r", self.req_ref.id, req_verifier)
+            _FAST_PATH.req_db.debug("Requirement link: %s -> %r", self.req_ref.id, req_verifier)
 
             # Link <-> verifier cross-reference.
             req_verifier.verifies(self)

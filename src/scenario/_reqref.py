@@ -127,10 +127,8 @@ class ReqRef:
         Resolution of :attr:`_any_req`.
         Cached with :attr:`_req`.
         """
-        from ._reqdb import REQ_DB
-
         if self._req is None:
-            self._req = REQ_DB.getreq(self._any_req, push_unknown=True)
+            self._req = _FAST_PATH.req_db.getreq(self._any_req, push_unknown=True)
         return self._req
 
     @property

@@ -89,7 +89,6 @@ class ReqTraceability(_LoggerImpl):
             ``True`` (by default) to generate info logging.
         """
         from ._loggermain import MAIN_LOGGER
-        from ._reqdb import REQ_DB
         from ._testsuitefile import TestSuiteFile
 
         self.debug("ReqTraceability.loaddatafromfiles(req_db_file_paths=%r, test_suite_paths=%r)", req_db_file_paths, test_suite_paths)
@@ -109,21 +108,21 @@ class ReqTraceability(_LoggerImpl):
             if log_info:
                 MAIN_LOGGER.info("Loading requirements")
             with MAIN_LOGGER.pushindentation("  "):
-                if REQ_DB.getallreqs():
+                if _FAST_PATH.req_db.getallreqs():
                     if log_info:
                         MAIN_LOGGER.info("Resetting requirement database")
-                    REQ_DB.clear()
+                    _FAST_PATH.req_db.clear()
 
                 self.debug("Reading %d req-db file(s)", len(list(req_db_file_paths)))
                 for _req_db_file_path in req_db_file_paths:  # type: _PathType
                     if log_info:
                         MAIN_LOGGER.info(f"Loading '{_req_db_file_path}'")
-                    REQ_DB.load(_req_db_file_path)
+                    _FAST_PATH.req_db.load(_req_db_file_path)
         else:
             self.debug("Requirement database left as is")
 
         if log_info:
-            _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+            _req_ref_count = len(_FAST_PATH.req_db.getallrefs())  # type: int
             # MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
             MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
 
@@ -204,7 +203,6 @@ class ReqTraceability(_LoggerImpl):
         from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
         from ._campaignreport import CAMPAIGN_REPORT
         from ._loggermain import MAIN_LOGGER
-        from ._reqdb import REQ_DB
 
         self.debug("ReqTraceability.loaddatafromcampaignresults(campaign_results='%s')", campaign_results)
 
@@ -218,10 +216,10 @@ class ReqTraceability(_LoggerImpl):
             self.debug("Campaign report file: '%s'", _campaign_report_path)
 
             # Clear the requirement database before reloading it while reading campaign results.
-            if REQ_DB.getallreqs():
+            if _FAST_PATH.req_db.getallreqs():
                 if log_info:
                     MAIN_LOGGER.info("Resetting requirement database")
-                REQ_DB.clear()
+                _FAST_PATH.req_db.clear()
 
             if log_info:
                 MAIN_LOGGER.info(f"Loading campaign results from '{_campaign_report_path}'")
@@ -233,7 +231,7 @@ class ReqTraceability(_LoggerImpl):
             )  # type: CampaignExecution
 
             if log_info:
-                _req_ref_count = len(REQ_DB.getallrefs())  # type: int
+                _req_ref_count = len(_FAST_PATH.req_db.getallrefs())  # type: int
                 MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
         else:
             _campaign_report_path = campaign_results.campaign_report_path  # Type already declared above.
@@ -496,13 +494,13 @@ class ReqTraceability(_LoggerImpl):
         :return: Downstream traceability.
         """
         from ._reflection import qualname
-        from ._reqdb import REQ_DB
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
 
-        self.debug("ReqTraceability.getdownstream(): Computing downstream traceability from %d requirement references in database", len(REQ_DB.getallrefs()))
+        _all_req_refs = _FAST_PATH.req_db.getallrefs()  # type: typing.Sequence[_ReqRefType]
+        self.debug("ReqTraceability.getdownstream(): Computing downstream traceability from %d requirement references in database", len(_all_req_refs))
         _downstream_req_refs = []  # type: typing.List[ReqTraceability.Downstream.ReqRef]
-        for _req_ref in REQ_DB.getallrefs():  # type: _ReqRefType
+        for _req_ref in _all_req_refs:  # type: _ReqRefType
             _downstream_req_ref = ReqTraceability.Downstream.ReqRef(req_ref=_req_ref)  # type: ReqTraceability.Downstream.ReqRef
             _downstream_req_refs.append(_downstream_req_ref)
 

@@ -31,6 +31,7 @@ if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._req import Req as _ReqType
+    from ._reqdb import ReqDatabase as _ReqDatabaseType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
@@ -61,6 +62,7 @@ class FastPath:
         "_config_db",
         "_execution_locations",
         "_req_cls",
+        "_req_db",
         "_req_ref_cls",
         "_req_verifier_cls",
         "_req_verifier_helper_cls",
@@ -100,6 +102,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_config()` property.
         self._scenario_config = None  # type: typing.Optional[_ScenarioConfigType]
+
+        #: :class:`._reqdb.ReqDatabase` singleton reference.
+        #:
+        #: Reference resolved by :meth:`req_db()` property.
+        self._req_db = None  # type: typing.Optional[_ReqDatabaseType]
 
         # Classes.
 
@@ -172,6 +179,16 @@ class FastPath:
             from ._scenarioconfig import SCENARIO_CONFIG  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_config = SCENARIO_CONFIG
         return self._scenario_config
+
+    @property
+    def req_db(self):  # type: () -> _ReqDatabaseType
+        """
+        :class:`._reqdb.ReqDatabase` singleton.
+        """
+        if self._req_db is None:
+            from ._reqdb import REQ_DB  # check-imports: ignore  ## `FastPath` local import.
+            self._req_db = REQ_DB
+        return self._req_db
 
     @property
     def scenario_definition_cls(self):  # type: () -> typing.Type[_ScenarioDefinitionType]

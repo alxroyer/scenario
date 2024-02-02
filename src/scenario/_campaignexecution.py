@@ -106,13 +106,12 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
-        from ._reqdb import ReqDatabase
 
         if self._req_db_path is None:
             self._req_db_path = self._guessfilepath(
                 file_description="requirement database",
                 default_filename=_FAST_PATH.scenario_config.reqdbfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_db.JSON_SCHEMA_SUBPATH),
             )
         return self._req_db_path
 

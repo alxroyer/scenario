@@ -454,7 +454,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_req_verifier: JSON content of a requirement verifier.
         :param req_verifier: Requirement verifier to update. Either a scenario or a step.
         """
-        from ._reqdb import REQ_DB
         if typing.TYPE_CHECKING:
             from ._reqtypes import ReqLinkDefType
 
@@ -463,7 +462,7 @@ class ScenarioReport(_LoggerImpl):
             for _json_req_link in json_req_verifier["reqs"]:  # type: _JsonDictType
                 _req_ref_id = _json_req_link["ref"]  # type: str
                 try:
-                    _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: _ReqRefType
+                    _req_ref = _FAST_PATH.req_db.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: _ReqRefType
                 except KeyError:
                     if self._feed_req_db:
                         # Requirement reference should have been added automatically.

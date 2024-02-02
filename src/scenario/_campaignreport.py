@@ -318,7 +318,6 @@ class CampaignReport(_LoggerImpl):
         :return: Campaign execution data.
         """
         from ._campaignexecution import CampaignExecution
-        from ._reqdb import REQ_DB
         from ._xmlutils import Xml
 
         _campaign_execution = CampaignExecution(outdir=self._report_path.parent)  # type: CampaignExecution
@@ -351,7 +350,7 @@ class CampaignReport(_LoggerImpl):
                 if self._feed_req_db:
                     # Read the requirement database file by the way.
                     self.debug("Feeding requirement database from '%s'", _campaign_execution.req_db_path)
-                    REQ_DB.load(_campaign_execution.req_db_path)
+                    _FAST_PATH.req_db.load(_campaign_execution.req_db_path)
             elif _link_purpose == CampaignReport.LinkPurpose.DOWNSTREAM_TRACEABILITY:
                 _campaign_execution.downstream_traceability_path = self._xmlattr2path(_xml_link, "href")
                 self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.downstream_traceability_path)

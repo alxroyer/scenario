@@ -103,7 +103,6 @@ class ReqVerifier(abc.ABC):
         :return:
             ``self``
         """
-        from ._reqdb import REQ_DB
         from ._reqlink import ReqLink
 
         # Try to save each link.
@@ -120,7 +119,7 @@ class ReqVerifier(abc.ABC):
                 _req_link.verifiedby(self)
 
                 # Let's debug the upstream requirement link after.
-                REQ_DB.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
+                _FAST_PATH.req_db.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
 
         return self
 

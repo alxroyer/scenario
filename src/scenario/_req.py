@@ -136,9 +136,7 @@ class Req:
         """
         Reference to the main part of this requirement.
         """
-        from ._reqdb import REQ_DB
-
-        return REQ_DB.getreqref(self)
+        return _FAST_PATH.req_db.getreqref(self)
 
     @property
     def subrefs(self):  # type: () -> _OrderedSetType[_ReqRefType]
@@ -147,13 +145,11 @@ class Req:
 
         See :meth:`._reqref.ReqRef.orderedset()` for order details.
         """
-        from ._reqdb import REQ_DB
-
         return _FAST_PATH.req_ref_cls.orderedset(
             # Filter requirement references that point to subparts of this requirement.
             filter(
                 lambda req_ref: (req_ref.req is self) and req_ref.issubref(),
-                REQ_DB.getallrefs(),
+                _FAST_PATH.req_db.getallrefs(),
             ),
         )
 

@@ -75,7 +75,6 @@ class CampaignRunner(_LoggerImpl):
         from ._handlers import HANDLERS
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
-        from ._reqdb import REQ_DB
         from ._reqtraceability import REQ_TRACEABILITY
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
@@ -105,7 +104,7 @@ class CampaignRunner(_LoggerImpl):
             # Load requirements.
             for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
                 MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
-                REQ_DB.load(_req_db_file)
+                _FAST_PATH.req_db.load(_req_db_file)
 
             _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
 
@@ -122,9 +121,9 @@ class CampaignRunner(_LoggerImpl):
             _campaign_execution.time.setendtime()
 
             # Dump requirement files (only when there are requirements).
-            if REQ_DB.getallreqs():
+            if _FAST_PATH.req_db.getallreqs():
                 # Requirement database.
-                REQ_DB.dump(_campaign_execution.req_db_path)
+                _FAST_PATH.req_db.dump(_campaign_execution.req_db_path)
                 # Downstream & upstream traceability reports.
                 REQ_TRACEABILITY.loaddatafromcampaignresults(
                     _campaign_execution,

@@ -98,7 +98,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
-        from ._reqdb import REQ_DB
         from ._scenarioargs import ScenarioArgs
         from ._scenarioexecution import ScenarioExecution
         from ._scenarioreport import SCENARIO_REPORT
@@ -118,7 +117,7 @@ class ScenarioRunner(_LoggerImpl):
             # Load requirements.
             for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
                 MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
-                REQ_DB.load(_req_db_file)
+                _FAST_PATH.req_db.load(_req_db_file)
 
             # Execute tests.
             _errors = []  # type: typing.List[ErrorCode]
