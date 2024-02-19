@@ -71,13 +71,12 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Makes it possible to easily access the attributes and methods defined with a user scenario definition.
         """
         from ._reflection import qualname
-        from ._scenariostack import SCENARIO_STACK
 
-        if isinstance(SCENARIO_STACK.building.scenario_definition, cls):
-            return SCENARIO_STACK.building.scenario_definition
-        if isinstance(SCENARIO_STACK.current_scenario_definition, cls):
-            return SCENARIO_STACK.current_scenario_definition
-        SCENARIO_STACK.raisecontexterror(f"Current scenario definition not of type {qualname(cls)}")
+        if isinstance(_FAST_PATH.scenario_stack.building.scenario_definition, cls):
+            return _FAST_PATH.scenario_stack.building.scenario_definition
+        if isinstance(_FAST_PATH.scenario_stack.current_scenario_definition, cls):
+            return _FAST_PATH.scenario_stack.current_scenario_definition
+        _FAST_PATH.scenario_stack.raisecontexterror(f"Current scenario definition not of type {qualname(cls)}")
 
     def __init__(
             self,

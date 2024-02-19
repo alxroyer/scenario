@@ -99,7 +99,6 @@ class LogFormatter(logging.Formatter):
         from ._datetimeutils import toiso8601
         from ._loggermain import MAIN_LOGGER
         from ._scenariologging import ScenarioLogging
-        from ._scenariostack import SCENARIO_STACK
 
         # Retrieve the logger reference from the record.
         # Memo: Logger reference as extra data set by :class:`logfilters.LoggerLogFilter`.
@@ -119,7 +118,7 @@ class LogFormatter(logging.Formatter):
 
         # Scenario stack indentation.
         if self._with(record, _LogExtraDataImpl.SCENARIO_STACK_INDENTATION, default=True):
-            _log_line += ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN * (SCENARIO_STACK.size - 1)
+            _log_line += ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN * (_FAST_PATH.scenario_stack.size - 1)
 
         # Action / result margin.
         if self._with(record, _LogExtraDataImpl.ACTION_RESULT_MARGIN, default=True):
@@ -208,7 +207,6 @@ class LogFormatter(logging.Formatter):
         3. The current execution state.
         """
         from ._loghandler import LogHandler
-        from ._scenariostack import SCENARIO_STACK
 
         # 1. Check whether the record or the attached logger has the given flag set.
         _value = _LogExtraDataHelperImpl.get(record, extra_flag)  # type: typing.Any
@@ -226,7 +224,7 @@ class LogFormatter(logging.Formatter):
                 return False
         if extra_flag == _LogExtraDataImpl.ACTION_RESULT_MARGIN:
             # Action/result margin only when there is a current action or expected result.
-            return SCENARIO_STACK.current_action_result_execution is not None
+            return _FAST_PATH.scenario_stack.current_action_result_execution is not None
 
         # 3. Otherwise, return the default value.
         return default

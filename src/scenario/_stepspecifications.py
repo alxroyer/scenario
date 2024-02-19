@@ -128,13 +128,12 @@ class StepDefinitionSpecification:
         :raise LookupError: When the step definition could not be found.
         """
         from ._scenariorunner import SCENARIO_RUNNER
-        from ._scenariostack import SCENARIO_STACK
 
         # Ensure a scenario definition reference.
         if not scenario:
-            scenario = SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition
+            scenario = _FAST_PATH.scenario_stack.building.scenario_definition or _FAST_PATH.scenario_stack.current_scenario_definition
         if not scenario:
-            SCENARIO_STACK.raisecontexterror("No current scenario")
+            _FAST_PATH.scenario_stack.raisecontexterror("No current scenario")
 
         # Identify matching steps.
         _matching_step_definitions = []  # type: typing.List[_StepDefinitionType]

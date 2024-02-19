@@ -37,6 +37,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenariostack import ScenarioStack as _ScenarioStackType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
@@ -68,6 +69,7 @@ class FastPath:
         "_req_verifier_helper_cls",
         "_scenario_config",
         "_scenario_definition_cls",
+        "_scenario_stack",
         "_step_definition_cls",
         "args",
     ]
@@ -102,6 +104,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_config()` property.
         self._scenario_config = None  # type: typing.Optional[_ScenarioConfigType]
+
+        #: :class:`._scenariostack.ScenarioStack` singleton reference.
+        #:
+        #: Reference resolved by :meth:`scenario_stack()` property.
+        self._scenario_stack = None  # type: typing.Optional[_ScenarioStackType]
 
         #: :class:`._reqdb.ReqDatabase` singleton reference.
         #:
@@ -179,6 +186,16 @@ class FastPath:
             from ._scenarioconfig import SCENARIO_CONFIG  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_config = SCENARIO_CONFIG
         return self._scenario_config
+
+    @property
+    def scenario_stack(self):  # type: () -> _ScenarioStackType
+        """
+        :class:`._scenariostack.ScenarioStack` singleton.
+        """
+        if self._scenario_stack is None:
+            from ._scenariostack import SCENARIO_STACK  # check-imports: ignore  ## `FastPath` local import.
+            self._scenario_stack = SCENARIO_STACK
+        return self._scenario_stack
 
     @property
     def req_db(self):  # type: () -> _ReqDatabaseType

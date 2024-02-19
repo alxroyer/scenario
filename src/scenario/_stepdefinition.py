@@ -55,7 +55,6 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         Makes it possible to easily access the attributes and methods defined with a user step definition.
         """
         from ._reflection import qualname
-        from ._scenariostack import SCENARIO_STACK
         if typing.TYPE_CHECKING:
             from ._stepspecifications import AnyStepDefinitionSpecificationType
 
@@ -67,18 +66,18 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
             return _step_definition
 
         _step_specification = cls if (index is None) else (cls, index)  # type: AnyStepDefinitionSpecificationType
-        if SCENARIO_STACK.building.scenario_definition:
-            _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(_step_specification)  # type: typing.Optional[StepDefinition]
+        if _FAST_PATH.scenario_stack.building.scenario_definition:
+            _step_definition = _FAST_PATH.scenario_stack.building.scenario_definition.getstep(_step_specification)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
-        if SCENARIO_STACK.current_scenario_definition:
-            _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(_step_specification)  # Type already defined above.
+        if _FAST_PATH.scenario_stack.current_scenario_definition:
+            _step_definition = _FAST_PATH.scenario_stack.current_scenario_definition.getstep(_step_specification)  # Type already defined above.
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
-        if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
-            SCENARIO_STACK.raisecontexterror("No current scenario definition")
+        if not (_FAST_PATH.scenario_stack.building.scenario_definition or _FAST_PATH.scenario_stack.current_scenario_definition):
+            _FAST_PATH.scenario_stack.raisecontexterror("No current scenario definition")
         else:
-            SCENARIO_STACK.raisecontexterror(f"No such step definition of type {qualname(cls)}")
+            _FAST_PATH.scenario_stack.raisecontexterror(f"No such step definition of type {qualname(cls)}")
 
     def __init__(
             self,

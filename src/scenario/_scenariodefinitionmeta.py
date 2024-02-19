@@ -130,21 +130,19 @@ class MetaScenarioDefinition(abc.ABCMeta):
             Pushes the scenario definition to the building context of the scenario stack before the initializer's execution,
             then removes it out after the initializer's execution.
             """
-            from ._scenariostack import SCENARIO_STACK
-
             _scenario_definition = None  # type: typing.Optional[_ScenarioDefinitionType]
             if (len(args) >= 1) and isinstance(args[0], _FAST_PATH.scenario_definition_cls):
                 _scenario_definition = args[0]
 
             # Push the scenario definition to the building context of the scenario stack.
             if _scenario_definition:
-                SCENARIO_STACK.debug("MetaScenarioDefinition.InitWrapper.__call__(): Pushing scenario being built")
-                SCENARIO_STACK.building.pushscenariodefinition(_scenario_definition)
+                _FAST_PATH.scenario_stack.debug("MetaScenarioDefinition.InitWrapper.__call__(): Pushing scenario being built")
+                _FAST_PATH.scenario_stack.building.pushscenariodefinition(_scenario_definition)
 
             # Call the original ``__init__()`` method.
             self.init_method(*args, **kwargs)
 
             # Pop the scenario definition from the building context of the scenario stack.
             if _scenario_definition:
-                SCENARIO_STACK.debug("MetaScenarioDefinition.InitWrapper.__call__(): Popping scenario being built")
-                SCENARIO_STACK.building.popscenariodefinition(_scenario_definition)
+                _FAST_PATH.scenario_stack.debug("MetaScenarioDefinition.InitWrapper.__call__(): Popping scenario being built")
+                _FAST_PATH.scenario_stack.building.popscenariodefinition(_scenario_definition)

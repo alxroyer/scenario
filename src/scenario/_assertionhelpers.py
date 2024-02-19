@@ -26,6 +26,7 @@ import unittest as _unittestmod
 
 if True:
     from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # `FmtAndArgs` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
     from ._debugutils import FmtAndArgs as _FmtAndArgsType
@@ -119,10 +120,9 @@ def evidence(
     :param args: Proof message arguments.
     """
     from ._scenariorunner import SCENARIO_RUNNER
-    from ._scenariostack import SCENARIO_STACK
 
     if evidence_enabled and SCENARIO_RUNNER.doexecute():
-        if SCENARIO_STACK.current_scenario_definition and SCENARIO_STACK.current_action_result_execution:
+        if _FAST_PATH.scenario_stack.current_scenario_definition and _FAST_PATH.scenario_stack.current_action_result_execution:
             # Ensure `regular` is of type `str`.
             if not isinstance(regular, str):
                 regular = str(regular)
@@ -134,4 +134,4 @@ def evidence(
             _evidence_message.push(regular, *args)
 
             # Save it.
-            SCENARIO_STACK.current_scenario_definition.evidence(str(_evidence_message))
+            _FAST_PATH.scenario_stack.current_scenario_definition.evidence(str(_evidence_message))

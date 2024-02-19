@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._req import Req as _ReqType
@@ -293,13 +294,12 @@ class ScenarioLogging:
         Resets the :attr:`_known_issues` history for the main scenario.
         """
         from ._loggermain import MAIN_LOGGER
-        from ._scenariostack import SCENARIO_STACK
 
         MAIN_LOGGER.rawoutput("")
         MAIN_LOGGER.rawoutput(f"END OF '{scenario_definition.name}'")
 
         # Reset the `_known_issues` history when this is the main scenario.
-        if SCENARIO_STACK.ismainscenario(scenario_definition):
+        if _FAST_PATH.scenario_stack.ismainscenario(scenario_definition):
             self._known_issues = []
 
         self._calls.append(ScenarioLogging._Call.END_SCENARIO)
