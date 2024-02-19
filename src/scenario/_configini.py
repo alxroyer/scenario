@@ -23,6 +23,7 @@ import os
 import typing
 
 if True:
+    from ._configkey import ConfigKey as _ConfigKeyImpl  # `ConfigKey` imported once for performance concerns.
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -86,8 +87,6 @@ class ConfigIni:
 
         .. warning:: Works only for `Dict[str, Dict[str, Union[str, int, bool, float]]]` dictionaries (i.e. *[section]/key = value* structures).
         """
-        from ._configkey import ConfigKey
-
         _FAST_PATH.config_db.debug("Saving INI file '%s'", path)
 
         _config_parser = configparser.ConfigParser()  # type: configparser.ConfigParser
@@ -104,14 +103,14 @@ class ConfigIni:
             if isinstance(current_node, dict):
                 for _subkey in current_node:
                     _feedini(
-                        parent_node_key=ConfigKey.join(parent_node_key, current_node_subkey),
+                        parent_node_key=_ConfigKeyImpl.join(parent_node_key, current_node_subkey),
                         current_node_subkey=_subkey,
                         current_node=current_node[_subkey],
                     )
             elif isinstance(current_node, list):
                 for _index in range(len(current_node)):
                     _feedini(
-                        parent_node_key=ConfigKey.join(parent_node_key, current_node_subkey),
+                        parent_node_key=_ConfigKeyImpl.join(parent_node_key, current_node_subkey),
                         current_node_subkey=f"[{_index}]",
                         current_node=current_node[_index],
                     )

@@ -24,6 +24,7 @@ import re
 import typing
 
 if True:
+    from ._configkey import ConfigKey as _ConfigKeyImpl  # `ConfigKey` imported once for performance concerns.
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
@@ -266,9 +267,7 @@ class ConfigNode:
 
         :return: List of full keys.
         """
-        from ._configkey import ConfigKey
-
-        return [ConfigKey.join(self.key, _subkey) for _subkey in self.getsubkeys()]
+        return [_ConfigKeyImpl.join(self.key, _subkey) for _subkey in self.getsubkeys()]
 
     def getsubkeys(self):  # type: (...) -> typing.List[str]
         """
@@ -276,19 +275,17 @@ class ConfigNode:
 
         :return: List of sub-keys.
         """
-        from ._configkey import ConfigKey
-
         _subkeys = []  # type: typing.List[str]
         if isinstance(self._data, dict):
             for _direct_subkey in self._data:  # type: str
                 _subnode = self._data[_direct_subkey]  # type: ConfigNode
                 for _subsubkey in _subnode.getsubkeys():  # type: str
-                    _subkeys.append(ConfigKey.join(_direct_subkey, _subsubkey))
+                    _subkeys.append(_ConfigKeyImpl.join(_direct_subkey, _subsubkey))
         elif isinstance(self._data, list):
             for _index in range(len(self._data)):  # type: int
                 _subnode = self._data[_index]  # Type already declared above.
                 for _subsubkey in _subnode.getsubkeys():  # Type already declared above.
-                    _subkeys.append(ConfigKey.join(f"[{_index}]", _subsubkey))
+                    _subkeys.append(_ConfigKeyImpl.join(f"[{_index}]", _subsubkey))
         else:
             _subkeys.append("")
         return _subkeys
@@ -319,8 +316,6 @@ class ConfigNode:
         :param origin: Origin info to set for each sub-node walked through or created, starting from this one.
         :return: Sub-node if found, ``None`` otherwise.
         """
-        from ._configkey import ConfigKey
-
         if create_missing:
             _FAST_PATH.config_db.debug("%r: _getsubnode(subkey=%r, create_missing=%r, origin=%r)", self, subkey, create_missing, origin)
 
@@ -365,7 +360,7 @@ class ConfigNode:
                 raise IndexError(_errmsg_start + f"Cannot index a non-list node with {_first!r}")
             _index = int(_match.group(1))  # type: int
             if create_missing and (_index == len(self._data)):
-                self._data.append(ConfigNode(parent=self, key=ConfigKey.join(self.key, f"[{_index}]")))
+                self._data.append(ConfigNode(parent=self, key=_ConfigKeyImpl.join(self.key, f"[{_index}]")))
                 _FAST_PATH.config_db.debug("  New %r", self._data[-1])
             try:
                 _subnode = self._data[_index]
@@ -388,7 +383,7 @@ class ConfigNode:
                     _subnode = self._data[_first]
                 # Create it when missing and applicable.
                 elif create_missing:
-                    _subnode = self._data[_first] = ConfigNode(parent=self, key=ConfigKey.join(self.key, _first))
+                    _subnode = self._data[_first] = ConfigNode(parent=self, key=_ConfigKeyImpl.join(self.key, _first))
                     _FAST_PATH.config_db.debug("  New %r", _subnode)
 
         # Walk through the sub-node.
