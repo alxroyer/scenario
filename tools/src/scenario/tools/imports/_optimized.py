@@ -41,5 +41,6 @@ OPTIMIZED_PATHS = [
     _SRC_PATH / "scenario" / "_scenarioconfig.py",
     _SRC_PATH / "scenario" / "_scenariodefinition.py",
     _SRC_PATH / "scenario" / "_scenariostack.py",
+    _SRC_PATH / "scenario" / "_setutils.py",
     _SRC_PATH / "scenario" / "_stepdefinition.py",
 ]  # type: typing.Sequence[scenario.Path]

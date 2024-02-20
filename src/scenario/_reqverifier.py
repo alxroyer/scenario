@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._setutils import orderedset as _orderedset  # `orderedset()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -54,9 +55,7 @@ class ReqVerifier(abc.ABC):
         :param req_verifiers: Unordered list of :class:`ReqVerifier` items.
         :return: Ordered set of unique :class:`ReqVerifier` items, ordered by scenario (or owner scenario) names, then step ids.
         """
-        from ._setutils import orderedset
-
-        return orderedset(
+        return _orderedset(
             req_verifiers,
             key=ReqVerifierHelper.sortkeyfunction,
         )

@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._setutils import orderedset as _orderedset  # `orderedset()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqref import ReqRef as _ReqRefType
@@ -53,9 +54,7 @@ class ReqLink:
         :param req_links: Unordered list of :class:`ReqLink` items.
         :return: Ordered set of unique :class:`ReqLink` items, by requirement reference ids, then scenario names and steps.
         """
-        from ._setutils import orderedset
-
-        return orderedset(
+        return _orderedset(
             req_links,
             key=ReqLinkHelper.sortkeyfunction,
         )
