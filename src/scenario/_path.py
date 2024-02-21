@@ -26,6 +26,8 @@ import tempfile
 import typing
 
 
+if True:
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     #: Type for path-like data: either a simple string or a ``os.PathLike`` instance.
     AnyPathType = typing.Union[str, os.PathLike]
@@ -249,9 +251,7 @@ class Path:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} object for '{self.prettypath}'>"
+        return f"<{_qualname(type(self))} object for '{self.prettypath}'>"
 
     def __str__(self):  # type: () -> str
         """

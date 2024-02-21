@@ -33,6 +33,8 @@ import typing
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import checkfuncqualname as _checkfuncqualname  # `checkfuncqualname()` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -71,14 +73,12 @@ class CodeLocation:
         :param method: Method to locate.
         :return: :class:`CodeLocation` instance.
         """
-        from ._reflection import qualname
-
         _source_file = inspect.getsourcefile(method)  # type: typing.Optional[str]
         assert _source_file
         return CodeLocation(
             file=_PathImpl(_source_file),
             line=inspect.getsourcelines(method)[1],
-            qualname=qualname(method),
+            qualname=_qualname(method),
         )
 
     #: Cache for :meth:`fromclass()`.
@@ -99,8 +99,6 @@ class CodeLocation:
             In order to speed up consecutive calls for the same class,
             this method caches results in :attr:`_class_locations_cache`.
         """
-        from ._reflection import qualname
-
         # First, search for the class location in the cache.
         if cls in CodeLocation._class_locations_cache:
             return CodeLocation._class_locations_cache[cls]
@@ -116,7 +114,7 @@ class CodeLocation:
         _location = CodeLocation(
             file=_PathImpl(_source_file),
             line=_line,
-            qualname=qualname(cls),
+            qualname=_qualname(cls),
         )  # type: CodeLocation
 
         # Save it in the cache and return.
@@ -249,8 +247,6 @@ class ExecutionLocations(_LoggerImpl):
         :param tb_items: Traceback items to build the stack from.
         :return: Stack of :class:`CodeLocation`, from first to last call.
         """
-        from ._reflection import checkfuncqualname
-
         self.debug("Computing test location:")
 
         _locations = []  # type: typing.List[CodeLocation]
@@ -292,7 +288,7 @@ class ExecutionLocations(_LoggerImpl):
                     self.debug("Location stack trace - %s:%d: %s", _location.file, _location.line, _location.qualname)
                     if fqn:
                         # Ensure the location function name is fully qualified.
-                        _location.qualname = checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
+                        _location.qualname = _checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
                         # Fix the `traceback` item as well.
                         _tb_item.name = _location.qualname
                     _locations.insert(0, _location)

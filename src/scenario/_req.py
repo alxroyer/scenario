@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._setutils import orderedset as _orderedset  # `orderedset()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
@@ -92,10 +93,8 @@ class Req:
         """
         Canonical string representation of the requirement instance.
         """
-        from ._reflection import qualname
-
         return "".join([
-            f"<{qualname(type(self))}",
+            f"<{_qualname(type(self))}",
             f" id={self.id!r}",
             f" title={self.title!r}" if self.title else "",
             f">",

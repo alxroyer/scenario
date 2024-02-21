@@ -29,6 +29,7 @@ if True:
     from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._configtypes import OriginType as _OriginType
@@ -82,9 +83,7 @@ class ConfigNode:
 
         Gives the configuration key and type of data.
         """
-        from ._reflection import qualname
-
-        _repr = f"<{qualname(type(self))}"  # type: str
+        _repr = f"<{_qualname(type(self))}"  # type: str
         _repr += f" key='{self.key}'"
         if isinstance(self._data, dict):
             _repr += " data={...}"
@@ -432,8 +431,6 @@ class ConfigNode:
 
         When the configuration data is not of the expected type, a ``ValueError`` is raised.
         """
-        from ._reflection import qualname
-
         def _castreturntype(value):  # type: (typing.Any) -> _VarDataType
             """
             Avoids using ``# type: ignore`` pragmas every time this :meth:`ConfigNode.cast()` method returns a value.
@@ -481,7 +478,7 @@ class ConfigNode:
             # Convert the configuration value in the ``type`` type.
             return _castreturntype(typing.cast(typing.Any, type)(self._data))
         except ValueError:
-            raise ValueError(self.errmsg(f"{self._data!r} not a valid {qualname(type)} value"))
+            raise ValueError(self.errmsg(f"{self._data!r} not a valid {_qualname(type)} value"))
 
     @property
     def origin(self):  # type: () -> _OriginType

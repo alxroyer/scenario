@@ -27,6 +27,7 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType
@@ -301,9 +302,7 @@ class TestSuiteExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} of '{self.test_suite_file.path}'>"
+        return f"<{_qualname(type(self))} of '{self.test_suite_file.path}'>"
 
     @property
     def steps(self):  # type: () -> _ExecTotalStatsType
@@ -397,9 +396,7 @@ class TestCaseExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} of '{self.script_path}'>"
+        return f"<{_qualname(type(self))} of '{self.script_path}'>"
 
     @property
     def scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]

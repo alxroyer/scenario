@@ -20,6 +20,8 @@ Step execution management.
 
 import typing
 
+if True:
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
@@ -77,9 +79,7 @@ class StepExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))}#{self.number} of {self.definition!r}>"
+        return f"<{_qualname(type(self))}#{self.number} of {self.definition!r}>"
 
     @property
     def status(self):  # type: () -> _ExecutionStatusType

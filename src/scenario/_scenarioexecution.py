@@ -20,6 +20,8 @@ Scenario execution management.
 
 import typing
 
+if True:
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._logger import Logger as _LoggerType
@@ -72,9 +74,7 @@ class ScenarioExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} {self.definition.name!r}>"
+        return f"<{_qualname(type(self))} {self.definition.name!r}>"
 
     # Execution methods.
 

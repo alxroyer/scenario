@@ -29,6 +29,8 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import importmodulefrompath as _importmodulefrompath  # `importmodulefrompath()` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` used as metaclass.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
@@ -70,13 +72,11 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
 
         Makes it possible to easily access the attributes and methods defined with a user scenario definition.
         """
-        from ._reflection import qualname
-
         if isinstance(_FAST_PATH.scenario_stack.building.scenario_definition, cls):
             return _FAST_PATH.scenario_stack.building.scenario_definition
         if isinstance(_FAST_PATH.scenario_stack.current_scenario_definition, cls):
             return _FAST_PATH.scenario_stack.current_scenario_definition
-        _FAST_PATH.scenario_stack.raisecontexterror(f"Current scenario definition not of type {qualname(cls)}")
+        _FAST_PATH.scenario_stack.raisecontexterror(f"Current scenario definition not of type {_qualname(cls)}")
 
     def __init__(
             self,
@@ -151,11 +151,9 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         """
         Canonical string representation of the scenario definition.
         """
-        from ._reflection import qualname
-
         # Sometimes, `__repr__()` may be called on an object being built.
         if hasattr(self, "name"):
-            return f"<{qualname(type(self))} {self.name!r}>"
+            return f"<{_qualname(type(self))} {self.name!r}>"
         else:
             return super().__repr__()
 
@@ -506,11 +504,9 @@ class ScenarioDefinitionHelper:
         :param sys_modules_cache: See :func:`._reflection.importmodulefrompath()`.
         :return: Scenario definition classes, if any.
         """
-        from ._reflection import importmodulefrompath
-
         # Load the test scenario module.
         script_path = _PathImpl(script_path)
-        _module = importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
+        _module = _importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
 
         # Find out the scenario classes in that module.
         _scenario_definition_class = None  # type: typing.Optional[typing.Type[ScenarioDefinition]]
@@ -546,12 +542,11 @@ class ScenarioDefinitionHelper:
         Reads the scenario step list by inspecting the user scenario class,
         and feeds the scenario definition step list.
         """
-        from ._reflection import qualname
         from ._stepmethods import StepMethods
 
         # Scan methods.
         _methods = []  # type: typing.List[types.MethodType]
-        self._logger.debug("Searching for steps in %s:", qualname(type(self.definition)))
+        self._logger.debug("Searching for steps in %s:", _qualname(type(self.definition)))
         for _method_name, _method in inspect.getmembers(self.definition, predicate=inspect.ismethod):  # type: str, types.MethodType
             if _method_name.startswith("step"):
                 # According to https://stackoverflow.com/questions/41900639/python-unable-to-compare-bound-method-to-itself#41900748,

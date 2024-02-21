@@ -29,6 +29,7 @@ import typing
 if True:
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._logger import Logger as _LoggerType
@@ -91,9 +92,7 @@ class SubProcess:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"{qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
+        return f"{_qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
 
     def __str__(self):  # type: () -> str
         """

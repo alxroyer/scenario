@@ -20,6 +20,8 @@ Action / expected result execution management.
 
 import typing
 
+if True:
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
 
@@ -59,6 +61,4 @@ class ActionResultExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"
+        return f"<{_qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"

@@ -23,6 +23,7 @@ import typing
 if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -60,9 +61,7 @@ class TestSuiteFile(_LoggerImpl):
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} path='{self.path}'>"
+        return f"<{_qualname(type(self))} path='{self.path}'>"
 
     def read(self):  # type: (...) -> None
         """

@@ -25,6 +25,7 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
@@ -493,7 +494,6 @@ class ReqTraceability(_LoggerImpl):
 
         :return: Downstream traceability.
         """
-        from ._reflection import qualname
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
 
@@ -534,7 +534,7 @@ class ReqTraceability(_LoggerImpl):
                     else:
                         raise ValueError(f"Unexpected verifier {_req_verifier!r}")
 
-        self.debug("ReqTraceability.downstream() -> %d %s objects", len(_downstream_req_refs), qualname(ReqTraceability.Downstream.ReqRef))
+        self.debug("ReqTraceability.downstream() -> %d %s objects", len(_downstream_req_refs), _qualname(ReqTraceability.Downstream.ReqRef))
         return _downstream_req_refs
 
     def writedownstream(
@@ -768,7 +768,6 @@ class ReqTraceability(_LoggerImpl):
 
         :return: Upstream traceability.
         """
-        from ._reflection import qualname
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
 
@@ -806,7 +805,7 @@ class ReqTraceability(_LoggerImpl):
                             req_subref=_req_ref, req_link=_req_link,
                         )  # type: ReqTraceability.Upstream.ReqSubref
 
-        self.debug("ReqTraceability.upstream() -> %d %s objects", len(_upstream_scenarios), qualname(ReqTraceability.Upstream.Scenario))
+        self.debug("ReqTraceability.upstream() -> %d %s objects", len(_upstream_scenarios), _qualname(ReqTraceability.Upstream.Scenario))
         return _upstream_scenarios
 
     def writeupstream(

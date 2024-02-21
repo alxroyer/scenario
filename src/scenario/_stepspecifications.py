@@ -24,6 +24,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -79,8 +80,6 @@ class StepDefinitionSpecification:
 
         :return: String representation.
         """
-        from ._reflection import qualname
-
         # Single match specifications (s-spec).
         if bool(isinstance(self._s_spec, _FAST_PATH.scenario_definition_cls)):  # Cast with `bool()` to avoid a "Statement is unreachable" error.
             return str(self._s_spec)
@@ -92,7 +91,7 @@ class StepDefinitionSpecification:
         if isinstance(self._m_spec, str):
             _spec = repr(self._m_spec)
         if isinstance(self._m_spec, type):
-            _spec = qualname(self._m_spec)
+            _spec = _qualname(self._m_spec)
 
         # Multiple match index (mi-spec).
         if self._m_spec_index is not None:

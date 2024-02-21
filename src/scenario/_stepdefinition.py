@@ -25,6 +25,7 @@ if True:
     from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
 if typing.TYPE_CHECKING:
@@ -54,7 +55,6 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
 
         Makes it possible to easily access the attributes and methods defined with a user step definition.
         """
-        from ._reflection import qualname
         if typing.TYPE_CHECKING:
             from ._stepspecifications import AnyStepDefinitionSpecificationType
 
@@ -77,7 +77,7 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         if not (_FAST_PATH.scenario_stack.building.scenario_definition or _FAST_PATH.scenario_stack.current_scenario_definition):
             _FAST_PATH.scenario_stack.raisecontexterror("No current scenario definition")
         else:
-            _FAST_PATH.scenario_stack.raisecontexterror(f"No such step definition of type {qualname(cls)}")
+            _FAST_PATH.scenario_stack.raisecontexterror(f"No such step definition of type {_qualname(cls)}")
 
     def __init__(
             self,
@@ -121,12 +121,10 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
         if type(self) is StepDefinition:
-            return f"<{qualname(type(self))} {self.name!r}>"
+            return f"<{_qualname(type(self))} {self.name!r}>"
         else:
-            return f"<{qualname(type(self))}#{self.number}>"
+            return f"<{_qualname(type(self))}#{self.number}>"
 
     def __str__(self):  # type: () -> str
         """

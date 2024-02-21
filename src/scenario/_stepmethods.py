@@ -22,6 +22,8 @@ import inspect
 import types
 import typing
 
+if True:
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
@@ -45,15 +47,13 @@ class StepMethods:
 
         Used by the :meth:`sortbyhierarchythennames()` and :meth:`sortbyreversehierarchythennames()` methods.
         """
-        from ._reflection import qualname
-
         _count = 0  # type: int
         for _cls in inspect.getmro(method.__self__.__class__):  # type: type
             for _method_name, _method in inspect.getmembers(_cls, predicate=inspect.isfunction):  # type: str, types.MethodType
                 if _method_name == method.__name__:
                     _count += 1
 
-        logger.debug("StepMethods._hierarchycount(%s) -> %d", qualname(method), _count)
+        logger.debug("StepMethods._hierarchycount(%s) -> %d", _qualname(method), _count)
         return _count
 
     @staticmethod
@@ -66,9 +66,7 @@ class StepMethods:
         :param methods: Array of methods to debug.
         :return: Debug representation.
         """
-        from ._reflection import qualname
-
-        return f"[{', '.join(qualname(_method) for _method in methods)}]"
+        return f"[{', '.join(_qualname(_method) for _method in methods)}]"
 
     @staticmethod
     def sortbynames(

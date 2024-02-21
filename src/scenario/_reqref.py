@@ -24,6 +24,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._setutils import orderedset as _orderedset  # `orderedset()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
@@ -91,9 +92,7 @@ class ReqRef:
         """
         Canonical string representation of the requirement reference.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} id={self.id!r}>"
+        return f"<{_qualname(type(self))} id={self.id!r}>"
 
     def __str__(self):  # type: () -> str
         """

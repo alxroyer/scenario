@@ -32,6 +32,8 @@ if True:
     from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # `FmtAndArgs` imported once for performance concerns.
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._reflection import isiterable as _isiterable  # `isiterable()` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType as _ErrParamType
     from ._assertionhelpers import EvidenceParamType as _EvidenceParamType
@@ -918,10 +920,8 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._reflection import isiterable
-
         assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
-        assert isiterable(obj), _assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", _saferepr(obj))
+        assert _isiterable(obj), _assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", _saferepr(obj))
 
         assert not _AssertionHelperFunctions.safecontainer(obj), _assertionhelpers.errmsg(
             err,
@@ -946,10 +946,8 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._reflection import isiterable
-
         assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
-        assert isiterable(obj), _assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", _saferepr(obj))
+        assert _isiterable(obj), _assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", _saferepr(obj))
 
         assert _AssertionHelperFunctions.safecontainer(obj), _assertionhelpers.errmsg(
             err,
@@ -976,10 +974,8 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._reflection import isiterable
-
         assert obj is not None, _assertionhelpers.isnonemsg("assertlen()", "obj")
-        assert isiterable(obj), _assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", _saferepr(obj))
+        assert _isiterable(obj), _assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", _saferepr(obj))
         assert length is not None, _assertionhelpers.isnonemsg("assertlen()", "length")
 
         _len = len(_AssertionHelperFunctions.safecontainer(obj))  # type: int
@@ -1007,12 +1003,10 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._reflection import isiterable
-
         if isinstance(container, (str, bytes)):
             assert obj is not None, _assertionhelpers.isnonemsg("assertin()", "obj")
         assert container is not None, _assertionhelpers.isnonemsg("assertin()", "container")
-        assert isiterable(container), _assertionhelpers.ctxmsg("assertin()", "invalid container type %s", _saferepr(container))
+        assert _isiterable(container), _assertionhelpers.ctxmsg("assertin()", "invalid container type %s", _saferepr(container))
 
         # Note 1: The error display proposed by unittest does not truncate the strings, which makes the reading hard.
         # assertionhelpers.unittest.assertIn(obj, container, err)
@@ -1041,12 +1035,10 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._reflection import isiterable
-
         if isinstance(container, (str, bytes)):
             assert obj is not None, _assertionhelpers.isnonemsg("assertnotin()", "obj")
         assert container is not None, _assertionhelpers.isnonemsg("assertnotin()", "container")
-        assert isiterable(container), _assertionhelpers.ctxmsg("assertnotin()", "invalid container type %s", _saferepr(container))
+        assert _isiterable(container), _assertionhelpers.ctxmsg("assertnotin()", "invalid container type %s", _saferepr(container))
 
         # Note 1: The error display proposed by unittest does not truncate the strings (for assertIn() at least), which makes the reading hard.
         # assertionhelpers.unittest.assertNotIn(obj, container, err)
@@ -1078,10 +1070,8 @@ class Assertions(abc.ABC):
         :param err: Optional error message.
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
-        from ._reflection import isiterable
-
         assert container is not None, _assertionhelpers.isnonemsg("assertcount()", "container")
-        assert isiterable(container), _assertionhelpers.ctxmsg("assertcount()", "invalid container type %s", _saferepr(container))
+        assert _isiterable(container), _assertionhelpers.ctxmsg("assertcount()", "invalid container type %s", _saferepr(container))
         assert obj is not None, _assertionhelpers.isnonemsg("assertcount()", "obj")
         assert count is not None, _assertionhelpers.isnonemsg("assertcount()", "count")
 
@@ -1140,8 +1130,6 @@ class Assertions(abc.ABC):
 
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
-        from ._reflection import qualname
-
         _json_safe_repr_max_length = 32  # type: int
 
         def _errormsg(fmt, *args):  # type: (str, typing.Any) -> str
@@ -1191,7 +1179,7 @@ class Assertions(abc.ABC):
         # Check types and values.
         for _item in _items:  # type: typing.Union[_JsonDictType, int, str]
             if type is not None:
-                assert isinstance(_item, type), _errormsg("Wrong type %r, %s expected", _item, qualname(type))
+                assert isinstance(_item, type), _errormsg("Wrong type %r, %s expected", _item, _qualname(type))
             if value is not None:
                 assert _json_data == value, _errormsg("Wrong value %r, %r expected", _item, value)
         # Check the number of matching items.
