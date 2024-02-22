@@ -31,6 +31,7 @@ if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
+    from ._confignode import ConfigNode as _ConfigNodeType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -227,7 +228,6 @@ class CampaignRunner(_LoggerImpl):
         """
         from ._campaignargs import CampaignArgs
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._confignode import ConfigNode
         from ._datetimeutils import ISO8601_REGEX
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
@@ -274,7 +274,7 @@ class CampaignRunner(_LoggerImpl):
             # No log console specification.
             _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_CONSOLE), "0")
             # Log date/time option propagation.
-            _log_datetime_config = _FAST_PATH.config_db.getnode(_FAST_PATH.scenario_config.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
+            _log_datetime_config = _FAST_PATH.config_db.getnode(_FAST_PATH.scenario_config.Key.LOG_DATETIME)  # type: typing.Optional[_ConfigNodeType]
             if _log_datetime_config:
                 _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
             # Script path.

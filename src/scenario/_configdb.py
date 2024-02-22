@@ -24,6 +24,7 @@ import os
 import typing
 
 if True:
+    from ._confignode import ConfigNode as _ConfigNodeImpl  # `ConfigNode` imported once for performance concerns.
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
@@ -60,13 +61,12 @@ class ConfigDatabase(_LoggerImpl):
         """
         Initializes instance attributes and configures logging for the :class:`ConfigDatabase` class.
         """
-        from ._confignode import ConfigNode
         from ._debugclasses import DebugClass
 
         _LoggerImpl.__init__(self, log_class=DebugClass.CONFIG_DATABASE)
 
         #: Configuration tree.
-        self._root = ConfigNode(parent=None, key="")  # type: ConfigNode
+        self._root = _ConfigNodeImpl(parent=None, key="")  # type: _ConfigNodeType
 
     def loadfile(
             self,
@@ -261,8 +261,6 @@ class ConfigDatabase(_LoggerImpl):
         :return:
             Configuration value if set, or default value if set, or ``None`` otherwise.
         """
-        from ._confignode import ConfigNode
-
         # Check input parameters:
         # - Convert default value from path-like to string.
         if isinstance(default, os.PathLike):
@@ -272,7 +270,7 @@ class ConfigDatabase(_LoggerImpl):
             type = builtins.type(default)  # noqa  ## Shadows built-in name 'type'
 
         # Search for the configuration node from the key, and return its data when found.
-        _node = self._root.get(key)  # type: typing.Optional[ConfigNode]
+        _node = self._root.get(key)  # type: typing.Optional[_ConfigNodeType]
         if _node is not None:
             if (type is not None) and (_node.data is not None):
                 return _node.cast(type=type)

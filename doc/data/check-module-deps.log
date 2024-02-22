@@ -26,6 +26,7 @@ INFO     <06>             _scenariostack.py => [_logextradata.py, _logger.py, _s
 INFO     <06>               _stepsection.py => [_stepdefinition.py]
 INFO     <05>                      _args.py => [_configargs.py, _fastpath.py, _logger.py, _loggingargs.py, _path.py,
 INFO                                            _reflection.py]
+INFO     <05>                  _configdb.py => [_confignode.py, _enumutils.py, _logger.py, _path.py]
 INFO     <05>        _scenariodefinition.py => [_assertions.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
 INFO                                            _reflection.py, _reqverifier.py, _scenariodefinitionmeta.py, _stepuserapi.py]
 INFO     <05>            _stepdefinition.py => [_assertions.py, _fastpath.py, _logger.py, _reflection.py, _reqverifier.py,
@@ -35,7 +36,6 @@ INFO     <04>                _assertions.py => [_assertionhelpers.py, _debugutil
 INFO     <04>         _campaignexecution.py => [_fastpath.py, _path.py, _reflection.py]
 INFO     <04>            _campaignreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _logger.py, _path.py]
 INFO     <04>                _configargs.py => [_path.py]
-INFO     <04>                  _configdb.py => [_enumutils.py, _logger.py, _path.py]
 INFO     <04>                _confignode.py => [_configkey.py, _debugutils.py, _enumutils.py, _fastpath.py, _path.py,
 INFO                                            _reflection.py]
 INFO     <04>                  _handlers.py => [_enumutils.py, _fastpath.py, _logger.py]

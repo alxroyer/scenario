@@ -217,11 +217,10 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :attr:`Key.LOG_COLOR`.
         """
-        from ._confignode import ConfigNode
         from ._consoleutils import Console
 
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
-        _config_node = _FAST_PATH.config_db.getnode(_key)  # type: typing.Optional[ConfigNode]
+        _config_node = _FAST_PATH.config_db.getnode(_key)  # type: typing.Optional[_ConfigNodeType]
         if _config_node:
             try:
                 _color_number = _config_node.cast(type=int)  # type: int
@@ -497,14 +496,13 @@ class ScenarioConfig(_LoggerImpl):
         """
         Loads the issue level names configured through configuration files.
         """
-        from ._confignode import ConfigNode
         from ._issuelevels import IssueLevel
 
-        _root_node = _FAST_PATH.config_db.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[ConfigNode]
+        _root_node = _FAST_PATH.config_db.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[_ConfigNodeType]
         if _root_node:
             for _name in _root_node.getsubkeys():  # type: str
                 # Retrieve the `int` value configured with the issue level name.
-                _subnode = _root_node.get(_name)  # type: typing.Optional[ConfigNode]
+                _subnode = _root_node.get(_name)  # type: typing.Optional[_ConfigNodeType]
                 assert _subnode, "Internal error"
                 try:
                     _value = _subnode.cast(int)  # type: int
@@ -581,17 +579,15 @@ class ScenarioConfig(_LoggerImpl):
         :return:
             Strings with related configuration nodes.
         """
-        from ._confignode import ConfigNode
-
         _strings = []  # type: typing.List[str]
-        _nodes = []  # type: typing.List[ConfigNode]
+        _nodes = []  # type: typing.List[_ConfigNodeType]
 
-        _node = _FAST_PATH.config_db.getnode(config_key)  # type: typing.Optional[ConfigNode]
+        _node = _FAST_PATH.config_db.getnode(config_key)  # type: typing.Optional[_ConfigNodeType]
         if _node:
             _data = _node.data  # type: typing.Any
             if isinstance(_data, list):
                 for _sub_key in _node.getsubkeys():  # type: str
-                    _sub_node = _node.get(_sub_key)  # type: typing.Optional[ConfigNode]
+                    _sub_node = _node.get(_sub_key)  # type: typing.Optional[_ConfigNodeType]
                     # `_node.get()` should always return a sub-node in this situation.
                     if not _sub_node:
                         raise RuntimeError("Internal error")
@@ -635,10 +631,8 @@ class ScenarioConfig(_LoggerImpl):
         :raise FileNotFoundError:
             In case of relative path not described in a configuration file.
         """
-        from ._confignode import ConfigNode
-
         _paths = []  # type: typing.List[_PathType]
-        for _string, _node in self._readstringlistfromconf(config_key):  # type: str, ConfigNode
+        for _string, _node in self._readstringlistfromconf(config_key):  # type: str, _ConfigNodeType
             if _PathImpl.is_absolute(_string):
                 _paths.append(_PathImpl(_string))
             elif _node.source_file:
