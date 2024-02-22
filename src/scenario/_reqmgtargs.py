@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
@@ -100,23 +101,21 @@ class ReqManagementArgs(_ArgsImpl):
 
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
-        from ._loggermain import MAIN_LOGGER
-
         if not super()._checkargs(args):
             return False
 
         # Input options.
         if self.campaign_results_path:
             if self.req_db_paths:
-                MAIN_LOGGER.error("Can't use --req-db with --campaign")
+                _FAST_PATH.main_logger.error("Can't use --req-db with --campaign")
             if self.test_suite_paths:
-                MAIN_LOGGER.error("Can't use --test-suite with --campaign")
+                _FAST_PATH.main_logger.error("Can't use --test-suite with --campaign")
             if self.req_db_paths or self.test_suite_paths:
                 return False
 
         # Output options.
         if not any([self.downstream_traceability_outfile, self.upstream_traceability_outfile]):
-            MAIN_LOGGER.error("Please use one option of --downstream-traceability or --upstream-traceability at least")
+            _FAST_PATH.main_logger.error("Please use one option of --downstream-traceability or --upstream-traceability at least")
             return False
 
         return True

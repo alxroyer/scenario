@@ -21,6 +21,8 @@ Common statistics.
 import time
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
 
@@ -172,19 +174,18 @@ class TimeStats:
         :return: New :class:`TimeStats` instance.
         """
         from ._datetimeutils import fromiso8601
-        from ._loggermain import MAIN_LOGGER
 
         _stat = TimeStats()  # type: TimeStats
         if ("start" in json_data) and isinstance(json_data["start"], str):
             try:
                 _stat.start = fromiso8601(json_data["start"])
             except Exception as _err:
-                MAIN_LOGGER.warning(str(_err))
+                _FAST_PATH.main_logger.warning(str(_err))
         if ("end" in json_data) and isinstance(json_data["end"], str):
             try:
                 _stat.end = fromiso8601(json_data["end"])
             except Exception as _err:
-                MAIN_LOGGER.warning(str(_err))
+                _FAST_PATH.main_logger.warning(str(_err))
         # Do not rely on the input 'elapsed' field if given.
         # Let it be recomputed from 'start' and 'end' values.
         return _stat

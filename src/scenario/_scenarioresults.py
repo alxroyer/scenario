@@ -76,7 +76,6 @@ class ScenarioResults(_LoggerImpl):
         Designed to display convient information after :class:`._scenariologging.ScenarioLogging` and :class:`._campaignlogging.CampaignLogging` outputs.
         """
         from ._datetimeutils import f2strduration
-        from ._loggermain import MAIN_LOGGER
         from ._stats import ExecTotalStats
 
         _total_step_stats = ExecTotalStats()  # type: ExecTotalStats
@@ -123,19 +122,19 @@ class ScenarioResults(_LoggerImpl):
         _fmt += " " * (_stat_field_len - len("Actions"))  # Ensure regular spacing between columns.
         _fmt += "%s"  # Note: No width for the *extra info* column.
 
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
-        MAIN_LOGGER.info(_fmt % (
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.info(_fmt % (
             "TOTAL", "Status",
             "Steps", "Actions", "Results",
             "Time",
             ", ".join(_FAST_PATH.scenario_config.resultsextrainfo()).capitalize(),
         ))
-        MAIN_LOGGER.info(_fmt % (
+        _FAST_PATH.main_logger.info(_fmt % (
             _total_name_field, "",
             _total_step_stats, _total_action_stats, _total_result_stats,
             f2strduration(_total_time), "",
         ))
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
         for _scenario_execution in _successes:
             self._displayscenarioline(logging.INFO, _fmt, _scenario_execution)
@@ -158,7 +157,6 @@ class ScenarioResults(_LoggerImpl):
         :param scenario_execution: Scenario to display.
         """
         from ._datetimeutils import f2strduration
-        from ._loggermain import MAIN_LOGGER
 
         # Build extra info.
         _extra_info = []  # type: typing.List[str]
@@ -174,7 +172,7 @@ class ScenarioResults(_LoggerImpl):
         self.debug("Extra info: %r", _extra_info)
 
         # Log the scenario line.
-        MAIN_LOGGER.log(log_level, fmt % (
+        _FAST_PATH.main_logger.log(log_level, fmt % (
             scenario_execution.definition.name, scenario_execution.status,
             scenario_execution.step_stats, scenario_execution.action_stats, scenario_execution.result_stats,
             f2strduration(scenario_execution.time.elapsed),
@@ -199,14 +197,13 @@ class ScenarioResults(_LoggerImpl):
         :param error: Test error to display.
         """
         from ._testerrors import ExceptionError, TestError
-        from ._loggermain import MAIN_LOGGER
 
         if isinstance(error, ExceptionError):
             # `ExceptionError.logerror()` prints out the exception traceback.
             # Call the base `TestError.logerror()` instead.
-            TestError.logerror(error, logger=MAIN_LOGGER, level=log_level, indent="  ")
+            TestError.logerror(error, logger=_FAST_PATH.main_logger, level=log_level, indent="  ")
         else:
-            error.logerror(logger=MAIN_LOGGER, level=log_level, indent="  ")
+            error.logerror(logger=_FAST_PATH.main_logger, level=log_level, indent="  ")
 
 
 #: Main instance of :class:`ScenarioResults`.

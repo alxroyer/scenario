@@ -40,7 +40,6 @@ class LoggingService:
         """
         from ._logfilters import HandlerLogFilter
         from ._logformatter import LogFormatter
-        from ._loggermain import MAIN_LOGGER
         from ._loghandler import LogHandler
 
         # Start file logging if required.
@@ -49,18 +48,17 @@ class LoggingService:
             LogHandler.file_handler = logging.FileHandler(_log_outpath, mode="w", encoding="utf-8")
             LogHandler.file_handler.addFilter(HandlerLogFilter(handler=LogHandler.file_handler))
             LogHandler.file_handler.setFormatter(LogFormatter(LogHandler.file_handler))
-            MAIN_LOGGER.logging_instance.addHandler(LogHandler.file_handler)
+            _FAST_PATH.main_logger.logging_instance.addHandler(LogHandler.file_handler)
 
     def stop(self):  # type: (...) -> None
         """
         Stops logging features.
         """
-        from ._loggermain import MAIN_LOGGER
         from ._loghandler import LogHandler
 
         if LogHandler.file_handler:
-            if LogHandler.file_handler in MAIN_LOGGER.logging_instance.handlers:
-                MAIN_LOGGER.logging_instance.removeHandler(LogHandler.file_handler)
+            if LogHandler.file_handler in _FAST_PATH.main_logger.logging_instance.handlers:
+                _FAST_PATH.main_logger.logging_instance.removeHandler(LogHandler.file_handler)
             LogHandler.file_handler.close()
             LogHandler.file_handler = None
 

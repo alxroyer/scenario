@@ -73,7 +73,6 @@ class CampaignRunner(_LoggerImpl):
         from ._datetimeutils import toiso8601
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
-        from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
         from ._reqtraceability import REQ_TRACEABILITY
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
@@ -87,7 +86,7 @@ class CampaignRunner(_LoggerImpl):
                     return CampaignArgs.getinstance().error_code
             _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[_PathType]
             if not _test_suite_files:
-                MAIN_LOGGER.error("No test suite files")
+                _FAST_PATH.main_logger.error("No test suite files")
                 return ErrorCode.INPUT_MISSING_ERROR
 
             # Create the date/time output directory (if required).
@@ -103,7 +102,7 @@ class CampaignRunner(_LoggerImpl):
 
             # Load requirements.
             for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
-                MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
+                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_file}'")
                 _FAST_PATH.req_db.load(_req_db_file)
 
             _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
@@ -143,8 +142,8 @@ class CampaignRunner(_LoggerImpl):
             try:
                 CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
             except Exception as _err:
-                MAIN_LOGGER.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return ErrorCode.fromexception(_err)
 
             # Final logging (after reports generation).
@@ -160,7 +159,7 @@ class CampaignRunner(_LoggerImpl):
             return ErrorCode.SUCCESS
 
         except Exception as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return ErrorCode.fromexception(_err)
 
     def _exectestsuitefile(

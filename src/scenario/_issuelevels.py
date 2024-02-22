@@ -22,6 +22,9 @@ import abc
 import enum
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+
 
 if typing.TYPE_CHECKING:
     #: Known issue level type.
@@ -163,8 +166,6 @@ class IssueLevel(abc.ABC):
         Logs a warning if named issue levels are set
         but the given issue level number does not match with any.
         """
-        from ._loggermain import MAIN_LOGGER
-
         # `None` => return `None`.
         if level is None:
             return None
@@ -185,6 +186,6 @@ class IssueLevel(abc.ABC):
 
         # Number not matching with named issue levels.
         if IssueLevel._named:
-            MAIN_LOGGER.warning(f"Unknown issue level {level!r}, not in {IssueLevel.getnameddesc()}")
+            _FAST_PATH.main_logger.warning(f"Unknown issue level {level!r}, not in {IssueLevel.getnameddesc()}")
 
         return level

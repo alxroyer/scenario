@@ -22,6 +22,7 @@ import sys
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -50,7 +51,6 @@ class ReqManagement(_LoggerImpl):
         :return: Error code.
         """
         from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
         from ._reqmgtargs import ReqManagementArgs
         from ._reqtraceability import REQ_TRACEABILITY
@@ -77,7 +77,7 @@ class ReqManagement(_LoggerImpl):
                     test_suite_paths=ReqManagementArgs.getinstance().test_suite_paths or None,
                 )
         except Exception as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             _errors.append(ErrorCode.fromexception(_err))
 
         # Execute `ReqManagementArgs` options.
@@ -91,7 +91,7 @@ class ReqManagement(_LoggerImpl):
                         allow_results=ReqManagementArgs.getinstance().allow_results,
                     )
                 except Exception as _err:
-                    MAIN_LOGGER.logexceptiontraceback(_err)
+                    _FAST_PATH.main_logger.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))
 
             # Upstream traceability report.
@@ -102,7 +102,7 @@ class ReqManagement(_LoggerImpl):
                         _upstream_traceability_path,
                     )
                 except Exception as _err:
-                    MAIN_LOGGER.logexceptiontraceback(_err)
+                    _FAST_PATH.main_logger.logexceptiontraceback(_err)
                     _errors.append(ErrorCode.fromexception(_err))
 
         # Terminate log features.

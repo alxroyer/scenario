@@ -96,7 +96,6 @@ class ScenarioRunner(_LoggerImpl):
         :return: Error code.
         """
         from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
         from ._loggingservice import LOGGING_SERVICE
         from ._scenarioargs import ScenarioArgs
         from ._scenarioexecution import ScenarioExecution
@@ -115,7 +114,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Load requirements.
             for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
-                MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
+                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_file}'")
                 _FAST_PATH.req_db.load(_req_db_file)
 
             # Execute tests.
@@ -150,7 +149,7 @@ class ScenarioRunner(_LoggerImpl):
                     try:
                         SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)
                     except Exception as _err:
-                        MAIN_LOGGER.error(f"Error while writing '{_scenario_report}': {_err}")
+                        _FAST_PATH.main_logger.error(f"Error while writing '{_scenario_report}': {_err}")
                         # Note: Full traceback will be displayed in the main `except` block below.
                         raise
 
@@ -165,7 +164,7 @@ class ScenarioRunner(_LoggerImpl):
             return ErrorCode.worst(_errors)
 
         except Exception as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return ErrorCode.fromexception(_err)
 
     # Scenario execution.
@@ -206,7 +205,6 @@ class ScenarioRunner(_LoggerImpl):
         Feeds the :data:`._scenarioresults.SCENARIO_RESULTS` instance.
         """
         from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
 
         # Save the current time before loading the scenario script
         # and the `ScenarioDefinition` instance has been eventually created.
@@ -217,21 +215,21 @@ class ScenarioRunner(_LoggerImpl):
             _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(scenario_path) \
                 # type: typing.Type[_ScenarioDefinitionType]
         except ImportError as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return ErrorCode.INPUT_MISSING_ERROR
         except SyntaxError as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return ErrorCode.INPUT_FORMAT_ERROR
         except LookupError as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return ErrorCode.INPUT_FORMAT_ERROR
 
         try:
             _scenario_definition = _scenario_definition_class()  # type: _ScenarioDefinitionType
         except Exception as _err:
             # Unexpected exception.
-            MAIN_LOGGER.error(f"Unexpected exception: {_err}")
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.error(f"Unexpected exception: {_err}")
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return ErrorCode.INTERNAL_ERROR
 
         _err_code = self.executescenario(
@@ -354,7 +352,6 @@ class ScenarioRunner(_LoggerImpl):
         """
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
-        from ._loggermain import MAIN_LOGGER
         from ._scenarioattributes import CoreScenarioAttributes
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenariologging import SCENARIO_LOGGING
@@ -391,7 +388,7 @@ class ScenarioRunner(_LoggerImpl):
                 self.debug("Expected attributes: %r", _expected_attribute_names)
                 for _expected_attribute_name in _expected_attribute_names:  # type: str
                     if _expected_attribute_name not in scenario_definition.getattributenames():
-                        MAIN_LOGGER.error(f"Missing test attribute {_expected_attribute_name}")
+                        _FAST_PATH.main_logger.error(f"Missing test attribute {_expected_attribute_name}")
                         self.popindentation()
                         return ErrorCode.INPUT_FORMAT_ERROR
 

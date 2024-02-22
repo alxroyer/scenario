@@ -22,6 +22,7 @@ import abc
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
@@ -75,10 +76,8 @@ class StepUserApi(abc.ABC):
         :return:
             Logging indentation context.
         """
-        from ._loggermain import MAIN_LOGGER
-
         self.ACTION(text)
-        return MAIN_LOGGER.pushindentation("    ")
+        return _FAST_PATH.main_logger.pushindentation("    ")
 
     def ACTION(  # noqa  ## PEP8: Function name should be lower case
             self,

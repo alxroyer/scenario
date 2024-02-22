@@ -65,10 +65,8 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         When consecutive calls occur, the latest overwrites the previous,
         and a warning is displayed unless ``warn_reset`` is set to ``False``.
         """
-        from ._loggermain import MAIN_LOGGER
-
         if Args._instance and (instance is not Args._instance) and warn_reset:
-            MAIN_LOGGER.warning(f"Multiple instances of argument parser: {instance!r} takes place of {Args._instance!r}")
+            _FAST_PATH.main_logger.warning(f"Multiple instances of argument parser: {instance!r} takes place of {Args._instance!r}")
         Args._instance = instance
 
         # Set `FAST_PATH.args`.
@@ -209,7 +207,6 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         :return: ``True`` for success, ``False`` otherwise.
         """
         from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
 
         # Parse command line arguments.
         _parsed_args = self.__arg_parser.parse_args(args)  # type: typing.Any
@@ -219,7 +216,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
             try:
                 self.__arg_infos[_member_name].process(self, _parsed_args)
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
 
         # Load configurations:
@@ -228,31 +225,31 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
             try:
                 _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
         # - 2) load configuration files,
         for _config_path in self.config_paths:  # type: _PathType
             try:
-                MAIN_LOGGER.info(f"Loading '{_config_path}'")
+                _FAST_PATH.main_logger.info(f"Loading '{_config_path}'")
                 _FAST_PATH.config_db.loadfile(_config_path)
             except EnvironmentError as _env_err:
                 self.error_code = ErrorCode.ENVIRONMENT_ERROR
                 # Don't log the full traceback for an environment error, just the error message.
-                MAIN_LOGGER.error(str(_env_err))
+                _FAST_PATH.main_logger.error(str(_env_err))
                 return False
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
         # - 3) reload the single configuration values, so that they prevail on configuration files.
         for _key in self.config_values:  # Type already declared above.
             try:
                 _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
 
         # Configure unclassed debugging.
-        MAIN_LOGGER.enabledebug(self.debug_main)
+        _FAST_PATH.main_logger.enabledebug(self.debug_main)
 
         # Post-check arguments.
         try:
@@ -262,7 +259,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
                 return False
         except Exception as _err:
             # Unexpected error: print the exception traceback, don't show argument usage.
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return False
 
         self.error_code = ErrorCode.SUCCESS

@@ -97,7 +97,6 @@ class LogFormatter(logging.Formatter):
         """
         from ._consoleutils import Console
         from ._datetimeutils import toiso8601
-        from ._loggermain import MAIN_LOGGER
         from ._scenariologging import ScenarioLogging
 
         # Retrieve the logger reference from the record.
@@ -140,7 +139,7 @@ class LogFormatter(logging.Formatter):
 
         # Main logger indentation.
         if self._with(record, _LogExtraDataImpl.MAIN_LOGGER_INDENTATION, default=True):
-            _log_line += MAIN_LOGGER.getindentation()
+            _log_line += _FAST_PATH.main_logger.getindentation()
 
         # Log message color (begin).
         _message_color = None  # type: typing.Optional[Console.Color]

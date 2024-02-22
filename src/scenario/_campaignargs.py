@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._scenarioargs import CommonExecArgs as _CommonExecArgsImpl  # `CommonExecArgs` used for inheritance.
 if typing.TYPE_CHECKING:
@@ -119,8 +120,6 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
 
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
-        from ._loggermain import MAIN_LOGGER
-
         if not _ArgsImpl._checkargs(self, args):
             return False
         if not _CommonExecArgsImpl._checkargs(self, args):
@@ -131,13 +130,13 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
                 self.debug("Using current working directory for output directory by default")
                 self._outdir = _PathImpl.cwd()
             else:
-                MAIN_LOGGER.error("Output directory missing")
+                _FAST_PATH.main_logger.error("Output directory missing")
                 return False
         self._outdir.mkdir(parents=True, exist_ok=True)
 
         for _test_suite_path in self.test_suite_paths:  # type: _PathType
             if not _test_suite_path.is_file():
-                MAIN_LOGGER.error(f"No such file '{_test_suite_path}'")
+                _FAST_PATH.main_logger.error(f"No such file '{_test_suite_path}'")
                 return False
 
         return True

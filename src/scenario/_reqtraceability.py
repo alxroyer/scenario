@@ -89,7 +89,6 @@ class ReqTraceability(_LoggerImpl):
         :param log_info:
             ``True`` (by default) to generate info logging.
         """
-        from ._loggermain import MAIN_LOGGER
         from ._testsuitefile import TestSuiteFile
 
         self.debug("ReqTraceability.loaddatafromfiles(req_db_file_paths=%r, test_suite_paths=%r)", req_db_file_paths, test_suite_paths)
@@ -107,17 +106,17 @@ class ReqTraceability(_LoggerImpl):
         _t0 = time.time()  # type: float
         if req_db_file_paths:
             if log_info:
-                MAIN_LOGGER.info("Loading requirements")
-            with MAIN_LOGGER.pushindentation("  "):
+                _FAST_PATH.main_logger.info("Loading requirements")
+            with _FAST_PATH.main_logger.pushindentation("  "):
                 if _FAST_PATH.req_db.getallreqs():
                     if log_info:
-                        MAIN_LOGGER.info("Resetting requirement database")
+                        _FAST_PATH.main_logger.info("Resetting requirement database")
                     _FAST_PATH.req_db.clear()
 
                 self.debug("Reading %d req-db file(s)", len(list(req_db_file_paths)))
                 for _req_db_file_path in req_db_file_paths:  # type: _PathType
                     if log_info:
-                        MAIN_LOGGER.info(f"Loading '{_req_db_file_path}'")
+                        _FAST_PATH.main_logger.info(f"Loading '{_req_db_file_path}'")
                     _FAST_PATH.req_db.load(_req_db_file_path)
         else:
             self.debug("Requirement database left as is")
@@ -125,7 +124,7 @@ class ReqTraceability(_LoggerImpl):
         if log_info:
             _req_ref_count = len(_FAST_PATH.req_db.getallrefs())  # type: int
             # MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
-            MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
+            _FAST_PATH.main_logger.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
 
         # Test suites.
 
@@ -139,20 +138,20 @@ class ReqTraceability(_LoggerImpl):
 
         if test_suite_paths:
             if log_info:
-                MAIN_LOGGER.info("Loading scenarios")
-            with MAIN_LOGGER.pushindentation("  "):
+                _FAST_PATH.main_logger.info("Loading scenarios")
+            with _FAST_PATH.main_logger.pushindentation("  "):
                 self.scenarios.clear()
 
                 self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
                 for _test_suite_path in test_suite_paths:  # type: _PathType
                     if log_info:
-                        MAIN_LOGGER.info("Loading '%s'", _test_suite_path)
-                    with MAIN_LOGGER.pushindentation("  "):
+                        _FAST_PATH.main_logger.info("Loading '%s'", _test_suite_path)
+                    with _FAST_PATH.main_logger.pushindentation("  "):
                         _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
                         _test_suite_file.read()
                         for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
                             if log_info:
-                                MAIN_LOGGER.info("Loading '%s'", _test_script_path)
+                                _FAST_PATH.main_logger.info("Loading '%s'", _test_script_path)
 
                             # Find the scenario class.
                             _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(
@@ -183,7 +182,7 @@ class ReqTraceability(_LoggerImpl):
         if log_info:
             _scenario_count = len(self.scenarios)  # type: int
             # MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
-            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
+            _FAST_PATH.main_logger.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
 
     def loaddatafromcampaignresults(
             self,
@@ -203,7 +202,6 @@ class ReqTraceability(_LoggerImpl):
         """
         from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
         from ._campaignreport import CAMPAIGN_REPORT
-        from ._loggermain import MAIN_LOGGER
 
         self.debug("ReqTraceability.loaddatafromcampaignresults(campaign_results='%s')", campaign_results)
 
@@ -219,11 +217,11 @@ class ReqTraceability(_LoggerImpl):
             # Clear the requirement database before reloading it while reading campaign results.
             if _FAST_PATH.req_db.getallreqs():
                 if log_info:
-                    MAIN_LOGGER.info("Resetting requirement database")
+                    _FAST_PATH.main_logger.info("Resetting requirement database")
                 _FAST_PATH.req_db.clear()
 
             if log_info:
-                MAIN_LOGGER.info(f"Loading campaign results from '{_campaign_report_path}'")
+                _FAST_PATH.main_logger.info(f"Loading campaign results from '{_campaign_report_path}'")
             _campaign_execution = CAMPAIGN_REPORT.readcampaignreport(
                 _campaign_report_path,
                 feed_req_db=True,
@@ -233,7 +231,7 @@ class ReqTraceability(_LoggerImpl):
 
             if log_info:
                 _req_ref_count = len(_FAST_PATH.req_db.getallrefs())  # type: int
-                MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
+                _FAST_PATH.main_logger.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
         else:
             _campaign_report_path = campaign_results.campaign_report_path  # Type already declared above.
             _campaign_execution = campaign_results  # Type already declared above.
@@ -255,13 +253,13 @@ class ReqTraceability(_LoggerImpl):
                             self.scenarios.append(_test_case_execution.scenario_execution.definition)
                         except Exception as _err:
                             if _test_case_execution.report.path:
-                                MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}': {_err}")
+                                _FAST_PATH.main_logger.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}': {_err}")
                             else:
-                                MAIN_LOGGER.warning(f"Can't load scenario {_test_case_execution.name!r}: {_err}")
+                                _FAST_PATH.main_logger.warning(f"Can't load scenario {_test_case_execution.name!r}: {_err}")
 
         if log_info:
             _scenario_count = len(self.scenarios)  # type: int
-            MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+            _FAST_PATH.main_logger.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
     class Downstream(abc.ABC):
         """
@@ -560,10 +558,9 @@ class ReqTraceability(_LoggerImpl):
             ``False`` to prevent test results in the downstream traceability report.
         """
         from ._jsondictutils import JsonDict
-        from ._loggermain import MAIN_LOGGER
 
         if log_info:
-            MAIN_LOGGER.info(f"Saving downstream traceability in '{outfile}'")
+            _FAST_PATH.main_logger.info(f"Saving downstream traceability in '{outfile}'")
 
         # Automatically compute upstream tracebility if needed.
         if downstream_traceability is None:
@@ -828,10 +825,9 @@ class ReqTraceability(_LoggerImpl):
             ``True`` (by default) to generate info logging.
         """
         from ._jsondictutils import JsonDict
-        from ._loggermain import MAIN_LOGGER
 
         if log_info:
-            MAIN_LOGGER.info(f"Saving upstream traceability in '{outfile}'")
+            _FAST_PATH.main_logger.info(f"Saving upstream traceability in '{outfile}'")
 
         # Automatically compute upstream tracebility if needed.
         if upstream_traceability is None:

@@ -108,10 +108,7 @@ class Logger:
         else:
             # Child logger.
             # Set the main logger as the parent logger.
-            # Memo: Don't import the main logger before we're sure we're not building the main logger itself!
-            from ._loggermain import MAIN_LOGGER
-
-            self._logger.parent = MAIN_LOGGER.logging_instance
+            self._logger.parent = _FAST_PATH.main_logger.logging_instance
             self._logger.propagate = True
         # `logging.Logger._log()` indirection.
         self._logger._log = self._log  # type: ignore[assignment]  ## Cannot assign to a method

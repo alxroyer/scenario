@@ -27,6 +27,7 @@ import typing
 
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     #: Type for path-like data: either a simple string or a ``os.PathLike`` instance.
@@ -62,16 +63,14 @@ class Path:
         :param path: New main path.
         :param log_level: Log level (as defined by the standard ``logging`` package) to use for the related log line.
         """
-        from ._loggermain import MAIN_LOGGER
-
         if path is None:
             if Path._main_path is not None:
-                MAIN_LOGGER.log(log_level, "Main path unset")
+                _FAST_PATH.main_logger.log(log_level, "Main path unset")
         else:
             if not isinstance(path, Path):
                 path = Path(path)
             if (Path._main_path is None) or (not path.samefile(Path._main_path)):
-                MAIN_LOGGER.log(log_level, f"Main path: '{path.abspath}'")
+                _FAST_PATH.main_logger.log(log_level, f"Main path: '{path.abspath}'")
         Path._main_path = path
 
     @staticmethod

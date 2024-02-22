@@ -195,7 +195,6 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
         from ._jsondictutils import JsonDict
-        from ._loggermain import MAIN_LOGGER
 
         if not _ArgsImpl._checkargs(self, args):
             return False
@@ -205,18 +204,18 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         # Scenario report.
         if self.scenario_report is not None:
             if not JsonDict.isknwonsuffix(self.scenario_report):
-                MAIN_LOGGER.error(f"Unknown suffix for scenario report '{self.scenario_report}'")
+                _FAST_PATH.main_logger.error(f"Unknown suffix for scenario report '{self.scenario_report}'")
                 return False
 
             # Incomptibility with multiple scenarios.
             if len(self.scenario_paths) > 1:
-                MAIN_LOGGER.error("Cannot use the --scenario-report option with multiple scenario files")
+                _FAST_PATH.main_logger.error("Cannot use the --scenario-report option with multiple scenario files")
                 return False
 
         # Scenario paths.
         for _scenario_path in self.scenario_paths:  # type: _PathType
             if not _scenario_path.is_file():
-                MAIN_LOGGER.error(f"No such file '{_scenario_path}'")
+                _FAST_PATH.main_logger.error(f"No such file '{_scenario_path}'")
                 return False
 
         return True
