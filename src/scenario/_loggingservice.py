@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
 
@@ -40,27 +41,24 @@ class LoggingService:
         """
         from ._logfilters import HandlerLogFilter
         from ._logformatter import LogFormatter
-        from ._loghandler import LogHandler
 
         # Start file logging if required.
         _log_outpath = _FAST_PATH.scenario_config.logoutpath()  # type: typing.Optional[_PathType]
         if _log_outpath is not None:
-            LogHandler.file_handler = logging.FileHandler(_log_outpath, mode="w", encoding="utf-8")
-            LogHandler.file_handler.addFilter(HandlerLogFilter(handler=LogHandler.file_handler))
-            LogHandler.file_handler.setFormatter(LogFormatter(LogHandler.file_handler))
-            _FAST_PATH.main_logger.logging_instance.addHandler(LogHandler.file_handler)
+            _LogHandlerImpl.file_handler = logging.FileHandler(_log_outpath, mode="w", encoding="utf-8")
+            _LogHandlerImpl.file_handler.addFilter(HandlerLogFilter(handler=_LogHandlerImpl.file_handler))
+            _LogHandlerImpl.file_handler.setFormatter(LogFormatter(_LogHandlerImpl.file_handler))
+            _FAST_PATH.main_logger.logging_instance.addHandler(_LogHandlerImpl.file_handler)
 
     def stop(self):  # type: (...) -> None
         """
         Stops logging features.
         """
-        from ._loghandler import LogHandler
-
-        if LogHandler.file_handler:
-            if LogHandler.file_handler in _FAST_PATH.main_logger.logging_instance.handlers:
-                _FAST_PATH.main_logger.logging_instance.removeHandler(LogHandler.file_handler)
-            LogHandler.file_handler.close()
-            LogHandler.file_handler = None
+        if _LogHandlerImpl.file_handler:
+            if _LogHandlerImpl.file_handler in _FAST_PATH.main_logger.logging_instance.handlers:
+                _FAST_PATH.main_logger.logging_instance.removeHandler(_LogHandlerImpl.file_handler)
+            _LogHandlerImpl.file_handler.close()
+            _LogHandlerImpl.file_handler = None
 
 
 #: Main instance of :class:`LoggingService`.

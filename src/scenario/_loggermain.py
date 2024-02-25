@@ -26,6 +26,7 @@ import typing
 if True:
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
 
 
 class MainLogger(_LoggerImpl):
@@ -42,7 +43,6 @@ class MainLogger(_LoggerImpl):
         from ._consoleutils import disableconsolebuffering
         from ._logfilters import HandlerLogFilter
         from ._logformatter import LogFormatter
-        from ._loghandler import LogHandler
 
         _LoggerImpl.__init__(self, log_class="")
 
@@ -57,13 +57,13 @@ class MainLogger(_LoggerImpl):
         # Note:
         # A second dummy main logger may be instanciated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
         # Skip the console handler installation in that case.
-        assert (LogHandler.console_handler is None) or typing.TYPE_CHECKING, "Console handler already installed"
-        if LogHandler.console_handler is None:
-            LogHandler.console_handler = logging.StreamHandler()
-            LogHandler.console_handler.stream = sys.stdout  # Note: :meth:`logging.StreamHandler.setStream()` is not available in all Python versions.
-            LogHandler.console_handler.addFilter(HandlerLogFilter(handler=LogHandler.console_handler))
-            LogHandler.console_handler.setFormatter(LogFormatter(LogHandler.console_handler))
-            self._logger.addHandler(LogHandler.console_handler)
+        assert (_LogHandlerImpl.console_handler is None) or typing.TYPE_CHECKING, "Console handler already installed"
+        if _LogHandlerImpl.console_handler is None:
+            _LogHandlerImpl.console_handler = logging.StreamHandler()
+            _LogHandlerImpl.console_handler.stream = sys.stdout  # Note: :meth:`logging.StreamHandler.setStream()` is not available in all Python versions.
+            _LogHandlerImpl.console_handler.addFilter(HandlerLogFilter(handler=_LogHandlerImpl.console_handler))
+            _LogHandlerImpl.console_handler.setFormatter(LogFormatter(_LogHandlerImpl.console_handler))
+            self._logger.addHandler(_LogHandlerImpl.console_handler)
 
     def rawoutput(
             self,

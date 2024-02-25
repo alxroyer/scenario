@@ -25,6 +25,7 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
+    from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
@@ -115,13 +116,11 @@ class HandlerLogFilter(logging.Filter):
         Checks the :meth:`._scenarioconfig.ScenarioConfig.logconsoleenabled()` or :meth:`._scenarioconfig.ScenarioConfig.logoutpath()` configurations,
         depending on the handler attached.
         """
-        from ._loghandler import LogHandler
-
         # Handler filtering.
-        if self._handler is LogHandler.console_handler:
+        if self._handler is _LogHandlerImpl.console_handler:
             if not _FAST_PATH.scenario_config.logconsoleenabled():
                 return False
-        if self._handler is LogHandler.file_handler:
+        if self._handler is _LogHandlerImpl.file_handler:
             if _FAST_PATH.scenario_config.logoutpath() is None:
                 return False
 

@@ -27,6 +27,7 @@ if True:
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` imported once for performance concerns.
+    from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
@@ -205,8 +206,6 @@ class LogFormatter(logging.Formatter):
         2. The scenario configuration,
         3. The current execution state.
         """
-        from ._loghandler import LogHandler
-
         # 1. Check whether the record or the attached logger has the given flag set.
         _value = _LogExtraDataHelperImpl.get(record, extra_flag)  # type: typing.Any
         if isinstance(_value, bool):
@@ -217,7 +216,7 @@ class LogFormatter(logging.Formatter):
             return _FAST_PATH.scenario_config.logdatetimeenabled()
         if extra_flag == _LogExtraDataImpl.COLOR:
             # Use colors in the console handler only.
-            if (self._handler is LogHandler.console_handler) and _FAST_PATH.scenario_config.logcolorenabled():
+            if (self._handler is _LogHandlerImpl.console_handler) and _FAST_PATH.scenario_config.logcolorenabled():
                 return True
             else:
                 return False
