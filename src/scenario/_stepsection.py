@@ -47,7 +47,11 @@ class StepSectionDescription(_StepDefinitionImpl):
         """
         :param description: Step section description.
         """
-        _StepDefinitionImpl.__init__(self)
+        _StepDefinitionImpl.__init__(
+            self,
+            # Step section descriptions steps don't hold a step number.
+            numbered=False,
+        )
 
         #: Step section description.
         self.description = description

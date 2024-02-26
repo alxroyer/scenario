@@ -82,9 +82,11 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
     def __init__(
             self,
             method=None,  # type: typing.Optional[types.MethodType]
+            numbered=True,  # type: bool
     ):  # type: (...) -> None
         """
         :param method: Method that defines the step, when applicable. Optional.
+        :param numbered: ``False`` if the step shall not be numbered.
         """
         from ._stepexecution import StepExecution
 
@@ -100,6 +102,11 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType
         if self.method:
             self.location = _FAST_PATH.code_location.frommethod(self.method)
+
+        #: ``True`` when the step may be assigned a step :attr:`number`.
+        #:
+        #: When ``False``, :meth:`number()` consequently returns 0.
+        self.numbered = numbered
 
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
@@ -165,19 +172,16 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         Number of this step definition within the steps defining the related scenario.
         Starting from 1, as displayed to the user.
         """
-        from ._stepsection import StepSectionDescription
+        if not self.numbered:
+            return 0
 
         _step_number = 0  # type: int
-        # Check the :attr:`scenario` attribute has been set with a real object.
-        if hasattr(self.scenario, "name"):
-            for _step_definition in self.scenario.steps:  # type: StepDefinition
-                # Skip section steps.
-                if isinstance(_step_definition, StepSectionDescription):
-                    continue
-
+        for _step_definition in self.scenario.steps:  # type: StepDefinition
+            # Count numbered steps only.
+            if _step_definition.numbered:
                 _step_number += 1
-                if _step_definition is self:
-                    break
+            if _step_definition is self:
+                break
         return _step_number
 
     def addactionresult(
