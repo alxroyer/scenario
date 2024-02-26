@@ -76,6 +76,7 @@ class ScenarioResults(_LoggerImpl):
         Designed to display convient information after :class:`._scenariologging.ScenarioLogging` and :class:`._campaignlogging.CampaignLogging` outputs.
         """
         from ._datetimeutils import f2strduration
+        from ._scenarioexecution import ScenarioExecutionHelper
         from ._stats import ExecTotalStats
 
         _total_step_stats = ExecTotalStats()  # type: ExecTotalStats
@@ -105,8 +106,8 @@ class ScenarioResults(_LoggerImpl):
                 _warnings.append(_scenario_execution)
             else:
                 _successes.append(_scenario_execution)
-        _warnings.sort()
-        _errors.sort()
+        _warnings.sort(key=ScenarioExecutionHelper.criticitysortkeyfunction)
+        _errors.sort(key=ScenarioExecutionHelper.criticitysortkeyfunction)
         _total_name_field = f"{len(self._results)} tests, {len(_errors)} failed, {len(_warnings)} with warnings"  # type: str
         _name_field_len = max(_name_field_len, len(_total_name_field))
         _stat_field_len = max(_stat_field_len, len(str(_total_step_stats)), len(str(_total_action_stats)), len(str(_total_result_stats)))

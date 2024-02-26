@@ -24,8 +24,10 @@ import typing
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` used for inheritance.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._knownissues import KnownIssue as _KnownIssueType
     from ._req import Req as _ReqType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
@@ -64,15 +66,13 @@ class ScenarioLogging:
         """
         Initializes the last call history.
         """
-        from ._knownissues import KnownIssue
-
         #: History of this class's method calls.
         #:
         #: Makes it possible to adjust the display depending on the sequence of information.
         self._calls = []  # type: typing.List[ScenarioLogging._Call]
 
         #: Known issues already displayed.
-        self._known_issues = []  # type: typing.List[KnownIssue]
+        self._known_issues = []  # type: typing.List[_KnownIssueType]
 
     def beginscenario(
             self,
@@ -226,15 +226,13 @@ class ScenarioLogging:
 
         :param error: Error to display.
         """
-        from ._knownissues import KnownIssue
         from ._testerrors import ExceptionError
 
         # Display known issues once only.
-        if isinstance(error, KnownIssue):
-            for _known_issue in self._known_issues:  # type: KnownIssue
-                if _known_issue == error:
-                    # Known issue already displayed.
-                    return
+        if isinstance(error, _KnownIssueImpl):
+            if any([_known_issue == error for _known_issue in self._known_issues]):
+                # Known issue already displayed.
+                return
             # Ok, this known issue has not been displayed yet.
             self._known_issues.append(error)
 

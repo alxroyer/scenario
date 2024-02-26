@@ -24,6 +24,7 @@ if True:
     from ._debugutils import callback as _callback  # `callback()` imported once for performance concerns.
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -523,7 +524,6 @@ class CampaignReport(_LoggerImpl):
         :param test_case_execution: Test case execution to generate the JUnit XML for.
         :return: Test case JUnit XML.
         """
-        from ._knownissues import KnownIssue
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
@@ -590,7 +590,7 @@ class CampaignReport(_LoggerImpl):
             # [CUBIC]: "# The type of the assert."
             if isinstance(_error, ExceptionError):
                 _xml_failure.setattr("type", _error.exception_type)
-            elif isinstance(_error, KnownIssue):
+            elif isinstance(_error, _KnownIssueImpl):
                 _xml_failure.setattr("type", "known-issue")
 
             # testcase/failure/[text]:
@@ -638,7 +638,6 @@ class CampaignReport(_LoggerImpl):
         """
         from ._campaignexecution import TestCaseExecution
         from ._executionstatus import ExecutionStatus
-        from ._knownissues import KnownIssue
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
@@ -685,7 +684,7 @@ class CampaignReport(_LoggerImpl):
                     if _xml_failure.hasattr("type"):
                         if _xml_failure.getattr("type") == "known-issue":
                             self.debug("testcase/failure/@type = 'known-issue'")
-                            _error = KnownIssue.fromstr(_error.message)
+                            _error = _KnownIssueImpl.fromstr(_error.message)
                             self.debug("testcase/failure/@message => %r", _error)
                         else:
                             _error = ExceptionError(exception=None)

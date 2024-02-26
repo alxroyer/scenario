@@ -18,9 +18,11 @@
 Scenario execution management.
 """
 
+import abc
 import typing
 
 if True:
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
@@ -248,29 +250,34 @@ class ScenarioExecution:
 
         return _result_stats
 
-    # Comparison.
-    def __cmp(
-            self,
-            other,  # type: typing.Any
-    ):  # type: (...) -> int
-        """
-        Scenario execution comparison in terms of result criticity.
 
-        :param other: Other :class:`ScenarioExecution` instance to compare with.
+class ScenarioExecutionHelper(abc.ABC):
+    """
+    Helper class for :class:`ScenarioExecution`.
+    """
+
+    @staticmethod
+    def criticitysortkeyfunction(
+            scenario_execution,  # type: ScenarioExecution
+    ):  # type: (...) -> typing.Tuple[int, int, float, int, float]
+        """
+        Key function used to sort :class:`ScenarioExecution` items in terms of result criticity.
+
+        :param scenario_execution:
+            :class:`ScenarioExecution` instance to compute result criticty for.
         :return:
-            - -1 if ``self`` is less critical than ``other``,
-            - 0 if ``self`` and ``other`` have the same criticity,
-            - 1 if ``self`` is more critical than ``other``.
+            5-terms tuple:
+
+            1. Status score: the higher, the more critical,
+            2. Number of unqualified level errors,
+            3. Highest error level (or -INFINITY),
+            4. Number of unqualified level warnings,
+            5. Highest warning level (or -INFINITY).
         """
         from ._executionstatus import ExecutionStatus
-        from ._knownissues import KnownIssue
         from ._testerrors import TestError
 
-        if not isinstance(other, ScenarioExecution):
-            raise TypeError(f"Cannot compare {self!r} with {other!r}")
-
-        # Inner functions.
-        def _statusscore(scenario_execution):  # type: (ScenarioExecution) -> int
+        def _statusscore():  # type: () -> int
             return {
                 ExecutionStatus.SUCCESS: 0,
                 ExecutionStatus.SKIPPED: 1,
@@ -279,80 +286,21 @@ class ScenarioExecution:
                 ExecutionStatus.FAIL: 4,
             }[scenario_execution.status]
 
-        def _noissuelevels(test_errors):  # type: (typing.Sequence[TestError]) -> int
-            _count = 0  # type: int
+        def _unqualifiedlevels(test_errors):  # type: (typing.Sequence[TestError]) -> int
+            return len(list(filter(
+                lambda test_error: (not isinstance(test_error, _KnownIssueImpl)) or (test_error.level is None),
+                test_errors,
+            )))
+
+        def _highestissuelevel(test_errors):  # type: (typing.Sequence[TestError]) -> float
+            _issue_levels = [- float("inf")]  # type: typing.List[float]
             for _test_error in test_errors:  # type: TestError
-                if (not isinstance(_test_error, KnownIssue)) or (_test_error.level is None):
-                    _count += 1
-            return _count
+                if isinstance(_test_error, _KnownIssueImpl) and (_test_error.level is not None):
+                    _issue_levels.append(float(_test_error.level))
+            return max(_issue_levels)
 
-        def _highesterrorissuelevel(test_errors):  # type: (typing.Sequence[TestError]) -> typing.Optional[int]
-            _highest_error_issue_level = None  # type: typing.Optional[int]
-            for _test_error in test_errors:  # type: TestError
-                if isinstance(_test_error, KnownIssue) and (_test_error.level is not None):
-                    if (_highest_error_issue_level is None) or (_test_error.level > _highest_error_issue_level):
-                        _highest_error_issue_level = _test_error.level
-            return _highest_error_issue_level
-
-        # Compare status.
-        if _statusscore(self) != _statusscore(other):
-            return _statusscore(self) - _statusscore(other)
-
-        # Compare errors:
-        # - Without issue levels.
-        if _noissuelevels(self.errors) != _noissuelevels(other.errors):
-            return _noissuelevels(self.errors) - _noissuelevels(other.errors)
-        # - Highest issue levels.
-        _highest_error_issue_level1 = _highesterrorissuelevel(self.errors)  # type: typing.Optional[int]
-        _highest_error_issue_level2 = _highesterrorissuelevel(other.errors)  # type: typing.Optional[int]
-        if _highest_error_issue_level1 != _highest_error_issue_level2:
-            if _highest_error_issue_level1 is None:
-                return +1
-            if _highest_error_issue_level2 is None:
-                return -1
-            return _highest_error_issue_level1 - _highest_error_issue_level2
-
-        # Compare warnings:
-        # - Without issue levels.
-        if _noissuelevels(self.warnings) != _noissuelevels(other.warnings):
-            return _noissuelevels(self.warnings) - _noissuelevels(other.warnings)
-        # - Highest issue levels.
-        _highest_warning_issue_level1 = _highesterrorissuelevel(self.warnings)  # type: typing.Optional[int]
-        _highest_warning_issue_level2 = _highesterrorissuelevel(other.warnings)  # type: typing.Optional[int]
-        if _highest_warning_issue_level1 != _highest_warning_issue_level2:
-            if _highest_warning_issue_level1 is None:
-                return +1
-            if _highest_warning_issue_level2 is None:
-                return -1
-            return _highest_warning_issue_level1 - _highest_warning_issue_level2
-
-        # Same criticity.
-        return 0
-
-    def __lt__(self, other):  # type: (typing.Any) -> bool
-        """
-        Checks whether ``self`` < ``other``, i.e. ``self`` strictly less critical than ``other``.
-        """
-        return self.__cmp(other) < 0
-
-    def __le__(self, other):  # type: (typing.Any) -> bool
-        """
-        Checks whether ``self`` <= ``other``, i.e. ``self`` less critical than or as critical as``other``.
-        """
-        return self.__cmp(other) <= 0
-
-    def __gt__(self, other):  # type: (typing.Any) -> bool
-        """
-        Checks whether ``self`` > ``other``, i.e. ``self`` strictly more critical than ``other``.
-        """
-        return self.__cmp(other) > 0
-
-    def __ge__(self, other):  # type: (typing.Any) -> bool
-        """
-        Checks whether ``self`` >= ``other``, i.e. ``self`` more critical than or as critical as``other``.
-        """
-        return self.__cmp(other) >= 0
-
-    # Do not use `__cmp()` for `__eq__()` nor `__ne__()`.
-    # def __eq__(self, other): ...  # type: (typing.Any) -> bool
-    # def __ne__(self, other): ...  # type: (typing.Any) -> bool
+        return (
+            _statusscore(),
+            _unqualifiedlevels(scenario_execution.errors), _highestissuelevel(scenario_execution.errors),
+            _unqualifiedlevels(scenario_execution.warnings), _highestissuelevel(scenario_execution.warnings),
+        )

@@ -147,7 +147,7 @@ class TestError(Exception):
         :param json_data: JSON dictionary.
         :return: New :class:`TestError` instance.
         """
-        from ._knownissues import KnownIssue
+        from ._knownissues import KnownIssue  # check-imports: ignore  ## Avoid cyclic module imports with '_knownissues.py'.
 
         if "type" in json_data:
             if json_data["type"] == "known-issue":

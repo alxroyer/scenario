@@ -1,4 +1,4 @@
-INFO     <08>                   __init__.py => [_actionresultdefinition.py, _actionresultexecution.py, _args.py,
+INFO     <11>                   __init__.py => [_actionresultdefinition.py, _actionresultexecution.py, _args.py,
 INFO                                            _assertionhelpers.py, _assertions.py, _campaignargs.py, _campaignexecution.py,
 INFO                                            _campaignreport.py, _campaignrunner.py, _configdb.py, _confignode.py,
 INFO                                            _consoleutils.py, _datetimeutils.py, _debugutils.py, _enumutils.py,
@@ -11,27 +11,31 @@ INFO                                            _scenarioevents.py, _scenarioexe
 INFO                                            _scenariorunner.py, _scenariostack.py, _stats.py, _stepdefinition.py,
 INFO                                            _stepexecution.py, _stepsection.py, _stepspecifications.py, _subprocess.py,
 INFO                                            _testerrors.py, _timezoneutils.py]
+INFO     <10>            _campaignrunner.py => [_fastpath.py, _logger.py, _scenariodefinition.py]
+INFO     <10>           _reqtraceability.py => [_fastpath.py, _logger.py, _path.py, _reflection.py, _reqref.py, _reqverifier.py,
+INFO                                            _scenariodefinition.py, _stepdefinition.py]
+INFO     <10>            _scenarioreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
+INFO                                            _scenariodefinition.py, _stepdefinition.py]
+INFO     <10>            _scenariorunner.py => [_args.py, _enumutils.py, _fastpath.py, _knownissues.py, _logextradata.py,
+INFO                                            _logger.py, _scenariodefinition.py, _stepdefinition.py]
+INFO     <10>             _scenariostack.py => [_logextradata.py, _logger.py, _scenariodefinition.py]
+INFO     <10>               _stepsection.py => [_stepdefinition.py]
+INFO     <09>        _scenariodefinition.py => [_assertions.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
+INFO                                            _reflection.py, _reqverifier.py, _scenariodefinitionmeta.py, _stepuserapi.py]
+INFO     <09>            _stepdefinition.py => [_assertions.py, _fastpath.py, _logger.py, _reflection.py, _reqverifier.py,
+INFO                                            _stepuserapi.py]
+INFO     <08>            _campaignreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _knownissues.py, _logger.py,
+INFO                                            _path.py]
+INFO     <08>         _scenarioexecution.py => [_knownissues.py, _reflection.py]
+INFO     <08>           _scenariologging.py => [_enumutils.py, _fastpath.py, _knownissues.py]
+INFO     <08>               _stepuserapi.py => [_fastpath.py, _knownissues.py, _logger.py]
 INFO     <07>              _campaignargs.py => [_args.py, _fastpath.py, _path.py, _scenarioargs.py]
-INFO     <07>            _campaignrunner.py => [_fastpath.py, _logger.py, _scenariodefinition.py]
 INFO     <07>               _knownissues.py => [_fastpath.py, _testerrors.py]
-INFO     <07>           _reqtraceability.py => [_fastpath.py, _logger.py, _path.py, _reflection.py, _reqref.py, _reqverifier.py,
-INFO                                            _scenariodefinition.py, _stepdefinition.py]
-INFO     <07>            _scenarioreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
-INFO                                            _scenariodefinition.py, _stepdefinition.py]
-INFO     <07>            _scenariorunner.py => [_args.py, _enumutils.py, _fastpath.py, _logextradata.py, _logger.py,
-INFO                                            _scenariodefinition.py, _stepdefinition.py]
-INFO     <07>             _scenariostack.py => [_logextradata.py, _logger.py, _scenariodefinition.py]
-INFO     <07>               _stepsection.py => [_stepdefinition.py]
 INFO     <06>                _reqmgtargs.py => [_args.py, _fastpath.py, _path.py]
 INFO     <06>              _scenarioargs.py => [_args.py, _fastpath.py, _path.py]
-INFO     <06>        _scenariodefinition.py => [_assertions.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
-INFO                                            _reflection.py, _reqverifier.py, _scenariodefinitionmeta.py, _stepuserapi.py]
-INFO     <06>            _stepdefinition.py => [_assertions.py, _fastpath.py, _logger.py, _reflection.py, _reqverifier.py,
-INFO                                            _stepuserapi.py]
 INFO     <06>                _testerrors.py => [_fastpath.py, _locations.py, _path.py]
 INFO     <05>                      _args.py => [_configargs.py, _fastpath.py, _logger.py, _loggingargs.py, _path.py,
 INFO                                            _reflection.py]
-INFO     <05>            _campaignreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _logger.py, _path.py]
 INFO     <05>                  _configdb.py => [_confignode.py, _enumutils.py, _logger.py, _path.py]
 INFO     <05>                  _handlers.py => [_enumutils.py, _fastpath.py, _logger.py]
 INFO     <05>                 _locations.py => [_logger.py, _path.py, _reflection.py]
@@ -41,7 +45,6 @@ INFO     <05>                     _reqdb.py => [_fastpath.py, _logger.py, _req.p
 INFO     <05>                    _reqmgt.py => [_fastpath.py, _logger.py]
 INFO     <05>            _scenarioconfig.py => [_enumutils.py, _fastpath.py, _logger.py, _path.py]
 INFO     <05>           _scenarioresults.py => [_debugutils.py, _fastpath.py, _logger.py]
-INFO     <05>               _stepuserapi.py => [_fastpath.py, _logger.py]
 INFO     <05>             _testsuitefile.py => [_logger.py, _path.py, _reflection.py]
 INFO     <05>                ui/_htmldoc.py => [_logger.py]
 INFO     <05>             ui/_httpserver.py => [_logger.py]
@@ -63,7 +66,6 @@ INFO     <03>                      _path.py => [_fastpath.py, _reflection.py]
 INFO     <03>                       _req.py => [_fastpath.py, _reflection.py, _setutils.py]
 INFO     <03>                   _reqlink.py => [_fastpath.py, _reflection.py, _setutils.py]
 INFO     <03>                    _reqref.py => [_fastpath.py, _reflection.py, _setutils.py]
-INFO     <03>         _scenarioexecution.py => [_reflection.py]
 INFO     <03>             _stepexecution.py => [_reflection.py]
 INFO     <03>               _stepmethods.py => [_reflection.py]
 INFO     <03>        _stepspecifications.py => [_fastpath.py, _reflection.py]
@@ -82,7 +84,6 @@ INFO     <02>               _reqverifier.py => [_fastpath.py, _setutils.py]
 INFO     <02>        _scenarioattributes.py => [_enumutils.py]
 INFO     <02>    _scenariodefinitionmeta.py => [_fastpath.py]
 INFO     <02>            _scenarioevents.py => [_enumutils.py]
-INFO     <02>           _scenariologging.py => [_enumutils.py, _fastpath.py]
 INFO     <02>                     _stats.py => [_fastpath.py]
 INFO     <02>                ui/__init__.py => [ui/_main.py]
 INFO     <02>          ui/_configuration.py => [_enumutils.py, ui/_requesthandler.py]

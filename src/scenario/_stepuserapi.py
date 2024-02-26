@@ -23,9 +23,11 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
+    from ._knownissues import KnownIssue as _KnownIssueType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
     from ._textutils import AnyLongTextType as _AnyLongTextType
 
@@ -40,10 +42,8 @@ class StepUserApi(abc.ABC):
         """
         Initializes an empty known issue list.
         """
-        from ._knownissues import KnownIssue
-
         #: Known issues at the definition level.
-        self.known_issues = []  # type: typing.List[KnownIssue]
+        self.known_issues = []  # type: typing.List[_KnownIssueType]
 
     def STEP(  # noqa  ## PEP8: Function name should be lower case
             self,
@@ -207,14 +207,13 @@ class StepUserApi(abc.ABC):
         """
         General implementation for related overloads.
         """
-        from ._knownissues import KnownIssue
         from ._scenariorunner import SCENARIO_RUNNER
 
         # Positional parameters (deprecated).
         if (len(args) == 2) and (not kwargs):
             if isinstance(self, _LoggerImpl):
                 self.warning(f"knownissue(): Positional parameters deprecated, please use named parameters")
-            SCENARIO_RUNNER.onerror(KnownIssue(id=args[0], message=args[1]), originator=self)
+            SCENARIO_RUNNER.onerror(_KnownIssueImpl(id=args[0], message=args[1]), originator=self)
             return
 
         # Ensure ``message`` as a named argument.
@@ -226,4 +225,4 @@ class StepUserApi(abc.ABC):
         # Build the `KnownIssue` objects with named arguments.
         for _arg_name in kwargs:
             assert _arg_name in ("level", "id", "message"), f"knownissue(): Wrong argument {_arg_name!r}"
-        SCENARIO_RUNNER.onerror(KnownIssue(**kwargs), originator=self)
+        SCENARIO_RUNNER.onerror(_KnownIssueImpl(**kwargs), originator=self)

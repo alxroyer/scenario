@@ -27,6 +27,7 @@ if True:
     from ._enumutils import isin as _isin  # `isin()` imported once for performance concerns.
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Imported once for performance concerns.
@@ -709,7 +710,6 @@ class ScenarioRunner(_LoggerImpl):
         """
         from ._actionresultexecution import ActionResultExecution
         from ._handlers import HANDLERS
-        from ._knownissues import KnownIssue
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioexecution import ScenarioExecution
         from ._scenariologging import SCENARIO_LOGGING
@@ -724,7 +724,7 @@ class ScenarioRunner(_LoggerImpl):
 
         if self._execution_mode == ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
             # Build objects.
-            if isinstance(error, KnownIssue):
+            if isinstance(error, _KnownIssueImpl):
                 if originator:
                     _FAST_PATH.scenario_stack.building.fromoriginator(originator).known_issues.append(error)
                 else:
@@ -736,8 +736,8 @@ class ScenarioRunner(_LoggerImpl):
         else:
             # Discard duplicate `KnownIssue` instances created on consecutive `StepDefinition.step()` calls.
             # Stick with the first instance registered at definition level.
-            if isinstance(error, KnownIssue) and isinstance(originator, _StepDefinitionImpl):
-                for _known_issue in originator.known_issues:  # type: KnownIssue
+            if isinstance(error, _KnownIssueImpl) and isinstance(originator, _StepDefinitionImpl):
+                for _known_issue in originator.known_issues:  # type: _KnownIssueType
                     if _known_issue == error:
                         self.debug(f"%r: discarding %r in favor of %r", originator, error, _known_issue)
                         error = _known_issue
@@ -767,7 +767,7 @@ class ScenarioRunner(_LoggerImpl):
                 # Determine the candidate list to store the error into.
                 _list = obj.warnings if error.iswarning() else obj.errors  # type: typing.List[_TestErrorType]
                 # Do not store known issues twice (in the owner execution contexts among others).
-                if isinstance(error, KnownIssue) and (error in _list):
+                if isinstance(error, _KnownIssueImpl) and (error in _list):
                     return False
                 # Store the error in the candidate list.
                 _list.append(error)
@@ -792,16 +792,10 @@ class ScenarioRunner(_LoggerImpl):
 
         :return: ``True`` when the scenario execution should stop, ``False`` when the scenario execution should continue on.
         """
-        from ._knownissues import KnownIssue
-
         if _FAST_PATH.scenario_stack.current_scenario_execution and _FAST_PATH.scenario_stack.current_scenario_execution.errors:
             # Errors occurred.
             # Check whether these errors are real errors, or just known issues considered as errors.
-            _real_errors = 0  # type: int
-            for _error in _FAST_PATH.scenario_stack.current_scenario_execution.errors:  # type: _TestErrorType
-                if not isinstance(_error, KnownIssue):
-                    _real_errors += 1
-            if not _real_errors:
+            if all([isinstance(_error, _KnownIssueImpl) for _error in _FAST_PATH.scenario_stack.current_scenario_execution.errors]):
                 # No real error, keep going.
                 return False
 
