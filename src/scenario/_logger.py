@@ -27,6 +27,7 @@ if True:
     from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` used for class member initialization, imported once for performance concerns.
+    from ._logfilters import LoggerLogFilter as _LoggerLogFilterImpl  # `LoggerLogFilter` imported once for performance concerns.
     from ._loggingcontext import LoggingContext as _LoggingContextImpl  # `LoggingContext` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
@@ -89,15 +90,13 @@ class Logger:
 
         .. seealso:: :meth:`enabledebug()` and :meth:`setlogcolor()`.
         """
-        from ._logfilters import LoggerLogFilter
-
         #: Log class.
         self.log_class = _enum2str(log_class)  # type: str
 
         # Build the ``logging.Logger`` instance, and attach a filter.
         #: ``logging.Logger`` instance as a member variable.
         self._logger = logging.Logger(name=self.log_class, level=logging.DEBUG)  # type: logging.Logger
-        self._logger.addFilter(LoggerLogFilter(logger=self))
+        self._logger.addFilter(_LoggerLogFilterImpl(logger=self))
         if not self.log_class:
             # Main logger.
             global _main_loggers

@@ -25,6 +25,7 @@ import typing
 
 if True:
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
+    from ._logfilters import HandlerLogFilter as _HandlerLogFilterImpl  # `HandlerLogFilter` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
 
@@ -41,7 +42,6 @@ class MainLogger(_LoggerImpl):
         Enables debugging by default and makes console initializations.
         """
         from ._consoleutils import disableconsolebuffering
-        from ._logfilters import HandlerLogFilter
         from ._logformatter import LogFormatter
 
         _LoggerImpl.__init__(self, log_class="")
@@ -61,7 +61,7 @@ class MainLogger(_LoggerImpl):
         if _LogHandlerImpl.console_handler is None:
             _LogHandlerImpl.console_handler = logging.StreamHandler()
             _LogHandlerImpl.console_handler.stream = sys.stdout  # Note: :meth:`logging.StreamHandler.setStream()` is not available in all Python versions.
-            _LogHandlerImpl.console_handler.addFilter(HandlerLogFilter(handler=_LogHandlerImpl.console_handler))
+            _LogHandlerImpl.console_handler.addFilter(_HandlerLogFilterImpl(handler=_LogHandlerImpl.console_handler))
             _LogHandlerImpl.console_handler.setFormatter(LogFormatter(_LogHandlerImpl.console_handler))
             self._logger.addHandler(_LogHandlerImpl.console_handler)
 

@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._logfilters import HandlerLogFilter as _HandlerLogFilterImpl  # `HandlerLogFilter` imported once for performance concerns.
     from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
@@ -39,14 +40,13 @@ class LoggingService:
         """
         Starts logging features.
         """
-        from ._logfilters import HandlerLogFilter
         from ._logformatter import LogFormatter
 
         # Start file logging if required.
         _log_outpath = _FAST_PATH.scenario_config.logoutpath()  # type: typing.Optional[_PathType]
         if _log_outpath is not None:
             _LogHandlerImpl.file_handler = logging.FileHandler(_log_outpath, mode="w", encoding="utf-8")
-            _LogHandlerImpl.file_handler.addFilter(HandlerLogFilter(handler=_LogHandlerImpl.file_handler))
+            _LogHandlerImpl.file_handler.addFilter(_HandlerLogFilterImpl(handler=_LogHandlerImpl.file_handler))
             _LogHandlerImpl.file_handler.setFormatter(LogFormatter(_LogHandlerImpl.file_handler))
             _FAST_PATH.main_logger.logging_instance.addHandler(_LogHandlerImpl.file_handler)
 
