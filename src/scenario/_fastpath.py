@@ -39,6 +39,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenariorunner import ScenarioRunner as _ScenarioRunnerType
     from ._scenariostack import ScenarioStack as _ScenarioStackType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
@@ -74,6 +75,7 @@ class FastPath:
         "_req_verifier_helper_cls",
         "_scenario_config",
         "_scenario_definition_cls",
+        "_scenario_runner",
         "_scenario_stack",
         "_step_definition_cls",
         "_step_execution_cls",
@@ -122,6 +124,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_config()` property.
         self._scenario_config = None  # type: typing.Optional[_ScenarioConfigType]
+
+        #: :class:`._scenariorunner.ScenarioRunner` singleton reference.
+        #:
+        #: Reference resolved by :meth:`scenario_runner()` property.
+        self._scenario_runner = None  # type: typing.Optional[_ScenarioRunnerType]
 
         #: :class:`._scenariostack.ScenarioStack` singleton reference.
         #:
@@ -231,6 +238,16 @@ class FastPath:
             from ._scenarioconfig import SCENARIO_CONFIG  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_config = SCENARIO_CONFIG
         return self._scenario_config
+
+    @property
+    def scenario_runner(self):  # type: () -> _ScenarioRunnerType
+        """
+        :class:`._scenariorunner.ScenarioRunner` singleton.
+        """
+        if self._scenario_runner is None:
+            from ._scenariorunner import SCENARIO_RUNNER  # check-imports: ignore  ## `FastPath` local import.
+            self._scenario_runner = SCENARIO_RUNNER
+        return self._scenario_runner
 
     @property
     def scenario_stack(self):  # type: () -> _ScenarioStackType

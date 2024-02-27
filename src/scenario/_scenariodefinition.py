@@ -529,13 +529,11 @@ class ScenarioDefinitionHelper:
 
         :param definition: Scenario definition instance this helper works for.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
         #: Related scenario definition.
         self.definition = definition  # type: ScenarioDefinition
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
-        self._logger = SCENARIO_RUNNER  # type: _LoggerType
+        self._logger = _FAST_PATH.scenario_runner  # type: _LoggerType
 
     def buildsteps(self):  # type: (...) -> None
         """

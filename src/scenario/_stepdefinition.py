@@ -225,10 +225,8 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
 
         Otherwise, this base implementation of this method expects the :attr:`method` attribute to be set, and invokes it.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
         assert self.method is not None, f"{self} not implemented"
-        SCENARIO_RUNNER.debug("Invoking %r", self.method)
+        _FAST_PATH.scenario_runner.debug("Invoking %r", self.method)
         self.method()
 
 

@@ -26,7 +26,7 @@ INFO     <09>            _stepdefinition.py => [_assertions.py, _fastpath.py, _l
 INFO                                            _stepuserapi.py]
 INFO     <08>            _campaignreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _knownissues.py, _logger.py,
 INFO                                            _path.py]
-INFO     <08>         _scenarioexecution.py => [_knownissues.py, _reflection.py]
+INFO     <08>         _scenarioexecution.py => [_fastpath.py, _knownissues.py, _reflection.py]
 INFO     <08>           _scenariologging.py => [_enumutils.py, _fastpath.py, _knownissues.py]
 INFO     <08>               _stepuserapi.py => [_fastpath.py, _knownissues.py, _logger.py]
 INFO     <07>              _campaignargs.py => [_args.py, _fastpath.py, _path.py, _scenarioargs.py]

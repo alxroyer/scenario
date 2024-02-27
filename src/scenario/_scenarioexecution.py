@@ -22,6 +22,7 @@ import abc
 import typing
 
 if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -49,7 +50,6 @@ class ScenarioExecution:
             Related scenario definition under execution.
             May be ``None`` when the :class:`ScenarioExecution` instance is created as a data container only.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
         from ._stats import TimeStats
         from ._testerrors import TestError
 
@@ -70,7 +70,7 @@ class ScenarioExecution:
         self.warnings = []  # type: typing.List[TestError]
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
-        self._logger = SCENARIO_RUNNER  # type: _LoggerType
+        self._logger = _FAST_PATH.scenario_runner  # type: _LoggerType
 
     def __repr__(self):  # type: () -> str
         """

@@ -126,8 +126,6 @@ class StepDefinitionSpecification:
         :return: Step definition instance resolved.
         :raise LookupError: When the step definition could not be found.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
         # Ensure a scenario definition reference.
         if not scenario:
             scenario = _FAST_PATH.scenario_stack.building.scenario_definition or _FAST_PATH.scenario_stack.current_scenario_definition
@@ -152,7 +150,7 @@ class StepDefinitionSpecification:
         if self._m_spec_index is not None:
             _index = self._m_spec_index
         # Avoid `_index` being unspecified when several steps match in *execution mode*.
-        if (_index < 0) and (len(_matching_step_definitions) > 1) and SCENARIO_RUNNER.doexecute():
+        if (_index < 0) and (len(_matching_step_definitions) > 1) and _FAST_PATH.scenario_runner.doexecute():
             raise LookupError(f"Ambiguous specification {self} from scenario {scenario}, index required in execution mode "
                               f"(matching steps {_matching_step_definitions!r})")
 

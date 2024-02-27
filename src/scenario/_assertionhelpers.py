@@ -119,9 +119,7 @@ def evidence(
     :param regular: Regular proof message.
     :param args: Proof message arguments.
     """
-    from ._scenariorunner import SCENARIO_RUNNER
-
-    if evidence_enabled and SCENARIO_RUNNER.doexecute():
+    if evidence_enabled and _FAST_PATH.scenario_runner.doexecute():
         if _FAST_PATH.scenario_stack.current_scenario_definition and _FAST_PATH.scenario_stack.current_action_result_execution:
             # Ensure `regular` is of type `str`.
             if not isinstance(regular, str):

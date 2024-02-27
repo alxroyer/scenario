@@ -56,9 +56,7 @@ class StepUserApi(abc.ABC):
 
         .. note:: We deliberately deviate from PEP8 namings in order to highlight :meth:`STEP` calls in the final test code.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
-        SCENARIO_RUNNER.onstepdescription(description)
+        _FAST_PATH.scenario_runner.onstepdescription(description)
 
     def SECTION(  # noqa  ## PEP8: Function name should be lower case
             self,
@@ -92,9 +90,8 @@ class StepUserApi(abc.ABC):
         .. note:: We deliberately deviate from PEP8 namings in order to highlight :meth:`ACTION` calls in the final test code.
         """
         from ._actionresultdefinition import ActionResultDefinition
-        from ._scenariorunner import SCENARIO_RUNNER
 
-        SCENARIO_RUNNER.onactionresult(ActionResultDefinition.Type.ACTION, action)
+        _FAST_PATH.scenario_runner.onactionresult(ActionResultDefinition.Type.ACTION, action)
 
         return self.doexecute()
 
@@ -111,9 +108,8 @@ class StepUserApi(abc.ABC):
         .. note:: We deliberately deviate from PEP8 namings in order to highlight :meth:`RESULT` calls in the final test code.
         """
         from ._actionresultdefinition import ActionResultDefinition
-        from ._scenariorunner import SCENARIO_RUNNER
 
-        SCENARIO_RUNNER.onactionresult(ActionResultDefinition.Type.RESULT, result)
+        _FAST_PATH.scenario_runner.onactionresult(ActionResultDefinition.Type.RESULT, result)
 
         return self.doexecute()
 
@@ -126,9 +122,7 @@ class StepUserApi(abc.ABC):
             exactly the same as the :meth:`ACTION()` and :meth:`RESULT()` methods do,
             but without generating any texts.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
-        return SCENARIO_RUNNER.doexecute()
+        return _FAST_PATH.scenario_runner.doexecute()
 
     def evidence(
             self,
@@ -139,7 +133,6 @@ class StepUserApi(abc.ABC):
 
         :param evidence: Evidence text.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
         from ._textutils import anylongtext2str
 
         if isinstance(evidence, str):
@@ -151,7 +144,7 @@ class StepUserApi(abc.ABC):
         else:
             # In case the user provides something that is not a regular string.
             evidence = repr(evidence)
-        SCENARIO_RUNNER.onevidence(evidence)
+        _FAST_PATH.scenario_runner.onevidence(evidence)
 
     def goto(
             self,
@@ -162,9 +155,7 @@ class StepUserApi(abc.ABC):
 
         :param to_step_specification: Step specification of the step to jump to (see :obj:`._stepspecifications.AnyStepDefinitionSpecificationType`).
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
-        SCENARIO_RUNNER.goto(to_step_specification)
+        _FAST_PATH.scenario_runner.goto(to_step_specification)
 
     @typing.overload
     def knownissue(
@@ -207,13 +198,11 @@ class StepUserApi(abc.ABC):
         """
         General implementation for related overloads.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
         # Positional parameters (deprecated).
         if (len(args) == 2) and (not kwargs):
             if isinstance(self, _LoggerImpl):
                 self.warning(f"knownissue(): Positional parameters deprecated, please use named parameters")
-            SCENARIO_RUNNER.onerror(_KnownIssueImpl(id=args[0], message=args[1]), originator=self)
+            _FAST_PATH.scenario_runner.onerror(_KnownIssueImpl(id=args[0], message=args[1]), originator=self)
             return
 
         # Ensure ``message`` as a named argument.
@@ -225,4 +214,4 @@ class StepUserApi(abc.ABC):
         # Build the `KnownIssue` objects with named arguments.
         for _arg_name in kwargs:
             assert _arg_name in ("level", "id", "message"), f"knownissue(): Wrong argument {_arg_name!r}"
-        SCENARIO_RUNNER.onerror(_KnownIssueImpl(**kwargs), originator=self)
+        _FAST_PATH.scenario_runner.onerror(_KnownIssueImpl(**kwargs), originator=self)
