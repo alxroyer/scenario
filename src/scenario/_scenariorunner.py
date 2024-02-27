@@ -31,8 +31,10 @@ if True:
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Imported once for performance concerns.
-    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # Imported once for performance concerns.
-    from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # Imported once for performance concerns.
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
+    from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # `StepDefinitionHelper` imported once for performance concerns.
+    from ._stepexecution import StepExecution as _StepExecutionImpl  # `StepExecution` imported once for performance concerns.
+    from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # `StepExecutionHelper` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -41,6 +43,8 @@ if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
+    from ._stepexecution import StepExecutionHelper as _StepExecutionHelperType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
     from ._stepuserapi import StepUserApi as _StepUserApiType
     from ._testerrors import TestError as _TestErrorType
@@ -474,7 +478,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenariologging import SCENARIO_LOGGING
-        from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import ExceptionError, TestError
 
@@ -503,7 +506,7 @@ class ScenarioRunner(_LoggerImpl):
             # Create the step execution instance (will be dropped in DOC_ONLY mode in the end).
             # Start time by the way.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                step_definition.executions.append(StepExecution(step_definition, _step_number))
+                step_definition.executions.append(_StepExecutionImpl(step_definition, _step_number))
 
             # Display the step description.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
@@ -611,7 +614,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._actionresultdefinition import ActionResultDefinition
         from ._actionresultexecution import ActionResultExecution
         from ._scenariologging import SCENARIO_LOGGING
-        from ._stepexecution import StepExecutionHelper
         from ._textutils import anylongtext2str
 
         self.debug("onactionresult(action_result_type=%s, description=%r)", action_result_type, description)
@@ -636,7 +638,7 @@ class ScenarioRunner(_LoggerImpl):
             self._endcurrentactionresult()
 
             # Switch to this action/result.
-            _step_execution_helper = StepExecutionHelper(_FAST_PATH.scenario_stack.current_step_execution)  # type: StepExecutionHelper
+            _step_execution_helper = _StepExecutionHelperImpl(_FAST_PATH.scenario_stack.current_step_execution)  # type: _StepExecutionHelperType
             _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
             if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != anylongtext2str(description)):
                 _FAST_PATH.scenario_stack.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
@@ -713,7 +715,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioexecution import ScenarioExecution
         from ._scenariologging import SCENARIO_LOGGING
-        from ._stepexecution import StepExecution
 
         self.debug("onerror(error=%r, originator=%r)", error, originator)
 
@@ -759,7 +760,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Memorize the error in the current execution context.
             def _store_error(
-                    obj,  # type: typing.Optional[typing.Union[ScenarioExecution, StepExecution, ActionResultExecution]]
+                    obj,  # type: typing.Optional[typing.Union[ScenarioExecution, _StepExecutionType, ActionResultExecution]]
             ):  # type: (...) -> bool
                 # Check the current object is valid.
                 if obj is None:

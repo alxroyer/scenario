@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
 
 
 class ReqTraceability(_LoggerImpl):
@@ -464,8 +465,6 @@ class ReqTraceability(_LoggerImpl):
                 :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
-                from ._stepexecution import StepExecution
-
                 _json_step = {
                     "number": self.step.number,
                     "name": self.step.name,
@@ -477,7 +476,7 @@ class ReqTraceability(_LoggerImpl):
                 #  if the scenario has not been executed at all.
                 if allow_results and (self.step.scenario.execution is not None):
                     _json_step["results"] = []
-                    for _step_execution in self.step.executions:  # type: StepExecution
+                    for _step_execution in self.step.executions:  # type: _StepExecutionType
                         _json_step["results"].append({
                             "status": str(_step_execution.status),
                             "errors": [str(_error) for _error in _step_execution.errors],

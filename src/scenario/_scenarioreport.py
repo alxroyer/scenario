@@ -28,6 +28,7 @@ if True:
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
+    from ._stepexecution import StepExecution as _StepExecutionImpl  # `StepExecution` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._jsondictutils import JsonDictType as _JsonDictType
@@ -37,6 +38,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
 
 
 class ScenarioReport(_LoggerImpl):
@@ -311,7 +313,6 @@ class ScenarioReport(_LoggerImpl):
         :param step_definition: Step definition (with execution) to generate JSON content for.
         :return: JSON content.
         """
-        from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
@@ -335,7 +336,7 @@ class ScenarioReport(_LoggerImpl):
 
                 # Executions.
                 _json_step_definition["executions"] = []
-                for _step_execution in step_definition.executions:  # type: StepExecution
+                for _step_execution in step_definition.executions:  # type: _StepExecutionType
                     _json_step_execution = {
                         "number": _step_execution.number,
                         "time": _step_execution.time.tojson(),
@@ -366,7 +367,6 @@ class ScenarioReport(_LoggerImpl):
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
         from ._stats import TimeStats
-        from ._stepexecution import StepExecution
         from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
@@ -402,7 +402,7 @@ class ScenarioReport(_LoggerImpl):
                                extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
                     with self.pushindentation():
-                        _step_execution = StepExecution(_step_definition, _json_step_execution["number"])  # type: StepExecution
+                        _step_execution = _StepExecutionImpl(_step_definition, _json_step_execution["number"])  # type: _StepExecutionType
                         _step_execution.time = TimeStats.fromjson(_json_step_execution["time"])
                         self.debug("Time: %s", _step_execution.time)
 

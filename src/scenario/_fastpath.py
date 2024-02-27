@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenariostack import ScenarioStack as _ScenarioStackType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
 
 
 class FastPath:
@@ -75,6 +76,7 @@ class FastPath:
         "_scenario_definition_cls",
         "_scenario_stack",
         "_step_definition_cls",
+        "_step_execution_cls",
         "args",
     ]
 
@@ -142,6 +144,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`step_definition_cls()` property.
         self._step_definition_cls = None  # type: typing.Optional[typing.Type[_StepDefinitionType]]
+
+        #: :class:`._stepexecution.StepExecution` class reference.
+        #:
+        #: Reference resolved by :meth:`step_execution_cls()` property.
+        self._step_execution_cls = None  # type: typing.Optional[typing.Type[_StepExecutionType]]
 
         #: :class:`._req.Req` class reference.
         #:
@@ -264,6 +271,16 @@ class FastPath:
             from ._stepdefinition import StepDefinition  # check-imports: ignore  ## `FastPath` local import.
             self._step_definition_cls = StepDefinition
         return self._step_definition_cls
+
+    @property
+    def step_execution_cls(self):  # type: () -> typing.Type[_StepExecutionType]
+        """
+        :class:`._stepexecution.StepExecution` class reference.
+        """
+        if self._step_execution_cls is None:
+            from ._stepexecution import StepExecution  # check-imports: ignore  ## `FastPath` local import.
+            self._step_execution_cls = StepExecution
+        return self._step_execution_cls
 
     @property
     def req_cls(self):  # type: () -> typing.Type[_ReqType]

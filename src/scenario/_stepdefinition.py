@@ -33,6 +33,7 @@ if typing.TYPE_CHECKING:
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._locations import CodeLocation as _CodeLocationType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
 
 
 class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl):
@@ -88,8 +89,6 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         :param method: Method that defines the step, when applicable. Optional.
         :param numbered: ``False`` if the step shall not be numbered.
         """
-        from ._stepexecution import StepExecution
-
         #: Owner scenario.
         #:
         #: Set when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
@@ -122,7 +121,7 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         self.__action_result_definitions = []  # type: typing.List[_ActionResultDefinitionType]
 
         #: Step executions.
-        self.executions = []  # type: typing.List[StepExecution]
+        self.executions = []  # type: typing.List[_StepExecutionType]
 
     def __repr__(self):  # type: () -> str
         """

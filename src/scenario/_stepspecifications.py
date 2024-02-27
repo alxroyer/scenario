@@ -180,8 +180,6 @@ class StepExecutionSpecification:
 
         :param step_specification: Input specification.
         """
-        from ._stepexecution import StepExecution
-
         #: Direct :class:`._stepexecution.StepExecution` instance.
         self._step_execution = None  # type: typing.Optional[_StepExecutionType]
         #: Step definition
@@ -191,9 +189,12 @@ class StepExecutionSpecification:
             self._step_execution = step_specification._step_execution
             self._step_definition_spec = step_specification._step_definition_spec
         else:
-            if isinstance(step_specification, StepExecution):
+            if isinstance(step_specification, _FAST_PATH.step_execution_cls):
                 self._step_execution = step_specification
             else:
+                if typing.TYPE_CHECKING:
+                    from ._stepexecution import StepExecution  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
+                    assert not isinstance(step_specification, StepExecution)
                 self._step_definition_spec = StepDefinitionSpecification(step_specification)
 
     def __str__(self):  # type: () -> str

@@ -15,9 +15,9 @@ INFO     <10>            _campaignrunner.py => [_fastpath.py, _logger.py, _scena
 INFO     <10>           _reqtraceability.py => [_fastpath.py, _logger.py, _path.py, _reflection.py, _reqref.py, _reqverifier.py,
 INFO                                            _scenariodefinition.py, _stepdefinition.py]
 INFO     <10>            _scenarioreport.py => [_debugutils.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
-INFO                                            _scenariodefinition.py, _stepdefinition.py]
+INFO                                            _scenariodefinition.py, _stepdefinition.py, _stepexecution.py]
 INFO     <10>            _scenariorunner.py => [_args.py, _enumutils.py, _fastpath.py, _knownissues.py, _logextradata.py,
-INFO                                            _logger.py, _scenariodefinition.py, _stepdefinition.py]
+INFO                                            _logger.py, _scenariodefinition.py, _stepdefinition.py, _stepexecution.py]
 INFO     <10>             _scenariostack.py => [_logextradata.py, _logger.py, _scenariodefinition.py]
 INFO     <10>               _stepsection.py => [_stepdefinition.py]
 INFO     <09>        _scenariodefinition.py => [_assertions.py, _enumutils.py, _fastpath.py, _logger.py, _path.py,
