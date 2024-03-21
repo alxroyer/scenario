@@ -28,6 +28,8 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # `ExecTotalStats` imported once for performance concerns.
+    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType
@@ -35,6 +37,7 @@ if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
+    from ._stats import TimeStats as _TimeStatsType
     from ._testerrors import TestError as _TestErrorType
 
 
@@ -53,8 +56,6 @@ class CampaignExecution:
 
             ``None`` initializes the output directory path with the current working directory.
         """
-        from ._stats import TimeStats
-
         #: Output directory path.
         self.outdir = _PathImpl(outdir)  # type: _PathType
         #: Campaign report path, when explicitly set.
@@ -68,7 +69,7 @@ class CampaignExecution:
         #: Test suite results.
         self.test_suite_executions = []  # type: typing.List[TestSuiteExecution]
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
 
     def __repr__(self):  # type: () -> str
         """
@@ -214,9 +215,7 @@ class CampaignExecution:
         """
         Step statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.steps.total
             _stats.executed += _test_suite_execution.steps.executed
@@ -227,9 +226,7 @@ class CampaignExecution:
         """
         Action statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.actions.total
             _stats.executed += _test_suite_execution.actions.executed
@@ -240,9 +237,7 @@ class CampaignExecution:
         """
         Expected result statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.results.total
             _stats.executed += _test_suite_execution.results.executed
@@ -284,7 +279,6 @@ class TestSuiteExecution:
             which makes the :attr:`test_suite_file` instance *void* as well.
             This path can be fixed programmatically later on.
         """
-        from ._stats import TimeStats
         from ._testsuitefile import TestSuiteFile
 
         #: Owner campaign execution.
@@ -296,7 +290,7 @@ class TestSuiteExecution:
         #: Test cases.
         self.test_case_executions = []  # type: typing.List[TestCaseExecution]
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
 
     def __repr__(self):  # type: () -> str
         """
@@ -309,9 +303,7 @@ class TestSuiteExecution:
         """
         Step statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
                 _stats.add(_test_case_execution.scenario_execution.step_stats)
@@ -322,9 +314,7 @@ class TestSuiteExecution:
         """
         Action statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
                 _stats.add(_test_case_execution.scenario_execution.action_stats)
@@ -335,9 +325,7 @@ class TestSuiteExecution:
         """
         Expected result statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
                 _stats.add(_test_case_execution.scenario_execution.result_stats)
@@ -379,14 +367,12 @@ class TestCaseExecution:
             ``None`` initializes the :attr:`script_path` member with a *void* file path.
             This path can be fixed programmatically later on.
         """
-        from ._stats import TimeStats
-
         #: Owner test suite execution.
         self.test_suite_execution = test_suite_execution  # type: TestSuiteExecution
         #: Scenario script path.
         self.script_path = _PathImpl(script_path)  # type: _PathType
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Test case log output.
         self.log = LogFileReader()  # type: LogFileReader
         #: Test case report output.
@@ -454,33 +440,27 @@ class TestCaseExecution:
         """
         Step statistics.
         """
-        from ._stats import ExecTotalStats
-
         if self.scenario_execution:
             return self.scenario_execution.step_stats
-        return ExecTotalStats()
+        return _ExecTotalStatsImpl()
 
     @property
     def actions(self):  # type: () -> _ExecTotalStatsType
         """
         Action statistics.
         """
-        from ._stats import ExecTotalStats
-
         if self.scenario_execution:
             return self.scenario_execution.action_stats
-        return ExecTotalStats()
+        return _ExecTotalStatsImpl()
 
     @property
     def results(self):  # type: () -> _ExecTotalStatsType
         """
         Expected result statistics.
         """
-        from ._stats import ExecTotalStats
-
         if self.scenario_execution:
             return self.scenario_execution.result_stats
-        return ExecTotalStats()
+        return _ExecTotalStatsImpl()
 
 
 class CampaignStats:

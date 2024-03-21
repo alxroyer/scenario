@@ -22,9 +22,11 @@ import typing
 
 if True:
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
+    from ._stats import TimeStats as _TimeStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
@@ -50,7 +52,6 @@ class StepExecution:
         :param definition: Step definition this instance describes an execution for.
         :param number: Execution number. See :attr:`number`.
         """
-        from ._stats import TimeStats
         from ._testerrors import TestError
 
         #: Owner step reference.
@@ -67,7 +68,7 @@ class StepExecution:
         #: when the action / expected result execution is done.
         self.current_action_result_definition = None  # type: typing.Optional[_ActionResultDefinitionType]
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Error.
         self.errors = []  # type: typing.List[TestError]
         #: Warnings.

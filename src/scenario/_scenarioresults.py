@@ -25,8 +25,10 @@ if True:
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # `ExecTotalStats` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from ._stats import ExecTotalStats as _ExecTotalStatsType
     from ._testerrors import TestError as _TestErrorType
 
 
@@ -77,11 +79,10 @@ class ScenarioResults(_LoggerImpl):
         """
         from ._datetimeutils import f2strduration
         from ._scenarioexecution import ScenarioExecutionHelper
-        from ._stats import ExecTotalStats
 
-        _total_step_stats = ExecTotalStats()  # type: ExecTotalStats
-        _total_action_stats = ExecTotalStats()  # type: ExecTotalStats
-        _total_result_stats = ExecTotalStats()  # type: ExecTotalStats
+        _total_step_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
+        _total_action_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
+        _total_result_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         _total_time = 0.0  # type: float
 
         # Scan the results, sum them up, and determine the way to display them.

@@ -25,11 +25,14 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # `ExecTotalStats` imported once for performance concerns.
+    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._logger import Logger as _LoggerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
+    from ._stats import TimeStats as _TimeStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
@@ -50,7 +53,6 @@ class ScenarioExecution:
             Related scenario definition under execution.
             May be ``None`` when the :class:`ScenarioExecution` instance is created as a data container only.
         """
-        from ._stats import TimeStats
         from ._testerrors import TestError
 
         #: Related scenario definition.
@@ -63,7 +65,7 @@ class ScenarioExecution:
         self.__next_step_definition = None  # type: typing.Optional[_StepDefinitionType]
 
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Errors.
         self.errors = []  # type: typing.List[TestError]
         #: Warnings.
@@ -189,10 +191,9 @@ class ScenarioExecution:
 
         :return: Number of steps executed over the number of steps defined.
         """
-        from ._stats import ExecTotalStats
         from ._stepsection import StepSectionDescription
 
-        _step_stats = ExecTotalStats()  # type: ExecTotalStats
+        _step_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSection` instances.
             if isinstance(_step_definition, StepSectionDescription):
@@ -210,10 +211,9 @@ class ScenarioExecution:
         :return: Number of actions executed over the number of actions defined.
         """
         from ._actionresultdefinition import ActionResultDefinition
-        from ._stats import ExecTotalStats
         from ._stepsection import StepSectionDescription
 
-        _action_stats = ExecTotalStats()  # type: ExecTotalStats
+        _action_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSection` instances.
             if isinstance(_step_definition, StepSectionDescription):
@@ -234,10 +234,9 @@ class ScenarioExecution:
         :return: Number of expected results executed over the number of expected results defined.
         """
         from ._actionresultdefinition import ActionResultDefinition
-        from ._stats import ExecTotalStats
         from ._stepsection import StepSectionDescription
 
-        _result_stats = ExecTotalStats()  # type: ExecTotalStats
+        _result_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSection` instances.
             if isinstance(_step_definition, StepSectionDescription):

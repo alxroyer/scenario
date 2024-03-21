@@ -22,8 +22,10 @@ import typing
 
 if True:
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._stats import TimeStats as _TimeStatsType
 
 
 class ActionResultExecution:
@@ -38,14 +40,13 @@ class ActionResultExecution:
         """
         Sets the start time automatically.
         """
-        from ._stats import TimeStats
         from ._scenarioexecution import ScenarioExecution
         from ._testerrors import TestError
 
         #: Owner action/result reference.
         self.definition = definition  # type: _ActionResultDefinitionType
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Evidence items.
         self.evidence = []  # type: typing.List[str]
         #: Subscenario executions.

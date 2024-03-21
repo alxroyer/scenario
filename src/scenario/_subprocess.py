@@ -30,11 +30,13 @@ if True:
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._stats import TimeStats as _TimeStatsType
 
 
 class SubProcess:
@@ -50,8 +52,6 @@ class SubProcess:
             Command line arguments.
             May be the first arguments only, then rely on the :meth:`addargs()` method to add others.
         """
-        from ._stats import TimeStats
-
         #: Sub-process command line arguments.
         #:
         #: See :meth:`addargs()`.
@@ -77,7 +77,7 @@ class SubProcess:
         #: Standard error as a string.
         self.stderr = b''  # type: bytes
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
 
         #: ``subprocess.Popen`` instance.
         self._popen = None  # type: typing.Optional[subprocess.Popen[bytes]]

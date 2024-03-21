@@ -34,12 +34,14 @@ if True:
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._reflection import isiterable as _isiterable  # `isiterable()` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType as _ErrParamType
     from ._assertionhelpers import EvidenceParamType as _EvidenceParamType
     from ._debugutils import FmtAndArgs as _FmtAndArgsType
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
+    from ._stats import TimeStats as _TimeStatsType
     from ._stepexecution import StepExecution as _StepExecutionType
     from ._stepspecifications import AnyStepExecutionSpecificationType as _AnyStepExecutionSpecificationType
     from ._typeutils import TypeOrTypesType as _TypeOrTypesType
@@ -792,7 +794,6 @@ class Assertions(abc.ABC):
         :return: Step execution that matched the ``start`` and ``end`` specifications.
         """
         from ._datetimeutils import f2strtime
-        from ._stats import TimeStats
         from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "time")
@@ -811,7 +812,7 @@ class Assertions(abc.ABC):
         _step_desc2 = str(_step_execution2.definition)  # type: str
         _start2 = _AssertionHelperFunctions.getstepstarttime(_step_execution2)  # type: float
         _end2 = _AssertionHelperFunctions.getstependtime(_step_execution2, expect=expect_end_time)  # type: float
-        _all = TimeStats()  # type: TimeStats
+        _all = _TimeStatsImpl()  # type: _TimeStatsType
         _all.start = _start1
         _all.end = _end2
         assert _end1 < _start2, _assertionhelpers.ctxmsg(

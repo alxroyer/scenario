@@ -27,6 +27,7 @@ if True:
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
+    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
     from ._stepexecution import StepExecution as _StepExecutionImpl  # `StepExecution` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -256,7 +257,6 @@ class ScenarioReport(_LoggerImpl):
         :return: Scenario data.
         """
         from ._scenarioexecution import ScenarioExecution
-        from ._stats import TimeStats
         from ._testerrors import TestError
 
         self.debug("Reading scenario from JSON: %s", _jsondump(json_scenario, indent=2),
@@ -299,7 +299,7 @@ class ScenarioReport(_LoggerImpl):
             self.debug("Warnings: %d", len(_scenario_definition.execution.warnings))
 
             # Time & statistics.
-            _scenario_definition.execution.time = TimeStats.fromjson(json_scenario["time"])
+            _scenario_definition.execution.time = _TimeStatsImpl.fromjson(json_scenario["time"])
             self.debug("Time statistics: %s", _scenario_definition.execution.time)
 
         return _scenario_definition
@@ -367,7 +367,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_step_definition: Step definition JSON content to read.
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
-        from ._stats import TimeStats
         from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
@@ -404,7 +403,7 @@ class ScenarioReport(_LoggerImpl):
 
                     with self.pushindentation():
                         _step_execution = _StepExecutionImpl(_step_definition, _json_step_execution["number"])  # type: _StepExecutionType
-                        _step_execution.time = TimeStats.fromjson(_json_step_execution["time"])
+                        _step_execution.time = _TimeStatsImpl.fromjson(_json_step_execution["time"])
                         self.debug("Time: %s", _step_execution.time)
 
                         for _json_error in _json_step_execution["errors"]:  # type: _JsonDictType
@@ -536,7 +535,6 @@ class ScenarioReport(_LoggerImpl):
         """
         from ._actionresultdefinition import ActionResultDefinition
         from ._actionresultexecution import ActionResultExecution
-        from ._stats import TimeStats
         from ._testerrors import TestError
 
         self.debug("Reading action/result instance from JSON: %s", _jsondump(json_action_result_definition, indent=2),
@@ -559,7 +557,7 @@ class ScenarioReport(_LoggerImpl):
                 with self.pushindentation():
                     _action_result_execution = ActionResultExecution(_action_result_definition)  # type: ActionResultExecution
 
-                    _action_result_execution.time = TimeStats.fromjson(_json_action_result_execution["time"])
+                    _action_result_execution.time = _TimeStatsImpl.fromjson(_json_action_result_execution["time"])
                     self.debug("Time: %s", _action_result_execution.time)
 
                     _action_result_execution.evidence = _json_action_result_execution["evidence"].copy()
