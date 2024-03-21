@@ -300,6 +300,12 @@ class PerfImportWrapper:
         # Do import the module.
         _module = PerfImportWrapper._initial_importer(name, globals, locals, fromlist, level)  # type: types.ModuleType
 
+        # `from . import xxx` imports: fix empty `name` value with the expected single value in `fromlist`.
+        if not name:
+            if len(fromlist) != 1:
+                raise ImportError("Unexpected `from . import xxx, xxx` with several modules imported at once")
+            name = fromlist[0]
+
         # Update statistics.
         if name not in PerfImportWrapper._stats:
             PerfImportWrapper._stats[name] = PerfImportWrapper.Stats(name)
