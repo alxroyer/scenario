@@ -34,6 +34,7 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._setutils import OrderedSetType as _OrderedSetType
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
 class ReqVerifier(abc.ABC):
@@ -83,9 +84,7 @@ class ReqVerifier(abc.ABC):
 
         See :meth:`._reqlink.ReqLink.orderedset()` for order details.
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(self._req_links)
+        return _FAST_PATH.req_link_cls.orderedset(self._req_links)
 
     def verifies(
             self,  # type: _VarReqVerifierType
@@ -102,13 +101,13 @@ class ReqVerifier(abc.ABC):
         :return:
             ``self``
         """
-        from ._reqlink import ReqLink
-
         # Try to save each link.
         for _req_link in [first, *others]:  # type: _AnyReqLinkType
             # Ensure we have a `ReqLink` object.
-            if not isinstance(_req_link, ReqLink):
-                _req_link = ReqLink(_req_link)
+            if not isinstance(_req_link, _FAST_PATH.req_link_cls):
+                if typing.TYPE_CHECKING:
+                    assert not isinstance(_req_link, _ReqLinkType)
+                _req_link = _FAST_PATH.req_link_cls(_req_link)
 
             if _req_link not in self._req_links:
                 # New link.
@@ -145,9 +144,7 @@ class ReqVerifier(abc.ABC):
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(
+        return _FAST_PATH.req_link_cls.orderedset(
             # Filter requirement links with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_ref=req_ref, walk_subrefs=walk_subrefs),
@@ -165,9 +162,7 @@ class ReqVerifier(abc.ABC):
             Requirement references traced by this verifier,
             with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement verifier.
             [self],
             # Get the requirement reference for each link.
@@ -185,9 +180,7 @@ class ReqVerifier(abc.ABC):
             either directly or through a subreference of it,
             with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement verifier.
             [self],
             # Get the requirement for each link.
@@ -214,17 +207,13 @@ class ReqVerifierHelper:
         :return: String representation of the scenario or step.
         """
         if isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
-            # Redundant assertion for type checking concerns.
             if typing.TYPE_CHECKING:
-                from ._scenariodefinition import ScenarioDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
-                assert isinstance(req_verifier, ScenarioDefinition)
+                assert isinstance(req_verifier, _ScenarioDefinitionType)
 
             return req_verifier.name
         elif isinstance(req_verifier, _FAST_PATH.step_definition_cls):
-            # Redundant assertion for type checking concerns.
             if typing.TYPE_CHECKING:
-                from ._stepdefinition import StepDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
-                assert isinstance(req_verifier, StepDefinition)
+                assert isinstance(req_verifier, _StepDefinitionType)
 
             _step_number_fmt = "d"  # type: str
             if sortable:
@@ -260,17 +249,13 @@ class ReqVerifierHelper:
         :return: Scenario definition.
         """
         if isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
-            # Redundant assertion for type checking concerns.
             if typing.TYPE_CHECKING:
-                from ._scenariodefinition import ScenarioDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
-                assert isinstance(req_verifier, ScenarioDefinition)
+                assert isinstance(req_verifier, _ScenarioDefinitionType)
 
             return req_verifier
         if isinstance(req_verifier, _FAST_PATH.step_definition_cls):
-            # Redundant assertion for type checking concerns.
             if typing.TYPE_CHECKING:
-                from ._stepdefinition import StepDefinition  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
-                assert isinstance(req_verifier, StepDefinition)
+                assert isinstance(req_verifier, _StepDefinitionType)
 
             return req_verifier.scenario
         raise TypeError(f"Unexpected requirement verifier type {req_verifier!r}")

@@ -34,6 +34,7 @@ if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
@@ -431,11 +432,9 @@ class ScenarioReport(_LoggerImpl):
         :param req_verifier: Requirement verifier which JSON content to feed with requirement links. Either a scenario or a step.
         :param json_req_verifier: JSON content to update.
         """
-        from ._reqlink import ReqLink
-
         json_req_verifier["reqs"] = []
 
-        for _req_link in req_verifier.getreqlinks():  # type: ReqLink
+        for _req_link in req_verifier.getreqlinks():  # type: _ReqLinkType
             _json_req_link = {"ref": _req_link.req_ref.id}  # type: _JsonDictType
 
             if _req_link.comments:

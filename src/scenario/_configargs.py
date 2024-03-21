@@ -23,6 +23,7 @@ import typing
 if True:
     from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
 if typing.TYPE_CHECKING:
+    from ._args import Args as _ArgsType
     from ._path import Path as _PathType
 
 
@@ -36,8 +37,7 @@ class CommonConfigArgs:
         Installs common configuration program arguments.
         """
         if typing.TYPE_CHECKING:
-            from ._args import Args  # check-imports: ignore  ## Non-executable local import, in type-checking mode only, to avoid cyclic module dependency.
-            assert isinstance(self, Args)
+            assert isinstance(self, _ArgsType)
 
         #: Configuration files.
         self.config_paths = []  # type: typing.List[_PathType]

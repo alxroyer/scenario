@@ -191,8 +191,8 @@ class StepExecutionSpecification:
                 self._step_execution = step_specification
             else:
                 if typing.TYPE_CHECKING:
-                    from ._stepexecution import StepExecution  # check-imports: ignore  ## Non-executable local import, in type-checking mode only.
-                    assert not isinstance(step_specification, StepExecution)
+                    assert not isinstance(step_specification, _StepExecutionType)
+
                 self._step_definition_spec = StepDefinitionSpecification(step_specification)
 
     def __str__(self):  # type: () -> str

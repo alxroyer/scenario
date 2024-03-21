@@ -42,6 +42,7 @@ OPTIMIZED_PATHS = [
     _SRC_PATH / "scenario" / "_reflection.py",
     _SRC_PATH / "scenario" / "_req.py",
     _SRC_PATH / "scenario" / "_reqdb.py",
+    _SRC_PATH / "scenario" / "_reqlink.py",
     _SRC_PATH / "scenario" / "_reqref.py",
     _SRC_PATH / "scenario" / "_reqverifier.py",
     _SRC_PATH / "scenario" / "_scenarioconfig.py",

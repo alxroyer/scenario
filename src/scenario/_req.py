@@ -185,8 +185,6 @@ class Req:
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
         # Compute requirement references depending on `walk_subrefs`.
         _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
         if walk_subrefs:
@@ -201,7 +199,7 @@ class Req:
                 _req_ref.req_links,
             ))
 
-        return ReqLink.orderedset(_req_links)
+        return _FAST_PATH.req_link_cls.orderedset(_req_links)
 
     def getverifiers(
             self,
@@ -227,9 +225,7 @@ class Req:
         Does not return :class:`._scenariodefinition.ScenarioDefinition` instances that track this requirement through steps only.
         See :meth:`getscenarios()` for the purpose.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement references to walk through, depending on `walk_subrefs`.
             [self.main_ref] if not walk_subrefs else [self.main_ref, *self.subrefs],
             # Get requirement verifiers from each link.
@@ -259,9 +255,7 @@ class Req:
 
         Returns scenarios linked with this requirement, either directly or through one of their steps.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement references to walk through, depending on `walk_subrefs`.
             [self.main_ref] if not walk_subrefs else [self.main_ref, *self.subrefs],
             # Get scenarios from each link.

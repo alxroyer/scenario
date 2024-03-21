@@ -20,6 +20,9 @@ Common logging program arguments.
 
 import typing
 
+if typing.TYPE_CHECKING:
+    from ._args import Args as _ArgsType
+
 
 class CommonLoggingArgs:
     """
@@ -38,8 +41,7 @@ class CommonLoggingArgs:
         When per-class debugging is enabled, the main logger debugging is enabled by default.
         """
         if typing.TYPE_CHECKING:
-            from ._args import Args  # check-imports: ignore  ## Non-executable local import, in type-checking mode only, to avoid cyclic module dependency.
-            assert isinstance(self, Args)
+            assert isinstance(self, _ArgsType)
 
         #: Main logger debugging.
         self.debug_main = False  # type: bool

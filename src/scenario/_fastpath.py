@@ -34,6 +34,8 @@ if typing.TYPE_CHECKING:
     from ._loggermain import MainLogger as _MainLoggerType
     from ._req import Req as _ReqType
     from ._reqdb import ReqDatabase as _ReqDatabaseType
+    from ._reqlink import ReqLink as _ReqLinkType
+    from ._reqlink import ReqLinkHelper as _ReqLinkHelperType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
@@ -70,6 +72,8 @@ class FastPath:
         "_reflection_logger",
         "_req_cls",
         "_req_db",
+        "_req_link_cls",
+        "_req_link_helper_cls",
         "_req_ref_cls",
         "_req_verifier_cls",
         "_req_verifier_helper_cls",
@@ -176,6 +180,16 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`req_verifier_helper_cls()` property.
         self._req_verifier_helper_cls = None  # type: typing.Optional[typing.Type[_ReqVerifierHelperType]]
+
+        #: :class:`._reqlink.ReqLink` class reference.
+        #:
+        #: Reference resolved by :meth:`req_link_cls()` property.
+        self._req_link_cls = None  # type: typing.Optional[typing.Type[_ReqLinkType]]
+
+        #: :class:`._reqlink.ReqLinkHelper` class reference.
+        #:
+        #: Reference resolved by :meth:`req_link_helper_cls()` property.
+        self._req_link_helper_cls = None  # type: typing.Optional[typing.Type[_ReqLinkHelperType]]
 
     @property
     def code_location(self):  # type: () -> typing.Type[_CodeLocationType]
@@ -338,6 +352,26 @@ class FastPath:
             from ._reqverifier import ReqVerifierHelper  # check-imports: ignore  ## `FastPath` local import.
             self._req_verifier_helper_cls = ReqVerifierHelper
         return self._req_verifier_helper_cls
+
+    @property
+    def req_link_cls(self):  # type: () -> typing.Type[_ReqLinkType]
+        """
+        #: :class:`._reqlink.ReqLink` class reference.
+        """
+        if self._req_link_cls is None:
+            from ._reqlink import ReqLink  # check-imports: ignore  ## `FastPath` local import.
+            self._req_link_cls = ReqLink
+        return self._req_link_cls
+
+    @property
+    def req_link_helper_cls(self):  # type: () -> typing.Type[_ReqLinkHelperType]
+        """
+        #: :class:`._reqlink.ReqLinkHelper` class reference.
+        """
+        if self._req_link_helper_cls is None:
+            from ._reqlink import ReqLinkHelper  # check-imports: ignore  ## `FastPath` local import.
+            self._req_link_helper_cls = ReqLinkHelper
+        return self._req_link_helper_cls
 
 
 #: Main instance of :class:`FastPath`.

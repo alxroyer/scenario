@@ -251,9 +251,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return:
             Same as :meth:`._reqverifier.ReqVerifier.getreqs()`.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement verifiers to walk through, depending on `walk_steps`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement for each link.
@@ -277,9 +275,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return:
             Same as :meth:`._reqverifier.ReqVerifier.getreqrefs()`.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement verifiers to walk through, depending on `walk_steps`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement reference for each link.
@@ -316,15 +312,13 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return:
             Same as :meth:`._reqverifier.ReqVerifier.getreqlinks()`.
         """
-        from ._reqlink import ReqLink
-
         # Constitute the whole list of requirement links to consider, depending on the `walk_steps` option.
         _req_links = list(self._req_links)  # type: typing.List[_ReqLinkType]
         if walk_steps:
             for _step in self.steps:  # type: _StepDefinitionType
                 _req_links.extend(_step._req_links)
 
-        return ReqLink.orderedset(
+        return _FAST_PATH.req_link_cls.orderedset(
             # Filter this list with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_ref=req_ref, walk_subrefs=walk_subrefs),

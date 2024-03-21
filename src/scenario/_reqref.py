@@ -136,9 +136,7 @@ class ReqRef:
 
         See :meth:`._reqlink.ReqLink.orderedset()` for order details.
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(self._req_links)
+        return _FAST_PATH.req_link_cls.orderedset(self._req_links)
 
     def join(
             self,
@@ -230,9 +228,7 @@ class ReqRef:
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(
+        return _FAST_PATH.req_link_cls.orderedset(
             # Filter links with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_verifier=req_verifier, walk_steps=walk_steps),
@@ -249,9 +245,7 @@ class ReqRef:
         Does not return :class:`._scenariodefinition.ScenarioDefinition` instances that track this reference through steps only.
         See :meth:`getscenarios()` for the purpose.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement reference.
             [self],
             # Get requirement verifiers from each link.
@@ -266,9 +260,7 @@ class ReqRef:
 
         Returns scenarios linked with this requirement reference, either directly or through one of their steps.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement reference.
             [self],
             # Get scenarios from each link.

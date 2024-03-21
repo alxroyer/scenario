@@ -24,6 +24,7 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
     from ._req import Req as _ReqImpl  # `Req` imported once for performance concerns.
+    from ._reqlink import ReqLink as _ReqLinkImpl  # `ReqLink` imported once for performance concerns.
     from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` imported once for performance concerns.
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperImpl  # `ReqVerifierHelper` imported once for performance concerns.
@@ -311,12 +312,10 @@ class ReqDatabase(_LoggerImpl):
 
         :return: :class:`._reqlink.ReqLink` ordered set (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
-        _req_link_list = []  # type: typing.List[ReqLink]
+        _req_link_list = []  # type: typing.List[_ReqLinkType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             _req_link_list.extend(_req_ref.req_links)
-        _req_links = ReqLink.orderedset(_req_link_list)  # type: _OrderedSetType[ReqLink]
+        _req_links = _ReqLinkImpl.orderedset(_req_link_list)  # type: _OrderedSetType[_ReqLinkType]
 
         self.debug("getalllinks() -> %r", _req_links)
         return _req_links
