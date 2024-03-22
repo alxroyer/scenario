@@ -35,6 +35,7 @@ if True:
     from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # `StepDefinitionHelper` imported once for performance concerns.
     from ._stepexecution import StepExecution as _StepExecutionImpl  # `StepExecution` imported once for performance concerns.
     from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # `StepExecutionHelper` imported once for performance concerns.
+    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -614,7 +615,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._actionresultdefinition import ActionResultDefinition
         from ._actionresultexecution import ActionResultExecution
         from ._scenariologging import SCENARIO_LOGGING
-        from ._textutils import anylongtext2str
 
         self.debug("onactionresult(action_result_type=%s, description=%r)", action_result_type, description)
 
@@ -640,7 +640,7 @@ class ScenarioRunner(_LoggerImpl):
             # Switch to this action/result.
             _step_execution_helper = _StepExecutionHelperImpl(_FAST_PATH.scenario_stack.current_step_execution)  # type: _StepExecutionHelperType
             _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
-            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != anylongtext2str(description)):
+            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != _anylongtext2str(description)):
                 _FAST_PATH.scenario_stack.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
 
             # Create the action/result execution instance (in EXECUTE mode only).

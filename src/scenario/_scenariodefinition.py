@@ -34,6 +34,7 @@ if True:
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` used as metaclass.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
+    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
@@ -94,7 +95,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Activates debugging by default.
         """
         from ._scenarioexecution import ScenarioExecution
-        from ._textutils import anylongtext2str
 
         #: Scenario title, optional.
         #:
@@ -106,7 +106,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         #:
         #: More detailed explanation about the scenario than :attr:`title`.
         #: Commonly describes the purpose or objectives of the test.
-        self.description = anylongtext2str(description or "")  # type: str
+        self.description = _anylongtext2str(description or "")  # type: str
 
         #: Definition location.
         self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType

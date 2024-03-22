@@ -25,6 +25,7 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._setutils import orderedset as _orderedset  # `orderedset()` imported once for performance concerns.
+    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqref import ReqRef as _ReqRefType
@@ -71,8 +72,6 @@ class ReqLink:
 
         :param req_link_def: Requirement link definition.
         """
-        from ._textutils import anylongtext2str
-
         #: Verified requirement reference.
         #:
         #: Unresolved input data for the :meth:`req_ref()` property.
@@ -88,7 +87,7 @@ class ReqLink:
             self._any_req_ref = req_link_def[0]
             # 2nd member is optional comments.
             if len(req_link_def) > 1:
-                self.comments = anylongtext2str(
+                self.comments = _anylongtext2str(
                     req_link_def[1],  # type: ignore[misc]  ## Tuple index out of range (mypy@1.0.1 bug?)
                 )
         else:

@@ -22,6 +22,7 @@ import typing
 
 if True:
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` use for inheritance.
+    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._textutils import AnyLongTextType as _AnyLongTextType
@@ -53,12 +54,11 @@ class ActionResultDefinition:
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
         from ._actionresultexecution import ActionResultExecution
-        from ._textutils import anylongtext2str
 
         #: Action/result type.
         self.type = type  # type: ActionResultDefinition.Type
         #: Action/result textual description.
-        self.description = anylongtext2str(description)  # type: str
+        self.description = _anylongtext2str(description)  # type: str
         #: Owner step.
         #:
         #: Set when :meth:`._stepdefinition.StepDefinition.addactionresult()` is called.
