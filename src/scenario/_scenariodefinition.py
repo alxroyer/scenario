@@ -33,6 +33,7 @@ if True:
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
     from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` used as metaclass.
+    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # Imported once for performance concerns.
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
     from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
@@ -399,10 +400,8 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :param step_specification: Step specification (see :obj:`._stepspecifications.AnyStepDefinitionSpecificationType`).
         :return: Step definition found, if any. ``None`` otherwise.
         """
-        from ._stepspecifications import StepDefinitionSpecification
-
-        if not isinstance(step_specification, StepDefinitionSpecification):
-            step_specification = StepDefinitionSpecification(step_specification)
+        if not isinstance(step_specification, _StepDefinitionSpecificationImpl):
+            step_specification = _StepDefinitionSpecificationImpl(step_specification)
         return step_specification.resolve()
 
     def expectstep(
@@ -418,10 +417,8 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return: Expected step definition.
         :raise LookupError: When the step definition could not be found.
         """
-        from ._stepspecifications import StepDefinitionSpecification
-
-        if not isinstance(step_specification, StepDefinitionSpecification):
-            step_specification = StepDefinitionSpecification(step_specification)
+        if not isinstance(step_specification, _StepDefinitionSpecificationImpl):
+            step_specification = _StepDefinitionSpecificationImpl(step_specification)
         return step_specification.expect()
 
     @property

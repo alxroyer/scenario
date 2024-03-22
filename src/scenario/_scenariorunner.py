@@ -35,6 +35,7 @@ if True:
     from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # `StepDefinitionHelper` imported once for performance concerns.
     from ._stepexecution import StepExecution as _StepExecutionImpl  # `StepExecution` imported once for performance concerns.
     from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # `StepExecutionHelper` imported once for performance concerns.
+    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # Imported once for performance concerns.
     from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
@@ -826,13 +827,11 @@ class ScenarioRunner(_LoggerImpl):
 
         :param to_step_specification: Specification of the next step to execute.
         """
-        from ._stepspecifications import StepDefinitionSpecification
-
         self.debug("Jumping to step %s", to_step_specification)
 
         # Resolve the *to-step* specification.
-        if not isinstance(to_step_specification, StepDefinitionSpecification):
-            to_step_specification = StepDefinitionSpecification(to_step_specification)
+        if not isinstance(to_step_specification, _StepDefinitionSpecificationImpl):
+            to_step_specification = _StepDefinitionSpecificationImpl(to_step_specification)
         _next_step_definition = to_step_specification.expect()  # type: _StepDefinitionType
 
         # Set it as the next step for execution, then break the current step execution by raising a `GotoException`.

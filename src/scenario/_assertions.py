@@ -35,6 +35,7 @@ if True:
     from ._reflection import isiterable as _isiterable  # `isiterable()` imported once for performance concerns.
     from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
     from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
+    from ._stepspecifications import StepExecutionSpecification as _StepExecutionSpecificationImpl  # Imported once for performance concerns.
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType as _ErrParamType
     from ._assertionhelpers import EvidenceParamType as _EvidenceParamType
@@ -751,12 +752,11 @@ class Assertions(abc.ABC):
         :return: Step execution that matched the specification.
         """
         from ._datetimeutils import f2strtime
-        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "step specification")
-        if not isinstance(step, StepExecutionSpecification):
-            step = StepExecutionSpecification(step)
+        if not isinstance(step, _StepExecutionSpecificationImpl):
+            step = _StepExecutionSpecificationImpl(step)
 
         _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
@@ -794,15 +794,14 @@ class Assertions(abc.ABC):
         :return: Step execution that matched the ``start`` and ``end`` specifications.
         """
         from ._datetimeutils import f2strtime
-        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "time")
         assert start is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "start step specification")
-        if not isinstance(start, StepExecutionSpecification):
-            start = StepExecutionSpecification(start)
+        if not isinstance(start, _StepExecutionSpecificationImpl):
+            start = _StepExecutionSpecificationImpl(start)
         assert end is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "end step specification")
-        if not isinstance(end, StepExecutionSpecification):
-            end = StepExecutionSpecification(end)
+        if not isinstance(end, _StepExecutionSpecificationImpl):
+            end = _StepExecutionSpecificationImpl(end)
 
         _step_execution1 = start.expect()  # type: _StepExecutionType
         _step_desc1 = str(_step_execution1.definition)  # type: str
@@ -847,12 +846,11 @@ class Assertions(abc.ABC):
         :return: Step execution that matched the specification.
         """
         from ._datetimeutils import f2strtime
-        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "step specification")
-        if not isinstance(step, StepExecutionSpecification):
-            step = StepExecutionSpecification(step)
+        if not isinstance(step, _StepExecutionSpecificationImpl):
+            step = _StepExecutionSpecificationImpl(step)
 
         _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str
@@ -885,12 +883,11 @@ class Assertions(abc.ABC):
         :return: Step execution that matched the specification.
         """
         from ._datetimeutils import f2strtime
-        from ._stepspecifications import StepExecutionSpecification
 
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "step specification")
-        if not isinstance(step, StepExecutionSpecification):
-            step = StepExecutionSpecification(step)
+        if not isinstance(step, _StepExecutionSpecificationImpl):
+            step = _StepExecutionSpecificationImpl(step)
 
         _step_execution = step.expect()  # type: _StepExecutionType
         _step_desc = str(_step_execution.definition)  # type: str

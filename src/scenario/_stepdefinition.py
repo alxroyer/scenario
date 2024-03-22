@@ -34,6 +34,7 @@ if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
+    from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
 
 
 class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl):
@@ -56,9 +57,6 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
 
         Makes it possible to easily access the attributes and methods defined with a user step definition.
         """
-        if typing.TYPE_CHECKING:
-            from ._stepspecifications import AnyStepDefinitionSpecificationType
-
         def _ensurereturntype(step_definition):  # type: (StepDefinition) -> VarStepDefinitionType
             """
             Avoids using ``# type: ignore`` pragmas every time this :meth:`StepDefinition.getinstance()` method returns a value.
@@ -66,7 +64,7 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
             _step_definition = typing.cast(typing.Any, step_definition)  # type: VarStepDefinitionType  # noqa  ## Shadows name '_step_definition' from outer scope
             return _step_definition
 
-        _step_specification = cls if (index is None) else (cls, index)  # type: AnyStepDefinitionSpecificationType
+        _step_specification = cls if (index is None) else (cls, index)  # type: _AnyStepDefinitionSpecificationType
         if _FAST_PATH.scenario_stack.building.scenario_definition:
             _step_definition = _FAST_PATH.scenario_stack.building.scenario_definition.getstep(_step_specification)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
