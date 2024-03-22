@@ -21,6 +21,7 @@
 import typing
 
 if True:
+    from ._consoleutils import Console as _ConsoleImpl  # `Console` imported once for performance concerns.
     from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
@@ -217,8 +218,6 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :attr:`Key.LOG_COLOR`.
         """
-        from ._consoleutils import Console
-
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
         _config_node = _FAST_PATH.config_db.getnode(_key)  # type: typing.Optional[_ConfigNodeType]
         if _config_node:
@@ -226,7 +225,7 @@ class ScenarioConfig(_LoggerImpl):
                 _color_number = _config_node.cast(type=int)  # type: int
                 # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
                 # self.debug("logcolor(level=%r, default=%r) -> %r", level, default, Console.Color(_color_number))
-                return Console.Color(_color_number)
+                return _ConsoleImpl.Color(_color_number)
             except ValueError:
                 self.warning(_config_node.errmsg(f"Invalid color number {_config_node.data!r}"))
         # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.

@@ -23,6 +23,7 @@ import re
 import typing
 
 if True:
+    from ._consoleutils import Console as _ConsoleImpl  # `Console` imported once for performance concerns.
     from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
     from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
@@ -96,7 +97,6 @@ class LogFormatter(logging.Formatter):
         :param record: Log record to format for printing.
         :return: Log string representation.
         """
-        from ._consoleutils import Console
         from ._datetimeutils import toiso8601
         from ._scenariologging import ScenarioLogging
 
@@ -125,7 +125,7 @@ class LogFormatter(logging.Formatter):
             _log_line += ((" " * ScenarioLogging.ACTION_RESULT_MARGIN) + "  ")
 
         # Log level, with color, when applicable.
-        _level_color = None  # type: typing.Optional[Console.Color]
+        _level_color = None  # type: typing.Optional[_ConsoleType.Color]
         if self._with(record, _LogExtraDataImpl.COLOR, default=True):
             _level_color = self._levelcolor(record.levelno)
         if self._with(record, _LogExtraDataImpl.LOG_LEVEL, default=True):
@@ -133,7 +133,7 @@ class LogFormatter(logging.Formatter):
                 _log_line += f"\033[{_level_color}m"
             _log_line += record.levelname
             if _level_color:
-                _log_line += f"\033[{Console.Color.RESET}m"
+                _log_line += f"\033[{_ConsoleImpl.Color.RESET}m"
             _max_level_len = max(len(logging.getLevelName(x)) for x in range(0, logging.CRITICAL + 1))  # type: int
             _log_line += f"{' ':>{_max_level_len - len(record.levelname)}}"
             _log_line += " "
@@ -143,7 +143,7 @@ class LogFormatter(logging.Formatter):
             _log_line += _FAST_PATH.main_logger.getindentation()
 
         # Log message color (begin).
-        _message_color = None  # type: typing.Optional[Console.Color]
+        _message_color = None  # type: typing.Optional[_ConsoleType.Color]
         if self._with(record, _LogExtraDataImpl.COLOR, default=True):
             if isinstance(_logger, _LoggerImpl):
                 _message_color = _logger.getlogcolor()
@@ -164,7 +164,7 @@ class LogFormatter(logging.Formatter):
 
         # Log message color (end).
         if _message_color:
-            _log_line += f"\033[{Console.Color.RESET}m"
+            _log_line += f"\033[{_ConsoleImpl.Color.RESET}m"
 
         # Exception.
         _exception = ""  # type: str
@@ -237,16 +237,14 @@ class LogFormatter(logging.Formatter):
         :param level: Log level which respective color to find out.
         :return: Log color corresponding to the given log level.
         """
-        from ._consoleutils import Console
-
         if level < logging.INFO:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.DEBUG), Console.Color.DARKGREY02)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.DEBUG), _ConsoleImpl.Color.DARKGREY02)
         elif level < logging.WARNING:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.INFO), Console.Color.WHITE01)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.INFO), _ConsoleImpl.Color.WHITE01)
         elif level < logging.ERROR:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.WARNING), Console.Color.YELLOW33)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.WARNING), _ConsoleImpl.Color.YELLOW33)
         else:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.ERROR), Console.Color.RED91)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.ERROR), _ConsoleImpl.Color.RED91)
 
     @staticmethod
     def nocolor(

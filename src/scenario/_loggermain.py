@@ -41,7 +41,7 @@ class MainLogger(_LoggerImpl):
         """
         Enables debugging by default and makes console initializations.
         """
-        from ._consoleutils import disableconsolebuffering
+        from ._consoleutils import disableconsolebuffering  # check-imports: ignore  ## Once only import, no need to optimize.
         from ._logformatter import LogFormatter
 
         _LoggerImpl.__init__(self, log_class="")
