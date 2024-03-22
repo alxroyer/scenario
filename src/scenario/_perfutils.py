@@ -305,6 +305,8 @@ class PerfImportWrapper:
             if len(fromlist) != 1:
                 raise ImportError("Unexpected `from . import xxx, xxx` with several modules imported at once")
             name = fromlist[0]
+        if globals and ("__package__" in globals) and globals["__package__"]:
+            name = f"{globals['__package__']}.{name}"
 
         # Update statistics.
         if name not in PerfImportWrapper._stats:
