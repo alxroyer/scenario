@@ -408,7 +408,7 @@ the fewer project imports shall be placed at the module level:
       In order to ensure that remaining implementation imports are legitimate,
       they shall be justified with a comment at the end of the ``import`` line.
 
-      In the end, only a few implementation imports should remain:
+      In the end, only a few kind of implementation imports should remain:
 
       - Classes used for inheritance,
       - Classes used for global instanciations,
