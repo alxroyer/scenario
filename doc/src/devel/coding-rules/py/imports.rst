@@ -216,7 +216,7 @@ a type checking import shall rename the imported symbol with the ``Type`` suffix
 
     # Type hint: `Neighbour` symbol required for type checking. Use the renamed version.
     def newneighbour():  # type: (...) -> _NeighbourType
-        # If we forget this local import, type checkers will point an error on the instanciation line below.
+        # If we forget this local import, type checkers will point an error on the instantiation line below.
         from .neighbour import Neighbour
 
         # Instanction: `Neighbour` symbol required for execution.

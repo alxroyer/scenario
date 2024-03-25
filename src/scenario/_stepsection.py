@@ -74,7 +74,7 @@ class StepSectionBegin(_StepDefinitionImpl):
 
     - Override the :meth:`step()` method, in order to check preliminary conditions,
       call the :meth:`skipsection()` method when applicable.
-    - When building the scenario, instanciate your :class:`StepSectionBegin` override at the beginning of a step section,
+    - When building the scenario, instantiate your :class:`StepSectionBegin` override at the beginning of a step section,
       push other steps after,
       then finish with the :attr:`end` step.
     - When the :meth:`skipsection()` method is called in the :class:`StepSectionBegin` step,
@@ -84,7 +84,7 @@ class StepSectionBegin(_StepDefinitionImpl):
 
     def __init__(self):  # type: (...) -> None
         """
-        Instanciantes a :class:`StepSectionEnd` available with the :attr:`end` attribute.
+        Instantiates a :class:`StepSectionEnd` available with the :attr:`end` attribute.
         """
         _StepDefinitionImpl.__init__(self)
 

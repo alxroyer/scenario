@@ -245,7 +245,7 @@ class StepDefinitionHelper:
             definition,  # type: StepDefinition
     ):  # type: (...) -> None
         """
-        Instanciates a helper for the given step definition.
+        Instantiates a helper for the given step definition.
 
         :param definition: Step definition instance this helper works for.
         """

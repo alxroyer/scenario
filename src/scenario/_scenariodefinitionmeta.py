@@ -17,7 +17,7 @@
 """
 Metaclass for :class:`._scenariodefinition.ScenarioDefinition`.
 
-Ensures functioning with :class:`._scenariostack.ScenarioStack` on :class:`._scenariodefinition.ScenarioDefinition` instanciations.
+Ensures functioning with :class:`._scenariostack.ScenarioStack` on :class:`._scenariodefinition.ScenarioDefinition` instantiations.
 """
 
 import abc

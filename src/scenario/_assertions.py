@@ -27,7 +27,7 @@ import time
 import typing
 
 if True:
-    from . import _assertionhelpers as _assertionhelpers  # `_assertionhelpers` used for global instanciation.
+    from . import _assertionhelpers as _assertionhelpers  # `_assertionhelpers` used for global instantiation.
     from ._debugutils import callback as _callback  # `callback()` imported once for performance concerns.
     from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # `FmtAndArgs` imported once for performance concerns.
     from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.

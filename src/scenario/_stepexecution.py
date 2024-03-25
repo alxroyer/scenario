@@ -119,7 +119,7 @@ class StepExecutionHelper:
             execution,  # type: StepExecution
     ):  # type: (...) -> None
         """
-        Instanciates a helper for the given step execution.
+        Instantiates a helper for the given step execution.
 
         :param execution: Step execution instance this helper works for.
         """

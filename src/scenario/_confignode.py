@@ -137,7 +137,7 @@ class ConfigNode:
             else:
                 # Dictionary data.
                 if isinstance(data, dict):
-                    # Instanciate / check this node manages a dictionary of sub-nodes.
+                    # Instantiate / check this node manages a dictionary of sub-nodes.
                     if self._data is None:
                         self._setdata({})
                     if not isinstance(self._data, dict):
@@ -148,7 +148,7 @@ class ConfigNode:
 
                 # List data (or enum definitions).
                 elif isinstance(data, (list, enum.EnumMeta)):
-                    # Instanciate / check this node manages a list of sub-nodes.
+                    # Instantiate / check this node manages a list of sub-nodes.
                     if self._data is None:
                         self._setdata([])
                     if not isinstance(self._data, list):

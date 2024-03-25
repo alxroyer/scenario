@@ -109,9 +109,9 @@ class FastPath:
 
         #: :class:`._logger.Logger` singleton for reflective programming.
         #:
-        #: Instanciated by :meth:`reflection_logger()` property.
+        #: Instantiated by :meth:`reflection_logger()` property.
         #:
-        #: .. note:: Not instanciated in :mod:`._reflection`, but here with this :class:`FastPath` class.
+        #: .. note:: Not instantiated in :mod:`._reflection`, but here with this :class:`FastPath` class.
         self._reflection_logger = None  # type: typing.Optional[_LoggerType]
 
         #: :class:`._args.Args` instance installed.

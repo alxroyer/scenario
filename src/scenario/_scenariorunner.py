@@ -241,7 +241,7 @@ class ScenarioRunner(_LoggerImpl):
 
         _err_code = self.executescenario(
             _scenario_definition,
-            # Instanciation sometimes takes a while.
+            # Instantiation sometimes takes a while.
             # Ensure the starting time is set to when this method has actually been called.
             start_time=_t0,
         )  # type: ErrorCode

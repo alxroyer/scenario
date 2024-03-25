@@ -516,7 +516,7 @@ class ScenarioDefinitionHelper:
             definition,  # type: ScenarioDefinition
     ):  # type: (...) -> None
         """
-        Instanciates a helper for the given scenario definition.
+        Instantiates a helper for the given scenario definition.
 
         :param definition: Scenario definition instance this helper works for.
         """

@@ -15,7 +15,7 @@
 
 .. _step-objects:
 
-Step objects: instanciate steps and sequence them as scenarios
+Step objects: instantiate steps and sequence them as scenarios
 ==============================================================
 
 The :ref:`quickstart <quickstart>` showed how to quickly write a first test scenario using ``step...()`` methods.

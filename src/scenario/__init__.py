@@ -153,7 +153,7 @@ if True:
     .. py:attribute:: StepSectionDescription
 
         Step class that holds a description for a section of steps.
-        Automatically instanciated by :meth:`._scenariodefinition.ScenarioDefinition.section()`.
+        Automatically instantiated by :meth:`._scenariodefinition.ScenarioDefinition.section()`.
 
         .. seealso:: :class:`._stepsection.StepSectionDescription` implementation.
     """

@@ -66,7 +66,7 @@ class Xml(abc.ABC):
 
         def __init__(self):  # type: (...) -> None
             """
-            Instanciates an XML document, either for reading or writing.
+            Instantiates an XML document, either for reading or writing.
             """
             #: Underlying library document reference.
             self._xml_doc = xml.dom.minidom.Document()  # type: xml.dom.minidom.Document

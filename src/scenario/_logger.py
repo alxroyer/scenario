@@ -100,7 +100,7 @@ class Logger:
         if not self.log_class:
             # Main logger.
             global _main_loggers
-            # Note: A second dummy main logger may be instanciated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
+            # Note: A second dummy main logger may be instantiated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
             if (_main_loggers >= 1) and (not typing.TYPE_CHECKING):
                 raise RuntimeError("Only one main logger")
             _main_loggers += 1

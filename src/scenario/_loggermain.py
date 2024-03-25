@@ -55,7 +55,7 @@ class MainLogger(_LoggerImpl):
         # Install the console handler (with its attached filter and formatter).
         #
         # Note:
-        # A second dummy main logger may be instanciated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
+        # A second dummy main logger may be instantiated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
         # Skip the console handler installation in that case.
         assert (_LogHandlerImpl.console_handler is None) or typing.TYPE_CHECKING, "Console handler already installed"
         if _LogHandlerImpl.console_handler is None:
