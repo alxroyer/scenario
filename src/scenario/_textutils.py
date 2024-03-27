@@ -41,8 +41,6 @@ def anylongtext2str(
     :param any_text: Single string, or multiline string.
     :return: Simple string.
     """
-    from ._assertions import Assertions
-
     # Convert `any_text` as a modifiable list of lines.
     if isinstance(any_text, str):
         any_text = any_text.splitlines()
@@ -57,7 +55,8 @@ def anylongtext2str(
     # Determine the left blank indentation to remove from non-empty lines.
     _left_blank_indentations = [
         # Compute the number of leading spaces or tabs.
-        len(Assertions.assertisnotnone(re.search(r"^([ \t]*)", _line)).group(1))
+        # Memo: `re.search()` can't return `None` here, let's use `typing.cast(typing.Any)` to work around the typing error below.
+        len(typing.cast(typing.Any, re.search(r"^([ \t]*)", _line)).group(1))
         # Iterate over `any_text` lines...
         for _line in filter(
             # ...except empty lines.

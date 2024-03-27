@@ -25,6 +25,7 @@ if True:
 #: Module paths which local imports should be avoided for.
 OPTIMIZED_PATHS = [
     _SRC_PATH / "scenario" / "_args.py",
+    _SRC_PATH / "scenario" / "_assertions.py",
     _SRC_PATH / "scenario" / "_configdb.py",
     _SRC_PATH / "scenario" / "_configkey.py",
     _SRC_PATH / "scenario" / "_confignode.py",
