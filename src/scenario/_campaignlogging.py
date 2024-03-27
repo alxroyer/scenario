@@ -22,6 +22,7 @@ import logging
 import typing
 
 if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
     from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
@@ -143,8 +144,6 @@ class CampaignLogging:
 
         :param test_suite_execution:Test suite being executed.
         """
-        from ._datetimeutils import f2strduration
-
         _FAST_PATH.main_logger.rawoutput("")
         _FAST_PATH.main_logger.rawoutput(f"  END OF TEST SUITE '{test_suite_execution.test_suite_file.path}'")
         _FAST_PATH.main_logger.rawoutput("  ----------------------------------------------")
@@ -154,7 +153,7 @@ class CampaignLogging:
         _FAST_PATH.main_logger.rawoutput(f"                  Number of steps: {test_suite_execution.steps}")
         _FAST_PATH.main_logger.rawoutput(f"                Number of actions: {test_suite_execution.actions}")
         _FAST_PATH.main_logger.rawoutput(f"                Number of results: {test_suite_execution.results}")
-        _FAST_PATH.main_logger.rawoutput(f"                             Time: {f2strduration(test_suite_execution.time.elapsed)}")
+        _FAST_PATH.main_logger.rawoutput(f"                             Time: {_datetimeutils.f2strduration(test_suite_execution.time.elapsed)}")
         _FAST_PATH.main_logger.rawoutput("")
 
         self._calls.append(CampaignLogging._Call.END_TEST_SUITE)
@@ -170,8 +169,6 @@ class CampaignLogging:
 
         Displays the campaign statistics
         """
-        from ._datetimeutils import f2strduration
-
         _FAST_PATH.main_logger.rawoutput("END OF CAMPAIGN")
         _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
         _FAST_PATH.main_logger.rawoutput(f"          JUnit campaign report: {campaign_execution.campaign_report_path}")
@@ -189,7 +186,7 @@ class CampaignLogging:
             _FAST_PATH.main_logger.rawoutput(f"                Number of steps: {campaign_execution.steps}")
             _FAST_PATH.main_logger.rawoutput(f"              Number of actions: {campaign_execution.actions}")
             _FAST_PATH.main_logger.rawoutput(f"              Number of results: {campaign_execution.results}")
-            _FAST_PATH.main_logger.rawoutput(f"                           Time: {f2strduration(campaign_execution.time.elapsed)}")
+            _FAST_PATH.main_logger.rawoutput(f"                           Time: {_datetimeutils.f2strduration(campaign_execution.time.elapsed)}")
         _FAST_PATH.main_logger.rawoutput("")
 
         self._calls.append(CampaignLogging._Call.END_CAMPAIGN)

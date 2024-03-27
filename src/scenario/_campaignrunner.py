@@ -24,6 +24,7 @@ import time
 import typing
 
 if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
@@ -71,7 +72,6 @@ class CampaignRunner(_LoggerImpl):
         from ._campaignexecution import CampaignExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
         from ._campaignreport import CAMPAIGN_REPORT
-        from ._datetimeutils import toiso8601
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._loggingservice import LOGGING_SERVICE
@@ -92,7 +92,7 @@ class CampaignRunner(_LoggerImpl):
 
             # Create the date/time output directory (if required).
             if CampaignArgs.getinstance().create_dt_subdir:
-                _outdir_basename = toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
+                _outdir_basename = _datetimeutils.toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
                 _outdir = CampaignArgs.getinstance().outdir / _outdir_basename  # type: _PathType
             else:
                 _outdir = CampaignArgs.getinstance().outdir
@@ -228,7 +228,6 @@ class CampaignRunner(_LoggerImpl):
         """
         from ._campaignargs import CampaignArgs
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._datetimeutils import ISO8601_REGEX
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
@@ -348,7 +347,7 @@ class CampaignRunner(_LoggerImpl):
                             # Note:
                             # 4 spaces after 'ERROR' in general.
                             # Possibly 2 more spaces due to `ExceptionError.logerror()`.
-                            rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % ISO8601_REGEX.encode("utf-8"),
+                            rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % _datetimeutils.ISO8601_REGEX.encode("utf-8"),
                             _stdout_line,
                         )  # type: typing.Optional[typing.Match[bytes]]
                         if _match:

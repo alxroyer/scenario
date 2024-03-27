@@ -22,6 +22,7 @@ import logging
 import typing
 
 if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
     from ._debugutils import saferepr as _saferepr  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
@@ -77,7 +78,6 @@ class ScenarioResults(_LoggerImpl):
 
         Designed to display convient information after :class:`._scenariologging.ScenarioLogging` and :class:`._campaignlogging.CampaignLogging` outputs.
         """
-        from ._datetimeutils import f2strduration
         from ._scenarioexecution import ScenarioExecutionHelper
 
         _total_step_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
@@ -89,7 +89,7 @@ class ScenarioResults(_LoggerImpl):
         _name_field_len = 20  # type: int
         _status_field_len = 10  # type: int
         _stat_field_len = 10  # type: int
-        _time_field_len = len(f2strduration(0.0))  # type: int
+        _time_field_len = len(_datetimeutils.f2strduration(0.0))  # type: int
         _successes = []  # type: typing.List[_ScenarioExecutionType]
         _warnings = []  # type: typing.List[_ScenarioExecutionType]
         _errors = []  # type: typing.List[_ScenarioExecutionType]
@@ -134,7 +134,7 @@ class ScenarioResults(_LoggerImpl):
         _FAST_PATH.main_logger.info(_fmt % (
             _total_name_field, "",
             _total_step_stats, _total_action_stats, _total_result_stats,
-            f2strduration(_total_time), "",
+            _datetimeutils.f2strduration(_total_time), "",
         ))
         _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
@@ -158,8 +158,6 @@ class ScenarioResults(_LoggerImpl):
         :param fmt: Format to use.
         :param scenario_execution: Scenario to display.
         """
-        from ._datetimeutils import f2strduration
-
         # Build extra info.
         _extra_info = []  # type: typing.List[str]
         for _attribute_name in _FAST_PATH.scenario_config.resultsextrainfo():  # type: str
@@ -177,7 +175,7 @@ class ScenarioResults(_LoggerImpl):
         _FAST_PATH.main_logger.log(log_level, fmt % (
             scenario_execution.definition.name, scenario_execution.status,
             scenario_execution.step_stats, scenario_execution.action_stats, scenario_execution.result_stats,
-            f2strduration(scenario_execution.time.elapsed),
+            _datetimeutils.f2strduration(scenario_execution.time.elapsed),
             ", ".join(_extra_info),
         ))
 

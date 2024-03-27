@@ -22,6 +22,7 @@ import logging
 import typing
 
 if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
     from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @inheritance
@@ -293,8 +294,6 @@ class ScenarioLogging:
 
         :param scenario_execution: Scenario which execution has just finished.
         """
-        from ._datetimeutils import f2strduration
-
         _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
         # Display warnings and errors (if any).
@@ -308,7 +307,7 @@ class ScenarioLogging:
         _FAST_PATH.main_logger.rawoutput(f"    Number of STEPs: {scenario_execution.step_stats}")
         _FAST_PATH.main_logger.rawoutput(f"  Number of ACTIONs: {scenario_execution.action_stats}")
         _FAST_PATH.main_logger.rawoutput(f"  Number of RESULTs: {scenario_execution.result_stats}")
-        _FAST_PATH.main_logger.rawoutput(f"               Time: {f2strduration(scenario_execution.time.elapsed)}")
+        _FAST_PATH.main_logger.rawoutput(f"               Time: {_datetimeutils.f2strduration(scenario_execution.time.elapsed)}")
         _FAST_PATH.main_logger.rawoutput("")
 
     def _displaylongtext(

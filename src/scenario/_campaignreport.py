@@ -21,6 +21,7 @@ Campaign reports.
 import typing
 
 if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
     from ._debugutils import callback as _callback  # @perf
     from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
@@ -385,7 +386,6 @@ class CampaignReport(_LoggerImpl):
         :param test_suite_id: Test suite identifier.
         :return: Test suite JUnit XML.
         """
-        from ._datetimeutils import toiso8601
         from ._xmlutils import Xml
 
         _xml_test_suite = xml_doc.createnode("testsuite")  # type: Xml.Node
@@ -436,7 +436,7 @@ class CampaignReport(_LoggerImpl):
 
         # testsuite/@timestamp:
         # [CUBIC]: "when the test was executed in ISO 8601 format (2014-01-21T16:17:18). Timezone may not be specified. optional"
-        _xml_test_suite.setattr("timestamp", toiso8601(test_suite_execution.time.start) if test_suite_execution.time.start else "")
+        _xml_test_suite.setattr("timestamp", _datetimeutils.toiso8601(test_suite_execution.time.start) if test_suite_execution.time.start else "")
 
         # `scenario` statistics, non JUnit standard...
         self._objectstats2xmlattr(_xml_test_suite, test_suite_execution)
@@ -467,7 +467,6 @@ class CampaignReport(_LoggerImpl):
         :return: Test suite execution data.
         """
         from ._campaignexecution import TestSuiteExecution
-        from ._datetimeutils import f2strtime, fromiso8601
         from ._xmlutils import Xml
 
         _test_suite_execution = TestSuiteExecution(campaign_execution, self._xmlattr2path(xml_test_suite, "name"))  # type: TestSuiteExecution
@@ -496,11 +495,11 @@ class CampaignReport(_LoggerImpl):
             _test_suite_execution.time.elapsed = float(xml_test_suite.getattr("time"))
             self.debug("testsuite/@time = %f", _test_suite_execution.time.elapsed)
         if xml_test_suite.hasattr("timestamp"):
-            _test_suite_execution.time.start = fromiso8601(xml_test_suite.getattr("timestamp"))
-            self.debug("testsuite/@timestamp = %s", _callback(f2strtime, _test_suite_execution.time.start))
+            _test_suite_execution.time.start = _datetimeutils.fromiso8601(xml_test_suite.getattr("timestamp"))
+            self.debug("testsuite/@timestamp = %s", _callback(_datetimeutils.f2strtime, _test_suite_execution.time.start))
             if _test_suite_execution.time.elapsed is not None:
                 _test_suite_execution.time.end = _test_suite_execution.time.start + _test_suite_execution.time.elapsed
-                self.debug("testsuite/@timestamp + elapsed => end = %s", _callback(f2strtime, _test_suite_execution.time.end))
+                self.debug("testsuite/@timestamp + elapsed => end = %s", _callback(_datetimeutils.f2strtime, _test_suite_execution.time.end))
 
         for _xml_test_case in xml_test_suite.getchildren("testcase"):  # type: Xml.Node
             self.debug("New testsuite/testcase")

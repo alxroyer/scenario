@@ -28,6 +28,7 @@ import typing
 
 if True:
     from . import _assertionhelpers as _assertionhelpers  # @perf
+    from . import _datetimeutils as _datetimeutils  # @perf
     from ._debugutils import callback as _callback  # @perf
     from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # @perf
     from ._debugutils import saferepr as _saferepr  # @perf
@@ -751,8 +752,6 @@ class Assertions(abc.ABC):
         :param expect_end_time: ``True`` when the step execution is expected to be terminated.
         :return: Step execution that matched the specification.
         """
-        from ._datetimeutils import f2strtime
-
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimeinstep()", "step specification")
         if not isinstance(step, _StepExecutionSpecificationImpl):
@@ -764,11 +763,11 @@ class Assertions(abc.ABC):
         _end = _AssertionHelperFunctions.getstependtime(_step_execution, expect=expect_end_time)  # type: float
         assert _start <= time <= _end, _assertionhelpers.errmsg(
             err,
-            "%s not in %s %s", _callback(f2strtime, time), _step_desc, _step_execution.time,
+            "%s not in %s %s", _callback(_datetimeutils.f2strtime, time), _step_desc, _step_execution.time,
         )
         _assertionhelpers.evidence(
             evidence,
-            "%s in %s %s", _callback(f2strtime, time), _step_desc, _step_execution.time,
+            "%s in %s %s", _callback(_datetimeutils.f2strtime, time), _step_desc, _step_execution.time,
         )
 
         return _step_execution
@@ -793,8 +792,6 @@ class Assertions(abc.ABC):
         :param expect_end_time: ``True`` when the ``end`` step execution is expected to be terminated.
         :return: Step execution that matched the ``start`` and ``end`` specifications.
         """
-        from ._datetimeutils import f2strtime
-
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "time")
         assert start is not None, _assertionhelpers.isnonemsg("asserttimeinsteps()", "start step specification")
         if not isinstance(start, _StepExecutionSpecificationImpl):
@@ -820,11 +817,11 @@ class Assertions(abc.ABC):
         )
         assert _start1 <= time <= _end2, _assertionhelpers.errmsg(
             err,
-            "%s not in %s->%s %s", _callback(f2strtime, time), _step_desc1, _step_desc2, _all,
+            "%s not in %s->%s %s", _callback(_datetimeutils.f2strtime, time), _step_desc1, _step_desc2, _all,
         )
         _assertionhelpers.evidence(
             evidence,
-            "%s in %s->%s %s", _callback(f2strtime, time), _step_desc1, _step_desc2, _all,
+            "%s in %s->%s %s", _callback(_datetimeutils.f2strtime, time), _step_desc1, _step_desc2, _all,
         )
 
         return _step_execution1, _step_execution2
@@ -845,8 +842,6 @@ class Assertions(abc.ABC):
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.
         """
-        from ._datetimeutils import f2strtime
-
         assert time is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimebeforestep()", "step specification")
         if not isinstance(step, _StepExecutionSpecificationImpl):
@@ -857,11 +852,11 @@ class Assertions(abc.ABC):
         _start = _AssertionHelperFunctions.getstepstarttime(_step_execution)  # type: float
         assert time < _start, _assertionhelpers.errmsg(
             err,
-            "%s is not before %s %s", _callback(f2strtime, time), _step_desc, _step_execution.time,
+            "%s is not before %s %s", _callback(_datetimeutils.f2strtime, time), _step_desc, _step_execution.time,
         )
         _assertionhelpers.evidence(
             evidence,
-            "%s before %s %s", _callback(f2strtime, time), _step_desc, _step_execution.time,
+            "%s before %s %s", _callback(_datetimeutils.f2strtime, time), _step_desc, _step_execution.time,
         )
 
         return _step_execution
@@ -882,8 +877,6 @@ class Assertions(abc.ABC):
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         :return: Step execution that matched the specification.
         """
-        from ._datetimeutils import f2strtime
-
         assert time is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "time")
         assert step is not None, _assertionhelpers.isnonemsg("asserttimeafterstep()", "step specification")
         if not isinstance(step, _StepExecutionSpecificationImpl):
@@ -894,11 +887,11 @@ class Assertions(abc.ABC):
         _end = _AssertionHelperFunctions.getstependtime(_step_execution, expect=True)  # type: float
         assert time > _end, _assertionhelpers.errmsg(
             err,
-            "%s is not after %s %s", _callback(f2strtime, time), _step_desc, _step_execution.time,
+            "%s is not after %s %s", _callback(_datetimeutils.f2strtime, time), _step_desc, _step_execution.time,
         )
         _assertionhelpers.evidence(
             evidence,
-            "%s after %s %s", _callback(f2strtime, time), _step_desc, _step_execution.time,
+            "%s after %s %s", _callback(_datetimeutils.f2strtime, time), _step_desc, _step_execution.time,
         )
 
         return _step_execution

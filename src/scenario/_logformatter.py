@@ -23,6 +23,7 @@ import re
 import typing
 
 if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
     from ._consoleutils import Console as _ConsoleImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
@@ -97,7 +98,6 @@ class LogFormatter(logging.Formatter):
         :param record: Log record to format for printing.
         :return: Log string representation.
         """
-        from ._datetimeutils import toiso8601
         from ._scenariologging import ScenarioLogging
 
         # Retrieve the logger reference from the record.
@@ -110,7 +110,7 @@ class LogFormatter(logging.Formatter):
         # Date / time.
         if self._with(record, _LogExtraDataImpl.DATE_TIME, default=True):
             # Compute an ISO8601 time representation.
-            _log_line += toiso8601(record.created)
+            _log_line += _datetimeutils.toiso8601(record.created)
             _log_line += " - "
 
         # Head indentation.
