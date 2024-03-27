@@ -21,10 +21,10 @@ Campaign runner program arguments.
 import typing
 
 if True:
-    from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._scenarioargs import CommonExecArgs as _CommonExecArgsImpl  # `CommonExecArgs` used for inheritance.
+    from ._args import Args as _ArgsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._path import Path as _PathImpl  # @perf
+    from ._scenarioargs import CommonExecArgs as _CommonExecArgsImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
 

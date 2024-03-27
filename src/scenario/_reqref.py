@@ -23,9 +23,9 @@ import abc
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._setutils import orderedset as _orderedset  # `orderedset()` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._setutils import orderedset as _orderedset  # @perf
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType

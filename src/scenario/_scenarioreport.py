@@ -21,15 +21,15 @@ Scenario reports.
 import typing
 
 if True:
-    from ._debugutils import jsondump as _jsondump  # `jsondump()` imported once for performance concerns.
-    from ._enumutils import isin as _isin  # `isin()` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
-    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
-    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
-    from ._stepexecution import StepExecution as _StepExecutionImpl  # `StepExecution` imported once for performance concerns.
+    from ._debugutils import jsondump as _jsondump  # @perf
+    from ._enumutils import isin as _isin  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
+    from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._jsondictutils import JsonDictType as _JsonDictType

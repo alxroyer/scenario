@@ -21,7 +21,7 @@ import scenario.test
 import scenario.text
 
 if True:
-    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
+    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
 

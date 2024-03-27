@@ -22,7 +22,7 @@ import scenario.test
 import scenario.text
 
 if True:
-    from steps.commonargs import ExecCommonArgs as _ExecCommonArgsImpl  # `ExecCommonArgs` used for inheritance.
+    from steps.commonargs import ExecCommonArgs as _ExecCommonArgsImpl  # @inheritance
 
 
 class ExecCampaign(_ExecCommonArgsImpl):

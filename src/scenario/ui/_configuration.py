@@ -21,8 +21,8 @@ User interface configuration page.
 import typing
 
 if True:
-    from .._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # `RequestHandler` used for inheritance.
+    from .._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType

@@ -408,12 +408,18 @@ the fewer project imports shall be placed at the module level:
       In order to ensure that remaining implementation imports are legitimate,
       they shall be justified with a comment at the end of the ``import`` line.
 
-      In the end, only a few kind of implementation imports should remain:
+      In the end, only a few kind of implementation imports should remain,
+      with their related justification tag:
 
-      - Classes used for inheritance,
-      - Classes used for global instanciations,
-      - Functions executed in the module level context,
-      - Performance concerns.
+      - Classes used for inheritance (``@inheritance``) or metaclass (``@metaclass``),
+      - Classes used for global variable instantiations (``@module-level-instantiation``),
+        same with class member instantiations (``@class-member-instantiation``, refinement of the latter),
+      - Functions executed, or symbols used, in the module level context (``@module-level-execution``),
+      - Imports made once at the module level for performance concerns (``@perf``),
+      - Eventually, a couple of :mod:`scenario` package and subpackages imported after path management is done,
+        basically in executable scripts (``@after-path-management`` tag).
+
+      Justification tags may be separated by commas.
 
   :Typing imports [typing-proj]:
       As for implementation imports, we will not to define more type checking imports than necessary.

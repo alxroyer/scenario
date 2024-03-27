@@ -22,7 +22,7 @@ import html
 import typing
 
 if True:
-    from .._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from .._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from .._xmlutils import Xml as _XmlType
 

@@ -25,8 +25,8 @@ import typing
 import unittest as _unittestmod
 
 if True:
-    from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # `FmtAndArgs` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._debugutils import DelayedStr as _DelayedStrType
     from ._debugutils import FmtAndArgs as _FmtAndArgsType

@@ -47,8 +47,8 @@ import types
 import typing
 
 if True:
-    from ._debugutils import callback as _callback  # `callback()` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._debugutils import callback as _callback  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 

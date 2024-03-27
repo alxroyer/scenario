@@ -25,9 +25,9 @@ sys.path.append(str(_root_scenario_path / "test" / "src"))
 sys.path.append(str(_root_scenario_path / "tools" / "src"))
 
 if True:
-    import scenario
-    import scenario.test
-    import scenario.tools
+    import scenario  # @after-path-management
+    import scenario.test  # @after-path-management
+    import scenario.tools  # @after-path-management
 
 
 class UpdateTestData:

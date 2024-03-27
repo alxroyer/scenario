@@ -21,13 +21,13 @@ Requirement database.
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._req import Req as _ReqImpl  # `Req` imported once for performance concerns.
-    from ._reqlink import ReqLink as _ReqLinkImpl  # `ReqLink` imported once for performance concerns.
-    from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
-    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` imported once for performance concerns.
-    from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperImpl  # `ReqVerifierHelper` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._req import Req as _ReqImpl  # @perf
+    from ._reqlink import ReqLink as _ReqLinkImpl  # @perf
+    from ._reqref import ReqRef as _ReqRefImpl  # @perf
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @perf
+    from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType

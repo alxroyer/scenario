@@ -23,8 +23,8 @@ Eases the way to define and retrieve a step definition or execution.
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType

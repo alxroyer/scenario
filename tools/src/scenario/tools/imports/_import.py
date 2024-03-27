@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import re
 import typing
 
 import scenario
 
 if True:
-    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # `TrackerLogger` used for inheritance.
+    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._modulelevelcontext import ModuleLevelContext as _ModuleLevelContextType
 
@@ -251,23 +252,29 @@ class Import(_ErrorTrackerLoggerImpl):
         # No error: save resolved final path (if any).
         self._imported_module_final_path = _path
 
-    def error(
+    def _log(
             self,
+            level,  # type: int
             msg,  # type: str
             *args,  # type: typing.Any
             **kwargs  # type: typing.Any
     ):  # type: (...) -> None
         """
-        :class:`scenario._logger.Logger.error()` override, for ``'# check-imports: ignore'`` pattern management.
+        :class:`scenario._logger.Logger._log()` override, for ``check-imports: ignore`` pragma management.
 
-        Automatically redirected to :class:`scenario._logger.Logger.debug()` when ignored.
+        Automatically changed to debug logging when the pragma is found.
         """
-        if b'# check-imports: ignore' not in self.raw_src:
-            # Error not ignored.
-            super().error(msg, *args, **kwargs)
+        # Check for `check-imports: ignore` pragma (useless for debug log lines).
+        _match = None  # type: typing.Optional[typing.Match[bytes]]
+        if level > logging.DEBUG:
+            _match = re.match(rb'^[^#]*#.*check-imports: +ignore.*$', self.raw_src)
+
+        if not _match:
+            # Log not ignored.
+            super()._log(level, msg, *args, **kwargs)
         else:
-            # Error ignored.
+            # Log ignored.
             _args = list(args)  # type: typing.List[typing.Any]
             while self.stripped_src in _args:
                 _args[_args.index(self.stripped_src)] = self.raw_src
-            self.debug("(Ignored) " + msg, *_args, **kwargs)
+            super()._log(logging.DEBUG, f"(Ignored {logging.getLevelName(level).lower()}) " + msg, *_args, **kwargs)

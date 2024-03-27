@@ -24,18 +24,18 @@ import types
 import typing
 
 if True:
-    from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
-    from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import importmodulefrompath as _importmodulefrompath  # `importmodulefrompath()` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
-    from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # `MetaScenarioDefinition` used as metaclass.
-    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # Imported once for performance concerns.
-    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
-    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
+    from ._assertions import Assertions as _AssertionsImpl  # @inheritance
+    from ._enumutils import enum2str as _enum2str  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import importmodulefrompath as _importmodulefrompath  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @inheritance
+    from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # @metaclass
+    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
+    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # @inheritance
+    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType

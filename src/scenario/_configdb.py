@@ -24,10 +24,10 @@ import os
 import typing
 
 if True:
-    from ._confignode import ConfigNode as _ConfigNodeImpl  # `ConfigNode` imported once for performance concerns.
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._confignode import ConfigNode as _ConfigNodeImpl  # @perf
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._configtypes import KeyType as _KeyType

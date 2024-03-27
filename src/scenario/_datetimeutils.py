@@ -30,7 +30,7 @@ import time
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 
 
 #: Regular expression matching a duration as displayed by `scenario` (i.e. last part of ISO8601).

@@ -21,9 +21,9 @@ Scenario execution stack.
 import typing
 
 if True:
-    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType

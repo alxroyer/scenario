@@ -23,7 +23,7 @@ import logging
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 

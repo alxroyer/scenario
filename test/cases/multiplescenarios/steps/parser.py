@@ -21,7 +21,7 @@ import typing
 import scenario.test
 
 if True:
-    from steps.logparsing import LogParserStep as _LogParserStepImpl  # `LogParserStep` used for inheritance.
+    from steps.logparsing import LogParserStep as _LogParserStepImpl  # @inheritance
 
 
 class ParseFinalResultsLog(_LogParserStepImpl):

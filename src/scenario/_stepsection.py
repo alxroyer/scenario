@@ -22,7 +22,7 @@ import abc
 import typing
 
 if True:
-    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` used for inheritance.
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
 

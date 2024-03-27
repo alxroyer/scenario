@@ -22,7 +22,7 @@ import time
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
 

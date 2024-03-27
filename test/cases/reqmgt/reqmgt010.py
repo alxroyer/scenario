@@ -19,7 +19,7 @@ import typing
 import scenario.test
 
 if True:
-    from reqmgt.steps.reqitems import CheckReqItemStep as _CheckReqItemStepImpl  # `CheckReqItemStep` used for inheritance.
+    from reqmgt.steps.reqitems import CheckReqItemStep as _CheckReqItemStepImpl  # @inheritance
 
 
 class ReqMgt010(scenario.test.TestCase):

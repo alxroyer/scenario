@@ -23,12 +23,12 @@ import re
 import typing
 
 if True:
-    from ._consoleutils import Console as _ConsoleImpl  # `Console` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
-    from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # `LogExtraDataHelper` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` imported once for performance concerns.
-    from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
+    from ._consoleutils import Console as _ConsoleImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @perf
+    from ._loghandler import LogHandler as _LogHandlerImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType

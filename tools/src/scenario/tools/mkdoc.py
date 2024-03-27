@@ -22,7 +22,7 @@ import typing
 import scenario
 
 if True:
-    from . import _paths as _paths  # `_paths` used for class member instantiation.
+    from . import _paths as _paths  # @class-member-instantiation, @perf
 
 
 class MkDoc:

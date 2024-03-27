@@ -27,12 +27,12 @@ import inspect
 import typing
 
 if True:
-    from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # `CommonConfigArgs` used for inheritance.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # `CommonLoggingArgs` used for inheritance.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
 

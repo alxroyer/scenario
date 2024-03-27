@@ -20,8 +20,8 @@ import scenario
 import scenario.test
 
 if True:
-    from campaigns.steps.execution import ExecCampaign as _ExecCampaignImpl  # `ExecCampaign` used for inheritance.
-    from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils as _KnownIssueLevelUtilsImpl  # `KnownIssueLevelUtils` used for inheritance.
+    from campaigns.steps.execution import ExecCampaign as _ExecCampaignImpl  # @inheritance
+    from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils as _KnownIssueLevelUtilsImpl  # @inheritance
 
 
 class KnownIssues190(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):

@@ -19,7 +19,7 @@ import typing
 import scenario
 
 if True:
-    from .._paths import SRC_PATH as _SRC_PATH  # `SRC_PATH` used for global variable instantiation.
+    from .._paths import SRC_PATH as _SRC_PATH  # @module-level-instantiation
 
 
 #: Module paths which local imports should be avoided for.

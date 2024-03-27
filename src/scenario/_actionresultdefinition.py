@@ -21,8 +21,8 @@ Action / expected result definition.
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._textutils import AnyLongTextType as _AnyLongTextType

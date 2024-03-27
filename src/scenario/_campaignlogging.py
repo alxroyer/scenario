@@ -22,9 +22,9 @@ import logging
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType

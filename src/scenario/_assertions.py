@@ -27,15 +27,15 @@ import time
 import typing
 
 if True:
-    from . import _assertionhelpers as _assertionhelpers  # `_assertionhelpers` used for global instantiation.
-    from ._debugutils import callback as _callback  # `callback()` imported once for performance concerns.
-    from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # `FmtAndArgs` imported once for performance concerns.
-    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import isiterable as _isiterable  # `isiterable()` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
-    from ._stepspecifications import StepExecutionSpecification as _StepExecutionSpecificationImpl  # Imported once for performance concerns.
+    from . import _assertionhelpers as _assertionhelpers  # @perf
+    from ._debugutils import callback as _callback  # @perf
+    from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # @perf
+    from ._debugutils import saferepr as _saferepr  # @perf
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import isiterable as _isiterable  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
+    from ._stepspecifications import StepExecutionSpecification as _StepExecutionSpecificationImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._assertionhelpers import ErrParamType as _ErrParamType
     from ._assertionhelpers import EvidenceParamType as _EvidenceParamType

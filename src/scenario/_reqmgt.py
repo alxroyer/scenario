@@ -22,8 +22,8 @@ import sys
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import Path as _PathType

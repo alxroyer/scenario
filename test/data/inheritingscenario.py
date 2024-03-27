@@ -15,7 +15,7 @@
 # limitations under the License.
 
 if True:
-    from simplescenario import SimpleScenario as _SimpleScenarioImpl  # `SimpleScenario` used for inheritance.
+    from simplescenario import SimpleScenario as _SimpleScenarioImpl  # @inheritance
 
 
 class InheritingScenario(_SimpleScenarioImpl):

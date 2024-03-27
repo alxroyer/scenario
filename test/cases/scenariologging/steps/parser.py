@@ -22,7 +22,7 @@ import scenario.test
 import scenario.text
 
 if True:
-    from steps.logparsing import LogParserStep as _LogParserStepImpl  # `LogParserStep` used for inheritance.
+    from steps.logparsing import LogParserStep as _LogParserStepImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from steps.logparsing import LogParserStep as _LogParserStepType
 

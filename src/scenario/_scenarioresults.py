@@ -22,10 +22,10 @@ import logging
 import typing
 
 if True:
-    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # `ExecTotalStats` imported once for performance concerns.
+    from ._debugutils import saferepr as _saferepr  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType

@@ -23,20 +23,20 @@ import time
 import typing
 
 if True:
-    from ._args import Args as _ArgsImpl  # `Args` imported once for performance concerns.
-    from ._enumutils import isin as _isin  # `isin()` imported once for performance concerns.
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
-    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Imported once for performance concerns.
-    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
-    from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # `StepDefinitionHelper` imported once for performance concerns.
-    from ._stepexecution import StepExecution as _StepExecutionImpl  # `StepExecution` imported once for performance concerns.
-    from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # `StepExecutionHelper` imported once for performance concerns.
-    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # Imported once for performance concerns.
-    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
+    from ._args import Args as _ArgsImpl  # @perf
+    from ._enumutils import isin as _isin  # @perf
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
+    from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # @perf
+    from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
+    from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # @perf
+    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
+    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType

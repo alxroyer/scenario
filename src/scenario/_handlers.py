@@ -22,9 +22,9 @@ import enum
 import typing
 
 if True:
-    from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._enumutils import enum2str as _enum2str  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 

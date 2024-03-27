@@ -21,8 +21,8 @@ Action / expected result execution management.
 import typing
 
 if True:
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._stats import TimeStats as _TimeStatsType

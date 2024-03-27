@@ -27,8 +27,8 @@ import typing
 
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     #: Type for path-like data: either a simple string or a ``os.PathLike`` instance.
     AnyPathType = typing.Union[str, os.PathLike]

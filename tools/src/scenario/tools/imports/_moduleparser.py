@@ -20,7 +20,7 @@ import typing
 import scenario
 
 if True:
-    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # `ErrorTrackerLogger` used for inheritance.
+    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # @inheritance
 
 
 class ModuleParser(_ErrorTrackerLoggerImpl):

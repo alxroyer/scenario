@@ -21,9 +21,9 @@ Test suite file management.
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType

@@ -23,9 +23,9 @@ import traceback
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._locations import CodeLocation as _CodeLocationImpl  # `CodeLocation` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._locations import CodeLocation as _CodeLocationType

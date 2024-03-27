@@ -27,10 +27,10 @@ import threading
 import typing
 
 if True:
-    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
+    from ._debugutils import saferepr as _saferepr  # @perf
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._logger import Logger as _LoggerType

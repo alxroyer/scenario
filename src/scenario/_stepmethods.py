@@ -23,7 +23,7 @@ import types
 import typing
 
 if True:
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 

@@ -18,7 +18,7 @@ import scenario
 import scenario.test
 
 if True:
-    from steps.common import ExecScenario as _ExecScenarioImpl  # `ExecScenario` used for inheritance.
+    from steps.common import ExecScenario as _ExecScenarioImpl  # @inheritance
 
 
 class FailingScenario002(scenario.test.TestCase):

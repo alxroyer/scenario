@@ -24,7 +24,7 @@ import typing
 import xml.dom.minidom
 
 if True:
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
 

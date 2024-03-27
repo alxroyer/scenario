@@ -25,11 +25,11 @@ which owns a list of :class:`TestCaseExecution` instances (one test case per sce
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # `ExecTotalStats` imported once for performance concerns.
-    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType

@@ -22,15 +22,15 @@ import abc
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._reqref import ReqRef as _ReqRefImpl  # `ReqRef` imported once for performance concerns.
-    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` imported once for performance concerns.
-    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
-    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # Same for `ScenarioDefinitionHelper`.
-    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # `StepDefinition` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._reqref import ReqRef as _ReqRefImpl  # @perf
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @perf
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType

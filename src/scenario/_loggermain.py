@@ -24,10 +24,10 @@ import sys
 import typing
 
 if True:
-    from ._logextradata import LogExtraData as _LogExtraDataImpl  # `LogExtraData` imported once for performance concerns.
-    from ._logfilters import HandlerLogFilter as _HandlerLogFilterImpl  # `HandlerLogFilter` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._loghandler import LogHandler as _LogHandlerImpl  # `LogHandler` imported once for performance concerns.
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logfilters import HandlerLogFilter as _HandlerLogFilterImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._loghandler import LogHandler as _LogHandlerImpl  # @perf
 
 
 class MainLogger(_LoggerImpl):

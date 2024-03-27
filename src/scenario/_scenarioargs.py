@@ -21,9 +21,9 @@ Scenario runner program arguments.
 import typing
 
 if True:
-    from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._args import Args as _ArgsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
     from ._subprocess import SubProcess as _SubProcessType

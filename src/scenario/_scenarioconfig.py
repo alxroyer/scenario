@@ -21,11 +21,11 @@
 import typing
 
 if True:
-    from ._consoleutils import Console as _ConsoleImpl  # `Console` imported once for performance concerns.
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._consoleutils import Console as _ConsoleImpl  # @perf
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._consoleutils import Console as _ConsoleType

@@ -24,9 +24,9 @@ import time
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # `ScenarioDefinition` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType

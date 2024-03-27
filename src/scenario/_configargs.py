@@ -21,7 +21,7 @@ Common configuration program arguments.
 import typing
 
 if True:
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
     from ._path import Path as _PathType

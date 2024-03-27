@@ -19,7 +19,7 @@ Execution status management.
 """
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
 
 
 class ExecutionStatus(_StrEnumImpl):

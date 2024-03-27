@@ -415,7 +415,7 @@ if True:
         .. seealso:: :class:`._scenarioconfig.ScenarioConfig.Key` implementation.
     """
     # Note: Can't reexport `ScenarioConfig.Key` as `ConfigKey` with a single `import` statement. Use an intermediate private instance.
-    from ._scenarioconfig import ScenarioConfig as _ScenarioConfigImpl  # `ScenarioConfig` used for reexport.
+    from ._scenarioconfig import ScenarioConfig as _ScenarioConfigImpl  # @module-level-instantiation
     ConfigKey = _ScenarioConfigImpl.Key
     __all__.append("ConfigKey")
 

@@ -22,11 +22,11 @@ import abc
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # `ExecTotalStats` imported once for performance concerns.
-    from ._stats import TimeStats as _TimeStatsImpl  # `TimeStats` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._logger import Logger as _LoggerType

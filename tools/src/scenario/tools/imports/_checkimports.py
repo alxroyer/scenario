@@ -265,6 +265,26 @@ class CheckImports:
                             else:
                                 _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.stripped_src)
 
+            # === Justification ===
+            if _import.context.isifblockimpl() and not _import.isreexport():
+                _match = re.match(rb"^[^#]*#(.*)$", _import.raw_src)  # type: typing.Optional[typing.Match[bytes]]
+                if (not _match) or (not _match.group(1).strip()):
+                    _import.error("Justification missing with implementation import")
+                else:
+                    _justification = _match.group(1).strip()  # type: bytes
+                    _justification_tags = [
+                        b'@after-path-management',
+                        b'@inheritance', b'@metaclass',
+                        b'@module-level-instantiation', b'@class-member-instantiation',
+                        b'@module-level-execution',
+                        b'@perf',
+                    ]  # type: typing.Sequence[bytes]
+                    if not all([
+                        _part in _justification_tags
+                        for _part in map(lambda b: b.strip(), _justification.split(b','))
+                    ]):
+                        _import.warning("Unclassified justification %r", _justification)
+
     def _checklocalimports(
             self,
             module_parser,  # type: _ModuleParserType

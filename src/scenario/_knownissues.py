@@ -23,8 +23,8 @@ import re
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._testerrors import TestError as _TestErrorImpl  # `TestError` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._testerrors import TestError as _TestErrorImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._jsondictutils import JsonDictType as _JsonDictType

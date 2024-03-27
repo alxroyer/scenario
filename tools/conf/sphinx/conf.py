@@ -147,7 +147,7 @@ todo_emit_warnings = True  # type: bool
 
 # Make `scenario.tools.sphinx.setup()` be called automatically by Sphinx.
 if True:
-    import scenario.tools.sphinx
+    import scenario.tools.sphinx  # @after-path-management
 setup = scenario.tools.sphinx.setup  # type: typing.Callable[[sphinx.application.Sphinx], None]
 
 

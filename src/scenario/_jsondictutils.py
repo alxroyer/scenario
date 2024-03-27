@@ -26,8 +26,8 @@ import re
 import typing
 
 if True:
-    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
+    from ._debugutils import saferepr as _saferepr  # @perf
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
 

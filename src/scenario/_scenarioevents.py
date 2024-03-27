@@ -22,7 +22,7 @@ import abc
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType

@@ -22,12 +22,12 @@ import types
 import typing
 
 if True:
-    from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
-    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
-    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
+    from ._assertions import Assertions as _AssertionsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._reflection import qualname as _qualname  # @perf
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @inheritance
+    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType

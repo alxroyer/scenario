@@ -23,7 +23,7 @@ import typing
 import urllib.parse
 
 if True:
-    from .._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from .._enumutils import StrEnum as _StrEnumImpl  # @inheritance
 
 
 class HttpRequest(http.server.BaseHTTPRequestHandler):

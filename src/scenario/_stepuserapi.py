@@ -22,10 +22,10 @@ import abc
 import typing
 
 if True:
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._knownissues import KnownIssue as _KnownIssueImpl  # `KnownIssue` imported once for performance concerns.
-    from ._logger import Logger as _LoggerImpl  # `Logger` imported once for performance concerns.
-    from ._textutils import anylongtext2str as _anylongtext2str  # `anylongtext2str()` imported once for performance concerns.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @perf
+    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._knownissues import KnownIssue as _KnownIssueType

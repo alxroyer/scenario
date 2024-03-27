@@ -24,12 +24,12 @@ import re
 import typing
 
 if True:
-    from ._configkey import ConfigKey as _ConfigKeyImpl  # `ConfigKey` imported once for performance concerns.
-    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
-    from ._enumutils import enum2str as _enum2str  # `enum2str()` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
-    from ._path import Path as _PathImpl  # `Path` imported once for performance concerns.
-    from ._reflection import qualname as _qualname  # `qualname()` imported once for performance concerns.
+    from ._configkey import ConfigKey as _ConfigKeyImpl  # @perf
+    from ._debugutils import saferepr as _saferepr  # @perf
+    from ._enumutils import enum2str as _enum2str  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._configtypes import OriginType as _OriginType

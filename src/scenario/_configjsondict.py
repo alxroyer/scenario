@@ -21,8 +21,8 @@ JSON / YAML configuration file management.
 import typing
 
 if True:
-    from ._debugutils import saferepr as _saferepr  # `saferepr()` imported once for performance concerns.
-    from ._fastpath import FAST_PATH as _FAST_PATH  # `FAST_PATH` imported once for performance concerns.
+    from ._debugutils import saferepr as _saferepr  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._path import AnyPathType as _AnyPathType
