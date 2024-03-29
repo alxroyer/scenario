@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Merged package definition for :mod:`scenario.text`, ...
+Merged package definition for :mod:`scenario.inners`, :mod:`scenario.text`, ...
 """
 
 

@@ -16,6 +16,7 @@
 
 import typing
 
+import scenario.inners
 import scenario.test
 
 
@@ -35,8 +36,6 @@ class TextUtils001(scenario.test.TestCase):
         )
 
     def step001(self):  # type: (...) -> None
-        from scenario._textutils import anylongtext2str  # noqa  ## Access to protected module
-
         self.STEP("Multiline string")
 
         _multiline_string = """
@@ -60,7 +59,7 @@ class TextUtils001(scenario.test.TestCase):
 
         _parsed_string = ""  # type: str
         if self.ACTION(f"Parse the multiline string {_multiline_string!r} with the `anylongtext2str()` function."):
-            _parsed_string = anylongtext2str(_multiline_string)
+            _parsed_string = scenario.inners.textutils.anylongtext2str(_multiline_string)
 
         if self.RESULT(f"The resulting string is {_expected_string!r}."):
             self.assertequal(
@@ -69,8 +68,6 @@ class TextUtils001(scenario.test.TestCase):
             )
 
     def step002(self):  # type: (...) -> None
-        from scenario._textutils import anylongtext2str  # noqa  ## Access to protected module
-
         self.STEP("String list")
 
         _string_list = [
@@ -94,7 +91,7 @@ class TextUtils001(scenario.test.TestCase):
 
         _parsed_string = ""  # type: str
         if self.ACTION(f"Parse the string list {_string_list!r} with the `anylongtext2str()` function."):
-            _parsed_string = anylongtext2str(_string_list)
+            _parsed_string = scenario.inners.textutils.anylongtext2str(_string_list)
 
         if self.RESULT(f"The resulting string is {_expected_string!r}."):
             self.assertequal(

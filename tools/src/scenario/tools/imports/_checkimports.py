@@ -127,7 +127,7 @@ class CheckImports:
                 if any([
                     # Pure system import.
                     _import.issystemimport(),
-                    # `scenario.test` and `scenario.tools` may import `scenario` and `scenario.text`.
+                    # `scenario.test` and `scenario.tools` may import `scenario`, `scenario.inners` and `scenario.text`.
                     all([
                         any([
                             _import.importer_module_path.is_relative_to(_paths.TEST_SRC_PATH),
@@ -135,10 +135,11 @@ class CheckImports:
                         ]),
                         any([
                             _import.imported_module_original_name == "scenario",
+                            _import.imported_module_original_name == "scenario.inners",
                             _import.imported_module_original_name == "scenario.text",
                         ]),
                     ]),
-                    # Test launchers, cases, data and tool scripts may import `scenario`, `scenario.test` and `scenario.text`.
+                    # Test launchers, cases, data and tool scripts may import `scenario`, `scenario.test`, `scenario.inners` and `scenario.text`.
                     all([
                         any([
                             _import.importer_module_path.match(f"{_paths.TEST_PATH.abspath}/*.py"),
@@ -149,10 +150,11 @@ class CheckImports:
                         any([
                             _import.imported_module_original_name == "scenario",
                             _import.imported_module_original_name == "scenario.test",
+                            _import.imported_module_original_name == "scenario.inners",
                             _import.imported_module_original_name == "scenario.text",
                         ]),
                     ]),
-                    # Tool scripts and configurations may import `scenario`, `scenario.tools` (with subpackages) and `scenario.text`.
+                    # Tool scripts and configurations may import `scenario`, `scenario.tools` (with subpackages), `scenario.inners` and `scenario.text`.
                     all([
                         any([
                             _import.importer_module_path.match(f"{_paths.TOOLS_PATH.abspath}/*.py"),
@@ -162,6 +164,7 @@ class CheckImports:
                             _import.imported_module_original_name == "scenario",
                             _import.imported_module_original_name == "scenario.tools",
                             _import.imported_module_original_name.startswith("scenario.tools."),
+                            _import.imported_module_original_name == "scenario.inners",
                             _import.imported_module_original_name == "scenario.text",
                         ]),
                     ]),
@@ -266,12 +269,23 @@ class CheckImports:
                                 _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.stripped_src)
 
             # === Justification ===
+
+            # ---
+            # RULE: Implementation imports shall be justified.
+            # ---
             if _import.context.isifblockimpl() and not _import.isreexport():
                 _match = re.match(rb"^[^#]*#(.*)$", _import.raw_src)  # type: typing.Optional[typing.Match[bytes]]
                 if (not _match) or (not _match.group(1).strip()):
                     _import.error("Justification missing with implementation import")
                 else:
+                    # ---
+                    # RULE: Implementation import shall be justified with justfification tags.
+                    # ---
                     _justification = _match.group(1).strip()  # type: bytes
+                    # Avoid other pragmas if any, try to focus on justification tags.
+                    _match = re.search(rb'# +(@[^#]+)(#.*|)$', _justification)
+                    if _match:
+                        _justification = _match.group(1).strip()
                     _justification_tags = [
                         b'@after-path-management',
                         b'@inheritance', b'@metaclass',
@@ -301,10 +315,10 @@ class CheckImports:
         module_parser.debug("%d local import(s)", len(module_parser.local_imports))
         for _import in module_parser.local_imports:  # type: Import
             # ---
-            # RULE: Avoid local imports for optimized modules in main `scenario` modules
+            # RULE: Avoid local imports for optimized modules
             #       (except for imports from `scenario.ui` to `scenario` modules).
             # ---
-            if _import.importer_module_path.is_relative_to(_paths.SRC_PATH) and (_import.imported_module_path in OPTIMIZED_PATHS):
+            if _import.imported_module_path in OPTIMIZED_PATHS:
                 if (
                     _import.importer_module_path.is_relative_to(_paths.SRC_PATH / "scenario" / "ui")
                     and _import.imported_module_path and (_import.imported_module_path.parent == (_paths.SRC_PATH / "scenario"))

@@ -25,6 +25,8 @@ import traceback
 import types
 import typing
 
+import scenario.inners
+
 
 # Cache of module names that have already been `typing.TYPE_CHECKING`-reloaded.
 _RELOADWITHTYPECHECKING_CACHE = []  # type: typing.List[str]
@@ -71,7 +73,6 @@ def _reloadscenariomoduleswithtypechecking():  # type: (...) -> None
 def _reloadmodulewithtypechecking(
         module_name,  # type: str
 ):  # type: (...) -> None
-    from scenario._reflection import importmodulefrompath  # noqa  ## Access to a protected member
     from .._paths import SRC_PATH
     from ._logging import Logger
 
@@ -109,7 +110,7 @@ def _reloadmodulewithtypechecking(
                 # Ensure `typing.TYPE_CHECKING` is disabled.
                 typing.TYPE_CHECKING = False
 
-                importmodulefrompath(
+                scenario.inners.reflection.importmodulefrompath(
                     module_path,
                     # Ensure the module will be saved in `sys.modules`.
                     sys_modules_cache=True,
@@ -138,7 +139,7 @@ def _reloadmodulewithtypechecking(
                 # Reload the module (without replacing the original one).
                 if module_path.name != "__init__.py":
                     # Don't use `importlib.reload()` in general, otherwise the original modules would be replaced, possibly breaking consistency by the way.
-                    _reloaded_module = importmodulefrompath(
+                    _reloaded_module = scenario.inners.reflection.importmodulefrompath(
                         module_path,
                         # Don't read from `sys.modules`, nor save the reloaded module in `sys.modules`.
                         sys_modules_cache=False,
@@ -230,7 +231,6 @@ def _reloadmodulewithtypechecking(
 
 
 def _trackscenariotypes():  # type: (...) -> None
-    from scenario._reflection import fqname  # noqa  ## Access to a protected member
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TRACK_SCENARIO_TYPES)  # type: Logger
@@ -253,7 +253,7 @@ def _trackscenariotypes():  # type: (...) -> None
 
             _member = getattr(_module, _obj_name)  # type: typing.Any
             # Memo: `fqname()` fails on types, build the type fully qualified name from the local information we have in this function.
-            _fq_name = f"{fqname(_module)}.{_obj_name}"  # type: str
+            _fq_name = f"{scenario.inners.reflection.fqname(_module)}.{_obj_name}"  # type: str
 
             if inspect.getmodule(type(_member)) == typing:
                 # `repr()` on a type gives a useful string, let's display that string with `%r` below.

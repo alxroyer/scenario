@@ -210,6 +210,7 @@ class Import(_ErrorTrackerLoggerImpl):
                 # The first match will break the loop.
                 ("scenario.test", _paths.TEST_SRC_PATH / "scenario" / "test"),
                 ("scenario.tools", _paths.TOOLS_SRC_PATH / "scenario" / "tools"),
+                ("scenario.inners", _paths.UTILS_SRC_PATH / "scenario" / "inners"),
                 ("scenario.text", _paths.UTILS_SRC_PATH / "scenario" / "text"),
                 # Finish with `scenario`.
                 ("scenario", _paths.SRC_PATH / "scenario"),
@@ -267,7 +268,7 @@ class Import(_ErrorTrackerLoggerImpl):
         # Check for `check-imports: ignore` pragma (useless for debug log lines).
         _match = None  # type: typing.Optional[typing.Match[bytes]]
         if level > logging.DEBUG:
-            _match = re.match(rb'^[^#]*#.*check-imports: +ignore.*$', self.raw_src)
+            _match = re.search(rb'# *check-imports *: *ignore', self.raw_src)
 
         if not _match:
             # Log not ignored.

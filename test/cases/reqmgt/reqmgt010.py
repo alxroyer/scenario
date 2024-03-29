@@ -16,6 +16,7 @@
 
 import typing
 
+import scenario.inners
 import scenario.test
 
 if True:
@@ -108,11 +109,9 @@ class CreateScenario(scenario.Step):
         self.scenario_instance = scenario.Scenario()  # type: scenario.Scenario
 
     def step(self):  # type: (...) -> None
-        from scenario._reflection import qualname  # noqa  ## Access to protected module
-
         self.STEP("Scenario creation")
 
-        if self.ACTION(f"Create a {qualname(self.scenario_cls)} instance."):
+        if self.ACTION(f"Create a {scenario.inners.reflection.qualname(self.scenario_cls)} instance."):
             self.scenario_instance = self.scenario_cls()
 
 
