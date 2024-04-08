@@ -23,9 +23,9 @@ import time
 import typing
 
 if True:
+    from . import _enumutils as _enumutils  # @inheritance, @perf
+    from . import _textutils as _textutils  # @perf
     from ._args import Args as _ArgsImpl  # @perf
-    from ._enumutils import isin as _isin  # @perf
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
@@ -36,7 +36,6 @@ if True:
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
     from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # @perf
     from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
-    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -50,7 +49,6 @@ if typing.TYPE_CHECKING:
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
     from ._stepuserapi import StepUserApi as _StepUserApiType
     from ._testerrors import TestError as _TestErrorType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class ScenarioRunner(_LoggerImpl):
@@ -70,7 +68,7 @@ class ScenarioRunner(_LoggerImpl):
     - :class:`._scenarioreport.ScenarioReport`: scenario report generation.
     """
 
-    class ExecutionMode(_StrEnumImpl):
+    class ExecutionMode(_enumutils.StrEnum):
         """
         Execution mode enum.
 
@@ -386,7 +384,7 @@ class ScenarioRunner(_LoggerImpl):
                 # Display scenario attributes.
                 for _attribute_name in scenario_definition.getattributenames():  # type: str
                     # Skip empty core attributes.
-                    if _isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                    if _enumutils.isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
                         continue
                     SCENARIO_LOGGING.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
 
@@ -605,7 +603,7 @@ class ScenarioRunner(_LoggerImpl):
     def onactionresult(
             self,
             action_result_type,  # type: _ActionResultDefinitionType.Type
-            description,  # type: _AnyLongTextType
+            description,  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> None
         """
         Call redirection from :meth:`._stepuserapi.StepUserApi.ACTION()` or :meth:`._stepuserapi.StepUserApi.RESULT()`.
@@ -641,7 +639,7 @@ class ScenarioRunner(_LoggerImpl):
             # Switch to this action/result.
             _step_execution_helper = _StepExecutionHelperImpl(_FAST_PATH.scenario_stack.current_step_execution)  # type: _StepExecutionHelperType
             _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
-            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != _anylongtext2str(description)):
+            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != _textutils.anylongtext2str(description)):
                 _FAST_PATH.scenario_stack.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
 
             # Create the action/result execution instance (in EXECUTE mode only).

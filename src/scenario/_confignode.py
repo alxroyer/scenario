@@ -24,9 +24,9 @@ import re
 import typing
 
 if True:
+    from . import _debugutils as _debugutils  # @perf
+    from . import _enumutils as _enumutils  # @perf
     from ._configkey import ConfigKey as _ConfigKeyImpl  # @perf
-    from ._debugutils import saferepr as _saferepr  # @perf
-    from ._enumutils import enum2str as _enum2str  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import qualname as _qualname  # @perf
@@ -141,7 +141,7 @@ class ConfigNode:
                     if self._data is None:
                         self._setdata({})
                     if not isinstance(self._data, dict):
-                        raise ValueError(self.errmsg(f"Bad dict data {_saferepr(data)} for a non-dict configuration node", origin=origin))
+                        raise ValueError(self.errmsg(f"Bad dict data {_debugutils.saferepr(data)} for a non-dict configuration node", origin=origin))
                     # Use recursive calls with the ``subkey`` parameter set for each field of the input dictionary.
                     for _field_name in data:  # type: str
                         self.set(subkey=_field_name, data=data[_field_name], origin=origin)
@@ -152,7 +152,7 @@ class ConfigNode:
                     if self._data is None:
                         self._setdata([])
                     if not isinstance(self._data, list):
-                        raise ValueError(self.errmsg(f"Bad list data {_saferepr(data)} for a non-list configuration node", origin=origin))
+                        raise ValueError(self.errmsg(f"Bad list data {_debugutils.saferepr(data)} for a non-list configuration node", origin=origin))
                     # Add sub-nodes for each item of the input list.
                     for _index in range(len(data)):  # type: int
                         self._data.append(ConfigNode(parent=self, key=f"{self.key}[{len(self._data)}]"))
@@ -323,7 +323,7 @@ class ConfigNode:
             self.origins.append(origin)
 
         # When the sub-key is empty, it means we have reached the sub-node we are looking for.
-        subkey = _enum2str(subkey)
+        subkey = _enumutils.enum2str(subkey)
         if not subkey:
             return self
 
@@ -375,9 +375,8 @@ class ConfigNode:
             if self._data is not None:
                 # Find the direct sub-node in the member dictionary.
                 if not isinstance(self._data, dict):
-                    raise IndexError(
-                        _errmsg_start + f"Cannot index a non-dictionary node with {_first!r}, data is {_saferepr(self._data)} (origin: {self.origin})"
-                    )
+                    raise IndexError(_errmsg_start + f"Cannot index a non-dictionary node with {_first!r}, "
+                                                     f"data is {_debugutils.saferepr(self._data)} (origin: {self.origin})")
                 if _first in self._data:
                     _subnode = self._data[_first]
                 # Create it when missing and applicable.

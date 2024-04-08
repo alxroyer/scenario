@@ -22,8 +22,8 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
-    from ._debugutils import callback as _callback  # @perf
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from . import _debugutils as _debugutils  # @perf
+    from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
@@ -60,7 +60,7 @@ class CampaignReport(_LoggerImpl):
     - Other useful resource: https://stackoverflow.com/questions/442556/spec-for-junit-xml-output
     """
 
-    class LinkPurpose(_StrEnumImpl):
+    class LinkPurpose(_enumutils.StrEnum):
         """
         ``<link/>`` reference purposes.
         """
@@ -75,7 +75,7 @@ class CampaignReport(_LoggerImpl):
         #: Scenario report file link.
         SCENARIO_REPORT = "report"
 
-    class StatAttrName(_StrEnumImpl):
+    class StatAttrName(_enumutils.StrEnum):
         """
         `scenario` specific attribute names for statistics.
         """
@@ -496,10 +496,10 @@ class CampaignReport(_LoggerImpl):
             self.debug("testsuite/@time = %f", _test_suite_execution.time.elapsed)
         if xml_test_suite.hasattr("timestamp"):
             _test_suite_execution.time.start = _datetimeutils.fromiso8601(xml_test_suite.getattr("timestamp"))
-            self.debug("testsuite/@timestamp = %s", _callback(_datetimeutils.f2strtime, _test_suite_execution.time.start))
+            self.debug("testsuite/@timestamp = %s", _debugutils.callback(_datetimeutils.f2strtime, _test_suite_execution.time.start))
             if _test_suite_execution.time.elapsed is not None:
                 _test_suite_execution.time.end = _test_suite_execution.time.start + _test_suite_execution.time.elapsed
-                self.debug("testsuite/@timestamp + elapsed => end = %s", _callback(_datetimeutils.f2strtime, _test_suite_execution.time.end))
+                self.debug("testsuite/@timestamp + elapsed => end = %s", _debugutils.callback(_datetimeutils.f2strtime, _test_suite_execution.time.end))
 
         for _xml_test_case in xml_test_suite.getchildren("testcase"):  # type: Xml.Node
             self.debug("New testsuite/testcase")

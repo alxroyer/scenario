@@ -29,6 +29,7 @@ if True:
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @perf
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperImpl  # @perf
 if typing.TYPE_CHECKING:
+    from . import _setutils as _setutils
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
     from ._req import Req as _ReqType
@@ -38,7 +39,6 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import AnyReqType as _AnyReqType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class ReqDatabase(_LoggerImpl):
@@ -271,7 +271,7 @@ class ReqDatabase(_LoggerImpl):
 
         raise ValueError(f"Invalid requirement reference {req_ref!r}")
 
-    def getallreqs(self):  # type: (...) -> _OrderedSetType[_ReqType]
+    def getallreqs(self):  # type: (...) -> _setutils.OrderedSetType[_ReqType]
         """
         Returns all requirements saved in the database.
 
@@ -287,12 +287,12 @@ class ReqDatabase(_LoggerImpl):
                     self._req_db.values(),
                 ),
             ),
-        )  # type: _OrderedSetType[_ReqType]
+        )  # type: _setutils.OrderedSetType[_ReqType]
 
         self.debug("getallreqs() -> %r", _reqs)
         return _reqs
 
-    def getallrefs(self):  # type: (...) -> _OrderedSetType[_ReqRefType]
+    def getallrefs(self):  # type: (...) -> _setutils.OrderedSetType[_ReqRefType]
         """
         Returns all requirement references saved in the database.
 
@@ -301,12 +301,12 @@ class ReqDatabase(_LoggerImpl):
         _req_refs = _ReqRefImpl.orderedset(
             # All requirement references in the database.
             self._req_db.values(),
-        )  # type: _OrderedSetType[_ReqRefType]
+        )  # type: _setutils.OrderedSetType[_ReqRefType]
 
         self.debug("getallrefs() -> %r", _req_refs)
         return _req_refs
 
-    def getalllinks(self):  # type: () -> _OrderedSetType[_ReqLinkType]
+    def getalllinks(self):  # type: () -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Returns all requirement links saved in the database.
 
@@ -315,12 +315,12 @@ class ReqDatabase(_LoggerImpl):
         _req_link_list = []  # type: typing.List[_ReqLinkType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             _req_link_list.extend(_req_ref.req_links)
-        _req_links = _ReqLinkImpl.orderedset(_req_link_list)  # type: _OrderedSetType[_ReqLinkType]
+        _req_links = _ReqLinkImpl.orderedset(_req_link_list)  # type: _setutils.OrderedSetType[_ReqLinkType]
 
         self.debug("getalllinks() -> %r", _req_links)
         return _req_links
 
-    def getallverifiers(self):  # type: (...) -> _OrderedSetType[_ReqVerifierType]
+    def getallverifiers(self):  # type: (...) -> _setutils.OrderedSetType[_ReqVerifierType]
         """
         Returns all final requirement verifiers saved in the database,
         either scenarios or steps.
@@ -331,12 +331,12 @@ class ReqDatabase(_LoggerImpl):
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _req_verifier_list.extend(_req_link.req_verifiers)
-        _req_verifiers = _ReqVerifierImpl.orderedset(_req_verifier_list)  # type: _OrderedSetType[_ReqVerifierType]
+        _req_verifiers = _ReqVerifierImpl.orderedset(_req_verifier_list)  # type: _setutils.OrderedSetType[_ReqVerifierType]
 
         self.debug("getallverifiers() -> %r", _req_verifiers)
         return _req_verifiers
 
-    def getallscenarios(self):  # type: (...) -> _OrderedSetType[_ScenarioDefinitionType]
+    def getallscenarios(self):  # type: (...) -> _setutils.OrderedSetType[_ScenarioDefinitionType]
         """
         Returns all scenarios that track requirements.
 
@@ -351,7 +351,7 @@ class ReqDatabase(_LoggerImpl):
                     # Ensure `ScenarioDefinition` from `ReqVerifier` objects.
                     map(_ReqVerifierHelperImpl.getscenario, _req_link.req_verifiers),
                 )
-        _scenarios = _FAST_PATH.scenario_definition_cls.orderedset(_scenario_list)  # type: _OrderedSetType[_ScenarioDefinitionType]
+        _scenarios = _FAST_PATH.scenario_definition_cls.orderedset(_scenario_list)  # type: _setutils.OrderedSetType[_ScenarioDefinitionType]
 
         self.debug("getallscenarios() -> %r", _scenarios)
         return _scenarios

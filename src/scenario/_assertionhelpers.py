@@ -25,16 +25,13 @@ import typing
 import unittest as _unittestmod
 
 if True:
-    from ._debugutils import FmtAndArgs as _FmtAndArgsImpl  # @perf
+    from . import _debugutils as _debugutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-if typing.TYPE_CHECKING:
-    from ._debugutils import DelayedStr as _DelayedStrType
-    from ._debugutils import FmtAndArgs as _FmtAndArgsType
 
 
 if typing.TYPE_CHECKING:
     #: Optional error parameter type.
-    ErrParamType = typing.Optional[typing.Union[str, _DelayedStrType]]
+    ErrParamType = typing.Optional[typing.Union[str, _debugutils.DelayedStr]]
 
     #: Evidence parameter type.
     EvidenceParamType = typing.Optional[typing.Union[bool, str]]
@@ -46,7 +43,7 @@ unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 
 def errmsg(
         optional,  # type: ErrParamType
-        standard,  # type: typing.Union[str, _DelayedStrType]
+        standard,  # type: typing.Union[str, _debugutils.DelayedStr]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -65,14 +62,14 @@ def errmsg(
         standard = str(standard)
     # Format `standard` with `args` if not empty.
     if args:
-        standard = str(_FmtAndArgsImpl(standard, *args))
+        standard = str(_debugutils.FmtAndArgs(standard, *args))
 
     return unittest._formatMessage(optional, standard)  # noqa  ## Access to a protected member
 
 
 def ctxmsg(
         context,  # type: str
-        err,  # type: typing.Union[str, _DelayedStrType]
+        err,  # type: typing.Union[str, _debugutils.DelayedStr]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -88,7 +85,7 @@ def ctxmsg(
         err = str(err)
     # Format `err` with `args` if not empty.
     if args:
-        err = str(_FmtAndArgsImpl(err, *args))
+        err = str(_debugutils.FmtAndArgs(err, *args))
 
     return f"{context}: {err}"
 
@@ -109,7 +106,7 @@ def isnonemsg(
 
 def evidence(
         evidence_enabled,  # type: EvidenceParamType
-        regular,  # type: typing.Union[str, _DelayedStrType]
+        regular,  # type: typing.Union[str, _debugutils.DelayedStr]
         *args,  # type: typing.Any
 ):  # type: (...) -> None
     """
@@ -126,7 +123,7 @@ def evidence(
                 regular = str(regular)
 
             # Build the evidence message.
-            _evidence_message = _FmtAndArgsImpl()  # type: _FmtAndArgsType
+            _evidence_message = _debugutils.FmtAndArgs()  # type: _debugutils.FmtAndArgs
             if isinstance(evidence_enabled, str):
                 _evidence_message.push("%s: ", evidence_enabled)
             _evidence_message.push(regular, *args)

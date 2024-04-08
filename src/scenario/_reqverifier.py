@@ -22,8 +22,8 @@ import abc
 import typing
 
 if True:
+    from . import _setutils as _setutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._setutils import orderedset as _orderedset  # @perf
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -33,7 +33,6 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
@@ -49,14 +48,14 @@ class ReqVerifier(abc.ABC):
     def orderedset(
             cls,  # type: typing.Type[_VarReqVerifierType]
             req_verifiers,  # type: typing.Iterable[_VarReqVerifierType]
-    ):  # type: (...) -> _OrderedSetType[_VarReqVerifierType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_VarReqVerifierType]
         """
         Ensures an ordered set of unique :class:`ReqVerifier` items.
 
         :param req_verifiers: Unordered list of :class:`ReqVerifier` items.
         :return: Ordered set of unique :class:`ReqVerifier` items, ordered by scenario (or owner scenario) names, then step ids.
         """
-        return _orderedset(
+        return _setutils.orderedset(
             req_verifiers,
             key=ReqVerifierHelper.sortkeyfunction,
         )
@@ -78,7 +77,7 @@ class ReqVerifier(abc.ABC):
         self._req_links = set()  # type: typing.Set[_ReqLinkType]
 
     @property
-    def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
+    def req_links(self):  # type: () -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links through which this verifier traces requirement references.
 
@@ -126,7 +125,7 @@ class ReqVerifier(abc.ABC):
             req_ref=None,  # type: _AnyReqRefType
             *,
             walk_subrefs=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this verifier,
         filtered with the given predicates.

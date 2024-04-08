@@ -24,13 +24,13 @@ import traceback
 import typing
 
 if True:
-    from ._enumutils import enum2str as _enum2str  # @perf
+    from . import _enumutils as _enumutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @class-member-instantiation, @perf
     from ._logfilters import LoggerLogFilter as _LoggerLogFilterImpl  # @perf
     from ._loggingcontext import LoggingContext as _LoggingContextImpl  # @perf
 if typing.TYPE_CHECKING:
-    from ._consoleutils import Console as _ConsoleType
+    from . import _consoleutils as _consoleutils
     from ._logextradata import LogExtraData as _LogExtraDataType
     from ._loggingcontext import LoggingContext as _LoggingContextType
 
@@ -91,7 +91,7 @@ class Logger:
         .. seealso:: :meth:`enabledebug()` and :meth:`setlogcolor()`.
         """
         #: Log class.
-        self.log_class = _enum2str(log_class)  # type: str
+        self.log_class = _enumutils.enum2str(log_class)  # type: str
 
         # Build the ``logging.Logger`` instance, and attach a filter.
         #: ``logging.Logger`` instance as a member variable.
@@ -117,7 +117,7 @@ class Logger:
         self._debug_enabled = None  # type: typing.Optional[bool]
 
         #: Optional log color configuration.
-        self._log_color = None  # type: typing.Optional[_ConsoleType.Color]
+        self._log_color = None  # type: typing.Optional[_consoleutils.Console.Color]
 
         #: Logger indentation stack.
         self._indentations = []  # type: typing.List[str]
@@ -162,7 +162,7 @@ class Logger:
 
     def setlogcolor(
             self,
-            color,  # type: typing.Optional[_ConsoleType.Color]
+            color,  # type: typing.Optional[_consoleutils.Console.Color]
     ):  # type: (...) -> None
         """
         Sets or clears a log line color specialized for the logger.
@@ -175,7 +175,7 @@ class Logger:
         """
         self._log_color = color
 
-    def getlogcolor(self):  # type: (...) -> typing.Optional[_ConsoleType.Color]
+    def getlogcolor(self):  # type: (...) -> typing.Optional[_consoleutils.Console.Color]
         """
         Returns the specialized log line color for this logger, if any.
 

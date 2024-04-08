@@ -21,10 +21,10 @@ The :class:`DebugClass` enum defines the `scenario` debug classes (see: :class:`
 """
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from . import _enumutils as _enumutils  # @inheritance
 
 
-class DebugClass(_StrEnumImpl):
+class DebugClass(_enumutils.StrEnum):
     """
     `scenario` debug classes.
     """

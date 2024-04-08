@@ -48,7 +48,7 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
-    from ._debugutils import callback as _callback  # @perf
+    from . import _debugutils as _debugutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
@@ -100,8 +100,8 @@ class Timer:
             self.log_level,
             "%s: %s: %s (+%s)",
             self.context, message,
-            _callback(_datetimeutils.f2strduration, _current_time - self.t0),
-            _callback(_datetimeutils.f2strduration, _current_time - self._last_tick),
+            _debugutils.callback(_datetimeutils.f2strduration, _current_time - self.t0),
+            _debugutils.callback(_datetimeutils.f2strduration, _current_time - self._last_tick),
         )
         self.ticks.append((message, _current_time - self._last_tick))
         self._last_tick = _current_time
@@ -115,8 +115,8 @@ class Timer:
             self.log_level,
             "%s: Total time: %s (+%s)",
             self.context,
-            _callback(_datetimeutils.f2strduration, _current_time - self.t0),
-            _callback(_datetimeutils.f2strduration, _current_time - self._last_tick),
+            _debugutils.callback(_datetimeutils.f2strduration, _current_time - self.t0),
+            _debugutils.callback(_datetimeutils.f2strduration, _current_time - self._last_tick),
         )
         self._last_tick = _current_time
 

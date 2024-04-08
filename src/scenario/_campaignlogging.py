@@ -23,7 +23,7 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -39,7 +39,7 @@ class CampaignLogging:
     Instantiated once with the :data:`CAMPAIGN_LOGGING` singleton.
     """
 
-    class _Call(_StrEnumImpl):
+    class _Call(_enumutils.StrEnum):
         """
         :class:`CampaignLogging` call identifiers.
         """

@@ -22,11 +22,12 @@ import abc
 import typing
 
 if True:
+    from . import _setutils as _setutils  # @perf
+    from . import _textutils as _textutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._reflection import qualname as _qualname  # @perf
-    from ._setutils import orderedset as _orderedset  # @perf
-    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
+    from . import _typeutils as _typeutils
     from ._req import Req as _ReqType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
@@ -34,8 +35,6 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
-    from ._setutils import OrderedSetType as _OrderedSetType
-    from ._typeutils import VarItemType as _VarItemType
 
 
 class ReqLink:
@@ -49,14 +48,14 @@ class ReqLink:
     @staticmethod
     def orderedset(
             req_links,  # type: typing.Iterable[ReqLink]
-    ):  # type: (...) -> _OrderedSetType[ReqLink]
+    ):  # type: (...) -> _setutils.OrderedSetType[ReqLink]
         """
         Ensures a sorted set of unique :class:`ReqLink` items.
 
         :param req_links: Unordered list of :class:`ReqLink` items.
         :return: Ordered set of unique :class:`ReqLink` items, by requirement reference ids, then scenario names and steps.
         """
-        return _orderedset(
+        return _setutils.orderedset(
             req_links,
             key=ReqLinkHelper.sortkeyfunction,
         )
@@ -87,7 +86,7 @@ class ReqLink:
             self._any_req_ref = req_link_def[0]
             # 2nd member is optional comments.
             if len(req_link_def) > 1:
-                self.comments = _anylongtext2str(
+                self.comments = _textutils.anylongtext2str(
                     req_link_def[1],  # type: ignore[misc]  ## Tuple index out of range (mypy@1.0.1 bug?)
                 )
         else:
@@ -140,7 +139,7 @@ class ReqLink:
         return _FAST_PATH.req_db.getreqref(self._any_req_ref, push_unknown=True)
 
     @property
-    def req_verifiers(self):  # type: () -> _OrderedSetType[_ReqVerifierType]
+    def req_verifiers(self):  # type: () -> _setutils.OrderedSetType[_ReqVerifierType]
         """
         Requirement verifiers tracing the given requirement reference with this link.
 
@@ -264,20 +263,20 @@ class ReqLinkHelper(abc.ABC):
     @staticmethod
     def buildsetwithreqlinks(
             req_link_holders,  # type: typing.Sequence[typing.Union[_ReqRefType, _ReqVerifierType]]
-            items_from_link,  # type: typing.Callable[[ReqLink], typing.Iterable[_VarItemType]]
-    ):  # type: (...) -> _SetWithReqLinksType[_VarItemType]
+            items_from_link,  # type: typing.Callable[[ReqLink], typing.Iterable[_typeutils.VarItemType]]
+    ):  # type: (...) -> _SetWithReqLinksType[_typeutils.VarItemType]
         """
         Builds a set of items with related requirement links.
 
         :param req_link_holders: List of requirement references or requirement verifiers to walk through.
         :param items_from_link: Function that retrieves the items to save from requirement links.
         """
-        _set_with_req_links = {}  # type: _SetWithReqLinksType[_VarItemType]
+        _set_with_req_links = {}  # type: _SetWithReqLinksType[_typeutils.VarItemType]
 
         # Walk from `req_link_holders` through requirement links and items to save.
         for _req_link_holder in req_link_holders:  # type: typing.Union[_ReqRefType, _ReqVerifierType]
             for _req_link in _req_link_holder.req_links:  # type: ReqLink
-                for _item in items_from_link(_req_link):  # type: _VarItemType
+                for _item in items_from_link(_req_link):  # type: _typeutils.VarItemType
                     # Build unordered sets of requirement links first.
                     if _item not in _set_with_req_links:
                         _set_with_req_links[_item] = [_req_link]

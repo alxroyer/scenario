@@ -24,8 +24,9 @@ import types
 import typing
 
 if True:
+    from . import _enumutils as _enumutils  # @perf
+    from . import _textutils as _textutils  # @perf
     from ._assertions import Assertions as _AssertionsImpl  # @inheritance
-    from ._enumutils import enum2str as _enum2str  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
@@ -35,8 +36,8 @@ if True:
     from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # @metaclass
     from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # @inheritance
-    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
+    from . import _setutils as _setutils
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
@@ -46,12 +47,10 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
-    from ._setutils import OrderedSetType as _OrderedSetType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl, metaclass=_MetaScenarioDefinitionImpl):
@@ -83,7 +82,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
     def __init__(
             self,
             title=None,  # type: typing.Optional[str]
-            description=None,  # type: typing.Optional[_AnyLongTextType]
+            description=None,  # type: typing.Optional[_textutils.AnyLongTextType]
     ):  # type: (...) -> None
         """
         Initializes a scenario instance with optional title and description.
@@ -107,7 +106,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         #:
         #: More detailed explanation about the scenario than :attr:`title`.
         #: Commonly describes the purpose or objectives of the test.
-        self.description = _anylongtext2str(description or "")  # type: str
+        self.description = _textutils.anylongtext2str(description or "")  # type: str
 
         #: Definition location.
         self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType
@@ -193,7 +192,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
 
         # User scenario attributes.
-        self.__user_attributes[_enum2str(name)] = value
+        self.__user_attributes[_enumutils.enum2str(name)] = value
         return self
 
     def getattribute(
@@ -218,7 +217,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
 
         # User scenario attributes.
-        return self.__user_attributes[_enum2str(name)]
+        return self.__user_attributes[_enumutils.enum2str(name)]
 
     def getattributenames(self):  # type: (...) -> typing.Sequence[str]
         """
@@ -289,7 +288,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             *,
             walk_steps=False,  # type: bool
             walk_subrefs=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         :meth:`._reqverifier.ReqVerifier.getreqlinks()` override for the ``walk_steps`` option augmentation.
 

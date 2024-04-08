@@ -23,15 +23,14 @@ import re
 import typing
 
 if True:
+    from . import _consoleutils as _consoleutils  # @perf
     from . import _datetimeutils as _datetimeutils  # @perf
-    from ._consoleutils import Console as _ConsoleImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
     from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @perf
     from ._loghandler import LogHandler as _LogHandlerImpl  # @perf
 if typing.TYPE_CHECKING:
-    from ._consoleutils import Console as _ConsoleType
     from ._logextradata import LogExtraData as _LogExtraDataType
     from ._logger import Logger as _LoggerType
 
@@ -125,7 +124,7 @@ class LogFormatter(logging.Formatter):
             _log_line += ((" " * ScenarioLogging.ACTION_RESULT_MARGIN) + "  ")
 
         # Log level, with color, when applicable.
-        _level_color = None  # type: typing.Optional[_ConsoleType.Color]
+        _level_color = None  # type: typing.Optional[_consoleutils.Console.Color]
         if self._with(record, _LogExtraDataImpl.COLOR, default=True):
             _level_color = self._levelcolor(record.levelno)
         if self._with(record, _LogExtraDataImpl.LOG_LEVEL, default=True):
@@ -133,7 +132,7 @@ class LogFormatter(logging.Formatter):
                 _log_line += f"\033[{_level_color}m"
             _log_line += record.levelname
             if _level_color:
-                _log_line += f"\033[{_ConsoleImpl.Color.RESET}m"
+                _log_line += f"\033[{_consoleutils.Console.Color.RESET}m"
             _max_level_len = max(len(logging.getLevelName(x)) for x in range(0, logging.CRITICAL + 1))  # type: int
             _log_line += f"{' ':>{_max_level_len - len(record.levelname)}}"
             _log_line += " "
@@ -143,7 +142,7 @@ class LogFormatter(logging.Formatter):
             _log_line += _FAST_PATH.main_logger.getindentation()
 
         # Log message color (begin).
-        _message_color = None  # type: typing.Optional[_ConsoleType.Color]
+        _message_color = None  # type: typing.Optional[_consoleutils.Console.Color]
         if self._with(record, _LogExtraDataImpl.COLOR, default=True):
             if isinstance(_logger, _LoggerImpl):
                 _message_color = _logger.getlogcolor()
@@ -164,7 +163,7 @@ class LogFormatter(logging.Formatter):
 
         # Log message color (end).
         if _message_color:
-            _log_line += f"\033[{_ConsoleImpl.Color.RESET}m"
+            _log_line += f"\033[{_consoleutils.Console.Color.RESET}m"
 
         # Exception.
         _exception = ""  # type: str
@@ -230,7 +229,7 @@ class LogFormatter(logging.Formatter):
     @staticmethod
     def _levelcolor(
             level,  # type: int
-    ):  # type: (...) -> _ConsoleType.Color
+    ):  # type: (...) -> _consoleutils.Console.Color
         """
         Determines log color out from log level.
 
@@ -238,13 +237,13 @@ class LogFormatter(logging.Formatter):
         :return: Log color corresponding to the given log level.
         """
         if level < logging.INFO:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.DEBUG), _ConsoleImpl.Color.DARKGREY02)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.DEBUG), _consoleutils.Console.Color.DARKGREY02)
         elif level < logging.WARNING:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.INFO), _ConsoleImpl.Color.WHITE01)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.INFO), _consoleutils.Console.Color.WHITE01)
         elif level < logging.ERROR:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.WARNING), _ConsoleImpl.Color.YELLOW33)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.WARNING), _consoleutils.Console.Color.YELLOW33)
         else:
-            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.ERROR), _ConsoleImpl.Color.RED91)
+            return _FAST_PATH.scenario_config.logcolor(logging.getLevelName(logging.ERROR), _consoleutils.Console.Color.RED91)
 
     @staticmethod
     def nocolor(

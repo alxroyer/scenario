@@ -23,9 +23,9 @@ import abc
 import typing
 
 if True:
+    from . import _setutils as _setutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._reflection import qualname as _qualname  # @perf
-    from ._setutils import orderedset as _orderedset  # @perf
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -34,7 +34,6 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class ReqRef:
@@ -47,14 +46,14 @@ class ReqRef:
     @staticmethod
     def orderedset(
             req_refs,  # type: typing.Iterable[ReqRef]
-    ):  # type: (...) -> _OrderedSetType[ReqRef]
+    ):  # type: (...) -> _setutils.OrderedSetType[ReqRef]
         """
         Ensures an ordered set of unique :class:`ReqRef` items.
 
         :param req_refs: Unordered list of :class:`ReqRef` items.
         :return: Ordered set of unique :class:`ReqRef` items, ordered by requirement reference id.
         """
-        return _orderedset(
+        return _setutils.orderedset(
             req_refs,
             key=ReqRefHelper.sortkeyfunction,
         )
@@ -130,7 +129,7 @@ class ReqRef:
         return self._req
 
     @property
-    def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
+    def req_links(self):  # type: () -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Links with requirement verifiers.
 
@@ -210,7 +209,7 @@ class ReqRef:
             req_verifier=None,  # type: _ReqVerifierType
             *,
             walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this requirement reference,
         filtered with the given predicates.

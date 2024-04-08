@@ -24,7 +24,7 @@ import abc
 import typing
 
 if typing.TYPE_CHECKING:
-    from ._typeutils import VarItemType as _VarItemType
+    from . import _typeutils as _typeutils
 
 
 if typing.TYPE_CHECKING:
@@ -36,13 +36,13 @@ if typing.TYPE_CHECKING:
     #: Variable key function.
     #:
     #: Used to sort lists of items.
-    VarKeyFunctionType = typing.Callable[[_VarItemType], typing.Any]
+    VarKeyFunctionType = typing.Callable[[_typeutils.VarItemType], typing.Any]
 
 
 def orderedset(
-        *unordered,  # type: typing.Iterable[_VarItemType]
-        key,  # type: VarKeyFunctionType[_VarItemType]
-):  # type: (...) -> OrderedSetType[_VarItemType]
+        *unordered,  # type: typing.Iterable[_typeutils.VarItemType]
+        key,  # type: VarKeyFunctionType[_typeutils.VarItemType]
+):  # type: (...) -> OrderedSetType[_typeutils.VarItemType]
     """
     Sorts and ensures unique items from unordered list(s).
 
@@ -51,8 +51,8 @@ def orderedset(
     :return: Resulting ordered set.
     """
     # Sum up all `unordered` items in a single list.
-    _ordered_set = []  # type: typing.List[_VarItemType]
-    for _unordered in unordered:  # type: typing.Iterable[_VarItemType]
+    _ordered_set = []  # type: typing.List[_typeutils.VarItemType]
+    for _unordered in unordered:  # type: typing.Iterable[_typeutils.VarItemType]
         _ordered_set.extend(_unordered)
 
     # Ensure unique items.

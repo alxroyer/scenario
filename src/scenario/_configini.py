@@ -23,8 +23,8 @@ import os
 import typing
 
 if True:
+    from . import _debugutils as _debugutils  # @perf
     from ._configkey import ConfigKey as _ConfigKeyImpl  # @perf
-    from ._debugutils import saferepr as _saferepr  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
@@ -121,7 +121,7 @@ class ConfigIni:
                 _FAST_PATH.config_db.debug(f"Feeding INI with [{_ini_section}]/{current_node_subkey} = '{current_node}'")
                 _config_parser.set(_ini_section, current_node_subkey, f"{current_node}")
         _dict = _FAST_PATH.config_db.get(root)  # type: typing.Any
-        assert isinstance(_dict, dict), f"Configuration at '{root}' is not a dictionary ({_saferepr(_dict)})"
+        assert isinstance(_dict, dict), f"Configuration at '{root}' is not a dictionary ({_debugutils.saferepr(_dict)})"
         _feedini("", "", _dict)
 
         # Save the file. Use UTF-8 encoding.

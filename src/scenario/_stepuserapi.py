@@ -22,15 +22,14 @@ import abc
 import typing
 
 if True:
+    from . import _textutils as _textutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @perf
-    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class StepUserApi(abc.ABC):
@@ -80,7 +79,7 @@ class StepUserApi(abc.ABC):
 
     def ACTION(  # noqa  ## PEP8: Function name should be lower case
             self,
-            action,  # type: _AnyLongTextType
+            action,  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> bool
         """
         Describes a test action.
@@ -98,7 +97,7 @@ class StepUserApi(abc.ABC):
 
     def RESULT(  # noqa  ## PEP8: Function name should be lower case
             self,
-            result,  # type: _AnyLongTextType
+            result,  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> bool
         """
         Describes an expected result.
@@ -127,7 +126,7 @@ class StepUserApi(abc.ABC):
 
     def evidence(
             self,
-            evidence,  # type: _AnyLongTextType
+            evidence,  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> None
         """
         Saves an evidence for the current action or expected result.
@@ -136,10 +135,10 @@ class StepUserApi(abc.ABC):
         """
         if isinstance(evidence, str):
             # Text as a string (possibly long).
-            evidence = _anylongtext2str(evidence)
+            evidence = _textutils.anylongtext2str(evidence)
         elif isinstance(evidence, list) and evidence and all([isinstance(_item, str) for _item in evidence]):
             # Long text as a non-empty list of strings.
-            evidence = _anylongtext2str(evidence)
+            evidence = _textutils.anylongtext2str(evidence)
         else:
             # In case the user provides something that is not a regular string.
             evidence = repr(evidence)

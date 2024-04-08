@@ -23,7 +23,7 @@ import typing
 import urllib.parse
 
 if True:
-    from .._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from .. import _enumutils as _enumutils  # @inheritance
 
 
 class HttpRequest(http.server.BaseHTTPRequestHandler):
@@ -44,7 +44,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
     in order to redirect ``http.server`` logging to our logging system.
     """
 
-    class Method(_StrEnumImpl):
+    class Method(_enumutils.StrEnum):
         """
         HTTP methods as an enum.
         """

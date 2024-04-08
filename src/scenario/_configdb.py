@@ -24,8 +24,8 @@ import os
 import typing
 
 if True:
+    from . import _enumutils as _enumutils  # @inheritance
     from ._confignode import ConfigNode as _ConfigNodeImpl  # @perf
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -48,7 +48,7 @@ class ConfigDatabase(_LoggerImpl):
     See the :ref:`configuration database <config-db>` documentation.
     """
 
-    class FileFormat(_StrEnumImpl):
+    class FileFormat(_enumutils.StrEnum):
         """
         Configuration file formats.
         """

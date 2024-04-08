@@ -26,7 +26,7 @@ import re
 import typing
 
 if True:
-    from ._debugutils import saferepr as _saferepr  # @perf
+    from . import _debugutils as _debugutils  # @perf
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
@@ -67,7 +67,7 @@ class JsonDict(abc.ABC):
         if isinstance(obj, dict) and all([isinstance(_key, str) for _key in obj]):
             return obj
         else:
-            raise TypeError(f"{_saferepr(obj)} not a JSON-like dictionary")
+            raise TypeError(f"{_debugutils.saferepr(obj)} not a JSON-like dictionary")
 
     @staticmethod
     def isjson(
@@ -188,7 +188,7 @@ class JsonDict(abc.ABC):
         try:
             return JsonDict.assertjsondictinstance(_content)
         except TypeError:
-            raise ValueError(f"Bad content {_saferepr(_content)}, '{input_path}' should contain a string dictionary")
+            raise ValueError(f"Bad content {_debugutils.saferepr(_content)}, '{input_path}' should contain a string dictionary")
 
     @staticmethod
     def writefile(

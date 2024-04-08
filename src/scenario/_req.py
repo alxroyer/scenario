@@ -22,18 +22,16 @@ import abc
 import typing
 
 if True:
+    from . import _setutils as _setutils  # @perf
+    from . import _textutils as _textutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._reflection import qualname as _qualname  # @perf
-    from ._setutils import orderedset as _orderedset  # @perf
-    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class Req:
@@ -44,14 +42,14 @@ class Req:
     @staticmethod
     def orderedset(
             reqs,  # type: typing.Iterable[Req]
-    ):  # type: (...) -> _OrderedSetType[Req]
+    ):  # type: (...) -> _setutils.OrderedSetType[Req]
         """
         Ensures an ordered set of unique :class:`Req` items.
 
         :param reqs: Unordered list of :class:`Req` items.
         :return: Ordered set of unique :class:`Req` items, ordered by requirement id.
         """
-        return _orderedset(
+        return _setutils.orderedset(
             reqs,
             key=ReqHelper.sortkeyfunction,
         )
@@ -61,7 +59,7 @@ class Req:
             *,
             id,  # type: str  # noqa  ## Shadows built-in name 'id'
             title="",  # type: str
-            text="",  # type: _AnyLongTextType
+            text="",  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> None
         """
         Initializes a requirement instance with the given input data,
@@ -86,7 +84,7 @@ class Req:
         #: Requirement full text.
         #:
         #: Optional.
-        self.text = _anylongtext2str(text)  # type: str
+        self.text = _textutils.anylongtext2str(text)  # type: str
 
     def __repr__(self):  # type: () -> str
         """
@@ -136,7 +134,7 @@ class Req:
         return _FAST_PATH.req_db.getreqref(self)
 
     @property
-    def subrefs(self):  # type: () -> _OrderedSetType[_ReqRefType]
+    def subrefs(self):  # type: () -> _setutils.OrderedSetType[_ReqRefType]
         """
         References to subparts of this requirement.
 
@@ -156,7 +154,7 @@ class Req:
             *,
             walk_subrefs=False,  # type: bool
             walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this requirement,
         filtered with the given predicates.

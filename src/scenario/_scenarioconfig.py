@@ -21,14 +21,13 @@
 import typing
 
 if True:
-    from ._consoleutils import Console as _ConsoleImpl  # @perf
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from . import _consoleutils as _consoleutils  # @perf
+    from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
-    from ._consoleutils import Console as _ConsoleType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
 
@@ -44,7 +43,7 @@ class ScenarioConfig(_LoggerImpl):
     and the configuration database (see: :class:`._configdb.ConfigDatabase`).
     """
 
-    class Key(_StrEnumImpl):
+    class Key(_enumutils.StrEnum):
         """
         `scenario` configuration keys.
         """
@@ -207,8 +206,8 @@ class ScenarioConfig(_LoggerImpl):
     def logcolor(
             self,
             level,  # type: str
-            default,  # type: _ConsoleType.Color
-    ):  # type: (...) -> _ConsoleType.Color
+            default,  # type: _consoleutils.Console.Color
+    ):  # type: (...) -> _consoleutils.Console.Color
         """
         Retrieves the expected log color for the given log level.
 
@@ -225,7 +224,7 @@ class ScenarioConfig(_LoggerImpl):
                 _color_number = _config_node.cast(type=int)  # type: int
                 # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
                 # self.debug("logcolor(level=%r, default=%r) -> %r", level, default, Console.Color(_color_number))
-                return _ConsoleImpl.Color(_color_number)
+                return _consoleutils.Console.Color(_color_number)
             except ValueError:
                 self.warning(_config_node.errmsg(f"Invalid color number {_config_node.data!r}"))
         # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.

@@ -23,7 +23,7 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
-    from ._debugutils import saferepr as _saferepr  # @perf
+    from . import _debugutils as _debugutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
@@ -165,7 +165,7 @@ class ScenarioResults(_LoggerImpl):
                 _attribute_value = str(scenario_execution.definition.getattribute(_attribute_name))  # type: str
                 # Avoid attribute display on several lines.
                 if len(_attribute_value.splitlines()) > 1:
-                    _attribute_value = str(_saferepr(_attribute_value))
+                    _attribute_value = str(_debugutils.saferepr(_attribute_value))
                 # Avoid displaying empty attributes.
                 if _attribute_value:
                     _extra_info.append(_attribute_value)

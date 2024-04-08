@@ -27,7 +27,7 @@ import threading
 import typing
 
 if True:
-    from ._debugutils import saferepr as _saferepr  # @perf
+    from . import _debugutils as _debugutils  # @perf
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import qualname as _qualname  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
@@ -423,7 +423,7 @@ class SubProcess:
 
         self._log(logging.DEBUG, "%s returned %r", self.tolongstring(), self.returncode)
         if self.returncode != 0:
-            self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, _saferepr(self.stderr))
+            self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, _debugutils.saferepr(self.stderr))
 
         return self
 

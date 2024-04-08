@@ -22,7 +22,7 @@ import enum
 import typing
 
 if True:
-    from ._enumutils import enum2str as _enum2str  # @perf
+    from . import _enumutils as _enumutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -110,7 +110,7 @@ class Handlers(_LoggerImpl):
 
             .. warning:: Does not prevent a later handler to be installed before this one.
         """
-        event = _enum2str(event)
+        event = _enumutils.enum2str(event)
 
         self.debug("Installing *%s* handler %r, scenario=%r, once=%r, first=%r", event, handler, scenario, once, first)
 
@@ -133,7 +133,7 @@ class Handlers(_LoggerImpl):
         :param event: Event triggered.
         :param handler: Handler function.
         """
-        event = _enum2str(event)
+        event = _enumutils.enum2str(event)
 
         self.debug("Removing *%s* handler %r", event, handler)
 
@@ -157,7 +157,7 @@ class Handlers(_LoggerImpl):
         :param event: Event met.
         :param data: Event data to pass on when calling each handler.
         """
-        event = _enum2str(event)
+        event = _enumutils.enum2str(event)
 
         self.debug("Executing *%s* handlers", event)
         if event in self._handlers:

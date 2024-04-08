@@ -23,13 +23,13 @@ Defined in a separate module in order to avoid cyclic dependencies with ``typing
 import typing
 
 if typing.TYPE_CHECKING:
+    from . import _setutils as _setutils
+    from . import _textutils as _textutils
+    from . import _typeutils as _typeutils
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
-    from ._setutils import OrderedSetType as _OrderedSetType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
-    from ._typeutils import VarItemType as _VarItemType
 
 
 if typing.TYPE_CHECKING:
@@ -90,7 +90,7 @@ if typing.TYPE_CHECKING:
     ReqLinkDefType = typing.Union[
         AnyReqRefType,
         typing.Tuple[AnyReqRefType],
-        typing.Tuple[AnyReqRefType, _AnyLongTextType],
+        typing.Tuple[AnyReqRefType, _textutils.AnyLongTextType],
     ]
 
     #: Any kind of requirement link, either:
@@ -105,4 +105,4 @@ if typing.TYPE_CHECKING:
     #: Set of items with related requirement links.
     #:
     #: See :meth:`._reqlink.ReqLink.orderedset()` for requirement link order details.
-    SetWithReqLinksType = typing.Dict[_VarItemType, _OrderedSetType[_ReqLinkType]]
+    SetWithReqLinksType = typing.Dict[_typeutils.VarItemType, _setutils.OrderedSetType[_ReqLinkType]]

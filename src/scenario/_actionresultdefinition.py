@@ -21,11 +21,10 @@ Action / expected result definition.
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
-    from ._textutils import anylongtext2str as _anylongtext2str  # @perf
+    from . import _enumutils as _enumutils  # @inheritance
+    from . import _textutils as _textutils  # @perf
 if typing.TYPE_CHECKING:
     from ._stepdefinition import StepDefinition as _StepDefinitionType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class ActionResultDefinition:
@@ -33,7 +32,7 @@ class ActionResultDefinition:
     This class describes both an action or an expected result.
     """
 
-    class Type(_StrEnumImpl):
+    class Type(_enumutils.StrEnum):
         """
         Enum that tells whether a user text defines an action or an expected result.
         """
@@ -45,7 +44,7 @@ class ActionResultDefinition:
     def __init__(
             self,
             type,  # type: ActionResultDefinition.Type  # noqa  ## Shadows built-in name 'type'
-            description,  # type: _AnyLongTextType
+            description,  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> None
         """
         :param type: Action/result type.
@@ -58,7 +57,7 @@ class ActionResultDefinition:
         #: Action/result type.
         self.type = type  # type: ActionResultDefinition.Type
         #: Action/result textual description.
-        self.description = _anylongtext2str(description)  # type: str
+        self.description = _textutils.anylongtext2str(description)  # type: str
         #: Owner step.
         #:
         #: Set when :meth:`._stepdefinition.StepDefinition.addactionresult()` is called.

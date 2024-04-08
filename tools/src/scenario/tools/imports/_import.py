@@ -23,6 +23,7 @@ import scenario
 if True:
     from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from ._form import ImportForm as _ImportFormType
     from ._modulelevelcontext import ModuleLevelContext as _ModuleLevelContextType
 
 
@@ -41,9 +42,8 @@ class Import(_ErrorTrackerLoggerImpl):
 
         def ismodule(self):  # type: (...) -> bool
             if re.match(r"^[_a-z0-9]+$", self.original_name):
-                _imported_module_path = self.owner_import._imported_module_path  # type: typing.Optional[scenario.Path]  # noqa  ## Access to protected member
-                if _imported_module_path and _imported_module_path.is_dir():
-                    return (_imported_module_path / f"{self.original_name}.py").is_file()
+                if self.owner_import.imported_module_path and self.owner_import.imported_module_path.is_dir():
+                    return (self.owner_import.imported_module_path / f"{self.original_name}.py").is_file()
             return False
 
         def isfunction(self):  # type: (...) -> bool
@@ -76,6 +76,8 @@ class Import(_ErrorTrackerLoggerImpl):
         self.context = context  # type: _ModuleLevelContextType
         self.raw_src = src  # type: bytes
         self.stripped_src = ModuleParser.stripsrc(src)  # type: bytes
+
+        # Resolved members.
         self._imported_module_original_name = ""  # type: str
         self._imported_module_local_name = None  # type: typing.Optional[str]
         self._imported_module_path = None  # type: typing.Optional[scenario.Path]
@@ -94,9 +96,6 @@ class Import(_ErrorTrackerLoggerImpl):
             f" => {self._imported_module_path}" if self._imported_module_path else "",
             f">",
         ])
-
-    def isfromsyntax(self):  # type: (...) -> bool
-        return self.stripped_src.startswith(b'from ')
 
     @property
     def imported_module_original_name(self):  # type: () -> str
@@ -125,9 +124,15 @@ class Import(_ErrorTrackerLoggerImpl):
         return self._imported_module_final_path
 
     def issystemimport(self):  # type: (...) -> bool
+        """
+        Import of a module that does not belong to the `scenario` project.
+        """
         return self.imported_module_path is None
 
     def isscenarioimport(self):  # type: (...) -> bool
+        """
+        Import of a `scenario` module.
+        """
         return self.imported_module_path is not None
 
     @property
@@ -135,21 +140,37 @@ class Import(_ErrorTrackerLoggerImpl):
         self._ensureparsed()
         return self._imported_symbols
 
-    def isreexport(self):  # type: (...) -> bool
-        from .. import _paths
+    def ismoduleimport(self):  # type: (...) -> bool
+        """
+        Import of a module per se.
+        """
+        if not self.imported_symbols:
+            # No imported symbols, this is a module import by the way.
+            return True
+        else:
+            # Check all imported symbols are module imports.
+            return all([_symbol.ismodule() for _symbol in self.imported_symbols])
 
-        if not any([
-            self.importer_module_path.name == "__init__.py",
-            self.importer_module_path in [
-                _paths.SRC_PATH / "scenario" / "_typeexports.py",
-                _paths.TEST_CASES_PATH / "steps" / "common.py",
-                _paths.TEST_SRC_PATH / "scenario" / "test" / "_datascenarios.py",
-            ],
-        ]):
-            return False
+    def isreexport(self):  # type: (...) -> bool
+        # Check all imported symbols are reexports.
         if self.imported_symbols:
             return all([_symbol.isreexport() for _symbol in self.imported_symbols])
         return False
+
+    def form(self):  # type: (...) -> _ImportFormType
+        from ._form import ImportForm
+
+        if self.stripped_src.startswith(b'import '):
+            if self.ismoduleimport():
+                return ImportForm.SYSTEM_IMPORT
+            else:
+                # Should never happen, defensive code.
+                self.raiseerror(SyntaxError, f"System import {self.stripped_src!r} should be a module import")
+        else:
+            if self.ismoduleimport():
+                return ImportForm.IMPORT_MODULE_AS
+            else:
+                return ImportForm.FROM_MODULE_IMPORT
 
     def _ensureparsed(
             self,

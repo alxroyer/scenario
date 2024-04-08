@@ -23,6 +23,7 @@ import scenario
 import scenario.text
 
 if typing.TYPE_CHECKING:
+    from ._import import Import as _ImportType
     from ._moduleparser import ModuleParser as _ModuleParserType
 
 
@@ -56,6 +57,9 @@ class CheckImports:
         # Set main path after arguments have been parsed.
         scenario.Path.setmainpath(_paths.ROOT_SCENARIO_PATH, log_level=logging.INFO)
 
+        # Check configuration data.
+        self._checkconfigdata()
+
         # Process paths.
         for _start_path in (CheckImports.Args.getinstance().paths or (
             _paths.BIN_PATH,
@@ -75,6 +79,13 @@ class CheckImports:
         else:
             scenario.logging.info(f"{len(_errors)} {_errors} in {len(_modules)} {_modules}")
             return scenario.ErrorCode.TEST_ERROR
+
+    def _checkconfigdata(self):  # type: (...) -> None
+        from ._optimized import OPTIMIZED_PATHS
+
+        # Check all files in `OPTIMIZED_MODULES` correspond to actual files.
+        for _path in OPTIMIZED_PATHS:  # type: scenario.Path
+            scenario.Assertions.assertisfile(_path)
 
     def _walkpath(
             self,
@@ -96,6 +107,7 @@ class CheckImports:
     ):  # type: (...) -> None
         from ._moduleparser import ModuleParser
 
+        # Parse the module.
         _module_parser = ModuleParser(path)
         self.modules.append(_module_parser)
         try:
@@ -103,23 +115,23 @@ class CheckImports:
         except Exception as _err:
             _module_parser.error(f"{_err}")
             return
+        _module_parser.debug("%d module level import(s)", len(_module_parser.module_level_imports))
+        _module_parser.debug("%d local import(s)", len(_module_parser.local_imports))
 
-        self._checkmodulelevelimports(_module_parser)
+        # Check imports.
+        self._checkimportcontext(_module_parser)
+        self._checkimportsyntax(_module_parser)
+        self._checkimportedsymbols(_module_parser)
+        self._checkimportjustfications(_module_parser)
         self._checklocalimports(_module_parser)
 
-    def _checkmodulelevelimports(
+    def _checkimportcontext(
             self,
             module_parser,  # type: _ModuleParserType
     ):  # type: (...) -> None
         from .. import _paths
-        from ._import import Import
 
-        # Check module level imports.
-        module_parser.debug("%d module level import(s)", len(module_parser.module_level_imports))
-        for _import in module_parser.module_level_imports:  # type: Import
-
-            # === Import context ===
-
+        for _import in module_parser.module_level_imports:  # type: _ImportType
             # ---
             # RULE: Only system imports at pure module level.
             # ---
@@ -182,13 +194,6 @@ class CheckImports:
                     _import.error("Only system imports at pure module level: %r", _import.stripped_src)
 
             # ---
-            # RULE: Avoid `# noqa` on module level imports
-            #       (except for main blocks and for reexports).
-            # ---
-            if re.search(rb'# *noqa', _import.raw_src) and (not _import.context.isifblockmain()) and (not _import.isreexport()):
-                _import.error("Avoid `# noqa` on module level imports: %r", _import.raw_src)
-
-            # ---
             # RULE: Avoid unqualified `if` blocks.
             # ---
             if _import.context.isunqualifiedifblock():
@@ -203,8 +208,26 @@ class CheckImports:
                 else:
                     _import.error("Avoid `try` blocks, except for reexports: %r", _import.stripped_src)
 
-            # === Import syntax ===
+            # ---
+            # RULE: Avoid duplicate module imports between implementation and typing imports.
+            # ---
+            if _import.context.isifblockimpl() and _import.ismoduleimport():
+                for _typing_import in module_parser.typing_imports:  # type: _ImportType
+                    if _typing_import.ismoduleimport():
+                        if _typing_import.imported_module_final_path == _import.imported_module_final_path:
+                            _import.error("Duplicate module import: %r", _import.stripped_src)
+                            _typing_import.error("Duplicate module import: %r", _typing_import.stripped_src)
+                            break
+                else:
+                    _import.debug("No duplicate typing import for implementation module import: %r", _import.stripped_src)
 
+    def _checkimportsyntax(
+            self,
+            module_parser,  # type: _ModuleParserType
+    ):  # type: (...) -> None
+        from ._form import expectedform, ImportForm
+
+        for _import in module_parser.module_level_imports:  # type: _ImportType
             # ---
             # RULE: Only one symbol per import line.
             # ---
@@ -215,13 +238,27 @@ class CheckImports:
             else:
                 _import.error("Several symbols imported in a single line: %r", _import.stripped_src)
 
-            # === Imported symbols ===
+            # ---
+            # RULE: Desired import form.
+            # ---
+            if _import.imported_module_final_path and (not _import.isreexport()):
+                _expected_form = expectedform(_import.imported_module_final_path)  # type: ImportForm
+                if _import.form() != _expected_form:
+                    _import.error("`%s` syntax expected: %r", _expected_form, _import.stripped_src)
+                else:
+                    _import.debug("`%s` syntax as expected: %r", _expected_form, _import.stripped_src)
 
+    def _checkimportedsymbols(
+            self,
+            module_parser,  # type: _ModuleParserType
+    ):  # type: (...) -> None
+        for _import in module_parser.module_level_imports:  # type: _ImportType
             if _import.context.isifblockmain():
-                # Don't check renames, privates or reexports in main blocks.
+                # Don't check imported symbols in main blocks.
+                # Consider as local imports for the purpose.
                 _import.debug("Main block import %r")
             else:
-                for _imported_symbol in _import.imported_symbols:  # type: Import.ImportedSymbol
+                for _imported_symbol in _import.imported_symbols:  # type: _ImportType.ImportedSymbol
                     if not _imported_symbol.local_name:
                         # ---
                         # RULE: Module level imports should be renamed.
@@ -268,12 +305,22 @@ class CheckImports:
                             else:
                                 _import.error("%r should be suffixed with 'Type': %r", _imported_symbol.original_name, _import.stripped_src)
 
-            # === Justification ===
+    def _checkimportjustfications(
+            self,
+            module_parser,  # type: _ModuleParserType
+    ):  # type: (...) -> None
+        for _import in module_parser.module_level_imports:  # type: _ImportType
+            # ---
+            # RULE: Avoid `# noqa` on module level imports
+            #       (except for main blocks and for reexports).
+            # ---
+            if re.search(rb'# *noqa', _import.raw_src) and (not _import.context.isifblockmain()) and (not _import.isreexport()):
+                _import.error("Avoid `# noqa` on module level imports: %r", _import.raw_src)
 
             # ---
             # RULE: Implementation imports shall be justified.
             # ---
-            if _import.context.isifblockimpl() and not _import.isreexport():
+            if _import.context.isifblockimpl() and (not _import.isreexport()):
                 _match = re.match(rb"^[^#]*#(.*)$", _import.raw_src)  # type: typing.Optional[typing.Match[bytes]]
                 if (not _match) or (not _match.group(1).strip()):
                     _import.error("Justification missing with implementation import")
@@ -304,24 +351,17 @@ class CheckImports:
             module_parser,  # type: _ModuleParserType
     ):  # type: (...) -> None
         from .. import _paths
-        from ._import import Import
         from ._optimized import OPTIMIZED_PATHS
 
-        # Check all files in `OPTIMIZED_MODULES` correspond to actual files.
-        for _path in OPTIMIZED_PATHS:  # type: scenario.Path
-            scenario.Assertions.assertisfile(_path)
-
-        # Check local imports.
-        module_parser.debug("%d local import(s)", len(module_parser.local_imports))
-        for _import in module_parser.local_imports:  # type: Import
+        for _import in module_parser.local_imports:  # type: _ImportType
             # ---
             # RULE: Avoid local imports for optimized modules
             #       (except for imports from `scenario.ui` to `scenario` modules).
             # ---
-            if _import.imported_module_path in OPTIMIZED_PATHS:
+            if _import.imported_module_path and (_import.imported_module_path in OPTIMIZED_PATHS):
                 if (
                     _import.importer_module_path.is_relative_to(_paths.SRC_PATH / "scenario" / "ui")
-                    and _import.imported_module_path and (_import.imported_module_path.parent == (_paths.SRC_PATH / "scenario"))
+                    and (_import.imported_module_path.parent == (_paths.SRC_PATH / "scenario"))
                 ):
                     _import.debug("Local import for optimized module ignored from `scenario.ui`: %r", _import.stripped_src)
                 else:

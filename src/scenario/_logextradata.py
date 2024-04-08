@@ -23,12 +23,12 @@ import logging
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from . import _enumutils as _enumutils  # @inheritance
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
 
-class LogExtraData(_StrEnumImpl):
+class LogExtraData(_enumutils.StrEnum):
     """
     Keys to can be used in the dictionary passed on in the ``extra`` parameter of the standard ``logging`` functions.
     """

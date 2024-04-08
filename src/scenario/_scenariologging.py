@@ -23,7 +23,7 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
-    from ._enumutils import StrEnum as _StrEnumImpl  # @inheritance
+    from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -49,7 +49,7 @@ class ScenarioLogging:
     #: The scenario stack indentation pattern ensures that the '|' lines are presented the 'ACTION: ' or 'RESULT: ' pattern they relate to.
     SCENARIO_STACK_INDENTATION_PATTERN = "      | "  # type: str
 
-    class _Call(_StrEnumImpl):
+    class _Call(_enumutils.StrEnum):
         """
         :class:`ScenarioLogging` call identifiers.
         """

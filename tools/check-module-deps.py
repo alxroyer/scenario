@@ -26,7 +26,7 @@ sys.path.append(str(_root_scenario_path / "tools" / "src"))
 
 if __name__ == "__main__":
     import scenario
-    from scenario.tools.imports import CheckModuleDeps
+    import scenario.tools.imports
 
-    _res = CheckModuleDeps().run()  # type: scenario.ErrorCode
+    _res = scenario.tools.imports.CheckModuleDeps().run()  # type: scenario.ErrorCode
     sys.exit(int(_res))
