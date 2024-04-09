@@ -18,6 +18,7 @@ import re
 import typing
 
 import scenario
+import scenario.inners
 import scenario.test
 import scenario.text
 
@@ -118,9 +119,7 @@ class ParseScenarioLog(_LogParserStepImpl):
             return self._match.group(1)
 
         def indentationlevel(self):  # type: (...) -> int
-            from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
-
-            return self.indentation().count(self.step.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN))
+            return self.indentation().count(self.step.tobytes(scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN))
 
         def group(
                 self,
@@ -151,12 +150,10 @@ class ParseScenarioLog(_LogParserStepImpl):
             regex,  # type: bytes
             line,  # type: bytes
     ):  # type: (...) -> typing.Optional[ParseScenarioLog._Match]
-        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
-
         _match = re.search(
             rb''.join([
                 # Scenario stack indentation
-                rb'((%s)*)' % self.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN.replace("|", r"\|")),
+                rb'((%s)*)' % self.tobytes(scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN.replace("|", r"\|")),
                 # Following of the regex.
                 regex,
             ]),
@@ -170,15 +167,13 @@ class ParseScenarioLog(_LogParserStepImpl):
             self,
             line,  # type: bytes
     ):  # type: (...) -> bool
-        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
-
         # Useful typed variables.
         _match = None  # type: typing.Optional[ParseScenarioLog._Match]
         _error_level = ""  # type: str
 
         if self._match(rb'---+$', line):
             return True
-        if line.endswith(self.tobytes(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN.rstrip())):
+        if line.endswith(self.tobytes(scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN.rstrip())):
             return True
 
         # Beginning of scenario.

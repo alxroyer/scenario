@@ -15,14 +15,13 @@
 # limitations under the License.
 
 import scenario
+import scenario.inners
 import scenario.test
 
 
 class Logging421(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
-        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
-
         from logutils.logging420 import CheckUserIndentation, ExecUserIndentation
 
         scenario.test.TestCase.__init__(
@@ -37,8 +36,6 @@ class Logging421(scenario.test.TestCase):
 
         self.addstep(ExecUserIndentation(
             scenario.test.paths.SUPERSCENARIO_SCENARIO, subscenario=scenario.test.paths.LOGGING_INDENTATION_SCENARIO,
-            scenario_stack_indentation=ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN,
+            scenario_stack_indentation=scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN,
         ))
         self.addstep(CheckUserIndentation(ExecUserIndentation.getinstance()))
-
-

@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenariologging import ScenarioLogging as _ScenarioLoggingType
     from ._scenariorunner import ScenarioRunner as _ScenarioRunnerType
     from ._scenariostack import ScenarioStack as _ScenarioStackType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -79,6 +80,7 @@ class FastPath:
         "_req_verifier_helper_cls",
         "_scenario_config",
         "_scenario_definition_cls",
+        "_scenario_logging",
         "_scenario_runner",
         "_scenario_stack",
         "_step_definition_cls",
@@ -138,6 +140,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_stack()` property.
         self._scenario_stack = None  # type: typing.Optional[_ScenarioStackType]
+
+        #: :class:`._scenariologging.ScenarioLogging` singleton reference.
+        #:
+        #: Reference resolved by :meth:`scenario_logging()` property.
+        self._scenario_logging = None  # type: typing.Optional[_ScenarioLoggingType]
 
         #: :class:`._reqdb.ReqDatabase` singleton reference.
         #:
@@ -272,6 +279,16 @@ class FastPath:
             from ._scenariostack import SCENARIO_STACK  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_stack = SCENARIO_STACK
         return self._scenario_stack
+
+    @property
+    def scenario_logging(self):  # type: (...) -> _ScenarioLoggingType
+        """
+        :class:`._scenariologging.ScenarioLogging` singleton.
+        """
+        if self._scenario_logging is None:
+            from ._scenariologging import SCENARIO_LOGGING  # check-imports: ignore  ## `FastPath` local import.
+            self._scenario_logging = SCENARIO_LOGGING
+        return self._scenario_logging
 
     @property
     def req_db(self):  # type: () -> _ReqDatabaseType

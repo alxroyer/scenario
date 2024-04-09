@@ -97,8 +97,6 @@ class LogFormatter(logging.Formatter):
         :param record: Log record to format for printing.
         :return: Log string representation.
         """
-        from ._scenariologging import ScenarioLogging
-
         # Retrieve the logger reference from the record.
         # Memo: Logger reference as extra data set by :class:`logfilters.LoggerLogFilter`.
         _logger = _LogExtraDataHelperImpl.get(record, _LogExtraDataImpl.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
@@ -117,11 +115,11 @@ class LogFormatter(logging.Formatter):
 
         # Scenario stack indentation.
         if self._with(record, _LogExtraDataImpl.SCENARIO_STACK_INDENTATION, default=True):
-            _log_line += ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN * (_FAST_PATH.scenario_stack.size - 1)
+            _log_line += _FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN * (_FAST_PATH.scenario_stack.size - 1)
 
         # Action / result margin.
         if self._with(record, _LogExtraDataImpl.ACTION_RESULT_MARGIN, default=True):
-            _log_line += ((" " * ScenarioLogging.ACTION_RESULT_MARGIN) + "  ")
+            _log_line += ((" " * _FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN) + "  ")
 
         # Log level, with color, when applicable.
         _level_color = None  # type: typing.Optional[_consoleutils.Console.Color]

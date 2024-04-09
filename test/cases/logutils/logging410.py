@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.inners
 import scenario.test
 
 if True:
@@ -59,8 +60,6 @@ class CheckMainScenario(_LogVerificationStepImpl):
         self.result_indentation = 0  # type: int
 
     def step(self):  # type: (...) -> None
-        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
-
         self.STEP("Main scenario indentation")
 
         if self.RESULT("The beginning of the main scenario is displayed without indentation."):
@@ -76,7 +75,7 @@ class CheckMainScenario(_LogVerificationStepImpl):
                         evidence=True,
                     )
         if self.RESULT("The 'ACTION: ' patterns of the main scenario actions of are right-aligned "
-                       f"with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
+                       f"with {scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN} characters."):
             for _main_action_text in (
                 f"Execute the '{scenario.test.paths.SCENARIO_LOGGING_SCENARIO}' scenario.",
             ):  # type: str
@@ -84,7 +83,7 @@ class CheckMainScenario(_LogVerificationStepImpl):
                     self.assertregex(
                         r"".join([
                             r"^",
-                            r" " * (ScenarioLogging.ACTION_RESULT_MARGIN - len("ACTION: ")),
+                            r" " * (scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN - len("ACTION: ")),
                             r"ACTION: ",
                         ]),
                         _main_action_line,
@@ -92,7 +91,7 @@ class CheckMainScenario(_LogVerificationStepImpl):
                     )
                     self.action_indentation = _main_action_line.find("ACTION: ")
         if self.RESULT("The 'RESULT: ' patterns of the main scenario expected results are right-aligned "
-                       f"with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
+                       f"with {scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN} characters."):
             for _main_result_text in (
                 "No exception is thrown.",
             ):  # type: str
@@ -100,7 +99,7 @@ class CheckMainScenario(_LogVerificationStepImpl):
                     self.assertregex(
                         r"".join([
                             r"^",
-                            r" " * (ScenarioLogging.ACTION_RESULT_MARGIN - len("RESULT: ")),
+                            r" " * (scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN - len("RESULT: ")),
                             r"RESULT: ",
                         ]),
                         _main_result_line,
@@ -108,7 +107,7 @@ class CheckMainScenario(_LogVerificationStepImpl):
                     )
                     self.result_indentation = _main_result_line.find("RESULT: ")
         if self.RESULT("The 'EVIDENCE: ' patterns the the main scenario evidence are right-aligned "
-                       f"with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
+                       f"with {scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN} characters."):
             for _main_evidence_text in (
                 "Subscenario executed successfully",
             ):  # type: str
@@ -116,7 +115,7 @@ class CheckMainScenario(_LogVerificationStepImpl):
                     self.assertregex(
                         r"".join([
                             r"^",
-                            r" " * (ScenarioLogging.ACTION_RESULT_MARGIN - len("EVIDENCE: ")),
+                            r" " * (scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN - len("EVIDENCE: ")),
                             r"EVIDENCE: ",
                         ]),
                         _main_evidence_line,
@@ -127,14 +126,12 @@ class CheckMainScenario(_LogVerificationStepImpl):
 class CheckSubScenario(_LogVerificationStepImpl):
 
     def step(self):  # type: (...) -> None
-        from scenario._scenariologging import ScenarioLogging  # noqa  ## Access to protected module
-
         self.STEP("Subscenario indentation")
 
         assert isinstance(self.exec_step, CheckMainScenario)
 
-        _subscenario_regex_start = r"^" + ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN.replace("|", r"\|")  # type: str
-        if self.RESULT(f"The '{ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN}' indentation pattern "
+        _subscenario_regex_start = r"^" + scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN.replace("|", r"\|")  # type: str
+        if self.RESULT(f"The '{scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN}' indentation pattern "
                        "makes the '|' characters be indented constantly, and below the 'ACTION: ' and 'RESULT: ' patterns."):
             self.evidence(f"Main action indentation: {self.exec_step.action_indentation}")
             self.assertgreater(self.exec_step.action_indentation, 0)
@@ -145,7 +142,7 @@ class CheckSubScenario(_LogVerificationStepImpl):
                 self.exec_step.result_indentation,
             )  # type: int
             _subscenario_line_indentation = -1  # type: int
-            for _subscenario_line in self.assertlines(ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN):  # type: str
+            for _subscenario_line in self.assertlines(scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN):  # type: str
                 self.evidence(f"Subscenario line: {_subscenario_line!r}")
                 if _subscenario_line_indentation < 0:
                     _subscenario_line_indentation = _subscenario_line.find("|")
@@ -161,14 +158,14 @@ class CheckSubScenario(_LogVerificationStepImpl):
             # Check we have actually processed subscenario lines.
             self.assertgreater(_subscenario_line_indentation, 0)
         if self.RESULT("The beginning of the subscenario is displayed "
-                       f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern."):
+                       f"with the {scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern."):
             for _subscenario_beginning_line in self.assertlines(f"SCENARIO '{scenario.test.paths.SCENARIO_LOGGING_SCENARIO}'"):  # type: str
                 self.assertregex(
                     _subscenario_regex_start + r"SCENARIO ", _subscenario_beginning_line,
                     evidence=True,
                 )
         if self.RESULT("The steps of the subscenario are displayed "
-                       f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern."):
+                       f"with the {scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern."):
             for _subscenario_step_text in (
                 "STEP#1: Scenario logging",
             ):  # type: str
@@ -178,8 +175,8 @@ class CheckSubScenario(_LogVerificationStepImpl):
                         evidence=True,
                     )
         if self.RESULT("The 'ACTION: ' patterns of the subscenario actions are prefixed "
-                       f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
-                       f"then right-aligned with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
+                       f"with the {scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
+                       f"then right-aligned with {scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN} characters."):
             for _subscenario_action_text in (
                 "This is a sample action.",
             ):  # type: str
@@ -187,15 +184,15 @@ class CheckSubScenario(_LogVerificationStepImpl):
                     self.assertregex(
                         r"".join([
                             _subscenario_regex_start,
-                            r" " * (ScenarioLogging.ACTION_RESULT_MARGIN - len("ACTION: ")),
+                            r" " * (scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN - len("ACTION: ")),
                             r"ACTION: ",
                         ]),
                         _subscenario_action_line,
                         evidence=True,
                     )
         if self.RESULT("The 'RESULT: ' patterns of the of the subscenario expected results are prefixed "
-                       f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
-                       f"then right-aligned with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
+                       f"with the {scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
+                       f"then right-aligned with {scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN} characters."):
             for _subscenario_result_text in (
                 "This is a sample expected result.",
             ):  # type: str
@@ -203,15 +200,15 @@ class CheckSubScenario(_LogVerificationStepImpl):
                     self.assertregex(
                         r"".join([
                             _subscenario_regex_start,
-                            r" " * (ScenarioLogging.ACTION_RESULT_MARGIN - len("RESULT: ")),
+                            r" " * (scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN - len("RESULT: ")),
                             r"RESULT: ",
                         ]),
                         _subscenario_result_line,
                         evidence=True,
                     )
         if self.RESULT("The 'EVIDENCE: ' patterns of of the subscenario evidence are prefixed "
-                       f"with the {ScenarioLogging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
-                       f"then right-aligned with {ScenarioLogging.ACTION_RESULT_MARGIN} characters."):
+                       f"with the {scenario.inners.FAST_PATH.scenario_logging.SCENARIO_STACK_INDENTATION_PATTERN!r} indentation pattern, "
+                       f"then right-aligned with {scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN} characters."):
             for _subscenario_evidence_text in (
                 "Action evidence.",
                 "Expected result evidence.",
@@ -220,7 +217,7 @@ class CheckSubScenario(_LogVerificationStepImpl):
                     self.assertregex(
                         r"".join([
                             _subscenario_regex_start,
-                            r" " * (ScenarioLogging.ACTION_RESULT_MARGIN - len("EVIDENCE: ")),
+                            r" " * (scenario.inners.FAST_PATH.scenario_logging.ACTION_RESULT_MARGIN - len("EVIDENCE: ")),
                             r"EVIDENCE: ",
                         ]),
                         _subscenario_evidence_line,
