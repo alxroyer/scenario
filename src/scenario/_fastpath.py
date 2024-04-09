@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._scenariologging import ScenarioLogging as _ScenarioLoggingType
     from ._scenariorunner import ScenarioRunner as _ScenarioRunnerType
     from ._scenariostack import ScenarioStack as _ScenarioStackType
@@ -80,6 +81,7 @@ class FastPath:
         "_req_verifier_helper_cls",
         "_scenario_config",
         "_scenario_definition_cls",
+        "_scenario_execution_cls",
         "_scenario_logging",
         "_scenario_runner",
         "_scenario_stack",
@@ -157,6 +159,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_definition_cls()` property.
         self._scenario_definition_cls = None  # type: typing.Optional[typing.Type[_ScenarioDefinitionType]]
+
+        #: :class:`._scenarioexecution.ScenarioExecution` class reference.
+        #:
+        #: Reference resolved by :meth:`scenario_execution_cls()` property.
+        self._scenario_execution_cls = None  # type: typing.Optional[typing.Type[_ScenarioExecutionType]]
 
         #: :class:`._stepdefinition.StepDefinition` class reference.
         #:
@@ -309,6 +316,16 @@ class FastPath:
             from ._scenariodefinition import ScenarioDefinition  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_definition_cls = ScenarioDefinition
         return self._scenario_definition_cls
+
+    @property
+    def scenario_execution_cls(self):  # type: () -> typing.Type[_ScenarioExecutionType]
+        """
+        :class:`._scenarioexecution.ScenarioExecution` class reference.
+        """
+        if self._scenario_execution_cls is None:
+            from ._scenarioexecution import ScenarioExecution  # check-imports: ignore  ## `FastPath` local import.
+            self._scenario_execution_cls = ScenarioExecution
+        return self._scenario_execution_cls
 
     @property
     def step_definition_cls(self):  # type: () -> typing.Type[_StepDefinitionType]

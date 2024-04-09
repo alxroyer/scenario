@@ -47,6 +47,7 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
@@ -94,8 +95,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
 
         Activates debugging by default.
         """
-        from ._scenarioexecution import ScenarioExecution
-
         #: Scenario title, optional.
         #:
         #: As short as possible.
@@ -145,7 +144,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         self.__step_definitions = []  # type: typing.List[_StepDefinitionType]
 
         #: Scenario execution, if any.
-        self.execution = None  # type: typing.Optional[ScenarioExecution]
+        self.execution = None  # type: typing.Optional[_ScenarioExecutionType]
 
     def __repr__(self):  # type: () -> str
         """

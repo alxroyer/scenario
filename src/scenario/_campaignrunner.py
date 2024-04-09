@@ -28,6 +28,7 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -231,7 +232,6 @@ class CampaignRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenarioexecution import ScenarioExecution
         from ._scenarioresults import SCENARIO_RESULTS
         from ._subprocess import SubProcess
         from ._testerrors import TestError
@@ -283,7 +283,7 @@ class CampaignRunner(_LoggerImpl):
             # create `ScenarioDefinition` and `ScenarioExecution` instances from scratch in order to save error details.
             _fallback_errors = _ScenarioDefinitionImpl()  # type: _ScenarioDefinitionType
             _fallback_errors.name = test_case_execution.name
-            _fallback_errors.execution = ScenarioExecution(_fallback_errors)
+            _fallback_errors.execution = _ScenarioExecutionImpl(_fallback_errors)
             _fallback_errors.execution.time.setstarttime()
 
             def _fallbackerror(

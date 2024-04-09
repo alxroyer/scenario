@@ -28,6 +28,7 @@ if True:
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -872,11 +873,10 @@ class CampaignReport(_LoggerImpl):
         :return: Statistic read from ``stat_object``.
         """
         from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
-        from ._scenarioexecution import ScenarioExecution
 
         assert stat_name.count("-") == 1, f"Bad stat name {stat_name!r}"
         _stat_type, _exec_total = stat_name.split("-")  # type: str, str
-        if isinstance(stat_object, ScenarioExecution):
+        if isinstance(stat_object, _ScenarioExecutionImpl):
             return int(getattr(getattr(stat_object, _stat_type[:-1] + "_stats"), _exec_total))
         elif isinstance(stat_object, (CampaignExecution, TestSuiteExecution, TestCaseExecution)):
             return int(getattr(getattr(stat_object, _stat_type), _exec_total))

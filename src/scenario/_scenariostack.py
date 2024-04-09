@@ -24,6 +24,7 @@ if True:
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
@@ -278,12 +279,10 @@ class ScenarioStack(_LoggerImpl):
         :param scenario: Scenario definition or scenario execution to check.
         :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
-        from ._scenarioexecution import ScenarioExecution
-
         _scenario_definition = None  # type: typing.Optional[_ScenarioDefinitionType]
         if isinstance(scenario, _ScenarioDefinitionImpl):
             _scenario_definition = scenario
-        if isinstance(scenario, ScenarioExecution):
+        if isinstance(scenario, _ScenarioExecutionImpl):
             _scenario_definition = scenario.definition
         if _scenario_definition and self.main_scenario_definition:
             if _scenario_definition is self.main_scenario_definition:
@@ -328,12 +327,10 @@ class ScenarioStack(_LoggerImpl):
         :param scenario: Scenario definition or scenario execution to check.
         :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
-        from ._scenarioexecution import ScenarioExecution
-
         _scenario_definition = None  # type: typing.Optional[_ScenarioDefinitionType]
         if isinstance(scenario, _ScenarioDefinitionImpl):
             _scenario_definition = scenario
-        if isinstance(scenario, ScenarioExecution):
+        if isinstance(scenario, _ScenarioExecutionImpl):
             _scenario_definition = scenario.definition
         if _scenario_definition and self.current_scenario_definition:
             if _scenario_definition is self.current_scenario_definition:

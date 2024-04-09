@@ -31,6 +31,7 @@ if True:
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
     from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # @perf
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
@@ -43,6 +44,7 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
     from ._stepexecution import StepExecutionHelper as _StepExecutionHelperType
@@ -103,7 +105,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._errcodes import ErrorCode
         from ._loggingservice import LOGGING_SERVICE
         from ._scenarioargs import ScenarioArgs
-        from ._scenarioexecution import ScenarioExecution
         from ._scenarioreport import SCENARIO_REPORT
         from ._scenarioresults import SCENARIO_RESULTS
 
@@ -139,7 +140,7 @@ class ScenarioRunner(_LoggerImpl):
                 if not _FAST_PATH.scenario_stack.history:
                     self.error("No last scenario after execution")
                     return ErrorCode.INTERNAL_ERROR
-                _scenario_execution = _FAST_PATH.scenario_stack.history[-1]  # type: ScenarioExecution
+                _scenario_execution = _FAST_PATH.scenario_stack.history[-1]  # type: _ScenarioExecutionType
 
                 # Manage test errors.
                 if _scenario_execution.errors:
@@ -309,7 +310,6 @@ class ScenarioRunner(_LoggerImpl):
         :return: Error code.
         """
         from ._errcodes import ErrorCode
-        from ._scenarioexecution import ScenarioExecution
 
         self.debug("_buildscenario(scenario_definition=%r)", scenario_definition)
 
@@ -323,7 +323,7 @@ class ScenarioRunner(_LoggerImpl):
             # Create the `ScenarioExecution` instance right now.
             # Even though we are only building objects for now,
             # this is required to make it possible to iterate over the step list (just after), and execute them in the `BUILD_OBJECTS` exection mode.
-            scenario_definition.execution = ScenarioExecution(scenario_definition)
+            scenario_definition.execution = _ScenarioExecutionImpl(scenario_definition)
 
             # Start iterating over the step list.
             scenario_definition.execution.startsteplist()
@@ -706,7 +706,6 @@ class ScenarioRunner(_LoggerImpl):
         from ._actionresultexecution import ActionResultExecution
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenarioexecution import ScenarioExecution
 
         self.debug("onerror(error=%r, originator=%r)", error, originator)
 
@@ -752,7 +751,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Memorize the error in the current execution context.
             def _store_error(
-                    obj,  # type: typing.Optional[typing.Union[ScenarioExecution, _StepExecutionType, ActionResultExecution]]
+                    obj,  # type: typing.Optional[typing.Union[_ScenarioExecutionType, _StepExecutionType, ActionResultExecution]]
             ):  # type: (...) -> bool
                 # Check the current object is valid.
                 if obj is None:

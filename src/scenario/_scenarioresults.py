@@ -78,7 +78,7 @@ class ScenarioResults(_LoggerImpl):
 
         Designed to display convient information after :class:`._scenariologging.ScenarioLogging` and :class:`._campaignlogging.CampaignLogging` outputs.
         """
-        from ._scenarioexecution import ScenarioExecutionHelper
+        from ._scenarioexecution import ScenarioExecutionHelper  # check-imports: ignore  ## No performance impact.
 
         _total_step_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         _total_action_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType

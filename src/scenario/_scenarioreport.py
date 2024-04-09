@@ -27,6 +27,7 @@ if True:
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
@@ -39,6 +40,7 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
 
@@ -256,7 +258,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_scenario: Scenario JSON content to read.
         :return: Scenario data.
         """
-        from ._scenarioexecution import ScenarioExecution
         from ._testerrors import TestError
 
         self.debug("Reading scenario from JSON: %s", _debugutils.jsondump(json_scenario, indent=2),
@@ -287,7 +288,7 @@ class ScenarioReport(_LoggerImpl):
                 _scenario_definition.addstep(_step_definition)
 
             # Status & errors.
-            _scenario_definition.execution = ScenarioExecution(_scenario_definition)
+            _scenario_definition.execution = _ScenarioExecutionImpl(_scenario_definition)
             for _json_error in json_scenario["errors"]:  # type: _JsonDictType
                 _scenario_definition.execution.errors.append(TestError.fromjson(_json_error))
                 self.debug("Error: %s", _scenario_definition.execution.errors[-1])
@@ -486,7 +487,6 @@ class ScenarioReport(_LoggerImpl):
         :return: JSON content object.
         """
         from ._actionresultexecution import ActionResultExecution
-        from ._scenarioexecution import ScenarioExecution
         from ._testerrors import TestError
 
         self.debug("Generating JSON content for %r", action_result_definition)
@@ -513,7 +513,7 @@ class ScenarioReport(_LoggerImpl):
                 for _warning in _action_result_execution.warnings:  # type: TestError
                     _json_action_result_execution["warnings"].append(_warning.tojson())
 
-                for _subscenario_execution in _action_result_execution.subscenarios:  # type: ScenarioExecution
+                for _subscenario_execution in _action_result_execution.subscenarios:  # type: _ScenarioExecutionType
                     self.debug("Generating JSON content for subscenario %r", _subscenario_execution.definition)
                     with self.pushindentation("  | "):
                         _json_action_result_execution["subscenarios"].append(self._scenario2json(_subscenario_execution.definition, is_main=False))
