@@ -28,8 +28,10 @@ import typing
 if True:
     from . import _debugutils as _debugutils  # @perf
     from ._path import Path as _PathImpl  # @perf
+    from ._textfileutils import TextFile as _TextFileImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
+    from ._textfileutils import TextFile as _TextFileType
 
 
 if typing.TYPE_CHECKING:
@@ -155,14 +157,12 @@ class JsonDict(abc.ABC):
         :param encoding: Encoding to use for reading. Automatically determined from the file content by default.
         :return: JSON-like dictionary read from the input file.
         """
-        from ._textfileutils import TextFile
-
         # Ensure `input_path` is a `Path` instance.
         if not isinstance(input_path, _PathImpl):
             input_path = _PathImpl(input_path)
 
         # Instantiate a `TextFile` object to read from the `input_path` file.
-        _text_file = TextFile(input_path, "r", encoding=encoding)  # type: TextFile
+        _text_file = _TextFileImpl(input_path, "r", encoding=encoding)  # type: _TextFileType
 
         # Read the file with format depending on its extension.
         if input_path.suffix.lower() in JsonDict.JSON_SUFFIXES:
@@ -223,7 +223,6 @@ class JsonDict(abc.ABC):
             Number of space characters for indentation.
         """
         from ._pkginfo import PKG_INFO
-        from ._textfileutils import TextFile
 
         # Ensure `output_path` is a `Path` instance.
         if not isinstance(output_path, _PathImpl):
@@ -243,7 +242,7 @@ class JsonDict(abc.ABC):
         _content.update(content)
 
         # Instantiate a `TextFile` object to write the `output_path` file.
-        _text_file = TextFile(output_path, "w", encoding=encoding)  # type: TextFile
+        _text_file = _TextFileImpl(output_path, "w", encoding=encoding)  # type: _TextFileType
 
         # Write the file with format depending on its extension.
         output_path.parent.mkdir(parents=True, exist_ok=True)

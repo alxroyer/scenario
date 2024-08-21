@@ -24,6 +24,7 @@ if True:
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import qualname as _qualname  # @perf
+    from ._textfileutils import TextFile as _TextFileImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -70,7 +71,6 @@ class TestSuiteFile(_LoggerImpl):
         :raise ._errcodes.ErrorCodeError: With :attr:`._errcodes.ErrorCode.INPUT_FORMAT_ERROR`, when the file could not be parsed.
         """
         from ._errcodes import ErrorCode, ErrorCodeError
-        from ._textfileutils import TextFile
 
         # Reset the script path list in case :meth:`parse()` is called several times..
         self.script_paths = []
@@ -78,7 +78,7 @@ class TestSuiteFile(_LoggerImpl):
         # Foe each line in the campaign file.
         self.debug("Reading '%s'", self.path)
         with self.pushindentation():
-            for _line in TextFile(self.path, "r").readlines():  # type: str
+            for _line in _TextFileImpl(self.path, "r").readlines():  # type: str
                 _line = _line.strip()
                 if not _line:
                     continue

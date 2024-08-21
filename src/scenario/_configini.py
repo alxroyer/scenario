@@ -26,6 +26,7 @@ if True:
     from . import _debugutils as _debugutils  # @perf
     from ._configkey import ConfigKey as _ConfigKeyImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._textfileutils import guessencoding as _guessencoding  # @perf
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._path import AnyPathType as _AnyPathType
@@ -47,8 +48,6 @@ class ConfigIni:
         :param path: Path of the INI file to load.
         :param root: Root key to load the INI file from.
         """
-        from ._textfileutils import guessencoding
-
         _FAST_PATH.config_db.debug("Loading INI file '%s'", path)
 
         _config_parser = configparser.ConfigParser()  # type: configparser.ConfigParser
@@ -56,7 +55,7 @@ class ConfigIni:
         # See https://stackoverflow.com/questions/1611799/preserve-case-in-configparser#1611877/964122
         _config_parser.optionxform = lambda optionstr: optionstr  # type: ignore[assignment]  ## Cannot assign to a method
 
-        _res = _config_parser.read(path, encoding=guessencoding(path))  # type: typing.List[str]
+        _res = _config_parser.read(path, encoding=_guessencoding(path))  # type: typing.List[str]
         if os.fspath(path) not in _res:
             raise IOError(f"Could not read '{path}'")
 
