@@ -28,6 +28,7 @@ if True:
     from . import _textutils as _textutils  # @perf
     from ._assertions import Assertions as _AssertionsImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import importmodulefrompath as _importmodulefrompath  # @perf
@@ -108,7 +109,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         self.description = _textutils.anylongtext2str(description or "")  # type: str
 
         #: Definition location.
-        self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType
+        self.location = _CodeLocationImpl.fromclass(type(self))  # type: _CodeLocationType
 
         #: Script path.
         self.script_path = _PathImpl(self.location.file)  # type: _PathType

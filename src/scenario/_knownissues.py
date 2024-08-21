@@ -24,6 +24,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._testerrors import TestError as _TestErrorImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
@@ -284,7 +285,7 @@ class KnownIssue(_TestErrorImpl):
         _known_issue = KnownIssue(
             message=json_data["message"],
         )  # type: KnownIssue
-        _known_issue.location = _FAST_PATH.code_location.fromlongstring(json_data["location"])
+        _known_issue.location = _CodeLocationImpl.fromlongstring(json_data["location"])
 
         # Optional fields.
         if "level" in json_data:

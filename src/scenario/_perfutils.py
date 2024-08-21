@@ -50,6 +50,7 @@ if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from . import _debugutils as _debugutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
@@ -316,7 +317,7 @@ class PerfImportWrapper:
         if name == PerfImportWrapper.refine_import:
             # Memo: Skip
             #   (-1) => `PerfImportWrapper._wrapper()` (this method)
-            _location = _FAST_PATH.code_location.fromtbitem(traceback.extract_stack()[-2]).tolongstring()  # type: str
+            _location = _CodeLocationImpl.fromtbitem(traceback.extract_stack()[-2]).tolongstring()  # type: str
             if _location not in _stats.callers:
                 _stats.callers[_location] = 0
             _stats.callers[_location] += 1

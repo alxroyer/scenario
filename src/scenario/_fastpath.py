@@ -28,7 +28,6 @@ import typing
 if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
-    from ._locations import CodeLocation as _CodeLocationType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._logger import Logger as _LoggerType
     from ._loggermain import MainLogger as _MainLoggerType
@@ -67,7 +66,6 @@ class FastPath:
 
     # Optimize attribute access for this class.
     __slots__ = [
-        "_code_location_cls",
         "_config_db",
         "_execution_locations",
         "_main_logger",
@@ -95,11 +93,6 @@ class FastPath:
         Declares fast path data.
         """
         # Instances.
-
-        #: :class:`._locations.CodeLocation` class reference.
-        #:
-        #: Reference resolved by :meth:`code_location()` property.
-        self._code_location_cls = None  # type: typing.Optional[typing.Type[_CodeLocationType]]
 
         #: :class:`._locations.ExecutionLocations` singleton reference.
         #:
@@ -204,16 +197,6 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`req_link_helper_cls()` property.
         self._req_link_helper_cls = None  # type: typing.Optional[typing.Type[_ReqLinkHelperType]]
-
-    @property
-    def code_location(self):  # type: () -> typing.Type[_CodeLocationType]
-        """
-        Container for :class:`._locations.CodeLocation` static methods.
-        """
-        if self._code_location_cls is None:
-            from ._locations import CodeLocation  # check-imports: ignore  ## `FastPath` local import.
-            self._code_location_cls = CodeLocation
-        return self._code_location_cls
 
     @property
     def execution_locations(self):  # type: () -> _ExecutionLocationsType

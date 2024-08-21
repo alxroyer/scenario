@@ -24,6 +24,7 @@ if True:
     from . import _debugutils as _debugutils  # @perf
     from . import _enumutils as _enumutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
@@ -377,7 +378,7 @@ class ScenarioReport(_LoggerImpl):
         with self.pushindentation():
             _step_definition = _StepDefinitionImpl()  # type: _StepDefinitionType
 
-            _step_definition.location = _FAST_PATH.code_location.fromlongstring(json_step_definition["location"])
+            _step_definition.location = _CodeLocationImpl.fromlongstring(json_step_definition["location"])
             self.debug("Location: %s", _step_definition.location.tolongstring())
 
             _step_definition.description = json_step_definition["description"]

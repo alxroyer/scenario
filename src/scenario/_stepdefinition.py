@@ -24,6 +24,7 @@ import typing
 if True:
     from ._assertions import Assertions as _AssertionsImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._reflection import qualname as _qualname  # @perf
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @inheritance
@@ -96,9 +97,9 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         self.method = method  # type: typing.Optional[types.MethodType]
 
         #: Definition location.
-        self.location = _FAST_PATH.code_location.fromclass(type(self))  # type: _CodeLocationType
+        self.location = _CodeLocationImpl.fromclass(type(self))  # type: _CodeLocationType
         if self.method:
-            self.location = _FAST_PATH.code_location.frommethod(self.method)
+            self.location = _CodeLocationImpl.frommethod(self.method)
 
         #: ``True`` when the step may be assigned a step :attr:`number`.
         #:

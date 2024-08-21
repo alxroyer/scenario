@@ -157,7 +157,7 @@ class TestError(Exception):
 
         _location = None  # type: typing.Optional[_CodeLocationType]
         if "location" in json_data:
-            _location = _FAST_PATH.code_location.fromlongstring(json_data["location"])
+            _location = _CodeLocationImpl.fromlongstring(json_data["location"])
         return TestError(message=json_data["message"], location=_location)
 
 
@@ -250,5 +250,5 @@ class ExceptionError(TestError):
         _error = ExceptionError(exception=None)  # type: ExceptionError
         _error.exception_type = json_data["type"]
         _error.message = json_data["message"]
-        _error.location = _FAST_PATH.code_location.fromlongstring(json_data["location"])
+        _error.location = _CodeLocationImpl.fromlongstring(json_data["location"])
         return _error

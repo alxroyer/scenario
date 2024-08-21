@@ -26,6 +26,7 @@ if True:
     from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
@@ -694,7 +695,7 @@ class CampaignReport(_LoggerImpl):
                     for _xml_text in _xml_failure.gettextnodes():  # type: Xml.TextNode
                         _last_line = _xml_text.data.splitlines()[-1]  # type: str
                         if _last_line.count(":") >= 3:
-                            _error.location = _FAST_PATH.code_location.fromlongstring(":".join(_last_line.split(":")[:3]))
+                            _error.location = _CodeLocationImpl.fromlongstring(":".join(_last_line.split(":")[:3]))
                             self.debug("testcase/failure/@location = '%s'", _error.location.tolongstring())
                     _test_case_execution.scenario_execution.errors.append(_error)
         if xml_test_case.hasattr("status"):
