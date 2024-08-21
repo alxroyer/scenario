@@ -83,9 +83,9 @@ class CheckImports:
     def _checkconfigdata(self):  # type: (...) -> None
         from ._optimized import OPTIMIZED_PATHS
 
-        # Check all files in `OPTIMIZED_MODULES` correspond to actual files.
+        # Check all paths in `OPTIMIZED_PATHS` correspond to existing paths.
         for _path in OPTIMIZED_PATHS:  # type: scenario.Path
-            scenario.Assertions.assertisfile(_path)
+            scenario.Assertions.assertexists(_path)
 
     def _walkpath(
             self,
