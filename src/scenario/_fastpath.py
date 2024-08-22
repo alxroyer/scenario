@@ -46,6 +46,9 @@ if typing.TYPE_CHECKING:
     from ._scenariostack import ScenarioStack as _ScenarioStackType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
+    from ._stepsection import StepSectionBegin as _StepSectionBeginType
+    from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
+    from ._stepsection import StepSectionEnd as _StepSectionEndType
 
 
 class FastPath:
@@ -85,6 +88,9 @@ class FastPath:
         "_scenario_stack",
         "_step_definition_cls",
         "_step_execution_cls",
+        "_step_section_begin_cls",
+        "_step_section_description_cls",
+        "_step_section_end_cls",
         "args",
     ]
 
@@ -167,6 +173,21 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`step_execution_cls()` property.
         self._step_execution_cls = None  # type: typing.Optional[typing.Type[_StepExecutionType]]
+
+        #: :class:`._stepsection.StepSectionBegin` class reference.
+        #:
+        #: Reference resolved by :meth:`step_section_begin_cls()` property.
+        self._step_section_begin_cls = None  # type: typing.Optional[typing.Type[_StepSectionBeginType]]
+
+        #: :class:`._stepsection.StepSectionDescription` class reference.
+        #:
+        #: Reference resolved by :meth:`step_section_description_cls()` property.
+        self._step_section_description_cls = None  # type: typing.Optional[typing.Type[_StepSectionDescriptionType]]
+
+        #: :class:`._stepsection.StepSectionEnd` class reference.
+        #:
+        #: Reference resolved by :meth:`step_section_end_cls()` property.
+        self._step_section_end_cls = None  # type: typing.Optional[typing.Type[_StepSectionEndType]]
 
         #: :class:`._req.Req` class reference.
         #:
@@ -329,6 +350,36 @@ class FastPath:
             from ._stepexecution import StepExecution  # check-imports: ignore  ## `FastPath` local import.
             self._step_execution_cls = StepExecution
         return self._step_execution_cls
+
+    @property
+    def step_section_begin_cls(self):  # type: () -> typing.Type[_StepSectionBeginType]
+        """
+        :class:`._stepsection.StepSectionBegin` class reference.
+        """
+        if self._step_section_begin_cls is None:
+            from ._stepsection import StepSectionBegin  # check-imports: ignore  ## `FastPath` local import.
+            self._step_section_begin_cls = StepSectionBegin
+        return self._step_section_begin_cls
+
+    @property
+    def step_section_description_cls(self):  # type: () -> typing.Type[_StepSectionDescriptionType]
+        """
+        :class:`._stepsection.StepSectionDescription` class reference.
+        """
+        if self._step_section_description_cls is None:
+            from ._stepsection import StepSectionDescription  # check-imports: ignore  ## `FastPath` local import.
+            self._step_section_description_cls = StepSectionDescription
+        return self._step_section_description_cls
+
+    @property
+    def step_section_end_cls(self):  # type: () -> typing.Type[_StepSectionEndType]
+        """
+        :class:`._stepsection.StepSectionEnd` class reference.
+        """
+        if self._step_section_end_cls is None:
+            from ._stepsection import StepSectionEnd  # check-imports: ignore  ## `FastPath` local import.
+            self._step_section_end_cls = StepSectionEnd
+        return self._step_section_end_cls
 
     @property
     def req_cls(self):  # type: () -> typing.Type[_ReqType]

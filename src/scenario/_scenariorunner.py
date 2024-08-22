@@ -475,12 +475,11 @@ class ScenarioRunner(_LoggerImpl):
         """
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._stepsection import StepSectionDescription
         from ._testerrors import ExceptionError, TestError
 
         self.debug("Beginning of %r", step_definition)
 
-        if isinstance(step_definition, StepSectionDescription):
+        if isinstance(step_definition, _FAST_PATH.step_section_description_cls):
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
                 _FAST_PATH.scenario_logging.stepsectiondescription(step_definition)
         else:
@@ -488,8 +487,8 @@ class ScenarioRunner(_LoggerImpl):
             # Sum up step executions already known for the given scenario.
             _step_number = 1  # type: int
             for _step_definition in step_definition.scenario.steps:  # type: _StepDefinitionType
-                # Skip step sections.
-                if isinstance(_step_definition, StepSectionDescription):
+                # Skip step section descriptions.
+                if isinstance(_step_definition, _FAST_PATH.step_section_description_cls):
                     continue
                 _step_number += len(_step_definition.executions)
 

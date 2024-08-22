@@ -316,7 +316,6 @@ class ScenarioReport(_LoggerImpl):
         :param step_definition: Step definition (with execution) to generate JSON content for.
         :return: JSON content.
         """
-        from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
         self.debug("Generating JSON content for %r", step_definition)
@@ -327,8 +326,8 @@ class ScenarioReport(_LoggerImpl):
                 "description": step_definition.description,
             }  # type: _JsonDictType
 
-            # Do not set 'reqs', 'actions-results' and 'executions' lists for step sections.
-            if not isinstance(step_definition, StepSectionDescription):
+            # Do not set 'reqs', 'actions-results' and 'executions' lists for step section descriptions.
+            if not isinstance(step_definition, _FAST_PATH.step_section_description_cls):
                 # Requirements.
                 self._reqverifier2json(step_definition, _json_step_definition)
 
@@ -369,7 +368,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_step_definition: Step definition JSON content to read.
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
-        from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
         self.debug("Reading step instance from JSON: %s", _debugutils.jsondump(json_step_definition, indent=2),
@@ -388,7 +386,7 @@ class ScenarioReport(_LoggerImpl):
                 # Missing executions and/or actions/results.
                 # Replace the general `StepDefinition` instance created above by a `StepSection` one.
                 assert _step_definition.description is not None
-                _step_definition = StepSectionDescription(_step_definition.description)
+                _step_definition = _FAST_PATH.step_section_description_cls(_step_definition.description)
             else:
                 # Requirements.
                 self._json2reqverifier(json_step_definition, _step_definition)

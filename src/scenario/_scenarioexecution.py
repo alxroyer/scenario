@@ -191,12 +191,10 @@ class ScenarioExecution:
 
         :return: Number of steps executed over the number of steps defined.
         """
-        from ._stepsection import StepSectionDescription
-
         _step_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
-            # Skip `StepSection` instances.
-            if isinstance(_step_definition, StepSectionDescription):
+            # Skip `StepSectionDescription` instances.
+            if isinstance(_step_definition, _FAST_PATH.step_section_description_cls):
                 continue
 
             _step_stats.total += 1
@@ -211,12 +209,11 @@ class ScenarioExecution:
         :return: Number of actions executed over the number of actions defined.
         """
         from ._actionresultdefinition import ActionResultDefinition
-        from ._stepsection import StepSectionDescription
 
         _action_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
-            # Skip `StepSection` instances.
-            if isinstance(_step_definition, StepSectionDescription):
+            # Skip `StepSectionDescription` instances.
+            if isinstance(_step_definition, _FAST_PATH.step_section_description_cls):
                 continue
 
             for _action_result_definition in _step_definition.actions_results:  # type: ActionResultDefinition
@@ -234,12 +231,11 @@ class ScenarioExecution:
         :return: Number of expected results executed over the number of expected results defined.
         """
         from ._actionresultdefinition import ActionResultDefinition
-        from ._stepsection import StepSectionDescription
 
         _result_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
-            # Skip `StepSection` instances.
-            if isinstance(_step_definition, StepSectionDescription):
+            # Skip `StepSectionDescription` instances.
+            if isinstance(_step_definition, _FAST_PATH.step_section_description_cls):
                 continue
 
             for _action_result_definition in _step_definition.actions_results:  # type: ActionResultDefinition

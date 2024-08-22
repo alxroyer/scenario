@@ -368,9 +368,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :param description: Description for the section.
         :return: The step section description step just added.
         """
-        from ._stepsection import StepSectionDescription
-
-        _step_section_description = StepSectionDescription(description)  # type: StepSectionDescription
+        _step_section_description = _FAST_PATH.step_section_description_cls(description)  # type: _StepSectionDescriptionType
         _step_section_description.scenario = self
         self.__step_definitions.append(_step_section_description)
         return _step_section_description
