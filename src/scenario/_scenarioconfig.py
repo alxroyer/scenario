@@ -24,6 +24,7 @@ if True:
     from . import _consoleutils as _consoleutils  # @perf
     from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -494,8 +495,6 @@ class ScenarioConfig(_LoggerImpl):
         """
         Loads the issue level names configured through configuration files.
         """
-        from ._issuelevels import IssueLevel
-
         _root_node = _FAST_PATH.config_db.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[_ConfigNodeType]
         if _root_node:
             for _name in _root_node.getsubkeys():  # type: str
@@ -509,16 +508,16 @@ class ScenarioConfig(_LoggerImpl):
                     continue
 
                 # Check value consistency when the issue level name is already known.
-                if _name in IssueLevel.getnamed():
-                    if _value != IssueLevel.parse(_name):
+                if _name in _IssueLevelImpl.getnamed():
+                    if _value != _IssueLevelImpl.parse(_name):
                         self.warning(_subnode.errmsg(
-                            f"Name already set {IssueLevel.getdesc(IssueLevel.parse(_name))}, issue level name {_name}={_value!r} ignored"
+                            f"Name already set {_IssueLevelImpl.getdesc(_IssueLevelImpl.parse(_name))}, issue level name {_name}={_value!r} ignored"
                         ))
                     continue
 
                 # Save the association between the new issue level name and value.
                 self.debug("loadissuelevelnames(): %r = %r", _name, _value)
-                IssueLevel.addname(_name, _value)
+                _IssueLevelImpl.addname(_name, _value)
 
     def issuelevelerror(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
         """
@@ -526,7 +525,6 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Error issue level if set, ``None`` otherwise.
         """
-        from ._issuelevels import IssueLevel
         from ._scenarioargs import CommonExecArgs
 
         if _FAST_PATH.args:
@@ -535,7 +533,7 @@ class ScenarioConfig(_LoggerImpl):
                     self.debug("issuelevelerror() -> %r (from args)", _FAST_PATH.args.issue_level_error)
                     return _FAST_PATH.args.issue_level_error
 
-        _issue_level_error = IssueLevel.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_ERROR, type=int))  # type: typing.Optional[_AnyIssueLevelType]
+        _issue_level_error = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_ERROR, type=int))  # type: typing.Optional[_AnyIssueLevelType]
         self.debug("issuelevelerror() -> %r (from config-db)", _issue_level_error)
         return _issue_level_error
 
@@ -545,7 +543,6 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Ignored issue level if set, ``None`` otherwise.
         """
-        from ._issuelevels import IssueLevel
         from ._scenarioargs import CommonExecArgs
 
         if _FAST_PATH.args:
@@ -554,7 +551,8 @@ class ScenarioConfig(_LoggerImpl):
                     self.debug("issuelevelignored() -> %r (from args)", _FAST_PATH.args.issue_level_ignored)
                     return _FAST_PATH.args.issue_level_ignored
 
-        _issue_level_ignored = IssueLevel.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_IGNORED, type=int))  # type: typing.Optional[_AnyIssueLevelType]
+        _issue_level_ignored = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_IGNORED, type=int)) \
+            # type: typing.Optional[_AnyIssueLevelType]
         self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
         return _issue_level_ignored
 

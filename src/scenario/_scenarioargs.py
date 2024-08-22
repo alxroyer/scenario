@@ -23,8 +23,10 @@ import typing
 if True:
     from ._args import Args as _ArgsImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
     from ._subprocess import SubProcess as _SubProcessType
 
@@ -38,10 +40,6 @@ class CommonExecArgs:
         """
         Installs common test execution program arguments.
         """
-        from ._issuelevels import IssueLevel
-        if typing.TYPE_CHECKING:
-            from ._issuelevels import AnyIssueLevelType
-
         assert isinstance(self, _ArgsImpl)
 
         #: ``True`` when the test(s) is(are) executed for documentation generation only,
@@ -58,23 +56,23 @@ class CommonExecArgs:
         # - https://github.com/swansonk14/typed-argument-parser#union
 
         #: Error issue level.
-        self.issue_level_error = None  # type: typing.Optional[AnyIssueLevelType]
-        self.addarg("Error issue level", "issue_level_error", IssueLevel.parse).define(
+        self.issue_level_error = None  # type: typing.Optional[_AnyIssueLevelType]
+        self.addarg("Error issue level", "issue_level_error", _IssueLevelImpl.parse).define(
             "--issue-level-error", metavar="ISSUE_LEVEL",
             action="store", default=None,
             help="Define the issue level from and above which known issues should be considered as errors. "
                  "None by default, i.e. all known issues are considered as warnings."
-                 f"{f' Named levels: {IssueLevel.getnameddesc()}.' if IssueLevel.getnamed() else ''}",
+                 f"{f' Named levels: {_IssueLevelImpl.getnameddesc()}.' if _IssueLevelImpl.getnamed() else ''}",
         )
 
         #: Ignored issue level.
-        self.issue_level_ignored = None  # type: typing.Optional[AnyIssueLevelType]
-        self.addarg("Ignored issue level", "issue_level_ignored", IssueLevel.parse).define(
+        self.issue_level_ignored = None  # type: typing.Optional[_AnyIssueLevelType]
+        self.addarg("Ignored issue level", "issue_level_ignored", _IssueLevelImpl.parse).define(
             "--issue-level-ignored", metavar="ISSUE_LEVEL",
             action="store", default=None,
             help="Define the issue level from and under which known issues should be ignored. "
                  "None by default, i.e. no known issue ignored by default."
-                 f"{f' Named levels: {IssueLevel.getnameddesc()}.' if IssueLevel.getnamed() else ''}",
+                 f"{f' Named levels: {_IssueLevelImpl.getnameddesc()}.' if _IssueLevelImpl.getnamed() else ''}",
         )
 
     def _checkargs(

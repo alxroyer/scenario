@@ -24,6 +24,7 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._testerrors import TestError as _TestErrorImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -89,8 +90,6 @@ class KnownIssue(_TestErrorImpl):
         :param id: Issue identifier. Optional.
         :param url: Issue URL. Optional.
         """
-        from ._issuelevels import IssueLevel
-
         _TestErrorImpl.__init__(
             self,
             message=message,
@@ -101,7 +100,7 @@ class KnownIssue(_TestErrorImpl):
         self.level = level  # type: typing.Optional[_AnyIssueLevelType]
         if isinstance(self.level, int):
             # Try to match with a named issue level.
-            self.level = IssueLevel.parse(self.level)
+            self.level = _IssueLevelImpl.parse(self.level)
 
         #: Issue identifier.
         self.id = id  # type: typing.Optional[str]
@@ -118,11 +117,9 @@ class KnownIssue(_TestErrorImpl):
 
         'Issue(({level-name}=){level})( {id})! {message}'.
         """
-        from ._issuelevels import IssueLevel
-
         _str = "Issue"  # type: str
         if self.level is not None:
-            _str += f"({IssueLevel.getdesc(self.level)})"
+            _str += f"({_IssueLevelImpl.getdesc(self.level)})"
         if self.id is not None:
             _str += f" {self.id}"
         _str += "!"
@@ -162,15 +159,13 @@ class KnownIssue(_TestErrorImpl):
         :param string: String representation, as computed by :meth:`__str__()`.
         :return: New :class:`KnownIssue` instance.
         """
-        from ._issuelevels import IssueLevel
-
         _match = re.match(r"^Issue(\((.+=)?(\d+)\))? *(.*)! (.*)$", string)  # type: typing.Optional[typing.Match[str]]
         assert _match, f"Invalid known issue string ${string!r}"
 
         return KnownIssue(
             level=(
-                IssueLevel.parse(_match.group(2)) if _match.group(2)
-                else IssueLevel.parse(_match.group(3)) if _match.group(3)
+                _IssueLevelImpl.parse(_match.group(2)) if _match.group(2)
+                else _IssueLevelImpl.parse(_match.group(3)) if _match.group(3)
                 else None
             ),
             id=_match.group(4),
@@ -279,8 +274,6 @@ class KnownIssue(_TestErrorImpl):
         :param json_data: JSON dictionary.
         :return: New :class:`KnownIssue` instance.
         """
-        from ._issuelevels import IssueLevel
-
         # Mandatory fields.
         _known_issue = KnownIssue(
             message=json_data["message"],
@@ -289,7 +282,7 @@ class KnownIssue(_TestErrorImpl):
 
         # Optional fields.
         if "level" in json_data:
-            _known_issue.level = IssueLevel.parse(json_data["level"])
+            _known_issue.level = _IssueLevelImpl.parse(json_data["level"])
         if "id" in json_data:
             _known_issue.id = json_data["id"]
         if "url" in json_data:
