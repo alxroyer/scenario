@@ -25,6 +25,7 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
+    from ._campaignargs import CampaignArgs as _CampaignArgsImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
@@ -69,7 +70,6 @@ class CampaignRunner(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._campaignargs import CampaignArgs
         from ._campaignexecution import CampaignExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
         from ._campaignreport import CAMPAIGN_REPORT
@@ -82,21 +82,21 @@ class CampaignRunner(_LoggerImpl):
 
         try:
             # Analyze program arguments, if not already set.
-            if not CampaignArgs.isset():
-                CampaignArgs.setinstance(CampaignArgs())
-                if not CampaignArgs.getinstance().parse(sys.argv[1:]):
-                    return CampaignArgs.getinstance().error_code
+            if not _CampaignArgsImpl.isset():
+                _CampaignArgsImpl.setinstance(_CampaignArgsImpl())
+                if not _CampaignArgsImpl.getinstance().parse(sys.argv[1:]):
+                    return _CampaignArgsImpl.getinstance().error_code
             _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[_PathType]
             if not _test_suite_files:
                 _FAST_PATH.main_logger.error("No test suite files")
                 return ErrorCode.INPUT_MISSING_ERROR
 
             # Create the date/time output directory (if required).
-            if CampaignArgs.getinstance().create_dt_subdir:
+            if _CampaignArgsImpl.getinstance().create_dt_subdir:
                 _outdir_basename = _datetimeutils.toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
-                _outdir = CampaignArgs.getinstance().outdir / _outdir_basename  # type: _PathType
+                _outdir = _CampaignArgsImpl.getinstance().outdir / _outdir_basename  # type: _PathType
             else:
-                _outdir = CampaignArgs.getinstance().outdir
+                _outdir = _CampaignArgsImpl.getinstance().outdir
             _outdir.mkdir(parents=True, exist_ok=True)
 
             # Start log features.
@@ -227,7 +227,6 @@ class CampaignRunner(_LoggerImpl):
         :param test_case_execution: Test case to execute.
         :raise: Exception when something worse than test errors occured.
         """
-        from ._campaignargs import CampaignArgs
         from ._campaignlogging import CAMPAIGN_LOGGING
         from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
@@ -260,12 +259,12 @@ class CampaignRunner(_LoggerImpl):
             # Prepare the command line.
             _subprocess = SubProcess(sys.executable, _FAST_PATH.scenario_config.runnerscriptpath())  # type: SubProcess
             # Report configuration files and single configuration values from campaign to scenario execution.
-            for _config_path in CampaignArgs.getinstance().config_paths:  # type: _PathType
+            for _config_path in _CampaignArgsImpl.getinstance().config_paths:  # type: _PathType
                 _subprocess.addargs("--config-file", _config_path)
-            for _config_name in CampaignArgs.getinstance().config_values:  # type: str
-                _subprocess.addargs("--config-value", _config_name, CampaignArgs.getinstance().config_values[_config_name])
+            for _config_name in _CampaignArgsImpl.getinstance().config_values:  # type: str
+                _subprocess.addargs("--config-value", _config_name, _CampaignArgsImpl.getinstance().config_values[_config_name])
             # Report common execution options from campaign to scenario execution.
-            CampaignArgs.reportexecargs(CampaignArgs.getinstance(), _subprocess)
+            _CampaignArgsImpl.reportexecargs(_CampaignArgsImpl.getinstance(), _subprocess)
             # --scenario-report option.
             _subprocess.addargs("--scenario-report", test_case_execution.report.path)
             # Log outfile specification.

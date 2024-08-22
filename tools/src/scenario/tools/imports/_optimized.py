@@ -27,6 +27,7 @@ OPTIMIZED_PATHS = [
     # _paths.SRC_PATH / "scenario",  # Not relevant.
     _paths.SRC_PATH / "scenario" / "_args.py",
     _paths.SRC_PATH / "scenario" / "_assertions.py",
+    _paths.SRC_PATH / "scenario" / "_campaignargs.py",
     _paths.SRC_PATH / "scenario" / "_configdb.py",
     _paths.SRC_PATH / "scenario" / "_configkey.py",
     _paths.SRC_PATH / "scenario" / "_confignode.py",
@@ -50,6 +51,7 @@ OPTIMIZED_PATHS = [
     _paths.SRC_PATH / "scenario" / "_reqlink.py",
     _paths.SRC_PATH / "scenario" / "_reqref.py",
     _paths.SRC_PATH / "scenario" / "_reqverifier.py",
+    _paths.SRC_PATH / "scenario" / "_scenarioargs.py",
     _paths.SRC_PATH / "scenario" / "_scenarioconfig.py",
     _paths.SRC_PATH / "scenario" / "_scenariodefinition.py",
     _paths.SRC_PATH / "scenario" / "_scenarioexecution.py",

@@ -30,6 +30,7 @@ if True:
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._scenarioargs import ScenarioArgs as _ScenarioArgsImpl  # @perf
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
@@ -104,16 +105,15 @@ class ScenarioRunner(_LoggerImpl):
         """
         from ._errcodes import ErrorCode
         from ._loggingservice import LOGGING_SERVICE
-        from ._scenarioargs import ScenarioArgs
         from ._scenarioreport import SCENARIO_REPORT
         from ._scenarioresults import SCENARIO_RESULTS
 
         try:
             # Analyze program arguments, if not already set.
-            if not ScenarioArgs.isset():
-                ScenarioArgs.setinstance(ScenarioArgs())
-                if not ScenarioArgs.getinstance().parse(sys.argv[1:]):
-                    return ScenarioArgs.getinstance().error_code
+            if not _ScenarioArgsImpl.isset():
+                _ScenarioArgsImpl.setinstance(_ScenarioArgsImpl())
+                if not _ScenarioArgsImpl.getinstance().parse(sys.argv[1:]):
+                    return _ScenarioArgsImpl.getinstance().error_code
 
             # Start log features.
             LOGGING_SERVICE.start()
@@ -125,7 +125,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Execute tests.
             _errors = []  # type: typing.List[ErrorCode]
-            for _scenario_path in ScenarioArgs.getinstance().scenario_paths:  # type: _PathType
+            for _scenario_path in _ScenarioArgsImpl.getinstance().scenario_paths:  # type: _PathType
                 self.debug("Executing '%s'...", _scenario_path)
 
                 _res = self.executepath(_scenario_path)  # type: ErrorCode
@@ -150,7 +150,7 @@ class ScenarioRunner(_LoggerImpl):
                 SCENARIO_RESULTS.add(_scenario_execution)
 
                 # Generate scenario report if required.
-                _scenario_report = ScenarioArgs.getinstance().scenario_report  # type: typing.Optional[_PathType]
+                _scenario_report = _ScenarioArgsImpl.getinstance().scenario_report  # type: typing.Optional[_PathType]
                 if _scenario_report:
                     try:
                         SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)
@@ -184,12 +184,10 @@ class ScenarioRunner(_LoggerImpl):
         1) the scenario stack building context,
         and 2) the scenario args --doc-only option.
         """
-        from ._scenarioargs import ScenarioArgs
-
         if _FAST_PATH.scenario_stack.building.scenario_definition:
             return ScenarioRunner.ExecutionMode.BUILD_OBJECTS
-        elif isinstance(_ArgsImpl.getinstance(), ScenarioArgs):
-            if ScenarioArgs.getinstance().doc_only:
+        elif _FAST_PATH.scenario_args:
+            if _FAST_PATH.scenario_args.doc_only:
                 return ScenarioRunner.ExecutionMode.DOC_ONLY
             else:
                 return ScenarioRunner.ExecutionMode.EXECUTE

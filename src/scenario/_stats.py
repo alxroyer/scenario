@@ -207,12 +207,9 @@ class ExecTotalStats:
 
         :return: String representation of the statistics.
         """
-        from ._scenarioargs import ScenarioArgs
-        from ._campaignargs import CampaignArgs
-
-        if ScenarioArgs.isset() and ScenarioArgs.getinstance().doc_only:
+        if _FAST_PATH.scenario_args and _FAST_PATH.scenario_args.getinstance().doc_only:
             return f"{self.total}"
-        elif CampaignArgs.isset() and CampaignArgs.getinstance().doc_only:
+        elif _FAST_PATH.campaign_args and _FAST_PATH.campaign_args.doc_only:
             return f"{self.total}"
         else:
             return f"{self.executed}/{self.total}"

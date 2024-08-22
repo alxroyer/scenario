@@ -27,6 +27,7 @@ import typing
 
 if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
+    from ._campaignargs import CampaignArgs as _CampaignArgsType
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._logger import Logger as _LoggerType
@@ -38,6 +39,8 @@ if typing.TYPE_CHECKING:
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
+    from ._scenarioargs import CommonExecArgs as _CommonExecArgsType
+    from ._scenarioargs import ScenarioArgs as _ScenarioArgsType
     from ._scenarioconfig import ScenarioConfig as _ScenarioConfigType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
@@ -69,7 +72,10 @@ class FastPath:
 
     # Optimize attribute access for this class.
     __slots__ = [
+        "_args",
+        "_campaign_args",
         "_config_db",
+        "_exec_args",
         "_execution_locations",
         "_main_logger",
         "_reflection_logger",
@@ -80,6 +86,7 @@ class FastPath:
         "_req_ref_cls",
         "_req_verifier_cls",
         "_req_verifier_helper_cls",
+        "_scenario_args",
         "_scenario_config",
         "_scenario_definition_cls",
         "_scenario_execution_cls",
@@ -91,7 +98,6 @@ class FastPath:
         "_step_section_begin_cls",
         "_step_section_description_cls",
         "_step_section_end_cls",
-        "args",
     ]
 
     def __init__(self):  # type: (...) -> None
@@ -119,8 +125,23 @@ class FastPath:
 
         #: :class:`._args.Args` instance installed.
         #:
-        #: Reference set by :meth:`._args.Args.setinstance()`.
-        self.args = None  # type: typing.Optional[_ArgsType]
+        #: Reference set by :meth:`._args.Args.setinstance()` via the :meth:`args()` setter.
+        self._args = None  # type: typing.Optional[_ArgsType]
+
+        #: :class:`._scenarioargs.CommonExecArgs` instance installed.
+        #:
+        #: Reference set by :meth:`._args.Args.setinstance()` via the :meth:`args()` setter.
+        self._exec_args = None  # type: typing.Optional[_CommonExecArgsType]
+
+        #: :class:`._scenarioargs.ScenarioArgs` instance installed.
+        #:
+        #: Reference set by :meth:`._args.Args.setinstance()` via the :meth:`args()` setter.
+        self._scenario_args = None  # type: typing.Optional[_ScenarioArgsType]
+
+        #: :class:`._campaignargs.CampaignArgs` instance installed.
+        #:
+        #: Reference set by :meth:`._args.Args.setinstance()` via the :meth:`args()` setter.
+        self._campaign_args = None  # type: typing.Optional[_CampaignArgsType]
 
         #: :class:`._configdb.ConfigDatabase` singleton reference.
         #:
@@ -250,6 +271,48 @@ class FastPath:
 
             self._reflection_logger = Logger(log_class=DebugClass.REFLECTION)
         return self._reflection_logger
+
+    @property
+    def args(self):  # type: () -> typing.Optional[_ArgsType]
+        """
+        :class:`._args.Args` instance installed, if any.
+        """
+        return self._args
+
+    @args.setter
+    def args(self, args):  # type: (typing.Optional[_ArgsType]) -> None
+        """
+        :class:`._args.Args` instance setter.
+        """
+        from ._args import Args  # check-imports: ignore  ## `FastPath` local import.
+        from ._campaignargs import CampaignArgs  # check-imports: ignore  ## `FastPath` local import.
+        from ._scenarioargs import CommonExecArgs, ScenarioArgs  # check-imports: ignore  ## `FastPath` local import.
+
+        self._args = args
+        self._exec_args = args if (isinstance(args, Args) and isinstance(args, CommonExecArgs)) else None
+        self._scenario_args = args if isinstance(args, ScenarioArgs) else None
+        self._campaign_args = args if isinstance(args, CampaignArgs) else None
+
+    @property
+    def exec_args(self):  # type: () -> typing.Optional[_CommonExecArgsType]
+        """
+        :class:`._scenarioargs.CommonExecArgs` instance installed, if any.
+        """
+        return self._exec_args
+
+    @property
+    def scenario_args(self):  # type: () -> typing.Optional[_ScenarioArgsType]
+        """
+        :class:`._scenarioargs.ScenarioArgs` instance installed, if any.
+        """
+        return self._scenario_args
+
+    @property
+    def campaign_args(self):  # type: () -> typing.Optional[_CampaignArgsType]
+        """
+        :class:`._campaignargs.CampaignArgs` instance installed, if any.
+        """
+        return self._campaign_args
 
     @property
     def config_db(self):  # type: () -> _ConfigDatabaseType

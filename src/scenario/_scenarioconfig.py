@@ -347,14 +347,11 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Test suite files.
         """
-        from ._campaignargs import CampaignArgs
-
         # Determine test suite files to process from...
         _test_suite_files = []  # type: typing.List[_PathType]
         # ...campaign arguments first (when applicable),
-        if CampaignArgs.isset():
-            if CampaignArgs.getinstance().test_suite_paths:
-                _test_suite_files.extend(CampaignArgs.getinstance().test_suite_paths)
+        if _FAST_PATH.campaign_args:
+            _test_suite_files.extend(_FAST_PATH.campaign_args.test_suite_paths)
         # ...or default configuration otherwise.
         if not _test_suite_files:
             _test_suite_files.extend(self._readpathlistfromconf(self.Key.TEST_SUITE_FILES))
@@ -375,7 +372,7 @@ class ScenarioConfig(_LoggerImpl):
         self.debug("scenariotimeout() -> %r", _scenario_timeout)
         return _scenario_timeout
 
-    def resultsextrainfo(self):  # type: (...) -> typing.List[str]
+    def resultsextrainfo(self):  # type: (...) -> typing.Sequence[str]
         """
         Retrieves the list of scenario attributes to display for extra info when displaying test results.
 
@@ -387,29 +384,25 @@ class ScenarioConfig(_LoggerImpl):
         Returns a 1-item list with :attr:`._scenarioattributes.CoreScenarioAttributes.TITLE`
         by default in case nothing is configured.
         """
-        from ._campaignargs import CampaignArgs
-        from ._scenarioargs import ScenarioArgs
         from ._scenarioattributes import CoreScenarioAttributes
 
         # Merge attribute names from...
-        _attribute_names = []  # type: typing.List[str]
+        _attribute_names = set()  # type: typing.Set[str]
         # ...arguments,
-        if _FAST_PATH.args:
-            if isinstance(_FAST_PATH.args, (ScenarioArgs, CampaignArgs)):
-                for _attribute_name in _FAST_PATH.args.extra_info:  # type: str
-                    if _attribute_name not in _attribute_names:
-                        _attribute_names.append(_attribute_name)
+        if _FAST_PATH.scenario_args:
+            _attribute_names.update(_FAST_PATH.scenario_args.extra_info)
+        if _FAST_PATH.campaign_args:
+            _attribute_names.update(_FAST_PATH.campaign_args.extra_info)
         # ...and configuration database.
         for _attribute_name, _ in self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO):  # Type already declared above.
-            if _attribute_name not in _attribute_names:
-                _attribute_names.append(_attribute_name)
+            _attribute_names.add(_attribute_name)
 
         # Default to titles.
         if not _attribute_names:
-            _attribute_names.append(CoreScenarioAttributes.TITLE)
+            _attribute_names.add(CoreScenarioAttributes.TITLE)
 
         self.debug("resultsextrainfo() -> %r", _attribute_names)
-        return _attribute_names
+        return list(_attribute_names)
 
     def scenarioreportsuffix(self):  # type: (...) -> str
         """
@@ -525,17 +518,14 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Error issue level if set, ``None`` otherwise.
         """
-        from ._scenarioargs import CommonExecArgs
-
-        if _FAST_PATH.args:
-            if isinstance(_FAST_PATH.args, CommonExecArgs):
-                if _FAST_PATH.args.issue_level_error is not None:
-                    self.debug("issuelevelerror() -> %r (from args)", _FAST_PATH.args.issue_level_error)
-                    return _FAST_PATH.args.issue_level_error
-
-        _issue_level_error = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_ERROR, type=int))  # type: typing.Optional[_AnyIssueLevelType]
-        self.debug("issuelevelerror() -> %r (from config-db)", _issue_level_error)
-        return _issue_level_error
+        if _FAST_PATH.exec_args and (_FAST_PATH.exec_args.issue_level_error is not None):
+            self.debug("issuelevelerror() -> %r (from args)", _FAST_PATH.exec_args.issue_level_error)
+            return _FAST_PATH.exec_args.issue_level_error
+        else:
+            _issue_level_error = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_ERROR, type=int)) \
+                # type: typing.Optional[_AnyIssueLevelType]
+            self.debug("issuelevelerror() -> %r (from config-db)", _issue_level_error)
+            return _issue_level_error
 
     def issuelevelignored(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
         """
@@ -543,18 +533,14 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Ignored issue level if set, ``None`` otherwise.
         """
-        from ._scenarioargs import CommonExecArgs
-
-        if _FAST_PATH.args:
-            if isinstance(_FAST_PATH.args, CommonExecArgs):
-                if _FAST_PATH.args.issue_level_ignored is not None:
-                    self.debug("issuelevelignored() -> %r (from args)", _FAST_PATH.args.issue_level_ignored)
-                    return _FAST_PATH.args.issue_level_ignored
-
-        _issue_level_ignored = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_IGNORED, type=int)) \
-            # type: typing.Optional[_AnyIssueLevelType]
-        self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
-        return _issue_level_ignored
+        if _FAST_PATH.exec_args and (_FAST_PATH.exec_args.issue_level_ignored is not None):
+            self.debug("issuelevelignored() -> %r (from args)", _FAST_PATH.exec_args.issue_level_ignored)
+            return _FAST_PATH.exec_args.issue_level_ignored
+        else:
+            _issue_level_ignored = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_IGNORED, type=int)) \
+                # type: typing.Optional[_AnyIssueLevelType]
+            self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
+            return _issue_level_ignored
 
     def _readstringlistfromconf(
             self,
