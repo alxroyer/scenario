@@ -36,6 +36,7 @@ OPTIMIZED_PATHS = [
     _paths.SRC_PATH / "scenario" / "_debugclasses.py",
     _paths.SRC_PATH / "scenario" / "_debugutils.py",
     _paths.SRC_PATH / "scenario" / "_enumutils.py",
+    _paths.SRC_PATH / "scenario" / "_errcodes.py",
     _paths.SRC_PATH / "scenario" / "_issuelevels.py",
     _paths.SRC_PATH / "scenario" / "_knownissues.py",
     _paths.SRC_PATH / "scenario" / "_locations.py",

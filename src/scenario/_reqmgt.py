@@ -23,6 +23,7 @@ import typing
 
 if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -49,7 +50,6 @@ class ReqManagement(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
         from ._loggingservice import LOGGING_SERVICE
         from ._reqmgtargs import ReqManagementArgs
         from ._reqtraceability import REQ_TRACEABILITY
@@ -63,7 +63,7 @@ class ReqManagement(_LoggerImpl):
         # Start log features.
         LOGGING_SERVICE.start()
 
-        _errors = []  # type: typing.List[ErrorCode]
+        _errors = []  # type: typing.List[_ErrorCodeType]
 
         # Requirement & scenario loading.
         try:
@@ -77,7 +77,7 @@ class ReqManagement(_LoggerImpl):
                 )
         except Exception as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            _errors.append(ErrorCode.fromexception(_err))
+            _errors.append(_ErrorCodeImpl.fromexception(_err))
 
         # Execute `ReqManagementArgs` options.
         if not _errors:
@@ -91,7 +91,7 @@ class ReqManagement(_LoggerImpl):
                     )
                 except Exception as _err:
                     _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                    _errors.append(ErrorCode.fromexception(_err))
+                    _errors.append(_ErrorCodeImpl.fromexception(_err))
 
             # Upstream traceability report.
             _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[_PathType]
@@ -102,13 +102,13 @@ class ReqManagement(_LoggerImpl):
                     )
                 except Exception as _err:
                     _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                    _errors.append(ErrorCode.fromexception(_err))
+                    _errors.append(_ErrorCodeImpl.fromexception(_err))
 
         # Terminate log features.
         LOGGING_SERVICE.stop()
 
         # End.
-        return ErrorCode.worst(_errors)
+        return _ErrorCodeImpl.worst(_errors)
 
 
 #: Main instance of :class:`ReqManagement`.

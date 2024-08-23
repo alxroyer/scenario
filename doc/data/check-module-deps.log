@@ -11,14 +11,14 @@ INFO                                            _scenarioevents.py, _scenarioexe
 INFO                                            _scenariorunner.py, _scenariostack.py, _stats.py, _stepdefinition.py,
 INFO                                            _stepexecution.py, _stepsection.py, _stepspecifications.py, _subprocess.py,
 INFO                                            _testerrors.py, _timezoneutils.py]
-INFO     <10>            _campaignrunner.py => [_campaignargs.py, _datetimeutils.py, _debugclasses.py, _fastpath.py, _logger.py,
-INFO                                            _scenariodefinition.py, _scenarioexecution.py]
+INFO     <10>            _campaignrunner.py => [_campaignargs.py, _datetimeutils.py, _debugclasses.py, _errcodes.py,
+INFO                                            _fastpath.py, _logger.py, _scenariodefinition.py, _scenarioexecution.py]
 INFO     <10>           _reqtraceability.py => [_debugclasses.py, _fastpath.py, _logger.py, _path.py, _reflection.py,
 INFO                                            _reqref.py, _reqverifier.py, _scenariodefinition.py, _stepdefinition.py]
 INFO     <10>            _scenarioreport.py => [_debugclasses.py, _debugutils.py, _enumutils.py, _fastpath.py, _locations.py,
 INFO                                            _logger.py, _path.py, _scenariodefinition.py, _scenarioexecution.py, _stats.py,
 INFO                                            _stepdefinition.py, _stepexecution.py]
-INFO     <10>            _scenariorunner.py => [_debugclasses.py, _enumutils.py, _fastpath.py, _knownissues.py,
+INFO     <10>            _scenariorunner.py => [_debugclasses.py, _enumutils.py, _errcodes.py, _fastpath.py, _knownissues.py,
 INFO                                            _logextradata.py, _logger.py, _scenarioargs.py, _scenariodefinition.py,
 INFO                                            _scenarioexecution.py, _stepdefinition.py, _stepexecution.py,
 INFO                                            _stepspecifications.py, _textutils.py]
@@ -42,8 +42,8 @@ INFO     <06>                 _perfutils.py => [_datetimeutils.py, _debugutils.p
 INFO     <06>                _reqmgtargs.py => [_args.py, _fastpath.py, _path.py]
 INFO     <06>              _scenarioargs.py => [_args.py, _fastpath.py, _issuelevels.py, _path.py]
 INFO     <06>                _testerrors.py => [_fastpath.py, _locations.py, _path.py]
-INFO     <05>                      _args.py => [_configargs.py, _debugclasses.py, _fastpath.py, _logger.py, _loggingargs.py,
-INFO                                            _path.py, _reflection.py]
+INFO     <05>                      _args.py => [_configargs.py, _debugclasses.py, _errcodes.py, _fastpath.py, _logger.py,
+INFO                                            _loggingargs.py, _path.py, _reflection.py]
 INFO     <05>                  _configdb.py => [_confignode.py, _debugclasses.py, _enumutils.py, _logger.py, _path.py]
 INFO     <05>                  _handlers.py => [_debugclasses.py, _enumutils.py, _fastpath.py, _logger.py]
 INFO     <05>                 _locations.py => [_debugclasses.py, _logger.py, _path.py, _reflection.py]
@@ -52,12 +52,13 @@ INFO                                            _loghandler.py]
 INFO     <05>                _loggermain.py => [_logextradata.py, _logfilters.py, _logger.py, _loghandler.py]
 INFO     <05>                     _reqdb.py => [_debugclasses.py, _fastpath.py, _logger.py, _req.py, _reqlink.py, _reqref.py,
 INFO                                            _reqverifier.py]
-INFO     <05>                    _reqmgt.py => [_debugclasses.py, _fastpath.py, _logger.py]
+INFO     <05>                    _reqmgt.py => [_debugclasses.py, _errcodes.py, _fastpath.py, _logger.py]
 INFO     <05>            _scenarioconfig.py => [_consoleutils.py, _debugclasses.py, _enumutils.py, _fastpath.py,
 INFO                                            _issuelevels.py, _logger.py, _path.py]
 INFO     <05>           _scenarioresults.py => [_datetimeutils.py, _debugclasses.py, _debugutils.py, _fastpath.py, _logger.py,
 INFO                                            _stats.py]
-INFO     <05>             _testsuitefile.py => [_debugclasses.py, _logger.py, _path.py, _reflection.py, _textfileutils.py]
+INFO     <05>             _testsuitefile.py => [_debugclasses.py, _errcodes.py, _logger.py, _path.py, _reflection.py,
+INFO                                            _textfileutils.py]
 INFO     <05>                ui/_htmldoc.py => [_logger.py]
 INFO     <05>             ui/_httpserver.py => [_logger.py]
 INFO     <04>     _actionresultexecution.py => [_reflection.py, _stats.py]
@@ -72,7 +73,7 @@ INFO     <04>                    _logger.py => [_enumutils.py, _fastpath.py, _lo
 INFO                                            _loggingcontext.py]
 INFO     <04>            _loggingservice.py => [_fastpath.py, _logfilters.py, _loghandler.py]
 INFO     <04>             _stepexecution.py => [_reflection.py, _stats.py]
-INFO     <04>                _subprocess.py => [_debugutils.py, _path.py, _reflection.py, _stats.py]
+INFO     <04>                _subprocess.py => [_debugutils.py, _errcodes.py, _path.py, _reflection.py, _stats.py]
 INFO     <04>                  _xmlutils.py => [_path.py]
 INFO     <03>           _campaignlogging.py => [_datetimeutils.py, _enumutils.py, _fastpath.py, _logextradata.py]
 INFO     <03>                _logfilters.py => [_fastpath.py, _logextradata.py, _loghandler.py]

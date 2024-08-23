@@ -26,6 +26,7 @@ if True:
     from . import _enumutils as _enumutils  # @inheritance, @perf
     from . import _textutils as _textutils  # @perf
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
@@ -101,7 +102,6 @@ class ScenarioRunner(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
         from ._loggingservice import LOGGING_SERVICE
         from ._scenarioreport import SCENARIO_REPORT
         from ._scenarioresults import SCENARIO_RESULTS
@@ -122,12 +122,12 @@ class ScenarioRunner(_LoggerImpl):
                 _FAST_PATH.req_db.load(_req_db_file)
 
             # Execute tests.
-            _errors = []  # type: typing.List[ErrorCode]
+            _errors = []  # type: typing.List[_ErrorCodeType]
             for _scenario_path in _ScenarioArgsImpl.getinstance().scenario_paths:  # type: _PathType
                 self.debug("Executing '%s'...", _scenario_path)
 
-                _res = self.executepath(_scenario_path)  # type: ErrorCode
-                if _res != ErrorCode.SUCCESS:
+                _res = self.executepath(_scenario_path)  # type: _ErrorCodeType
+                if _res != _ErrorCodeImpl.SUCCESS:
                     # The `executepath()` and `execute()` methods don't return `ErrorCode.TEST_ERROR`.
                     # If the return code is not `ErrorCode.SUCCESS` at this point, it means this is a serious error.
                     # Stop processing right away.
@@ -137,12 +137,12 @@ class ScenarioRunner(_LoggerImpl):
                 assert _FAST_PATH.scenario_stack.size == 0
                 if not _FAST_PATH.scenario_stack.history:
                     self.error("No last scenario after execution")
-                    return ErrorCode.INTERNAL_ERROR
+                    return _ErrorCodeImpl.INTERNAL_ERROR
                 _scenario_execution = _FAST_PATH.scenario_stack.history[-1]  # type: _ScenarioExecutionType
 
                 # Manage test errors.
                 if _scenario_execution.errors:
-                    _errors.append(ErrorCode.TEST_ERROR)
+                    _errors.append(_ErrorCodeImpl.TEST_ERROR)
 
                 # Feed the `SCENARIO_RESULTS` instance.
                 SCENARIO_RESULTS.add(_scenario_execution)
@@ -165,11 +165,11 @@ class ScenarioRunner(_LoggerImpl):
             LOGGING_SERVICE.stop()
 
             # End test.
-            return ErrorCode.worst(_errors)
+            return _ErrorCodeImpl.worst(_errors)
 
         except Exception as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            return ErrorCode.fromexception(_err)
+            return _ErrorCodeImpl.fromexception(_err)
 
     # Scenario execution.
 
@@ -206,8 +206,6 @@ class ScenarioRunner(_LoggerImpl):
 
         Feeds the :data:`._scenarioresults.SCENARIO_RESULTS` instance.
         """
-        from ._errcodes import ErrorCode
-
         # Save the current time before loading the scenario script
         # and the `ScenarioDefinition` instance has been eventually created.
         _t0 = time.time()  # type: float
@@ -218,13 +216,13 @@ class ScenarioRunner(_LoggerImpl):
                 # type: typing.Type[_ScenarioDefinitionType]
         except ImportError as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            return ErrorCode.INPUT_MISSING_ERROR
+            return _ErrorCodeImpl.INPUT_MISSING_ERROR
         except SyntaxError as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            return ErrorCode.INPUT_FORMAT_ERROR
+            return _ErrorCodeImpl.INPUT_FORMAT_ERROR
         except LookupError as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            return ErrorCode.INPUT_FORMAT_ERROR
+            return _ErrorCodeImpl.INPUT_FORMAT_ERROR
 
         try:
             _scenario_definition = _scenario_definition_class()  # type: _ScenarioDefinitionType
@@ -232,14 +230,14 @@ class ScenarioRunner(_LoggerImpl):
             # Unexpected exception.
             _FAST_PATH.main_logger.error(f"Unexpected exception: {_err}")
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            return ErrorCode.INTERNAL_ERROR
+            return _ErrorCodeImpl.INTERNAL_ERROR
 
         _err_code = self.executescenario(
             _scenario_definition,
             # Instantiation sometimes takes a while.
             # Ensure the starting time is set to when this method has actually been called.
             start_time=_t0,
-        )  # type: ErrorCode
+        )  # type: _ErrorCodeType
 
         return _err_code
 
@@ -260,17 +258,15 @@ class ScenarioRunner(_LoggerImpl):
         :return:
             Error code, but no :attr:`._errcodes.ErrorCode.TEST_ERROR`.
         """
-        from ._errcodes import ErrorCode
-
         self.debug("Executing scenario %r", scenario_definition)
 
         # Build and begin the scenario.
-        _res = self._buildscenario(scenario_definition)  # type: ErrorCode
-        if _res != ErrorCode.SUCCESS:
+        _res = self._buildscenario(scenario_definition)  # type: _ErrorCodeType
+        if _res != _ErrorCodeImpl.SUCCESS:
             return _res
         assert scenario_definition.execution
         _res = self._beginscenario(scenario_definition)
-        if _res != ErrorCode.SUCCESS:
+        if _res != _ErrorCodeImpl.SUCCESS:
             return _res
         if start_time is not None:
             # Fix the starting time when the `starting_time` parameter is set.
@@ -289,11 +285,11 @@ class ScenarioRunner(_LoggerImpl):
 
         # End the scenario.
         _res = self._endscenario(scenario_definition)
-        if _res != ErrorCode.SUCCESS:
+        if _res != _ErrorCodeImpl.SUCCESS:
             return _res
 
         # Whether a test error occurred or not, return SUCCESS in this method.
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _buildscenario(
             self,
@@ -305,8 +301,6 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: :class:`._scenariodefinition.ScenarioDefinition` instance to populate with steps, actions and expected results definitions.
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
-
         self.debug("_buildscenario(scenario_definition=%r)", scenario_definition)
 
         with self.pushindentation():
@@ -339,7 +333,7 @@ class ScenarioRunner(_LoggerImpl):
             # Eventually remove the scenario definition reference from the building context of the scenario stack.
             _FAST_PATH.scenario_stack.building.popscenariodefinition(scenario_definition)
 
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _beginscenario(
             self,
@@ -351,7 +345,6 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: Scenario or subscenario which execution to start.
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._scenarioattributes import CoreScenarioAttributes
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
@@ -390,7 +383,7 @@ class ScenarioRunner(_LoggerImpl):
                     if _expected_attribute_name not in scenario_definition.getattributenames():
                         _FAST_PATH.main_logger.error(f"Missing test attribute {_expected_attribute_name}")
                         self.popindentation()
-                        return ErrorCode.INPUT_FORMAT_ERROR
+                        return _ErrorCodeImpl.INPUT_FORMAT_ERROR
 
                 # Requirement verifications.
                 _FAST_PATH.scenario_logging.reqcoverage(scenario_definition)
@@ -407,7 +400,7 @@ class ScenarioRunner(_LoggerImpl):
             # Notify every known issues registered at the definition level.
             self._notifyknownissuedefinitions(scenario_definition)
 
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _endscenario(
             self,
@@ -419,7 +412,6 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: Scenario or subscenario which execution to end.
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
 
@@ -458,7 +450,7 @@ class ScenarioRunner(_LoggerImpl):
             if _FAST_PATH.scenario_stack.size == 0:
                 _FAST_PATH.scenario_logging.displaystatistics(scenario_definition.execution)
 
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _execstep(
             self,

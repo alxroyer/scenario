@@ -29,12 +29,14 @@ import typing
 if True:
     from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # @inheritance
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
+    from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import Path as _PathType
 
 
@@ -114,8 +116,6 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
 
         :param class_debugging: See :class:`._loggingargs.CommonLoggingArgs`.
         """
-        from ._errcodes import ErrorCode
-
         _LoggerImpl.__init__(self, log_class=_DebugClassImpl.ARGS)
 
         # Initialize parsing members.
@@ -131,7 +131,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         self.parsed = False
 
         #: Argument parsing error code.
-        self.error_code = ErrorCode.ARGUMENTS_ERROR  # type: ErrorCode
+        self.error_code = _ErrorCodeImpl.ARGUMENTS_ERROR  # type: _ErrorCodeType
 
         # Common command line arguments.
         self.__arg_parser.add_argument(
@@ -206,8 +206,6 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         :param args: Argument list, without the program name.
         :return: ``True`` for success, ``False`` otherwise.
         """
-        from ._errcodes import ErrorCode
-
         # Parse command line arguments.
         _parsed_args = self.__arg_parser.parse_args(args)  # type: typing.Any
 
@@ -233,7 +231,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
                 _FAST_PATH.main_logger.info(f"Loading '{_config_path}'")
                 _FAST_PATH.config_db.loadfile(_config_path)
             except EnvironmentError as _env_err:
-                self.error_code = ErrorCode.ENVIRONMENT_ERROR
+                self.error_code = _ErrorCodeImpl.ENVIRONMENT_ERROR
                 # Don't log the full traceback for an environment error, just the error message.
                 _FAST_PATH.main_logger.error(str(_env_err))
                 return False
@@ -262,7 +260,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return False
 
-        self.error_code = ErrorCode.SUCCESS
+        self.error_code = _ErrorCodeImpl.SUCCESS
         self.parsed = True
         return True
 

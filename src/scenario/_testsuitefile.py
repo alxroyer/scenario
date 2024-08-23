@@ -22,6 +22,8 @@ import typing
 
 if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
+    from ._errcodes import ErrorCodeError as _ErrorCodeErrorImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import qualname as _qualname  # @perf
@@ -69,8 +71,6 @@ class TestSuiteFile(_LoggerImpl):
 
         :raise ._errcodes.ErrorCodeError: With :attr:`._errcodes.ErrorCode.INPUT_FORMAT_ERROR`, when the file could not be parsed.
         """
-        from ._errcodes import ErrorCode, ErrorCodeError
-
         # Reset the script path list in case :meth:`parse()` is called several times..
         self.script_paths = []
 
@@ -120,8 +120,8 @@ class TestSuiteFile(_LoggerImpl):
                                 self.script_paths.append(_add_path)
 
                 except Exception as _err:
-                    raise ErrorCodeError(
-                        error_code=ErrorCode.INPUT_FORMAT_ERROR,
+                    raise _ErrorCodeErrorImpl(
+                        error_code=_ErrorCodeImpl.INPUT_FORMAT_ERROR,
                         message=f"Error while parsing '{self.path}': {_err}",
                         exception=_err,
                     )

@@ -28,6 +28,7 @@ import typing
 
 if True:
     from . import _debugutils as _debugutils  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import qualname as _qualname  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
@@ -233,10 +234,8 @@ class SubProcess:
 
         The return code is available through the :attr:`returncode` attribute.
         """
-        from ._errcodes import ErrorCode
-
         if isinstance(exit_on_error_code, bool):
-            self._exit_on_error_code = ErrorCode.INTERNAL_ERROR if exit_on_error_code else None
+            self._exit_on_error_code = _ErrorCodeImpl.INTERNAL_ERROR if exit_on_error_code else None
         else:
             self._exit_on_error_code = exit_on_error_code
         return self

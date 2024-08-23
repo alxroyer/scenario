@@ -27,6 +27,7 @@ if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from ._campaignargs import CampaignArgs as _CampaignArgsImpl  # @perf
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
@@ -72,7 +73,6 @@ class CampaignRunner(_LoggerImpl):
         from ._campaignexecution import CampaignExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
         from ._campaignreport import CAMPAIGN_REPORT
-        from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._loggingservice import LOGGING_SERVICE
         from ._reqtraceability import REQ_TRACEABILITY
@@ -88,7 +88,7 @@ class CampaignRunner(_LoggerImpl):
             _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[_PathType]
             if not _test_suite_files:
                 _FAST_PATH.main_logger.error("No test suite files")
-                return ErrorCode.INPUT_MISSING_ERROR
+                return _ErrorCodeImpl.INPUT_MISSING_ERROR
 
             # Create the date/time output directory (if required).
             if _CampaignArgsImpl.getinstance().create_dt_subdir:
@@ -145,7 +145,7 @@ class CampaignRunner(_LoggerImpl):
             except Exception as _err:
                 _FAST_PATH.main_logger.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
                 _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                return ErrorCode.fromexception(_err)
+                return _ErrorCodeImpl.fromexception(_err)
 
             # Final logging (after reports generation).
             CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
@@ -157,11 +157,11 @@ class CampaignRunner(_LoggerImpl):
             # Terminate log features.
             LOGGING_SERVICE.stop()
 
-            return ErrorCode.SUCCESS
+            return _ErrorCodeImpl.SUCCESS
 
         except Exception as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            return ErrorCode.fromexception(_err)
+            return _ErrorCodeImpl.fromexception(_err)
 
     def _exectestsuitefile(
             self,
@@ -227,7 +227,6 @@ class CampaignRunner(_LoggerImpl):
         :raise: Exception when something worse than test errors occured.
         """
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._errcodes import ErrorCode
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
@@ -304,7 +303,7 @@ class CampaignRunner(_LoggerImpl):
                 _fallbackerror(f"'{test_case_execution.script_path}' did not return within {_subprocess.time.elapsed} seconds")
             elif _subprocess.returncode != 0:
                 try:
-                    _returncode_desc = str(ErrorCode(_subprocess.returncode))  # type: str
+                    _returncode_desc = str(_ErrorCodeImpl(_subprocess.returncode))  # type: str
                 except ValueError as _err:
                     _returncode_desc = str(_err)  # Type already declared above.
                 _fallbackerror(f"'{test_case_execution.script_path}' failed with error code {_subprocess.returncode!r} ({_returncode_desc})")
@@ -370,7 +369,7 @@ class CampaignRunner(_LoggerImpl):
                 # Specific case when the file does not exist:
                 # it causes a ARGUMENTS_ERROR that displays its error while the logging service is not started up yet,
                 # thus we don't catch the 'No such file error'
-                if _subprocess.returncode == ErrorCode.ARGUMENTS_ERROR:
+                if _subprocess.returncode == _ErrorCodeImpl.ARGUMENTS_ERROR:
                     if not test_case_execution.script_path.is_file():
                         _fallbackerror(f"No such file '{test_case_execution.script_path}'")
 
