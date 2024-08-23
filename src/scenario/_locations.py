@@ -31,6 +31,7 @@ import types
 import typing
 
 if True:
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import checkfuncqualname as _checkfuncqualname  # @perf
@@ -201,9 +202,7 @@ class ExecutionLocations(_LoggerImpl):
         """
         Sets up logging for the :class:`ExecutionLocations` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.EXECUTION_LOCATIONS)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.EXECUTION_LOCATIONS)
 
     def fromcurrentstack(
             self,

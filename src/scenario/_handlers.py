@@ -23,6 +23,7 @@ import typing
 
 if True:
     from . import _enumutils as _enumutils  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -81,9 +82,7 @@ class Handlers(_LoggerImpl):
         """
         Initializes an empty handler list.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.HANDLERS)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.HANDLERS)
 
         #: Installed handlers.
         #:

@@ -22,6 +22,7 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from . import _debugutils as _debugutils  # @perf
     from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
@@ -98,9 +99,7 @@ class CampaignReport(_LoggerImpl):
         """
         Configures logging for the :class:`CampaignReport` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.CAMPAIGN_REPORT)
 
         #: Campaign report path being written or read.
         self._report_path = _PathImpl()  # type: _PathType

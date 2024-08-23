@@ -25,7 +25,7 @@ import typing
 if True:
     from . import _enumutils as _enumutils  # @inheritance, @perf
     from . import _textutils as _textutils  # @perf
-    from ._args import Args as _ArgsImpl  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
@@ -92,9 +92,7 @@ class ScenarioRunner(_LoggerImpl):
         """
         Sets up logging for the :class:`ScenarioRunner` class, and member variables.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.SCENARIO_RUNNER)
         self.setextradata(_LogExtraDataImpl.ACTION_RESULT_MARGIN, False)
 
     def main(self):  # type: (...) -> _ErrorCodeType

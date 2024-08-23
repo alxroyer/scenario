@@ -23,6 +23,7 @@ import typing
 if True:
     from . import _consoleutils as _consoleutils  # @perf
     from . import _enumutils as _enumutils  # @inheritance
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
@@ -120,9 +121,7 @@ class ScenarioConfig(_LoggerImpl):
         """
         Initializes the instance as a logger, and the timezone cache information.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.SCENARIO_CONFIG)
+        _LoggerImpl.__init__(self, _DebugClassImpl.SCENARIO_CONFIG)
 
         #: Timezone cache information.
         self.__timezone = None  # type: typing.Optional[str]

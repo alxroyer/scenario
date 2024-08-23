@@ -22,6 +22,7 @@ import sys
 import typing
 
 if True:
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -40,9 +41,7 @@ class ReqManagement(_LoggerImpl):
         """
         Configures logging for the :class:`ReqManagement` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.REQ_MANAGEMENT)
+        _LoggerImpl.__init__(self, _DebugClassImpl.REQ_MANAGEMENT)
 
     def main(self):  # type: (...) -> _ErrorCodeType
         """

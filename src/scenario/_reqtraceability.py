@@ -22,6 +22,7 @@ import abc
 import typing
 
 if True:
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
@@ -55,9 +56,7 @@ class ReqTraceability(_LoggerImpl):
         """
         Initializes instance attributes and configures logging for the :class:`ReqTraceability` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.REQ_TRACEABILITY)
+        _LoggerImpl.__init__(self, _DebugClassImpl.REQ_TRACEABILITY)
 
         #: Scenarios loaded with :meth:`loaddatafromfiles()` or :meth:`loaddatafromcampaignresults()`.
         self.scenarios = []  # type: typing.List[_ScenarioDefinitionType]

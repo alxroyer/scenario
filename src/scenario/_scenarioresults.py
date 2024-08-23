@@ -24,6 +24,7 @@ import typing
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from . import _debugutils as _debugutils  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
@@ -44,9 +45,7 @@ class ScenarioResults(_LoggerImpl):
         """
         Initializes an empty list.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.SCENARIO_RESULTS)
+        _LoggerImpl.__init__(self, _DebugClassImpl.SCENARIO_RESULTS)
 
         #: List of :class:`._scenarioexecution.ScenarioExecution` instances.
         self._results = []  # type: typing.List[_ScenarioExecutionType]

@@ -28,6 +28,7 @@ import typing
 
 if True:
     from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # @inheritance
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # @inheritance
@@ -113,10 +114,9 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
 
         :param class_debugging: See :class:`._loggingargs.CommonLoggingArgs`.
         """
-        from ._debugclasses import DebugClass
         from ._errcodes import ErrorCode
 
-        _LoggerImpl.__init__(self, log_class=DebugClass.ARGS)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.ARGS)
 
         # Initialize parsing members.
 

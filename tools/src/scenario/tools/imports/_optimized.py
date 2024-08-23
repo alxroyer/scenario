@@ -33,6 +33,7 @@ OPTIMIZED_PATHS = [
     _paths.SRC_PATH / "scenario" / "_confignode.py",
     _paths.SRC_PATH / "scenario" / "_consoleutils.py",
     _paths.SRC_PATH / "scenario" / "_datetimeutils.py",
+    _paths.SRC_PATH / "scenario" / "_debugclasses.py",
     _paths.SRC_PATH / "scenario" / "_debugutils.py",
     _paths.SRC_PATH / "scenario" / "_enumutils.py",
     _paths.SRC_PATH / "scenario" / "_issuelevels.py",

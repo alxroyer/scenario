@@ -23,6 +23,7 @@ import typing
 if True:
     from . import _debugutils as _debugutils  # @perf
     from . import _enumutils as _enumutils  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
@@ -60,9 +61,7 @@ class ScenarioReport(_LoggerImpl):
         """
         Configures logging for the :class:`ScenarioReport` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_REPORT)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.SCENARIO_REPORT)
 
         #: JSON / YAML report path being written or read.
         self._report_path = _PathImpl()  # type: _PathType

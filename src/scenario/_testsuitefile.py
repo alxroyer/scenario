@@ -21,6 +21,7 @@ Test suite file management.
 import typing
 
 if True:
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._reflection import qualname as _qualname  # @perf
@@ -44,9 +45,7 @@ class TestSuiteFile(_LoggerImpl):
 
         :param path: Test suite file path.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.TEST_SUITE_FILE)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.TEST_SUITE_FILE)
 
         #: Test suite file path.
         self.path = _PathImpl(path)  # type: _PathType

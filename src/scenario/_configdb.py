@@ -26,6 +26,7 @@ import typing
 if True:
     from . import _enumutils as _enumutils  # @inheritance
     from ._confignode import ConfigNode as _ConfigNodeImpl  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -61,9 +62,7 @@ class ConfigDatabase(_LoggerImpl):
         """
         Initializes instance attributes and configures logging for the :class:`ConfigDatabase` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.CONFIG_DATABASE)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.CONFIG_DATABASE)
 
         #: Configuration tree.
         self._root = _ConfigNodeImpl(parent=None, key="")  # type: _ConfigNodeType
