@@ -25,6 +25,8 @@ import typing
 if True:
     from . import _enumutils as _enumutils  # @inheritance, @perf
     from . import _textutils as _textutils  # @perf
+    from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionImpl  # @perf
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionImpl  # @perf
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
@@ -41,6 +43,7 @@ if True:
     from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._path import AnyPathType as _AnyPathType
@@ -595,9 +598,6 @@ class ScenarioRunner(_LoggerImpl):
         :param action_result_type: ACTION or RESULT.
         :param description: Action or expected result description.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-        from ._actionresultexecution import ActionResultExecution
-
         self.debug("onactionresult(action_result_type=%s, description=%r)", action_result_type, description)
 
         if self._execution_mode == ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
@@ -606,7 +606,7 @@ class ScenarioRunner(_LoggerImpl):
                 _FAST_PATH.scenario_stack.raisecontexterror("No building step definition")
 
             _FAST_PATH.scenario_stack.building.step_definition.addactionresult(
-                ActionResultDefinition(
+                _ActionResultDefinitionImpl(
                     type=action_result_type,
                     description=description,
                 ),
@@ -621,13 +621,13 @@ class ScenarioRunner(_LoggerImpl):
 
             # Switch to this action/result.
             _step_execution_helper = _StepExecutionHelperImpl(_FAST_PATH.scenario_stack.current_step_execution)  # type: _StepExecutionHelperType
-            _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
+            _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: _ActionResultDefinitionType
             if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != _textutils.anylongtext2str(description)):
                 _FAST_PATH.scenario_stack.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
 
             # Create the action/result execution instance (in EXECUTE mode only).
             if self._execution_mode == ScenarioRunner.ExecutionMode.EXECUTE:
-                _action_result_definition.executions.append(ActionResultExecution(_action_result_definition))
+                _action_result_definition.executions.append(_ActionResultExecutionImpl(_action_result_definition))
 
             # Display.
             _FAST_PATH.scenario_logging.actionresult(_action_result_definition)
@@ -690,7 +690,6 @@ class ScenarioRunner(_LoggerImpl):
         :param error: Error that occurred.
         :param originator: Scenario or step definition that made the call to :meth:`onerror()`, set in :meth:.stepuserapi.StepUserApi.knownissue()`..
         """
-        from ._actionresultexecution import ActionResultExecution
         from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
 
@@ -738,7 +737,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Memorize the error in the current execution context.
             def _store_error(
-                    obj,  # type: typing.Optional[typing.Union[_ScenarioExecutionType, _StepExecutionType, ActionResultExecution]]
+                    obj,  # type: typing.Optional[typing.Union[_ScenarioExecutionType, _StepExecutionType, _ActionResultExecutionType]]
             ):  # type: (...) -> bool
                 # Check the current object is valid.
                 if obj is None:

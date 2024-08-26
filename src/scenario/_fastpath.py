@@ -26,6 +26,8 @@ and justified in the related data docstring.
 import typing
 
 if typing.TYPE_CHECKING:
+    from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._args import Args as _ArgsType
     from ._campaignargs import CampaignArgs as _CampaignArgsType
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
@@ -72,6 +74,8 @@ class FastPath:
 
     # Optimize attribute access for this class.
     __slots__ = [
+        "_action_result_definition_cls",
+        "_action_result_execution_cls",
         "_args",
         "_campaign_args",
         "_config_db",
@@ -195,20 +199,30 @@ class FastPath:
         #: Reference resolved by :meth:`step_execution_cls()` property.
         self._step_execution_cls = None  # type: typing.Optional[typing.Type[_StepExecutionType]]
 
-        #: :class:`._stepsection.StepSectionBegin` class reference.
-        #:
-        #: Reference resolved by :meth:`step_section_begin_cls()` property.
-        self._step_section_begin_cls = None  # type: typing.Optional[typing.Type[_StepSectionBeginType]]
-
         #: :class:`._stepsection.StepSectionDescription` class reference.
         #:
         #: Reference resolved by :meth:`step_section_description_cls()` property.
         self._step_section_description_cls = None  # type: typing.Optional[typing.Type[_StepSectionDescriptionType]]
 
+        #: :class:`._stepsection.StepSectionBegin` class reference.
+        #:
+        #: Reference resolved by :meth:`step_section_begin_cls()` property.
+        self._step_section_begin_cls = None  # type: typing.Optional[typing.Type[_StepSectionBeginType]]
+
         #: :class:`._stepsection.StepSectionEnd` class reference.
         #:
         #: Reference resolved by :meth:`step_section_end_cls()` property.
         self._step_section_end_cls = None  # type: typing.Optional[typing.Type[_StepSectionEndType]]
+
+        #: :class:`._actionresultdefinition.ActionResultDefinition` class reference.
+        #:
+        #: Reference resolved by :meth:`action_result_definition_cls()` property.
+        self._action_result_definition_cls = None  # type: typing.Optional[typing.Type[_ActionResultDefinitionType]]
+
+        #: :class:`._actionresultexecution.ActionResultExecution` class reference.
+        #:
+        #: Reference resolved by :meth:`action_result_execution_cls()` property.
+        self._action_result_execution_cls = None  # type: typing.Optional[typing.Type[_ActionResultExecutionType]]
 
         #: :class:`._req.Req` class reference.
         #:
@@ -415,16 +429,6 @@ class FastPath:
         return self._step_execution_cls
 
     @property
-    def step_section_begin_cls(self):  # type: () -> typing.Type[_StepSectionBeginType]
-        """
-        :class:`._stepsection.StepSectionBegin` class reference.
-        """
-        if self._step_section_begin_cls is None:
-            from ._stepsection import StepSectionBegin  # check-imports: ignore  ## `FastPath` local import.
-            self._step_section_begin_cls = StepSectionBegin
-        return self._step_section_begin_cls
-
-    @property
     def step_section_description_cls(self):  # type: () -> typing.Type[_StepSectionDescriptionType]
         """
         :class:`._stepsection.StepSectionDescription` class reference.
@@ -435,6 +439,16 @@ class FastPath:
         return self._step_section_description_cls
 
     @property
+    def step_section_begin_cls(self):  # type: () -> typing.Type[_StepSectionBeginType]
+        """
+        :class:`._stepsection.StepSectionBegin` class reference.
+        """
+        if self._step_section_begin_cls is None:
+            from ._stepsection import StepSectionBegin  # check-imports: ignore  ## `FastPath` local import.
+            self._step_section_begin_cls = StepSectionBegin
+        return self._step_section_begin_cls
+
+    @property
     def step_section_end_cls(self):  # type: () -> typing.Type[_StepSectionEndType]
         """
         :class:`._stepsection.StepSectionEnd` class reference.
@@ -443,6 +457,26 @@ class FastPath:
             from ._stepsection import StepSectionEnd  # check-imports: ignore  ## `FastPath` local import.
             self._step_section_end_cls = StepSectionEnd
         return self._step_section_end_cls
+
+    @property
+    def action_result_definition_cls(self):  # type: () -> typing.Type[_ActionResultDefinitionType]
+        """
+        :class:`._actionresultdefinition.ActionResultDefinition` class reference.
+        """
+        if self._action_result_definition_cls is None:
+            from ._actionresultdefinition import ActionResultDefinition  # check-imports: ignore  ## `FastPath` local import.
+            self._action_result_definition_cls = ActionResultDefinition
+        return self._action_result_definition_cls
+
+    @property
+    def action_result_execution_cls(self):  # type: () -> typing.Type[_ActionResultExecutionType]
+        """
+        :class:`._actionresultexecution.ActionResultExecution` class reference.
+        """
+        if self._action_result_execution_cls is None:
+            from ._actionresultexecution import ActionResultExecution  # check-imports: ignore  ## `FastPath` local import.
+            self._action_result_execution_cls = ActionResultExecution
+        return self._action_result_execution_cls
 
     @property
     def req_cls(self):  # type: () -> typing.Type[_ReqType]

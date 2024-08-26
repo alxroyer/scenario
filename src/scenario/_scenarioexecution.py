@@ -28,6 +28,7 @@ if True:
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
+    from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._logger import Logger as _LoggerType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
@@ -208,16 +209,14 @@ class ScenarioExecution:
 
         :return: Number of actions executed over the number of actions defined.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-
         _action_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSectionDescription` instances.
             if isinstance(_step_definition, _FAST_PATH.step_section_description_cls):
                 continue
 
-            for _action_result_definition in _step_definition.actions_results:  # type: ActionResultDefinition
-                if _action_result_definition.type == ActionResultDefinition.Type.ACTION:
+            for _action_result_definition in _step_definition.actions_results:  # type: _ActionResultDefinitionType
+                if _action_result_definition.type == _FAST_PATH.action_result_definition_cls.Type.ACTION:
                     _action_stats.total += 1
                     _action_stats.executed += len(_action_result_definition.executions)
 
@@ -230,16 +229,14 @@ class ScenarioExecution:
 
         :return: Number of expected results executed over the number of expected results defined.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-
         _result_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _step_definition in self.definition.steps:  # type: _StepDefinitionType
             # Skip `StepSectionDescription` instances.
             if isinstance(_step_definition, _FAST_PATH.step_section_description_cls):
                 continue
 
-            for _action_result_definition in _step_definition.actions_results:  # type: ActionResultDefinition
-                if _action_result_definition.type == ActionResultDefinition.Type.RESULT:
+            for _action_result_definition in _step_definition.actions_results:  # type: _ActionResultDefinitionType
+                if _action_result_definition.type == _FAST_PATH.action_result_definition_cls.Type.RESULT:
                     _result_stats.total += 1
                     _result_stats.executed += len(_action_result_definition.executions)
 

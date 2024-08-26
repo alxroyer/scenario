@@ -89,9 +89,7 @@ class StepUserApi(abc.ABC):
 
         .. note:: We deliberately deviate from PEP8 namings in order to highlight :meth:`ACTION` calls in the final test code.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-
-        _FAST_PATH.scenario_runner.onactionresult(ActionResultDefinition.Type.ACTION, action)
+        _FAST_PATH.scenario_runner.onactionresult(_FAST_PATH.action_result_definition_cls.Type.ACTION, action)
 
         return self.doexecute()
 
@@ -107,9 +105,7 @@ class StepUserApi(abc.ABC):
 
         .. note:: We deliberately deviate from PEP8 namings in order to highlight :meth:`RESULT` calls in the final test code.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-
-        _FAST_PATH.scenario_runner.onactionresult(ActionResultDefinition.Type.RESULT, result)
+        _FAST_PATH.scenario_runner.onactionresult(_FAST_PATH.action_result_definition_cls.Type.RESULT, result)
 
         return self.doexecute()
 

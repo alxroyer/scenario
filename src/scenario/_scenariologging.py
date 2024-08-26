@@ -25,7 +25,7 @@ if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._knownissues import KnownIssue as _KnownIssueImpl  # @inheritance
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType
@@ -204,9 +204,7 @@ class ScenarioLogging:
 
         :param actionresult: Action or expected result being executed.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-
-        if (actionresult.type == ActionResultDefinition.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
+        if (actionresult.type == _FAST_PATH.action_result_definition_cls.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
             # Add space before an action only after results.
             _FAST_PATH.main_logger.rawoutput("")
 

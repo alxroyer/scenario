@@ -25,6 +25,8 @@ if True:
 #: Module paths which local imports should be avoided for.
 OPTIMIZED_PATHS = [
     # _paths.SRC_PATH / "scenario",  # Not relevant.
+    _paths.SRC_PATH / "scenario" / "_actionresultdefinition.py",
+    _paths.SRC_PATH / "scenario" / "_actionresultexecution.py",
     _paths.SRC_PATH / "scenario" / "_args.py",
     _paths.SRC_PATH / "scenario" / "_assertions.py",
     _paths.SRC_PATH / "scenario" / "_campaignargs.py",

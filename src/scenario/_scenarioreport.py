@@ -23,6 +23,8 @@ import typing
 if True:
     from . import _debugutils as _debugutils  # @perf
     from . import _enumutils as _enumutils  # @perf
+    from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionImpl  # @perf
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionImpl  # @perf
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
@@ -35,6 +37,7 @@ if True:
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -484,7 +487,6 @@ class ScenarioReport(_LoggerImpl):
         :param action_result_definition: Action or expected result to generate JSON content for.
         :return: JSON content object.
         """
-        from ._actionresultexecution import ActionResultExecution
         from ._testerrors import TestError
 
         self.debug("Generating JSON content for %r", action_result_definition)
@@ -496,7 +498,7 @@ class ScenarioReport(_LoggerImpl):
                 "executions": [],
             }  # type: _JsonDictType
 
-            for _action_result_execution in action_result_definition.executions:  # type: ActionResultExecution
+            for _action_result_execution in action_result_definition.executions:  # type: _ActionResultExecutionType
                 _json_action_result_execution = {
                     "time": _action_result_execution.time.tojson(),
                     "evidence": _action_result_execution.evidence.copy(),
@@ -531,21 +533,19 @@ class ScenarioReport(_LoggerImpl):
         :param json_action_result_definition: Action / expected result JSON content to read.
         :return: :class:`._actionresultdefinition.ActionResultDefinition` data.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-        from ._actionresultexecution import ActionResultExecution
         from ._testerrors import TestError
 
         self.debug("Reading action/result instance from JSON: %s", _debugutils.jsondump(json_action_result_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         with self.pushindentation():
-            _action_result_type = ActionResultDefinition.Type(json_action_result_definition["type"])  # type: ActionResultDefinition.Type
+            _action_result_type = _ActionResultDefinitionImpl.Type(json_action_result_definition["type"])  # type: _ActionResultDefinitionType.Type
             self.debug("Type: %s", _action_result_type)
 
-            _action_result_definition = ActionResultDefinition(
+            _action_result_definition = _ActionResultDefinitionImpl(
                 type=_action_result_type,
                 description=json_action_result_definition["description"],
-            )  # type: ActionResultDefinition
+            )  # type: _ActionResultDefinitionType
             self.debug("Description: %r", _action_result_definition.description)
 
             for _json_action_result_execution in json_action_result_definition["executions"]:  # type: _JsonDictType
@@ -553,7 +553,7 @@ class ScenarioReport(_LoggerImpl):
                            extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
                 with self.pushindentation():
-                    _action_result_execution = ActionResultExecution(_action_result_definition)  # type: ActionResultExecution
+                    _action_result_execution = _ActionResultExecutionImpl(_action_result_definition)  # type: _ActionResultExecutionType
 
                     _action_result_execution.time = _TimeStatsImpl.fromjson(_json_action_result_execution["time"])
                     self.debug("Time: %s", _action_result_execution.time)
