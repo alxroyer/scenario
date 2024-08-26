@@ -31,6 +31,8 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenarioevents import ScenarioEvent as _ScenarioEventImpl  # @perf
+    from ._scenarioevents import ScenarioEventData as _ScenarioEventDataImpl  # @perf
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
@@ -75,7 +77,6 @@ class CampaignRunner(_LoggerImpl):
         from ._campaignreport import CAMPAIGN_REPORT
         from ._loggingservice import LOGGING_SERVICE
         from ._reqtraceability import REQ_TRACEABILITY
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
 
         try:
@@ -108,7 +109,7 @@ class CampaignRunner(_LoggerImpl):
             _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
 
             # *before-campaign* handlers.
-            _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
             # Start logging.
             CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
@@ -151,7 +152,7 @@ class CampaignRunner(_LoggerImpl):
             SCENARIO_RESULTS.display()
 
             # *after-campaign* handlers.
-            _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
             # Terminate log features.
             LOGGING_SERVICE.stop()
@@ -192,9 +193,8 @@ class CampaignRunner(_LoggerImpl):
         """
         from ._campaignexecution import TestCaseExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
 
-        _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
+        _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST_SUITE, _ScenarioEventDataImpl.TestSuite(test_suite_execution=test_suite_execution))
 
         CAMPAIGN_LOGGING.begintestsuite(test_suite_execution)
         test_suite_execution.time.setstarttime()
@@ -212,7 +212,7 @@ class CampaignRunner(_LoggerImpl):
             test_suite_execution.time.setendtime()
             CAMPAIGN_LOGGING.endtestsuite(test_suite_execution)
 
-            _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST_SUITE, _ScenarioEventDataImpl.TestSuite(test_suite_execution=test_suite_execution))
 
     def _exectestcase(
             self,
@@ -225,12 +225,11 @@ class CampaignRunner(_LoggerImpl):
         :raise: Exception when something worse than test errors occured.
         """
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
         from ._subprocess import SubProcess
         from ._testerrors import TestError
 
-        _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
+        _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST_CASE, _ScenarioEventDataImpl.TestCase(test_case_execution=test_case_execution))
 
         CAMPAIGN_LOGGING.begintestcase(test_case_execution)
         test_case_execution.time.setstarttime()
@@ -383,8 +382,8 @@ class CampaignRunner(_LoggerImpl):
             # Dispatch handlers.
             if test_case_execution.scenario_execution is not None:
                 for _error in test_case_execution.scenario_execution.errors:  # type: TestError
-                    _FAST_PATH.handlers.callhandlers(ScenarioEvent.ERROR, _error)
-            _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
+                    _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.ERROR, _error)
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST_CASE, _ScenarioEventDataImpl.TestCase(test_case_execution=test_case_execution))
 
             # Feed the `SCENARIO_RESULTS` instance.
             if test_case_execution.scenario_execution is not None:

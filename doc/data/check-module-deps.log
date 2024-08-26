@@ -12,7 +12,8 @@ INFO                                            _scenariorunner.py, _scenariosta
 INFO                                            _stepexecution.py, _stepsection.py, _stepspecifications.py, _subprocess.py,
 INFO                                            _testerrors.py, _timezoneutils.py]
 INFO     <10>            _campaignrunner.py => [_campaignargs.py, _datetimeutils.py, _debugclasses.py, _errcodes.py,
-INFO                                            _fastpath.py, _logger.py, _scenariodefinition.py, _scenarioexecution.py]
+INFO                                            _fastpath.py, _logger.py, _scenariodefinition.py, _scenarioevents.py,
+INFO                                            _scenarioexecution.py]
 INFO     <10>           _reqtraceability.py => [_debugclasses.py, _fastpath.py, _logger.py, _path.py, _reflection.py,
 INFO                                            _reqref.py, _reqverifier.py, _scenariodefinition.py, _stepdefinition.py]
 INFO     <10>            _scenarioreport.py => [_actionresultdefinition.py, _actionresultexecution.py, _debugclasses.py,
@@ -21,8 +22,9 @@ INFO                                            _path.py, _scenariodefinition.py
 INFO                                            _stepdefinition.py, _stepexecution.py]
 INFO     <10>            _scenariorunner.py => [_actionresultdefinition.py, _actionresultexecution.py, _debugclasses.py,
 INFO                                            _enumutils.py, _errcodes.py, _fastpath.py, _knownissues.py, _logextradata.py,
-INFO                                            _logger.py, _scenarioargs.py, _scenariodefinition.py, _scenarioexecution.py,
-INFO                                            _stepdefinition.py, _stepexecution.py, _stepspecifications.py, _textutils.py]
+INFO                                            _logger.py, _scenarioargs.py, _scenariodefinition.py, _scenarioevents.py,
+INFO                                            _scenarioexecution.py, _stepdefinition.py, _stepexecution.py,
+INFO                                            _stepspecifications.py, _textutils.py]
 INFO     <10>             _scenariostack.py => [_debugclasses.py, _logextradata.py, _logger.py, _scenariodefinition.py,
 INFO                                            _scenarioexecution.py]
 INFO     <10>               _stepsection.py => [_stepdefinition.py]

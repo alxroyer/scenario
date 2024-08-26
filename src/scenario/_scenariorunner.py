@@ -35,6 +35,8 @@ if True:
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._scenarioargs import ScenarioArgs as _ScenarioArgsImpl  # @perf
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
+    from ._scenarioevents import ScenarioEvent as _ScenarioEventImpl  # @perf
+    from ._scenarioevents import ScenarioEventData as _ScenarioEventDataImpl  # @perf
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
     from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # @perf
@@ -349,7 +351,6 @@ class ScenarioRunner(_LoggerImpl):
         :return: Error code.
         """
         from ._scenarioattributes import CoreScenarioAttributes
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
 
         self.debug("_beginscenario(scenario_definition=%r)", scenario_definition)
 
@@ -397,7 +398,7 @@ class ScenarioRunner(_LoggerImpl):
             scenario_definition.execution.time.setstarttime()
 
             # Execute *before test* handlers.
-            _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST, _ScenarioEventDataImpl.Scenario(scenario_definition=scenario_definition))
 
             # Notify every known issues registered at the definition level.
             self._notifyknownissuedefinitions(scenario_definition)
@@ -414,8 +415,6 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: Scenario or subscenario which execution to end.
         :return: Error code.
         """
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-
         self.debug("_endscenario(scenario_definition=%r)", scenario_definition)
 
         with self.pushindentation():
@@ -431,7 +430,7 @@ class ScenarioRunner(_LoggerImpl):
             self._notifyknownissuedefinitions(scenario_definition)
 
             # Execute *after test* handlers (whether the test is SUCCESS or not).
-            _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST, _ScenarioEventDataImpl.Scenario(scenario_definition=scenario_definition))
 
             # End execution time.
             scenario_definition.execution.time.setendtime()
@@ -462,7 +461,6 @@ class ScenarioRunner(_LoggerImpl):
 
         :param step_definition: Step definition to execute.
         """
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._testerrors import ExceptionError, TestError
 
         self.debug("Beginning of %r", step_definition)
@@ -482,7 +480,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Execute *before step* handlers.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_STEP, ScenarioEventData.Step(step_definition=step_definition))
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_STEP, _ScenarioEventDataImpl.Step(step_definition=step_definition))
                 if self._shouldstop() or (not _FAST_PATH.scenario_stack.current_step_definition):
                     self.debug("Execution of %r aborted after *before step* handlers", step_definition)
                     return
@@ -534,7 +532,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Execute *after step* handlers.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_STEP, ScenarioEventData.Step(step_definition=step_definition))
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_STEP, _ScenarioEventDataImpl.Step(step_definition=step_definition))
 
         self.debug("End of %r", step_definition)
 
@@ -687,8 +685,6 @@ class ScenarioRunner(_LoggerImpl):
         :param error: Error that occurred.
         :param originator: Scenario or step definition that made the call to :meth:`onerror()`, set in :meth:.stepuserapi.StepUserApi.knownissue()`..
         """
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-
         self.debug("onerror(error=%r, originator=%r)", error, originator)
 
         # Return right away if the error is ignored.
@@ -758,7 +754,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Call error handlers (if `error` is actually an error).
             if error.iserror():
-                _FAST_PATH.handlers.callhandlers(ScenarioEvent.ERROR, ScenarioEventData.Error(error=error))
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.ERROR, _ScenarioEventDataImpl.Error(error=error))
 
     def _shouldstop(self):  # type: (...) -> bool
         """

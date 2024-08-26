@@ -59,6 +59,7 @@ OPTIMIZED_PATHS = [
     _paths.SRC_PATH / "scenario" / "_scenarioargs.py",
     _paths.SRC_PATH / "scenario" / "_scenarioconfig.py",
     _paths.SRC_PATH / "scenario" / "_scenariodefinition.py",
+    _paths.SRC_PATH / "scenario" / "_scenarioevents.py",
     _paths.SRC_PATH / "scenario" / "_scenarioexecution.py",
     _paths.SRC_PATH / "scenario" / "_scenariologging.py",
     _paths.SRC_PATH / "scenario" / "_scenariorunner.py",
