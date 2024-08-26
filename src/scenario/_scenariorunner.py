@@ -109,7 +109,6 @@ class ScenarioRunner(_LoggerImpl):
         """
         from ._loggingservice import LOGGING_SERVICE
         from ._scenarioreport import SCENARIO_REPORT
-        from ._scenarioresults import SCENARIO_RESULTS
 
         try:
             # Analyze program arguments, if not already set.
@@ -150,7 +149,7 @@ class ScenarioRunner(_LoggerImpl):
                     _errors.append(_ErrorCodeImpl.TEST_ERROR)
 
                 # Feed the `SCENARIO_RESULTS` instance.
-                SCENARIO_RESULTS.add(_scenario_execution)
+                _FAST_PATH.scenario_results.add(_scenario_execution)
 
                 # Generate scenario report if required.
                 _scenario_report = _ScenarioArgsImpl.getinstance().scenario_report  # type: typing.Optional[_PathType]
@@ -163,8 +162,8 @@ class ScenarioRunner(_LoggerImpl):
                         raise
 
             # Display final results (when applicable).
-            if SCENARIO_RESULTS.count > 1:
-                SCENARIO_RESULTS.display()
+            if _FAST_PATH.scenario_results.count > 1:
+                _FAST_PATH.scenario_results.display()
 
             # Terminate log features.
             LOGGING_SERVICE.stop()

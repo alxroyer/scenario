@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._scenariologging import ScenarioLogging as _ScenarioLoggingType
+    from ._scenarioresults import ScenarioResults as _ScenarioResultsType
     from ._scenariorunner import ScenarioRunner as _ScenarioRunnerType
     from ._scenariostack import ScenarioStack as _ScenarioStackType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -101,6 +102,7 @@ class FastPath:
         "_scenario_definition_cls",
         "_scenario_execution_cls",
         "_scenario_logging",
+        "_scenario_results",
         "_scenario_runner",
         "_scenario_stack",
         "_step_definition_cls",
@@ -177,6 +179,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_logging()` property.
         self._scenario_logging = None  # type: typing.Optional[_ScenarioLoggingType]
+
+        #: :class:`._scenarioresults.ScenarioResults` singleton reference.
+        #:
+        #: Reference resolved by :meth:`scenario_results()` property.
+        self._scenario_results = None  # type: typing.Optional[_ScenarioResultsType]
 
         #: :class:`._campaignrunner.CampaignRunner` singleton reference.
         #:
@@ -398,6 +405,16 @@ class FastPath:
             from ._scenariologging import SCENARIO_LOGGING  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_logging = SCENARIO_LOGGING
         return self._scenario_logging
+
+    @property
+    def scenario_results(self):  # type: (...) -> _ScenarioResultsType
+        """
+        :class:`._scenariologging.ScenarioLogging` singleton.
+        """
+        if self._scenario_results is None:
+            from ._scenarioresults import SCENARIO_RESULTS  # check-imports: ignore  ## `FastPath` local import.
+            self._scenario_results = SCENARIO_RESULTS
+        return self._scenario_results
 
     @property
     def campaign_runner(self):  # type: () -> _CampaignRunnerType

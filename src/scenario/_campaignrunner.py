@@ -76,7 +76,6 @@ class CampaignRunner(_LoggerImpl):
         from ._campaignreport import CAMPAIGN_REPORT
         from ._loggingservice import LOGGING_SERVICE
         from ._reqtraceability import REQ_TRACEABILITY
-        from ._scenarioresults import SCENARIO_RESULTS
 
         try:
             # Analyze program arguments, if not already set.
@@ -148,7 +147,7 @@ class CampaignRunner(_LoggerImpl):
 
             # Final logging (after reports generation).
             _FAST_PATH.campaign_logging.endcampaign(_campaign_execution)
-            SCENARIO_RESULTS.display()
+            _FAST_PATH.scenario_results.display()
 
             # *after-campaign* handlers.
             _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
@@ -222,7 +221,6 @@ class CampaignRunner(_LoggerImpl):
         :param test_case_execution: Test case to execute.
         :raise: Exception when something worse than test errors occured.
         """
-        from ._scenarioresults import SCENARIO_RESULTS
         from ._subprocess import SubProcess
         from ._testerrors import TestError
 
@@ -384,7 +382,7 @@ class CampaignRunner(_LoggerImpl):
 
             # Feed the `SCENARIO_RESULTS` instance.
             if test_case_execution.scenario_execution is not None:
-                SCENARIO_RESULTS.add(test_case_execution.scenario_execution)
+                _FAST_PATH.scenario_results.add(test_case_execution.scenario_execution)
 
 
 #: Main instance of :class:`CampaignRunner`.
