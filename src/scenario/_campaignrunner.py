@@ -73,7 +73,6 @@ class CampaignRunner(_LoggerImpl):
         from ._campaignexecution import CampaignExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
         from ._campaignreport import CAMPAIGN_REPORT
-        from ._handlers import HANDLERS
         from ._loggingservice import LOGGING_SERVICE
         from ._reqtraceability import REQ_TRACEABILITY
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
@@ -109,7 +108,7 @@ class CampaignRunner(_LoggerImpl):
             _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
 
             # *before-campaign* handlers.
-            HANDLERS.callhandlers(ScenarioEvent.BEFORE_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
+            _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
 
             # Start logging.
             CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
@@ -152,7 +151,7 @@ class CampaignRunner(_LoggerImpl):
             SCENARIO_RESULTS.display()
 
             # *after-campaign* handlers.
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
+            _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
 
             # Terminate log features.
             LOGGING_SERVICE.stop()
@@ -193,10 +192,9 @@ class CampaignRunner(_LoggerImpl):
         """
         from ._campaignexecution import TestCaseExecution
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
 
-        HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
+        _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
 
         CAMPAIGN_LOGGING.begintestsuite(test_suite_execution)
         test_suite_execution.time.setstarttime()
@@ -214,7 +212,7 @@ class CampaignRunner(_LoggerImpl):
             test_suite_execution.time.setendtime()
             CAMPAIGN_LOGGING.endtestsuite(test_suite_execution)
 
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
+            _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
 
     def _exectestcase(
             self,
@@ -227,13 +225,12 @@ class CampaignRunner(_LoggerImpl):
         :raise: Exception when something worse than test errors occured.
         """
         from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._handlers import HANDLERS
         from ._scenarioevents import ScenarioEvent, ScenarioEventData
         from ._scenarioresults import SCENARIO_RESULTS
         from ._subprocess import SubProcess
         from ._testerrors import TestError
 
-        HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
+        _FAST_PATH.handlers.callhandlers(ScenarioEvent.BEFORE_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
 
         CAMPAIGN_LOGGING.begintestcase(test_case_execution)
         test_case_execution.time.setstarttime()
@@ -386,8 +383,8 @@ class CampaignRunner(_LoggerImpl):
             # Dispatch handlers.
             if test_case_execution.scenario_execution is not None:
                 for _error in test_case_execution.scenario_execution.errors:  # type: TestError
-                    HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
+                    _FAST_PATH.handlers.callhandlers(ScenarioEvent.ERROR, _error)
+            _FAST_PATH.handlers.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
 
             # Feed the `SCENARIO_RESULTS` instance.
             if test_case_execution.scenario_execution is not None:

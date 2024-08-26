@@ -31,6 +31,7 @@ if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
     from ._campaignargs import CampaignArgs as _CampaignArgsType
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
+    from ._handlers import Handlers as _HandlersType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._logger import Logger as _LoggerType
     from ._loggermain import MainLogger as _MainLoggerType
@@ -81,6 +82,7 @@ class FastPath:
         "_config_db",
         "_exec_args",
         "_execution_locations",
+        "_handlers",
         "_main_logger",
         "_reflection_logger",
         "_req_cls",
@@ -171,6 +173,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_logging()` property.
         self._scenario_logging = None  # type: typing.Optional[_ScenarioLoggingType]
+
+        #: :class:`._handlers.Handlers` singleton reference.
+        #:
+        #: Reference resolved by :meth:`handlers()` property.
+        self._handlers = None  # type: typing.Optional[_HandlersType]
 
         #: :class:`._reqdb.ReqDatabase` singleton reference.
         #:
@@ -377,6 +384,16 @@ class FastPath:
             from ._scenariologging import SCENARIO_LOGGING  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_logging = SCENARIO_LOGGING
         return self._scenario_logging
+
+    @property
+    def handlers(self):  # type: () -> _HandlersType
+        """
+        :class:`._handlers.Handlers` singleton.
+        """
+        if self._handlers is None:
+            from ._handlers import HANDLERS  # check-imports: ignore  ## `FastPath` local import.
+            self._handlers = HANDLERS
+        return self._handlers
 
     @property
     def req_db(self):  # type: () -> _ReqDatabaseType
