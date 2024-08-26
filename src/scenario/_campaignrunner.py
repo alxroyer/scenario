@@ -73,7 +73,6 @@ class CampaignRunner(_LoggerImpl):
         :return: Error code.
         """
         from ._campaignexecution import CampaignExecution
-        from ._campaignlogging import CAMPAIGN_LOGGING
         from ._campaignreport import CAMPAIGN_REPORT
         from ._loggingservice import LOGGING_SERVICE
         from ._reqtraceability import REQ_TRACEABILITY
@@ -112,7 +111,7 @@ class CampaignRunner(_LoggerImpl):
             _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
             # Start logging.
-            CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
+            _FAST_PATH.campaign_logging.begincampaign(_campaign_execution)
 
             # Execute the campaign.
             _campaign_execution.time.setstarttime()
@@ -148,7 +147,7 @@ class CampaignRunner(_LoggerImpl):
                 return _ErrorCodeImpl.fromexception(_err)
 
             # Final logging (after reports generation).
-            CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
+            _FAST_PATH.campaign_logging.endcampaign(_campaign_execution)
             SCENARIO_RESULTS.display()
 
             # *after-campaign* handlers.
@@ -192,11 +191,10 @@ class CampaignRunner(_LoggerImpl):
         :raise: Exception when something worse than test errors occured.
         """
         from ._campaignexecution import TestCaseExecution
-        from ._campaignlogging import CAMPAIGN_LOGGING
 
         _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST_SUITE, _ScenarioEventDataImpl.TestSuite(test_suite_execution=test_suite_execution))
 
-        CAMPAIGN_LOGGING.begintestsuite(test_suite_execution)
+        _FAST_PATH.campaign_logging.begintestsuite(test_suite_execution)
         test_suite_execution.time.setstarttime()
 
         try:
@@ -210,7 +208,7 @@ class CampaignRunner(_LoggerImpl):
 
         finally:
             test_suite_execution.time.setendtime()
-            CAMPAIGN_LOGGING.endtestsuite(test_suite_execution)
+            _FAST_PATH.campaign_logging.endtestsuite(test_suite_execution)
 
             _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST_SUITE, _ScenarioEventDataImpl.TestSuite(test_suite_execution=test_suite_execution))
 
@@ -224,14 +222,13 @@ class CampaignRunner(_LoggerImpl):
         :param test_case_execution: Test case to execute.
         :raise: Exception when something worse than test errors occured.
         """
-        from ._campaignlogging import CAMPAIGN_LOGGING
         from ._scenarioresults import SCENARIO_RESULTS
         from ._subprocess import SubProcess
         from ._testerrors import TestError
 
         _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST_CASE, _ScenarioEventDataImpl.TestCase(test_case_execution=test_case_execution))
 
-        CAMPAIGN_LOGGING.begintestcase(test_case_execution)
+        _FAST_PATH.campaign_logging.begintestcase(test_case_execution)
         test_case_execution.time.setstarttime()
 
         try:
@@ -377,7 +374,7 @@ class CampaignRunner(_LoggerImpl):
         finally:
             # Terminate the test case instance.
             test_case_execution.time.setendtime()
-            CAMPAIGN_LOGGING.endtestcase(test_case_execution)
+            _FAST_PATH.campaign_logging.endtestcase(test_case_execution)
 
             # Dispatch handlers.
             if test_case_execution.scenario_execution is not None:

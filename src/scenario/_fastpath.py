@@ -30,6 +30,8 @@ if typing.TYPE_CHECKING:
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._args import Args as _ArgsType
     from ._campaignargs import CampaignArgs as _CampaignArgsType
+    from ._campaignlogging import CampaignLogging as _CampaignLoggingType
+    from ._campaignrunner import CampaignRunner as _CampaignRunnerType
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
     from ._handlers import Handlers as _HandlersType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
@@ -79,6 +81,8 @@ class FastPath:
         "_action_result_execution_cls",
         "_args",
         "_campaign_args",
+        "_campaign_logging",
+        "_campaign_runner",
         "_config_db",
         "_exec_args",
         "_execution_locations",
@@ -173,6 +177,16 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`scenario_logging()` property.
         self._scenario_logging = None  # type: typing.Optional[_ScenarioLoggingType]
+
+        #: :class:`._campaignrunner.CampaignRunner` singleton reference.
+        #:
+        #: Reference resolved by :meth:`campaign_runner()` property.
+        self._campaign_runner = None  # type: typing.Optional[_CampaignRunnerType]
+
+        #: :class:`._campaignlogging.CampaignLogging` singleton reference.
+        #:
+        #: Reference resolved by :meth:`campaign_logging()` property.
+        self._campaign_logging = None  # type: typing.Optional[_CampaignLoggingType]
 
         #: :class:`._handlers.Handlers` singleton reference.
         #:
@@ -384,6 +398,26 @@ class FastPath:
             from ._scenariologging import SCENARIO_LOGGING  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_logging = SCENARIO_LOGGING
         return self._scenario_logging
+
+    @property
+    def campaign_runner(self):  # type: () -> _CampaignRunnerType
+        """
+        :class:`._campaignrunner.CampaignRunner` singleton.
+        """
+        if self._campaign_runner is None:
+            from ._campaignrunner import CAMPAIGN_RUNNER  # check-imports: ignore  ## `FastPath` local import.
+            self._campaign_runner = CAMPAIGN_RUNNER
+        return self._campaign_runner
+
+    @property
+    def campaign_logging(self):  # type: () -> _CampaignLoggingType
+        """
+        :class:`._campaignlogging.CampaignLogging` singleton.
+        """
+        if self._campaign_logging is None:
+            from ._campaignlogging import CAMPAIGN_LOGGING  # check-imports: ignore  ## `FastPath` local import.
+            self._campaign_logging = CAMPAIGN_LOGGING
+        return self._campaign_logging
 
     @property
     def handlers(self):  # type: () -> _HandlersType

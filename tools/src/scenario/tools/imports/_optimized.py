@@ -30,6 +30,8 @@ OPTIMIZED_PATHS = [
     _paths.SRC_PATH / "scenario" / "_args.py",
     _paths.SRC_PATH / "scenario" / "_assertions.py",
     _paths.SRC_PATH / "scenario" / "_campaignargs.py",
+    _paths.SRC_PATH / "scenario" / "_campaignlogging.py",
+    _paths.SRC_PATH / "scenario" / "_campaignrunner.py",
     _paths.SRC_PATH / "scenario" / "_configdb.py",
     _paths.SRC_PATH / "scenario" / "_configkey.py",
     _paths.SRC_PATH / "scenario" / "_confignode.py",
