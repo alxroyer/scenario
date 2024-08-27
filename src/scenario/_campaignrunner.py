@@ -73,9 +73,6 @@ class CampaignRunner(_LoggerImpl):
         :return: Error code.
         """
         from ._campaignexecution import CampaignExecution
-        from ._campaignreport import CAMPAIGN_REPORT
-        from ._loggingservice import LOGGING_SERVICE
-        from ._reqtraceability import REQ_TRACEABILITY
 
         try:
             # Analyze program arguments, if not already set.
@@ -97,7 +94,7 @@ class CampaignRunner(_LoggerImpl):
             _outdir.mkdir(parents=True, exist_ok=True)
 
             # Start log features.
-            LOGGING_SERVICE.start()
+            _FAST_PATH.logging_service.start()
 
             # Load requirements.
             for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
@@ -123,23 +120,23 @@ class CampaignRunner(_LoggerImpl):
                 # Requirement database.
                 _FAST_PATH.req_db.dump(_campaign_execution.req_db_path)
                 # Downstream & upstream traceability reports.
-                REQ_TRACEABILITY.loaddatafromcampaignresults(
+                _FAST_PATH.req_traceability.loaddatafromcampaignresults(
                     _campaign_execution,
                     log_info=False,  # Don't log info messages.
                 )
-                REQ_TRACEABILITY.writedownstream(
+                _FAST_PATH.req_traceability.writedownstream(
                     _campaign_execution.downstream_traceability_path,
                     log_info=False,  # Don't log info messages.
                     allow_results=True,  # Save test results in traceability reports.
                 )
-                REQ_TRACEABILITY.writeupstream(
+                _FAST_PATH.req_traceability.writeupstream(
                     _campaign_execution.upstream_traceability_path,
                     log_info=False,  # Don't log info messages.
                 )
 
             # Eventually write the JUnit campaign report (depends on requirement files generated before).
             try:
-                CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
+                _FAST_PATH.campaign_report.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
             except Exception as _err:
                 _FAST_PATH.main_logger.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
                 _FAST_PATH.main_logger.logexceptiontraceback(_err)
@@ -153,7 +150,7 @@ class CampaignRunner(_LoggerImpl):
             _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
             # Terminate log features.
-            LOGGING_SERVICE.stop()
+            _FAST_PATH.logging_service.stop()
 
             return _ErrorCodeImpl.SUCCESS
 

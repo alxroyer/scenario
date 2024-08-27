@@ -201,7 +201,6 @@ class ReqTraceability(_LoggerImpl):
             ``True`` (by default) to generate info logging.
         """
         from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
-        from ._campaignreport import CAMPAIGN_REPORT
 
         self.debug("ReqTraceability.loaddatafromcampaignresults(campaign_results='%s')", campaign_results)
 
@@ -222,7 +221,7 @@ class ReqTraceability(_LoggerImpl):
 
             if log_info:
                 _FAST_PATH.main_logger.info(f"Loading campaign results from '{_campaign_report_path}'")
-            _campaign_execution = CAMPAIGN_REPORT.readcampaignreport(
+            _campaign_execution = _FAST_PATH.campaign_report.readcampaignreport(
                 _campaign_report_path,
                 feed_req_db=True,
                 # Let's read scenario reports one by one after.

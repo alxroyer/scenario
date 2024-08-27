@@ -50,9 +50,7 @@ class ReqManagement(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._loggingservice import LOGGING_SERVICE
         from ._reqmgtargs import ReqManagementArgs
-        from ._reqtraceability import REQ_TRACEABILITY
 
         # Analyze program arguments, if not already set.
         if not ReqManagementArgs.isset():
@@ -61,7 +59,7 @@ class ReqManagement(_LoggerImpl):
                 return ReqManagementArgs.getinstance().error_code
 
         # Start log features.
-        LOGGING_SERVICE.start()
+        _FAST_PATH.logging_service.start()
 
         _errors = []  # type: typing.List[_ErrorCodeType]
 
@@ -69,9 +67,9 @@ class ReqManagement(_LoggerImpl):
         try:
             _campaign_results_path = ReqManagementArgs.getinstance().campaign_results_path  # type: typing.Optional[_PathType]
             if _campaign_results_path:
-                REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_results_path)
+                _FAST_PATH.req_traceability.loaddatafromcampaignresults(_campaign_results_path)
             else:
-                REQ_TRACEABILITY.loaddatafromfiles(
+                _FAST_PATH.req_traceability.loaddatafromfiles(
                     req_db_file_paths=ReqManagementArgs.getinstance().req_db_paths or None,
                     test_suite_paths=ReqManagementArgs.getinstance().test_suite_paths or None,
                 )
@@ -85,7 +83,7 @@ class ReqManagement(_LoggerImpl):
             _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _downstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writedownstream(
+                    _FAST_PATH.req_traceability.writedownstream(
                         _downstream_traceability_path,
                         allow_results=ReqManagementArgs.getinstance().allow_results,
                     )
@@ -97,7 +95,7 @@ class ReqManagement(_LoggerImpl):
             _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _upstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writeupstream(
+                    _FAST_PATH.req_traceability.writeupstream(
                         _upstream_traceability_path,
                     )
                 except Exception as _err:
@@ -105,7 +103,7 @@ class ReqManagement(_LoggerImpl):
                     _errors.append(_ErrorCodeImpl.fromexception(_err))
 
         # Terminate log features.
-        LOGGING_SERVICE.stop()
+        _FAST_PATH.logging_service.stop()
 
         # End.
         return _ErrorCodeImpl.worst(_errors)

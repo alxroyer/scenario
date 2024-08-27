@@ -132,13 +132,12 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
-        from ._reqtraceability import ReqTraceability
 
         if self._downstream_traceability_path is None:
             self._downstream_traceability_path = self._guessfilepath(
                 file_description="downstream traceability",
                 default_filename=_FAST_PATH.scenario_config.downstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_traceability.Downstream.JSON_SCHEMA_SUBPATH),
             )
         return self._downstream_traceability_path
 
@@ -157,13 +156,12 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
-        from ._reqtraceability import ReqTraceability
 
         if self._upstream_traceability_path is None:
             self._upstream_traceability_path = self._guessfilepath(
                 file_description="upstream traceability",
                 default_filename=_FAST_PATH.scenario_config.upstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_traceability.Upstream.JSON_SCHEMA_SUBPATH),
             )
         return self._upstream_traceability_path
 
@@ -190,20 +188,18 @@ class CampaignExecution:
         :param match_file: Handler that tells whether a given path is an acceptable candidate.
         :return: Path of the file searched.
         """
-        from ._campaignreport import CAMPAIGN_REPORT
-
         _default_file = self.outdir / default_filename  # type: _PathType
         if _default_file.exists():
             # The default file already exists, take it (for reading obviously).
-            CAMPAIGN_REPORT.debug("%s file: '%s'", file_description, _default_file)
+            _FAST_PATH.campaign_report.debug("%s file: '%s'", file_description, _default_file)
             return _default_file
         elif self.outdir.is_dir():
             # Check for a matching candidate for reading in existing files.
-            CAMPAIGN_REPORT.debug("Listing %s files in '%s'", file_description, self.outdir)
+            _FAST_PATH.campaign_report.debug("Listing %s files in '%s'", file_description, self.outdir)
             _candidate_files = list(filter(match_file, self.outdir.glob("*")))  # type: typing.Sequence[_PathType]
             if len(_candidate_files) == 1:
                 # Single file, take it.
-                CAMPAIGN_REPORT.debug("%s file: '%s'", file_description, _candidate_files[0])
+                _FAST_PATH.campaign_report.debug("%s file: '%s'", file_description, _candidate_files[0])
                 return _candidate_files[0]
             elif len(_candidate_files) > 1:
                 raise FileNotFoundError(f"Too many {file_description} files in '{self.outdir}'")
@@ -537,8 +533,6 @@ class ReportFileReader:
         """
         Read the scenario report.
         """
-        from ._scenarioreport import SCENARIO_REPORT
-
         if not self.path:
             raise FileNotFoundError("No scenario report to read")
-        self.content = SCENARIO_REPORT.readscenarioreport(self.path, feed_req_db=True)
+        self.content = _FAST_PATH.scenario_report.readscenarioreport(self.path, feed_req_db=True)

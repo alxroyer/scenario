@@ -107,9 +107,6 @@ class ScenarioRunner(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._loggingservice import LOGGING_SERVICE
-        from ._scenarioreport import SCENARIO_REPORT
-
         try:
             # Analyze program arguments, if not already set.
             if not _ScenarioArgsImpl.isset():
@@ -118,7 +115,7 @@ class ScenarioRunner(_LoggerImpl):
                     return _ScenarioArgsImpl.getinstance().error_code
 
             # Start log features.
-            LOGGING_SERVICE.start()
+            _FAST_PATH.logging_service.start()
 
             # Load requirements.
             for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
@@ -155,7 +152,7 @@ class ScenarioRunner(_LoggerImpl):
                 _scenario_report = _ScenarioArgsImpl.getinstance().scenario_report  # type: typing.Optional[_PathType]
                 if _scenario_report:
                     try:
-                        SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)
+                        _FAST_PATH.scenario_report.writescenarioreport(_scenario_execution.definition, _scenario_report)
                     except Exception as _err:
                         _FAST_PATH.main_logger.error(f"Error while writing '{_scenario_report}': {_err}")
                         # Note: Full traceback will be displayed in the main `except` block below.
@@ -166,7 +163,7 @@ class ScenarioRunner(_LoggerImpl):
                 _FAST_PATH.scenario_results.display()
 
             # Terminate log features.
-            LOGGING_SERVICE.stop()
+            _FAST_PATH.logging_service.stop()
 
             # End test.
             return _ErrorCodeImpl.worst(_errors)

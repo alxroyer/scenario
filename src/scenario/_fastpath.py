@@ -31,17 +31,20 @@ if typing.TYPE_CHECKING:
     from ._args import Args as _ArgsType
     from ._campaignargs import CampaignArgs as _CampaignArgsType
     from ._campaignlogging import CampaignLogging as _CampaignLoggingType
+    from ._campaignreport import CampaignReport as _CampaignReportType
     from ._campaignrunner import CampaignRunner as _CampaignRunnerType
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
     from ._handlers import Handlers as _HandlersType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
     from ._logger import Logger as _LoggerType
     from ._loggermain import MainLogger as _MainLoggerType
+    from ._loggingservice import LoggingService as _LoggingServiceType
     from ._req import Req as _ReqType
     from ._reqdb import ReqDatabase as _ReqDatabaseType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqlink import ReqLinkHelper as _ReqLinkHelperType
     from ._reqref import ReqRef as _ReqRefType
+    from ._reqtraceability import ReqTraceability as _ReqTraceabilityType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
     from ._scenarioargs import CommonExecArgs as _CommonExecArgsType
@@ -50,6 +53,7 @@ if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._scenariologging import ScenarioLogging as _ScenarioLoggingType
+    from ._scenarioreport import ScenarioReport as _ScenarioReportType
     from ._scenarioresults import ScenarioResults as _ScenarioResultsType
     from ._scenariorunner import ScenarioRunner as _ScenarioRunnerType
     from ._scenariostack import ScenarioStack as _ScenarioStackType
@@ -83,11 +87,13 @@ class FastPath:
         "_args",
         "_campaign_args",
         "_campaign_logging",
+        "_campaign_report",
         "_campaign_runner",
         "_config_db",
         "_exec_args",
         "_execution_locations",
         "_handlers",
+        "_logging_service",
         "_main_logger",
         "_reflection_logger",
         "_req_cls",
@@ -95,6 +101,7 @@ class FastPath:
         "_req_link_cls",
         "_req_link_helper_cls",
         "_req_ref_cls",
+        "_req_traceability",
         "_req_verifier_cls",
         "_req_verifier_helper_cls",
         "_scenario_args",
@@ -102,6 +109,7 @@ class FastPath:
         "_scenario_definition_cls",
         "_scenario_execution_cls",
         "_scenario_logging",
+        "_scenario_report",
         "_scenario_results",
         "_scenario_runner",
         "_scenario_stack",
@@ -122,6 +130,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`execution_locations()` property.
         self._execution_locations = None  # type: typing.Optional[_ExecutionLocationsType]
+
+        #: :class:`._loggingservice.LoggingService` singleton reference.
+        #:
+        #: Reference resolved by :meth:`logging_service()` property.
+        self._logging_service = None  # type: typing.Optional[_LoggingServiceType]
 
         #: :class:`._loggermain.MainLogger` singleton reference.
         #:
@@ -185,6 +198,11 @@ class FastPath:
         #: Reference resolved by :meth:`scenario_results()` property.
         self._scenario_results = None  # type: typing.Optional[_ScenarioResultsType]
 
+        #: :class:`._scenarioreport.ScenarioReport` singleton reference.
+        #:
+        #: Reference resolved by :meth:`scenario_report()` property.
+        self._scenario_report = None  # type: typing.Optional[_ScenarioReportType]
+
         #: :class:`._campaignrunner.CampaignRunner` singleton reference.
         #:
         #: Reference resolved by :meth:`campaign_runner()` property.
@@ -195,6 +213,11 @@ class FastPath:
         #: Reference resolved by :meth:`campaign_logging()` property.
         self._campaign_logging = None  # type: typing.Optional[_CampaignLoggingType]
 
+        #: :class:`._campaignreport.CampaignReport` singleton reference.
+        #:
+        #: Reference resolved by :meth:`campaign_report()` property.
+        self._campaign_report = None  # type: typing.Optional[_CampaignReportType]
+
         #: :class:`._handlers.Handlers` singleton reference.
         #:
         #: Reference resolved by :meth:`handlers()` property.
@@ -204,6 +227,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`req_db()` property.
         self._req_db = None  # type: typing.Optional[_ReqDatabaseType]
+
+        #: :class:`._reqtraceability.ReqTraceability` singleton reference.
+        #:
+        #: Reference resolved by :meth:`req_traceability()` property.
+        self._req_traceability = None  # type: typing.Optional[_ReqTraceabilityType]
 
         # Classes.
 
@@ -291,6 +319,16 @@ class FastPath:
             from ._locations import EXECUTION_LOCATIONS  # check-imports: ignore  ## `FastPath` local import.
             self._execution_locations = EXECUTION_LOCATIONS
         return self._execution_locations
+
+    @property
+    def logging_service(self):  # type: () -> _LoggingServiceType
+        """
+        :class:`._loggingservice.LoggingService` singleton.
+        """
+        if self._logging_service is None:
+            from ._loggingservice import LOGGING_SERVICE  # check-imports: ignore  ## `FastPath` local import.
+            self._logging_service = LOGGING_SERVICE
+        return self._logging_service
 
     @property
     def main_logger(self):  # type: () -> _MainLoggerType
@@ -409,12 +447,22 @@ class FastPath:
     @property
     def scenario_results(self):  # type: (...) -> _ScenarioResultsType
         """
-        :class:`._scenariologging.ScenarioLogging` singleton.
+        :class:`._scenarioresults.ScenarioResults` singleton.
         """
         if self._scenario_results is None:
             from ._scenarioresults import SCENARIO_RESULTS  # check-imports: ignore  ## `FastPath` local import.
             self._scenario_results = SCENARIO_RESULTS
         return self._scenario_results
+
+    @property
+    def scenario_report(self):  # type: (...) -> _ScenarioReportType
+        """
+        :class:`._scenarioreport.ScenarioReport` singleton.
+        """
+        if self._scenario_report is None:
+            from ._scenarioreport import SCENARIO_REPORT  # check-imports: ignore  ## `FastPath` local import.
+            self._scenario_report = SCENARIO_REPORT
+        return self._scenario_report
 
     @property
     def campaign_runner(self):  # type: () -> _CampaignRunnerType
@@ -437,6 +485,16 @@ class FastPath:
         return self._campaign_logging
 
     @property
+    def campaign_report(self):  # type: () -> _CampaignReportType
+        """
+        :class:`._campaignreport.CampaignReport` singleton.
+        """
+        if self._campaign_report is None:
+            from ._campaignreport import CAMPAIGN_REPORT  # check-imports: ignore  ## `FastPath` local import.
+            self._campaign_report = CAMPAIGN_REPORT
+        return self._campaign_report
+
+    @property
     def handlers(self):  # type: () -> _HandlersType
         """
         :class:`._handlers.Handlers` singleton.
@@ -455,6 +513,16 @@ class FastPath:
             from ._reqdb import REQ_DB  # check-imports: ignore  ## `FastPath` local import.
             self._req_db = REQ_DB
         return self._req_db
+
+    @property
+    def req_traceability(self):  # type: () -> _ReqTraceabilityType
+        """
+        :class:`._reqtraceability.ReqTraceability` singleton.
+        """
+        if self._req_traceability is None:
+            from ._reqtraceability import REQ_TRACEABILITY  # check-imports: ignore  ## `FastPath` local import.
+            self._req_traceability = REQ_TRACEABILITY
+        return self._req_traceability
 
     @property
     def scenario_definition_cls(self):  # type: () -> typing.Type[_ScenarioDefinitionType]
