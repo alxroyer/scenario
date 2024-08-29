@@ -28,7 +28,7 @@ class ImportForm(scenario.enum.StrEnum):
     IMPORT_MODULE_AS = "from <package> import <module>"
 
 
-#: Specify non-:attr:`ImportForm.FROM_MODULE_IMPORT` imports only.
+#: Specify :attr:`ImportForm.FROM_MODULE_IMPORT` imports only when they come with a justification.
 _IMPORT_FORMS = {
     _paths.SRC_PATH / "scenario" / "__init__.py": ImportForm.SYSTEM_IMPORT,
     _paths.SRC_PATH / "scenario" / "_assertionhelpers.py": ImportForm.IMPORT_MODULE_AS,
@@ -37,7 +37,6 @@ _IMPORT_FORMS = {
     _paths.SRC_PATH / "scenario" / "_debugutils.py": ImportForm.IMPORT_MODULE_AS,
     _paths.SRC_PATH / "scenario" / "_enumutils.py": ImportForm.IMPORT_MODULE_AS,
     _paths.SRC_PATH / "scenario" / "_jsondictutils.py": ImportForm.FROM_MODULE_IMPORT,  # Keep importing `JsonDictUtilsType` from '_jsondictutils.py'.
-    _paths.SRC_PATH / "scenario" / "_perfutils.py": ImportForm.IMPORT_MODULE_AS,
     _paths.SRC_PATH / "scenario" / "_setutils.py": ImportForm.IMPORT_MODULE_AS,
     _paths.SRC_PATH / "scenario" / "_textfileutils.py": ImportForm.FROM_MODULE_IMPORT,  # Single `TextFile` class in '_textfileutils.py'.
     _paths.SRC_PATH / "scenario" / "_textutils.py": ImportForm.IMPORT_MODULE_AS,

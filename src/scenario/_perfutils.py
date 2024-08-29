@@ -41,6 +41,7 @@ Memo for python profiling with ``cProfile`` and ``pstats``:
 
 import builtins
 import importlib
+import os
 import time
 import traceback
 import types
@@ -49,10 +50,118 @@ import typing
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from . import _debugutils as _debugutils  # @perf
-    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
+
+
+class CallLocation:
+    """
+    Call location management for tool classes in this module.
+    """
+
+    def __init__(
+            self,
+            *,
+            file,  # type: str
+            func="",  # type: str
+            line=0,  # type: int
+    ):  # type: (...) -> None
+        """
+        Instantiates a call location object.
+
+        :param file: See :attr:`file`.
+        :param line: See :attr:`line`.
+        :param func: See :attr:`func`.
+        """
+        #: Path of source file.
+        #: Usually a relative path from the current working directory.
+        #: Unix separators.
+        self.file = file.replace("\\", "/")  # type: str
+        #: Line number in :attr:`file`.
+        #: 0 stands for not set.
+        self.line = line  # type: int
+        #: Function name :attr:`file`
+        #: (without class name in case of a method, and without parentheses).
+        #: Empty strings stand for not set.
+        self.func = func  # type: str
+
+    def __str__(self):  # type: () -> str
+        """
+        Printable string representation.
+
+        Skips :attr:`line` and :attr:`func` if not relevant.
+        """
+        _location = self.file  # type: str
+        if self.line > 0:
+            _location += f":{self.line}"
+        if self.func:
+            _location += f":{self.func}"
+        return _location
+
+    def __eq__(self, other):  # type: (object) -> bool
+        """
+        Necessary to use :class:`CallLocation` objects as dictionary keys.
+
+        :param other: Object to compare with.
+        """
+        if isinstance(other, CallLocation):
+            return all([
+                other.file == self.file,
+                other.line == self.line,
+                other.func == self.func,
+            ])
+        return False
+
+    def __hash__(self):  # type: () -> int
+        """
+        Necessary to use :class:`CallLocation` objects as dictionary keys.
+        """
+        return hash((self.file, self.line, self.func))
+
+    @staticmethod
+    def locate(
+            *,
+            skipped=None,  # type: typing.Sequence[CallLocation]
+    ):  # type: (...) -> CallLocation
+        """
+        Locates the call location from the current stack.
+
+        :param skipped: Optional list of skipped locations.
+        :return: Call location instance.
+        """
+        skipped = skipped or []
+        skipped = [
+            # Skip any location from this source file.
+            CallLocation(
+                file=os.path.relpath(__file__, os.getcwd()),
+                line=0,
+                func="",
+            ),
+            *skipped,
+        ]
+
+        for _frame_summary in reversed(traceback.extract_stack()):  # type: traceback.FrameSummary
+            _location = CallLocation(
+                file=_frame_summary.filename,
+                line=_frame_summary.lineno or 0,
+                func=_frame_summary.name,
+            )  # type: CallLocation
+
+            # Check whether this location is skipped.
+            for _skipped_location in skipped:  # type: CallLocation
+                if all([
+                    _location.file == _skipped_location.file,
+                    (not _skipped_location.func) or (_location.func == _skipped_location.func),
+                    (not _skipped_location.line) or (_location.line == _skipped_location.line),
+                ]):
+                    # Location skipped.
+                    # Break this inner loop, skip the `else` block below, and proceed with next frame summary.
+                    break
+            else:
+                # Location not skipped.
+                return _location
+
+        raise Exception("Can't determine call location")
 
 
 class Timer:
@@ -317,10 +426,138 @@ class PerfImportWrapper:
         if name == PerfImportWrapper.refine_import:
             # Memo: Skip
             #   (-1) => `PerfImportWrapper._wrapper()` (this method)
-            _location = _CodeLocationImpl.fromtbitem(traceback.extract_stack()[-2]).tolongstring()  # type: str
+            _location = str(CallLocation.locate())  # type: str
             if _location not in _stats.callers:
                 _stats.callers[_location] = 0
             _stats.callers[_location] += 1
 
         # Return the imported module.
         return _module
+
+
+class CallTracker:
+    """
+    Tool class for counting and analyzing locations for a given call.
+
+    Locations may be refined by keywords.
+
+    Usage:
+
+    .. code-block:: python
+
+        # Once:
+        MY_CALL_TRACKER = CallTracker()
+        MY_CALL_TRACKER.skip(CallLocation(...))
+        MY_CALL_TRACKER.skip(CallLocation(...))
+
+        # Then, each time the function/method tracked is called:
+        MY_CALL_TRACKER.call()
+        # Or, for separate keyword entries:
+        MY_CALL_TRACKER.call(f"...")
+    """
+
+    def __init__(self):  # type: (...) -> None
+        """
+        Instantiates a new call tracker object.
+        """
+        #: Skipped call locations.
+        #: Fed by :meth:`skip()`.
+        #: Cleared by :meth:`clear()`.
+        self._skipped_locations = []  # type: typing.List[CallLocation]
+        #: Keyword entries.
+        #: Fed by :meth:`call()`.
+        self._keyword_entries = {}  # type: typing.Dict[str, CallTracker._KeywordEntry]
+
+    def skip(
+            self,
+            location,  # type: CallLocation
+    ):  # type: (...) -> None
+        """
+        Skip call locations matching the given specifications.
+
+        :param location: Call location to skip.
+        """
+        self._skipped_locations.append(location)
+
+    def call(
+            self,
+            keyword="",  # type: str
+    ):  # type: (...) -> None
+        """
+        Registers a call.
+
+        :param keyword: Optional keyword.
+        """
+        # Search for an already registered keyword entry,
+        # otherwise register a new one.
+        try:
+            _keyword_entry = self._keyword_entries[keyword]  # type: CallTracker._KeywordEntry
+        except KeyError:
+            _keyword_entry = self._keyword_entries[keyword] = CallTracker._KeywordEntry(keyword)
+
+        # Determine the call location (without using `ExecutionLocations` implementation).
+        _location = CallLocation.locate(skipped=self._skipped_locations)  # type: CallLocation
+
+        # Increment call count, or save 1 for new locations.
+        if _location in _keyword_entry.locations:
+            _keyword_entry.locations[_location] += 1
+        else:
+            _keyword_entry.locations[_location] = 1
+
+    def clear(self):  # type: (...) -> None
+        """
+        Clears keyword entries, with call locations already registered if any.
+        """
+        self._keyword_entries.clear()
+
+    def show(
+            self,
+            logger,  # type: _LoggerType
+            level,  # type: int
+            *,
+            reverse=True,  # type: bool
+    ):  # type: (...) -> None
+        """
+        Displays results.
+
+        :param logger: Logger object to use for logging.
+        :param level: Log level to use for logging.
+        :param reverse: ``True`` to start with highest counts, ``False`` to end with highest counts.
+        """
+        for _keyword_entry in sorted(
+            self._keyword_entries.values(),
+            key=lambda keyword_entry: keyword_entry.count,
+            reverse=reverse,
+        ):  # type: CallTracker._KeywordEntry
+            logger.log(level, f"{_keyword_entry.count}: {_keyword_entry.keyword or '(all)'}:")
+
+            for _location, _count in sorted(
+                _keyword_entry.locations.items(),
+                key=lambda t: t[1],  # Sort on location counts.
+                reverse=reverse,
+            ):  # type: CallLocation, int
+                logger.log(level, f"    {_count}: {_location}")
+
+    class _KeywordEntry:
+        """
+        Keyword entry.
+        """
+
+        def __init__(
+                self,
+                keyword,  # type: str
+        ):  # type: (...) -> None
+            """
+            :param keyword: Keyword associated with this entry.
+            """
+            #: Keyword of the entry.
+            self.keyword = keyword  # type: str
+            #: Call locations.
+            self.locations = {}  # type: typing.Dict[CallLocation, int]
+
+        @property
+        def count(self):  # type: () -> int
+            """
+            Sum of call location counts associated with this entry.
+            """
+            return sum(self.locations.values())
