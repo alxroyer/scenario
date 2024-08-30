@@ -274,15 +274,17 @@ class ExecutionLocations(_LoggerImpl):
                 # - Avoid 'src/scenario' sources.
                 if isinstance(_location.file, _PathImpl) and _location.file.is_relative_to(_SRC_SCENARIO_PATH):
                     _keep = False
-                for _skipped_path in (
-                    # - Avoid unittest sources.
-                    pathlib.Path("unittest") / "case.py",
-                    # - Avoid PyCharm sources (visible in the execution stack when debugging).
-                    pathlib.Path("pydevd.py"),
-                    pathlib.Path("_pydev_execfile.py"),
-                ):  # type: pathlib.Path
-                    if _location.file.as_posix().endswith(_skipped_path.as_posix()):
-                        _keep = False
+                else:
+                    for _skipped_path in (
+                        # - Avoid unittest sources.
+                        pathlib.Path("unittest") / "case.py",
+                        # - Avoid PyCharm sources (visible in the execution stack when debugging).
+                        pathlib.Path("pydevd.py"),
+                        pathlib.Path("_pydev_execfile.py"),
+                    ):  # type: pathlib.Path
+                        if _location.file.as_posix().endswith(_skipped_path.as_posix()):
+                            _keep = False
+                            break
 
                 if _keep:
                     self.debug("Location stack trace - %s:%d: %s", _location.file, _location.line, _location.qualname)
