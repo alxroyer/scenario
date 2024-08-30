@@ -34,6 +34,7 @@ if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
+    from ._path import SRC_SCENARIO_PATH as _SRC_SCENARIO_PATH  # @perf
     from ._reflection import checkfuncqualname as _checkfuncqualname  # @perf
     from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
@@ -271,7 +272,7 @@ class ExecutionLocations(_LoggerImpl):
                 # Filter-out stack trace elements based on file paths:
                 _keep = True
                 # - Avoid 'src/scenario' sources.
-                if isinstance(_location.file, _PathImpl) and _location.file.is_relative_to(pathlib.Path(__file__).parent):
+                if isinstance(_location.file, _PathImpl) and _location.file.is_relative_to(_SRC_SCENARIO_PATH):
                     _keep = False
                 for _skipped_path in (
                     # - Avoid unittest sources.

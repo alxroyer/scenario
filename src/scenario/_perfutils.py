@@ -407,6 +407,8 @@ class CallTracker:
                 reverse=not reverse,
             ):  # type: CallLocation, CallTracker._LocationEntry
                 logger.log(level, f"    {_location_entry.count} / {_location_entry.cumulative_time:.3f}: {_location}")
+        if not self._keyword_entries:
+            logger.log(level, "No entry")
 
     class _KeywordEntry:
         """

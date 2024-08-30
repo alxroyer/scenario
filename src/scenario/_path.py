@@ -626,3 +626,15 @@ class Path:
         self._abspath.replace(pathlib.Path(target))
         # Note: `pathlib.Path.replace()` returns the new path only from Python 3.8.
         return Path(target)
+
+
+# Useful paths.
+
+#: Root `scenario` path.
+ROOT_SCENARIO_PATH = Path(__file__).parents[2]  # type: Path
+
+#: `scenario` source directory path.
+SRC_PATH = ROOT_SCENARIO_PATH / "src"  # type: Path
+
+#: 'src/scenario' subdirectory path.
+SRC_SCENARIO_PATH = SRC_PATH / "scenario"  # type: Path
