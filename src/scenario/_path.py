@@ -34,6 +34,12 @@ if typing.TYPE_CHECKING:
     AnyPathType = typing.Union[str, os.PathLike]
 
 
+#: Void path constant as a ``pathlib.Path``.
+#:
+#: ``pathlib.Path`` instance computed once for performance concerns.
+_VOID_PATHLIB_PATH = pathlib.Path("//void/path")  # type: pathlib.Path
+
+
 class Path:
     """
     Helper class for path management.
@@ -152,7 +158,7 @@ class Path:
             which is a main difference with the ``pathlib`` library.
         """
         #: ``pathlib.Path`` instance used to store the absolute path described by this :class:`Path` instance.
-        self._abspath = pathlib.Path("//void/path")  # type: pathlib.Path
+        self._abspath = _VOID_PATHLIB_PATH  # type: pathlib.Path
         if isinstance(path, Path):
             # No need to duplicate the immutable `pathlib.Path` object.
             # The latter can be shared between the two `scenario.Path` instances.
@@ -231,7 +237,7 @@ class Path:
         # `pathlib.Path.samefile()` implemented as a member method.
         self.symlink_to = self._abspath.symlink_to  #: Shortcut to ``pathlib.Path.symlink_to()``.
         if sys.version_info >= (3, 10):
-            self.hardlink_to = self._abspath.hardlink_to  #: Shortcut to ``pathlib.Path.hardlink_to()``.
+            self.hardlink_to = self._abspath.hardlink_to  #: Shortcut to ``pathlib.Path.hardlink_to()``.  # noqa  ## Unresolved attribute reference 'hardlink_to' for class 'Path'
         if sys.version_info >= (3, 8):
             self.link_to = self._abspath.link_to  #: Shortcut to ``pathlib.Path.link_to()``.
         self.touch = self._abspath.touch  #: Shortcut to ``pathlib.Path.touch()``.
@@ -485,7 +491,7 @@ class Path:
 
         :return: ``True`` when the path is void, ``False`` otherwise.
         """
-        return self._abspath == Path()._abspath
+        return self._abspath is _VOID_PATHLIB_PATH
 
     @staticmethod
     def is_absolute(
