@@ -457,7 +457,7 @@ The 'tools/check-module-deps.py' script helps visualizing `scenario` module depe
         The list of optimized modules is defined in 'scenario/tools/imports/_optimized.py'.
 
         .. tip::
-            The :class:`scenario._perfutils.PerfImportWrapper` util may be used to determine which modules are imported the most
+            The :class:`scenario._perfutils.ImportCallTracker` tool class may be used to determine which modules are imported the most
             during a given code execution.
 
         .. tip::

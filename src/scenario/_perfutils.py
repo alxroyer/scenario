@@ -40,11 +40,9 @@ Memo for python profiling with ``cProfile`` and ``pstats``:
 """
 
 import builtins
-import importlib
 import os
 import time
 import traceback
-import types
 import typing
 
 if True:
@@ -295,146 +293,6 @@ class Timer:
             ]))
 
 
-class PerfImportWrapper:
-    """
-    Importer function wrapper for performance analysis.
-
-    Usage:
-
-    .. code-block:: python
-
-        PerfImportWrapper.Stats.clear()
-        PerfImportWrapper.install()
-
-        # Code to profile imports here.
-
-        PerfImportWrapper.uninstall()
-        PerfImportWrapper.Stats.show(self, logging.WARNING)
-    """
-
-    #: Import name to debug callers for.
-    refine_import = None  # type: typing.Optional[str]
-
-    class Stats:
-        """
-        Import statistics for a given module name.
-        """
-
-        def __init__(
-                self,
-                name,  # type: str
-        ):  # type: (...) -> None
-            """
-            :param name: Imported module name.
-            """
-            #: Imported module name.
-            self.name = name  # type: str
-            #: Import count for the given module name.
-            self.count = 0  # type: int
-            #: Total time taken for related imports.
-            self.total_time = 0.0  # type: float
-            #: Caller statistics.
-            self.callers = {}  # type: typing.Dict[str, int]
-
-        @staticmethod
-        def clear():  # type: (...) -> None
-            """
-            Clears :class:`PerfImportWrapper` statistics.
-            """
-            PerfImportWrapper._stats.clear()
-
-        @staticmethod
-        def show(
-                logger,  # type: _LoggerType
-                level,  # type: int
-        ):  # type: (...) -> None
-            """
-            Shows :class:`PerfImportWrapper` statistics.
-
-            :param logger: Logger object to use for logging.
-            :param level: Log level to use for logging.
-            """
-            for _import_stats in sorted(PerfImportWrapper._stats.values(), key=lambda import_stats: - import_stats.count):  # type: PerfImportWrapper.Stats
-                logger.log(level, f"import {_import_stats.name}: " + ", ".join([
-                    f"count={_import_stats.count}",
-                    f"total_time={_import_stats.total_time:.3f}",
-                    f"average={_import_stats.total_time / float(_import_stats.count):.3f}",
-                ]))
-                for _location_count in sorted(_import_stats.callers.items(), key=lambda t: t[1], reverse=True):  # type: typing.Tuple[str, int]
-                    logger.log(level, f"  {_location_count[0]}: {_location_count[1]}")
-
-    #: Import statistics.
-    _stats = {}  # type: typing.Dict[str, PerfImportWrapper.Stats]
-
-    #: Initial importer handler.
-    _initial_importer = importlib.__import__  # Let type inference do the job.
-
-    @staticmethod
-    def install():  # type: (...) -> None
-        """
-        Installs the importer wrapper.
-
-        .. warning:: Don't install twice in a row! Please :meth:`uninstall()` before.
-        """
-        PerfImportWrapper._initial_importer = builtins.__import__
-        builtins.__import__ = PerfImportWrapper._wrapper
-
-    @staticmethod
-    def uninstall():  # type: (...) -> None
-        """
-        Uninstalls the importer wrapper.
-
-        .. warning:: Don't uninstall if not installed! :meth:`install()` should have been called before.
-        """
-        builtins.__import__ = PerfImportWrapper._initial_importer
-
-    @staticmethod
-    def _wrapper(
-            name,  # type: str
-            globals=None,  # type: typing.Optional[typing.Mapping[str, typing.Any]]  # noqa  ## Shadows the built-in name 'globals'
-            locals=None,  # type: typing.Optional[typing.Mapping[str, typing.Any]]  # noqa  ## Shadows the built-in name 'locals'
-            fromlist=(),  # type: typing.Sequence[str]
-            level=0,  # type: int
-    ):  # type: (...) -> types.ModuleType
-        """
-        Importer wrapper function.
-
-        Feeds the statistics.
-        """
-        # Save starting time.
-        _t0 = time.time()  # type: float
-
-        # Do import the module.
-        _module = PerfImportWrapper._initial_importer(name, globals, locals, fromlist, level)  # type: types.ModuleType
-
-        # `from . import xxx` imports: fix empty `name` value with the expected single value in `fromlist`.
-        if not name:
-            if len(fromlist) != 1:
-                raise ImportError("Unexpected `from . import xxx, xxx` with several modules imported at once")
-            name = fromlist[0]
-        if globals and ("__package__" in globals) and globals["__package__"]:
-            name = f"{globals['__package__']}.{name}"
-
-        # Update statistics.
-        if name not in PerfImportWrapper._stats:
-            PerfImportWrapper._stats[name] = PerfImportWrapper.Stats(name)
-        _stats = PerfImportWrapper._stats[name]  # type: PerfImportWrapper.Stats
-        _stats.count += 1
-        _stats.total_time += (time.time() - _t0)
-
-        # Refined statistics.
-        if name == PerfImportWrapper.refine_import:
-            # Memo: Skip
-            #   (-1) => `PerfImportWrapper._wrapper()` (this method)
-            _location = str(CallLocation.locate())  # type: str
-            if _location not in _stats.callers:
-                _stats.callers[_location] = 0
-            _stats.callers[_location] += 1
-
-        # Return the imported module.
-        return _module
-
-
 class CallTracker:
     """
     Tool class for counting and analyzing locations for a given call.
@@ -482,14 +340,15 @@ class CallTracker:
     def call(
             self,
             keyword="",  # type: str
+            elapsed=0.0,  # type: float
     ):  # type: (...) -> None
         """
         Registers a call.
 
         :param keyword: Optional keyword.
+        :param elapsed: Elapsed time for the call being registered.
         """
-        # Search for an already registered keyword entry,
-        # otherwise register a new one.
+        # Search for an already registered keyword entry, otherwise register a new one.
         try:
             _keyword_entry = self._keyword_entries[keyword]  # type: CallTracker._KeywordEntry
         except KeyError:
@@ -498,11 +357,15 @@ class CallTracker:
         # Determine the call location (without using `ExecutionLocations` implementation).
         _location = CallLocation.locate(skipped=self._skipped_locations)  # type: CallLocation
 
-        # Increment call count, or save 1 for new locations.
-        if _location in _keyword_entry.locations:
-            _keyword_entry.locations[_location] += 1
-        else:
-            _keyword_entry.locations[_location] = 1
+        # Search for an already registered location entry, otherwise register a new one.
+        try:
+            _location_entry = _keyword_entry.locations[_location]  # type: CallTracker._LocationEntry
+        except KeyError:
+            _location_entry = _keyword_entry.locations[_location] = CallTracker._LocationEntry()
+
+        # Increment call count and cumulative time.
+        _location_entry.count += 1
+        _location_entry.cumulative_time += elapsed
 
     def clear(self):  # type: (...) -> None
         """
@@ -515,28 +378,32 @@ class CallTracker:
             logger,  # type: _LoggerType
             level,  # type: int
             *,
-            reverse=True,  # type: bool
+            reverse=False,  # type: bool
     ):  # type: (...) -> None
         """
         Displays results.
 
-        :param logger: Logger object to use for logging.
-        :param level: Log level to use for logging.
-        :param reverse: ``True`` to start with highest counts, ``False`` to end with highest counts.
+        :param logger:
+            Logger object to use for logging.
+        :param level:
+            Log level to use for logging.
+        :param reverse:
+            ``False`` to start with highest counts (same default presentation as ``cProfile`` / ``pstats``,
+            ``True`` to end with highest counts.
         """
         for _keyword_entry in sorted(
             self._keyword_entries.values(),
             key=lambda keyword_entry: keyword_entry.count,
-            reverse=reverse,
+            reverse=not reverse,
         ):  # type: CallTracker._KeywordEntry
-            logger.log(level, f"{_keyword_entry.count}: {_keyword_entry.keyword or '(all)'}:")
+            logger.log(level, f"{_keyword_entry.count} / {_keyword_entry.cumulative_time:.3f}: {_keyword_entry.keyword or '(all)'}:")
 
-            for _location, _count in sorted(
+            for _location, _location_entry in sorted(
                 _keyword_entry.locations.items(),
-                key=lambda t: t[1],  # Sort on location counts.
-                reverse=reverse,
-            ):  # type: CallLocation, int
-                logger.log(level, f"    {_count}: {_location}")
+                key=lambda t: t[1].count,  # Sort on location counts.
+                reverse=not reverse,
+            ):  # type: CallLocation, CallTracker._LocationEntry
+                logger.log(level, f"    {_location_entry.count} / {_location_entry.cumulative_time:.3f}: {_location}")
 
     class _KeywordEntry:
         """
@@ -553,11 +420,186 @@ class CallTracker:
             #: Keyword of the entry.
             self.keyword = keyword  # type: str
             #: Call locations.
-            self.locations = {}  # type: typing.Dict[CallLocation, int]
+            self.locations = {}  # type: typing.Dict[CallLocation, CallTracker._LocationEntry]
 
         @property
         def count(self):  # type: () -> int
             """
             Sum of call location counts associated with this entry.
             """
-            return sum(self.locations.values())
+            return sum([_location_entry.count for _location_entry in self.locations.values()])
+
+        @property
+        def cumulative_time(self):  # type: () -> float
+            """
+            Sum of call location times associated with this entry.
+            """
+            return sum([_location_entry.cumulative_time for _location_entry in self.locations.values()])
+
+    class _LocationEntry:
+        """
+        Call location entry.
+        """
+
+        def __init__(self):  # type: (...) -> None
+            """
+            Initializes a call location entry with 0 for :attr:`count` and :attr:`cumulative_time`.
+            """
+            #: Number of times this call location has occurred.
+            self.count = 0  # type: int
+            #: Cumulative time elapsed for the :attr:`count` calls.
+            #: May be unused.
+            self.cumulative_time = 0.0  # type: float
+
+
+class BuiltinCallTracker(CallTracker):
+    """
+    Builtin function wrapper for performance analysis.
+
+    Usage:
+
+    .. code-block:: python
+
+        _builtin_call_tracker = BuiltinCallTracker(
+            builtin, "isinstance",
+            keyword=lambda args, kwargs, ret: f"isinstance{args!r}",
+        )
+        _builtin_call_tracker.install()
+
+        # Code to profile imports here.
+
+        _builtin_call_tracker.uninstall()
+        _builtin_call_tracker.show(logger, logging.WARNING)
+    """
+
+    if typing.TYPE_CHECKING:
+        #: Keyword computation handler type.
+        #:
+        #: Arguments:
+        #:
+        #: 1. Positional arguments.
+        #: 2. Named arguments.
+        #: 3. Return value.
+        #:
+        #: Return value:
+        #:
+        #: - Keyword computed from the arguments above.
+        KeywordHandlerType = typing.Callable[
+            [
+                typing.Sequence[typing.Any],
+                typing.Mapping[str, typing.Any],
+                typing.Any,
+            ],
+            str,
+        ]
+
+    def __init__(
+            self,
+            obj,  # type: object
+            name,  # type: str
+            *,
+            keyword=None,  # type: BuiltinCallTracker.KeywordHandlerType
+    ):  # type: (...) -> None
+        """
+        Saves the builtin object and name of the function to wrap.
+
+        :param obj: See :attr:`obj`.
+        :param name: See :attr:`name`.
+        :param keyword: Optional keyword computation handler.
+        """
+        CallTracker.__init__(self)
+
+        #: Object owning the builtin function to wrap.
+        self.obj = obj  # type: object
+        #: Name of the builtin function in :attr:`obj`.
+        self.name = name  # type: str
+
+        #: Keyword computation handler.
+        self.keyword = keyword or (lambda arg, kwargs, ret: "")  # type: BuiltinCallTracker.KeywordHandlerType
+
+        #: Initial builtin function handler.
+        #: Saved by :meth:`install()` and restored by :meth:`uninstall()`.
+        self._initial_builtin_function = None  # type: typing.Any
+
+    def install(self):  # type: (...) -> None
+        """
+        Installs the builtin function wrapper.
+
+        .. warning:: Don't install twice in a row! Please :meth:`uninstall()` before.
+        """
+        assert self._initial_builtin_function is None, "Don't install the builtin function wrapper twice in a row"
+        self._initial_builtin_function = getattr(self.obj, self.name)
+        setattr(self.obj, self.name, self._wrapper)
+
+    def uninstall(self):  # type: (...) -> None
+        """
+        Uninstalls the builtin function wrapper.
+
+        .. warning:: Don't uninstall if not installed! :meth:`install()` should have been called before.
+        """
+        assert self._initial_builtin_function is not None, "Builtin function wrapper not installed"
+        setattr(self.obj, self.name, self._initial_builtin_function)
+        self._initial_builtin_function = None
+
+    def _wrapper(
+            self,
+            *args,  # type: typing.Any
+            **kwargs,  # type: typing.Any
+    ):  # type: (...) -> typing.Any
+        """
+        Builtin function wrapper.
+
+        Tracks the call statistics.
+        """
+        # Save starting time.
+        _t0 = time.time()  # type: float
+
+        # Call the real builtin function.
+        _res = self._initial_builtin_function(*args, **kwargs)  # type: typing.Any
+
+        # Register the call.
+        self.call(self.keyword(args, kwargs, _res), elapsed=time.time() - _t0)
+
+        # Return value.
+        return _res
+
+
+class ImportCallTracker(BuiltinCallTracker):
+    """
+    :class:`BuiltinCallTracker` specialization for ``import`` statements.
+    """
+
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the base :class:`BuiltinCallTracker` class for ``import`` wrapping.
+        """
+        BuiltinCallTracker.__init__(
+            self,
+            builtins, "__import__",
+            keyword=ImportCallTracker._keyword,
+        )
+
+    @staticmethod
+    def _keyword(
+            args,  # type: typing.Sequence[typing.Any]
+            kwargs,  # type: typing.Mapping[str, typing.Any]  # noqa  ## Unused parameter.
+            ret,  # type: typing.Any  # noqa  ## Unused parameter.
+    ):  # type: (...) -> str
+        """
+        Computes :class:`CallTracker` keywords from ``import`` arguments.
+        """
+        _name = args[0]  # type: str
+        _globals = args[1]  # type: typing.Optional[typing.Mapping[str, typing.Any]]
+        _fromlist = args[3]  # type: typing.Sequence[str]
+
+        # `from . import xxx` imports: fix empty `name` value with the expected single value in `fromlist`.
+        if not _name:
+            if len(_fromlist) != 1:
+                raise ImportError("Unexpected `from . import xxx, xxx` with several modules imported at once")
+            _name = _fromlist[0]
+
+        # Full qualified name, if applicable.
+        if _globals and ("__package__" in _globals) and _globals["__package__"]:
+            _name = f"{_globals['__package__']}.{_name}"
+
+        return _name
