@@ -508,6 +508,16 @@ class Path:
         except:  # noqa  ## Too broad exception clause.
             return False
 
+    #: :meth:`is_relative_to()` and :meth:`relative_to()` cache.
+    #:
+    #: Keys are tuples of (``self``, ``other``) paths for the given methods.
+    #:
+    #: Values give:
+    #:
+    #: - the relative path computed once for the given path tuple if ``self`` is relative to ``other``,
+    #: - an empty string if ``self`` is not relative to ``other``.
+    _relative_to_cache = {}  # type: typing.Dict[typing.Tuple[AnyPathType, AnyPathType], str]
+
     def is_relative_to(
             self,
             other,  # type: AnyPathType
@@ -520,13 +530,37 @@ class Path:
 
         See `pathlib.PurePath.is_relative_to() <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.is_relative_to>`_.
         """
+        # Check cache first.
+        # Use the member `self._relative_to_cache` override to avoid infinite recursive calls when the cache is being updated.
+        _cache_key = (self, other)  # type: typing.Tuple[AnyPathType, AnyPathType]
+        if _cache_key in self._relative_to_cache:
+            return bool(self._relative_to_cache[_cache_key])
+
+        _res = False  # type: bool
+        # Note: `PurePath.is_relative_to()` exists only from Python 3.9.
         if sys.version_info >= (3, 9):
-            return self._abspath.is_relative_to(other)
+            _res = self._abspath.is_relative_to(other)
         else:
-            # Note: `PurePath.is_relative_to()` exists only from Python 3.9.
+            # Ensure `other` as a `Path` instance.
             if not isinstance(other, Path):
                 other = Path(other)
-            return os.fspath(self).startswith(os.fspath(other))
+
+            _res = os.fspath(self).startswith(os.fspath(other))
+
+        # Update cache.
+        if _res:
+            try:
+                # Make next call to `is_relative_to()` return `True` right away
+                # in order to avoid infinite recursive calls between `is_relative_to()` and `relative_to()`.
+                self._relative_to_cache = dict({(self, other): "True"})
+                Path._relative_to_cache[_cache_key] = self.relative_to(other)
+            finally:
+                # Remove the `self._relative_to_cache` member override.
+                del self._relative_to_cache
+        else:
+            Path._relative_to_cache[_cache_key] = ""
+
+        return _res
 
     def relative_to(
             self,
@@ -549,20 +583,34 @@ class Path:
 
         See `pathlib.PurePath.relative_to() <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.relative_to>`_.
         """
+        # Check cache first.
+        _cache_key = (self, other)  # type: typing.Tuple[AnyPathType, AnyPathType]
+        if _cache_key in Path._relative_to_cache:
+            return Path._relative_to_cache[_cache_key]
+
+        # Ensure `other` as a `Path` instance.
         if not isinstance(other, Path):
             other = Path(other)
 
         # First check whether the path is actually relative to
         # - either the `other` path,
         # - or the *main* path if configured.
+        _relative_path = ""  # type: str
         if not self.is_relative_to(other):
             _main_path = Path.getmainpath()  # type: typing.Optional[Path]
             if (not _main_path) or (not self.is_relative_to(_main_path)):
                 # If not, return the absolute path.
-                return self.abspath
+                _relative_path = self.abspath
 
-        # Use `os.path.relpath()` instead of `pathlib.PurePath.relative_to()`.
-        return pathlib.Path(os.path.relpath(self._abspath, other)).as_posix()
+        # Compute the relative path if applicable.
+        if not _relative_path:
+            # Use `os.path.relpath()` instead of `pathlib.PurePath.relative_to()`.
+            _relative_path = pathlib.Path(os.path.relpath(self._abspath, other)).as_posix()
+
+        # Update cache.
+        Path._relative_to_cache[_cache_key] = _relative_path
+
+        return _relative_path
 
     def iterdir(self):  # type: (...) -> typing.Iterator[Path]
         """
