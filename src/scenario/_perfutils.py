@@ -57,6 +57,12 @@ class CallLocation:
     Call location management for tool classes in this module.
     """
 
+    #: Base list of paths to skip.
+    _base_skipped_paths = [
+        # Skip any location from this source file.
+        os.path.relpath(__file__, os.getcwd()),
+    ]  # type: typing.Sequence[str]
+
     def __init__(
             self,
             *,
@@ -102,11 +108,13 @@ class CallLocation:
 
         :param other: Object to compare with.
         """
-        if isinstance(other, CallLocation):
+        # Don't use `isinstance()` to avoid infinite cyclic calls when `IsInstanceCallTracker` is in use.
+        # if isinstance(other, CallLocation):
+        if type(other) is CallLocation:
             return all([
-                other.file == self.file,
-                other.line == self.line,
-                other.func == self.func,
+                other.file == self.file,  # noqa  ## Unresolved attribute reference 'file' for class 'object'
+                other.line == self.line,  # noqa  ## Unresolved attribute reference 'line' for class 'object'
+                other.func == self.func,  # noqa  ## Unresolved attribute reference 'func' for class 'object'
             ])
         return False
 
@@ -129,12 +137,7 @@ class CallLocation:
         """
         skipped = skipped or []
         skipped = [
-            # Skip any location from this source file.
-            CallLocation(
-                file=os.path.relpath(__file__, os.getcwd()),
-                line=0,
-                func="",
-            ),
+            *[CallLocation(file=_path) for _path in CallLocation._base_skipped_paths],
             *skipped,
         ]
 
@@ -452,24 +455,27 @@ class CallTracker:
             self.cumulative_time = 0.0  # type: float
 
 
-class BuiltinCallTracker(CallTracker):
+class WrapperCallTracker(CallTracker):
     """
-    Builtin function wrapper for performance analysis.
+    Function wrapper for performance analysis.
 
-    Usage:
+    Works also with ``builtins`` functions!
+
+    Example:
 
     .. code-block:: python
 
-        _builtin_call_tracker = BuiltinCallTracker(
-            builtin, "isinstance",
-            keyword=lambda args, kwargs, ret: f"isinstance{args!r}",
+        _path_init_call_tracker = WrapperCallTracker(
+            Path, "__init__",
+            keyword=lambda args, kwargs, ret: f"Path(path={args[0]!r}, relative_to={args[1]!r})",
         )
-        _builtin_call_tracker.install()
+        _path_init_call_tracker.skip(CallLocation(file="src/scenario/_path.py", func="__init__"))
+        _path_init_call_tracker.install()
 
-        # Code to profile imports here.
+        # Code to profile `Path.__init__()` calls here.
 
-        _builtin_call_tracker.uninstall()
-        _builtin_call_tracker.show(logger, logging.WARNING)
+        _path_init_call_tracker.uninstall()
+        _path_init_call_tracker.show(scenario.logging, logging.WARNING)
     """
 
     if typing.TYPE_CHECKING:
@@ -498,10 +504,10 @@ class BuiltinCallTracker(CallTracker):
             obj,  # type: object
             name,  # type: str
             *,
-            keyword=None,  # type: BuiltinCallTracker.KeywordHandlerType
+            keyword=None,  # type: WrapperCallTracker.KeywordHandlerType
     ):  # type: (...) -> None
         """
-        Saves the builtin object and name of the function to wrap.
+        Saves the owner object and name of the function to wrap.
 
         :param obj: See :attr:`obj`.
         :param name: See :attr:`name`.
@@ -509,53 +515,56 @@ class BuiltinCallTracker(CallTracker):
         """
         CallTracker.__init__(self)
 
-        #: Object owning the builtin function to wrap.
+        #: Object owning the function to wrap.
         self.obj = obj  # type: object
-        #: Name of the builtin function in :attr:`obj`.
+        #: Name of the function to wrap in :attr:`obj`.
         self.name = name  # type: str
 
         #: Keyword computation handler.
-        self.keyword = keyword or (lambda arg, kwargs, ret: "")  # type: BuiltinCallTracker.KeywordHandlerType
+        self.keyword = keyword or (lambda arg, kwargs, ret: "")  # type: WrapperCallTracker.KeywordHandlerType
 
-        #: Initial builtin function handler.
+        #: Initial function handler.
         #: Saved by :meth:`install()` and restored by :meth:`uninstall()`.
-        self._initial_builtin_function = None  # type: typing.Any
+        self._initial_function = None  # type: typing.Any
 
     def install(self):  # type: (...) -> None
         """
-        Installs the builtin function wrapper.
+        Installs the function wrapper.
 
         .. warning:: Don't install twice in a row! Please :meth:`uninstall()` before.
         """
-        assert self._initial_builtin_function is None, "Don't install the builtin function wrapper twice in a row"
-        self._initial_builtin_function = getattr(self.obj, self.name)
-        setattr(self.obj, self.name, self._wrapper)
+        assert self._initial_function is None, "Don't install the function wrapper twice in a row"
+        self._initial_function = getattr(self.obj, self.name)
+        setattr(self.obj, self.name, lambda *args, **kwargs: WrapperCallTracker._wrapper(self, args, kwargs))
 
     def uninstall(self):  # type: (...) -> None
         """
-        Uninstalls the builtin function wrapper.
+        Uninstalls the function wrapper.
 
         .. warning:: Don't uninstall if not installed! :meth:`install()` should have been called before.
         """
-        assert self._initial_builtin_function is not None, "Builtin function wrapper not installed"
-        setattr(self.obj, self.name, self._initial_builtin_function)
-        self._initial_builtin_function = None
+        assert self._initial_function is not None, "Function wrapper not installed"
+        setattr(self.obj, self.name, self._initial_function)
+        self._initial_function = None
 
+    @staticmethod
     def _wrapper(
-            self,
-            *args,  # type: typing.Any
-            **kwargs,  # type: typing.Any
+            self,  # type: WrapperCallTracker
+            args,  # type: typing.Sequence[typing.Any]
+            kwargs,  # type: typing.Mapping[str, typing.Any]
     ):  # type: (...) -> typing.Any
         """
-        Builtin function wrapper.
+        Function wrapper.
 
         Tracks the call statistics.
+
+        Defined as a static method to avoid positional argument errors due to ``self`` management of Python.
         """
         # Save starting time.
         _t0 = time.time()  # type: float
 
-        # Call the real builtin function.
-        _res = self._initial_builtin_function(*args, **kwargs)  # type: typing.Any
+        # Call the real function.
+        _res = self._initial_function(*args, **kwargs)  # type: typing.Any
 
         # Register the call.
         self.call(self.keyword(args, kwargs, _res), elapsed=time.time() - _t0)
@@ -564,16 +573,28 @@ class BuiltinCallTracker(CallTracker):
         return _res
 
 
-class ImportCallTracker(BuiltinCallTracker):
+class ImportCallTracker(WrapperCallTracker):
     """
-    :class:`BuiltinCallTracker` specialization for ``import`` statements.
+    :class:`WrapperCallTracker` specialization for ``import`` statements.
+
+    Example:
+
+    .. code-block:: python
+
+        _import_call_tracker = ImportCallTracker()
+        _import_call_tracker.install()
+
+        # Code to profile imports here.
+
+        _import_call_tracker.uninstall()
+        _import_call_tracker.show(scenario.logging, logging.WARNING)
     """
 
     def __init__(self):  # type: (...) -> None
         """
-        Configures the base :class:`BuiltinCallTracker` class for ``import`` wrapping.
+        Configures the base :class:`WrapperCallTracker` class for ``import`` wrapping.
         """
-        BuiltinCallTracker.__init__(
+        WrapperCallTracker.__init__(
             self,
             builtins, "__import__",
             keyword=ImportCallTracker._keyword,
@@ -603,3 +624,31 @@ class ImportCallTracker(BuiltinCallTracker):
             _name = f"{_globals['__package__']}.{_name}"
 
         return _name
+
+
+class IsInstanceCallTracker(WrapperCallTracker):
+    """
+    :class:`WrapperCallTracker` specialization for ``isinstance()`` calls.
+
+    Example:
+
+    .. code-block:: python
+
+        _is_instance_call_tracker = IsInstanceCallTracker()
+        _is_instance_call_tracker.install()
+
+        # Code to profile `isinstance()` calls here.
+
+        _is_instance_call_tracker.uninstall()
+        _is_instance_call_tracker.show(scenario.logging, logging.WARNING)
+    """
+
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the base :class:`WrapperCallTracker` class for ``isinstance()`` wrapping.
+        """
+        WrapperCallTracker.__init__(
+            self,
+            builtins, "isinstance",
+            keyword=lambda args, kwargs, ret: str(args[1]),
+        )
