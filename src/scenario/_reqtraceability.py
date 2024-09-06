@@ -142,40 +142,40 @@ class ReqTraceability(_LoggerImpl):
             with _FAST_PATH.main_logger.pushindentation("  "):
                 self.scenarios.clear()
 
-                self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
-                for _test_suite_path in test_suite_paths:  # type: _PathType
-                    if log_info:
-                        _FAST_PATH.main_logger.info("Loading '%s'", _test_suite_path)
-                    with _FAST_PATH.main_logger.pushindentation("  "):
-                        _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
-                        _test_suite_file.read()
-                        for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
-                            if log_info:
-                                _FAST_PATH.main_logger.info("Loading '%s'", _test_script_path)
+                try:
+                    # Disable scenario debug logging.
+                    _initial_scenario_debug_logging = (
+                        _FAST_PATH.config_db.get(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
+                    )  # type: typing.Optional[bool]
+                    _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
 
-                            # Find the scenario class.
-                            _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(
-                                _test_script_path,
-                                # Avoid loaded module being saved in `sys.modules`,
-                                # so that the function can be called again, and traceability refreshed.
-                                sys_modules_cache=False,
-                            )  # type: typing.Type[_ScenarioDefinitionType]
-                            self.debug("_scenario_definition_class=%r", _scenario_definition_class)
+                    self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
+                    for _test_suite_path in test_suite_paths:  # type: _PathType
+                        if log_info:
+                            _FAST_PATH.main_logger.info("Loading '%s'", _test_suite_path)
+                        with _FAST_PATH.main_logger.pushindentation("  "):
+                            _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
+                            _test_suite_file.read()
+                            for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
+                                if log_info:
+                                    _FAST_PATH.main_logger.info("Loading '%s'", _test_script_path)
 
-                            try:
-                                # Disable scenario debug logging.
-                                _initial_scenario_debug_logging = (
-                                    _FAST_PATH.config_db.get(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
-                                )  # type: typing.Optional[bool]
-                                _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
+                                # Find the scenario class.
+                                _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(
+                                    _test_script_path,
+                                    # Avoid loaded module being saved in `sys.modules`,
+                                    # so that the function can be called again, and traceability refreshed.
+                                    sys_modules_cache=False,
+                                )  # type: typing.Type[_ScenarioDefinitionType]
+                                self.debug("_scenario_definition_class=%r", _scenario_definition_class)
 
                                 # Create the scenario instance.
                                 _scenario = _scenario_definition_class()  # type: _ScenarioDefinitionType
-                            finally:
-                                # Restore initial scenario debug logging configuration.
-                                _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
-                            self.debug("_scenario=%r", _scenario)
-                            self.scenarios.append(_scenario)
+                                self.debug("_scenario=%r", _scenario)
+                                self.scenarios.append(_scenario)
+                finally:
+                    # Restore initial scenario debug logging configuration.
+                    _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
         else:
             self.debug("Scenario list left as is")
 
