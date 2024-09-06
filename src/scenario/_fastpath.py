@@ -39,6 +39,7 @@ if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
     from ._loggermain import MainLogger as _MainLoggerType
     from ._loggingservice import LoggingService as _LoggingServiceType
+    from ._path import Path as _PathType
     from ._req import Req as _ReqType
     from ._reqdb import ReqDatabase as _ReqDatabaseType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -95,6 +96,7 @@ class FastPath:
         "_handlers",
         "_logging_service",
         "_main_logger",
+        "_path_cls",
         "_reflection_logger",
         "_req_cls",
         "_req_db",
@@ -234,6 +236,11 @@ class FastPath:
         self._req_traceability = None  # type: typing.Optional[_ReqTraceabilityType]
 
         # Classes.
+
+        #: :class:`._path.Path` class reference.
+        #:
+        #: Reference resolved by :meth:`path_cls()` property.
+        self._path_cls = None  # type: typing.Optional[typing.Type[_PathType]]
 
         #: :class:`._scenariodefinition.ScenarioDefinition` class reference.
         #:
@@ -523,6 +530,18 @@ class FastPath:
             from ._reqtraceability import REQ_TRACEABILITY  # check-imports: ignore  ## `FastPath` local import.
             self._req_traceability = REQ_TRACEABILITY
         return self._req_traceability
+
+    @property
+    def path_cls(self):  # type: () -> typing.Type[_PathType]
+        """
+        :class:`._path.Path` class reference.
+
+        .. warning:: Prefer importing the class with implementation symbols if possible.
+        """
+        if self._path_cls is None:
+            from ._path import Path  # check-imports: ignore  ## `FastPath` local import.
+            self._path_cls = Path
+        return self._path_cls
 
     @property
     def scenario_definition_cls(self):  # type: () -> typing.Type[_ScenarioDefinitionType]

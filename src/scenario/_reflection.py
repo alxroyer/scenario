@@ -94,6 +94,68 @@ def isiterable(
         return False
 
 
+def _ensureabsolute(
+        script_path,  # type: _AnyPathType
+):  # type: (...) -> pathlib.Path
+    """
+    Ensures an absolute ``pathlib.Path`` version of ``script_path``.
+
+    :param script_path:
+        Input path.
+    :return:
+        Absolute ``pathlib.Path``.
+        Possibly ``script_path`` as is if already an absolute ``pathlib.Path``.
+    """
+    if isinstance(script_path, pathlib.Path):
+        if not script_path.is_absolute():
+            script_path = script_path.resolve()
+    elif isinstance(script_path, _FAST_PATH.path_cls):
+        return script_path._abspath  # noqa  ## Cannot find reference '_abspath' in 'str | PathLike'
+    else:
+        script_path = pathlib.Path(script_path).resolve()
+    return script_path
+
+
+def modulenamefrompath(
+        script_path,  # type: _AnyPathType
+):  # type: (...) -> str
+    """
+    Fully qualified module name computation from a script path.
+
+    Takes into account relative paths from any of ``sys.path``.
+
+    :param script_path: Script path to compute a module name for.
+    :return: Fully qualified module name computed.
+    """
+    script_path = _ensureabsolute(script_path)
+
+    # Use the directory name in case of a '__init__.py' file.
+    if script_path.name == "__init__.py":
+        _module_name = script_path.parent.name  # type: str
+    # Use the module basename without extension otherwise.
+    else:
+        _module_name = script_path.stem  # Type already declared above.
+
+    # Check whether the script is part of a `sys.path`, in order to preserve the module's package belonging.
+    #
+    # Note:
+    #   `pathlib.PurePath.is_relative_to()` exists from Python 3.9 only. Compare absolute strings.
+    #   Use `os.fspath()` to ensure normalization.
+    #   Compute `_script_fspath` once.
+    _script_fspath = os.fspath(script_path)  # type: str
+    for _python_path in sys.path:  # type: str
+        # `_python_path` may be a relative path. Ensure an absolute path to compare `_script_fspath` with it.
+        _python_path = os.fspath(pathlib.Path(_python_path).resolve())
+
+        # if script_path.is_relative_to(_python_path):
+        if _script_fspath.startswith(_python_path):
+            _module_name = script_path.relative_to(_python_path).as_posix().replace("/", ".")[:-3]
+            if _module_name.endswith(".__init__"):
+                _module_name = _module_name[:-len(".__init__")]
+
+    return _module_name
+
+
 def importmodulefrompath(
         script_path,  # type: _AnyPathType
         sys_modules_cache=True,  # type: bool
@@ -122,28 +184,12 @@ def importmodulefrompath(
 
         - ``__path__`` definition is missing, preventing usage of `pkgutil.extend_path()` consequently.
     """
-    script_path = pathlib.Path(script_path).resolve()
+    script_path = _ensureabsolute(script_path)
     assert script_path.is_file(), f"No such file '{script_path}'"
     assert script_path.suffix == ".py", f"Not a Python script '{script_path}'"
 
-    # Determine the module name:
-    # - Use the directory name in case of a '__init__.py' file.
-    if script_path.name == "__init__.py":
-        _module_name = script_path.parent.name  # type: str
-    # - Use the module basename without extension otherwise.
-    else:
-        _module_name = script_path.stem  # Type already declared above.
-    # - Then check whether the script is part of a `sys.path`, in order to preserve the module's package belonging.
-    for _python_path in sys.path:  # type: str
-        # Note: `pathlib.PurePath.is_relative_to()` exists from Python 3.9 only. Compare absolute strings.
-        # if script_path.is_relative_to(_python_path):
-        if os.fspath(script_path).startswith(os.fspath(_python_path)):
-            _module_name = script_path.relative_to(
-                # Note: `_python_path` may be a relative path. Ensure an absolute path in order to be able to compute a relative path from it.
-                pathlib.Path(_python_path).resolve()
-            ).as_posix().replace("/", ".")[:-3]
-            if _module_name.endswith(".__init__"):
-                _module_name = _module_name[:-len(".__init__")]
+    # Determine the module name.
+    _module_name = modulenamefrompath(script_path)  # type: str
 
     # First check whether the scenario has already been loaded.
     if sys_modules_cache:
@@ -234,11 +280,19 @@ def getloadedmodulefrompath(
     :param script_path: Python script path.
     :return: Corresponding module if already loaded.
     """
-    script_path = pathlib.Path(script_path)
     _module = None  # type: typing.Optional[types.ModuleType]
-    for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
-        if _module is None:
-            for _module_name in _module_registry:  # type: str
+
+    # Heuristic: First search the module from its module name.
+    _module_name = modulenamefrompath(script_path)  # type: str
+    if _module is None:
+        _module = _non_cached_modules.get(_module_name)
+    if _module is None:
+        _module = sys.modules.get(_module_name)
+
+    # If not found yet, try to match with `__file__` attributes of loaded modules.
+    if _module is None:
+        for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
+            for _module_name in _module_registry:  # Type already declared above.
                 if hasattr(_module_registry[_module_name], "__file__"):
                     if pathlib.Path(_module_registry[_module_name].__file__ or "").samefile(script_path):
                         _module = _module_registry[_module_name]
