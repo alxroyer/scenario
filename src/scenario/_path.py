@@ -172,6 +172,11 @@ class Path:
                 # Let's resolve `path` as is otherwise.
                 self._abspath = path.resolve()
 
+        #: Pretty path cache.
+        #:
+        #: computed on demand by :meth:`prettypath()` property.
+        self._prettypath = None  # type: typing.Optional[str]
+
         # === `pathlib.PurePath` API support ===
         # `pathlib.PurePath.parts` implemented as a member property.
         # `pathlib.PurePath.drive` implemented as a member property.
@@ -371,13 +376,13 @@ class Path:
         or the current working directory otherwise,
         and presented in the POSIX style.
         """
-        _ref_path = Path.cwd()  # type: Path
-        if Path._main_path is not None:
-            _ref_path = Path._main_path
-        _prettypath = self._abspath.as_posix()  # type: str
-        if self.is_relative_to(_ref_path) and (self != _ref_path):
-            _prettypath = self.relative_to(_ref_path)
-        return _prettypath
+        if self._prettypath is None:
+            _ref_path = Path._main_path or Path.cwd()  # type: Path
+            if self.is_relative_to(_ref_path) and (self != _ref_path):
+                self._prettypath = self.relative_to(_ref_path)
+            else:
+                self._prettypath = self._abspath.as_posix()
+        return self._prettypath
 
     def resolve(self):  # type: (...) -> Path
         """
