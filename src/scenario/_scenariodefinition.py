@@ -109,13 +109,19 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         self.description = _textutils.anylongtext2str(description or "")  # type: str
 
         #: Definition location.
-        self.location = _CodeLocationImpl.fromclass(type(self))  # type: _CodeLocationType
+        #:
+        #: Computed on demand and cached by :meth:`location()` property.
+        self._location = None  # type: typing.Optional[_CodeLocationType]
 
         #: Script path.
-        self.script_path = _PathImpl(self.location.file)  # type: _PathType
+        #:
+        #: Computed on demand and cached by :meth:`script_path()` property.
+        self._script_path = None  # type: typing.Optional[_PathType]
 
         #: Scenario name: i.e. script pretty path.
-        self.name = self.script_path.prettypath  # type: str
+        #:
+        #: Computed on demand and cached by :meth:`name()` property.
+        self._name = None  # type: typing.Optional[str]
 
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
@@ -162,6 +168,57 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Human readable string representation of the scenario definition.
         """
         return self.name
+
+    @property
+    def name(self):  # type: () -> str
+        """
+        Scenario name.
+
+        Script pretty path by default.
+        """
+        if self._name is not None:
+            return self._name
+        else:
+            return self.script_path.prettypath
+
+    @name.setter
+    def name(self, name):  # type: (str) -> None
+        """
+        Scenario name setter.
+        """
+        self._name = name
+
+    @property
+    def script_path(self):  # type: () -> _PathType
+        """
+        Script path getter.
+        """
+        if self._script_path is None:
+            self._script_path = _PathImpl(self.location.file)
+        return self._script_path
+
+    @script_path.setter
+    def script_path(self, script_path):  # type: (_PathType) -> None
+        """
+        Script path setter.
+        """
+        self._script_path = script_path
+
+    @property
+    def location(self):  # type: () -> _CodeLocationType
+        """
+        Definition location getter.
+        """
+        if self._location is None:
+            self._location = _CodeLocationImpl.fromclass(type(self))
+        return self._location
+
+    @location.setter
+    def location(self, location):  # type: (_CodeLocationType) -> None
+        """
+        Definition location setter.
+        """
+        self._location = location
 
     def setattribute(
             self,

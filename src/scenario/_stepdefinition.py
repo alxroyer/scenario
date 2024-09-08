@@ -88,6 +88,11 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         :param method: Method that defines the step, when applicable. Optional.
         :param numbered: ``False`` if the step shall not be numbered.
         """
+        #: Scenario name.
+        #:
+        #: Computed on demande and cached by :meth:`name()` property.
+        self._name = None  # type: typing.Optional[str]
+
         #: Owner scenario.
         #:
         #: Set when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
@@ -97,9 +102,9 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         self.method = method  # type: typing.Optional[types.MethodType]
 
         #: Definition location.
-        self.location = _CodeLocationImpl.fromclass(type(self))  # type: _CodeLocationType
-        if self.method:
-            self.location = _CodeLocationImpl.frommethod(self.method)
+        #:
+        #: Computed on demand and cached by :meth:`location()` property.
+        self._location = None  # type: typing.Optional[_CodeLocationType]
 
         #: ``True`` when the step may be assigned a step :attr:`number`.
         #:
@@ -142,7 +147,31 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         Step name, i.e. the fully qualified name of the class or method defining it.
         """
-        return self.location.qualname
+        if self._name is None:
+            if self.method:
+                self._name = _qualname(self.method)
+            else:
+                self._name = _qualname(type(self))
+        return self._name
+
+    @property
+    def location(self):  # type: () -> _CodeLocationType
+        """
+        Definition location getter.
+        """
+        if self._location is None:
+            if self.method:
+                self._location = _CodeLocationImpl.frommethod(self.method)
+            else:
+                self._location = _CodeLocationImpl.fromclass(type(self))
+        return self._location
+
+    @location.setter
+    def location(self, location):  # type: (_CodeLocationType) -> None
+        """
+        Definition location setter.
+        """
+        self._location = location
 
     @property
     def scenario(self):  # type: () -> _ScenarioDefinitionType
