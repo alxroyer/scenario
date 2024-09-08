@@ -394,21 +394,37 @@ class CallTracker:
             ``False`` to start with highest counts (same default presentation as ``cProfile`` / ``pstats``,
             ``True`` to end with highest counts.
         """
-        for _keyword_entry in sorted(
-            self._keyword_entries.values(),
-            key=lambda keyword_entry: keyword_entry.count,
-            reverse=not reverse,
-        ):  # type: CallTracker._KeywordEntry
-            logger.log(level, f"{_keyword_entry.count} / {_keyword_entry.cumulative_time:.3f}: {_keyword_entry.keyword or '(all)'}:")
+        def _logtotal():  # type: (...) -> None
+            if len(self._keyword_entries) > 1:
+                _total_count = sum([_.count for _ in self._keyword_entries.values()])  # type: int
+                _total_cumulative_time = sum([_.cumulative_time for _ in self._keyword_entries.values()])  # type: float
+                logger.log(level, f"{_total_count} / {_total_cumulative_time:.3f}: TOTAL")
 
-            for _location, _location_entry in sorted(
-                _keyword_entry.locations.items(),
-                key=lambda t: t[1].count,  # Sort on location counts.
-                reverse=not reverse,
-            ):  # type: CallLocation, CallTracker._LocationEntry
-                logger.log(level, f"    {_location_entry.count} / {_location_entry.cumulative_time:.3f}: {_location}")
         if not self._keyword_entries:
             logger.log(level, "No entry")
+
+        else:
+            if not reverse:
+                _logtotal()
+                logger.log(level, "---")
+
+            for _keyword_entry in sorted(
+                self._keyword_entries.values(),
+                key=lambda keyword_entry: keyword_entry.count,
+                reverse=not reverse,
+            ):  # type: CallTracker._KeywordEntry
+                logger.log(level, f"{_keyword_entry.count} / {_keyword_entry.cumulative_time:.3f}: {_keyword_entry.keyword or '(all)'}:")
+
+                for _location, _location_entry in sorted(
+                    _keyword_entry.locations.items(),
+                    key=lambda t: t[1].count,  # Sort on location counts.
+                    reverse=not reverse,
+                ):  # type: CallLocation, CallTracker._LocationEntry
+                    logger.log(level, f"    {_location_entry.count} / {_location_entry.cumulative_time:.3f}: {_location}")
+
+            if reverse:
+                logger.log(level, "---")
+                _logtotal()
 
     class _KeywordEntry:
         """
