@@ -177,6 +177,11 @@ class Path:
         #: computed on demand by :meth:`prettypath()` property.
         self._prettypath = None  # type: typing.Optional[str]
 
+        #: :meth:`samefile()` cache.
+        #:
+        #: Dictionary of `{id: :meth:`samefile()` result}`.
+        self._samefile_cache = {}  # type: typing.Dict[int, bool]
+
         # === `pathlib.PurePath` API support ===
         # `pathlib.PurePath.parts` implemented as a member property.
         # `pathlib.PurePath.drive` implemented as a member property.
@@ -420,20 +425,30 @@ class Path:
         :param other: Other path (or anything that is not a path at all).
         :return: ``True`` when ``other`` is the same path.
         """
+        if self.is_void():
+            return False
+
         if not isinstance(other, Path):
             try:
                 other = Path(other)
             except OSError:
                 # ``other`` cannot be interpreted as a path.
                 return False
-
-        if self.is_void() or other.is_void():
+        if other.is_void():
             return False
 
-        try:
-            return self._abspath.samefile(other._abspath)
-        except OSError:
-            return os.fspath(self) == os.fspath(other)
+        # Check for previous result in `_samefile_cache`.
+        _samefile = self._samefile_cache.get(id(other))  # type: typing.Optional[bool]
+        if _samefile is None:
+            try:
+                _samefile = self._abspath.samefile(other._abspath)
+            except OSError:
+                _samefile = (os.fspath(self) == os.fspath(other))
+
+            # Save result in `_samefile_cache`.
+            self._samefile_cache[id(other)] = _samefile
+
+        return _samefile
 
     def __truediv__(
             self,
