@@ -324,7 +324,9 @@ class Logger:
         The processing of the message depends on the :attr:`_debug_enabled` configuration
         (see :meth:`enabledebug()`).
         """
-        self._logger.debug(msg, *args, **kwargs)
+        # Optimization: If debug is disabled, return right away.
+        if self._debug_enabled:
+            self._logger.debug(msg, *args, **kwargs)
 
     def log(
             self,
@@ -336,7 +338,9 @@ class Logger:
         """
         Logs a message with a configurable severity.
         """
-        self._logger.log(level, msg, *args, **kwargs)
+        # Optimization: If debug is disabled, return right away, unless `level` is higher than `logging.DEBUG`.
+        if self._debug_enabled or (level > logging.DEBUG):
+            self._logger.log(level, msg, *args, **kwargs)
 
     def _log(
             self,  # type: Logger
