@@ -134,6 +134,19 @@ class MetaScenarioDefinition(abc.ABCMeta):
             if (len(args) >= 1) and isinstance(args[0], _FAST_PATH.scenario_definition_cls):
                 _scenario_definition = args[0]
 
+            # Don't push again the same scenario definition instance on the sscenario stack.
+            #
+            # Indeed, for a given `self` instance, this wrapper will be called several times in a row,
+            # for each subclass up in the hierarchy tree, until the base `ScenarioDefinition` class is reached.
+            #
+            # For instance, for a new `Campaign001` instance, defined in 'test/cases/campaigns/campaign001.py':
+            # - called first for `Campaign001.__init__()`,
+            # - then called for `scenario.test.TestCase.__init__()`,
+            # - eventually called for `ScenarioDefinition.__init__()`.
+            if _scenario_definition is _FAST_PATH.scenario_stack.building.scenario_definition:
+                _FAST_PATH.scenario_stack.debug("MetaScenarioDefinition.InitWrapper.__call__(): Scenario already knwon as being built")
+                _scenario_definition = None
+
             # Push the scenario definition to the building context of the scenario stack.
             if _scenario_definition:
                 _FAST_PATH.scenario_stack.debug("MetaScenarioDefinition.InitWrapper.__call__(): Pushing scenario being built")
