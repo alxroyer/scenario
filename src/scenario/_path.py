@@ -428,6 +428,8 @@ class Path:
         if self.is_void():
             return False
 
+        if other is self:
+            return True
         if not isinstance(other, Path):
             try:
                 other = Path(other)
@@ -440,10 +442,9 @@ class Path:
         # Check for previous result in `_samefile_cache`.
         _samefile = self._samefile_cache.get(id(other))  # type: typing.Optional[bool]
         if _samefile is None:
-            try:
-                _samefile = self._abspath.samefile(other._abspath)
-            except OSError:
-                _samefile = (os.fspath(self) == os.fspath(other))
+            # Comparing fspaths eventually faster than calling `pathlib.Path.samefile()`.
+            # _samefile = self._abspath.samefile(other._abspath)
+            _samefile = (os.fspath(self) == os.fspath(other))
 
             # Save result in `_samefile_cache`.
             self._samefile_cache[id(other)] = _samefile
