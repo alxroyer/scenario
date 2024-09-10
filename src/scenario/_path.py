@@ -167,15 +167,30 @@ class Path:
             path = pathlib.Path(path)
             if not path.is_absolute():
                 # Resolve relative path.
-                self._abspath = (pathlib.Path(relative_to or pathlib.Path.cwd()).resolve() / path).resolve()
+                self._abspath = (pathlib.Path(relative_to or pathlib.Path.cwd()) / path).resolve()
             else:
                 # Let's resolve `path` as is otherwise.
                 self._abspath = path.resolve()
 
+        #: :meth:`__repr__()` cache.
+        #:
+        #: Computed and cached on demand by :meth:`__repr__()`.
+        self._repr_cache = None  # type: typing.Optional[str]
+
+        #: Parent cache.
+        #:
+        #: Computed and cached on demand by :meth:`parent()`.
+        self._parent_cache = None  # type: typing.Optional[Path]
+
+        #: Absolute path cache.
+        #:
+        #: Computed and cached on demand by the :meth:`abspath()` property.
+        self._abspath_cache = None  # type: typing.Optional[str]
+
         #: Pretty path cache.
         #:
-        #: computed on demand by :meth:`prettypath()` property.
-        self._prettypath = None  # type: typing.Optional[str]
+        #: Computed and cached on demand by the :meth:`prettypath()` property.
+        self._prettypath_cache = None  # type: typing.Optional[str]
 
         #: :meth:`samefile()` cache.
         #:
@@ -260,13 +275,16 @@ class Path:
         """
         ``os.PathLike`` interface implementation.
         """
+        # `pathlib.PurePath.__fspath__()` already optimized.
         return os.fspath(self._abspath)
 
     def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
-        return f"<{_qualname(type(self))} object for '{self.prettypath}'>"
+        if self._repr_cache is None:
+            self._repr_cache = f"<{_qualname(type(self))} object for '{self.prettypath}'>"
+        return self._repr_cache
 
     def __str__(self):  # type: () -> str
         """
@@ -280,6 +298,7 @@ class Path:
 
         Makes it possible to use :class:`Path` objects as dictionary keys.
         """
+        # `pathlib.PurePath.__hash__()` already optimized.
         return hash(self._abspath)
 
     @property
@@ -287,6 +306,7 @@ class Path:
         """
         See `pathlib.PurePath.parts <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parts>`_.
         """
+        # `pathlib.PurePath.parts()` already optimized.
         return self._abspath.parts
 
     @property
@@ -294,6 +314,7 @@ class Path:
         """
         See `pathlib.PurePath.drive <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.drive>`_.
         """
+        # `pathlib.PurePath.drive` property already optimized.
         return self._abspath.drive
 
     @property
@@ -301,6 +322,7 @@ class Path:
         """
         See `pathlib.PurePath.root <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.root>`_.
         """
+        # `pathlib.PurePath.root` property already optimized.
         return self._abspath.root
 
     @property
@@ -308,6 +330,7 @@ class Path:
         """
         See `pathlib.PurePath.anchor <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.anchor>`_.
         """
+        # `pathlib.PurePath.anchor()` already optimized so far (simple concatenation of drive + root).
         return self._abspath.anchor
 
     @property
@@ -317,7 +340,14 @@ class Path:
 
         See `pathlib.PurePath.parents <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parents>`_.
         """
-        return tuple([Path(_path) for _path in self._abspath.parents])
+        # Don't compute a new `Path` list from `pathlib.Path.parents`,
+        # but rely on cached `Path.parent()` properties.
+        _parents = []  # type: typing.List[Path]
+        _path = self  # type: Path
+        while _path.parent is not _path:
+            _parents.append(_path.parent)
+            _path = _path.parent
+        return tuple(_parents)
 
     @property
     def parent(self):  # type: () -> Path
@@ -326,7 +356,12 @@ class Path:
 
         See `pathlib.PurePath.parent <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parent>`_.
         """
-        return Path(self._abspath.parent)
+        if self._parent_cache is None:
+            if self._abspath.parent is self._abspath:
+                self._parent_cache = self
+            else:
+                self._parent_cache = Path(self._abspath.parent)
+        return self._parent_cache
 
     @property
     def name(self):  # type: () -> str
@@ -335,6 +370,7 @@ class Path:
 
         See `pathlib.PurePath.name <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.name>`_.
         """
+        # `pathlib.PurePath.name()` already optimized so far (simple operations on parts).
         return self._abspath.name
 
     @property
@@ -345,6 +381,7 @@ class Path:
 
         See `pathlib.PurePath.suffix <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.suffix>`_.
         """
+        # `pathlib.PurePath.suffix()` already optimized so far (simple operations on name).
         return self._abspath.suffix
 
     @property
@@ -354,6 +391,7 @@ class Path:
 
         See `pathlib.PurePath.suffixes <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.suffixes>`_.
         """
+        # `pathlib.PurePath.suffixes()` already optimized so far (simple operations on name).
         return self._abspath.suffixes
 
     @property
@@ -363,6 +401,7 @@ class Path:
 
         See `pathlib.PurePath.stem <https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.stem>`_.
         """
+        # `pathlib.PurePath.stem()` already optimized so far (simple operations on name).
         return self._abspath.stem
 
     @property
@@ -370,7 +409,9 @@ class Path:
         """
         Absolute form of the path in the POSIX style.
         """
-        return self._abspath.as_posix()
+        if self._abspath_cache is None:
+            self._abspath_cache = self._abspath.as_posix()
+        return self._abspath_cache
 
     @property
     def prettypath(self):  # type: () -> str
@@ -381,13 +422,13 @@ class Path:
         or the current working directory otherwise,
         and presented in the POSIX style.
         """
-        if self._prettypath is None:
+        if self._prettypath_cache is None:
             _ref_path = Path._main_path or Path.cwd()  # type: Path
             if self.is_relative_to(_ref_path) and (self != _ref_path):
-                self._prettypath = self.relative_to(_ref_path)
+                self._prettypath_cache = self.relative_to(_ref_path)
             else:
-                self._prettypath = self._abspath.as_posix()
-        return self._prettypath
+                self._prettypath_cache = self._abspath.as_posix()
+        return self._prettypath_cache
 
     def resolve(self):  # type: (...) -> Path
         """

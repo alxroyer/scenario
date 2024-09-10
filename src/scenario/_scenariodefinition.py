@@ -108,20 +108,22 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         #: Commonly describes the purpose or objectives of the test.
         self.description = _textutils.anylongtext2str(description or "")  # type: str
 
-        #: Definition location.
+        #: Definition location cache.
         #:
-        #: Computed on demand and cached by :meth:`location()` property.
-        self._location = None  # type: typing.Optional[_CodeLocationType]
+        #: Computed on demand and cached by the :meth:`location()` property.
+        #: May be explicitly set by the :meth:`location()` setter.
+        self.__location_cache = None  # type: typing.Optional[_CodeLocationType]
 
-        #: Script path.
+        #: Script path cache.
         #:
-        #: Computed on demand and cached by :meth:`script_path()` property.
-        self._script_path = None  # type: typing.Optional[_PathType]
+        #: Computed on demand and cached by the :meth:`script_path()` property.
+        #: May be explicitly set by the :meth:`script_path()` setter.
+        self.__script_path_cache = None  # type: typing.Optional[_PathType]
 
-        #: Scenario name: i.e. script pretty path.
+        #: Scenario name, when explicitly set.
         #:
-        #: Computed on demand and cached by :meth:`name()` property.
-        self._name = None  # type: typing.Optional[str]
+        #: Set by the :meth:`name()` setter.
+        self.__name = None  # type: typing.Optional[str]
 
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
@@ -176,8 +178,8 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
 
         Script pretty path by default.
         """
-        if self._name is not None:
-            return self._name
+        if self.__name is not None:
+            return self.__name
         else:
             return self.script_path.prettypath
 
@@ -186,39 +188,39 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         """
         Scenario name setter.
         """
-        self._name = name
+        self.__name = name
 
     @property
     def script_path(self):  # type: () -> _PathType
         """
         Script path getter.
         """
-        if self._script_path is None:
-            self._script_path = _PathImpl(self.location.file)
-        return self._script_path
+        if self.__script_path_cache is None:
+            self.__script_path_cache = _PathImpl(self.location.file)
+        return self.__script_path_cache
 
     @script_path.setter
     def script_path(self, script_path):  # type: (_PathType) -> None
         """
         Script path setter.
         """
-        self._script_path = script_path
+        self.__script_path_cache = script_path
 
     @property
     def location(self):  # type: () -> _CodeLocationType
         """
         Definition location getter.
         """
-        if self._location is None:
-            self._location = _CodeLocationImpl.fromclass(type(self))
-        return self._location
+        if self.__location_cache is None:
+            self.__location_cache = _CodeLocationImpl.fromclass(type(self))
+        return self.__location_cache
 
     @location.setter
     def location(self, location):  # type: (_CodeLocationType) -> None
         """
         Definition location setter.
         """
-        self._location = location
+        self.__location_cache = location
 
     def setattribute(
             self,

@@ -88,10 +88,10 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         :param method: Method that defines the step, when applicable. Optional.
         :param numbered: ``False`` if the step shall not be numbered.
         """
-        #: Scenario name.
+        #: Step name cache.
         #:
-        #: Computed on demande and cached by :meth:`name()` property.
-        self._name = None  # type: typing.Optional[str]
+        #: Computed on demand and cached by the :meth:`name()` property.
+        self.__name_cache = None  # type: typing.Optional[str]
 
         #: Owner scenario.
         #:
@@ -101,10 +101,11 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         #: Step method, if any.
         self.method = method  # type: typing.Optional[types.MethodType]
 
-        #: Definition location.
+        #: Definition location cache.
         #:
-        #: Computed on demand and cached by :meth:`location()` property.
-        self._location = None  # type: typing.Optional[_CodeLocationType]
+        #: Computed on demand and cached by the :meth:`location()` property.
+        #: May be explicitly set by the :meth:`location()` setter.
+        self.__location_cache = None  # type: typing.Optional[_CodeLocationType]
 
         #: ``True`` when the step may be assigned a step :attr:`number`.
         #:
@@ -147,31 +148,31 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         Step name, i.e. the fully qualified name of the class or method defining it.
         """
-        if self._name is None:
+        if self.__name_cache is None:
             if self.method:
-                self._name = _qualname(self.method)
+                self.__name_cache = _qualname(self.method)
             else:
-                self._name = _qualname(type(self))
-        return self._name
+                self.__name_cache = _qualname(type(self))
+        return self.__name_cache
 
     @property
     def location(self):  # type: () -> _CodeLocationType
         """
         Definition location getter.
         """
-        if self._location is None:
+        if self.__location_cache is None:
             if self.method:
-                self._location = _CodeLocationImpl.frommethod(self.method)
+                self.__location_cache = _CodeLocationImpl.frommethod(self.method)
             else:
-                self._location = _CodeLocationImpl.fromclass(type(self))
-        return self._location
+                self.__location_cache = _CodeLocationImpl.fromclass(type(self))
+        return self.__location_cache
 
     @location.setter
     def location(self, location):  # type: (_CodeLocationType) -> None
         """
         Definition location setter.
         """
-        self._location = location
+        self.__location_cache = location
 
     @property
     def scenario(self):  # type: () -> _ScenarioDefinitionType
