@@ -192,11 +192,6 @@ class Path:
         #: Computed and cached on demand by the :meth:`prettypath()` property.
         self._prettypath_cache = None  # type: typing.Optional[str]
 
-        #: :meth:`samefile()` cache.
-        #:
-        #: Dictionary of `{id: :meth:`samefile()` result}`.
-        self._samefile_cache = {}  # type: typing.Dict[int, bool]
-
         # === `pathlib.PurePath` API support ===
         # `pathlib.PurePath.parts` implemented as a member property.
         # `pathlib.PurePath.drive` implemented as a member property.
@@ -480,17 +475,9 @@ class Path:
         if other.is_void():
             return False
 
-        # Check for previous result in `_samefile_cache`.
-        _samefile = self._samefile_cache.get(id(other))  # type: typing.Optional[bool]
-        if _samefile is None:
-            # Comparing fspaths eventually faster than calling `pathlib.Path.samefile()`.
-            # _samefile = self._abspath.samefile(other._abspath)
-            _samefile = (os.fspath(self) == os.fspath(other))
-
-            # Save result in `_samefile_cache`.
-            self._samefile_cache[id(other)] = _samefile
-
-        return _samefile
+        # Comparing fspaths eventually faster than calling `pathlib.Path.samefile()`.
+        # return self._abspath.samefile(other._abspath)
+        return os.fspath(self) == os.fspath(other)
 
     def __truediv__(
             self,
