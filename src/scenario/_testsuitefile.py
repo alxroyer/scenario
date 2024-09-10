@@ -17,7 +17,7 @@
 """
 Test suite file management.
 """
-
+import collections
 import typing
 
 if True:
@@ -52,12 +52,12 @@ class TestSuiteFile(_LoggerImpl):
         #: Test suite file path.
         self.path = _PathImpl(path)  # type: _PathType
 
-        #: Script paths describes by the test suite file.
+        #: Script paths described by the test suite file.
         #:
         #: Filled once the test suite file has been successfully read.
         #:
         #: .. seealso:: :meth:`read()`.
-        self.script_paths = []  # type: typing.List[_PathType]
+        self.script_paths = []  # type: typing.Sequence[_PathType]
 
     def __repr__(self):  # type: () -> str
         """
@@ -74,7 +74,12 @@ class TestSuiteFile(_LoggerImpl):
         # Reset the script path list in case :meth:`parse()` is called several times..
         self.script_paths = []
 
-        # Foe each line in the campaign file.
+        # In order to avoid calling `Path.samefile()` many times,
+        # let's build the resulting script path list with an ordered dictionary
+        # using abspaths for keys.
+        _script_paths = collections.OrderedDict()  # type: collections.OrderedDict[str, _PathType]
+
+        # For each line in the campaign file.
         self.debug("Reading '%s'", self.path)
         with self.pushindentation():
             for _line in _TextFileImpl(self.path, "r").readlines():  # type: str
@@ -91,10 +96,9 @@ class TestSuiteFile(_LoggerImpl):
                         self.debug("Black list line: %r", _line)
                         with self.pushindentation():
                             for _rm_path in self.path.parent.glob(_line):  # type: _PathType
-                                for _test_script_path in self.script_paths:  # type: _PathType
-                                    if _test_script_path.samefile(_rm_path):
-                                        self.debug("- '%s'", _test_script_path)
-                                        self.script_paths.remove(_test_script_path)
+                                if _rm_path.abspath in _script_paths:
+                                    self.debug("- '%s'", _rm_path)
+                                    del _script_paths[_rm_path.abspath]
 
                     else:
                         # White list.
@@ -103,21 +107,16 @@ class TestSuiteFile(_LoggerImpl):
                             if _line.startswith("+"):
                                 _line = _line[1:].strip()
                             if "*" in _line:
-                                for _add_path in self.path.parent.glob(_line):  # type: typing.Optional[_PathType]
-                                    assert _add_path
+                                for _add_path in self.path.parent.glob(_line):  # type: _PathType
                                     if not _add_path.is_file():
                                         continue
-                                    for _test_script_path in self.script_paths:  # type already declared above
-                                        if _test_script_path.samefile(_add_path):
-                                            _add_path = None
-                                            break
-                                    if _add_path is not None:
+                                    if _add_path.abspath not in _script_paths:
                                         self.debug("+ '%s'", _add_path)
-                                        self.script_paths.append(_add_path)
+                                        _script_paths[_add_path.abspath] = _add_path
                             else:
                                 _add_path = self.path.parent / _line  # Type already declared above
                                 self.debug("+ '%s'", _add_path)
-                                self.script_paths.append(_add_path)
+                                _script_paths[_add_path.abspath] = _add_path
 
                 except Exception as _err:
                     raise _ErrorCodeErrorImpl(
@@ -125,3 +124,6 @@ class TestSuiteFile(_LoggerImpl):
                         message=f"Error while parsing '{self.path}': {_err}",
                         exception=_err,
                     )
+
+        # Eventually feed the resulting script path list.
+        self.script_paths = list(_script_paths.values())
