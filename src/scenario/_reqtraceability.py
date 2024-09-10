@@ -102,8 +102,6 @@ class ReqTraceability(_LoggerImpl):
             # Default configuration.
             req_db_file_paths = _FAST_PATH.scenario_config.reqdbfiles()
 
-        import time
-        _t0 = time.time()  # type: float
         if req_db_file_paths:
             if log_info:
                 _FAST_PATH.main_logger.info("Loading requirements")
@@ -123,12 +121,10 @@ class ReqTraceability(_LoggerImpl):
 
         if log_info:
             _req_ref_count = len(_FAST_PATH.req_db.getallrefs())  # type: int
-            # MAIN_LOGGER.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
-            _FAST_PATH.main_logger.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
+            _FAST_PATH.main_logger.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
 
         # Test suites.
 
-        _t0 = time.time()  # Type already declared above.
         if test_suite_paths:
             # Ensure persistent and countable list.
             test_suite_paths = list(test_suite_paths)
@@ -181,8 +177,7 @@ class ReqTraceability(_LoggerImpl):
 
         if log_info:
             _scenario_count = len(self.scenarios)  # type: int
-            # MAIN_LOGGER.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
-            _FAST_PATH.main_logger.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded in {time.time() - _t0:.3f} seconds")
+            _FAST_PATH.main_logger.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
 
     def loaddatafromcampaignresults(
             self,
@@ -251,10 +246,11 @@ class ReqTraceability(_LoggerImpl):
                                 assert _test_case_execution.scenario_execution
                             self.scenarios.append(_test_case_execution.scenario_execution.definition)
                         except Exception as _err:
-                            if _test_case_execution.report.path:
-                                _FAST_PATH.main_logger.warning(f"Can't load scenario {_test_case_execution.name!r} from '{_test_case_execution.report.path}': {_err}")
-                            else:
-                                _FAST_PATH.main_logger.warning(f"Can't load scenario {_test_case_execution.name!r}: {_err}")
+                            _FAST_PATH.main_logger.warning("".join([
+                                f"Can't load scenario {_test_case_execution.name!r}",
+                                f" from '{_test_case_execution.report.path}'" if _test_case_execution.report.path else "",
+                                f": {_err}",
+                            ]))
 
         if log_info:
             _scenario_count = len(self.scenarios)  # type: int
