@@ -20,9 +20,13 @@ Step execution management.
 
 import typing
 
+if True:
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
+    from ._stats import TimeStats as _TimeStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
@@ -48,7 +52,6 @@ class StepExecution:
         :param definition: Step definition this instance describes an execution for.
         :param number: Execution number. See :attr:`number`.
         """
-        from ._stats import TimeStats
         from ._testerrors import TestError
 
         #: Owner step reference.
@@ -65,7 +68,7 @@ class StepExecution:
         #: when the action / expected result execution is done.
         self.current_action_result_definition = None  # type: typing.Optional[_ActionResultDefinitionType]
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Error.
         self.errors = []  # type: typing.List[TestError]
         #: Warnings.
@@ -77,9 +80,7 @@ class StepExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))}#{self.number} of {self.definition!r}>"
+        return f"<{_qualname(type(self))}#{self.number} of {self.definition!r}>"
 
     @property
     def status(self):  # type: () -> _ExecutionStatusType
@@ -118,7 +119,7 @@ class StepExecutionHelper:
             execution,  # type: StepExecution
     ):  # type: (...) -> None
         """
-        Instanciates a helper for the given step execution.
+        Instantiates a helper for the given step execution.
 
         :param execution: Step execution instance this helper works for.
         """

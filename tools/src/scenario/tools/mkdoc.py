@@ -22,7 +22,7 @@ import typing
 import scenario
 
 if True:
-    from . import _paths as _paths  # `_paths` used for class member instanciation.
+    from . import _paths as _paths  # @class-member-instantiation, @perf
 
 
 class MkDoc:
@@ -182,7 +182,7 @@ class MkDoc:
             # Dump the scenario executions summary when required.
             if summary and (_summary_total_line_index > 0):
                 _log_summary_out_path = _paths.DOC_DATA_PATH / (_basename_no_ext + ".summary.log")  # type: scenario.Path
-                scenario.logging.info(f"Updating {_log_summary_out_path}")
+                scenario.logging.info(f"Updating '{_log_summary_out_path}'")
                 _dumptext(_log_summary_out_path, b'\n'.join(_log_lines[_summary_total_line_index - 1:]))
 
             # Replace execution times in the JSON and XML reports with substitution patterns.

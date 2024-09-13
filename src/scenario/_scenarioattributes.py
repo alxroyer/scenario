@@ -19,10 +19,10 @@
 """
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from . import _enumutils as _enumutils  # @inheritance
 
 
-class CoreScenarioAttributes(_StrEnumImpl):
+class CoreScenarioAttributes(_enumutils.StrEnum):
     """
     Core scenario attributes.
     """

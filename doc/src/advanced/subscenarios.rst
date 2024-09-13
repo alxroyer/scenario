@@ -64,7 +64,7 @@ To do so, start with loading your base scenario with a regular ``import`` statem
     :lines: 1
     :dedent:
 
-Instanciate it with the appropriate values:
+Instantiate it with the appropriate values:
 
 .. literalinclude:: ../../../demo/commutativeadditions.py
     :language: python

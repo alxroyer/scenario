@@ -21,8 +21,16 @@ Requirement database.
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._req import Req as _ReqImpl  # @perf
+    from ._reqlink import ReqLink as _ReqLinkImpl  # @perf
+    from ._reqref import ReqRef as _ReqRefImpl  # @perf
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @perf
+    from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperImpl  # @perf
 if typing.TYPE_CHECKING:
+    from . import _setutils as _setutils
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
     from ._req import Req as _ReqType
@@ -32,7 +40,6 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import AnyReqType as _AnyReqType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class ReqDatabase(_LoggerImpl):
@@ -62,9 +69,7 @@ class ReqDatabase(_LoggerImpl):
         """
         Initializes a empty database.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.REQ_DATABASE)
+        _LoggerImpl.__init__(self, _DebugClassImpl.REQ_DATABASE)
 
         #: Database of requirement references, keyed by identifiers.
         self._req_db = {}  # type: typing.Dict[str, _ReqRefType]
@@ -87,8 +92,6 @@ class ReqDatabase(_LoggerImpl):
         :param req_db_file: JSON file to read.
         """
         from ._jsondictutils import JsonDict
-        from ._req import Req
-        from ._reqref import ReqRef
 
         # Read the JSON file.
         self.debug("Reading '%s'", req_db_file)
@@ -109,14 +112,14 @@ class ReqDatabase(_LoggerImpl):
                     f"keeping {_req_json['id']!r}"
                 )
 
-            _req = self.push(Req(
+            _req = self.push(_ReqImpl(
                 id=_req_json["id"],
                 title=_req_json["title"],
                 text=_req_json["text"],
-            ))  # type: Req
+            ))  # type: _ReqType
 
             for _reqref_id in _req_json["subrefs"]:  # type: str
-                self.push(ReqRef(
+                self.push(_ReqRefImpl(
                     _req,
                     *_reqref_id.split("/")[1:],
                 ))
@@ -176,28 +179,25 @@ class ReqDatabase(_LoggerImpl):
         .. note::
             If ``req`` already exists in the database, it won't be duplicated.
         """
-        from ._req import Req
-        from ._reqref import ReqRef
-
-        _req_ref = obj if isinstance(obj, ReqRef) else ReqRef(obj)  # type: ReqRef
+        _req_ref = obj if isinstance(obj, _ReqRefImpl) else _ReqRefImpl(obj)  # type: _ReqRefType
         # Ensure the `ReqRef._req` cache is set for `Req` registrations. Infinite cyclic calls otherwise.
-        if isinstance(obj, Req):
+        if isinstance(obj, _ReqImpl):
             _req_ref._req = obj
         _req_key = _req_ref.id  # type: str
-        _req_type = "requirement reference" if isinstance(obj, ReqRef) else "requirement"  # type: str
+        _req_type = "requirement reference" if isinstance(obj, _ReqRefImpl) else "requirement"  # type: str
         if _req_key not in self._req_db:
             # Save and log the new requirement reference.
             self.debug("New %s %r", _req_type, obj)
             self._req_db[_req_key] = _req_ref
         else:
             # Check this is the requirement instance we already know.
-            if obj is (self._req_db[_req_key].req if isinstance(obj, Req) else self._req_db[_req_key]):
+            if obj is (self._req_db[_req_key].req if isinstance(obj, _ReqImpl) else self._req_db[_req_key]):
                 self.debug("%s already stored %r", _req_type.capitalize(), obj)
             else:
                 raise ValueError(f"Duplicate {_req_type} {_req_key!r}: {obj!r} v/s {self._req_db[_req_key].req!r}")
 
         # Return the object eventually saved in the database.
-        if isinstance(obj, Req):
+        if isinstance(obj, _ReqImpl):
             return self._req_db[_req_key].req
         else:
             return self._req_db[_req_key]
@@ -216,10 +216,8 @@ class ReqDatabase(_LoggerImpl):
         :param push_unknown: ``True`` to push the new :class:`._req.Req` instance if not already known.
         :return: Requirement instance registered in the database.
         """
-        from ._req import Req
-
         # `Req` instance.
-        if isinstance(req, Req):
+        if isinstance(req, _ReqImpl):
             if push_unknown and (req.id not in self._req_db):
                 return self.push(req)
             else:
@@ -229,7 +227,7 @@ class ReqDatabase(_LoggerImpl):
         elif isinstance(req, str):
             if req not in self._req_db:
                 if push_unknown:
-                    return self.push(Req(id=req))
+                    return self.push(_ReqImpl(id=req))
                 else:
                     raise KeyError(f"Unknown requirement id {req!r}")
             return self._req_db[req].req
@@ -250,14 +248,11 @@ class ReqDatabase(_LoggerImpl):
         :param push_unknown: ``True`` to push a new :class:`._reqref.ReqRef` instance if not already known.
         :return: Requirement reference instance registered in the database.
         """
-        from ._req import Req
-        from ._reqref import ReqRef
-
         # `Req` or `ReqRef` instance.
-        if isinstance(req_ref, (Req, ReqRef)):
+        if isinstance(req_ref, (_ReqImpl, _ReqRefImpl)):
             if push_unknown and (req_ref.id not in self._req_db):
                 req_ref = self.push(req_ref)
-                return req_ref if isinstance(req_ref, ReqRef) else req_ref.main_ref
+                return req_ref if isinstance(req_ref, _ReqRefImpl) else req_ref.main_ref
             else:
                 return self.getreqref(req_ref.id)
 
@@ -266,24 +261,22 @@ class ReqDatabase(_LoggerImpl):
             if req_ref not in self._req_db:
                 if push_unknown:
                     _req_id = req_ref.split("/")[0]  # type: str
-                    _req = self.getreq(_req_id, push_unknown=push_unknown)  # type: Req
+                    _req = self.getreq(_req_id, push_unknown=push_unknown)  # type: _ReqType
                     if req_ref != _req.id:
-                        self._req_db[req_ref] = ReqRef(_req, *req_ref.split("/")[1:])
+                        self._req_db[req_ref] = _ReqRefImpl(_req, *req_ref.split("/")[1:])
                 else:
                     raise KeyError(f"Unknown requirement reference {req_ref!r}")
             return self._req_db[req_ref]
 
         raise ValueError(f"Invalid requirement reference {req_ref!r}")
 
-    def getallreqs(self):  # type: (...) -> _OrderedSetType[_ReqType]
+    def getallreqs(self):  # type: (...) -> _setutils.OrderedSetType[_ReqType]
         """
         Returns all requirements saved in the database.
 
         :return: :class:`._req.Req` ordered set (see :meth:`._req.Req.orderedset()` for order details).
         """
-        from ._req import Req
-
-        _reqs = Req.orderedset(
+        _reqs = _ReqImpl.orderedset(
             map(
                 # Convert `ReqRef` to `Req` objects.
                 lambda req_ref: req_ref.req,
@@ -293,62 +286,56 @@ class ReqDatabase(_LoggerImpl):
                     self._req_db.values(),
                 ),
             ),
-        )  # type: _OrderedSetType[Req]
+        )  # type: _setutils.OrderedSetType[_ReqType]
 
         self.debug("getallreqs() -> %r", _reqs)
         return _reqs
 
-    def getallrefs(self):  # type: (...) -> _OrderedSetType[_ReqRefType]
+    def getallrefs(self):  # type: (...) -> _setutils.OrderedSetType[_ReqRefType]
         """
         Returns all requirement references saved in the database.
 
         :return: :class:`._reqref.ReqRef` ordered set (see :meth:`._reqref.ReqRef.orderedset()` for order details).
         """
-        from ._reqref import ReqRef
-
-        _req_refs = ReqRef.orderedset(
+        _req_refs = _ReqRefImpl.orderedset(
             # All requirement references in the database.
             self._req_db.values(),
-        )  # type: _OrderedSetType[ReqRef]
+        )  # type: _setutils.OrderedSetType[_ReqRefType]
 
         self.debug("getallrefs() -> %r", _req_refs)
         return _req_refs
 
-    def getalllinks(self):  # type: () -> _OrderedSetType[_ReqLinkType]
+    def getalllinks(self):  # type: () -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Returns all requirement links saved in the database.
 
         :return: :class:`._reqlink.ReqLink` ordered set (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
-        _req_link_list = []  # type: typing.List[ReqLink]
+        _req_link_list = []  # type: typing.List[_ReqLinkType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             _req_link_list.extend(_req_ref.req_links)
-        _req_links = ReqLink.orderedset(_req_link_list)  # type: _OrderedSetType[ReqLink]
+        _req_links = _ReqLinkImpl.orderedset(_req_link_list)  # type: _setutils.OrderedSetType[_ReqLinkType]
 
         self.debug("getalllinks() -> %r", _req_links)
         return _req_links
 
-    def getallverifiers(self):  # type: (...) -> _OrderedSetType[_ReqVerifierType]
+    def getallverifiers(self):  # type: (...) -> _setutils.OrderedSetType[_ReqVerifierType]
         """
         Returns all final requirement verifiers saved in the database,
         either scenarios or steps.
 
         :return: :class:`._reqverifier.ReqVerifier` ordered set (see :meth:`._reqverifier.ReqVerifier.orderedset()` for order details).
         """
-        from ._reqverifier import ReqVerifier
-
-        _req_verifier_list = []  # type: typing.List[ReqVerifier]
+        _req_verifier_list = []  # type: typing.List[_ReqVerifierType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _req_verifier_list.extend(_req_link.req_verifiers)
-        _req_verifiers = ReqVerifier.orderedset(_req_verifier_list)  # type: _OrderedSetType[ReqVerifier]
+        _req_verifiers = _ReqVerifierImpl.orderedset(_req_verifier_list)  # type: _setutils.OrderedSetType[_ReqVerifierType]
 
         self.debug("getallverifiers() -> %r", _req_verifiers)
         return _req_verifiers
 
-    def getallscenarios(self):  # type: (...) -> _OrderedSetType[_ScenarioDefinitionType]
+    def getallscenarios(self):  # type: (...) -> _setutils.OrderedSetType[_ScenarioDefinitionType]
         """
         Returns all scenarios that track requirements.
 
@@ -356,21 +343,21 @@ class ReqDatabase(_LoggerImpl):
 
         :return: :class:`._scenariodefinition.ScenarioDefinition` ordered set (see :meth:`._reqverifier.ReqVerifier.orderedset()` for order details).
         """
-        from ._reqverifier import ReqVerifierHelper
-        from ._scenariodefinition import ScenarioDefinition
-
-        _scenario_list = []  # type: typing.List[ScenarioDefinition]
+        _scenario_list = []  # type: typing.List[_ScenarioDefinitionType]
         for _req_ref in self._req_db.values():  # type: _ReqRefType
             for _req_link in _req_ref.req_links:  # type: _ReqLinkType
                 _scenario_list.extend(
                     # Ensure `ScenarioDefinition` from `ReqVerifier` objects.
-                    map(ReqVerifierHelper.getscenario, _req_link.req_verifiers),
+                    map(_ReqVerifierHelperImpl.getscenario, _req_link.req_verifiers),
                 )
-        _scenarios = ScenarioDefinition.orderedset(_scenario_list)  # type: _OrderedSetType[ScenarioDefinition]
+        _scenarios = _FAST_PATH.scenario_definition_cls.orderedset(_scenario_list)  # type: _setutils.OrderedSetType[_ScenarioDefinitionType]
 
         self.debug("getallscenarios() -> %r", _scenarios)
         return _scenarios
 
 
 #: Main instance of :class:`ReqDatabase`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.req_db`.
+#: Please prefer the latter instead of using local imports of this module.
 REQ_DB = ReqDatabase()  # type: ReqDatabase

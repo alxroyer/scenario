@@ -24,12 +24,20 @@ which owns a list of :class:`TestCaseExecution` instances (one test case per sce
 
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
+    from ._stats import TimeStats as _TimeStatsType
     from ._testerrors import TestError as _TestErrorType
 
 
@@ -48,23 +56,20 @@ class CampaignExecution:
 
             ``None`` initializes the output directory path with the current working directory.
         """
-        from ._path import Path
-        from ._stats import TimeStats
-
         #: Output directory path.
-        self.outdir = Path(outdir)  # type: Path
+        self.outdir = _PathImpl(outdir)  # type: _PathType
         #: Campaign report path, when explicitly set.
-        self._campaign_report_path = None  # type: typing.Optional[Path]
+        self._campaign_report_path = None  # type: typing.Optional[_PathType]
         #: Requirement database file path, when explicitly set.
-        self._req_db_path = None  # type: typing.Optional[Path]
+        self._req_db_path = None  # type: typing.Optional[_PathType]
         #: Downstream traceability file path, when explicitly set.
-        self._downstream_traceability_path = None  # type: typing.Optional[Path]
+        self._downstream_traceability_path = None  # type: typing.Optional[_PathType]
         #: Upstream traceability file path, when explicitly set.
-        self._upstream_traceability_path = None  # type: typing.Optional[Path]
+        self._upstream_traceability_path = None  # type: typing.Optional[_PathType]
         #: Test suite results.
         self.test_suite_executions = []  # type: typing.List[TestSuiteExecution]
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
 
     def __repr__(self):  # type: () -> str
         """
@@ -80,12 +85,10 @@ class CampaignExecution:
 
         Default path when not set yet.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         if self._campaign_report_path is None:
             self._campaign_report_path = self._guessfilepath(
                 file_description=".xml",
-                default_filename=SCENARIO_CONFIG.campaignreportfilename(),
+                default_filename=_FAST_PATH.scenario_config.campaignreportfilename(),
                 match_file=lambda path: path.suffix.lower() == ".xml",
             )
         return self._campaign_report_path
@@ -105,14 +108,12 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
-        from ._reqdb import ReqDatabase
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         if self._req_db_path is None:
             self._req_db_path = self._guessfilepath(
                 file_description="requirement database",
-                default_filename=SCENARIO_CONFIG.reqdbfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
+                default_filename=_FAST_PATH.scenario_config.reqdbfilename(),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_db.JSON_SCHEMA_SUBPATH),
             )
         return self._req_db_path
 
@@ -131,14 +132,12 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
-        from ._reqtraceability import ReqTraceability
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         if self._downstream_traceability_path is None:
             self._downstream_traceability_path = self._guessfilepath(
                 file_description="downstream traceability",
-                default_filename=SCENARIO_CONFIG.downstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH),
+                default_filename=_FAST_PATH.scenario_config.downstreamtraceabilityfilename(),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_traceability.Downstream.JSON_SCHEMA_SUBPATH),
             )
         return self._downstream_traceability_path
 
@@ -157,14 +156,12 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
-        from ._reqtraceability import ReqTraceability
-        from ._scenarioconfig import SCENARIO_CONFIG
 
         if self._upstream_traceability_path is None:
             self._upstream_traceability_path = self._guessfilepath(
                 file_description="upstream traceability",
-                default_filename=SCENARIO_CONFIG.upstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH),
+                default_filename=_FAST_PATH.scenario_config.upstreamtraceabilityfilename(),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_traceability.Upstream.JSON_SCHEMA_SUBPATH),
             )
         return self._upstream_traceability_path
 
@@ -191,20 +188,18 @@ class CampaignExecution:
         :param match_file: Handler that tells whether a given path is an acceptable candidate.
         :return: Path of the file searched.
         """
-        from ._campaignreport import CAMPAIGN_REPORT
-
         _default_file = self.outdir / default_filename  # type: _PathType
         if _default_file.exists():
             # The default file already exists, take it (for reading obviously).
-            CAMPAIGN_REPORT.debug("%s file: '%s'", file_description, _default_file)
+            _FAST_PATH.campaign_report.debug("%s file: '%s'", file_description, _default_file)
             return _default_file
         elif self.outdir.is_dir():
             # Check for a matching candidate for reading in existing files.
-            CAMPAIGN_REPORT.debug("Listing %s files in '%s'", file_description, self.outdir)
+            _FAST_PATH.campaign_report.debug("Listing %s files in '%s'", file_description, self.outdir)
             _candidate_files = list(filter(match_file, self.outdir.glob("*")))  # type: typing.Sequence[_PathType]
             if len(_candidate_files) == 1:
                 # Single file, take it.
-                CAMPAIGN_REPORT.debug("%s file: '%s'", file_description, _candidate_files[0])
+                _FAST_PATH.campaign_report.debug("%s file: '%s'", file_description, _candidate_files[0])
                 return _candidate_files[0]
             elif len(_candidate_files) > 1:
                 raise FileNotFoundError(f"Too many {file_description} files in '{self.outdir}'")
@@ -216,9 +211,7 @@ class CampaignExecution:
         """
         Step statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.steps.total
             _stats.executed += _test_suite_execution.steps.executed
@@ -229,9 +222,7 @@ class CampaignExecution:
         """
         Action statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.actions.total
             _stats.executed += _test_suite_execution.actions.executed
@@ -242,9 +233,7 @@ class CampaignExecution:
         """
         Expected result statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
             _stats.total += _test_suite_execution.results.total
             _stats.executed += _test_suite_execution.results.executed
@@ -286,37 +275,31 @@ class TestSuiteExecution:
             which makes the :attr:`test_suite_file` instance *void* as well.
             This path can be fixed programmatically later on.
         """
-        from ._path import Path
-        from ._stats import TimeStats
         from ._testsuitefile import TestSuiteFile
 
         #: Owner campaign execution.
         self.campaign_execution = campaign_execution  # type: CampaignExecution
         #: Test suite file.
-        self.test_suite_file = TestSuiteFile(Path(test_suite_path))  # type: TestSuiteFile
+        self.test_suite_file = TestSuiteFile(_PathImpl(test_suite_path))  # type: TestSuiteFile
         #: Test suite name: i.e. test suite file pretty path.
         self.name = self.test_suite_file.path.prettypath  # type: str
         #: Test cases.
         self.test_case_executions = []  # type: typing.List[TestCaseExecution]
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
 
     def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} of '{self.test_suite_file.path}'>"
+        return f"<{_qualname(type(self))} of '{self.test_suite_file.path}'>"
 
     @property
     def steps(self):  # type: () -> _ExecTotalStatsType
         """
         Step statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
                 _stats.add(_test_case_execution.scenario_execution.step_stats)
@@ -327,9 +310,7 @@ class TestSuiteExecution:
         """
         Action statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
                 _stats.add(_test_case_execution.scenario_execution.action_stats)
@@ -340,9 +321,7 @@ class TestSuiteExecution:
         """
         Expected result statistics.
         """
-        from ._stats import ExecTotalStats
-
-        _stats = ExecTotalStats()  # type: ExecTotalStats
+        _stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
             if _test_case_execution.scenario_execution:
                 _stats.add(_test_case_execution.scenario_execution.result_stats)
@@ -384,15 +363,12 @@ class TestCaseExecution:
             ``None`` initializes the :attr:`script_path` member with a *void* file path.
             This path can be fixed programmatically later on.
         """
-        from ._path import Path
-        from ._stats import TimeStats
-
         #: Owner test suite execution.
         self.test_suite_execution = test_suite_execution  # type: TestSuiteExecution
         #: Scenario script path.
-        self.script_path = Path(script_path)  # type: Path
+        self.script_path = _PathImpl(script_path)  # type: _PathType
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Test case log output.
         self.log = LogFileReader()  # type: LogFileReader
         #: Test case report output.
@@ -402,9 +378,7 @@ class TestCaseExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} of '{self.script_path}'>"
+        return f"<{_qualname(type(self))} of '{self.script_path}'>"
 
     @property
     def scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]
@@ -462,33 +436,27 @@ class TestCaseExecution:
         """
         Step statistics.
         """
-        from ._stats import ExecTotalStats
-
         if self.scenario_execution:
             return self.scenario_execution.step_stats
-        return ExecTotalStats()
+        return _ExecTotalStatsImpl()
 
     @property
     def actions(self):  # type: () -> _ExecTotalStatsType
         """
         Action statistics.
         """
-        from ._stats import ExecTotalStats
-
         if self.scenario_execution:
             return self.scenario_execution.action_stats
-        return ExecTotalStats()
+        return _ExecTotalStatsImpl()
 
     @property
     def results(self):  # type: () -> _ExecTotalStatsType
         """
         Expected result statistics.
         """
-        from ._stats import ExecTotalStats
-
         if self.scenario_execution:
             return self.scenario_execution.result_stats
-        return ExecTotalStats()
+        return _ExecTotalStatsImpl()
 
 
 class CampaignStats:
@@ -556,20 +524,15 @@ class ReportFileReader:
         """
         Initializes :attr:`path` and :attr:`content` attributes with ``None``.
         """
-        from ._scenariodefinition import ScenarioDefinition
-        from ._path import Path
-
         #: Test case JSON file path.
-        self.path = None  # type: typing.Optional[Path]
+        self.path = None  # type: typing.Optional[_PathType]
         #: Scenario execution data read from the test case JSON file.
-        self.content = None  # type: typing.Optional[ScenarioDefinition]
+        self.content = None  # type: typing.Optional[_ScenarioDefinitionType]
 
     def read(self):  # type: (...) -> None
         """
         Read the scenario report.
         """
-        from ._scenarioreport import SCENARIO_REPORT
-
         if not self.path:
             raise FileNotFoundError("No scenario report to read")
-        self.content = SCENARIO_REPORT.readscenarioreport(self.path, feed_req_db=True)
+        self.content = _FAST_PATH.scenario_report.readscenarioreport(self.path, feed_req_db=True)

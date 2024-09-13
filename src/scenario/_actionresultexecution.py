@@ -20,8 +20,13 @@ Action / expected result execution management.
 
 import typing
 
+if True:
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from ._stats import TimeStats as _TimeStatsType
 
 
 class ActionResultExecution:
@@ -36,18 +41,16 @@ class ActionResultExecution:
         """
         Sets the start time automatically.
         """
-        from ._stats import TimeStats
-        from ._scenarioexecution import ScenarioExecution
         from ._testerrors import TestError
 
         #: Owner action/result reference.
         self.definition = definition  # type: _ActionResultDefinitionType
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Evidence items.
         self.evidence = []  # type: typing.List[str]
         #: Subscenario executions.
-        self.subscenarios = []  # type: typing.List[ScenarioExecution]
+        self.subscenarios = []  # type: typing.List[_ScenarioExecutionType]
         #: Errors.
         self.errors = []  # type: typing.List[TestError]
         #: Warnings.
@@ -59,6 +62,4 @@ class ActionResultExecution:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"
+        return f"<{_qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"

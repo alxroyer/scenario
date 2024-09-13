@@ -145,6 +145,8 @@ The :py:class:`scenario._scenariorunner.ScenarioRunner` class remains the conduc
 
 #. If there were several scenarios executed, the final results are displayed [#class-ScenarioResults]_.
 
+.. Footnotes.
+
 ---
 
 .. [#attr-execution_mode] See :py:attr:`scenario._scenariorunner.ScenarioRunner._execution_mode`.

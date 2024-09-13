@@ -29,7 +29,7 @@ defining a `story` by the way.
 One of the main interests of `scenario` is its ability to `reuse test code`:
 
 - :ref:`Step objects <step-objects>`:
-  Instanciate steps  one after the others, just like bricks,
+  Instantiate steps one after the others, just like bricks,
   and quickly write different versions of a story
   (like a nominal test scenario, then alternative scenarios).
 - :ref:`Subscenarios <subscenarios>`:

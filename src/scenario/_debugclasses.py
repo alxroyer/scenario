@@ -21,10 +21,10 @@ The :class:`DebugClass` enum defines the `scenario` debug classes (see: :class:`
 """
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from . import _enumutils as _enumutils  # @inheritance
 
 
-class DebugClass(_StrEnumImpl):
+class DebugClass(_enumutils.StrEnum):
     """
     `scenario` debug classes.
     """
@@ -67,6 +67,3 @@ class DebugClass(_StrEnumImpl):
     UI_HTTP_SERVER = "scenario.ui.HttpServer"
     #: UI HTML document debugging.
     UI_HTML_DOCUMENT = "scenario.ui.HtmlDocument"
-
-    #: Issue#65 debugging: execution times.
-    EXECUTION_TIMES = "scenario.#65.exec-times"

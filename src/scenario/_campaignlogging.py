@@ -22,7 +22,10 @@ import logging
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from . import _datetimeutils as _datetimeutils  # @perf
+    from . import _enumutils as _enumutils  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -36,7 +39,7 @@ class CampaignLogging:
     Instantiated once with the :data:`CAMPAIGN_LOGGING` singleton.
     """
 
-    class _Call(_StrEnumImpl):
+    class _Call(_enumutils.StrEnum):
         """
         :class:`CampaignLogging` call identifiers.
         """
@@ -58,17 +61,15 @@ class CampaignLogging:
 
     def begincampaign(
             self,
-            campaign_execution,  # type: _CampaignExecutionType
+            campaign_execution,  # type: _CampaignExecutionType  # noqa  ## Parameter unused
     ):  # type: (...) -> None
         """
         Displays the beginning of the campaign.
 
         :param campaign_execution: Campaign being executed.
         """
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput("CAMPAIGN")
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput("CAMPAIGN")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
         self._calls.append(CampaignLogging._Call.BEGIN_CAMPAIGN)
 
@@ -81,10 +82,8 @@ class CampaignLogging:
 
         :param test_suite_execution: Test suite being executed.
         """
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput(f"  TEST SUITE '{test_suite_execution.test_suite_file.path}'")
-        MAIN_LOGGER.rawoutput("  ----------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput(f"  TEST SUITE '{test_suite_execution.test_suite_file.path}'")
+        _FAST_PATH.main_logger.rawoutput("  ----------------------------------------------")
 
         self._calls.append(CampaignLogging._Call.BEGIN_TEST_SUITE)
 
@@ -97,13 +96,10 @@ class CampaignLogging:
 
         :param test_case_execution: Test case being executed.
         """
-        from ._logextradata import LogExtraData
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput(f"    Executing '{test_case_execution.name}'")
+        _FAST_PATH.main_logger.rawoutput(f"    Executing '{test_case_execution.name}'")
 
         # Ensure consecutive loggings will be indented below the line before.
-        MAIN_LOGGER.setextradata(LogExtraData.HEAD_INDENTATION, "      ")
+        _FAST_PATH.main_logger.setextradata(_LogExtraDataImpl.HEAD_INDENTATION, "      ")
 
         self._calls.append(CampaignLogging._Call.BEGIN_TEST_CASE)
 
@@ -117,27 +113,25 @@ class CampaignLogging:
         :param test_case_execution:Test case being executed.
         """
         from ._executionstatus import ExecutionStatus
-        from ._logextradata import LogExtraData
-        from ._loggermain import MAIN_LOGGER
         from ._testerrors import TestError
 
         if test_case_execution.log.path and test_case_execution.log.path.is_file():
-            MAIN_LOGGER.debug("Log file:        '%s'", test_case_execution.log.path)
+            _FAST_PATH.main_logger.debug("Log file:        '%s'", test_case_execution.log.path)
         if test_case_execution.report.path and test_case_execution.report.path.is_file():
-            MAIN_LOGGER.debug("Scenario report: '%s'", test_case_execution.report.path)
+            _FAST_PATH.main_logger.debug("Scenario report: '%s'", test_case_execution.report.path)
 
         if test_case_execution.status == ExecutionStatus.WARNINGS:
-            MAIN_LOGGER.warning(test_case_execution.status)
+            _FAST_PATH.main_logger.warning(test_case_execution.status)
         elif test_case_execution.status != ExecutionStatus.SUCCESS:
-            MAIN_LOGGER.error(test_case_execution.status)
+            _FAST_PATH.main_logger.error(test_case_execution.status)
 
         for _warning in test_case_execution.warnings:  # type: TestError
-            _warning.logerror(MAIN_LOGGER, level=logging.WARNING)
+            _warning.logerror(_FAST_PATH.main_logger, level=logging.WARNING)
         for _error in test_case_execution.errors:  # type: TestError
-            _error.logerror(MAIN_LOGGER, level=logging.ERROR)
+            _error.logerror(_FAST_PATH.main_logger, level=logging.ERROR)
 
         # Break the test case logging indentation set in :meth:`begintestcase()`.
-        MAIN_LOGGER.setextradata(LogExtraData.HEAD_INDENTATION, None)
+        _FAST_PATH.main_logger.setextradata(_LogExtraDataImpl.HEAD_INDENTATION, None)
 
         self._calls.append(CampaignLogging._Call.END_TEST_CASE)
 
@@ -150,20 +144,17 @@ class CampaignLogging:
 
         :param test_suite_execution:Test suite being executed.
         """
-        from ._datetimeutils import f2strduration
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput("")
-        MAIN_LOGGER.rawoutput(f"  END OF TEST SUITE '{test_suite_execution.test_suite_file.path}'")
-        MAIN_LOGGER.rawoutput("  ----------------------------------------------")
-        MAIN_LOGGER.rawoutput(f"             Number of test cases: {test_suite_execution.counts.total}")
-        MAIN_LOGGER.rawoutput(f"         Number of tests in error: {test_suite_execution.counts.errors + test_suite_execution.counts.failures}")
-        MAIN_LOGGER.rawoutput(f"    Number of tests with warnings: {test_suite_execution.counts.warnings}")
-        MAIN_LOGGER.rawoutput(f"                  Number of steps: {test_suite_execution.steps}")
-        MAIN_LOGGER.rawoutput(f"                Number of actions: {test_suite_execution.actions}")
-        MAIN_LOGGER.rawoutput(f"                Number of results: {test_suite_execution.results}")
-        MAIN_LOGGER.rawoutput(f"                             Time: {f2strduration(test_suite_execution.time.elapsed)}")
-        MAIN_LOGGER.rawoutput("")
+        _FAST_PATH.main_logger.rawoutput("")
+        _FAST_PATH.main_logger.rawoutput(f"  END OF TEST SUITE '{test_suite_execution.test_suite_file.path}'")
+        _FAST_PATH.main_logger.rawoutput("  ----------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput(f"             Number of test cases: {test_suite_execution.counts.total}")
+        _FAST_PATH.main_logger.rawoutput(f"         Number of tests in error: {test_suite_execution.counts.errors + test_suite_execution.counts.failures}")
+        _FAST_PATH.main_logger.rawoutput(f"    Number of tests with warnings: {test_suite_execution.counts.warnings}")
+        _FAST_PATH.main_logger.rawoutput(f"                  Number of steps: {test_suite_execution.steps}")
+        _FAST_PATH.main_logger.rawoutput(f"                Number of actions: {test_suite_execution.actions}")
+        _FAST_PATH.main_logger.rawoutput(f"                Number of results: {test_suite_execution.results}")
+        _FAST_PATH.main_logger.rawoutput(f"                             Time: {_datetimeutils.f2strduration(test_suite_execution.time.elapsed)}")
+        _FAST_PATH.main_logger.rawoutput("")
 
         self._calls.append(CampaignLogging._Call.END_TEST_SUITE)
 
@@ -178,31 +169,31 @@ class CampaignLogging:
 
         Displays the campaign statistics
         """
-        from ._datetimeutils import f2strduration
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput("END OF CAMPAIGN")
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
-        MAIN_LOGGER.rawoutput(f"          JUnit campaign report: {campaign_execution.campaign_report_path}")
+        _FAST_PATH.main_logger.rawoutput("END OF CAMPAIGN")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput(f"          JUnit campaign report: {campaign_execution.campaign_report_path}")
         if campaign_execution.req_db_path.is_file():
-            MAIN_LOGGER.rawoutput(f"                   Requirements: {campaign_execution.req_db_path}")
+            _FAST_PATH.main_logger.rawoutput(f"                   Requirements: {campaign_execution.req_db_path}")
         if campaign_execution.downstream_traceability_path.is_file():
-            MAIN_LOGGER.rawoutput(f"        Downstream traceability: {campaign_execution.downstream_traceability_path}")
+            _FAST_PATH.main_logger.rawoutput(f"        Downstream traceability: {campaign_execution.downstream_traceability_path}")
         if campaign_execution.upstream_traceability_path.is_file():
-            MAIN_LOGGER.rawoutput(f"          Upstream traceability: {campaign_execution.upstream_traceability_path}")
-        MAIN_LOGGER.rawoutput(f"          Number of test suites: {len(campaign_execution.test_suite_executions)}")
+            _FAST_PATH.main_logger.rawoutput(f"          Upstream traceability: {campaign_execution.upstream_traceability_path}")
+        _FAST_PATH.main_logger.rawoutput(f"          Number of test suites: {len(campaign_execution.test_suite_executions)}")
         if len(campaign_execution.test_suite_executions) > 1:
-            MAIN_LOGGER.rawoutput(f"           Number of test cases: {campaign_execution.counts.total}")
-            MAIN_LOGGER.rawoutput(f"       Number of tests in error: {campaign_execution.counts.failures}")
-            MAIN_LOGGER.rawoutput(f"  Number of tests with warnings: {campaign_execution.counts.warnings}")
-            MAIN_LOGGER.rawoutput(f"                Number of steps: {campaign_execution.steps}")
-            MAIN_LOGGER.rawoutput(f"              Number of actions: {campaign_execution.actions}")
-            MAIN_LOGGER.rawoutput(f"              Number of results: {campaign_execution.results}")
-            MAIN_LOGGER.rawoutput(f"                           Time: {f2strduration(campaign_execution.time.elapsed)}")
-        MAIN_LOGGER.rawoutput("")
+            _FAST_PATH.main_logger.rawoutput(f"       _FAST_PATH.main_logger    Number of test cases: {campaign_execution.counts.total}")
+            _FAST_PATH.main_logger.rawoutput(f"       Number of tests in error: {campaign_execution.counts.failures}")
+            _FAST_PATH.main_logger.rawoutput(f"  Number of tests with warnings: {campaign_execution.counts.warnings}")
+            _FAST_PATH.main_logger.rawoutput(f"                Number of steps: {campaign_execution.steps}")
+            _FAST_PATH.main_logger.rawoutput(f"              Number of actions: {campaign_execution.actions}")
+            _FAST_PATH.main_logger.rawoutput(f"              Number of results: {campaign_execution.results}")
+            _FAST_PATH.main_logger.rawoutput(f"                           Time: {_datetimeutils.f2strduration(campaign_execution.time.elapsed)}")
+        _FAST_PATH.main_logger.rawoutput("")
 
         self._calls.append(CampaignLogging._Call.END_CAMPAIGN)
 
 
 #: Main instance of :class:`CampaignLogging`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.campaign_logging`.
+#: Please prefer the latter instead of using local imports of this module.
 CAMPAIGN_LOGGING = CampaignLogging()  # type: CampaignLogging

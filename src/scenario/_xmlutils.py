@@ -23,6 +23,8 @@ import gc
 import typing
 import xml.dom.minidom
 
+if True:
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
 
@@ -64,7 +66,7 @@ class Xml(abc.ABC):
 
         def __init__(self):  # type: (...) -> None
             """
-            Instanciates an XML document, either for reading or writing.
+            Instantiates an XML document, either for reading or writing.
             """
             #: Underlying library document reference.
             self._xml_doc = xml.dom.minidom.Document()  # type: xml.dom.minidom.Document
@@ -98,10 +100,8 @@ class Xml(abc.ABC):
             :param path: File to read from.
             :return: XML document read from the file.
             """
-            from ._path import Path
-
             _doc = Xml.Document()  # type: Xml.Document
-            _doc._xml_doc = xml.dom.minidom.parseString(Path(path).read_bytes())
+            _doc._xml_doc = xml.dom.minidom.parseString(_PathImpl(path).read_bytes())
             return _doc
 
         def writefile(
@@ -113,9 +113,7 @@ class Xml(abc.ABC):
 
             :param path: File to write to.
             """
-            from ._path import Path
-
-            Path(path).write_bytes(self.dumpstream())
+            _PathImpl(path).write_bytes(self.dumpstream())
 
         def dumpstream(
                 self,

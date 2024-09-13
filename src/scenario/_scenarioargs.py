@@ -21,8 +21,13 @@ Scenario runner program arguments.
 import typing
 
 if True:
-    from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._args import Args as _ArgsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
+    from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
+    from ._path import Path as _PathType
     from ._subprocess import SubProcess as _SubProcessType
 
 
@@ -35,10 +40,6 @@ class CommonExecArgs:
         """
         Installs common test execution program arguments.
         """
-        from ._issuelevels import IssueLevel
-        if typing.TYPE_CHECKING:
-            from ._issuelevels import AnyIssueLevelType
-
         assert isinstance(self, _ArgsImpl)
 
         #: ``True`` when the test(s) is(are) executed for documentation generation only,
@@ -55,23 +56,23 @@ class CommonExecArgs:
         # - https://github.com/swansonk14/typed-argument-parser#union
 
         #: Error issue level.
-        self.issue_level_error = None  # type: typing.Optional[AnyIssueLevelType]
-        self.addarg("Error issue level", "issue_level_error", IssueLevel.parse).define(
+        self.issue_level_error = None  # type: typing.Optional[_AnyIssueLevelType]
+        self.addarg("Error issue level", "issue_level_error", _IssueLevelImpl.parse).define(
             "--issue-level-error", metavar="ISSUE_LEVEL",
             action="store", default=None,
             help="Define the issue level from and above which known issues should be considered as errors. "
                  "None by default, i.e. all known issues are considered as warnings."
-                 f"{f' Named levels: {IssueLevel.getnameddesc()}.' if IssueLevel.getnamed() else ''}",
+                 f"{f' Named levels: {_IssueLevelImpl.getnameddesc()}.' if _IssueLevelImpl.getnamed() else ''}",
         )
 
         #: Ignored issue level.
-        self.issue_level_ignored = None  # type: typing.Optional[AnyIssueLevelType]
-        self.addarg("Ignored issue level", "issue_level_ignored", IssueLevel.parse).define(
+        self.issue_level_ignored = None  # type: typing.Optional[_AnyIssueLevelType]
+        self.addarg("Ignored issue level", "issue_level_ignored", _IssueLevelImpl.parse).define(
             "--issue-level-ignored", metavar="ISSUE_LEVEL",
             action="store", default=None,
             help="Define the issue level from and under which known issues should be ignored. "
                  "None by default, i.e. no known issue ignored by default."
-                 f"{f' Named levels: {IssueLevel.getnameddesc()}.' if IssueLevel.getnamed() else ''}",
+                 f"{f' Named levels: {_IssueLevelImpl.getnameddesc()}.' if _IssueLevelImpl.getnamed() else ''}",
         )
 
     def _checkargs(
@@ -83,10 +84,8 @@ class CommonExecArgs:
 
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         # Just ensure issue names from configuration files are loaded.
-        SCENARIO_CONFIG.loadissuelevelnames()
+        _FAST_PATH.scenario_config.loadissuelevelnames()
 
         return True
 
@@ -131,8 +130,6 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
             ``False`` to disable the scenario path positional arguments definition.
             Useful for user programs that wish to redefine it.
         """
-        from ._path import Path
-
         _ArgsImpl.__init__(self, class_debugging=True)
         self.setdescription("Scenario test execution.")
 
@@ -140,8 +137,8 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
 
         #: Scenario report output file path.
         #: No scenario report when ``None``.
-        self.scenario_report = None  # type: typing.Optional[Path]
-        self.addarg("Scenario report output file", "scenario_report", Path).define(
+        self.scenario_report = None  # type: typing.Optional[_PathType]
+        self.addarg("Scenario report output file", "scenario_report", _PathImpl).define(
             "--scenario-report", metavar="SCENARIO_REPORT_PATH",
             action="store", type=str, default=None,
             help="Save the report in the given output file path. "
@@ -161,9 +158,9 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         )
 
         #: Path of the scenario Python script to execute.
-        self.scenario_paths = []  # type: typing.List[Path]
+        self.scenario_paths = []  # type: typing.List[_PathType]
         if positional_args:
-            self.addarg("Scenario path(s)", "scenario_paths", Path).define(
+            self.addarg("Scenario path(s)", "scenario_paths", _PathImpl).define(
                 metavar="SCENARIO_PATH", nargs="+",
                 action="store", type=str, default=[],
                 help="Scenario script(s) to execute.",
@@ -196,8 +193,6 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
         from ._jsondictutils import JsonDict
-        from ._loggermain import MAIN_LOGGER
-        from ._path import Path
 
         if not _ArgsImpl._checkargs(self, args):
             return False
@@ -207,18 +202,18 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
         # Scenario report.
         if self.scenario_report is not None:
             if not JsonDict.isknwonsuffix(self.scenario_report):
-                MAIN_LOGGER.error(f"Unknown suffix for scenario report '{self.scenario_report}'")
+                _FAST_PATH.main_logger.error(f"Unknown suffix for scenario report '{self.scenario_report}'")
                 return False
 
             # Incomptibility with multiple scenarios.
             if len(self.scenario_paths) > 1:
-                MAIN_LOGGER.error("Cannot use the --scenario-report option with multiple scenario files")
+                _FAST_PATH.main_logger.error("Cannot use the --scenario-report option with multiple scenario files")
                 return False
 
         # Scenario paths.
-        for _scenario_path in self.scenario_paths:  # type: Path
+        for _scenario_path in self.scenario_paths:  # type: _PathType
             if not _scenario_path.is_file():
-                MAIN_LOGGER.error(f"No such file '{_scenario_path}'")
+                _FAST_PATH.main_logger.error(f"No such file '{_scenario_path}'")
                 return False
 
         return True

@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.inners
 
 
 class SubProcess(scenario.SubProcess):
@@ -69,11 +70,10 @@ class SubProcess(scenario.SubProcess):
             line,  # type: bytes
     ):  # type: (...) -> None
         from scenario._logformatter import LogFormatter  # noqa  ## Access to a protected module
-        from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to a protected module
 
         if self._show_stdout:
             _line = self._safedecode(line)  # type: str
-            if not SCENARIO_CONFIG.logcolorenabled():
+            if not scenario.inners.FAST_PATH.scenario_config.logcolorenabled():
                 _line = LogFormatter.nocolor(_line)
             scenario.logging.info(_line)
 
@@ -82,11 +82,10 @@ class SubProcess(scenario.SubProcess):
             line,  # type: bytes
     ):  # type: (...) -> None
         from scenario._logformatter import LogFormatter  # noqa  ## Access to a protected module
-        from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to a protected module
 
         if self._show_stderr:
             _line = self._safedecode(line)  # type: str
-            if not SCENARIO_CONFIG.logcolorenabled():
+            if not scenario.inners.FAST_PATH.scenario_config.logcolorenabled():
                 _line = LogFormatter.nocolor(_line)
             scenario.logging.error(_line)
 

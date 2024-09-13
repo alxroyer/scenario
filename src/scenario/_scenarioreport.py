@@ -21,14 +21,33 @@ Scenario reports.
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _debugutils as _debugutils  # @perf
+    from . import _enumutils as _enumutils  # @perf
+    from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionImpl  # @perf
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionImpl  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
+    from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
+    from ._reqlink import ReqLink as _ReqLinkType
+    from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
 
 
 class ScenarioReport(_LoggerImpl):
@@ -45,13 +64,10 @@ class ScenarioReport(_LoggerImpl):
         """
         Configures logging for the :class:`ScenarioReport` class.
         """
-        from ._debugclasses import DebugClass
-        from ._path import Path
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_REPORT)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.SCENARIO_REPORT)
 
         #: JSON / YAML report path being written or read.
-        self._report_path = Path()  # type: Path
+        self._report_path = _PathImpl()  # type: _PathType
 
         #: ``True`` to feed automatically the requirement database with verified requirement references.
         self._feed_req_db = False  # type: bool
@@ -89,14 +105,13 @@ class ScenarioReport(_LoggerImpl):
         :param report_path: Path to write the scenario report into.
         """
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         try:
             self.resetindentation()
             self.debug("Writing scenario report to '%s'", report_path)
 
             # Build the JSON content.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _json = self._scenario2json(scenario_definition, is_main=True)  # type: _JsonDictType
 
             # Write the report file.
@@ -108,7 +123,7 @@ class ScenarioReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
 
     def readjsonreport(
             self,
@@ -147,14 +162,13 @@ class ScenarioReport(_LoggerImpl):
             Scenario data read from the scenario report file.
         """
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         try:
             self.resetindentation()
             self.debug("Reading scenario report from '%s'", report_path)
 
             # Read the report file.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _json = JsonDict.readfile(self._report_path)  # type: _JsonDictType
 
             # Analyze the JSON content.
@@ -165,7 +179,7 @@ class ScenarioReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
             self._feed_req_db = False
 
     def _scenario2json(
@@ -180,8 +194,6 @@ class ScenarioReport(_LoggerImpl):
         :param is_main: True for the main scenario, False otherwise.
         :return: JSON content.
         """
-        from ._debugutils import jsondump
-        from ._enumutils import isin
         from ._scenarioattributes import CoreScenarioAttributes
         from ._testerrors import TestError
 
@@ -201,7 +213,7 @@ class ScenarioReport(_LoggerImpl):
             _json_scenario["attributes"] = {}
             for _attribute_name in scenario_definition.getattributenames():  # type: str
                 # Skip empty core attributes.
-                if isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                if _enumutils.isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
                     continue
                 _json_scenario["attributes"][_attribute_name] = str(scenario_definition.getattribute(_attribute_name))
 
@@ -235,7 +247,7 @@ class ScenarioReport(_LoggerImpl):
                         "results": scenario_definition.execution.result_stats.tojson(),
                     }
 
-        self.debug("JSON content generated for scenario %r: %s", scenario_definition.name, jsondump(_json_scenario, indent=2),
+        self.debug("JSON content generated for scenario %r: %s", scenario_definition.name, _debugutils.jsondump(_json_scenario, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
         return _json_scenario
 
@@ -249,26 +261,21 @@ class ScenarioReport(_LoggerImpl):
         :param json_scenario: Scenario JSON content to read.
         :return: Scenario data.
         """
-        from ._debugutils import jsondump
-        from ._path import Path
-        from ._scenariodefinition import ScenarioDefinition
-        from ._scenarioexecution import ScenarioExecution
-        from ._stats import TimeStats
         from ._testerrors import TestError
 
-        self.debug("Reading scenario from JSON: %s", jsondump(json_scenario, indent=2),
+        self.debug("Reading scenario from JSON: %s", _debugutils.jsondump(json_scenario, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
         with self.pushindentation():
             # Create the scenario definition instance.
-            _scenario_definition = ScenarioDefinition()  # type: ScenarioDefinition
+            _scenario_definition = _ScenarioDefinitionImpl()  # type: _ScenarioDefinitionType
 
             # Scenario name.
             _scenario_definition.name = json_scenario["name"]
             self.debug("Name: %r", _scenario_definition.name)
 
             # Script path.
-            _scenario_definition.script_path = Path(json_scenario["href"], relative_to=self._report_path.parent)
+            _scenario_definition.script_path = _PathImpl(json_scenario["href"], relative_to=self._report_path.parent)
             self.debug("Script path: '%s'", _scenario_definition.script_path)
 
             # Attributes.
@@ -284,7 +291,7 @@ class ScenarioReport(_LoggerImpl):
                 _scenario_definition.addstep(_step_definition)
 
             # Status & errors.
-            _scenario_definition.execution = ScenarioExecution(_scenario_definition)
+            _scenario_definition.execution = _ScenarioExecutionImpl(_scenario_definition)
             for _json_error in json_scenario["errors"]:  # type: _JsonDictType
                 _scenario_definition.execution.errors.append(TestError.fromjson(_json_error))
                 self.debug("Error: %s", _scenario_definition.execution.errors[-1])
@@ -296,7 +303,7 @@ class ScenarioReport(_LoggerImpl):
             self.debug("Warnings: %d", len(_scenario_definition.execution.warnings))
 
             # Time & statistics.
-            _scenario_definition.execution.time = TimeStats.fromjson(json_scenario["time"])
+            _scenario_definition.execution.time = _TimeStatsImpl.fromjson(json_scenario["time"])
             self.debug("Time statistics: %s", _scenario_definition.execution.time)
 
         return _scenario_definition
@@ -311,9 +318,6 @@ class ScenarioReport(_LoggerImpl):
         :param step_definition: Step definition (with execution) to generate JSON content for.
         :return: JSON content.
         """
-        from ._debugutils import jsondump
-        from ._stepexecution import StepExecution
-        from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
         self.debug("Generating JSON content for %r", step_definition)
@@ -324,8 +328,8 @@ class ScenarioReport(_LoggerImpl):
                 "description": step_definition.description,
             }  # type: _JsonDictType
 
-            # Do not set 'reqs', 'actions-results' and 'executions' lists for step sections.
-            if not isinstance(step_definition, StepSectionDescription):
+            # Do not set 'reqs', 'actions-results' and 'executions' lists for step section descriptions.
+            if not isinstance(step_definition, _FAST_PATH.step_section_description_cls):
                 # Requirements.
                 self._reqverifier2json(step_definition, _json_step_definition)
 
@@ -336,7 +340,7 @@ class ScenarioReport(_LoggerImpl):
 
                 # Executions.
                 _json_step_definition["executions"] = []
-                for _step_execution in step_definition.executions:  # type: StepExecution
+                for _step_execution in step_definition.executions:  # type: _StepExecutionType
                     _json_step_execution = {
                         "number": _step_execution.number,
                         "time": _step_execution.time.tojson(),
@@ -352,7 +356,7 @@ class ScenarioReport(_LoggerImpl):
 
                     _json_step_definition["executions"].append(_json_step_execution)
 
-        self.debug("JSON content generated for %r: %s", step_definition, jsondump(_json_step_definition, indent=2),
+        self.debug("JSON content generated for %r: %s", step_definition, _debugutils.jsondump(_json_step_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
         return _json_step_definition
 
@@ -366,21 +370,15 @@ class ScenarioReport(_LoggerImpl):
         :param json_step_definition: Step definition JSON content to read.
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
-        from ._debugutils import jsondump
-        from ._locations import CodeLocation
-        from ._stats import TimeStats
-        from ._stepdefinition import StepDefinition
-        from ._stepexecution import StepExecution
-        from ._stepsection import StepSectionDescription
         from ._testerrors import TestError
 
-        self.debug("Reading step instance from JSON: %s", jsondump(json_step_definition, indent=2),
+        self.debug("Reading step instance from JSON: %s", _debugutils.jsondump(json_step_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         with self.pushindentation():
-            _step_definition = StepDefinition()  # type: StepDefinition
+            _step_definition = _StepDefinitionImpl()  # type: _StepDefinitionType
 
-            _step_definition.location = CodeLocation.fromlongstring(json_step_definition["location"])
+            _step_definition.location = _CodeLocationImpl.fromlongstring(json_step_definition["location"])
             self.debug("Location: %s", _step_definition.location.tolongstring())
 
             _step_definition.description = json_step_definition["description"]
@@ -390,7 +388,7 @@ class ScenarioReport(_LoggerImpl):
                 # Missing executions and/or actions/results.
                 # Replace the general `StepDefinition` instance created above by a `StepSection` one.
                 assert _step_definition.description is not None
-                _step_definition = StepSectionDescription(_step_definition.description)
+                _step_definition = _FAST_PATH.step_section_description_cls(_step_definition.description)
             else:
                 # Requirements.
                 self._json2reqverifier(json_step_definition, _step_definition)
@@ -402,12 +400,12 @@ class ScenarioReport(_LoggerImpl):
 
                 # Executions.
                 for _json_step_execution in json_step_definition["executions"]:  # type: _JsonDictType
-                    self.debug("Building step execution instance from JSON: %s", jsondump(_json_step_execution, indent=2),
+                    self.debug("Building step execution instance from JSON: %s", _debugutils.jsondump(_json_step_execution, indent=2),
                                extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
                     with self.pushindentation():
-                        _step_execution = StepExecution(_step_definition, _json_step_execution["number"])  # type: StepExecution
-                        _step_execution.time = TimeStats.fromjson(_json_step_execution["time"])
+                        _step_execution = _StepExecutionImpl(_step_definition, _json_step_execution["number"])  # type: _StepExecutionType
+                        _step_execution.time = _TimeStatsImpl.fromjson(_json_step_execution["time"])
                         self.debug("Time: %s", _step_execution.time)
 
                         for _json_error in _json_step_execution["errors"]:  # type: _JsonDictType
@@ -435,11 +433,9 @@ class ScenarioReport(_LoggerImpl):
         :param req_verifier: Requirement verifier which JSON content to feed with requirement links. Either a scenario or a step.
         :param json_req_verifier: JSON content to update.
         """
-        from ._reqlink import ReqLink
-
         json_req_verifier["reqs"] = []
 
-        for _req_link in req_verifier.getreqlinks():  # type: ReqLink
+        for _req_link in req_verifier.getreqlinks():  # type: _ReqLinkType
             _json_req_link = {"ref": _req_link.req_ref.id}  # type: _JsonDictType
 
             if _req_link.comments:
@@ -458,8 +454,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_req_verifier: JSON content of a requirement verifier.
         :param req_verifier: Requirement verifier to update. Either a scenario or a step.
         """
-        from ._reqdb import REQ_DB
-        from ._reqref import ReqRef
         if typing.TYPE_CHECKING:
             from ._reqtypes import ReqLinkDefType
 
@@ -468,7 +462,7 @@ class ScenarioReport(_LoggerImpl):
             for _json_req_link in json_req_verifier["reqs"]:  # type: _JsonDictType
                 _req_ref_id = _json_req_link["ref"]  # type: str
                 try:
-                    _req_ref = REQ_DB.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: ReqRef
+                    _req_ref = _FAST_PATH.req_db.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: _ReqRefType
                 except KeyError:
                     if self._feed_req_db:
                         # Requirement reference should have been added automatically.
@@ -493,9 +487,6 @@ class ScenarioReport(_LoggerImpl):
         :param action_result_definition: Action or expected result to generate JSON content for.
         :return: JSON content object.
         """
-        from ._actionresultexecution import ActionResultExecution
-        from ._debugutils import jsondump
-        from ._scenarioexecution import ScenarioExecution
         from ._testerrors import TestError
 
         self.debug("Generating JSON content for %r", action_result_definition)
@@ -507,7 +498,7 @@ class ScenarioReport(_LoggerImpl):
                 "executions": [],
             }  # type: _JsonDictType
 
-            for _action_result_execution in action_result_definition.executions:  # type: ActionResultExecution
+            for _action_result_execution in action_result_definition.executions:  # type: _ActionResultExecutionType
                 _json_action_result_execution = {
                     "time": _action_result_execution.time.tojson(),
                     "evidence": _action_result_execution.evidence.copy(),
@@ -522,13 +513,13 @@ class ScenarioReport(_LoggerImpl):
                 for _warning in _action_result_execution.warnings:  # type: TestError
                     _json_action_result_execution["warnings"].append(_warning.tojson())
 
-                for _subscenario_execution in _action_result_execution.subscenarios:  # type: ScenarioExecution
+                for _subscenario_execution in _action_result_execution.subscenarios:  # type: _ScenarioExecutionType
                     self.debug("Generating JSON content for subscenario %r", _subscenario_execution.definition)
                     with self.pushindentation("  | "):
                         _json_action_result_execution["subscenarios"].append(self._scenario2json(_subscenario_execution.definition, is_main=False))
                 _json_action_result_definition["executions"].append(_json_action_result_execution)
 
-        self.debug("JSON content generated for %r: %s", action_result_definition, jsondump(_json_action_result_definition, indent=2),
+        self.debug("JSON content generated for %r: %s", action_result_definition, _debugutils.jsondump(_json_action_result_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
         return _json_action_result_definition
 
@@ -542,33 +533,29 @@ class ScenarioReport(_LoggerImpl):
         :param json_action_result_definition: Action / expected result JSON content to read.
         :return: :class:`._actionresultdefinition.ActionResultDefinition` data.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-        from ._actionresultexecution import ActionResultExecution
-        from ._debugutils import jsondump
-        from ._stats import TimeStats
         from ._testerrors import TestError
 
-        self.debug("Reading action/result instance from JSON: %s", jsondump(json_action_result_definition, indent=2),
+        self.debug("Reading action/result instance from JSON: %s", _debugutils.jsondump(json_action_result_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
         with self.pushindentation():
-            _action_result_type = ActionResultDefinition.Type(json_action_result_definition["type"])  # type: ActionResultDefinition.Type
+            _action_result_type = _ActionResultDefinitionImpl.Type(json_action_result_definition["type"])  # type: _ActionResultDefinitionType.Type
             self.debug("Type: %s", _action_result_type)
 
-            _action_result_definition = ActionResultDefinition(
+            _action_result_definition = _ActionResultDefinitionImpl(
                 type=_action_result_type,
                 description=json_action_result_definition["description"],
-            )  # type: ActionResultDefinition
+            )  # type: _ActionResultDefinitionType
             self.debug("Description: %r", _action_result_definition.description)
 
             for _json_action_result_execution in json_action_result_definition["executions"]:  # type: _JsonDictType
-                self.debug("Reading action/result execution instance from JSON: %s", jsondump(_json_action_result_execution, indent=2),
+                self.debug("Reading action/result execution instance from JSON: %s", _debugutils.jsondump(_json_action_result_execution, indent=2),
                            extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
                 with self.pushindentation():
-                    _action_result_execution = ActionResultExecution(_action_result_definition)  # type: ActionResultExecution
+                    _action_result_execution = _ActionResultExecutionImpl(_action_result_definition)  # type: _ActionResultExecutionType
 
-                    _action_result_execution.time = TimeStats.fromjson(_json_action_result_execution["time"])
+                    _action_result_execution.time = _TimeStatsImpl.fromjson(_json_action_result_execution["time"])
                     self.debug("Time: %s", _action_result_execution.time)
 
                     _action_result_execution.evidence = _json_action_result_execution["evidence"].copy()
@@ -596,4 +583,7 @@ class ScenarioReport(_LoggerImpl):
 
 
 #: Main instance of :class:`ScenarioReport`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_report`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_REPORT = ScenarioReport()  # type: ScenarioReport

@@ -21,6 +21,8 @@ import sphinx.application
 import sphinx.ext.autodoc
 import typing
 
+import scenario.inners
+
 
 class AutodocHandlers:
     """
@@ -40,7 +42,7 @@ class AutodocHandlers:
 
     def skipmember(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Parameter not used
             owner_type,  # type: str
             nfq_name,  # type: str
             obj,  # type: typing.Optional[object]
@@ -100,7 +102,6 @@ class AutodocHandlers:
                 autodoc will use the first non-None value returned by a handler.
                 Handlers should return None to fall back to the skipping behavior of autodoc and other enabled extensions.
         """
-        from scenario._reflection import fqname  # noqa  ## Access to a protected member
         from ._logging import Logger
         from ._reflection import isspecialfunction
 
@@ -110,18 +111,18 @@ class AutodocHandlers:
 
         if would_skip:
             if inspect.isclass(obj) and (nfq_name != "__metaclass__"):
-                _logger.debug("class `%s` not skipped!", fqname(obj))
+                _logger.debug("class `%s` not skipped!", scenario.inners.reflection.fqname(obj))
                 return False
             if inspect.isfunction(obj):
-                _logger.debug("function `%s` not skipped!", fqname(obj))
+                _logger.debug("function `%s` not skipped!", scenario.inners.reflection.fqname(obj))
                 return False
             if inspect.ismethod(obj):
-                _logger.debug("method `%s` not skipped!", fqname(obj))
+                _logger.debug("method `%s` not skipped!", scenario.inners.reflection.fqname(obj))
                 return False
             if owner_type in ("class", "exception"):
                 if obj is not None:
                     if isspecialfunction(obj):
-                        _logger.debug("method `%s` not skipped!", fqname(obj))
+                        _logger.debug("method `%s` not skipped!", scenario.inners.reflection.fqname(obj))
                         return False
                     if obj is sphinx.ext.autodoc.INSTANCEATTR:
                         _logger.debug("instance attribute `%s` not skipped!", nfq_name)
@@ -139,7 +140,7 @@ class AutodocHandlers:
 
     def processsignature(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Parameter not used
             what,  # type: str
             fq_name,  # type: str
             obj,  # type: typing.Optional[object]
@@ -245,7 +246,7 @@ class AutodocHandlers:
                         re.match(r"^([^#]+)( *#.*)( = \w+)$", _args[_index])
                         # Otherwise match with no default value.
                         # The empty group in the end is left intentionally for grouping compatibility between the two regex.
-                        or re.match(r"^([^#]+)( *#.*)()$", _args[_index])  # Empty group assumed.
+                        or re.match(r"^([^#]+)( *#.*)()$", _args[_index])  # noqa  ## Empty group assumed
                     )  # type: typing.Optional[typing.Match[str]]
                     assert _match, _errmsg(f"Could not parse comment from {_args[_index]!r}")
                     _args[_index] = _match.group(1).rstrip() + _match.group(3)
@@ -265,7 +266,7 @@ class AutodocHandlers:
 
     def processdocstring(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Parameter not used
             what,  # type: str
             fq_name,  # type: str
             obj,  # type: typing.Optional[typing.Any]

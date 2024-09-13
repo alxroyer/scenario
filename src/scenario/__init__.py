@@ -153,7 +153,7 @@ if True:
     .. py:attribute:: StepSectionDescription
 
         Step class that holds a description for a section of steps.
-        Automatically instanciated by :meth:`._scenariodefinition.ScenarioDefinition.section()`.
+        Automatically instantiated by :meth:`._scenariodefinition.ScenarioDefinition.section()`.
 
         .. seealso:: :class:`._stepsection.StepSectionDescription` implementation.
     """
@@ -415,8 +415,8 @@ if True:
         .. seealso:: :class:`._scenarioconfig.ScenarioConfig.Key` implementation.
     """
     # Note: Can't reexport `ScenarioConfig.Key` as `ConfigKey` with a single `import` statement. Use an intermediate private instance.
-    from ._scenarioconfig import ScenarioConfig as _ScenarioConfig
-    ConfigKey = _ScenarioConfig.Key
+    from ._scenarioconfig import ScenarioConfig as _ScenarioConfigImpl  # @module-level-instantiation
+    ConfigKey = _ScenarioConfigImpl.Key
     __all__.append("ConfigKey")
 
 

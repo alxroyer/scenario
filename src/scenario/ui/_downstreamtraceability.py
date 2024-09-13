@@ -21,7 +21,7 @@ User interface downstream traceability page.
 import typing
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # `RequestHandler` used for inheritance.
+    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from .._reqref import ReqRef as _ReqRefType
     from .._reqtraceability import ReqTraceability as _ReqTraceabilityType

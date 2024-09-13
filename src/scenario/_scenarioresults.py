@@ -22,9 +22,15 @@ import logging
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _datetimeutils as _datetimeutils  # @perf
+    from . import _debugutils as _debugutils  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from ._stats import ExecTotalStats as _ExecTotalStatsType
     from ._testerrors import TestError as _TestErrorType
 
 
@@ -39,9 +45,7 @@ class ScenarioResults(_LoggerImpl):
         """
         Initializes an empty list.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.SCENARIO_RESULTS)
+        _LoggerImpl.__init__(self, _DebugClassImpl.SCENARIO_RESULTS)
 
         #: List of :class:`._scenarioexecution.ScenarioExecution` instances.
         self._results = []  # type: typing.List[_ScenarioExecutionType]
@@ -73,21 +77,18 @@ class ScenarioResults(_LoggerImpl):
 
         Designed to display convient information after :class:`._scenariologging.ScenarioLogging` and :class:`._campaignlogging.CampaignLogging` outputs.
         """
-        from ._datetimeutils import f2strduration
-        from ._loggermain import MAIN_LOGGER
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._stats import ExecTotalStats
+        from ._scenarioexecution import ScenarioExecutionHelper  # check-imports: ignore  ## No performance impact.
 
-        _total_step_stats = ExecTotalStats()  # type: ExecTotalStats
-        _total_action_stats = ExecTotalStats()  # type: ExecTotalStats
-        _total_result_stats = ExecTotalStats()  # type: ExecTotalStats
+        _total_step_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
+        _total_action_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
+        _total_result_stats = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
         _total_time = 0.0  # type: float
 
         # Scan the results, sum them up, and determine the way to display them.
         _name_field_len = 20  # type: int
         _status_field_len = 10  # type: int
         _stat_field_len = 10  # type: int
-        _time_field_len = len(f2strduration(0.0))  # type: int
+        _time_field_len = len(_datetimeutils.f2strduration(0.0))  # type: int
         _successes = []  # type: typing.List[_ScenarioExecutionType]
         _warnings = []  # type: typing.List[_ScenarioExecutionType]
         _errors = []  # type: typing.List[_ScenarioExecutionType]
@@ -105,8 +106,8 @@ class ScenarioResults(_LoggerImpl):
                 _warnings.append(_scenario_execution)
             else:
                 _successes.append(_scenario_execution)
-        _warnings.sort()
-        _errors.sort()
+        _warnings.sort(key=ScenarioExecutionHelper.criticitysortkeyfunction)
+        _errors.sort(key=ScenarioExecutionHelper.criticitysortkeyfunction)
         _total_name_field = f"{len(self._results)} tests, {len(_errors)} failed, {len(_warnings)} with warnings"  # type: str
         _name_field_len = max(_name_field_len, len(_total_name_field))
         _stat_field_len = max(_stat_field_len, len(str(_total_step_stats)), len(str(_total_action_stats)), len(str(_total_result_stats)))
@@ -122,19 +123,19 @@ class ScenarioResults(_LoggerImpl):
         _fmt += " " * (_stat_field_len - len("Actions"))  # Ensure regular spacing between columns.
         _fmt += "%s"  # Note: No width for the *extra info* column.
 
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
-        MAIN_LOGGER.info(_fmt % (
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.info(_fmt % (
             "TOTAL", "Status",
             "Steps", "Actions", "Results",
             "Time",
-            ", ".join(SCENARIO_CONFIG.resultsextrainfo()).capitalize(),
+            ", ".join(_FAST_PATH.scenario_config.resultsextrainfo()).capitalize(),
         ))
-        MAIN_LOGGER.info(_fmt % (
+        _FAST_PATH.main_logger.info(_fmt % (
             _total_name_field, "",
             _total_step_stats, _total_action_stats, _total_result_stats,
-            f2strduration(_total_time), "",
+            _datetimeutils.f2strduration(_total_time), "",
         ))
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
         for _scenario_execution in _successes:
             self._displayscenarioline(logging.INFO, _fmt, _scenario_execution)
@@ -156,29 +157,24 @@ class ScenarioResults(_LoggerImpl):
         :param fmt: Format to use.
         :param scenario_execution: Scenario to display.
         """
-        from ._datetimeutils import f2strduration
-        from ._debugutils import saferepr
-        from ._loggermain import MAIN_LOGGER
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         # Build extra info.
         _extra_info = []  # type: typing.List[str]
-        for _attribute_name in SCENARIO_CONFIG.resultsextrainfo():  # type: str
+        for _attribute_name in _FAST_PATH.scenario_config.resultsextrainfo():  # type: str
             if _attribute_name in scenario_execution.definition.getattributenames():
                 _attribute_value = str(scenario_execution.definition.getattribute(_attribute_name))  # type: str
                 # Avoid attribute display on several lines.
                 if len(_attribute_value.splitlines()) > 1:
-                    _attribute_value = str(saferepr(_attribute_value))
+                    _attribute_value = str(_debugutils.saferepr(_attribute_value))
                 # Avoid displaying empty attributes.
                 if _attribute_value:
                     _extra_info.append(_attribute_value)
         self.debug("Extra info: %r", _extra_info)
 
         # Log the scenario line.
-        MAIN_LOGGER.log(log_level, fmt % (
+        _FAST_PATH.main_logger.log(log_level, fmt % (
             scenario_execution.definition.name, scenario_execution.status,
             scenario_execution.step_stats, scenario_execution.action_stats, scenario_execution.result_stats,
-            f2strduration(scenario_execution.time.elapsed),
+            _datetimeutils.f2strduration(scenario_execution.time.elapsed),
             ", ".join(_extra_info),
         ))
 
@@ -200,15 +196,17 @@ class ScenarioResults(_LoggerImpl):
         :param error: Test error to display.
         """
         from ._testerrors import ExceptionError, TestError
-        from ._loggermain import MAIN_LOGGER
 
         if isinstance(error, ExceptionError):
             # `ExceptionError.logerror()` prints out the exception traceback.
             # Call the base `TestError.logerror()` instead.
-            TestError.logerror(error, logger=MAIN_LOGGER, level=log_level, indent="  ")
+            TestError.logerror(error, logger=_FAST_PATH.main_logger, level=log_level, indent="  ")
         else:
-            error.logerror(logger=MAIN_LOGGER, level=log_level, indent="  ")
+            error.logerror(logger=_FAST_PATH.main_logger, level=log_level, indent="  ")
 
 
 #: Main instance of :class:`ScenarioResults`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_results`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_RESULTS = ScenarioResults()  # type: ScenarioResults

@@ -27,9 +27,17 @@ import inspect
 import typing
 
 if True:
-    from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # `CommonConfigArgs` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # `CommonLoggingArgs` used for inheritance.
+    from ._configargs import CommonConfigArgs as _CommonConfigArgsImpl  # @inheritance
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+if typing.TYPE_CHECKING:
+    from ._errcodes import ErrorCode as _ErrorCodeType
+    from ._path import Path as _PathType
 
 
 class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
@@ -60,11 +68,12 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         When consecutive calls occur, the latest overwrites the previous,
         and a warning is displayed unless ``warn_reset`` is set to ``False``.
         """
-        from ._loggermain import MAIN_LOGGER
-
         if Args._instance and (instance is not Args._instance) and warn_reset:
-            MAIN_LOGGER.warning(f"Multiple instances of argument parser: {instance!r} takes place of {Args._instance!r}")
+            _FAST_PATH.main_logger.warning(f"Multiple instances of argument parser: {instance!r} takes place of {Args._instance!r}")
         Args._instance = instance
+
+        # Set `FAST_PATH.args`.
+        _FAST_PATH.args = Args._instance
 
     @classmethod
     def getinstance(
@@ -77,11 +86,13 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
 
         .. warning:: The main :class:`Args` instance is not created automatically by this method,
                      and should be set with :meth:`setinstance()` prior to any :meth:`getinstance()` call.
-        """
-        from ._reflection import qualname
 
-        assert Args._instance is not None, f"No {qualname(cls)} instance available"
-        assert isinstance(Args._instance, cls), f"Wrong type {qualname(type(Args._instance))}, {qualname(cls)} expected"
+        .. note:: Also available (but untyped) as :attr:`._fastpath.FastPath.args`.
+        """
+        if Args._instance is None:
+            raise ValueError(f"No {_qualname(cls)} instance available")
+        if not isinstance(Args._instance, cls):
+            raise TypeError(f"Wrong type {_qualname(type(Args._instance))}, {_qualname(cls)} expected")
         return Args._instance
 
     @classmethod
@@ -105,10 +116,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
 
         :param class_debugging: See :class:`._loggingargs.CommonLoggingArgs`.
         """
-        from ._debugclasses import DebugClass
-        from ._errcodes import ErrorCode
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.ARGS)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.ARGS)
 
         # Initialize parsing members.
 
@@ -123,7 +131,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         self.parsed = False
 
         #: Argument parsing error code.
-        self.error_code = ErrorCode.ARGUMENTS_ERROR  # type: ErrorCode
+        self.error_code = _ErrorCodeImpl.ARGUMENTS_ERROR  # type: _ErrorCodeType
 
         # Common command line arguments.
         self.__arg_parser.add_argument(
@@ -198,11 +206,6 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         :param args: Argument list, without the program name.
         :return: ``True`` for success, ``False`` otherwise.
         """
-        from ._configdb import CONFIG_DB
-        from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
-        from ._path import Path
-
         # Parse command line arguments.
         _parsed_args = self.__arg_parser.parse_args(args)  # type: typing.Any
 
@@ -211,40 +214,40 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
             try:
                 self.__arg_infos[_member_name].process(self, _parsed_args)
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
 
         # Load configurations:
         # - 1) load the single configuration values so that they are taken in account immediately,
         for _key in self.config_values:  # type: str
             try:
-                CONFIG_DB.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
+                _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
         # - 2) load configuration files,
-        for _config_path in self.config_paths:  # type: Path
+        for _config_path in self.config_paths:  # type: _PathType
             try:
-                MAIN_LOGGER.info(f"Loading '{_config_path}'")
-                CONFIG_DB.loadfile(_config_path)
+                _FAST_PATH.main_logger.info(f"Loading '{_config_path}'")
+                _FAST_PATH.config_db.loadfile(_config_path)
             except EnvironmentError as _env_err:
-                self.error_code = ErrorCode.ENVIRONMENT_ERROR
+                self.error_code = _ErrorCodeImpl.ENVIRONMENT_ERROR
                 # Don't log the full traceback for an environment error, just the error message.
-                MAIN_LOGGER.error(str(_env_err))
+                _FAST_PATH.main_logger.error(str(_env_err))
                 return False
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
         # - 3) reload the single configuration values, so that they prevail on configuration files.
         for _key in self.config_values:  # Type already declared above.
             try:
-                CONFIG_DB.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
+                _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                MAIN_LOGGER.logexceptiontraceback(_err)
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
                 return False
 
         # Configure unclassed debugging.
-        MAIN_LOGGER.enabledebug(self.debug_main)
+        _FAST_PATH.main_logger.enabledebug(self.debug_main)
 
         # Post-check arguments.
         try:
@@ -254,10 +257,10 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
                 return False
         except Exception as _err:
             # Unexpected error: print the exception traceback, don't show argument usage.
-            MAIN_LOGGER.logexceptiontraceback(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
             return False
 
-        self.error_code = ErrorCode.SUCCESS
+        self.error_code = _ErrorCodeImpl.SUCCESS
         self.parsed = True
         return True
 
@@ -312,12 +315,10 @@ class ArgInfo:
         #: Key type, when the argument feeds a dictionary.
         self.key_type = None  # type: typing.Optional[typing.Type[str]]
         if isinstance(member_type, tuple):
-            assert len(member_type) == 2
             self.key_type = member_type[0]
         #: Base type of the program argument(s).
         self.value_type = str  # type: typing.Union[type, typing.Callable[[str], typing.Any]]
         if isinstance(member_type, tuple):
-            assert len(member_type) == 2
             self.value_type = member_type[1]
         else:
             self.value_type = member_type
@@ -342,7 +343,8 @@ class ArgInfo:
 
         .. seealso:: :meth:`Args.addarg()`
         """
-        assert "dest" not in kwargs
+        if "dest" in kwargs:
+            raise KeyError(f"Unexpected 'dest' parameter in {kwargs!r}")
         if len(args) > 0:
             self.arg_parser.add_argument(*args, dest=self.member_name, **kwargs)
         else:
@@ -359,13 +361,9 @@ class ArgInfo:
         :param args_instance: :class:`Args` instance to feed.
         :param parsed_args: Opaque parsed object returned by the ``argparse`` library.
         """
-        from ._loggermain import MAIN_LOGGER
-        from ._path import Path
-        from ._reflection import qualname
-
         # Retrieve and check members from both: the :class:`Args` instance on the one hand, and the opaque parsed object on the other hand.
         if self.member_name not in vars(args_instance):
-            raise KeyError(f"No such attribute '{self.member_name}' in {qualname(type(args_instance))}")
+            raise KeyError(f"No such attribute '{self.member_name}' in {_qualname(type(args_instance))}")
         _args_member = getattr(args_instance, self.member_name)  # type: typing.Any
         _parsed_member = getattr(parsed_args, self.member_name)  # type: typing.Any
         args_instance.debug("ArgInfo['%s'].process(): _parsed_member = %r", self.member_name, _parsed_member)
@@ -375,7 +373,7 @@ class ArgInfo:
             return
         if self.key_type is not None:
             if not isinstance(_args_member, dict):
-                raise TypeError(f"Attribute '{self.member_name}' in {qualname(type(args_instance))} should be a dictionary")
+                raise TypeError(f"Attribute '{self.member_name}' in {_qualname(type(args_instance))} should be a dictionary")
 
         # Build the list of parsed values to process.
         _parsed_values = []  # type: typing.List[typing.Any]
@@ -395,15 +393,15 @@ class ArgInfo:
                 _parsed_value = _parsed_value[1]
 
             # Check and convert parsed item values.
-            if (self.value_type is Path) and isinstance(_parsed_value, str):
-                _parsed_value = Path(_parsed_value)
+            if (self.value_type is _PathImpl) and isinstance(_parsed_value, str):
+                _parsed_value = _PathImpl(_parsed_value)
             elif isinstance(self.value_type, type):
                 _parsed_value = self.value_type(_parsed_value)
             elif inspect.isfunction(self.value_type) and isinstance(_parsed_value, str):
                 _parsed_value = self.value_type(_parsed_value)
             if _parsed_value is not None:
                 if (not inspect.isfunction(self.value_type)) and (not isinstance(_parsed_value, typing.cast(type, self.value_type))):
-                    raise TypeError(f"Wrong type {_parsed_value!r}, {qualname(self.value_type)} expected")
+                    raise TypeError(f"Wrong type {_parsed_value!r}, {_qualname(self.value_type)} expected")
 
             # Save the value in the :class:`Args` instance.
             if self.key_type is not None:

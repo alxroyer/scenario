@@ -22,6 +22,9 @@ Eases the way to define and retrieve a step definition or execution.
 
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -44,8 +47,6 @@ class StepDefinitionSpecification:
 
         :param step_specification: Input specification.
         """
-        from ._stepdefinition import StepDefinition
-
         #: Single match specification (s-spec).
         self._s_spec = None  # type: typing.Optional[typing.Union[_StepDefinitionType, int]]
         #: Multiple match specification (m-spec).
@@ -58,7 +59,7 @@ class StepDefinitionSpecification:
             self._s_spec = step_specification._s_spec
             self._m_spec = step_specification._m_spec
             self._m_spec_index = step_specification._m_spec_index
-        elif isinstance(step_specification, (StepDefinition, int)):
+        elif isinstance(step_specification, (_FAST_PATH.step_definition_cls, int)):
             # Single match specifications (s-spec).
             self._s_spec = step_specification
         elif isinstance(step_specification, (str, type)):
@@ -79,11 +80,8 @@ class StepDefinitionSpecification:
 
         :return: String representation.
         """
-        from ._reflection import qualname
-        from ._stepdefinition import StepDefinition
-
         # Single match specifications (s-spec).
-        if isinstance(self._s_spec, StepDefinition):
+        if bool(isinstance(self._s_spec, _FAST_PATH.scenario_definition_cls)):  # Cast with `bool()` to avoid a "Statement is unreachable" error.
             return str(self._s_spec)
         if isinstance(self._s_spec, int):
             return f"step#{self._s_spec}"
@@ -93,7 +91,7 @@ class StepDefinitionSpecification:
         if isinstance(self._m_spec, str):
             _spec = repr(self._m_spec)
         if isinstance(self._m_spec, type):
-            _spec = qualname(self._m_spec)
+            _spec = _qualname(self._m_spec)
 
         # Multiple match index (mi-spec).
         if self._m_spec_index is not None:
@@ -112,7 +110,7 @@ class StepDefinitionSpecification:
         :return: Step definition instance when resolved, ``None`` otherwise.
         """
         try:
-            return self.expect()
+            return self.expect(scenario=scenario)
         except LookupError:
             # Default to `None`.
             return None
@@ -128,21 +126,17 @@ class StepDefinitionSpecification:
         :return: Step definition instance resolved.
         :raise LookupError: When the step definition could not be found.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-        from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinition
-
         # Ensure a scenario definition reference.
         if not scenario:
-            scenario = SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition
+            scenario = _FAST_PATH.scenario_stack.building.scenario_definition or _FAST_PATH.scenario_stack.current_scenario_definition
         if not scenario:
-            SCENARIO_STACK.raisecontexterror("No current scenario")
+            _FAST_PATH.scenario_stack.raisecontexterror("No current scenario")
 
         # Identify matching steps.
         _matching_step_definitions = []  # type: typing.List[_StepDefinitionType]
         for _step_definition in scenario.steps:  # type: _StepDefinitionType
             if any([
-                isinstance(self._s_spec, StepDefinition) and (_step_definition is self._s_spec),
+                isinstance(self._s_spec, _FAST_PATH.step_definition_cls) and (_step_definition is self._s_spec),
                 isinstance(self._s_spec, int) and (_step_definition.number == self._s_spec),
                 isinstance(self._m_spec, str) and _step_definition.name.endswith(self._m_spec),
                 isinstance(self._m_spec, type) and isinstance(_step_definition, self._m_spec),
@@ -156,7 +150,7 @@ class StepDefinitionSpecification:
         if self._m_spec_index is not None:
             _index = self._m_spec_index
         # Avoid `_index` being unspecified when several steps match in *execution mode*.
-        if (_index < 0) and (len(_matching_step_definitions) > 1) and SCENARIO_RUNNER.doexecute():
+        if (_index < 0) and (len(_matching_step_definitions) > 1) and _FAST_PATH.scenario_runner.doexecute():
             raise LookupError(f"Ambiguous specification {self} from scenario {scenario}, index required in execution mode "
                               f"(matching steps {_matching_step_definitions!r})")
 
@@ -184,8 +178,6 @@ class StepExecutionSpecification:
 
         :param step_specification: Input specification.
         """
-        from ._stepexecution import StepExecution
-
         #: Direct :class:`._stepexecution.StepExecution` instance.
         self._step_execution = None  # type: typing.Optional[_StepExecutionType]
         #: Step definition
@@ -195,9 +187,12 @@ class StepExecutionSpecification:
             self._step_execution = step_specification._step_execution
             self._step_definition_spec = step_specification._step_definition_spec
         else:
-            if isinstance(step_specification, StepExecution):
+            if isinstance(step_specification, _FAST_PATH.step_execution_cls):
                 self._step_execution = step_specification
             else:
+                if typing.TYPE_CHECKING:
+                    assert not isinstance(step_specification, _StepExecutionType)
+
                 self._step_definition_spec = StepDefinitionSpecification(step_specification)
 
     def __str__(self):  # type: () -> str
@@ -223,7 +218,7 @@ class StepExecutionSpecification:
         :return: Step execution instance when resolved, ``None`` otherwise.
         """
         try:
-            return self.expect()
+            return self.expect(scenario=scenario)
         except LookupError:
             # Default to `None`.
             return None

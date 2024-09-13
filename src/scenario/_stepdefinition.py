@@ -18,19 +18,24 @@
 Step definition.
 """
 
-import inspect
 import types
 import typing
 
 if True:
-    from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
-    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
+    from ._assertions import Assertions as _AssertionsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._reflection import qualname as _qualname  # @perf
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @inheritance
+    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType
-    from ._logger import Logger as _LoggerType
+    from ._locations import CodeLocation as _CodeLocationType
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
+    from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
 
 
 class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl):
@@ -53,11 +58,6 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
 
         Makes it possible to easily access the attributes and methods defined with a user step definition.
         """
-        from ._reflection import qualname
-        from ._scenariostack import SCENARIO_STACK
-        if typing.TYPE_CHECKING:
-            from ._stepspecifications import AnyStepDefinitionSpecificationType
-
         def _ensurereturntype(step_definition):  # type: (StepDefinition) -> VarStepDefinitionType
             """
             Avoids using ``# type: ignore`` pragmas every time this :meth:`StepDefinition.getinstance()` method returns a value.
@@ -65,44 +65,52 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
             _step_definition = typing.cast(typing.Any, step_definition)  # type: VarStepDefinitionType  # noqa  ## Shadows name '_step_definition' from outer scope
             return _step_definition
 
-        _step_specification = cls if (index is None) else (cls, index)  # type: AnyStepDefinitionSpecificationType
-        if SCENARIO_STACK.building.scenario_definition:
-            _step_definition = SCENARIO_STACK.building.scenario_definition.getstep(_step_specification)  # type: typing.Optional[StepDefinition]
+        _step_specification = cls if (index is None) else (cls, index)  # type: _AnyStepDefinitionSpecificationType
+        if _FAST_PATH.scenario_stack.building.scenario_definition:
+            _step_definition = _FAST_PATH.scenario_stack.building.scenario_definition.getstep(_step_specification)  # type: typing.Optional[StepDefinition]
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
-        if SCENARIO_STACK.current_scenario_definition:
-            _step_definition = SCENARIO_STACK.current_scenario_definition.getstep(_step_specification)  # Type already defined above.
+        if _FAST_PATH.scenario_stack.current_scenario_definition:
+            _step_definition = _FAST_PATH.scenario_stack.current_scenario_definition.getstep(_step_specification)  # Type already defined above.
             if _step_definition is not None:
                 return _ensurereturntype(_step_definition)
-        if not (SCENARIO_STACK.building.scenario_definition or SCENARIO_STACK.current_scenario_definition):
-            SCENARIO_STACK.raisecontexterror("No current scenario definition")
+        if not (_FAST_PATH.scenario_stack.building.scenario_definition or _FAST_PATH.scenario_stack.current_scenario_definition):
+            _FAST_PATH.scenario_stack.raisecontexterror("No current scenario definition")
         else:
-            SCENARIO_STACK.raisecontexterror(f"No such step definition of type {qualname(cls)}")
+            _FAST_PATH.scenario_stack.raisecontexterror(f"No such step definition of type {_qualname(cls)}")
 
     def __init__(
             self,
             method=None,  # type: typing.Optional[types.MethodType]
+            numbered=True,  # type: bool
     ):  # type: (...) -> None
         """
         :param method: Method that defines the step, when applicable. Optional.
+        :param numbered: ``False`` if the step shall not be numbered.
         """
-        from ._locations import CodeLocation
-        from ._scenariodefinition import ScenarioDefinition
-        from ._stepexecution import StepExecution
+        #: Step name cache.
+        #:
+        #: Computed on demand and cached by the :meth:`name()` property.
+        self.__name_cache = None  # type: typing.Optional[str]
 
         #: Owner scenario.
         #:
-        #: Initially set with a void reference.
-        #: Fixed when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
-        self.scenario = ScenarioDefinition.__new__(ScenarioDefinition)  # type: ScenarioDefinition
+        #: Set when :meth:`._scenariodefinition.ScenarioDefinition.addstep()` is called.
+        self._scenario = None  # type: typing.Optional[_ScenarioDefinitionType]
 
         #: Step method, if any.
         self.method = method  # type: typing.Optional[types.MethodType]
 
-        #: Definition location.
-        self.location = CodeLocation.fromclass(type(self))  # type: CodeLocation
-        if self.method:
-            self.location = CodeLocation.frommethod(self.method)
+        #: Definition location cache.
+        #:
+        #: Computed on demand and cached by the :meth:`location()` property.
+        #: May be explicitly set by the :meth:`location()` setter.
+        self.__location_cache = None  # type: typing.Optional[_CodeLocationType]
+
+        #: ``True`` when the step may be assigned a step :attr:`number`.
+        #:
+        #: When ``False``, :meth:`number()` consequently returns 0.
+        self.numbered = numbered
 
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
@@ -118,18 +126,16 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         self.__action_result_definitions = []  # type: typing.List[_ActionResultDefinitionType]
 
         #: Step executions.
-        self.executions = []  # type: typing.List[StepExecution]
+        self.executions = []  # type: typing.List[_StepExecutionType]
 
     def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
         if type(self) is StepDefinition:
-            return f"<{qualname(type(self))} {self.name!r}>"
+            return f"<{_qualname(type(self))} {self.name!r}>"
         else:
-            return f"<{qualname(type(self))}#{self.number}>"
+            return f"<{_qualname(type(self))}#{self.number}>"
 
     def __str__(self):  # type: () -> str
         """
@@ -142,7 +148,49 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         Step name, i.e. the fully qualified name of the class or method defining it.
         """
-        return self.location.qualname
+        if self.__name_cache is None:
+            if self.method:
+                self.__name_cache = _qualname(self.method)
+            else:
+                self.__name_cache = _qualname(type(self))
+        return self.__name_cache
+
+    @property
+    def location(self):  # type: () -> _CodeLocationType
+        """
+        Definition location getter.
+        """
+        if self.__location_cache is None:
+            if self.method:
+                self.__location_cache = _CodeLocationImpl.frommethod(self.method)
+            else:
+                self.__location_cache = _CodeLocationImpl.fromclass(type(self))
+        return self.__location_cache
+
+    @location.setter
+    def location(self, location):  # type: (_CodeLocationType) -> None
+        """
+        Definition location setter.
+        """
+        self.__location_cache = location
+
+    @property
+    def scenario(self):  # type: () -> _ScenarioDefinitionType
+        """
+        Owner scenario.
+        """
+        if self._scenario is None:
+            raise RuntimeError(f"Owner scenario not set yet for {self!r}")
+        return self._scenario
+
+    @scenario.setter
+    def scenario(self, scenario):  # type: (_ScenarioDefinitionType) -> None
+        """
+        Owner scenario setter.
+        """
+        if self._scenario is not None:
+            raise RuntimeError(f"Owner scenario already set for {self!r} with {self._scenario!r}, can't set {scenario!r}")
+        self._scenario = scenario
 
     @property
     def number(self):  # type: () -> int
@@ -152,19 +200,16 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         Number of this step definition within the steps defining the related scenario.
         Starting from 1, as displayed to the user.
         """
-        from ._stepsection import StepSectionDescription
+        if not self.numbered:
+            return 0
 
         _step_number = 0  # type: int
-        # Check the :attr:`scenario` attribute has been set with a real object.
-        if hasattr(self.scenario, "name"):
-            for _step_definition in self.scenario.steps:  # type: StepDefinition
-                # Skip section steps.
-                if isinstance(_step_definition, StepSectionDescription):
-                    continue
-
+        for _step_definition in self.scenario.steps:  # type: StepDefinition
+            # Count numbered steps only.
+            if _step_definition.numbered:
                 _step_number += 1
-                if _step_definition is self:
-                    break
+            if _step_definition is self:
+                break
         return _step_number
 
     def addactionresult(
@@ -209,10 +254,8 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
 
         Otherwise, this base implementation of this method expects the :attr:`method` attribute to be set, and invokes it.
         """
-        from ._scenariorunner import SCENARIO_RUNNER
-
         assert self.method is not None, f"{self} not implemented"
-        SCENARIO_RUNNER.debug("Invoking %r", self.method)
+        _FAST_PATH.scenario_runner.debug("Invoking %r", self.method)
         self.method()
 
 
@@ -233,7 +276,7 @@ class StepDefinitionHelper:
             definition,  # type: StepDefinition
     ):  # type: (...) -> None
         """
-        Instanciates a helper for the given step definition.
+        Instantiates a helper for the given step definition.
 
         :param definition: Step definition instance this helper works for.
         """
@@ -262,109 +305,3 @@ class StepDefinitionHelper:
             if isinstance(_init_known_issues, list):
                 return _init_known_issues
         return []
-
-
-class StepMethods:
-    """
-    Collection of static methods to help manipulating step methods.
-    """
-
-    @staticmethod
-    def _hierarchycount(
-            logger,  # type: _LoggerType
-            method,  # type: types.MethodType
-    ):  # type: (...) -> int
-        """
-        Returns the number of classes in class hierarchy that have this method being declared.
-
-        :param logger: Logger to use for debugging.
-        :param method: Method to look for accessibility in class hierarchy.
-        :return: Count. The higher, the upper class the method is defined into.
-
-        Used by the :meth:`sortbyhierarchythennames()` and :meth:`sortbyreversehierarchythennames()` methods.
-        """
-        from ._reflection import qualname
-
-        _count = 0  # type: int
-        for _cls in inspect.getmro(method.__self__.__class__):  # type: type
-            for _method_name, _method in inspect.getmembers(_cls, predicate=inspect.isfunction):  # type: str, types.MethodType
-                if _method_name == method.__name__:
-                    _count += 1
-
-        logger.debug("StepMethods._hierarchycount(%s) -> %d", qualname(method), _count)
-        return _count
-
-    @staticmethod
-    def _dispmethodlist(
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> str
-        """
-        Computes a debug representation of a method list.
-
-        :param methods: Array of methods to debug.
-        :return: Debug representation.
-        """
-        from ._reflection import qualname
-
-        return f"[{', '.join(qualname(_method) for _method in methods)}]"
-
-    @staticmethod
-    def sortbynames(
-            logger,  # type: _LoggerType
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> None
-        """
-        Sorts an array of methods by method names.
-
-        :param logger: Logger to use for debugging.
-        :param methods: Array of methods to sort.
-        """
-        logger.debug("StepMethods.sortbynames(%s)", StepMethods._dispmethodlist(methods))
-        methods.sort(key=lambda method: method.__name__)
-        logger.debug("                     -> %s", StepMethods._dispmethodlist(methods))
-
-    @staticmethod
-    def sortbyhierarchythennames(
-            logger,  # type: _LoggerType
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> None
-        """
-        Sorts an array of methods by hierarchy at first, then by method names.
-
-        :param logger: Logger to use for debugging.
-        :param methods: Array of methods to sort.
-
-        Makes the methods defined in the higher classes be executed prior to those defined in the lower classes,
-        i.e. makes the most specific methods be executed at last.
-
-        Formerly used by *before-test* and *before-step* steps.
-        """
-        logger.debug("StepMethods.sortbyhierarchythennames(%s)", StepMethods._dispmethodlist(methods))
-        # We want to execute the higher class methods at first.
-        # When a method is defined in an upper class, its hierarchy count is high.
-        # Let's negate the result of :meth:`StepMethods._hierarchycount()` in order to sort the higher class methods at the beginning of the list.
-        methods.sort(key=lambda method: (- StepMethods._hierarchycount(logger, method), method.__name__))
-        logger.debug("                                  -> %s", StepMethods._dispmethodlist(methods))
-
-    @staticmethod
-    def sortbyreversehierarchythennames(
-            logger,  # type: _LoggerType
-            methods,  # type: typing.List[types.MethodType]
-    ):  # type: (...) -> None
-        """
-        Sorts an array of methods by reverse hierarchy first, then by method names.
-
-        :param logger: Logger to use for debugging.
-        :param methods: Array of methods to sort.
-
-        Makes the methods defined in the lower classes be executed prior to those defined in the upper classes,
-        i.e. makes the most specific methods be executed at first.
-
-        Formerly used by *after-test* and *after-step* steps.
-        """
-        logger.debug("StepMethods.sortbyreversehierarchythennames(%s)", StepMethods._dispmethodlist(methods))
-        # We want to execute the lower class methods at first.
-        # When a method is defined in a lower class, its hierarchy count is low.
-        # Do not negate the result of :meth:`StepMethods._hierarchycount()` in order to sort the lower class methods at the beginning of the list.
-        methods.sort(key=lambda method: (StepMethods._hierarchycount(logger, method), method.__name__))
-        logger.debug("                                         -> %s", StepMethods._dispmethodlist(methods))

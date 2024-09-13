@@ -24,10 +24,15 @@ import traceback
 import typing
 
 if True:
-    from ._logextradata import LogExtraData as _LogExtraDataImpl
+    from . import _enumutils as _enumutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @class-member-instantiation, @perf
+    from ._logfilters import LoggerLogFilter as _LoggerLogFilterImpl  # @perf
+    from ._loggingcontext import LoggingContext as _LoggingContextImpl  # @perf
 if typing.TYPE_CHECKING:
-    from ._consoleutils import Console as _ConsoleType
+    from . import _consoleutils as _consoleutils
     from ._logextradata import LogExtraData as _LogExtraDataType
+    from ._loggingcontext import LoggingContext as _LoggingContextType
 
 
 #: Number of main loggers already created.
@@ -85,30 +90,24 @@ class Logger:
 
         .. seealso:: :meth:`enabledebug()` and :meth:`setlogcolor()`.
         """
-        from ._enumutils import enum2str
-        from ._logfilters import LoggerLogFilter
-
         #: Log class.
-        self.log_class = enum2str(log_class)  # type: str
+        self.log_class = _enumutils.enum2str(log_class)  # type: str
 
         # Build the ``logging.Logger`` instance, and attach a filter.
         #: ``logging.Logger`` instance as a member variable.
         self._logger = logging.Logger(name=self.log_class, level=logging.DEBUG)  # type: logging.Logger
-        self._logger.addFilter(LoggerLogFilter(logger=self))
+        self._logger.addFilter(_LoggerLogFilterImpl(logger=self))
         if not self.log_class:
             # Main logger.
             global _main_loggers
-            # Note: A second dummy main logger may be instanciated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
+            # Note: A second dummy main logger may be instantiated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
             if (_main_loggers >= 1) and (not typing.TYPE_CHECKING):
                 raise RuntimeError("Only one main logger")
             _main_loggers += 1
         else:
             # Child logger.
             # Set the main logger as the parent logger.
-            # Memo: Don't import the main logger before we're sure we're not building the main logger itself!
-            from ._loggermain import MAIN_LOGGER
-
-            self._logger.parent = MAIN_LOGGER.logging_instance
+            self._logger.parent = _FAST_PATH.main_logger.logging_instance
             self._logger.propagate = True
         # `logging.Logger._log()` indirection.
         self._logger._log = self._log  # type: ignore[assignment]  ## Cannot assign to a method
@@ -118,7 +117,7 @@ class Logger:
         self._debug_enabled = None  # type: typing.Optional[bool]
 
         #: Optional log color configuration.
-        self._log_color = None  # type: typing.Optional[_ConsoleType.Color]
+        self._log_color = None  # type: typing.Optional[_consoleutils.Console.Color]
 
         #: Logger indentation stack.
         self._indentations = []  # type: typing.List[str]
@@ -155,18 +154,15 @@ class Logger:
 
         :return: ``True`` when debug logging is enabled, ``False`` otherwise.
         """
-        from ._args import Args
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         # Try to update `self._debug_enabled` if not already set.
-        if (self._debug_enabled is None) and Args.getinstance().parsed:
-            self._debug_enabled = (self.log_class in SCENARIO_CONFIG.debugclasses())
+        if (self._debug_enabled is None) and _FAST_PATH.args and _FAST_PATH.args.parsed:
+            self._debug_enabled = (self.log_class in _FAST_PATH.scenario_config.debugclasses())
 
         return self._debug_enabled or False
 
     def setlogcolor(
             self,
-            color,  # type: typing.Optional[_ConsoleType.Color]
+            color,  # type: typing.Optional[_consoleutils.Console.Color]
     ):  # type: (...) -> None
         """
         Sets or clears a log line color specialized for the logger.
@@ -179,7 +175,7 @@ class Logger:
         """
         self._log_color = color
 
-    def getlogcolor(self):  # type: (...) -> typing.Optional[_ConsoleType.Color]
+    def getlogcolor(self):  # type: (...) -> typing.Optional[_consoleutils.Console.Color]
         """
         Returns the specialized log line color for this logger, if any.
 
@@ -211,14 +207,12 @@ class Logger:
             in order to ensure the expected counter :meth:`popindentation()` is called,
             whatever happens (``return``, ``break``, ``continue`` jumps, or exception raised).
         """
-        from ._loggingcontext import LoggingContext
-
         self._indentations.append(indentation)
 
         # Return a started `LoggingContext` instance that does not push indentation again,
         # but would call `popindentation()` with the appropriate indentation:
         # - Initialize without indentation, and start.
-        _ctx = LoggingContext(logger=self, indentation="")  # type: LoggingContext
+        _ctx = _LoggingContextImpl(logger=self, indentation="")  # type: _LoggingContextType
         _ctx.__enter__()
         # - Fix indentation once started.
         _ctx.indentation = indentation
@@ -330,7 +324,9 @@ class Logger:
         The processing of the message depends on the :attr:`_debug_enabled` configuration
         (see :meth:`enabledebug()`).
         """
-        self._logger.debug(msg, *args, **kwargs)
+        # Optimization: If debug is disabled, return right away.
+        if self._debug_enabled:
+            self._logger.debug(msg, *args, **kwargs)
 
     def log(
             self,
@@ -342,7 +338,9 @@ class Logger:
         """
         Logs a message with a configurable severity.
         """
-        self._logger.log(level, msg, *args, **kwargs)
+        # Optimization: If debug is disabled, return right away, unless `level` is higher than `logging.DEBUG`.
+        if self._debug_enabled or (level > logging.DEBUG):
+            self._logger.log(level, msg, *args, **kwargs)
 
     def _log(
             self,  # type: Logger
@@ -365,15 +363,13 @@ class Logger:
 
         Handles appropriately the optional ``exc_info`` parameter.
         """
-        from ._args import Args
-        from ._logextradata import LogExtraData
-
         # Check ``self`` is actually a :class:`Logger` instance, as explained in the docstring above.
         if not isinstance(self, Logger):
             raise TypeError(f"{self!r} is not of type {Logger!r}")
 
         # Check that the arguments have been parsed.
-        if not Args.isset():
+        # Note: Since `Args` does log a couple of things before arguments are declared to be parsed, just check an instance has been installed.
+        if not _FAST_PATH.args:
             raise RuntimeError("Avoid logging anything before arguments have been parsed")
 
         # Remove the exception info from the named arguments if any.
@@ -395,18 +391,18 @@ class Logger:
         # Long text mode.
         _long_text_mode = None  # type: typing.Any
         _long_text_max_lines = None  # type: typing.Any
-        if LogExtraData.LONG_TEXT in _extra:
-            _long_text_mode = _extra[LogExtraData.LONG_TEXT]
-            del _extra[LogExtraData.LONG_TEXT]
+        if _LogExtraDataImpl.LONG_TEXT in _extra:
+            _long_text_mode = _extra[_LogExtraDataImpl.LONG_TEXT]
+            del _extra[_LogExtraDataImpl.LONG_TEXT]
             if not isinstance(_long_text_mode, bool):
-                raise TypeError(f"Invalid extra data '{LogExtraData.LONG_TEXT}', {_long_text_mode!r}, should be a `bool` value")
-        if LogExtraData.LONG_TEXT_MAX_LINES in _extra:
+                raise TypeError(f"Invalid extra data '{_LogExtraDataImpl.LONG_TEXT}', {_long_text_mode!r}, should be a `bool` value")
+        if _LogExtraDataImpl.LONG_TEXT_MAX_LINES in _extra:
             # Automatically activates the *long text mode*.
             _long_text_mode = True
-            _long_text_max_lines = _extra[LogExtraData.LONG_TEXT_MAX_LINES]
-            del _extra[LogExtraData.LONG_TEXT_MAX_LINES]
+            _long_text_max_lines = _extra[_LogExtraDataImpl.LONG_TEXT_MAX_LINES]
+            del _extra[_LogExtraDataImpl.LONG_TEXT_MAX_LINES]
             if not isinstance(_long_text_max_lines, int):
-                raise TypeError(f"Invalid extra data '{LogExtraData.LONG_TEXT_MAX_LINES}' {_long_text_max_lines!r}, should be an `int` value")
+                raise TypeError(f"Invalid extra data '{_LogExtraDataImpl.LONG_TEXT_MAX_LINES}' {_long_text_max_lines!r}, should be an `int` value")
         if _long_text_mode:
             self._loglongtext(level, msg, args, _long_text_max_lines, **kwargs)
         else:

@@ -18,6 +18,7 @@ import logging
 import typing
 
 import scenario
+import scenario.inners
 import scenario.test
 import scenario.text
 
@@ -206,14 +207,12 @@ class CheckConfigValue(scenario.test.Step):
         self.value_read = None  # type: typing.Any
 
     def step(self):  # type: (...) -> None
-        from scenario._reflection import qualname  # noqa  ## Access to protected module
-
-        self.STEP(f"Read {self.key!r}{f' as `{qualname(self.read_as)}`' if self.read_as is not None else ''}")
+        self.STEP(f"Read {self.key!r}{f' as `{scenario.inners.reflection.qualname(self.read_as)}`' if self.read_as is not None else ''}")
 
         if self.read_as is None:
             self.ACTION(f"Read {self.key!r} without specifying the type.")
         else:
-            self.ACTION(f"Read {self.key!r} as a `{qualname(self.read_as)}` value.")
+            self.ACTION(f"Read {self.key!r} as a `{scenario.inners.reflection.qualname(self.read_as)}` value.")
 
         _value_error = None  # type: typing.Optional[ValueError]
         if self.doexecute():
@@ -227,10 +226,10 @@ class CheckConfigValue(scenario.test.Step):
                 _value_error = _err
 
         if self.expected_type is not ValueError:
-            if self.RESULT(f"The type of the value read is `{qualname(self.expected_type)}`."):
+            if self.RESULT(f"The type of the value read is `{scenario.inners.reflection.qualname(self.expected_type)}`."):
                 self.assertisinstance(
                     self.value_read, self.expected_type,
-                    evidence=f"Value type{f' read as `{qualname(self.read_as)}`' if self.read_as is not None else ''}",
+                    evidence=f"Value type{f' read as `{scenario.inners.reflection.qualname(self.read_as)}`' if self.read_as is not None else ''}",
                 )
             if self.expected_value is not None:
                 if self.RESULT(f"The value read is {self.expected_value!r}."):

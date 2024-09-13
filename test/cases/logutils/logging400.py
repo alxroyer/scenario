@@ -20,7 +20,7 @@ import scenario
 import scenario.test
 
 if True:
-    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from steps.common import ExecScenario as _ExecScenarioType
 

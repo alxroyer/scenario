@@ -21,7 +21,11 @@ Requirement management arguments.
 import typing
 
 if True:
-    from ._args import Args as _ArgsImpl  # `Args` used for inheritance.
+    from ._args import Args as _ArgsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._path import Path as _PathImpl  # @perf
+if typing.TYPE_CHECKING:
+    from ._path import Path as _PathType
 
 
 class ReqManagementArgs(_ArgsImpl):
@@ -33,13 +37,11 @@ class ReqManagementArgs(_ArgsImpl):
         """
         Defines program arguments for :class:`._reqmgt.ReqManagement`.
         """
-        from ._path import Path
-
         _ArgsImpl.__init__(self, class_debugging=True)
 
         #: Input requirement database files.
-        self.req_db_paths = []  # type: typing.List[Path]
-        self.addarg("Req-db files", "req_db_paths", Path).define(
+        self.req_db_paths = []  # type: typing.List[_PathType]
+        self.addarg("Req-db files", "req_db_paths", _PathImpl).define(
             "--req-db", metavar="PATH",
             action="append", type=str, default=[],
             help="Requirement database file to load. "
@@ -48,8 +50,8 @@ class ReqManagementArgs(_ArgsImpl):
         )
 
         #: Test suite files to load scenarios from.
-        self.test_suite_paths = []  # type: typing.List[Path]
-        self.addarg("Test suite files", "test_suite_paths", Path).define(
+        self.test_suite_paths = []  # type: typing.List[_PathType]
+        self.addarg("Test suite files", "test_suite_paths", _PathImpl).define(
             "--test-suite", metavar="PATH",
             action="append", type=str, default=[],
             help="Test suite file to load scenarios from. "
@@ -58,8 +60,8 @@ class ReqManagementArgs(_ArgsImpl):
         )
 
         #: Campaign results to load data from.
-        self.campaign_results_path = None  # type: typing.Optional[Path]
-        self.addarg("Campaign results path", "campaign_results_path", Path).define(
+        self.campaign_results_path = None  # type: typing.Optional[_PathType]
+        self.addarg("Campaign results path", "campaign_results_path", _PathImpl).define(
             "--campaign", metavar="PATH",
             action="store", type=str,
             help="Campaign directory or JUnit report file to load data from. "
@@ -67,16 +69,16 @@ class ReqManagementArgs(_ArgsImpl):
         )
 
         #: Downstream traceability option.
-        self.downstream_traceability_outfile = None  # type: typing.Optional[Path]
-        self.addarg("Downstream traceability", "downstream_traceability_outfile", Path).define(
+        self.downstream_traceability_outfile = None  # type: typing.Optional[_PathType]
+        self.addarg("Downstream traceability", "downstream_traceability_outfile", _PathImpl).define(
             "--downstream-traceability", metavar="PATH",
             action="store", type=str, default=None,
             help="Generate downstream traceability, i.e. from requirements to scenarios.",
         )
 
         #: Upstream traceability option.
-        self.upstream_traceability_outfile = None  # type: typing.Optional[Path]
-        self.addarg("Upstream traceability", "upstream_traceability_outfile", Path).define(
+        self.upstream_traceability_outfile = None  # type: typing.Optional[_PathType]
+        self.addarg("Upstream traceability", "upstream_traceability_outfile", _PathImpl).define(
             "--upstream-traceability", metavar="PATH",
             action="store", type=str, default=None,
             help="Generate upstream traceability, i.e. from scenarios to requirements.",
@@ -99,23 +101,21 @@ class ReqManagementArgs(_ArgsImpl):
 
         .. seealso:: :meth:`._args.Args._checkargs()` for parameters and return details.
         """
-        from ._loggermain import MAIN_LOGGER
-
         if not super()._checkargs(args):
             return False
 
         # Input options.
         if self.campaign_results_path:
             if self.req_db_paths:
-                MAIN_LOGGER.error("Can't use --req-db with --campaign")
+                _FAST_PATH.main_logger.error("Can't use --req-db with --campaign")
             if self.test_suite_paths:
-                MAIN_LOGGER.error("Can't use --test-suite with --campaign")
+                _FAST_PATH.main_logger.error("Can't use --test-suite with --campaign")
             if self.req_db_paths or self.test_suite_paths:
                 return False
 
         # Output options.
         if not any([self.downstream_traceability_outfile, self.upstream_traceability_outfile]):
-            MAIN_LOGGER.error("Please use one option of --downstream-traceability or --upstream-traceability at least")
+            _FAST_PATH.main_logger.error("Please use one option of --downstream-traceability or --upstream-traceability at least")
             return False
 
         return True

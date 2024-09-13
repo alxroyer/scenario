@@ -21,14 +21,17 @@ Requirement class definition.
 import abc
 import typing
 
+if True:
+    from . import _setutils as _setutils  # @perf
+    from . import _textutils as _textutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class Req:
@@ -39,16 +42,14 @@ class Req:
     @staticmethod
     def orderedset(
             reqs,  # type: typing.Iterable[Req]
-    ):  # type: (...) -> _OrderedSetType[Req]
+    ):  # type: (...) -> _setutils.OrderedSetType[Req]
         """
         Ensures an ordered set of unique :class:`Req` items.
 
         :param reqs: Unordered list of :class:`Req` items.
         :return: Ordered set of unique :class:`Req` items, ordered by requirement id.
         """
-        from ._setutils import orderedset
-
-        return orderedset(
+        return _setutils.orderedset(
             reqs,
             key=ReqHelper.sortkeyfunction,
         )
@@ -58,7 +59,7 @@ class Req:
             *,
             id,  # type: str  # noqa  ## Shadows built-in name 'id'
             title="",  # type: str
-            text="",  # type: _AnyLongTextType
+            text="",  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> None
         """
         Initializes a requirement instance with the given input data,
@@ -70,8 +71,6 @@ class Req:
         :param title: Short title for the requirement.
         :param text: Full text of the requirement.
         """
-        from ._textutils import anylongtext2str
-
         #: Requirement identifier.
         #:
         #: Mandatory.
@@ -85,16 +84,14 @@ class Req:
         #: Requirement full text.
         #:
         #: Optional.
-        self.text = anylongtext2str(text)  # type: str
+        self.text = _textutils.anylongtext2str(text)  # type: str
 
     def __repr__(self):  # type: () -> str
         """
         Canonical string representation of the requirement instance.
         """
-        from ._reflection import qualname
-
         return "".join([
-            f"<{qualname(type(self))}",
+            f"<{_qualname(type(self))}",
             f" id={self.id!r}",
             f" title={self.title!r}" if self.title else "",
             f">",
@@ -127,34 +124,27 @@ class Req:
         :param sub: Requirement sub-item specification.
         :return: :class:`._reqref.ReqRef` instance computed from the current :class:`Req` and the given requirement sub-item specification.
         """
-        from ._reqref import ReqRef
-
-        return ReqRef(self, sub)
+        return _FAST_PATH.req_ref_cls(self, sub)
 
     @property
     def main_ref(self):  # type: () -> _ReqRefType
         """
         Reference to the main part of this requirement.
         """
-        from ._reqdb import REQ_DB
-
-        return REQ_DB.getreqref(self)
+        return _FAST_PATH.req_db.getreqref(self)
 
     @property
-    def subrefs(self):  # type: () -> _OrderedSetType[_ReqRefType]
+    def subrefs(self):  # type: () -> _setutils.OrderedSetType[_ReqRefType]
         """
         References to subparts of this requirement.
 
         See :meth:`._reqref.ReqRef.orderedset()` for order details.
         """
-        from ._reqdb import REQ_DB
-        from ._reqref import ReqRef
-
-        return ReqRef.orderedset(
+        return _FAST_PATH.req_ref_cls.orderedset(
             # Filter requirement references that point to subparts of this requirement.
             filter(
                 lambda req_ref: (req_ref.req is self) and req_ref.issubref(),
-                REQ_DB.getallrefs(),
+                _FAST_PATH.req_db.getallrefs(),
             ),
         )
 
@@ -164,7 +154,7 @@ class Req:
             *,
             walk_subrefs=False,  # type: bool
             walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this requirement,
         filtered with the given predicates.
@@ -192,8 +182,6 @@ class Req:
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
         # Compute requirement references depending on `walk_subrefs`.
         _req_refs = [self.main_ref]  # type: typing.List[_ReqRefType]
         if walk_subrefs:
@@ -208,7 +196,7 @@ class Req:
                 _req_ref.req_links,
             ))
 
-        return ReqLink.orderedset(_req_links)
+        return _FAST_PATH.req_link_cls.orderedset(_req_links)
 
     def getverifiers(
             self,
@@ -234,9 +222,7 @@ class Req:
         Does not return :class:`._scenariodefinition.ScenarioDefinition` instances that track this requirement through steps only.
         See :meth:`getscenarios()` for the purpose.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement references to walk through, depending on `walk_subrefs`.
             [self.main_ref] if not walk_subrefs else [self.main_ref, *self.subrefs],
             # Get requirement verifiers from each link.
@@ -266,14 +252,11 @@ class Req:
 
         Returns scenarios linked with this requirement, either directly or through one of their steps.
         """
-        from ._reqlink import ReqLinkHelper
-        from ._reqverifier import ReqVerifierHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement references to walk through, depending on `walk_subrefs`.
             [self.main_ref] if not walk_subrefs else [self.main_ref, *self.subrefs],
             # Get scenarios from each link.
-            lambda req_link: map(ReqVerifierHelper.getscenario, req_link.req_verifiers),
+            lambda req_link: map(_FAST_PATH.req_verifier_helper_cls.getscenario, req_link.req_verifiers),
         )
 
 

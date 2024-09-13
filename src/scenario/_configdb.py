@@ -24,8 +24,11 @@ import os
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _enumutils as _enumutils  # @inheritance
+    from ._confignode import ConfigNode as _ConfigNodeImpl  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._configtypes import KeyType as _KeyType
@@ -46,7 +49,7 @@ class ConfigDatabase(_LoggerImpl):
     See the :ref:`configuration database <config-db>` documentation.
     """
 
-    class FileFormat(_StrEnumImpl):
+    class FileFormat(_enumutils.StrEnum):
         """
         Configuration file formats.
         """
@@ -59,13 +62,10 @@ class ConfigDatabase(_LoggerImpl):
         """
         Initializes instance attributes and configures logging for the :class:`ConfigDatabase` class.
         """
-        from ._confignode import ConfigNode
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.CONFIG_DATABASE)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.CONFIG_DATABASE)
 
         #: Configuration tree.
-        self._root = ConfigNode(parent=None, key="")  # type: ConfigNode
+        self._root = _ConfigNodeImpl(parent=None, key="")  # type: _ConfigNodeType
 
     def loadfile(
             self,
@@ -88,10 +88,9 @@ class ConfigDatabase(_LoggerImpl):
         from ._configini import ConfigIni
         from ._configjsondict import ConfigJsonDict
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         if format is None:
-            if Path(path).suffix.lower() == ".ini":
+            if _PathImpl(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
             elif JsonDict.isknwonsuffix(path):
                 format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'
@@ -126,10 +125,9 @@ class ConfigDatabase(_LoggerImpl):
         from ._configini import ConfigIni
         from ._configjsondict import ConfigJsonDict
         from ._jsondictutils import JsonDict
-        from ._path import Path
 
         if format is None:
-            if Path(path).suffix.lower() == ".ini":
+            if _PathImpl(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
             elif JsonDict.isknwonsuffix(path):
                 format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'
@@ -262,8 +260,6 @@ class ConfigDatabase(_LoggerImpl):
         :return:
             Configuration value if set, or default value if set, or ``None`` otherwise.
         """
-        from ._confignode import ConfigNode
-
         # Check input parameters:
         # - Convert default value from path-like to string.
         if isinstance(default, os.PathLike):
@@ -273,7 +269,7 @@ class ConfigDatabase(_LoggerImpl):
             type = builtins.type(default)  # noqa  ## Shadows built-in name 'type'
 
         # Search for the configuration node from the key, and return its data when found.
-        _node = self._root.get(key)  # type: typing.Optional[ConfigNode]
+        _node = self._root.get(key)  # type: typing.Optional[_ConfigNodeType]
         if _node is not None:
             if (type is not None) and (_node.data is not None):
                 return _node.cast(type=type)
@@ -288,4 +284,7 @@ class ConfigDatabase(_LoggerImpl):
 
 
 #: Main instance of :class:`ConfigDatabase`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.config_db`.
+#: Please prefer the latter instead of using local imports of this module.
 CONFIG_DB = ConfigDatabase()  # type: ConfigDatabase

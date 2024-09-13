@@ -142,10 +142,10 @@ we choose to set them below a ``if True:`` block.
 
 In order to discriminate :ref:`[impl-proj] <coding-rules.py.imports.impl>` v/s :ref:`[typing-proj] <coding-rules.py.imports.type-checking>` imports
 (see explanation for the :ref:`type checking dilemma <coding-rules.py.imports.type-checking.dilemma>` below),
-symbols imported at the module level for execution shall be suffixed with ``Impl``.
+classes imported at the module level for execution shall be suffixed with ``Impl``.
 
 .. admonition:: Memo: leading underscore
-    :class: tip
+    :class: note
 
     As explained :ref:`after <coding-rules.py.imports.no-reexports>`,
     implementation imports shall also be prefixed with a leading underscore.
@@ -198,7 +198,7 @@ Using type checking imports usually leads to writing code that passes type check
 Which is what we call the :ref:`type checking dilemma <coding-rules.py.imports.type-checking.dilemma>`.
 
 In order to work around this dilemma,
-when importing an executable symbol at the global scope,
+when importing a class at the global scope,
 a type checking import shall rename the imported symbol with the ``Type`` suffix.
 
 .. admonition:: Memo: leading underscore
@@ -216,7 +216,7 @@ a type checking import shall rename the imported symbol with the ``Type`` suffix
 
     # Type hint: `Neighbour` symbol required for type checking. Use the renamed version.
     def newneighbour():  # type: (...) -> _NeighbourType
-        # If we forget this local import, type checkers will point an error on the instanciation line below.
+        # If we forget this local import, type checkers will point an error on the instantiation line below.
         from .neighbour import Neighbour
 
         # Instanction: `Neighbour` symbol required for execution.
@@ -226,8 +226,9 @@ a type checking import shall rename the imported symbol with the ``Type`` suffix
 Doins so, a difference is made between symbols imported for type checking, and symbols required for execution.
 By the way, type checkers won't miss lacking imports required for execution.
 
-Imported type symbols should normally don't need to be added the ``Type`` suffix,
-in as much as they should already hold it (see :ref:`type naming rules <coding-rules.py.namings.types>`).
+.. note::
+    Imported type symbols should normally don't need to be added the ``Type`` suffix,
+    in as much as they should already hold it (see :ref:`type naming rules <coding-rules.py.namings.types>`).
 
 .. code-block:: python
 
@@ -398,7 +399,7 @@ Cyclic dependencies
 In order to avoid cyclic module dependencies in a package,
 the fewer project imports shall be placed at the module level:
 
-- Postpone as much as possible the imports with :ref:`local imports <coding-rules.py.imports.local>`.
+- Postpone as much as possible the imports with :ref:`local imports <coding-rules.py.imports.local>` [#local-import-perf-limitation]_.
 - Discriminate remaining project imports:
   :ref:`implementation imports [impl-proj] <coding-rules.py.imports.impl>`
   v/s :ref:`type checking imports [typing-proj] <coding-rules.py.imports.type-checking>`.
@@ -407,11 +408,18 @@ the fewer project imports shall be placed at the module level:
       In order to ensure that remaining implementation imports are legitimate,
       they shall be justified with a comment at the end of the ``import`` line.
 
-      In the end, only a few implementation imports should remain:
+      In the end, only a few kind of implementation imports should remain,
+      with their related justification tag:
 
-      - Classes used for inheritance,
-      - Classes used for global instanciations,
-      - Functions executed in the module level context.
+      - Classes used for inheritance (``@inheritance``) or metaclass (``@metaclass``),
+      - Classes used for global variable instantiations (``@module-level-instantiation``),
+        same with class member instantiations (``@class-member-instantiation``, refinement of the latter),
+      - Functions executed, or symbols used, in the module level context (``@module-level-execution``),
+      - Imports made once at the module level for performance concerns (``@perf``),
+      - Eventually, a couple of :mod:`scenario` package and subpackages imported after path management is done,
+        basically in executable scripts (``@after-path-management`` tag).
+
+      Justification tags may be separated by commas.
 
   :Typing imports [typing-proj]:
       As for implementation imports, we will not to define more type checking imports than necessary.
@@ -428,6 +436,34 @@ The 'tools/check-module-deps.py' script helps visualizing `scenario` module depe
 .. literalinclude:: ../../../../data/check-module-deps.log
     :language: none
 
+.. Footnotes.
+
+---
+
+.. [#local-import-perf-limitation] About local imports and performance:
+
+    .. admonition:: Performance limitations due to local imports
+        :class: note
+
+        On the one hand, local imports avoid cyclic module dependencies.
+        But on the other hand, they may cause performance issues, especially when used in low-level functions called numerous times.
+        By the way, our local import strategy may lead to performance limitations.
+
+        That's the reason why a couple of modules have been identified for optimization,
+        and are expected to be imported at the module level, not through local imports.
+
+        The :ref:`'tools/check-imports.py script <coding-rules.py.imports.check>` checks this list of optimized modules.
+
+        The list of optimized modules is defined in 'scenario/tools/imports/_optimized.py'.
+
+        .. tip::
+            The :class:`scenario._perfutils.ImportCallTracker` tool class may be used to determine which modules are imported the most
+            during a given code execution.
+
+        .. tip::
+            When reintroducing :ref:`implementation imports <coding-rules.py.imports.impl>` for performance concerns,
+            if a risk of cyclic dependency come up, use fast-path data (see :attr:`scenario._fastpath.FAST_PATH`).
+
 
 .. _coding-rules.py.imports.check:
 
@@ -435,3 +471,7 @@ Import checkings
 ----------------
 
 The 'tools/check-imports.py' script helps checking imports in the whole `scenario` project.
+
+.. tip::
+    The ``# check-import: ignore`` pattern may be used to hide an import error reported by the 'tools/check-imports.py'.
+    This may be particularly useful for optimized imports in local imports (with additional ``##`` justification).

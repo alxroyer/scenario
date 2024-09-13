@@ -40,11 +40,9 @@ class Step(scenario.Step):
         from ._testcase import TestCase
 
         _scenario = scenario.stack.building.scenario_definition  # type: typing.Optional[scenario.Scenario]
-        # Avoid failing when the `self.scenario` attribute does not exist yet.
-        if hasattr(self, "scenario"):
-            # Memo: `self.scenario` is allocated but not initialized with a void instance in `ScenarioDefinition.__init__()`.
-            if hasattr(self.scenario, "name"):
-                _scenario = self.scenario
+        # Avoid failing when the owner scenario is not set yet.
+        if hasattr(self, "_scenario") and (self._scenario is not None):
+            _scenario = self._scenario
         assert isinstance(_scenario, TestCase), f"{_scenario!r} not a {TestCase!r}"
         return _scenario
 

@@ -22,7 +22,10 @@ import enum
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _enumutils as _enumutils  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
@@ -79,9 +82,7 @@ class Handlers(_LoggerImpl):
         """
         Initializes an empty handler list.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.HANDLERS)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.HANDLERS)
 
         #: Installed handlers.
         #:
@@ -108,9 +109,7 @@ class Handlers(_LoggerImpl):
 
             .. warning:: Does not prevent a later handler to be installed before this one.
         """
-        from ._enumutils import enum2str
-
-        event = enum2str(event)
+        event = _enumutils.enum2str(event)
 
         self.debug("Installing *%s* handler %r, scenario=%r, once=%r, first=%r", event, handler, scenario, once, first)
 
@@ -133,9 +132,7 @@ class Handlers(_LoggerImpl):
         :param event: Event triggered.
         :param handler: Handler function.
         """
-        from ._enumutils import enum2str
-
-        event = enum2str(event)
+        event = _enumutils.enum2str(event)
 
         self.debug("Removing *%s* handler %r", event, handler)
 
@@ -159,15 +156,12 @@ class Handlers(_LoggerImpl):
         :param event: Event met.
         :param data: Event data to pass on when calling each handler.
         """
-        from ._enumutils import enum2str
-        from ._scenariostack import SCENARIO_STACK
-
-        event = enum2str(event)
+        event = _enumutils.enum2str(event)
 
         self.debug("Executing *%s* handlers", event)
         if event in self._handlers:
             for _handler in self._handlers[event].copy():  # type: Handler
-                if _handler.scenario_definition and (not SCENARIO_STACK.iscurrentscenario(_handler.scenario_definition)):
+                if _handler.scenario_definition and (not _FAST_PATH.scenario_stack.iscurrentscenario(_handler.scenario_definition)):
                     self.debug("Handler %r skipped because the '%s' scenario is not being executed (or the current scenario is a subscenario)",
                                _handler.handler, _handler.scenario_definition.name)
                     continue
@@ -185,4 +179,7 @@ class Handlers(_LoggerImpl):
 
 
 #: Main instance of :class:`Handlers`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.handlers`.
+#: Please prefer the latter instead of using local imports of this module.
 HANDLERS = Handlers()  # type: Handlers

@@ -21,8 +21,8 @@ User interface configuration page.
 import typing
 
 if True:
-    from .._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # `RequestHandler` used for inheritance.
+    from .. import _enumutils as _enumutils  # @inheritance
+    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
@@ -47,7 +47,7 @@ class Configuration(_RequestHandlerImpl):
 
         return HttpRequest.encodeurl(Configuration.URL, args={Configuration.Arg.ACTION: Configuration.Action.RELOAD_DEFAULT})
 
-    class Arg(_StrEnumImpl):
+    class Arg(_enumutils.StrEnum):
         """
         GET parameter or form input names.
         """
@@ -64,7 +64,7 @@ class Configuration(_RequestHandlerImpl):
         #: Form#2: Input text that gives a path for a campaign directory or report file.
         CAMPAIGN_PATH = "campaign-path"
 
-    class Action(_StrEnumImpl):
+    class Action(_enumutils.StrEnum):
         """
         :attr:`Configuration.Arg.ACTION` values.
         """

@@ -12,7 +12,7 @@ defining a *story* by the way.
 
 One of the main interests of *scenario* is its ability to *reuse test code*:
 - [Step objects](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.step-objects.html):
-  Instanciate steps  one after the others, just like bricks,
+  Instantiate steps one after the others, just like bricks,
   and quickly write different versions of a story
   (like a nominal test scenario, then alternative scenarios).
 - [Subscenarios](https://scenario-testing-framework.readthedocs.io/en/latest/advanced.subscenarios.html):

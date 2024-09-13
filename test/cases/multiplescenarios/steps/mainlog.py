@@ -17,7 +17,7 @@
 import scenario.test
 
 if True:
-    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
+    from steps.logverifications import LogVerificationStep as _LogVerificationStepImpl  # @inheritance
 
 
 class CheckMultipleScenariosMainLog(_LogVerificationStepImpl):

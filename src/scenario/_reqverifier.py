@@ -21,6 +21,9 @@ Requirement verifiers.
 import abc
 import typing
 
+if True:
+    from . import _setutils as _setutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -30,7 +33,7 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
+    from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
 class ReqVerifier(abc.ABC):
@@ -45,16 +48,14 @@ class ReqVerifier(abc.ABC):
     def orderedset(
             cls,  # type: typing.Type[_VarReqVerifierType]
             req_verifiers,  # type: typing.Iterable[_VarReqVerifierType]
-    ):  # type: (...) -> _OrderedSetType[_VarReqVerifierType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_VarReqVerifierType]
         """
         Ensures an ordered set of unique :class:`ReqVerifier` items.
 
         :param req_verifiers: Unordered list of :class:`ReqVerifier` items.
         :return: Ordered set of unique :class:`ReqVerifier` items, ordered by scenario (or owner scenario) names, then step ids.
         """
-        from ._setutils import orderedset
-
-        return orderedset(
+        return _setutils.orderedset(
             req_verifiers,
             key=ReqVerifierHelper.sortkeyfunction,
         )
@@ -66,12 +67,9 @@ class ReqVerifier(abc.ABC):
         Checks that only :class:`._scenariodefinition.ScenarioDefinition` and :class:`._stepdefinition.StepDefinition`
         inherit from :class:`ReqVerifier`.
         """
-        from ._scenariodefinition import ScenarioDefinition
-        from ._stepdefinition import StepDefinition
-
         if not any([
-            isinstance(self, ScenarioDefinition),
-            isinstance(self, StepDefinition),
+            isinstance(self, _FAST_PATH.scenario_definition_cls),
+            isinstance(self, _FAST_PATH.step_definition_cls),
         ]):
             raise TypeError(f"Cannot subclass ReqVerifier if not a scenario nor step definition")
 
@@ -79,15 +77,13 @@ class ReqVerifier(abc.ABC):
         self._req_links = set()  # type: typing.Set[_ReqLinkType]
 
     @property
-    def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
+    def req_links(self):  # type: () -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links through which this verifier traces requirement references.
 
         See :meth:`._reqlink.ReqLink.orderedset()` for order details.
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(self._req_links)
+        return _FAST_PATH.req_link_cls.orderedset(self._req_links)
 
     def verifies(
             self,  # type: _VarReqVerifierType
@@ -104,14 +100,13 @@ class ReqVerifier(abc.ABC):
         :return:
             ``self``
         """
-        from ._reqdb import REQ_DB
-        from ._reqlink import ReqLink
-
         # Try to save each link.
         for _req_link in [first, *others]:  # type: _AnyReqLinkType
             # Ensure we have a `ReqLink` object.
-            if not isinstance(_req_link, ReqLink):
-                _req_link = ReqLink(_req_link)
+            if not isinstance(_req_link, _FAST_PATH.req_link_cls):
+                if typing.TYPE_CHECKING:
+                    assert not isinstance(_req_link, _ReqLinkType)
+                _req_link = _FAST_PATH.req_link_cls(_req_link)
 
             if _req_link not in self._req_links:
                 # New link.
@@ -121,7 +116,7 @@ class ReqVerifier(abc.ABC):
                 _req_link.verifiedby(self)
 
                 # Let's debug the upstream requirement link after.
-                REQ_DB.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
+                _FAST_PATH.req_db.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
 
         return self
 
@@ -130,7 +125,7 @@ class ReqVerifier(abc.ABC):
             req_ref=None,  # type: _AnyReqRefType
             *,
             walk_subrefs=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this verifier,
         filtered with the given predicates.
@@ -148,9 +143,7 @@ class ReqVerifier(abc.ABC):
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(
+        return _FAST_PATH.req_link_cls.orderedset(
             # Filter requirement links with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_ref=req_ref, walk_subrefs=walk_subrefs),
@@ -168,9 +161,7 @@ class ReqVerifier(abc.ABC):
             Requirement references traced by this verifier,
             with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement verifier.
             [self],
             # Get the requirement reference for each link.
@@ -188,9 +179,7 @@ class ReqVerifier(abc.ABC):
             either directly or through a subreference of it,
             with related links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement verifier.
             [self],
             # Get the requirement for each link.
@@ -216,12 +205,15 @@ class ReqVerifierHelper:
         :param sortable: Set to ``True`` to compute a sortable string.
         :return: String representation of the scenario or step.
         """
-        from ._scenariodefinition import ScenarioDefinition
-        from ._stepdefinition import StepDefinition
+        if isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
+            if typing.TYPE_CHECKING:
+                assert isinstance(req_verifier, _ScenarioDefinitionType)
 
-        if isinstance(req_verifier, ScenarioDefinition):
             return req_verifier.name
-        elif isinstance(req_verifier, StepDefinition):
+        elif isinstance(req_verifier, _FAST_PATH.step_definition_cls):
+            if typing.TYPE_CHECKING:
+                assert isinstance(req_verifier, _StepDefinitionType)
+
             _step_number_fmt = "d"  # type: str
             if sortable:
                 # Find out the number of digits to consider to format the step number.
@@ -255,11 +247,14 @@ class ReqVerifierHelper:
         :param req_verifier: Scenario or step definition as a :class:`ReqVerifier` instance.
         :return: Scenario definition.
         """
-        from ._scenariodefinition import ScenarioDefinition
-        from ._stepdefinition import StepDefinition
+        if isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
+            if typing.TYPE_CHECKING:
+                assert isinstance(req_verifier, _ScenarioDefinitionType)
 
-        if isinstance(req_verifier, ScenarioDefinition):
             return req_verifier
-        if isinstance(req_verifier, StepDefinition):
+        if isinstance(req_verifier, _FAST_PATH.step_definition_cls):
+            if typing.TYPE_CHECKING:
+                assert isinstance(req_verifier, _StepDefinitionType)
+
             return req_verifier.scenario
         raise TypeError(f"Unexpected requirement verifier type {req_verifier!r}")

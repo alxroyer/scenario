@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.inners
 
 
 class KnownIssueDetailsScenario(scenario.Scenario):
@@ -33,15 +34,13 @@ class KnownIssueDetailsScenario(scenario.Scenario):
         )
 
     def step010(self):  # type: (...) -> None
-        from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to protected module
-
         self.STEP("Known issue details")
 
         if self.ACTION("Track the error issue level threshold."):
-            self.evidence(f"Error issue level threshold: {SCENARIO_CONFIG.issuelevelerror()!r}")
+            self.evidence(f"Error issue level threshold: {scenario.inners.FAST_PATH.scenario_config.issuelevelerror()!r}")
 
         if self.ACTION("Track the ignored issue level threshold."):
-            self.evidence(f"Ignored issue level threshold: {SCENARIO_CONFIG.issuelevelignored()!r}")
+            self.evidence(f"Ignored issue level threshold: {scenario.inners.FAST_PATH.scenario_config.issuelevelignored()!r}")
 
         _url_base = scenario.conf.get(self.ConfigKey.URL_BASE, type=str)  # type: typing.Optional[str]
         if _url_base:

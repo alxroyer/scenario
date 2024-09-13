@@ -23,10 +23,14 @@ import re
 import typing
 
 if True:
-    from ._testerrors import TestError as _TestErrorImpl  # `TestError` used for inheritance.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
+    from ._testerrors import TestError as _TestErrorImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._jsondictutils import JsonDictType as _JsonDictType
+    from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
     from ._testerrors import TestError as _TestErrorType
 
@@ -86,20 +90,17 @@ class KnownIssue(_TestErrorImpl):
         :param id: Issue identifier. Optional.
         :param url: Issue URL. Optional.
         """
-        from ._issuelevels import IssueLevel
-        from ._locations import CodeLocation, EXECUTION_LOCATIONS
-
         _TestErrorImpl.__init__(
             self,
             message=message,
-            location=EXECUTION_LOCATIONS.fromcurrentstack(limit=1, fqn=True)[-1],
+            location=_FAST_PATH.execution_locations.fromcurrentstack(limit=1, fqn=True)[-1],
         )
 
         #: Issue level.
         self.level = level  # type: typing.Optional[_AnyIssueLevelType]
         if isinstance(self.level, int):
             # Try to match with a named issue level.
-            self.level = IssueLevel.parse(self.level)
+            self.level = _IssueLevelImpl.parse(self.level)
 
         #: Issue identifier.
         self.id = id  # type: typing.Optional[str]
@@ -108,7 +109,7 @@ class KnownIssue(_TestErrorImpl):
         self._url = url  # type: typing.Optional[str]
 
         #: Redefinition of :attr:`._testerrors.TestError.location` in order to explicitize it cannot be ``None`` for :class:`KnownIssue` instances.
-        self.location = self.location  # type: CodeLocation
+        self.location = self.location  # type: _CodeLocationType
 
     def __str__(self):  # type: () -> str
         """
@@ -116,11 +117,9 @@ class KnownIssue(_TestErrorImpl):
 
         'Issue(({level-name}=){level})( {id})! {message}'.
         """
-        from ._issuelevels import IssueLevel
-
         _str = "Issue"  # type: str
         if self.level is not None:
-            _str += f"({IssueLevel.getdesc(self.level)})"
+            _str += f"({_IssueLevelImpl.getdesc(self.level)})"
         if self.id is not None:
             _str += f" {self.id}"
         _str += "!"
@@ -160,15 +159,13 @@ class KnownIssue(_TestErrorImpl):
         :param string: String representation, as computed by :meth:`__str__()`.
         :return: New :class:`KnownIssue` instance.
         """
-        from ._issuelevels import IssueLevel
-
         _match = re.match(r"^Issue(\((.+=)?(\d+)\))? *(.*)! (.*)$", string)  # type: typing.Optional[typing.Match[str]]
         assert _match, f"Invalid known issue string ${string!r}"
 
         return KnownIssue(
             level=(
-                IssueLevel.parse(_match.group(2)) if _match.group(2)
-                else IssueLevel.parse(_match.group(3)) if _match.group(3)
+                _IssueLevelImpl.parse(_match.group(2)) if _match.group(2)
+                else _IssueLevelImpl.parse(_match.group(3)) if _match.group(3)
                 else None
             ),
             id=_match.group(4),
@@ -195,9 +192,7 @@ class KnownIssue(_TestErrorImpl):
         return False
 
     def iserror(self):  # type: (...) -> bool
-        from ._scenarioconfig import SCENARIO_CONFIG
-
-        _issue_level_error = SCENARIO_CONFIG.issuelevelerror()  # type: typing.Optional[int]
+        _issue_level_error = _FAST_PATH.scenario_config.issuelevelerror()  # type: typing.Optional[int]
         if _issue_level_error is None:
             # When the error issue level is not set, do not consider known issues as errors by default.
             return False
@@ -218,13 +213,11 @@ class KnownIssue(_TestErrorImpl):
         return True
 
     def isignored(self):  # type: (...) -> bool
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         # Cannot ignore an error!
         if self.iserror():
             return False
 
-        _issue_level_ignored = SCENARIO_CONFIG.issuelevelignored()  # type: typing.Optional[int]
+        _issue_level_ignored = _FAST_PATH.scenario_config.issuelevelignored()  # type: typing.Optional[int]
         if _issue_level_ignored is None:
             # When the ignored issue level is not set, known issues are not ignored by default.
             return False
@@ -281,18 +274,15 @@ class KnownIssue(_TestErrorImpl):
         :param json_data: JSON dictionary.
         :return: New :class:`KnownIssue` instance.
         """
-        from ._issuelevels import IssueLevel
-        from ._locations import CodeLocation
-
         # Mandatory fields.
         _known_issue = KnownIssue(
             message=json_data["message"],
         )  # type: KnownIssue
-        _known_issue.location = CodeLocation.fromlongstring(json_data["location"])
+        _known_issue.location = _CodeLocationImpl.fromlongstring(json_data["location"])
 
         # Optional fields.
         if "level" in json_data:
-            _known_issue.level = IssueLevel.parse(json_data["level"])
+            _known_issue.level = _IssueLevelImpl.parse(json_data["level"])
         if "id" in json_data:
             _known_issue.id = json_data["id"]
         if "url" in json_data:

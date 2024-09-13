@@ -17,7 +17,7 @@
 import scenario.test
 
 if True:
-    from logutils.steps.logoutfile import LogOutfileVerificationStep as _LogOutfileVerificationStepImpl  # `LogOutfileVerificationStep` for inheritance.
+    from logutils.steps.logoutfile import LogOutfileVerificationStep as _LogOutfileVerificationStepImpl  # @inheritance
 
 
 class Logging510(scenario.test.TestCase):

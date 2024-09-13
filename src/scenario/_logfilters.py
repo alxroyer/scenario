@@ -21,6 +21,11 @@ Log filtering.
 import logging
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logextradata import LogExtraDataHelper as _LogExtraDataHelperImpl  # @perf
+    from ._loghandler import LogHandler as _LogHandlerImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
@@ -60,13 +65,11 @@ class LoggerLogFilter(logging.Filter):
 
         Checks whether the log record should be filtered out due to the attached :class:`._logger.Logger` configuration.
         """
-        from ._logextradata import LogExtraData, LogExtraDataHelper
-
         # Ensure the current logger reference is set in the record as an extra data so that `LogFormatter` knows about it.
         # Ensure class loggers prevail on the main logger.
-        _logger = LogExtraDataHelper.get(record, LogExtraData.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
+        _logger = _LogExtraDataHelperImpl.get(record, _LogExtraDataImpl.CURRENT_LOGGER)  # type: typing.Optional[_LoggerType]
         if (not _logger) or (not _logger.log_class):
-            LogExtraDataHelper.set(record, LogExtraData.CURRENT_LOGGER, self._logger)
+            _LogExtraDataHelperImpl.set(record, _LogExtraDataImpl.CURRENT_LOGGER, self._logger)
 
         # Log level filtering.
         if record.levelno <= logging.DEBUG:
@@ -113,15 +116,12 @@ class HandlerLogFilter(logging.Filter):
         Checks the :meth:`._scenarioconfig.ScenarioConfig.logconsoleenabled()` or :meth:`._scenarioconfig.ScenarioConfig.logoutpath()` configurations,
         depending on the handler attached.
         """
-        from ._loghandler import LogHandler
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         # Handler filtering.
-        if self._handler is LogHandler.console_handler:
-            if not SCENARIO_CONFIG.logconsoleenabled():
+        if self._handler is _LogHandlerImpl.console_handler:
+            if not _FAST_PATH.scenario_config.logconsoleenabled():
                 return False
-        if self._handler is LogHandler.file_handler:
-            if SCENARIO_CONFIG.logoutpath() is None:
+        if self._handler is _LogHandlerImpl.file_handler:
+            if _FAST_PATH.scenario_config.logoutpath() is None:
                 return False
 
         # Fall back to the :class:`logging.Filter` parent implementation.

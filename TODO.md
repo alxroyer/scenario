@@ -98,3 +98,14 @@
 - Issue #32: Finalize scenario report JSON schema v1.
 - Issue #13: Documentation:
     - Find better step objects / subscenario demos.
+
+
+## Not planned
+
+- Issue #65:
+    - Extract _perfutils.py in a separate package.
+    - Rework `_reflection.py` as a singleton.
+        - Rework `FastPath.reflection_logger()` to `FastPath.reflection()` property.
+        - Check that `getloadedmodulefrompath()` has actually been successfully optimized.
+          It seems in the end we lost time with commit 30d8069 of 2024-09-06 on the 'bugfix/#65/optimize-scenario-instance-creation' branch.
+    - Try to get rid of `FastPath.__slots__` and measure perf impacts.

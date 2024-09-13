@@ -24,13 +24,14 @@ publicly exposed for assertion routine definitions in user code.
 import typing
 import unittest as _unittestmod
 
-if typing.TYPE_CHECKING:
-    from ._debugutils import DelayedStr as _DelayedStrType
+if True:
+    from . import _debugutils as _debugutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 
 
 if typing.TYPE_CHECKING:
     #: Optional error parameter type.
-    ErrParamType = typing.Optional[typing.Union[str, _DelayedStrType]]
+    ErrParamType = typing.Optional[typing.Union[str, _debugutils.DelayedStr]]
 
     #: Evidence parameter type.
     EvidenceParamType = typing.Optional[typing.Union[bool, str]]
@@ -42,7 +43,7 @@ unittest = _unittestmod.TestCase()  # type: _unittestmod.TestCase
 
 def errmsg(
         optional,  # type: ErrParamType
-        standard,  # type: typing.Union[str, _DelayedStrType]
+        standard,  # type: typing.Union[str, _debugutils.DelayedStr]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -53,8 +54,6 @@ def errmsg(
     :param args: Standard assertion message arguments.
     :return: Error message.
     """
-    from ._debugutils import FmtAndArgs
-
     # Ensure `optional` is of type `str` (if not `None`).
     if (optional is not None) and (not isinstance(optional, str)):
         optional = str(optional)
@@ -63,14 +62,14 @@ def errmsg(
         standard = str(standard)
     # Format `standard` with `args` if not empty.
     if args:
-        standard = str(FmtAndArgs(standard, *args))
+        standard = str(_debugutils.FmtAndArgs(standard, *args))
 
     return unittest._formatMessage(optional, standard)  # noqa  ## Access to a protected member
 
 
 def ctxmsg(
         context,  # type: str
-        err,  # type: typing.Union[str, _DelayedStrType]
+        err,  # type: typing.Union[str, _debugutils.DelayedStr]
         *args  # type: typing.Any
 ):  # type: (...) -> str
     """
@@ -81,14 +80,12 @@ def ctxmsg(
     :param args: Detailed assertion message arguments
     :return: Assertion message.
     """
-    from ._debugutils import FmtAndArgs
-
     # Ensure `err` is of type `str`.
     if not isinstance(err, str):
         err = str(err)
     # Format `err` with `args` if not empty.
     if args:
-        err = str(FmtAndArgs(err, *args))
+        err = str(_debugutils.FmtAndArgs(err, *args))
 
     return f"{context}: {err}"
 
@@ -109,7 +106,7 @@ def isnonemsg(
 
 def evidence(
         evidence_enabled,  # type: EvidenceParamType
-        regular,  # type: typing.Union[str, _DelayedStrType]
+        regular,  # type: typing.Union[str, _debugutils.DelayedStr]
         *args,  # type: typing.Any
 ):  # type: (...) -> None
     """
@@ -119,21 +116,17 @@ def evidence(
     :param regular: Regular proof message.
     :param args: Proof message arguments.
     """
-    from ._debugutils import FmtAndArgs
-    from ._scenariorunner import SCENARIO_RUNNER
-    from ._scenariostack import SCENARIO_STACK
-
-    if evidence_enabled and SCENARIO_RUNNER.doexecute():
-        if SCENARIO_STACK.current_scenario_definition and SCENARIO_STACK.current_action_result_execution:
+    if evidence_enabled and _FAST_PATH.scenario_runner.doexecute():
+        if _FAST_PATH.scenario_stack.current_scenario_definition and _FAST_PATH.scenario_stack.current_action_result_execution:
             # Ensure `regular` is of type `str`.
             if not isinstance(regular, str):
                 regular = str(regular)
 
             # Build the evidence message.
-            _evidence_message = FmtAndArgs()  # type: FmtAndArgs
+            _evidence_message = _debugutils.FmtAndArgs()  # type: _debugutils.FmtAndArgs
             if isinstance(evidence_enabled, str):
                 _evidence_message.push("%s: ", evidence_enabled)
             _evidence_message.push(regular, *args)
 
             # Save it.
-            SCENARIO_STACK.current_scenario_definition.evidence(str(_evidence_message))
+            _FAST_PATH.scenario_stack.current_scenario_definition.evidence(str(_evidence_message))

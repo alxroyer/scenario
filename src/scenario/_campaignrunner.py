@@ -24,13 +24,25 @@ import time
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _datetimeutils as _datetimeutils  # @perf
+    from ._campaignargs import CampaignArgs as _CampaignArgsImpl  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenarioevents import ScenarioEvent as _ScenarioEventImpl  # @perf
+    from ._scenarioevents import ScenarioEventData as _ScenarioEventDataImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
+    from ._confignode import ConfigNode as _ConfigNodeType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
 class CampaignRunner(_LoggerImpl):
@@ -52,9 +64,7 @@ class CampaignRunner(_LoggerImpl):
         """
         Configures logging for the :class:`CampaignRunner` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.CAMPAIGN_RUNNER)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.CAMPAIGN_RUNNER)
 
     def main(self):  # type: (...) -> _ErrorCodeType
         """
@@ -62,105 +72,91 @@ class CampaignRunner(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._campaignargs import CampaignArgs
         from ._campaignexecution import CampaignExecution
-        from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._campaignreport import CAMPAIGN_REPORT
-        from ._datetimeutils import toiso8601
-        from ._errcodes import ErrorCode
-        from ._handlers import HANDLERS
-        from ._loggermain import MAIN_LOGGER
-        from ._loggingservice import LOGGING_SERVICE
-        from ._path import Path
-        from ._reqdb import REQ_DB
-        from ._reqtraceability import REQ_TRACEABILITY
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenarioresults import SCENARIO_RESULTS
 
         try:
             # Analyze program arguments, if not already set.
-            if not CampaignArgs.isset():
-                CampaignArgs.setinstance(CampaignArgs())
-                if not CampaignArgs.getinstance().parse(sys.argv[1:]):
-                    return CampaignArgs.getinstance().error_code
-            _test_suite_files = SCENARIO_CONFIG.testsuitefiles()  # type: typing.Sequence[Path]
+            if not _CampaignArgsImpl.isset():
+                _CampaignArgsImpl.setinstance(_CampaignArgsImpl())
+                if not _CampaignArgsImpl.getinstance().parse(sys.argv[1:]):
+                    return _CampaignArgsImpl.getinstance().error_code
+            _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[_PathType]
             if not _test_suite_files:
-                MAIN_LOGGER.error("No test suite files")
-                return ErrorCode.INPUT_MISSING_ERROR
+                _FAST_PATH.main_logger.error("No test suite files")
+                return _ErrorCodeImpl.INPUT_MISSING_ERROR
 
             # Create the date/time output directory (if required).
-            if CampaignArgs.getinstance().create_dt_subdir:
-                _outdir_basename = toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
-                _outdir = CampaignArgs.getinstance().outdir / _outdir_basename  # type: Path
+            if _CampaignArgsImpl.getinstance().create_dt_subdir:
+                _outdir_basename = _datetimeutils.toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
+                _outdir = _CampaignArgsImpl.getinstance().outdir / _outdir_basename  # type: _PathType
             else:
-                _outdir = CampaignArgs.getinstance().outdir
+                _outdir = _CampaignArgsImpl.getinstance().outdir
             _outdir.mkdir(parents=True, exist_ok=True)
 
             # Start log features.
-            LOGGING_SERVICE.start()
+            _FAST_PATH.logging_service.start()
 
             # Load requirements.
-            for _req_db_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
-                MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
-                REQ_DB.load(_req_db_file)
+            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
+                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_file}'")
+                _FAST_PATH.req_db.load(_req_db_file)
 
             _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
 
             # *before-campaign* handlers.
-            HANDLERS.callhandlers(ScenarioEvent.BEFORE_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
             # Start logging.
-            CAMPAIGN_LOGGING.begincampaign(_campaign_execution)
+            _FAST_PATH.campaign_logging.begincampaign(_campaign_execution)
 
             # Execute the campaign.
             _campaign_execution.time.setstarttime()
-            for _test_suite_path in _test_suite_files:  # type: Path
+            for _test_suite_path in _test_suite_files:  # type: _PathType
                 self._exectestsuitefile(_campaign_execution, _test_suite_path)
             _campaign_execution.time.setendtime()
 
             # Dump requirement files (only when there are requirements).
-            if REQ_DB.getallreqs():
+            if _FAST_PATH.req_db.getallreqs():
                 # Requirement database.
-                REQ_DB.dump(_campaign_execution.req_db_path)
+                _FAST_PATH.req_db.dump(_campaign_execution.req_db_path)
                 # Downstream & upstream traceability reports.
-                REQ_TRACEABILITY.loaddatafromcampaignresults(
+                _FAST_PATH.req_traceability.loaddatafromcampaignresults(
                     _campaign_execution,
                     log_info=False,  # Don't log info messages.
                 )
-                REQ_TRACEABILITY.writedownstream(
+                _FAST_PATH.req_traceability.writedownstream(
                     _campaign_execution.downstream_traceability_path,
                     log_info=False,  # Don't log info messages.
                     allow_results=True,  # Save test results in traceability reports.
                 )
-                REQ_TRACEABILITY.writeupstream(
+                _FAST_PATH.req_traceability.writeupstream(
                     _campaign_execution.upstream_traceability_path,
                     log_info=False,  # Don't log info messages.
                 )
 
             # Eventually write the JUnit campaign report (depends on requirement files generated before).
             try:
-                CAMPAIGN_REPORT.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
+                _FAST_PATH.campaign_report.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
             except Exception as _err:
-                MAIN_LOGGER.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
-                MAIN_LOGGER.logexceptiontraceback(_err)
-                return ErrorCode.fromexception(_err)
+                _FAST_PATH.main_logger.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
+                _FAST_PATH.main_logger.logexceptiontraceback(_err)
+                return _ErrorCodeImpl.fromexception(_err)
 
             # Final logging (after reports generation).
-            CAMPAIGN_LOGGING.endcampaign(_campaign_execution)
-            SCENARIO_RESULTS.display()
+            _FAST_PATH.campaign_logging.endcampaign(_campaign_execution)
+            _FAST_PATH.scenario_results.display()
 
             # *after-campaign* handlers.
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_CAMPAIGN, ScenarioEventData.Campaign(campaign_execution=_campaign_execution))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
             # Terminate log features.
-            LOGGING_SERVICE.stop()
+            _FAST_PATH.logging_service.stop()
 
-            return ErrorCode.SUCCESS
+            return _ErrorCodeImpl.SUCCESS
 
         except Exception as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
-            return ErrorCode.fromexception(_err)
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
+            return _ErrorCodeImpl.fromexception(_err)
 
     def _exectestsuitefile(
             self,
@@ -191,20 +187,16 @@ class CampaignRunner(_LoggerImpl):
         :raise: Exception when something worse than test errors occured.
         """
         from ._campaignexecution import TestCaseExecution
-        from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._handlers import HANDLERS
-        from ._path import Path
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
 
-        HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
+        _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST_SUITE, _ScenarioEventDataImpl.TestSuite(test_suite_execution=test_suite_execution))
 
-        CAMPAIGN_LOGGING.begintestsuite(test_suite_execution)
+        _FAST_PATH.campaign_logging.begintestsuite(test_suite_execution)
         test_suite_execution.time.setstarttime()
 
         try:
             test_suite_execution.test_suite_file.read()
 
-            for _test_script_path in test_suite_execution.test_suite_file.script_paths:  # type: Path
+            for _test_script_path in test_suite_execution.test_suite_file.script_paths:  # type: _PathType
                 _test_case_execution = TestCaseExecution(test_suite_execution, _test_script_path)  # type: TestCaseExecution
                 test_suite_execution.test_case_executions.append(_test_case_execution)
 
@@ -212,9 +204,9 @@ class CampaignRunner(_LoggerImpl):
 
         finally:
             test_suite_execution.time.setendtime()
-            CAMPAIGN_LOGGING.endtestsuite(test_suite_execution)
+            _FAST_PATH.campaign_logging.endtestsuite(test_suite_execution)
 
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_SUITE, ScenarioEventData.TestSuite(test_suite_execution=test_suite_execution))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST_SUITE, _ScenarioEventDataImpl.TestSuite(test_suite_execution=test_suite_execution))
 
     def _exectestcase(
             self,
@@ -226,37 +218,19 @@ class CampaignRunner(_LoggerImpl):
         :param test_case_execution: Test case to execute.
         :raise: Exception when something worse than test errors occured.
         """
-        from ._campaignargs import CampaignArgs
-        from ._campaignlogging import CAMPAIGN_LOGGING
-        from ._configdb import CONFIG_DB
-        from ._confignode import ConfigNode
-        from ._datetimeutils import ISO8601_REGEX
-        from ._debugloggers import ExecTimesLogger
-        from ._errcodes import ErrorCode
-        from ._handlers import HANDLERS
-        from ._path import Path
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._scenariodefinition import ScenarioDefinition
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenarioexecution import ScenarioExecution
-        from ._scenarioresults import SCENARIO_RESULTS
         from ._subprocess import SubProcess
         from ._testerrors import TestError
 
-        _exec_times_logger = ExecTimesLogger("CampaignRunner._exectestcase()")  # type: ExecTimesLogger
+        _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST_CASE, _ScenarioEventDataImpl.TestCase(test_case_execution=test_case_execution))
 
-        HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
-        _exec_times_logger.tick("After *before-test-case* handlers")
-
-        CAMPAIGN_LOGGING.begintestcase(test_case_execution)
-        _exec_times_logger.tick("Starting test case")
+        _FAST_PATH.campaign_logging.begintestcase(test_case_execution)
         test_case_execution.time.setstarttime()
 
         try:
             # Prepare output paths.
             def _mkoutpath(
                     ext,  # type: str
-            ):  # type: (...) -> Path
+            ):  # type: (...) -> _PathType
                 """
                 Output file path builder.
 
@@ -265,36 +239,36 @@ class CampaignRunner(_LoggerImpl):
                 """
                 return test_case_execution.test_suite_execution.campaign_execution.outdir / (test_case_execution.script_path.stem + ext)
 
-            test_case_execution.report.path = _mkoutpath(SCENARIO_CONFIG.scenarioreportsuffix())
+            test_case_execution.report.path = _mkoutpath(_FAST_PATH.scenario_config.scenarioreportsuffix())
             test_case_execution.log.path = _mkoutpath(".log")
 
             # Prepare the command line.
-            _subprocess = SubProcess(sys.executable, SCENARIO_CONFIG.runnerscriptpath())  # type: SubProcess
+            _subprocess = SubProcess(sys.executable, _FAST_PATH.scenario_config.runnerscriptpath())  # type: SubProcess
             # Report configuration files and single configuration values from campaign to scenario execution.
-            for _config_path in CampaignArgs.getinstance().config_paths:  # type: Path
+            for _config_path in _CampaignArgsImpl.getinstance().config_paths:  # type: _PathType
                 _subprocess.addargs("--config-file", _config_path)
-            for _config_name in CampaignArgs.getinstance().config_values:  # type: str
-                _subprocess.addargs("--config-value", _config_name, CampaignArgs.getinstance().config_values[_config_name])
+            for _config_name in _CampaignArgsImpl.getinstance().config_values:  # type: str
+                _subprocess.addargs("--config-value", _config_name, _CampaignArgsImpl.getinstance().config_values[_config_name])
             # Report common execution options from campaign to scenario execution.
-            CampaignArgs.reportexecargs(CampaignArgs.getinstance(), _subprocess)
+            _CampaignArgsImpl.reportexecargs(_CampaignArgsImpl.getinstance(), _subprocess)
             # --scenario-report option.
             _subprocess.addargs("--scenario-report", test_case_execution.report.path)
             # Log outfile specification.
-            _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_FILE), test_case_execution.log.path)
+            _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_FILE), test_case_execution.log.path)
             # No log console specification.
-            _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_CONSOLE), "0")
+            _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_CONSOLE), "0")
             # Log date/time option propagation.
-            _log_datetime_config = CONFIG_DB.getnode(SCENARIO_CONFIG.Key.LOG_DATETIME)  # type: typing.Optional[ConfigNode]
+            _log_datetime_config = _FAST_PATH.config_db.getnode(_FAST_PATH.scenario_config.Key.LOG_DATETIME)  # type: typing.Optional[_ConfigNodeType]
             if _log_datetime_config:
-                _subprocess.addargs("--config-value", str(SCENARIO_CONFIG.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
+                _subprocess.addargs("--config-value", str(_FAST_PATH.scenario_config.Key.LOG_DATETIME), _log_datetime_config.cast(type=str))
             # Script path.
             _subprocess.addargs(test_case_execution.script_path)
 
             # In case no execution data is available in the end,
             # create `ScenarioDefinition` and `ScenarioExecution` instances from scratch in order to save error details.
-            _fallback_errors = ScenarioDefinition()  # type: ScenarioDefinition
+            _fallback_errors = _ScenarioDefinitionImpl()  # type: _ScenarioDefinitionType
             _fallback_errors.name = test_case_execution.name
-            _fallback_errors.execution = ScenarioExecution(_fallback_errors)
+            _fallback_errors.execution = _ScenarioExecutionImpl(_fallback_errors)
             _fallback_errors.execution.time.setstarttime()
 
             def _fallbackerror(
@@ -309,9 +283,7 @@ class CampaignRunner(_LoggerImpl):
                     _fallback_errors.execution.errors.append(TestError(error_message))
 
             # Execute the scenario.
-            _exec_times_logger.tick("Executing the sub-process")
-            _subprocess.setlogger(self).run(timeout=SCENARIO_CONFIG.scenariotimeout())
-            _exec_times_logger.tick("After sub-process execution")
+            _subprocess.setlogger(self).run(timeout=_FAST_PATH.scenario_config.scenariotimeout())
             self.debug("%s returned %r", _subprocess, _subprocess.returncode)
 
             # Analyze scenario return code.
@@ -319,11 +291,10 @@ class CampaignRunner(_LoggerImpl):
                 _fallbackerror(f"'{test_case_execution.script_path}' did not return within {_subprocess.time.elapsed} seconds")
             elif _subprocess.returncode != 0:
                 try:
-                    _returncode_desc = str(ErrorCode(_subprocess.returncode))  # type: str
+                    _returncode_desc = str(_ErrorCodeImpl(_subprocess.returncode))  # type: str
                 except ValueError as _err:
                     _returncode_desc = str(_err)  # Type already declared above.
                 _fallbackerror(f"'{test_case_execution.script_path}' failed with error code {_subprocess.returncode!r} ({_returncode_desc})")
-            _exec_times_logger.tick("After post-analyses")
 
             # Read the log outfile.
             if test_case_execution.log.path.is_file():
@@ -335,7 +306,6 @@ class CampaignRunner(_LoggerImpl):
                     self.debug("Error while reading %s log file: %s", test_case_execution.name, _err)
             else:
                 self.debug("No such file '%s'", test_case_execution.log.path)
-            _exec_times_logger.tick("After reading the log file")
 
             # Read the scenario report outfile.
             if test_case_execution.report.path.is_file():
@@ -347,7 +317,6 @@ class CampaignRunner(_LoggerImpl):
                     self.debug("Error while reading %s scenario report: %s", test_case_execution.name, _err)
             else:
                 self.debug("No such file '%s'", test_case_execution.report.path)
-            _exec_times_logger.tick("After reading the scenario report file")
 
             # Fix the scenario definition and execution instances, if not successfully read from the scenario report above.
             if not test_case_execution.scenario_execution:
@@ -363,7 +332,7 @@ class CampaignRunner(_LoggerImpl):
                             # Note:
                             # 4 spaces after 'ERROR' in general.
                             # Possibly 2 more spaces due to `ExceptionError.logerror()`.
-                            rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % ISO8601_REGEX.encode("utf-8"),
+                            rb'^(%s - |)ERROR {4}( {2}|)(.*)$' % _datetimeutils.ISO8601_REGEX.encode("utf-8"),
                             _stdout_line,
                         )  # type: typing.Optional[typing.Match[bytes]]
                         if _match:
@@ -388,35 +357,33 @@ class CampaignRunner(_LoggerImpl):
                 # Specific case when the file does not exist:
                 # it causes a ARGUMENTS_ERROR that displays its error while the logging service is not started up yet,
                 # thus we don't catch the 'No such file error'
-                if _subprocess.returncode == ErrorCode.ARGUMENTS_ERROR:
+                if _subprocess.returncode == _ErrorCodeImpl.ARGUMENTS_ERROR:
                     if not test_case_execution.script_path.is_file():
                         _fallbackerror(f"No such file '{test_case_execution.script_path}'")
 
                 # Terminate the fake scenario execution.
                 _fallback_errors.execution.time.setendtime()
-                _exec_times_logger.tick("After execution error management")
             # From now, the scenario execution instance necessarily exists.
             assert test_case_execution.scenario_execution
 
         finally:
             # Terminate the test case instance.
-            _exec_times_logger.tick("Ending test case")
             test_case_execution.time.setendtime()
-            CAMPAIGN_LOGGING.endtestcase(test_case_execution)
+            _FAST_PATH.campaign_logging.endtestcase(test_case_execution)
 
             # Dispatch handlers.
             if test_case_execution.scenario_execution is not None:
                 for _error in test_case_execution.scenario_execution.errors:  # type: TestError
-                    HANDLERS.callhandlers(ScenarioEvent.ERROR, _error)
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST_CASE, ScenarioEventData.TestCase(test_case_execution=test_case_execution))
-            _exec_times_logger.tick("After *after-test-case* handlers")
+                    _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.ERROR, _error)
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST_CASE, _ScenarioEventDataImpl.TestCase(test_case_execution=test_case_execution))
 
             # Feed the `SCENARIO_RESULTS` instance.
             if test_case_execution.scenario_execution is not None:
-                SCENARIO_RESULTS.add(test_case_execution.scenario_execution)
-
-            _exec_times_logger.finish()
+                _FAST_PATH.scenario_results.add(test_case_execution.scenario_execution)
 
 
 #: Main instance of :class:`CampaignRunner`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.campaign_runner`.
+#: Please prefer the latter instead of using local imports of this module.
 CAMPAIGN_RUNNER = CampaignRunner()  # type: CampaignRunner

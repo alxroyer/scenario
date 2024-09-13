@@ -25,8 +25,8 @@ sys.path.append(str(_root_scenario_path / "test" / "cases"))
 sys.path.append(str(_root_scenario_path / "test" / "src"))
 
 if True:
-    import scenario
-    import scenario.test
+    import scenario  # @after-path-management
+    import scenario.test  # @after-path-management
 
 
 # Command line arguments.

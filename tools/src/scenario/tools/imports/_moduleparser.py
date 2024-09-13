@@ -20,7 +20,9 @@ import typing
 import scenario
 
 if True:
-    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # `ErrorTrackerLogger` used for inheritance.
+    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # @inheritance
+if typing.TYPE_CHECKING:
+    from ._import import Import as _ImportType
 
 
 class ModuleParser(_ErrorTrackerLoggerImpl):
@@ -29,12 +31,15 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
             self,
             path,  # type: scenario.Path
     ):  # type: (...) -> None
-        from ._import import Import
-
         _ErrorTrackerLoggerImpl.__init__(self, f"{path}:")
 
         self.path = path  # type: scenario.Path
-        self.module_level_imports = []  # type: typing.List[Import]
+
+        self._imports = []  # type: typing.List[_ImportType]
+        self._module_level_imports = None  # type: typing.Optional[typing.Sequence[_ImportType]]
+        self._implementation_imports = None  # type: typing.Optional[typing.Sequence[_ImportType]]
+        self._typing_imports = None  # type: typing.Optional[typing.Sequence[_ImportType]]
+        self._local_imports = None  # type: typing.Optional[typing.Sequence[_ImportType]]
 
     def parse(self):  # type: (...) -> None
         from ._import import Import
@@ -71,15 +76,8 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
 
             # Import line, at any level.
             if re.match(rb'^import +.+$', _line.strip()) or re.match(rb'^from +[^ ]+ +import +.*$', _line.strip()):
-                _import = Import(self.path, _line_number, _context, _line)  # type: Import
-
-                # Save or ignore the import.
-                if _context.isanymodulelevel():
-                    self.module_level_imports.append(_import)
-                    _import.debug("Module level import detected: %r", _import)
-                else:
-                    _import.debug("Import ignored: %r", _import)
-
+                # Save the import.
+                self._imports.append(Import(self.path, _line_number, _context, _line))
                 continue
 
             # Module level lines.
@@ -128,6 +126,46 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
                 _context = _candidate_context
                 self.debug("%d: New context: %r", _line_number, _context)
                 continue
+
+    @property
+    def imports(self):  # type: () -> typing.Sequence[_ImportType]
+        return self._imports
+
+    @property
+    def module_level_imports(self):  # type: () -> typing.Sequence[_ImportType]
+        if self._module_level_imports is None:
+            self._module_level_imports = list(filter(
+                lambda imp: imp.context.isanymodulelevel(),
+                self._imports,
+            ))
+        return self._module_level_imports
+
+    @property
+    def implementation_imports(self):  # type: () -> typing.Sequence[_ImportType]
+        if self._implementation_imports is None:
+            self._implementation_imports = list(filter(
+                lambda imp: imp.context.isifblockimpl(),
+                self._imports,
+            ))
+        return self._implementation_imports
+
+    @property
+    def typing_imports(self):  # type: () -> typing.Sequence[_ImportType]
+        if self._typing_imports is None:
+            self._typing_imports = list(filter(
+                lambda imp: imp.context.isifblocktype(),
+                self._imports,
+            ))
+        return self._typing_imports
+
+    @property
+    def local_imports(self):  # type: () -> typing.Sequence[_ImportType]
+        if self._local_imports is None:
+            self._local_imports = list(filter(
+                lambda imp: not imp.context.isanymodulelevel(),
+                self._imports,
+            ))
+        return self._local_imports
 
     @staticmethod
     def stripsrc(

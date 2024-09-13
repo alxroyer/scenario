@@ -124,10 +124,10 @@ even though non renamed exports don't really need it.
     from ._privatemodule import OriginalClass as ExportedClass
     __all__.append("ExportedClass")
 
-.. admonition:: Memo - No renamed class exports with alias instanciations
+.. admonition:: Memo - No renamed class exports with alias instantiations
     :class: note
 
-    Renamed class exports don't work well with every type checker or IDE when exported through alias instanciations.
+    Renamed class exports don't work well with every type checker or IDE when exported through alias instantiations.
 
     For instance, if we declare :py:class:`scenario.Scenario` as following:
 

@@ -14,14 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import re
 import typing
 
 import scenario
 
 if True:
-    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # `TrackerLogger` used for inheritance.
+    from ._errortrackerlogger import ErrorTrackerLogger as _ErrorTrackerLoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from ._form import ImportForm as _ImportFormType
     from ._modulelevelcontext import ModuleLevelContext as _ModuleLevelContextType
 
 
@@ -30,17 +32,27 @@ class Import(_ErrorTrackerLoggerImpl):
     class ImportedSymbol:
         def __init__(
                 self,
+                owner_import,  # type: Import
                 src,  # type: bytes
         ):  # type: (...) -> None
+            self.owner_import = owner_import  # type: Import
             self.src = src  # type: bytes
             self.original_name = ""  # type: str
             self.local_name = ""  # type: str
 
         def ismodule(self):  # type: (...) -> bool
-            return re.match(r"^[_a-z]+$", self.original_name) is not None
+            if re.match(r"^[_a-z0-9]+$", self.original_name):
+                if self.owner_import.imported_module_path and self.owner_import.imported_module_path.is_dir():
+                    return (self.owner_import.imported_module_path / f"{self.original_name}.py").is_file()
+            return False
+
+        def isfunction(self):  # type: (...) -> bool
+            if re.match(r"^[_a-z0-9]+$", self.original_name):
+                return not self.ismodule()
+            return False
 
         def isconstant(self):  # type: (...) -> bool
-            return re.match(r"^[_A-Z]+$", self.original_name) is not None
+            return re.match(r"^[_A-Z0-9]+$", self.original_name) is not None
 
         def isreexport(self):  # type: (...) -> bool
             return all([
@@ -62,7 +74,10 @@ class Import(_ErrorTrackerLoggerImpl):
         self.importer_module_path = importer_module_path  # type: scenario.Path
         self.importer_module_line = importer_module_line  # type: int
         self.context = context  # type: _ModuleLevelContextType
-        self.src = ModuleParser.stripsrc(src)  # type: bytes
+        self.raw_src = src  # type: bytes
+        self.stripped_src = ModuleParser.stripsrc(src)  # type: bytes
+
+        # Resolved members.
         self._imported_module_original_name = ""  # type: str
         self._imported_module_local_name = None  # type: typing.Optional[str]
         self._imported_module_path = None  # type: typing.Optional[scenario.Path]
@@ -77,13 +92,10 @@ class Import(_ErrorTrackerLoggerImpl):
             f"<Import",
             f" context={self.context!r}",
             f" {self.importer_module_path}:{self.importer_module_line}:",
-            f" {self.src!r}",
+            f" {self.stripped_src!r}",
             f" => {self._imported_module_path}" if self._imported_module_path else "",
             f">",
         ])
-
-    def isfromsyntax(self):  # type: (...) -> bool
-        return self.src.startswith(b'from ')
 
     @property
     def imported_module_original_name(self):  # type: () -> str
@@ -112,9 +124,15 @@ class Import(_ErrorTrackerLoggerImpl):
         return self._imported_module_final_path
 
     def issystemimport(self):  # type: (...) -> bool
+        """
+        Import of a module that does not belong to the `scenario` project.
+        """
         return self.imported_module_path is None
 
     def isscenarioimport(self):  # type: (...) -> bool
+        """
+        Import of a `scenario` module.
+        """
         return self.imported_module_path is not None
 
     @property
@@ -122,10 +140,37 @@ class Import(_ErrorTrackerLoggerImpl):
         self._ensureparsed()
         return self._imported_symbols
 
+    def ismoduleimport(self):  # type: (...) -> bool
+        """
+        Import of a module per se.
+        """
+        if not self.imported_symbols:
+            # No imported symbols, this is a module import by the way.
+            return True
+        else:
+            # Check all imported symbols are module imports.
+            return all([_symbol.ismodule() for _symbol in self.imported_symbols])
+
     def isreexport(self):  # type: (...) -> bool
+        # Check all imported symbols are reexports.
         if self.imported_symbols:
             return all([_symbol.isreexport() for _symbol in self.imported_symbols])
         return False
+
+    def form(self):  # type: (...) -> _ImportFormType
+        from ._form import ImportForm
+
+        if self.stripped_src.startswith(b'import '):
+            if self.ismoduleimport():
+                return ImportForm.SYSTEM_IMPORT
+            else:
+                # Should never happen, defensive code.
+                self.raiseerror(SyntaxError, f"System import {self.stripped_src!r} should be a module import")
+        else:
+            if self.ismoduleimport():
+                return ImportForm.IMPORT_MODULE_AS
+            else:
+                return ImportForm.FROM_MODULE_IMPORT
 
     def _ensureparsed(
             self,
@@ -137,19 +182,19 @@ class Import(_ErrorTrackerLoggerImpl):
 
         _match = None  # type: typing.Optional[typing.Match[bytes]]
 
-        _match = re.match(rb'^import +([^ ,]+)( +as +([^ ,]*))?$', self.src)
+        _match = re.match(rb'^import +([^ ,]+)( +as +([^ ,]*))?$', self.stripped_src)
         if _match:
             self._imported_module_original_name = _match.group(1).decode("utf-8")
             if _match.group(3):
                 self._imported_module_local_name = _match.group(3).decode("utf-8")
 
-        _match = re.match(rb'^from +([^ ,]+) +import +([^ ,].*)$', self.src)
+        _match = re.match(rb'^from +([^ ,]+) +import +([^ ,].*)$', self.stripped_src)
         if _match:
             self._imported_module_original_name = _match.group(1).decode("utf-8")
             if _match.group(2):
                 for _part in _match.group(2).split(b','):  # type: bytes
                     _part = _part.strip()
-                    self._imported_symbols.append(Import.ImportedSymbol(_part))
+                    self._imported_symbols.append(Import.ImportedSymbol(self, _part))
                     _match = re.match(rb'^([^ ,]+)( +as +([^ ,]+))?$', _part)
                     if not _match:
                         self.raiseerror(SyntaxError, f"Invalid import part {_part!r}")
@@ -158,7 +203,7 @@ class Import(_ErrorTrackerLoggerImpl):
                         self._imported_symbols[-1].local_name = _match.group(3).decode("utf-8")
 
         if not self._imported_module_original_name:
-            self.raiseerror(SyntaxError, f"Failed to parse {self.src!r}")
+            self.raiseerror(SyntaxError, f"Failed to parse {self.stripped_src!r}")
 
     def _ensureresolved(self):  # type: (...) -> None
         from .. import _paths
@@ -186,6 +231,7 @@ class Import(_ErrorTrackerLoggerImpl):
                 # The first match will break the loop.
                 ("scenario.test", _paths.TEST_SRC_PATH / "scenario" / "test"),
                 ("scenario.tools", _paths.TOOLS_SRC_PATH / "scenario" / "tools"),
+                ("scenario.inners", _paths.UTILS_SRC_PATH / "scenario" / "inners"),
                 ("scenario.text", _paths.UTILS_SRC_PATH / "scenario" / "text"),
                 # Finish with `scenario`.
                 ("scenario", _paths.SRC_PATH / "scenario"),
@@ -227,3 +273,30 @@ class Import(_ErrorTrackerLoggerImpl):
 
         # No error: save resolved final path (if any).
         self._imported_module_final_path = _path
+
+    def _log(
+            self,
+            level,  # type: int
+            msg,  # type: str
+            *args,  # type: typing.Any
+            **kwargs  # type: typing.Any
+    ):  # type: (...) -> None
+        """
+        :class:`scenario._logger.Logger._log()` override, for ``check-imports: ignore`` pragma management.
+
+        Automatically changed to debug logging when the pragma is found.
+        """
+        # Check for `check-imports: ignore` pragma (useless for debug log lines).
+        _match = None  # type: typing.Optional[typing.Match[bytes]]
+        if level > logging.DEBUG:
+            _match = re.search(rb'# *check-imports *: *ignore', self.raw_src)
+
+        if not _match:
+            # Log not ignored.
+            super()._log(level, msg, *args, **kwargs)
+        else:
+            # Log ignored.
+            _args = list(args)  # type: typing.List[typing.Any]
+            while self.stripped_src in _args:
+                _args[_args.index(self.stripped_src)] = self.raw_src
+            super()._log(logging.DEBUG, f"(Ignored {logging.getLevelName(level).lower()}) " + msg, *_args, **kwargs)

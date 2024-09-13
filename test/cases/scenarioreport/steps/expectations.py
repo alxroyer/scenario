@@ -22,8 +22,7 @@ import scenario.test
 import scenario.text
 
 if True:
-    # `ScenarioReportFileVerificationStep` used for inheritance.
-    from .reportfile import ScenarioReportFileVerificationStep as _ScenarioReportFileVerificationStepImpl
+    from .reportfile import ScenarioReportFileVerificationStep as _ScenarioReportFileVerificationStepImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from scenarioexecution.steps.execution import ExecScenario as _ExecScenarioType
 

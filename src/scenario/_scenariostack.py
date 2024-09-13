@@ -21,7 +21,11 @@ Scenario execution stack.
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
@@ -141,8 +145,6 @@ class BuildingContext:
         - either a :class:`._stepdefinition.StepDefinition` reference directly,
         - or :class:`._scenariodefinition.ScenarioDefinition` reference.
         """
-        from ._scenariodefinition import ScenarioDefinition
-
         if (originator is self.scenario_definition) and self.step_definition:
             # The call comes from the `ScenarioDefinition` being built, but a step definition is currently being built.
             # Return the latter in that case.
@@ -150,7 +152,7 @@ class BuildingContext:
 
         # Check scenario definition originators correspond to the scenario definition currently being built.
         # Should never happen, but if not, just display a warning.
-        if isinstance(originator, ScenarioDefinition) and (originator is not self.scenario_definition):
+        if isinstance(originator, _ScenarioDefinitionImpl) and (originator is not self.scenario_definition):
             SCENARIO_STACK.warning(f"BuildingContext.fromoriginator(): Unexpected originator {originator!r}, {self.scenario_definition!r} expected")
 
         # Return the originator given by default.
@@ -184,11 +186,8 @@ class ScenarioStack(_LoggerImpl):
         """
         Initializes an empty scenario execution stack.
         """
-        from ._debugclasses import DebugClass
-        from ._logextradata import LogExtraData
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_STACK)
-        self.setextradata(LogExtraData.ACTION_RESULT_MARGIN, False)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.SCENARIO_STACK)
+        self.setextradata(_LogExtraDataImpl.ACTION_RESULT_MARGIN, False)
 
         #: Instances under construction.
         self.building = BuildingContext()  # type: BuildingContext
@@ -279,13 +278,10 @@ class ScenarioStack(_LoggerImpl):
         :param scenario: Scenario definition or scenario execution to check.
         :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
-        from ._scenariodefinition import ScenarioDefinition
-        from ._scenarioexecution import ScenarioExecution
-
-        _scenario_definition = None  # type: typing.Optional[ScenarioDefinition]
-        if isinstance(scenario, ScenarioDefinition):
+        _scenario_definition = None  # type: typing.Optional[_ScenarioDefinitionType]
+        if isinstance(scenario, _ScenarioDefinitionImpl):
             _scenario_definition = scenario
-        if isinstance(scenario, ScenarioExecution):
+        if isinstance(scenario, _ScenarioExecutionImpl):
             _scenario_definition = scenario.definition
         if _scenario_definition and self.main_scenario_definition:
             if _scenario_definition is self.main_scenario_definition:
@@ -330,13 +326,10 @@ class ScenarioStack(_LoggerImpl):
         :param scenario: Scenario definition or scenario execution to check.
         :return: ``True`` if the scenario corresponds to the main scenario, ``False`` otherwise.
         """
-        from ._scenariodefinition import ScenarioDefinition
-        from ._scenarioexecution import ScenarioExecution
-
-        _scenario_definition = None  # type: typing.Optional[ScenarioDefinition]
-        if isinstance(scenario, ScenarioDefinition):
+        _scenario_definition = None  # type: typing.Optional[_ScenarioDefinitionType]
+        if isinstance(scenario, _ScenarioDefinitionImpl):
             _scenario_definition = scenario
-        if isinstance(scenario, ScenarioExecution):
+        if isinstance(scenario, _ScenarioExecutionImpl):
             _scenario_definition = scenario.definition
         if _scenario_definition and self.current_scenario_definition:
             if _scenario_definition is self.current_scenario_definition:
@@ -471,4 +464,7 @@ class ScenarioStack(_LoggerImpl):
 
 
 #: Main instance of :class:`ScenarioStack`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_stack`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_STACK = ScenarioStack()  # type: ScenarioStack

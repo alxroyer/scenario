@@ -21,6 +21,9 @@ Common statistics.
 import time
 import typing
 
+if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
 
@@ -47,9 +50,7 @@ class TimeStats:
 
         :return: String representation of the time interval.
         """
-        from ._datetimeutils import f2strtime
-
-        return f"[{f2strtime(self.start)} - {f2strtime(self.end)}]"
+        return f"[{_datetimeutils.f2strtime(self.start)} - {_datetimeutils.f2strtime(self.end)}]"
 
     @property
     def start(self):  # type: () -> typing.Optional[float]
@@ -150,13 +151,11 @@ class TimeStats:
 
         :return: JSON dictionary, with optional 'start', 'end' and 'elapsed' ``float`` fields, when the values are set.
         """
-        from ._datetimeutils import toiso8601
-
         _json = {"start": None, "end": None, "elapsed": None}  # type: _JsonDictType
         if self.start is not None:
-            _json["start"] = toiso8601(self.start)
+            _json["start"] = _datetimeutils.toiso8601(self.start)
         if self.end is not None:
-            _json["end"] = toiso8601(self.end)
+            _json["end"] = _datetimeutils.toiso8601(self.end)
         if self.elapsed is not None:
             _json["elapsed"] = self.elapsed
         return _json
@@ -171,20 +170,17 @@ class TimeStats:
         :param json_data: JSON dictionary, with optional 'start', 'end' and 'elapsed' ``float`` fields.
         :return: New :class:`TimeStats` instance.
         """
-        from ._datetimeutils import fromiso8601
-        from ._loggermain import MAIN_LOGGER
-
         _stat = TimeStats()  # type: TimeStats
         if ("start" in json_data) and isinstance(json_data["start"], str):
             try:
-                _stat.start = fromiso8601(json_data["start"])
+                _stat.start = _datetimeutils.fromiso8601(json_data["start"])
             except Exception as _err:
-                MAIN_LOGGER.warning(str(_err))
+                _FAST_PATH.main_logger.warning(str(_err))
         if ("end" in json_data) and isinstance(json_data["end"], str):
             try:
-                _stat.end = fromiso8601(json_data["end"])
+                _stat.end = _datetimeutils.fromiso8601(json_data["end"])
             except Exception as _err:
-                MAIN_LOGGER.warning(str(_err))
+                _FAST_PATH.main_logger.warning(str(_err))
         # Do not rely on the input 'elapsed' field if given.
         # Let it be recomputed from 'start' and 'end' values.
         return _stat
@@ -211,12 +207,9 @@ class ExecTotalStats:
 
         :return: String representation of the statistics.
         """
-        from ._scenarioargs import ScenarioArgs
-        from ._campaignargs import CampaignArgs
-
-        if ScenarioArgs.isset() and ScenarioArgs.getinstance().doc_only:
+        if _FAST_PATH.scenario_args and _FAST_PATH.scenario_args.getinstance().doc_only:
             return f"{self.total}"
-        elif CampaignArgs.isset() and CampaignArgs.getinstance().doc_only:
+        elif _FAST_PATH.campaign_args and _FAST_PATH.campaign_args.doc_only:
             return f"{self.total}"
         else:
             return f"{self.executed}/{self.total}"

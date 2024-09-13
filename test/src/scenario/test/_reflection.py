@@ -56,8 +56,10 @@ def _blacklistimporter(
         raise ImportError(f"Module '{name}' black-listed")
 
     # Regular import by default.
-    return importlib.__import__(name, globals, locals, fromlist, level)
+    return _initial_importer(name, globals, locals, fromlist, level)
 
 
+#: Initial global importer function.
+_initial_importer = builtins.__import__  # Let type inference do the job.
 # Install our `_blacklistimporter()` function as the python global importer function.
 builtins.__import__ = _blacklistimporter

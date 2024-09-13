@@ -31,9 +31,15 @@ import types
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._path import SRC_SCENARIO_PATH as _SRC_SCENARIO_PATH  # @perf
+    from ._reflection import checkfuncqualname as _checkfuncqualname  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
 
 
 class CodeLocation:
@@ -52,11 +58,9 @@ class CodeLocation:
         :param tb_item: Traceback item.
         :return: :class:`CodeLocation` instance.
         """
-        from ._path import Path
-
         assert tb_item.lineno is not None, f"Invalid traceback item {tb_item!r} (line missing)"
         return CodeLocation(
-            file=Path(tb_item.filename),
+            file=_PathImpl(tb_item.filename),
             line=tb_item.lineno,
             qualname=tb_item.name,
         )
@@ -71,16 +75,16 @@ class CodeLocation:
         :param method: Method to locate.
         :return: :class:`CodeLocation` instance.
         """
-        from ._path import Path
-        from ._reflection import qualname
-
         _source_file = inspect.getsourcefile(method)  # type: typing.Optional[str]
         assert _source_file
         return CodeLocation(
-            file=Path(_source_file),
+            file=_PathImpl(_source_file),
             line=inspect.getsourcelines(method)[1],
-            qualname=qualname(method),
+            qualname=_qualname(method),
         )
+
+    #: Cache for :meth:`fromclass()`.
+    _class_locations_cache = {}  # type: typing.Dict[type, CodeLocation]
 
     @staticmethod
     def fromclass(
@@ -91,17 +95,33 @@ class CodeLocation:
 
         :param cls: Class to locate.
         :return: :class:`CodeLocation` instance.
-        """
-        from ._path import Path
-        from ._reflection import qualname
 
+        .. note::
+            Method a bit slow (probably due to ``inspect`` calls).
+            In order to speed up consecutive calls for the same class,
+            this method caches results in :attr:`_class_locations_cache`.
+        """
+        # First, search for the class location in the cache.
+        if cls in CodeLocation._class_locations_cache:
+            return CodeLocation._class_locations_cache[cls]
+
+        # Get the source file of the class.
         _source_file = inspect.getsourcefile(cls)  # type: typing.Optional[str]
-        assert _source_file
-        return CodeLocation(
-            file=Path(_source_file),
-            line=inspect.getsourcelines(cls)[1],
-            qualname=qualname(cls),
-        )
+        if not _source_file:
+            raise RuntimeError(f"Can't determine source file for class {cls!r}")
+        # Find the code location of the class in the source file.
+        _line = inspect.getsourcelines(cls)[1]  # type: int
+
+        # Build a `CodeLocation` instance.
+        _location = CodeLocation(
+            file=_PathImpl(_source_file),
+            line=_line,
+            qualname=_qualname(cls),
+        )  # type: CodeLocation
+
+        # Save it in the cache and return.
+        CodeLocation._class_locations_cache[cls] = _location
+        return _location
 
     def __init__(
             self,
@@ -116,14 +136,12 @@ class CodeLocation:
         :param line: Line in the file where the execution takes place.
         :param qualname: Qualified name of the class/function pointed.
         """
-        from ._path import Path
-
         #: File path.
         #:
         #: Set as a :class:`._path.Path` when ``file`` is passed on as a :class:`._path.Path`.
         #: Set as a ``pathlib.Path`` otherwise, possibly a relative path in that case.
-        self.file = pathlib.Path(file)  # type: typing.Union[pathlib.Path, Path]
-        if isinstance(file, Path):
+        self.file = pathlib.Path(file)  # type: typing.Union[pathlib.Path, _PathType]
+        if isinstance(file, _PathImpl):
             self.file = file
         #: Line number in the file.
         self.line = line  # type: int
@@ -149,9 +167,7 @@ class CodeLocation:
         """
         Long text representation.
         """
-        from ._path import Path
-
-        if isinstance(self.file, Path):
+        if isinstance(self.file, _PathImpl):
             return f"{self.file.prettypath}:{self.line}:{self.qualname}"
         else:
             return f"{self.file.as_posix()}:{self.line}:{self.qualname}"
@@ -187,9 +203,7 @@ class ExecutionLocations(_LoggerImpl):
         """
         Sets up logging for the :class:`ExecutionLocations` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.EXECUTION_LOCATIONS)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.EXECUTION_LOCATIONS)
 
     def fromcurrentstack(
             self,
@@ -201,7 +215,7 @@ class ExecutionLocations(_LoggerImpl):
 
         :param limit: Maximum number of backward items.
         :param fqn: ``True`` to ensure fully qualified names.
-        :return: Stack of :class:`CodeLocation`.
+        :return: Stack of :class:`CodeLocation`, from first to last call.
         """
         return self._fromtbitems(traceback.extract_stack(), limit=limit, fqn=fqn)
 
@@ -231,11 +245,8 @@ class ExecutionLocations(_LoggerImpl):
         Builds a stack of :class:`CodeLocation` from traceback items.
 
         :param tb_items: Traceback items to build the stack from.
-        :return: Stack of :class:`CodeLocation`.
+        :return: Stack of :class:`CodeLocation`, from first to last call.
         """
-        from ._path import Path
-        from ._reflection import checkfuncqualname
-
         self.debug("Computing test location:")
 
         _locations = []  # type: typing.List[CodeLocation]
@@ -261,23 +272,25 @@ class ExecutionLocations(_LoggerImpl):
                 # Filter-out stack trace elements based on file paths:
                 _keep = True
                 # - Avoid 'src/scenario' sources.
-                if isinstance(_location.file, Path) and _location.file.is_relative_to(pathlib.Path(__file__).parent):
+                if isinstance(_location.file, _PathImpl) and _location.file.is_relative_to(_SRC_SCENARIO_PATH):
                     _keep = False
-                for _skipped_path in (
-                    # - Avoid unittest sources.
-                    pathlib.Path("unittest") / "case.py",
-                    # - Avoid PyCharm sources (visible in the execution stack when debugging).
-                    pathlib.Path("pydevd.py"),
-                    pathlib.Path("_pydev_execfile.py"),
-                ):  # type: pathlib.Path
-                    if _location.file.as_posix().endswith(_skipped_path.as_posix()):
-                        _keep = False
+                else:
+                    for _skipped_path in (
+                        # - Avoid unittest sources.
+                        pathlib.Path("unittest") / "case.py",
+                        # - Avoid PyCharm sources (visible in the execution stack when debugging).
+                        pathlib.Path("pydevd.py"),
+                        pathlib.Path("_pydev_execfile.py"),
+                    ):  # type: pathlib.Path
+                        if _location.file.as_posix().endswith(_skipped_path.as_posix()):
+                            _keep = False
+                            break
 
                 if _keep:
                     self.debug("Location stack trace - %s:%d: %s", _location.file, _location.line, _location.qualname)
                     if fqn:
                         # Ensure the location function name is fully qualified.
-                        _location.qualname = checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
+                        _location.qualname = _checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
                         # Fix the `traceback` item as well.
                         _tb_item.name = _location.qualname
                     _locations.insert(0, _location)
@@ -293,4 +306,7 @@ class ExecutionLocations(_LoggerImpl):
 
 
 #: Main instance of :class:`ExecutionLocations`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.execution_locations`.
+#: Please prefer the latter instead of using local imports of this module.
 EXECUTION_LOCATIONS = ExecutionLocations()  # type: ExecutionLocations

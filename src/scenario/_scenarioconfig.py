@@ -21,11 +21,15 @@
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _consoleutils as _consoleutils  # @perf
+    from . import _enumutils as _enumutils  # @inheritance
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
-    from ._consoleutils import Console as _ConsoleType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
 
@@ -41,7 +45,7 @@ class ScenarioConfig(_LoggerImpl):
     and the configuration database (see: :class:`._configdb.ConfigDatabase`).
     """
 
-    class Key(_StrEnumImpl):
+    class Key(_enumutils.StrEnum):
         """
         `scenario` configuration keys.
         """
@@ -117,9 +121,7 @@ class ScenarioConfig(_LoggerImpl):
         """
         Initializes the instance as a logger, and the timezone cache information.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.SCENARIO_CONFIG)
+        _LoggerImpl.__init__(self, _DebugClassImpl.SCENARIO_CONFIG)
 
         #: Timezone cache information.
         self.__timezone = None  # type: typing.Optional[str]
@@ -133,11 +135,9 @@ class ScenarioConfig(_LoggerImpl):
 
             When not set, the local timezone is used.
         """
-        from ._configdb import CONFIG_DB
-
         if self.__timezone is None:
             # Set the cache member with an empty string if no configuration is set.
-            self.__timezone = CONFIG_DB.get(self.Key.TIMEZONE, type=str, default="").strip()
+            self.__timezone = _FAST_PATH.config_db.get(self.Key.TIMEZONE, type=str, default="").strip()
             # Convert empty string to `None`.
             self.__timezone = self.__timezone or None
 
@@ -159,9 +159,7 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.LOG_DATETIME`.
         """
-        from ._configdb import CONFIG_DB
-
-        _log_datetime_enabled = CONFIG_DB.get(self.Key.LOG_DATETIME, type=bool, default=True)  # type: bool
+        _log_datetime_enabled = _FAST_PATH.config_db.get(self.Key.LOG_DATETIME, type=bool, default=True)  # type: bool
         # Don't debug `logdatetimeenabled()`, otherwise it may cause infinite recursions when logging.
         # self.debug("logdatetimeenabled() -> %r", _log_datetime_enabled)
         return _log_datetime_enabled
@@ -172,9 +170,7 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.LOG_CONSOLE`.
         """
-        from ._configdb import CONFIG_DB
-
-        _log_console_enabled = CONFIG_DB.get(self.Key.LOG_CONSOLE, type=bool, default=True)  # type: bool
+        _log_console_enabled = _FAST_PATH.config_db.get(self.Key.LOG_CONSOLE, type=bool, default=True)  # type: bool
         # Don't debug `logconsoleenabled()`, otherwise it may cause infinite recursions when logging.
         # self.debug("logconsoleenabled() -> %r", _log_console_enabled)
         return _log_console_enabled
@@ -187,13 +183,10 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.LOG_FILE`.
         """
-        from ._configdb import CONFIG_DB
-        from ._path import Path
-
-        _log_outpath = None  # type: typing.Optional[Path]
-        _config = CONFIG_DB.get(self.Key.LOG_FILE, type=str)  # type: typing.Optional[str]
+        _log_outpath = None  # type: typing.Optional[_PathType]
+        _config = _FAST_PATH.config_db.get(self.Key.LOG_FILE, type=str)  # type: typing.Optional[str]
         if _config:  # Neither `None` nor empty!
-            _log_outpath = Path(_config)
+            _log_outpath = _PathImpl(_config)
 
         # Don't debug `logoutpath()`, otherwise it may cause infinite recursions when logging (tbc).
         # self.debug("logoutpath() -> %r", _log_outpath)
@@ -205,9 +198,7 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.LOG_COLOR_ENABLED`.
         """
-        from ._configdb import CONFIG_DB
-
-        _log_color_enabled = CONFIG_DB.get(self.Key.LOG_COLOR_ENABLED, type=bool, default=True)  # type: bool
+        _log_color_enabled = _FAST_PATH.config_db.get(self.Key.LOG_COLOR_ENABLED, type=bool, default=True)  # type: bool
         # Don't debug `logcolorenabled()`, otherwise it may cause infinite recursions when logging.
         # self.debug("logcolorenabled() -> %r", _log_color_enabled)
         return _log_color_enabled
@@ -215,8 +206,8 @@ class ScenarioConfig(_LoggerImpl):
     def logcolor(
             self,
             level,  # type: str
-            default,  # type: _ConsoleType.Color
-    ):  # type: (...) -> _ConsoleType.Color
+            default,  # type: _consoleutils.Console.Color
+    ):  # type: (...) -> _consoleutils.Console.Color
         """
         Retrieves the expected log color for the given log level.
 
@@ -226,18 +217,14 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :attr:`Key.LOG_COLOR`.
         """
-        from ._configdb import CONFIG_DB
-        from ._confignode import ConfigNode
-        from ._consoleutils import Console
-
         _key = str(self.Key.LOG_COLOR) % level.lower()  # type: str
-        _config_node = CONFIG_DB.getnode(_key)  # type: typing.Optional[ConfigNode]
+        _config_node = _FAST_PATH.config_db.getnode(_key)  # type: typing.Optional[_ConfigNodeType]
         if _config_node:
             try:
                 _color_number = _config_node.cast(type=int)  # type: int
                 # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
                 # self.debug("logcolor(level=%r, default=%r) -> %r", level, default, Console.Color(_color_number))
-                return Console.Color(_color_number)
+                return _consoleutils.Console.Color(_color_number)
             except ValueError:
                 self.warning(_config_node.errmsg(f"Invalid color number {_config_node.data!r}"))
         # Don't debug `logcolor()`, otherwise it may cause infinite recursions when logging.
@@ -253,14 +240,13 @@ class ScenarioConfig(_LoggerImpl):
         Adds debug classes defined by the program arguments (see :attr:`._loggingargs.CommonLoggingArgs.debug_classes`)
         plus those defined by the configurations (see :const:`Key.DEBUG_CLASSES`).
         """
-        from ._args import Args
-
         # Merge debug classes from...
         _debug_classes = []  # type: typing.List[str]
         # ...arguments,
-        for _debug_class in Args.getinstance().debug_classes:  # type: str
-            if _debug_class not in _debug_classes:
-                _debug_classes.append(_debug_class)
+        if _FAST_PATH.args:
+            for _debug_class in _FAST_PATH.args.getinstance().debug_classes:  # type: str
+                if _debug_class not in _debug_classes:
+                    _debug_classes.append(_debug_class)
         # ...and configuration database.
         for _debug_class, _ in self._readstringlistfromconf(self.Key.DEBUG_CLASSES):  # Type already declared above.
             if _debug_class not in _debug_classes:
@@ -277,9 +263,7 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :attr:`Key.SCENARIO_DEBUG_LOGGING_ENABLED`.
         """
-        from ._configdb import CONFIG_DB
-
-        _debug_logging_enabled = CONFIG_DB.get(ScenarioConfig.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool, default=True)  # type: bool
+        _debug_logging_enabled = _FAST_PATH.config_db.get(ScenarioConfig.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool, default=True)  # type: bool
         self.debug("scenariodebugloggingenabled() -> %r", _debug_logging_enabled)
         return _debug_logging_enabled
 
@@ -314,9 +298,7 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.EXPECT_STEP_REQ_REFINEMENT`.
         """
-        from ._configdb import CONFIG_DB
-
-        _expect_step_req_refinement = CONFIG_DB.get(self.Key.EXPECT_STEP_REQ_REFINEMENT, type=bool, default=False)  # type: bool
+        _expect_step_req_refinement = _FAST_PATH.config_db.get(self.Key.EXPECT_STEP_REQ_REFINEMENT, type=bool, default=False)  # type: bool
         self.debug("expectstepreqrefinement() -> %r", _expect_step_req_refinement)
         return _expect_step_req_refinement
 
@@ -326,9 +308,7 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.CONTINUE_ON_ERROR`.
         """
-        from ._configdb import CONFIG_DB
-
-        _continue_on_error = CONFIG_DB.get(self.Key.CONTINUE_ON_ERROR, type=bool, default=False)  # type: bool
+        _continue_on_error = _FAST_PATH.config_db.get(self.Key.CONTINUE_ON_ERROR, type=bool, default=False)  # type: bool
         self.debug("continueonerror() -> %r", _continue_on_error)
         return _continue_on_error
 
@@ -338,9 +318,7 @@ class ScenarioConfig(_LoggerImpl):
 
         Checks in configurations only (see :attr:`Key.DELAY_BETWEEN_STEPS`).
         """
-        from ._configdb import CONFIG_DB
-
-        _delay_between_steps = CONFIG_DB.get(self.Key.DELAY_BETWEEN_STEPS, type=float, default=0.001)  # type: float
+        _delay_between_steps = _FAST_PATH.config_db.get(self.Key.DELAY_BETWEEN_STEPS, type=float, default=0.001)  # type: float
         self.debug("delaybetweensteps() -> %r", _delay_between_steps)
         return _delay_between_steps
 
@@ -350,16 +328,13 @@ class ScenarioConfig(_LoggerImpl):
 
         Useful when executing campaigns.
         """
-        from ._configdb import CONFIG_DB
-        from ._path import Path
-
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _abspath = (
-            CONFIG_DB.get(self.Key.RUNNER_SCRIPT_PATH, type=str)
-            or (Path(__file__).parents[2] / "bin" / "run-test.py").abspath
+            _FAST_PATH.config_db.get(self.Key.RUNNER_SCRIPT_PATH, type=str)
+            or (_PathImpl(__file__).parents[2] / "bin" / "run-test.py").abspath
         )  # type: str
-        self.debug("runnerscriptpath() -> %r", Path(_abspath))
-        return Path(_abspath)
+        self.debug("runnerscriptpath() -> %r", _PathImpl(_abspath))
+        return _PathImpl(_abspath)
 
     def testsuitefiles(self):  # type: (...) -> typing.Sequence[_PathType]
         """
@@ -371,14 +346,11 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Test suite files.
         """
-        from ._campaignargs import CampaignArgs
-
         # Determine test suite files to process from...
         _test_suite_files = []  # type: typing.List[_PathType]
         # ...campaign arguments first (when applicable),
-        if CampaignArgs.isset():
-            if CampaignArgs.getinstance().test_suite_paths:
-                _test_suite_files.extend(CampaignArgs.getinstance().test_suite_paths)
+        if _FAST_PATH.campaign_args:
+            _test_suite_files.extend(_FAST_PATH.campaign_args.test_suite_paths)
         # ...or default configuration otherwise.
         if not _test_suite_files:
             _test_suite_files.extend(self._readpathlistfromconf(self.Key.TEST_SUITE_FILES))
@@ -395,13 +367,11 @@ class ScenarioConfig(_LoggerImpl):
 
         Checks in configurations only (see :attr:`Key.SCENARIO_TIMEOUT`).
         """
-        from ._configdb import CONFIG_DB
-
-        _scenario_timeout = CONFIG_DB.get(self.Key.SCENARIO_TIMEOUT, type=float, default=600.0)  # type: float
+        _scenario_timeout = _FAST_PATH.config_db.get(self.Key.SCENARIO_TIMEOUT, type=float, default=600.0)  # type: float
         self.debug("scenariotimeout() -> %r", _scenario_timeout)
         return _scenario_timeout
 
-    def resultsextrainfo(self):  # type: (...) -> typing.List[str]
+    def resultsextrainfo(self):  # type: (...) -> typing.Sequence[str]
         """
         Retrieves the list of scenario attributes to display for extra info when displaying test results.
 
@@ -413,30 +383,25 @@ class ScenarioConfig(_LoggerImpl):
         Returns a 1-item list with :attr:`._scenarioattributes.CoreScenarioAttributes.TITLE`
         by default in case nothing is configured.
         """
-        from ._args import Args
-        from ._campaignargs import CampaignArgs
-        from ._scenarioargs import ScenarioArgs
         from ._scenarioattributes import CoreScenarioAttributes
 
         # Merge attribute names from...
-        _attribute_names = []  # type: typing.List[str]
+        _attribute_names = set()  # type: typing.Set[str]
         # ...arguments,
-        _args = Args.getinstance()  # type: Args
-        if isinstance(_args, (ScenarioArgs, CampaignArgs)):
-            for _attribute_name in _args.extra_info:  # type: str
-                if _attribute_name not in _attribute_names:
-                    _attribute_names.append(_attribute_name)
+        if _FAST_PATH.scenario_args:
+            _attribute_names.update(_FAST_PATH.scenario_args.extra_info)
+        if _FAST_PATH.campaign_args:
+            _attribute_names.update(_FAST_PATH.campaign_args.extra_info)
         # ...and configuration database.
         for _attribute_name, _ in self._readstringlistfromconf(self.Key.RESULTS_EXTRA_INFO):  # Type already declared above.
-            if _attribute_name not in _attribute_names:
-                _attribute_names.append(_attribute_name)
+            _attribute_names.add(_attribute_name)
 
         # Default to titles.
         if not _attribute_names:
-            _attribute_names.append(CoreScenarioAttributes.TITLE)
+            _attribute_names.add(CoreScenarioAttributes.TITLE)
 
         self.debug("resultsextrainfo() -> %r", _attribute_names)
-        return _attribute_names
+        return list(_attribute_names)
 
     def scenarioreportsuffix(self):  # type: (...) -> str
         """
@@ -446,11 +411,9 @@ class ScenarioConfig(_LoggerImpl):
 
         '.json' by default.
         """
-        from ._configdb import CONFIG_DB
-
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _scenario_report_suffix = (
-            CONFIG_DB.get(self.Key.SCENARIO_REPORT_SUFFIX, type=str)
+            _FAST_PATH.config_db.get(self.Key.SCENARIO_REPORT_SUFFIX, type=str)
             or ".json"
         )  # type: str
         self.debug("scenarioreportsuffix() -> %r", _scenario_report_suffix)
@@ -464,11 +427,9 @@ class ScenarioConfig(_LoggerImpl):
 
         'campaign.xml' by default.
         """
-        from ._configdb import CONFIG_DB
-
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _campaign_report_filename = (
-            CONFIG_DB.get(self.Key.CAMPAIGN_REPORT_FILENAME, type=str)
+            _FAST_PATH.config_db.get(self.Key.CAMPAIGN_REPORT_FILENAME, type=str)
             or "campaign.xml"
         )  # type: str
         self.debug("campaignreportfilename() -> %r", _campaign_report_filename)
@@ -482,11 +443,9 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.REQ_DB_FILENAME`.
         """
-        from ._configdb import CONFIG_DB
-
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _req_db_filename = (
-            CONFIG_DB.get(self.Key.REQ_DB_FILENAME, type=str)
+            _FAST_PATH.config_db.get(self.Key.REQ_DB_FILENAME, type=str)
             or "req-db.json"
         )  # type: str
         self.debug("reqdbfilename() -> %r", _req_db_filename)
@@ -500,11 +459,9 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.DOWNSTREAM_TRACEABILITY_FILENAME`.
         """
-        from ._configdb import CONFIG_DB
-
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _downstream_traceability_filename = (
-            CONFIG_DB.get(self.Key.DOWNSTREAM_TRACEABILITY_FILENAME, type=str)
+            _FAST_PATH.config_db.get(self.Key.DOWNSTREAM_TRACEABILITY_FILENAME, type=str)
             or "req-downstream-traceability.json"
         )  # type: str
         self.debug("downstreamtraceabilityfilename() -> %r", _downstream_traceability_filename)
@@ -518,11 +475,9 @@ class ScenarioConfig(_LoggerImpl):
 
         Configurable through :const:`Key.UPSTREAM_TRACEABILITY_FILENAME`.
         """
-        from ._configdb import CONFIG_DB
-
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _upstream_traceability_filename = (
-            CONFIG_DB.get(self.Key.UPSTREAM_TRACEABILITY_FILENAME, type=str)
+            _FAST_PATH.config_db.get(self.Key.UPSTREAM_TRACEABILITY_FILENAME, type=str)
             or "req-upstream-traceability.json"
         )  # type: str
         self.debug("upstreamtraceabilityfilename() -> %r", _upstream_traceability_filename)
@@ -532,15 +487,11 @@ class ScenarioConfig(_LoggerImpl):
         """
         Loads the issue level names configured through configuration files.
         """
-        from ._configdb import CONFIG_DB
-        from ._confignode import ConfigNode
-        from ._issuelevels import IssueLevel
-
-        _root_node = CONFIG_DB.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[ConfigNode]
+        _root_node = _FAST_PATH.config_db.getnode(self.Key.ISSUE_LEVEL_NAMES)  # type: typing.Optional[_ConfigNodeType]
         if _root_node:
             for _name in _root_node.getsubkeys():  # type: str
                 # Retrieve the `int` value configured with the issue level name.
-                _subnode = _root_node.get(_name)  # type: typing.Optional[ConfigNode]
+                _subnode = _root_node.get(_name)  # type: typing.Optional[_ConfigNodeType]
                 assert _subnode, "Internal error"
                 try:
                     _value = _subnode.cast(int)  # type: int
@@ -549,16 +500,16 @@ class ScenarioConfig(_LoggerImpl):
                     continue
 
                 # Check value consistency when the issue level name is already known.
-                if _name in IssueLevel.getnamed():
-                    if _value != IssueLevel.parse(_name):
+                if _name in _IssueLevelImpl.getnamed():
+                    if _value != _IssueLevelImpl.parse(_name):
                         self.warning(_subnode.errmsg(
-                            f"Name already set {IssueLevel.getdesc(IssueLevel.parse(_name))}, issue level name {_name}={_value!r} ignored"
+                            f"Name already set {_IssueLevelImpl.getdesc(_IssueLevelImpl.parse(_name))}, issue level name {_name}={_value!r} ignored"
                         ))
                     continue
 
                 # Save the association between the new issue level name and value.
                 self.debug("loadissuelevelnames(): %r = %r", _name, _value)
-                IssueLevel.addname(_name, _value)
+                _IssueLevelImpl.addname(_name, _value)
 
     def issuelevelerror(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
         """
@@ -566,20 +517,14 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Error issue level if set, ``None`` otherwise.
         """
-        from ._args import Args
-        from ._configdb import CONFIG_DB
-        from ._issuelevels import IssueLevel
-        from ._scenarioargs import CommonExecArgs
-
-        _args = Args.getinstance()  # type: Args
-        if isinstance(_args, CommonExecArgs):
-            if _args.issue_level_error is not None:
-                self.debug("issuelevelerror() -> %r (from args)", _args.issue_level_error)
-                return _args.issue_level_error
-
-        _issue_level_error = IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_ERROR, type=int))  # type: typing.Optional[_AnyIssueLevelType]
-        self.debug("issuelevelerror() -> %r (from config-db)", _issue_level_error)
-        return _issue_level_error
+        if _FAST_PATH.exec_args and (_FAST_PATH.exec_args.issue_level_error is not None):
+            self.debug("issuelevelerror() -> %r (from args)", _FAST_PATH.exec_args.issue_level_error)
+            return _FAST_PATH.exec_args.issue_level_error
+        else:
+            _issue_level_error = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_ERROR, type=int)) \
+                # type: typing.Optional[_AnyIssueLevelType]
+            self.debug("issuelevelerror() -> %r (from config-db)", _issue_level_error)
+            return _issue_level_error
 
     def issuelevelignored(self):  # type: (...) -> typing.Optional[_AnyIssueLevelType]
         """
@@ -587,20 +532,14 @@ class ScenarioConfig(_LoggerImpl):
 
         :return: Ignored issue level if set, ``None`` otherwise.
         """
-        from ._args import Args
-        from ._configdb import CONFIG_DB
-        from ._issuelevels import IssueLevel
-        from ._scenarioargs import CommonExecArgs
-
-        _args = Args.getinstance()  # type: Args
-        if isinstance(_args, CommonExecArgs):
-            if _args.issue_level_ignored is not None:
-                self.debug("issuelevelignored() -> %r (from args)", _args.issue_level_ignored)
-                return _args.issue_level_ignored
-
-        _issue_level_ignored = IssueLevel.parse(CONFIG_DB.get(self.Key.ISSUE_LEVEL_IGNORED, type=int))  # type: typing.Optional[_AnyIssueLevelType]
-        self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
-        return _issue_level_ignored
+        if _FAST_PATH.exec_args and (_FAST_PATH.exec_args.issue_level_ignored is not None):
+            self.debug("issuelevelignored() -> %r (from args)", _FAST_PATH.exec_args.issue_level_ignored)
+            return _FAST_PATH.exec_args.issue_level_ignored
+        else:
+            _issue_level_ignored = _IssueLevelImpl.parse(_FAST_PATH.config_db.get(self.Key.ISSUE_LEVEL_IGNORED, type=int)) \
+                # type: typing.Optional[_AnyIssueLevelType]
+            self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
+            return _issue_level_ignored
 
     def _readstringlistfromconf(
             self,
@@ -621,18 +560,15 @@ class ScenarioConfig(_LoggerImpl):
         :return:
             Strings with related configuration nodes.
         """
-        from ._configdb import CONFIG_DB
-        from ._confignode import ConfigNode
-
         _strings = []  # type: typing.List[str]
-        _nodes = []  # type: typing.List[ConfigNode]
+        _nodes = []  # type: typing.List[_ConfigNodeType]
 
-        _node = CONFIG_DB.getnode(config_key)  # type: typing.Optional[ConfigNode]
+        _node = _FAST_PATH.config_db.getnode(config_key)  # type: typing.Optional[_ConfigNodeType]
         if _node:
             _data = _node.data  # type: typing.Any
             if isinstance(_data, list):
                 for _sub_key in _node.getsubkeys():  # type: str
-                    _sub_node = _node.get(_sub_key)  # type: typing.Optional[ConfigNode]
+                    _sub_node = _node.get(_sub_key)  # type: typing.Optional[_ConfigNodeType]
                     # `_node.get()` should always return a sub-node in this situation.
                     if not _sub_node:
                         raise RuntimeError("Internal error")
@@ -676,19 +612,19 @@ class ScenarioConfig(_LoggerImpl):
         :raise FileNotFoundError:
             In case of relative path not described in a configuration file.
         """
-        from ._confignode import ConfigNode
-        from ._path import Path
-
-        _paths = []  # type: typing.List[Path]
-        for _string, _node in self._readstringlistfromconf(config_key):  # type: str, ConfigNode
-            if Path.is_absolute(_string):
-                _paths.append(Path(_string))
+        _paths = []  # type: typing.List[_PathType]
+        for _string, _node in self._readstringlistfromconf(config_key):  # type: str, _ConfigNodeType
+            if _PathImpl.is_absolute(_string):
+                _paths.append(_PathImpl(_string))
             elif _node.source_file:
-                _paths.append(Path(_string, relative_to=_node.source_file.parent))
+                _paths.append(_PathImpl(_string, relative_to=_node.source_file.parent))
             else:
                 raise FileNotFoundError(_node.errmsg(f"Invalid file path {_string!r}"))
         return _paths
 
 
 #: Main instance of :class:`ScenarioConfig`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_config`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_CONFIG = ScenarioConfig()  # type: ScenarioConfig

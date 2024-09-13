@@ -20,8 +20,8 @@ import scenario
 import scenario.test
 
 if True:
-    from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils as _KnownIssueLevelUtilsImpl  # `KnownIssueLevelUtils` used for inheritance.
-    from steps.common import ExecScenario as _ExecScenarioImpl  # `ExecScenario` used for inheritance.
+    from knownissues.steps.knownissuelevelutils import KnownIssueLevelUtils as _KnownIssueLevelUtilsImpl  # @inheritance
+    from steps.common import ExecScenario as _ExecScenarioImpl  # @inheritance
 
 
 class KnownIssues180(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):

@@ -28,6 +28,9 @@ import sphinx.pycode
 import sphinx.util.inspect
 import sphinx.util.typing
 
+# Scenario imports.
+import scenario.inners
+
 
 class SphinxHacking:
 
@@ -38,7 +41,7 @@ class SphinxHacking:
 
     def setup(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Parameter not used
     ):  # type: (...) -> None
         # Hack `sphinx.ext.autodoc.ClassDocumenter.format_args()`.
         # Use `setattr()` to avoid a "Cannot assign to a method [assignment]" typing error.
@@ -58,7 +61,7 @@ class SphinxHacking:
     @staticmethod
     def _classdocumentergetsignature(
             self,  # type: sphinx.ext.autodoc.ClassDocumenter
-            **kwargs  # type: typing.Any
+            **kwargs  # type: typing.Any  # noqa  ## Parameter not used
     ):  # type: (...) -> typing.Tuple[typing.Optional[typing.Any], typing.Optional[str], typing.Optional[inspect.Signature]]
         """
         Replacement hack for ``sphinx.ext.autodoc.ClassDocumenter._get_signature()``.
@@ -88,7 +91,6 @@ class SphinxHacking:
         - `sphinx#11387 <https://github.com/sphinx-doc/sphinx/issues/11387>`_
         """
         from scenario import debug
-        from scenario._reflection import fqname  # noqa  ## Access to a protected member
         from ._logging import Logger
 
         _logger = Logger(Logger.Id.GET_CLASS_MEMBERS)  # type: Logger
@@ -122,7 +124,7 @@ class SphinxHacking:
             if _possibly_wrong_enum_superclass is _enum_superclass:
                 _logger.debug("No need to fix members for %r", subject)
             else:
-                _logger.debug("[sphinx#11353] Fixing %s enum members", fqname(subject))
+                _logger.debug("[sphinx#11353] Fixing %s enum members", scenario.inners.reflection.fqname(subject))
                 _logger.debug("_members (before) = %r", _members)
 
                 # Call `attrgetter()` as done in `sphinx.ext.autodoc.importer.get_class_members()`.
@@ -185,7 +187,8 @@ class SphinxHacking:
                         and (_members[_name].class_ is not _mro_class)
                     ):
                         _logger.debug("[sphinx#11387] Fixing definition class for %s.%s from %s to %s",
-                                      fqname(subject), _name, fqname(_members[_name].class_), fqname(_mro_class))
+                                      scenario.inners.reflection.fqname(subject), _name,
+                                      scenario.inners.reflection.fqname(_members[_name].class_), scenario.inners.reflection.fqname(_mro_class))
                         _members[_name].class_ = _mro_class
         _fixobjectmembersdefclass()
 

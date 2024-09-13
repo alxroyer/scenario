@@ -22,9 +22,14 @@ import logging
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
+    from . import _datetimeutils as _datetimeutils  # @perf
+    from . import _enumutils as _enumutils  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._knownissues import KnownIssue as _KnownIssueType
+    from ._req import Req as _ReqType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -44,7 +49,7 @@ class ScenarioLogging:
     #: The scenario stack indentation pattern ensures that the '|' lines are presented the 'ACTION: ' or 'RESULT: ' pattern they relate to.
     SCENARIO_STACK_INDENTATION_PATTERN = "      | "  # type: str
 
-    class _Call(_StrEnumImpl):
+    class _Call(_enumutils.StrEnum):
         """
         :class:`ScenarioLogging` call identifiers.
         """
@@ -62,15 +67,13 @@ class ScenarioLogging:
         """
         Initializes the last call history.
         """
-        from ._knownissues import KnownIssue
-
         #: History of this class's method calls.
         #:
         #: Makes it possible to adjust the display depending on the sequence of information.
         self._calls = []  # type: typing.List[ScenarioLogging._Call]
 
         #: Known issues already displayed.
-        self._known_issues = []  # type: typing.List[KnownIssue]
+        self._known_issues = []  # type: typing.List[_KnownIssueType]
 
     def beginscenario(
             self,
@@ -81,10 +84,8 @@ class ScenarioLogging:
 
         :param scenario_definition: Scenario being executed.
         """
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput(f"SCENARIO '{scenario_definition.name}'")
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput(f"SCENARIO '{scenario_definition.name}'")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
         self._calls.append(ScenarioLogging._Call.BEGIN_SCENARIO)
 
@@ -107,14 +108,12 @@ class ScenarioLogging:
 
         .. seealso:: :meth:`._scenarioconfig.ScenarioConfig.expectedscenarioattributes()`
         """
-        from ._loggermain import MAIN_LOGGER
-
         if len(value.splitlines()) <= 1:
             # One-line display.
-            MAIN_LOGGER.rawoutput(f"  {name}: {value}")
+            _FAST_PATH.main_logger.rawoutput(f"  {name}: {value}")
         else:
             # Multiline display.
-            MAIN_LOGGER.rawoutput(f"  {name}:")
+            _FAST_PATH.main_logger.rawoutput(f"  {name}:")
             self._displaylongtext(left="    ", long_text=value)
 
         self._calls.append(ScenarioLogging._Call.ATTRIBUTE)
@@ -128,22 +127,19 @@ class ScenarioLogging:
 
         :param scenario_definition: Scenario to display requirement verifications for.
         """
-        from ._loggermain import MAIN_LOGGER
-        from ._req import Req
-
-        _reqs = list(scenario_definition.getreqs(walk_steps=True))  # type: typing.Sequence[Req]
+        _reqs = list(scenario_definition.getreqs(walk_steps=True))  # type: typing.Sequence[_ReqType]
         if _reqs:
             if not any([_req.title for _req in _reqs]):
                 # Display requirement identifiers in a single line, separated with commas.
-                MAIN_LOGGER.rawoutput("  VERIFIES: " + ", ".join([_req.id for _req in _reqs]))
+                _FAST_PATH.main_logger.rawoutput("  VERIFIES: " + ", ".join([_req.id for _req in _reqs]))
             else:
                 # Display each requirement on a separate line, with its title when available.
-                MAIN_LOGGER.rawoutput("  VERIFIES:")
-                for _req in _reqs:  # type: Req
+                _FAST_PATH.main_logger.rawoutput("  VERIFIES:")
+                for _req in _reqs:  # type: _ReqType
                     if _req.title:
-                        MAIN_LOGGER.rawoutput(f"    {_req.id}: {_req.title}")
+                        _FAST_PATH.main_logger.rawoutput(f"    {_req.id}: {_req.title}")
                     else:
-                        MAIN_LOGGER.rawoutput(f"    {_req.id}")
+                        _FAST_PATH.main_logger.rawoutput(f"    {_req.id}")
 
         self._calls.append(ScenarioLogging._Call.REQ_COVERAGE)
 
@@ -152,9 +148,7 @@ class ScenarioLogging:
         Marks the beginning of scenario heading information,
         and the beginning of the test steps by the way.
         """
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput("")
+        _FAST_PATH.main_logger.rawoutput("")
 
         self._calls.append(ScenarioLogging._Call.END_HEADING_INFO)
 
@@ -167,20 +161,18 @@ class ScenarioLogging:
 
         :param step_section_description: Step section description step.
         """
-        from ._loggermain import MAIN_LOGGER
-
         # Add space between step sections:
         # - two empty lines when following 'action' or 'result' lines,
         # - only one otherwise.
         if self._calls and (self._calls[-1] in (ScenarioLogging._Call.ACTION, ScenarioLogging._Call.RESULT)):
-            MAIN_LOGGER.rawoutput("")
-            MAIN_LOGGER.rawoutput("")
+            _FAST_PATH.main_logger.rawoutput("")
+            _FAST_PATH.main_logger.rawoutput("")
         else:
-            MAIN_LOGGER.rawoutput("")
+            _FAST_PATH.main_logger.rawoutput("")
 
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
-        MAIN_LOGGER.rawoutput(f"  {step_section_description.description}")
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput(f"  {step_section_description.description}")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
     def stepdescription(
             self,
@@ -191,17 +183,15 @@ class ScenarioLogging:
 
         :param step_definition: Step definition being executed.
         """
-        from ._loggermain import MAIN_LOGGER
-
         # Add space between two steps.
-        MAIN_LOGGER.rawoutput("")
+        _FAST_PATH.main_logger.rawoutput("")
 
         _step_description = f"STEP#{step_definition.number}"  # type: str
         if step_definition.description is not None:
             _step_description += f": {step_definition.description}"
         _step_description += f" ({step_definition.location.tolongstring()})"
-        MAIN_LOGGER.rawoutput(_step_description)
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput(_step_description)
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
         self._calls.append(ScenarioLogging._Call.STEP_DESCRIPTION)
 
@@ -214,15 +204,12 @@ class ScenarioLogging:
 
         :param actionresult: Action or expected result being executed.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-        from ._loggermain import MAIN_LOGGER
-
-        if (actionresult.type == ActionResultDefinition.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
+        if (actionresult.type == _FAST_PATH.action_result_definition_cls.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
             # Add space before an action only after results.
-            MAIN_LOGGER.rawoutput("")
+            _FAST_PATH.main_logger.rawoutput("")
 
         self._displaylongtext(
-            left=f"  {str(actionresult.type).upper():>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}",
+            left=f"  {str(actionresult.type).upper():>{self.ACTION_RESULT_MARGIN - 4}}: {_FAST_PATH.main_logger.getindentation()}",
             long_text=actionresult.description,
         )
 
@@ -238,28 +225,25 @@ class ScenarioLogging:
 
         :param error: Error to display.
         """
-        from ._knownissues import KnownIssue
-        from ._loggermain import MAIN_LOGGER
         from ._testerrors import ExceptionError
 
         # Display known issues once only.
-        if isinstance(error, KnownIssue):
-            for _known_issue in self._known_issues:  # type: KnownIssue
-                if _known_issue == error:
-                    # Known issue already displayed.
-                    return
+        if isinstance(error, _KnownIssueImpl):
+            if any([_known_issue == error for _known_issue in self._known_issues]):
+                # Known issue already displayed.
+                return
             # Ok, this known issue has not been displayed yet.
             self._known_issues.append(error)
 
         # Display the error.
         _log_level = logging.ERROR if error.iserror() else logging.WARNING  # type: int
         if isinstance(error, ExceptionError):
-            MAIN_LOGGER.log(_log_level, "")
-            MAIN_LOGGER.log(_log_level, "!!! EXCEPTION !!!")
-        error.logerror(MAIN_LOGGER, level=_log_level)
+            _FAST_PATH.main_logger.log(_log_level, "")
+            _FAST_PATH.main_logger.log(_log_level, "!!! EXCEPTION !!!")
+        error.logerror(_FAST_PATH.main_logger, level=_log_level)
         if isinstance(error, ExceptionError):
-            MAIN_LOGGER.log(_log_level, "!!! EXCEPTION !!!")
-            MAIN_LOGGER.log(_log_level, "")
+            _FAST_PATH.main_logger.log(_log_level, "!!! EXCEPTION !!!")
+            _FAST_PATH.main_logger.log(_log_level, "")
 
     def evidence(
             self,
@@ -272,10 +256,8 @@ class ScenarioLogging:
 
         :param evidence: Evidence text.
         """
-        from ._loggermain import MAIN_LOGGER
-
         self._displaylongtext(
-            left=f"  {'EVIDENCE':>{self.ACTION_RESULT_MARGIN - 4}}: {MAIN_LOGGER.getindentation()}  -> ",
+            left=f"  {'EVIDENCE':>{self.ACTION_RESULT_MARGIN - 4}}: {_FAST_PATH.main_logger.getindentation()}  -> ",
             long_text=evidence,
         )
 
@@ -292,14 +274,11 @@ class ScenarioLogging:
 
         Resets the :attr:`_known_issues` history for the main scenario.
         """
-        from ._loggermain import MAIN_LOGGER
-        from ._scenariostack import SCENARIO_STACK
-
-        MAIN_LOGGER.rawoutput("")
-        MAIN_LOGGER.rawoutput(f"END OF '{scenario_definition.name}'")
+        _FAST_PATH.main_logger.rawoutput("")
+        _FAST_PATH.main_logger.rawoutput(f"END OF '{scenario_definition.name}'")
 
         # Reset the `_known_issues` history when this is the main scenario.
-        if SCENARIO_STACK.ismainscenario(scenario_definition):
+        if _FAST_PATH.scenario_stack.ismainscenario(scenario_definition):
             self._known_issues = []
 
         self._calls.append(ScenarioLogging._Call.END_SCENARIO)
@@ -313,10 +292,7 @@ class ScenarioLogging:
 
         :param scenario_execution: Scenario which execution has just finished.
         """
-        from ._datetimeutils import f2strduration
-        from ._loggermain import MAIN_LOGGER
-
-        MAIN_LOGGER.rawoutput("------------------------------------------------")
+        _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 
         # Display warnings and errors (if any).
         for _warning in scenario_execution.warnings:  # type: _TestErrorType
@@ -325,12 +301,12 @@ class ScenarioLogging:
             self.error(_error)
 
         # Terminate and display statistics.
-        MAIN_LOGGER.rawoutput(f"             Status: {scenario_execution.status}")
-        MAIN_LOGGER.rawoutput(f"    Number of STEPs: {scenario_execution.step_stats}")
-        MAIN_LOGGER.rawoutput(f"  Number of ACTIONs: {scenario_execution.action_stats}")
-        MAIN_LOGGER.rawoutput(f"  Number of RESULTs: {scenario_execution.result_stats}")
-        MAIN_LOGGER.rawoutput(f"               Time: {f2strduration(scenario_execution.time.elapsed)}")
-        MAIN_LOGGER.rawoutput("")
+        _FAST_PATH.main_logger.rawoutput(f"             Status: {scenario_execution.status}")
+        _FAST_PATH.main_logger.rawoutput(f"    Number of STEPs: {scenario_execution.step_stats}")
+        _FAST_PATH.main_logger.rawoutput(f"  Number of ACTIONs: {scenario_execution.action_stats}")
+        _FAST_PATH.main_logger.rawoutput(f"  Number of RESULTs: {scenario_execution.result_stats}")
+        _FAST_PATH.main_logger.rawoutput(f"               Time: {_datetimeutils.f2strduration(scenario_execution.time.elapsed)}")
+        _FAST_PATH.main_logger.rawoutput("")
 
     def _displaylongtext(
             self,
@@ -347,19 +323,20 @@ class ScenarioLogging:
         :param long_text:
             Long text to display, possibly on several lines.
         """
-        from ._loggermain import MAIN_LOGGER
-
         for _line in long_text.splitlines():  # type: str
             if _line or left.strip():
                 # Regular line display.
-                MAIN_LOGGER.rawoutput(f"{left}{_line}")
+                _FAST_PATH.main_logger.rawoutput(f"{left}{_line}")
             else:
                 # Avoid printing out the left blank indentation only.
-                MAIN_LOGGER.rawoutput("")
+                _FAST_PATH.main_logger.rawoutput("")
 
             # Replace `left` by blank indentation for consecutive lines.
             left = " " * len(left)
 
 
 #: Main instance of :class:`ScenarioLogging`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_logging`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_LOGGING = ScenarioLogging()  # type: ScenarioLogging

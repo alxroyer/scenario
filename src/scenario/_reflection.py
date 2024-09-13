@@ -20,20 +20,16 @@ Reflective programming tools and Python augmentations.
 
 import importlib.util
 import inspect
+import os
 import pathlib
 import sys
 import types
 import typing
 
 if True:
-    from ._debugclasses import DebugClass as _DebugClassImpl  # `DebugClass` used to instanciate global variable.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used to instanciate global variable.
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
-
-
-#: Logger instance for reflective programming.
-REFLECTION_LOGGER = _LoggerImpl(log_class=_DebugClassImpl.REFLECTION)  # type: _LoggerImpl
 
 
 def qualname(
@@ -98,6 +94,68 @@ def isiterable(
         return False
 
 
+def _ensureabsolute(
+        script_path,  # type: _AnyPathType
+):  # type: (...) -> pathlib.Path
+    """
+    Ensures an absolute ``pathlib.Path`` version of ``script_path``.
+
+    :param script_path:
+        Input path.
+    :return:
+        Absolute ``pathlib.Path``.
+        Possibly ``script_path`` as is if already an absolute ``pathlib.Path``.
+    """
+    if isinstance(script_path, pathlib.Path):
+        if not script_path.is_absolute():
+            script_path = script_path.resolve()
+    elif isinstance(script_path, _FAST_PATH.path_cls):
+        return script_path._abspath  # noqa  ## Cannot find reference '_abspath' in 'str | PathLike'
+    else:
+        script_path = pathlib.Path(script_path).resolve()
+    return script_path
+
+
+def modulenamefrompath(
+        script_path,  # type: _AnyPathType
+):  # type: (...) -> str
+    """
+    Fully qualified module name computation from a script path.
+
+    Takes into account relative paths from any of ``sys.path``.
+
+    :param script_path: Script path to compute a module name for.
+    :return: Fully qualified module name computed.
+    """
+    script_path = _ensureabsolute(script_path)
+
+    # Use the directory name in case of a '__init__.py' file.
+    if script_path.name == "__init__.py":
+        _module_name = script_path.parent.name  # type: str
+    # Use the module basename without extension otherwise.
+    else:
+        _module_name = script_path.stem  # Type already declared above.
+
+    # Check whether the script is part of a `sys.path`, in order to preserve the module's package belonging.
+    #
+    # Note:
+    #   `pathlib.PurePath.is_relative_to()` exists from Python 3.9 only. Compare absolute strings.
+    #   Use `os.fspath()` to ensure normalization.
+    #   Compute `_script_fspath` once.
+    _script_fspath = os.fspath(script_path)  # type: str
+    for _python_path in sys.path:  # type: str
+        # `_python_path` may be a relative path. Ensure an absolute path to compare `_script_fspath` with it.
+        _python_path = os.fspath(pathlib.Path(_python_path).resolve())
+
+        # if script_path.is_relative_to(_python_path):
+        if _script_fspath.startswith(_python_path):
+            _module_name = script_path.relative_to(_python_path).as_posix().replace("/", ".")[:-3]
+            if _module_name.endswith(".__init__"):
+                _module_name = _module_name[:-len(".__init__")]
+
+    return _module_name
+
+
 def importmodulefrompath(
         script_path,  # type: _AnyPathType
         sys_modules_cache=True,  # type: bool
@@ -126,29 +184,12 @@ def importmodulefrompath(
 
         - ``__path__`` definition is missing, preventing usage of `pkgutil.extend_path()` consequently.
     """
-    from ._path import Path
-
-    script_path = pathlib.Path(script_path).resolve()
+    script_path = _ensureabsolute(script_path)
     assert script_path.is_file(), f"No such file '{script_path}'"
     assert script_path.suffix == ".py", f"Not a Python script '{script_path}'"
 
-    # Determine the module name:
-    # - Use the directory name in case of a '__init__.py' file.
-    if script_path.name == "__init__.py":
-        _module_name = script_path.parent.name  # type: str
-    # - Use the module basename without extension otherwise.
-    else:
-        _module_name = script_path.stem  # Type already declared above.
-    # - Then check whether the script is part of a `sys.path`, in order to preserve the module's package belonging.
-    for _python_path in sys.path:  # type: str
-        # Note: `pathlib.PurePath.is_relative_to()` exists from Python 3.9 only. Use `scenario.Path` for the purpose.
-        if Path(script_path).is_relative_to(_python_path):
-            _module_name = script_path.relative_to(
-                # Note: `_python_path` may be a relative path. Ensure an absolute path in order to be able to compute a relative path from it.
-                pathlib.Path(_python_path).resolve()
-            ).as_posix().replace("/", ".")[:-3]
-            if _module_name.endswith(".__init__"):
-                _module_name = _module_name[:-len(".__init__")]
+    # Determine the module name.
+    _module_name = modulenamefrompath(script_path)  # type: str
 
     # First check whether the scenario has already been loaded.
     if sys_modules_cache:
@@ -169,29 +210,29 @@ def importmodulefrompath(
             raise ImportError(f"Could not load '{script_path}'")
         _module_spec.loader.exec_module(_module)
     except Exception as _err:
-        REFLECTION_LOGGER.debug("%s", _err, exc_info=sys.exc_info())
+        _FAST_PATH.reflection_logger.debug("%s", _err, exc_info=sys.exc_info())
         raise _err
 
     if sys_modules_cache:
         # Register the module just loaded in the `sys.modules` dictionary.
         # Note: Works even if `_module_name` is in the "package.module" form.
-        REFLECTION_LOGGER.debug("Saving %s -> %r in `sys.modules`", _module_name, _module)
+        _FAST_PATH.reflection_logger.debug("Saving %s -> %r in `sys.modules`", _module_name, _module)
         sys.modules[_module_name] = _module
     else:
         # Save the module just loaded in `_non_cached_modules`.
         # Useful for :func:`_inspectgetfilehack()` just after.
-        REFLECTION_LOGGER.debug("Saving %s -> %r in `_non_cached_modules`", _module_name, _module)
+        _FAST_PATH.reflection_logger.debug("Saving %s -> %r in `_non_cached_modules`", _module_name, _module)
         _non_cached_modules[_module_name] = _module
 
         # Ensure `sys.modules` remain unchanged.
         # Move new modules to `_non_cached_modules` as well.
         for _sys_module_name in list(sys.modules.keys()):  # type: str
             if _sys_module_name not in _initial_sys_modules_keys:
-                REFLECTION_LOGGER.debug("Moving %s -> %r from `sys.modules` to `_non_cached_modules`", _module_name, _module)
+                _FAST_PATH.reflection_logger.debug("Moving %s -> %r from `sys.modules` to `_non_cached_modules`", _module_name, _module)
                 _non_cached_modules[_sys_module_name] = sys.modules[_sys_module_name]
                 del sys.modules[_sys_module_name]
 
-    REFLECTION_LOGGER.debug("importmodulefrompath('%s') => %r", script_path, _module)
+    _FAST_PATH.reflection_logger.debug("importmodulefrompath('%s') => %r", script_path, _module)
     return _module
 
 
@@ -239,17 +280,25 @@ def getloadedmodulefrompath(
     :param script_path: Python script path.
     :return: Corresponding module if already loaded.
     """
-    script_path = pathlib.Path(script_path)
     _module = None  # type: typing.Optional[types.ModuleType]
-    for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
-        if _module is None:
-            for _module_name in _module_registry:  # type: str
+
+    # Heuristic: First search the module from its module name.
+    _module_name = modulenamefrompath(script_path)  # type: str
+    if _module is None:
+        _module = _non_cached_modules.get(_module_name)
+    if _module is None:
+        _module = sys.modules.get(_module_name)
+
+    # If not found yet, try to match with `__file__` attributes of loaded modules.
+    if _module is None:
+        for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
+            for _module_name in _module_registry:  # Type already declared above.
                 if hasattr(_module_registry[_module_name], "__file__"):
                     if pathlib.Path(_module_registry[_module_name].__file__ or "").samefile(script_path):
                         _module = _module_registry[_module_name]
                         break
 
-    REFLECTION_LOGGER.debug("getloadedmodulefrompath('%s') => %r", script_path, _module)
+    _FAST_PATH.reflection_logger.debug("getloadedmodulefrompath('%s') => %r", script_path, _module)
     return _module
 
 
@@ -299,16 +348,14 @@ def checkfuncqualname(
     :param func_name: Short name of the function.
     :return: Fully qualified name of the function, or ``func_name`` as is by default.
     """
-    from ._scenariodefinition import MetaScenarioDefinition
-
     # === Inner functions ===
 
     def _walkmodule(
             module,  # type: types.ModuleType
     ):  # type: (...) -> typing.Optional[str]
         _res = None  # type: typing.Optional[str]
-        REFLECTION_LOGGER.debug("Walking %r", module)
-        with REFLECTION_LOGGER.pushindentation():
+        _FAST_PATH.reflection_logger.debug("Walking %r", module)
+        with _FAST_PATH.reflection_logger.pushindentation():
             for _class_name, _cls in inspect.getmembers(module, inspect.isclass):  # type: str, type
                 _res = _walkclass(_cls)
                 if _res is not None:
@@ -318,7 +365,7 @@ def checkfuncqualname(
                 if _res is not None:
                     return _res
             if func_name == "<module>":
-                REFLECTION_LOGGER.debug("_walkmodule(): %r matches '%s'! => returning '%s'", module, func_name, qualname(module))
+                _FAST_PATH.reflection_logger.debug("_walkmodule(): %r matches '%s'! => returning '%s'", module, func_name, qualname(module))
                 return qualname(module)
         return None
 
@@ -332,8 +379,8 @@ def checkfuncqualname(
             return None
 
         _res = None  # type: typing.Optional[str]
-        REFLECTION_LOGGER.debug("Walking class %r", cls)
-        with REFLECTION_LOGGER.pushindentation():
+        _FAST_PATH.reflection_logger.debug("Walking class %r", cls)
+        with _FAST_PATH.reflection_logger.pushindentation():
             # Inner classes.
             for _class_name, _cls in inspect.getmembers(cls, inspect.isclass):  # type: str, type
                 _res = _walkclass(_cls)
@@ -344,12 +391,6 @@ def checkfuncqualname(
                 _res = _walkfunction(_func)
                 if _res is not None:
                     return _res
-            # `ScenarioDefinition.__init__()` wrappers.
-            for _wrapper_name, _wrapper in inspect.getmembers(cls, lambda obj: isinstance(obj, MetaScenarioDefinition.InitWrapper)):  \
-                    # type: str, MetaScenarioDefinition.InitWrapper
-                _res = _walkfunction(_wrapper.init_method)
-                if _res is not None:
-                    return _res
             # Member methods.
             for _method_name, _meth in inspect.getmembers(cls, inspect.ismethod):  # type: str, types.MethodType
                 _res = _walkfunction(_meth.__func__)
@@ -357,16 +398,29 @@ def checkfuncqualname(
                     return _res
             # Properties.
             for _prop_name, _prop in inspect.getmembers(cls, lambda obj: isinstance(obj, property)):  # type: str, property
-                if _prop.fget:
-                    _res = _walkfunction(typing.cast(types.FunctionType, _prop.fget))
+                _res = _walkproperty(_prop)
+                if _res is not None:
+                    return _res
+            # Method / function wrappers.
+            for _wrapper_name, _wrapper in inspect.getmembers(cls, lambda obj: all([
+                # Not already processed above.
+                not inspect.isclass(obj),
+                not inspect.isfunction(obj),
+                not inspect.ismethod(obj),
+                not isinstance(obj, property),
+                # But still a callable object.
+                hasattr(obj, "__call__"),
+            ])):  # type: str, typing.Any
+                for _wrapper_func_name, _wrapper_func in inspect.getmembers(_wrapper, inspect.isfunction):  # type: str, types.FunctionType
+                    _res = _walkfunction(_wrapper_func)
                     if _res is not None:
                         return _res
-                if _prop.fset:
-                    _res = _walkfunction(typing.cast(types.FunctionType, _prop.fset))
+                for _wrapper_method_name, _wrapper_method in inspect.getmembers(_wrapper, inspect.ismethod):  # type: str, types.MethodType
+                    _res = _walkfunction(_wrapper_method.__func__)
                     if _res is not None:
                         return _res
-                if _prop.fdel:
-                    _res = _walkfunction(typing.cast(types.FunctionType, _prop.fdel))
+                for _wrapper_prop_name, _wrapper_prop in inspect.getmembers(_wrapper, lambda obj: isinstance(obj, property)):  # type: str, property
+                    _res = _walkproperty(_wrapper_prop)
                     if _res is not None:
                         return _res
         return None
@@ -382,40 +436,57 @@ def checkfuncqualname(
 
         return _walkcode("function", qualname(func), func.__code__)
 
+    def _walkproperty(
+            prop,  # type: property
+    ):  # type: (...) -> typing.Optional[str]
+        if prop.fget:
+            _res = _walkfunction(typing.cast(types.FunctionType, prop.fget))
+            if _res is not None:
+                return _res
+        if prop.fset:
+            _res = _walkfunction(typing.cast(types.FunctionType, prop.fset))
+            if _res is not None:
+                return _res
+        if prop.fdel:
+            _res = _walkfunction(typing.cast(types.FunctionType, prop.fdel))
+            if _res is not None:
+                return _res
+        return None
+
     def _walkcode(
             code_type,  # type: str
             code_name,  # type: str
             code,  # type: types.CodeType
     ):  # type: (...) -> typing.Optional[str]
-        REFLECTION_LOGGER.debug("Walking %s '%s' %r", code_type, code_name, code)
-        with REFLECTION_LOGGER.pushindentation():
+        _FAST_PATH.reflection_logger.debug("Walking %s '%s' %r", code_type, code_name, code)
+        with _FAST_PATH.reflection_logger.pushindentation():
             # Filter-out non-matching lines.
-            REFLECTION_LOGGER.debug("_walkcode(): Computing line bounds...")
-            with REFLECTION_LOGGER.pushindentation():
+            _FAST_PATH.reflection_logger.debug("_walkcode(): Computing line bounds...")
+            with _FAST_PATH.reflection_logger.pushindentation():
                 _code_line_count = codelinecount(code)  # type: int
             if (line < code.co_firstlineno) or (line > code.co_firstlineno + _code_line_count):
-                REFLECTION_LOGGER.debug("_walkcode(): Line %d out of [%d, %d]", line, code.co_firstlineno, code.co_firstlineno + _code_line_count)
+                _FAST_PATH.reflection_logger.debug("_walkcode(): Line %d out of [%d, %d]", line, code.co_firstlineno, code.co_firstlineno + _code_line_count)
                 return None
             else:
-                REFLECTION_LOGGER.debug("_walkcode(): Line %d in [%d, %d]", line, code.co_firstlineno, code.co_firstlineno + _code_line_count)
+                _FAST_PATH.reflection_logger.debug("_walkcode(): Line %d in [%d, %d]", line, code.co_firstlineno, code.co_firstlineno + _code_line_count)
 
             # Try to walk through inner classes and functions.
             # Inner classes and functions can be found through the `co_consts` attribute.
             # In this tuple, inner classes and functions are given as a code object, followed by a name.
             # The name seems to be a short name for classes, but fully qualified names for functions...
-            REFLECTION_LOGGER.debug("_walkcode(): Scanning code items:")
-            with REFLECTION_LOGGER.pushindentation():
+            _FAST_PATH.reflection_logger.debug("_walkcode(): Scanning code items:")
+            with _FAST_PATH.reflection_logger.pushindentation():
                 _last_code = None  # type: typing.Optional[types.CodeType]
                 _inner_codes = []  # type: typing.List[typing.Tuple[str, types.CodeType]]
                 for _const in code.co_consts:  # type: typing.Any
-                    REFLECTION_LOGGER.debug("<%s>: %r", type(_const).__name__, _const)
+                    _FAST_PATH.reflection_logger.debug("<%s>: %r", type(_const).__name__, _const)
                     if (_last_code is None) and isinstance(_const, types.CodeType):
                         # Lambda.
                         if _const.co_name == "<lambda>":
                             # By definition, lambdas have no name.
                             # Save them as is.
                             _inner_codes.append((_const.co_name, _const))
-                            REFLECTION_LOGGER.debug("  => Inner code saved: %r", _inner_codes[-1])
+                            _FAST_PATH.reflection_logger.debug("  => Inner code saved: %r", _inner_codes[-1])
                             continue
 
                         # Inline `for` iteration.
@@ -423,22 +494,23 @@ def checkfuncqualname(
                         # - `[x for x in ...]` => '<listcomp>'
                         # - `(x for x in ...)` => '<genexpr>'
                         if _const.co_name in ("<listcomp>", "<genexpr>"):
-                            REFLECTION_LOGGER.debug("  => Inline `for` iteration, skipped")
+                            _FAST_PATH.reflection_logger.debug("  => Inline `for` iteration, skipped")
                             continue
 
                         # No special name, hence should be an inner class or function.
                         # Let's save it as `_last_code`, and wait for a `str` name as the next code item.
                         _last_code = _const
-                        REFLECTION_LOGGER.debug("  => Inner code detected, `str` name expected juste after...")
+                        _FAST_PATH.reflection_logger.debug("  => Inner code detected, `str` name expected juste after...")
                         continue
 
                     # Inner function name.
                     if _last_code is not None:
                         if isinstance(_const, str):
                             _inner_codes.append((_const, _last_code))
-                            REFLECTION_LOGGER.debug("  => Inner code saved: %r", _inner_codes[-1])
+                            _FAST_PATH.reflection_logger.debug("  => Inner code saved: %r", _inner_codes[-1])
                         else:
-                            REFLECTION_LOGGER.warning(f"{_const!r} following {_last_code!r} expected to be of type str, {qualname(type(_const))} found")
+                            _FAST_PATH.reflection_logger.warning(f"{_const!r} following {_last_code!r} expected to be of type str, "
+                                                                 f"{qualname(type(_const))} found")
                         _last_code = None
                         continue
             for _inner_code_name, _inner_code in _inner_codes:  # type: str, types.CodeType
@@ -453,25 +525,25 @@ def checkfuncqualname(
             # Eventually check that the name of this code instance matches the expected function name.
             # Memo: `code_name` is always passed on as fully qualified names for functions.
             if code_name.endswith(func_name):
-                REFLECTION_LOGGER.debug("_walkcode(): '%s' matches '%s'!", code_name, func_name)
+                _FAST_PATH.reflection_logger.debug("_walkcode(): '%s' matches '%s'!", code_name, func_name)
                 return code_name
 
         return None
 
     # === Main implementation ===
 
-    REFLECTION_LOGGER.debug("checkfuncqualname(file='%s', line=%d, func_name=%r)", file, line, func_name)
+    _FAST_PATH.reflection_logger.debug("checkfuncqualname(file='%s', line=%d, func_name=%r)", file, line, func_name)
 
     _fqn = None  # type: typing.Optional[str]
-    with REFLECTION_LOGGER.pushindentation():
+    with _FAST_PATH.reflection_logger.pushindentation():
         _module = getloadedmodulefrompath(file)  # type: typing.Optional[types.ModuleType]
         if _module:
             _fqn = _walkmodule(_module)
 
     if not _fqn:
-        REFLECTION_LOGGER.warning(f"Could not find fully qualified name for {file}:{line}:{func_name}()")
+        _FAST_PATH.reflection_logger.warning(f"Could not find fully qualified name for {file}:{line}:{func_name}()")
     # Return `func_name` as is by default.
-    REFLECTION_LOGGER.debug("checkfuncqualname(file='%s', line=%d, func_name=%r) -> %r", file, line, func_name, _fqn or func_name)
+    _FAST_PATH.reflection_logger.debug("checkfuncqualname(file='%s', line=%d, func_name=%r) -> %r", file, line, func_name, _fqn or func_name)
     return _fqn or func_name
 
 
@@ -500,7 +572,7 @@ def codelinecount(
     assert sys.version_info < (3, 12)
 
     # Inspired from https://svn.python.org/projects/python/branches/pep-0384/Objects/lnotab_notes.txt
-    REFLECTION_LOGGER.debug("codelinecount(): code.co_lnotab = 0x%s", code.co_lnotab.hex())
+    _FAST_PATH.reflection_logger.debug("codelinecount(): code.co_lnotab = 0x%s", code.co_lnotab.hex())
     _byte_code_addr = 0  # type: int
     _line_count = 0  # type: int
     _index = 0
@@ -517,7 +589,7 @@ def codelinecount(
                 _lineno_incr -= 256
             _line_count += _lineno_incr
             _index += 1
-            REFLECTION_LOGGER.debug(
+            _FAST_PATH.reflection_logger.debug(
                 "codelinecount(): byte-code-addr(%+d) = %d, line_count(%+d) = %d, lines = [%d; %d]",
                 _byte_code_incr, _byte_code_addr, _lineno_incr,
                 _line_count,

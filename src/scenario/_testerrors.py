@@ -22,6 +22,10 @@ import logging
 import traceback
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
+    from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._locations import CodeLocation as _CodeLocationType
@@ -143,8 +147,7 @@ class TestError(Exception):
         :param json_data: JSON dictionary.
         :return: New :class:`TestError` instance.
         """
-        from ._knownissues import KnownIssue
-        from ._locations import CodeLocation
+        from ._knownissues import KnownIssue  # check-imports: ignore  ## Avoid cyclic module imports with '_knownissues.py'.
 
         if "type" in json_data:
             if json_data["type"] == "known-issue":
@@ -152,9 +155,9 @@ class TestError(Exception):
             else:
                 return ExceptionError.fromjson(json_data)
 
-        _location = None  # type: typing.Optional[CodeLocation]
+        _location = None  # type: typing.Optional[_CodeLocationType]
         if "location" in json_data:
-            _location = CodeLocation.fromlongstring(json_data["location"])
+            _location = _CodeLocationImpl.fromlongstring(json_data["location"])
         return TestError(message=json_data["message"], location=_location)
 
 
@@ -170,9 +173,6 @@ class ExceptionError(TestError):
         """
         :param exception: Root cause exception, if available.
         """
-        from ._locations import CodeLocation, EXECUTION_LOCATIONS
-        from ._path import Path
-
         # Check input parameters.
         if isinstance(exception, BaseException):
             exception = traceback.TracebackException.from_exception(exception)
@@ -180,9 +180,9 @@ class ExceptionError(TestError):
         # Call the `TestError` initializer.
         if exception:
             # Caution: in case of internal error, `fromexception()` may return an empty list.
-            _location = CodeLocation(Path(), 0, "")
-            if EXECUTION_LOCATIONS.fromexception(exception, limit=1):
-                _location = EXECUTION_LOCATIONS.fromexception(exception, limit=1, fqn=True)[-1]
+            _location = _CodeLocationImpl(_PathImpl(), 0, "")
+            if _FAST_PATH.execution_locations.fromexception(exception, limit=1):
+                _location = _FAST_PATH.execution_locations.fromexception(exception, limit=1, fqn=True)[-1]
             TestError.__init__(
                 self,
                 message=str(exception),
@@ -247,10 +247,8 @@ class ExceptionError(TestError):
         :param json_data: JSON dictionary.
         :return: New :class:`ExceptionError` instance.
         """
-        from ._locations import CodeLocation
-
         _error = ExceptionError(exception=None)  # type: ExceptionError
         _error.exception_type = json_data["type"]
         _error.message = json_data["message"]
-        _error.location = CodeLocation.fromlongstring(json_data["location"])
+        _error.location = _CodeLocationImpl.fromlongstring(json_data["location"])
         return _error

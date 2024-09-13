@@ -16,6 +16,7 @@
 
 import importlib
 import inspect
+import logging
 import pathlib
 import re
 import sphinx.application
@@ -24,6 +25,8 @@ import sys
 import traceback
 import types
 import typing
+
+import scenario.inners
 
 
 # Cache of module names that have already been `typing.TYPE_CHECKING`-reloaded.
@@ -61,22 +64,22 @@ def _reloadscenariomoduleswithtypechecking():  # type: (...) -> None
 
     # Reload scenario modules with `typing.TYPE_CHECKING` enabled.
     for _module_name in _scenariodocumentedmodulenames():  # type: str
-        _logger.debug(f"Reloading {_module_name!r} with `typing.TYPE_CHECKING` enabled")
+        _logger.debug(f"Reloading {_module_name!r} with `typing.TYPE_CHECKING=True`")
         try:
             _reloadmodulewithtypechecking(_module_name)
         except Exception as _err:
             _logger.warning(f"Error while reloading {_module_name!r}: {_err!r}")
+            _logger.scenario_logger.logexceptiontraceback(_err, level=logging.WARNING)
 
 
 def _reloadmodulewithtypechecking(
         module_name,  # type: str
 ):  # type: (...) -> None
-    from scenario._reflection import importmodulefrompath  # noqa  ## Access to a protected member
     from .._paths import SRC_PATH
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TYPE_CHECKING_RELOAD)  # type: Logger
-    _logger.debug("_reloadwithtypechecking(module_name=%r)", module_name)
+    _logger.debug("_reloadmodulewithtypechecking(module_name=%r)", module_name)
 
     # Check the cache at first.
     if module_name in _RELOADWITHTYPECHECKING_CACHE:
@@ -95,6 +98,9 @@ def _reloadmodulewithtypechecking(
         Recursive function that reloads a module,
         and in case of ``ImportError`` exceptions, tries to reload typing dependencies.
         """
+        # Checking for cyclic dependency.
+        if module_name in _being_reloaded:
+            raise ImportError(f"Cannot reload {module_name!r} due to type checking cyclic dependencies between {_being_reloaded!r}")
         # Mark the given module name as being reloaded.
         _being_reloaded.append(module_name)
 
@@ -109,7 +115,7 @@ def _reloadmodulewithtypechecking(
                 # Ensure `typing.TYPE_CHECKING` is disabled.
                 typing.TYPE_CHECKING = False
 
-                importmodulefrompath(
+                scenario.inners.reflection.importmodulefrompath(
                     module_path,
                     # Ensure the module will be saved in `sys.modules`.
                     sys_modules_cache=True,
@@ -124,7 +130,7 @@ def _reloadmodulewithtypechecking(
         assert _original_module.__file__, f"Invalid path {_original_module.__file__!r} for module {_original_module}"
         module_path = pathlib.Path(_original_module.__file__)
 
-        # Keep trying to reload the module with `typing.TYPE_CHECKING` enabled until:
+        # Keep trying to reload the module with `typing.TYPE_CHECKING=True` until:
         # - either it succeeds directly,
         # - or it succeeds after typing dependencies have been reloaded with `typing.TYPE_CHECKING` enabled as well,
         # - or it fails due to type checking cyclic dependencies (`ImportError` raised).
@@ -138,7 +144,7 @@ def _reloadmodulewithtypechecking(
                 # Reload the module (without replacing the original one).
                 if module_path.name != "__init__.py":
                     # Don't use `importlib.reload()` in general, otherwise the original modules would be replaced, possibly breaking consistency by the way.
-                    _reloaded_module = importmodulefrompath(
+                    _reloaded_module = scenario.inners.reflection.importmodulefrompath(
                         module_path,
                         # Don't read from `sys.modules`, nor save the reloaded module in `sys.modules`.
                         sys_modules_cache=False,
@@ -176,46 +182,50 @@ def _reloadmodulewithtypechecking(
                 _RELOADWITHTYPECHECKING_CACHE.append(module_name)
                 return
 
-            except ImportError as _err:
+            except (ImportError, AttributeError) as _err:
                 _logger.debug("Import error: %r", _err)
-                # Memo: The `_err.name` and `_err.path` fields don't seem to be set...
-                _logger.debug("_err.name = %r", _err.name)
-                _logger.debug("_err.path = %r", _err.path)
 
                 # Find out the name of the typing module dependency.
                 _module_dependency = ""  # type: str
-                _match = re.search(r"cannot import name '([^']*)' from '([^']*)'", str(_err))  # type: typing.Optional[typing.Match[str]]
-                if _match:
-                    _module_dependency = _match.group(2)
-                else:
-                    # If the regex above fails, fallback on analyzing the exception traceback
-                    # (case with python 3.6: the 'from ...' part of the exception message is not given, just the name).
-                    _tb_err = traceback.TracebackException.from_exception(_err)  # type: traceback.TracebackException
-                    _tb_lines = "".join(_tb_err.stack.format()).splitlines()  # type: typing.Sequence[str]
-                    for _tb_line in _tb_lines:  # type: str
-                        _logger.debug(_tb_line)
-                    _match = re.search(r"from \.(.*) import ", _tb_lines[-1])  # Type already declared above.
+                if isinstance(_err, ImportError):
+                    if not _module_dependency:
+                        # Memo: The `_err.name` and `_err.path` fields don't seem to be always set with `ImportError`s...
+                        _logger.debug("_err.name = %r", _err.name)
+                        _logger.debug("_err.path = %r", _err.path)
+                        _module_dependency = _err.name or ""
+                    if not _module_dependency:
+                        _match = re.search(r"cannot import name '([^']*)' from '([^']*)'", str(_err))  # type: typing.Optional[typing.Match[str]]
+                        if _match:
+                            _module_dependency = _match.group(2)
+                    if not _module_dependency:
+                        # If the regex above fails, fallback on analyzing the exception traceback.
+                        # May be the case with python 3.6: the 'from ...' part of the exception message is not given, just the name.
+                        _tb_err = traceback.TracebackException.from_exception(_err)  # type: traceback.TracebackException
+                        _tb_lines = "".join(_tb_err.stack.format()).splitlines()  # type: typing.Sequence[str]
+                        for _tb_line in _tb_lines:  # type: str
+                            _logger.debug(_tb_line)
+                        _match = re.search(r"from \.(.*) import ", _tb_lines[-1])  # Type already declared above.
+                        if _match:
+                            _module_dependency = f"scenario.{_match.group(1)}"
+                if isinstance(_err, AttributeError):
+                    _match = re.search(r"module '([^']*)' has no attribute '([^']*)'", str(_err))  # Type already declared above.
                     if _match:
-                        _module_dependency = f"scenario.{_match.group(1)}"
+                        _module_dependency = _match.group(1)
 
                 # Try to reload the typing dependency recursively...
                 if _module_dependency:
-                    if _module_dependency in _being_reloaded:
-                        # ... unless we detect a type checking cyclic dependency.
-                        raise ImportError(f"Cannot import {module_name!r} due to type checking cyclic dependencies with {_module_dependency!r}")
-                    else:
-                        # Reload the typing dependency.
-                        with _logger.scenario_logger.pushindentation("  "):
-                            _reload(
-                                module_name=_module_dependency,
-                                module_path=pathlib.Path(_err.path or (SRC_PATH / f"{_module_dependency.replace('.', '/')}.py")),
-                            )
+                    # Reload the typing dependency.
+                    with _logger.scenario_logger.pushindentation("  "):
+                        _reload(
+                            module_name=_module_dependency,
+                            module_path=pathlib.Path(SRC_PATH / f"{_module_dependency.replace('.', '/')}.py"),
+                        )
 
-                        # If the typing dependency could be reloaded successfully, try again reloading the module for this `_reload()` call.
-                        continue
+                    # If the typing dependency could be reloaded successfully, try again reloading the module for this `_reload()` call.
+                    continue
 
-                # Unhandled `ImportError`, re-raise the exception as is.
-                raise _err
+                # Unhandled exception, re-raise it as is.
+                raise
 
             finally:
                 # Whatever happened, reset `typing.TYPE_CHECKING` eventually.
@@ -230,7 +240,6 @@ def _reloadmodulewithtypechecking(
 
 
 def _trackscenariotypes():  # type: (...) -> None
-    from scenario._reflection import fqname  # noqa  ## Access to a protected member
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TRACK_SCENARIO_TYPES)  # type: Logger
@@ -253,7 +262,7 @@ def _trackscenariotypes():  # type: (...) -> None
 
             _member = getattr(_module, _obj_name)  # type: typing.Any
             # Memo: `fqname()` fails on types, build the type fully qualified name from the local information we have in this function.
-            _fq_name = f"{fqname(_module)}.{_obj_name}"  # type: str
+            _fq_name = f"{scenario.inners.reflection.fqname(_module)}.{_obj_name}"  # type: str
 
             if inspect.getmodule(type(_member)) == typing:
                 # `repr()` on a type gives a useful string, let's display that string with `%r` below.

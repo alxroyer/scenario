@@ -24,7 +24,10 @@ import sys
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logfilters import HandlerLogFilter as _HandlerLogFilterImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._loghandler import LogHandler as _LogHandlerImpl  # @perf
 
 
 class MainLogger(_LoggerImpl):
@@ -38,10 +41,8 @@ class MainLogger(_LoggerImpl):
         """
         Enables debugging by default and makes console initializations.
         """
-        from ._consoleutils import disableconsolebuffering
-        from ._logfilters import HandlerLogFilter
+        from ._consoleutils import disableconsolebuffering  # check-imports: ignore  ## Once only import, no need to optimize.
         from ._logformatter import LogFormatter
-        from ._loghandler import LogHandler
 
         _LoggerImpl.__init__(self, log_class="")
 
@@ -54,15 +55,15 @@ class MainLogger(_LoggerImpl):
         # Install the console handler (with its attached filter and formatter).
         #
         # Note:
-        # A second dummy main logger may be instanciated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
+        # A second dummy main logger may be instantiated due to our `scenario.tools.sphinx` implementation with `typing.TYPE_CHECKING` enabled.
         # Skip the console handler installation in that case.
-        assert (LogHandler.console_handler is None) or typing.TYPE_CHECKING, "Console handler already installed"
-        if LogHandler.console_handler is None:
-            LogHandler.console_handler = logging.StreamHandler()
-            LogHandler.console_handler.stream = sys.stdout  # Note: :meth:`logging.StreamHandler.setStream()` is not available in all Python versions.
-            LogHandler.console_handler.addFilter(HandlerLogFilter(handler=LogHandler.console_handler))
-            LogHandler.console_handler.setFormatter(LogFormatter(LogHandler.console_handler))
-            self._logger.addHandler(LogHandler.console_handler)
+        assert (_LogHandlerImpl.console_handler is None) or typing.TYPE_CHECKING, "Console handler already installed"
+        if _LogHandlerImpl.console_handler is None:
+            _LogHandlerImpl.console_handler = logging.StreamHandler()
+            _LogHandlerImpl.console_handler.stream = sys.stdout  # Note: :meth:`logging.StreamHandler.setStream()` is not available in all Python versions.
+            _LogHandlerImpl.console_handler.addFilter(_HandlerLogFilterImpl(handler=_LogHandlerImpl.console_handler))
+            _LogHandlerImpl.console_handler.setFormatter(LogFormatter(_LogHandlerImpl.console_handler))
+            self._logger.addHandler(_LogHandlerImpl.console_handler)
 
     def rawoutput(
             self,
@@ -75,18 +76,19 @@ class MainLogger(_LoggerImpl):
 
         :param message: Log message to output.
         """
-        from ._logextradata import LogExtraData
-
         self.info(
             message,
             extra={
-                LogExtraData.LOG_LEVEL: False,
-                LogExtraData.COLOR: False,
-                LogExtraData.MAIN_LOGGER_INDENTATION: False,
-                LogExtraData.ACTION_RESULT_MARGIN: False,
+                _LogExtraDataImpl.LOG_LEVEL: False,
+                _LogExtraDataImpl.COLOR: False,
+                _LogExtraDataImpl.MAIN_LOGGER_INDENTATION: False,
+                _LogExtraDataImpl.ACTION_RESULT_MARGIN: False,
             },
         )
 
 
 #: Main logger instance.
+#:
+#: Also available as :attr:`._fastpath.FastPath.main_logger`.
+#: Please prefer the latter instead of using local imports of this module.
 MAIN_LOGGER = MainLogger()  # type: MainLogger

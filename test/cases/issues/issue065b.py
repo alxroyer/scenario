@@ -20,7 +20,7 @@ import scenario
 import scenario.test
 
 if True:
-    from issues.issue065a import CheckTimeLostStep as _CheckTimeLostStepImpl  # `CheckTimeLostStep` used for inheritance.
+    from issues.issue065a import CheckTimeLostStep as _CheckTimeLostStepImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from campaigns.steps.execution import ExecCampaign as _ExecCampaignType
     from steps.common import ParseFinalResultsLog as _ParseFinalResultsLogType

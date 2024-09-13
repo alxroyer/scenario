@@ -21,7 +21,13 @@ Requirement / test coverage links.
 import abc
 import typing
 
+if True:
+    from . import _setutils as _setutils  # @perf
+    from . import _textutils as _textutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
+    from . import _typeutils as _typeutils
     from ._req import Req as _ReqType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
@@ -29,8 +35,6 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqtypes import VarReqVerifierType as _VarReqVerifierType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
-    from ._setutils import OrderedSetType as _OrderedSetType
-    from ._typeutils import VarItemType as _VarItemType
 
 
 class ReqLink:
@@ -44,16 +48,14 @@ class ReqLink:
     @staticmethod
     def orderedset(
             req_links,  # type: typing.Iterable[ReqLink]
-    ):  # type: (...) -> _OrderedSetType[ReqLink]
+    ):  # type: (...) -> _setutils.OrderedSetType[ReqLink]
         """
         Ensures a sorted set of unique :class:`ReqLink` items.
 
         :param req_links: Unordered list of :class:`ReqLink` items.
         :return: Ordered set of unique :class:`ReqLink` items, by requirement reference ids, then scenario names and steps.
         """
-        from ._setutils import orderedset
-
-        return orderedset(
+        return _setutils.orderedset(
             req_links,
             key=ReqLinkHelper.sortkeyfunction,
         )
@@ -69,8 +71,6 @@ class ReqLink:
 
         :param req_link_def: Requirement link definition.
         """
-        from ._textutils import anylongtext2str
-
         #: Verified requirement reference.
         #:
         #: Unresolved input data for the :meth:`req_ref()` property.
@@ -86,7 +86,7 @@ class ReqLink:
             self._any_req_ref = req_link_def[0]
             # 2nd member is optional comments.
             if len(req_link_def) > 1:
-                self.comments = anylongtext2str(
+                self.comments = _textutils.anylongtext2str(
                     req_link_def[1],  # type: ignore[misc]  ## Tuple index out of range (mypy@1.0.1 bug?)
                 )
         else:
@@ -97,13 +97,10 @@ class ReqLink:
         """
         Canonical string representation of the requirement link.
         """
-        from ._reflection import qualname
-        from ._reqverifier import ReqVerifierHelper
-
         return "".join([
-            f"<{qualname(type(self))}",
+            f"<{_qualname(type(self))}",
             f" req_ref={self.req_ref!r}",
-            f" req_verifiers={[ReqVerifierHelper.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
+            f" req_verifiers={[_FAST_PATH.req_verifier_helper_cls.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
             f" comments={self.comments!r}" if self.comments else "",
             ">",
         ])
@@ -112,12 +109,10 @@ class ReqLink:
         """
         Human readable string representation of the requirement link.
         """
-        from ._reqverifier import ReqVerifierHelper
-
         return "".join([
             str(self.req_ref),
             " <- ",
-            "{", ", ".join([ReqVerifierHelper.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]), "}",
+            "{", ", ".join([_FAST_PATH.req_verifier_helper_cls.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]), "}",
             f" | {self.comments}" if self.comments else "",
         ])
 
@@ -141,20 +136,16 @@ class ReqLink:
 
         Resolution of :attr:`_any_req_ref`.
         """
-        from ._reqdb import REQ_DB
-
-        return REQ_DB.getreqref(self._any_req_ref, push_unknown=True)
+        return _FAST_PATH.req_db.getreqref(self._any_req_ref, push_unknown=True)
 
     @property
-    def req_verifiers(self):  # type: () -> _OrderedSetType[_ReqVerifierType]
+    def req_verifiers(self):  # type: () -> _setutils.OrderedSetType[_ReqVerifierType]
         """
         Requirement verifiers tracing the given requirement reference with this link.
 
         See :meth:`._reqverifier.ReqVerifier.orderedset()` for order details.
         """
-        from ._reqverifier import ReqVerifier
-
-        return ReqVerifier.orderedset(self._req_verifiers)
+        return _FAST_PATH.req_verifier_cls.orderedset(self._req_verifiers)
 
     def matches(
             self,
@@ -186,12 +177,9 @@ class ReqLink:
 
             ``True`` by default when no predicates are set.
         """
-        from ._reqdb import REQ_DB
-        from ._scenariodefinition import ScenarioDefinition
-
         # Requirement reference predicates.
         if req_ref is not None:
-            req_ref = REQ_DB.getreqref(req_ref)
+            req_ref = _FAST_PATH.req_db.getreqref(req_ref)
             if not self.req_ref.matches(req_ref):
                 # Requirement reference mismatch.
                 if walk_subrefs and req_ref.ismain():
@@ -205,9 +193,12 @@ class ReqLink:
         if req_verifier is not None:
             if req_verifier not in self._req_verifiers:
                 # Requirement verifier mismatch.
-                if walk_steps and isinstance(req_verifier, ScenarioDefinition):
+                if walk_steps and isinstance(req_verifier, _FAST_PATH.scenario_definition_cls):
                     # Scenario and `walk_steps`.
-                    if not any([(_step in self._req_verifiers) for _step in req_verifier.steps]):
+                    if not any([
+                        (_step in self._req_verifiers)
+                        for _step in req_verifier.steps  # noqa  ## Unresolved attribute reference 'steps' for class 'ReqVerifier'
+                    ]):
                         return False
                 else:
                     return False
@@ -225,12 +216,10 @@ class ReqLink:
         :param req_verifier: Requirement verifier that traces the requirement reference with this link.
         :return: ``self``
         """
-        from ._reqdb import REQ_DB
-
         # As soon as the link is actually traced by verifiers:
         # - ensure the database knows the requirement reference (subreferences only),
         if self.req_ref.issubref():
-            REQ_DB.push(self.req_ref)
+            _FAST_PATH.req_db.push(self.req_ref)
         # - ensure the link is saved in the requirement reference link set,
         if self not in self.req_ref.req_links:
             self.req_ref._req_links.add(self)  # noqa  ## Access to protected member
@@ -241,7 +230,7 @@ class ReqLink:
             self._req_verifiers.add(req_verifier)
 
             # Debug the downstream requirement link.
-            REQ_DB.debug("Requirement link: %s -> %r", self.req_ref.id, req_verifier)
+            _FAST_PATH.req_db.debug("Requirement link: %s -> %r", self.req_ref.id, req_verifier)
 
             # Link <-> verifier cross-reference.
             req_verifier.verifies(self)
@@ -266,30 +255,28 @@ class ReqLinkHelper(abc.ABC):
         :param req_link: Requirement link item to sort.
         :return: Key tuple.
         """
-        from ._reqverifier import ReqVerifierHelper
-
         return (
             req_link.req_ref.id,
-            *[ReqVerifierHelper.sortkeyfunction(_req_verifier) for _req_verifier in req_link.req_verifiers],
+            *[_FAST_PATH.req_verifier_helper_cls.sortkeyfunction(_req_verifier) for _req_verifier in req_link.req_verifiers],
         )
 
     @staticmethod
     def buildsetwithreqlinks(
             req_link_holders,  # type: typing.Sequence[typing.Union[_ReqRefType, _ReqVerifierType]]
-            items_from_link,  # type: typing.Callable[[ReqLink], typing.Iterable[_VarItemType]]
-    ):  # type: (...) -> _SetWithReqLinksType[_VarItemType]
+            items_from_link,  # type: typing.Callable[[ReqLink], typing.Iterable[_typeutils.VarItemType]]
+    ):  # type: (...) -> _SetWithReqLinksType[_typeutils.VarItemType]
         """
         Builds a set of items with related requirement links.
 
         :param req_link_holders: List of requirement references or requirement verifiers to walk through.
         :param items_from_link: Function that retrieves the items to save from requirement links.
         """
-        _set_with_req_links = {}  # type: _SetWithReqLinksType[_VarItemType]
+        _set_with_req_links = {}  # type: _SetWithReqLinksType[_typeutils.VarItemType]
 
         # Walk from `req_link_holders` through requirement links and items to save.
         for _req_link_holder in req_link_holders:  # type: typing.Union[_ReqRefType, _ReqVerifierType]
             for _req_link in _req_link_holder.req_links:  # type: ReqLink
-                for _item in items_from_link(_req_link):  # type: _VarItemType
+                for _item in items_from_link(_req_link):  # type: _typeutils.VarItemType
                     # Build unordered sets of requirement links first.
                     if _item not in _set_with_req_links:
                         _set_with_req_links[_item] = [_req_link]

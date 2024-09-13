@@ -18,8 +18,7 @@ import scenario.test
 import scenario.text
 
 if True:
-    # `ScenarioReportFileVerificationStep` used for inheritance.
-    from scenarioreport.steps.reportfile import ScenarioReportFileVerificationStep as _ScenarioReportFileVerificationStepImpl
+    from scenarioreport.steps.reportfile import ScenarioReportFileVerificationStep as _ScenarioReportFileVerificationStepImpl  # @inheritance
 
 
 class Issue33(scenario.test.TestCase):

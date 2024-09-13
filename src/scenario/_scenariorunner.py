@@ -18,25 +18,46 @@
 Scenario execution management.
 """
 
-import logging
 import sys
 import time
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _enumutils as _enumutils  # @inheritance, @perf
+    from . import _textutils as _textutils  # @perf
+    from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionImpl  # @perf
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionImpl  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
+    from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._scenarioargs import ScenarioArgs as _ScenarioArgsImpl  # @perf
+    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
+    from ._scenarioevents import ScenarioEvent as _ScenarioEventImpl  # @perf
+    from ._scenarioevents import ScenarioEventData as _ScenarioEventDataImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
+    from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
+    from ._stepdefinition import StepDefinitionHelper as _StepDefinitionHelperImpl  # @perf
+    from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
+    from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # @perf
+    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
+    from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._stepexecution import StepExecution as _StepExecutionType
+    from ._stepexecution import StepExecutionHelper as _StepExecutionHelperType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
     from ._stepuserapi import StepUserApi as _StepUserApiType
     from ._testerrors import TestError as _TestErrorType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
 class ScenarioRunner(_LoggerImpl):
@@ -56,7 +77,7 @@ class ScenarioRunner(_LoggerImpl):
     - :class:`._scenarioreport.ScenarioReport`: scenario report generation.
     """
 
-    class ExecutionMode(_StrEnumImpl):
+    class ExecutionMode(_enumutils.StrEnum):
         """
         Execution mode enum.
 
@@ -77,11 +98,8 @@ class ScenarioRunner(_LoggerImpl):
         """
         Sets up logging for the :class:`ScenarioRunner` class, and member variables.
         """
-        from ._debugclasses import DebugClass
-        from ._logextradata import LogExtraData
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.SCENARIO_RUNNER)
-        self.setextradata(LogExtraData.ACTION_RESULT_MARGIN, False)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.SCENARIO_RUNNER)
+        self.setextradata(_LogExtraDataImpl.ACTION_RESULT_MARGIN, False)
 
     def main(self):  # type: (...) -> _ErrorCodeType
         """
@@ -89,90 +107,70 @@ class ScenarioRunner(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._debugloggers import ExecTimesLogger
-        from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
-        from ._loggingservice import LOGGING_SERVICE
-        from ._path import Path
-        from ._reqdb import REQ_DB
-        from ._scenarioargs import ScenarioArgs
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._scenarioexecution import ScenarioExecution
-        from ._scenarioreport import SCENARIO_REPORT
-        from ._scenarioresults import SCENARIO_RESULTS
-        from ._scenariostack import SCENARIO_STACK
-
-        _exec_times_logger = ExecTimesLogger("ScenarioRunner.main()")  # type: ExecTimesLogger
-
         try:
             # Analyze program arguments, if not already set.
-            if not ScenarioArgs.isset():
-                ScenarioArgs.setinstance(ScenarioArgs())
-                if not ScenarioArgs.getinstance().parse(sys.argv[1:]):
-                    return ScenarioArgs.getinstance().error_code
+            if not _ScenarioArgsImpl.isset():
+                _ScenarioArgsImpl.setinstance(_ScenarioArgsImpl())
+                if not _ScenarioArgsImpl.getinstance().parse(sys.argv[1:]):
+                    return _ScenarioArgsImpl.getinstance().error_code
 
             # Start log features.
-            LOGGING_SERVICE.start()
+            _FAST_PATH.logging_service.start()
 
             # Load requirements.
-            for _req_db_file in SCENARIO_CONFIG.reqdbfiles():  # type: Path
-                MAIN_LOGGER.info(f"Loading requirements from '{_req_db_file}'")
-                REQ_DB.load(_req_db_file)
+            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
+                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_file}'")
+                _FAST_PATH.req_db.load(_req_db_file)
 
             # Execute tests.
-            _errors = []  # type: typing.List[ErrorCode]
-            for _scenario_path in ScenarioArgs.getinstance().scenario_paths:  # type: Path
+            _errors = []  # type: typing.List[_ErrorCodeType]
+            for _scenario_path in _ScenarioArgsImpl.getinstance().scenario_paths:  # type: _PathType
                 self.debug("Executing '%s'...", _scenario_path)
 
-                _exec_times_logger.tick("Before executepath()")
-                _res = self.executepath(_scenario_path)  # type: ErrorCode
-                if _res != ErrorCode.SUCCESS:
+                _res = self.executepath(_scenario_path)  # type: _ErrorCodeType
+                if _res != _ErrorCodeImpl.SUCCESS:
                     # The `executepath()` and `execute()` methods don't return `ErrorCode.TEST_ERROR`.
                     # If the return code is not `ErrorCode.SUCCESS` at this point, it means this is a serious error.
                     # Stop processing right away.
                     return _res
 
                 # Retrieve the last scenario execution.
-                assert SCENARIO_STACK.size == 0
-                if not SCENARIO_STACK.history:
+                assert _FAST_PATH.scenario_stack.size == 0
+                if not _FAST_PATH.scenario_stack.history:
                     self.error("No last scenario after execution")
-                    return ErrorCode.INTERNAL_ERROR
-                _scenario_execution = SCENARIO_STACK.history[-1]  # type: ScenarioExecution
+                    return _ErrorCodeImpl.INTERNAL_ERROR
+                _scenario_execution = _FAST_PATH.scenario_stack.history[-1]  # type: _ScenarioExecutionType
 
                 # Manage test errors.
                 if _scenario_execution.errors:
-                    _errors.append(ErrorCode.TEST_ERROR)
+                    _errors.append(_ErrorCodeImpl.TEST_ERROR)
 
                 # Feed the `SCENARIO_RESULTS` instance.
-                SCENARIO_RESULTS.add(_scenario_execution)
-                _exec_times_logger.tick("After executepath()")
+                _FAST_PATH.scenario_results.add(_scenario_execution)
 
                 # Generate scenario report if required.
-                _scenario_report = ScenarioArgs.getinstance().scenario_report  # type: typing.Optional[Path]
+                _scenario_report = _ScenarioArgsImpl.getinstance().scenario_report  # type: typing.Optional[_PathType]
                 if _scenario_report:
                     try:
-                        SCENARIO_REPORT.writescenarioreport(_scenario_execution.definition, _scenario_report)
+                        _FAST_PATH.scenario_report.writescenarioreport(_scenario_execution.definition, _scenario_report)
                     except Exception as _err:
-                        MAIN_LOGGER.error(f"Error while writing '{_scenario_report}': {_err}")
+                        _FAST_PATH.main_logger.error(f"Error while writing '{_scenario_report}': {_err}")
                         # Note: Full traceback will be displayed in the main `except` block below.
                         raise
-                    _exec_times_logger.tick("After scenario report generation")
 
             # Display final results (when applicable).
-            if SCENARIO_RESULTS.count > 1:
-                SCENARIO_RESULTS.display()
+            if _FAST_PATH.scenario_results.count > 1:
+                _FAST_PATH.scenario_results.display()
 
             # Terminate log features.
-            LOGGING_SERVICE.stop()
+            _FAST_PATH.logging_service.stop()
 
             # End test.
-            return ErrorCode.worst(_errors)
+            return _ErrorCodeImpl.worst(_errors)
 
         except Exception as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
-            return ErrorCode.fromexception(_err)
-        finally:
-            _exec_times_logger.finish()
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
+            return _ErrorCodeImpl.fromexception(_err)
 
     # Scenario execution.
 
@@ -185,14 +183,10 @@ class ScenarioRunner(_LoggerImpl):
         1) the scenario stack building context,
         and 2) the scenario args --doc-only option.
         """
-        from ._args import Args
-        from ._scenarioargs import ScenarioArgs
-        from ._scenariostack import SCENARIO_STACK
-
-        if SCENARIO_STACK.building.scenario_definition:
+        if _FAST_PATH.scenario_stack.building.scenario_definition:
             return ScenarioRunner.ExecutionMode.BUILD_OBJECTS
-        elif isinstance(Args.getinstance(), ScenarioArgs):
-            if ScenarioArgs.getinstance().doc_only:
+        elif _FAST_PATH.scenario_args:
+            if _FAST_PATH.scenario_args.doc_only:
                 return ScenarioRunner.ExecutionMode.DOC_ONLY
             else:
                 return ScenarioRunner.ExecutionMode.EXECUTE
@@ -213,51 +207,39 @@ class ScenarioRunner(_LoggerImpl):
 
         Feeds the :data:`._scenarioresults.SCENARIO_RESULTS` instance.
         """
-        from ._debugloggers import ExecTimesLogger
-        from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
-        from ._scenariodefinition import ScenarioDefinitionHelper
-
-        _exec_times_logger = ExecTimesLogger("ScenarioRunner.executepath()")  # type: ExecTimesLogger
         # Save the current time before loading the scenario script
         # and the `ScenarioDefinition` instance has been eventually created.
         _t0 = time.time()  # type: float
 
         # Create a test instance.
         try:
-            _scenario_definition_class = (
-                ScenarioDefinitionHelper.getscenariodefinitionclassfromscript(scenario_path)
-            )  # type: typing.Type[_ScenarioDefinitionType]
-            _exec_times_logger.tick("Once the definition class has been found")
+            _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(scenario_path) \
+                # type: typing.Type[_ScenarioDefinitionType]
         except ImportError as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
-            return ErrorCode.INPUT_MISSING_ERROR
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
+            return _ErrorCodeImpl.INPUT_MISSING_ERROR
         except SyntaxError as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
-            return ErrorCode.INPUT_FORMAT_ERROR
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
+            return _ErrorCodeImpl.INPUT_FORMAT_ERROR
         except LookupError as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
-            return ErrorCode.INPUT_FORMAT_ERROR
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
+            return _ErrorCodeImpl.INPUT_FORMAT_ERROR
 
         try:
             _scenario_definition = _scenario_definition_class()  # type: _ScenarioDefinitionType
-            _exec_times_logger.tick("Once the definition class has been instanciated")
         except Exception as _err:
             # Unexpected exception.
-            MAIN_LOGGER.error(f"Unexpected exception: {_err}")
-            MAIN_LOGGER.logexceptiontraceback(_err)
-            return ErrorCode.INTERNAL_ERROR
+            _FAST_PATH.main_logger.error(f"Unexpected exception: {_err}")
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
+            return _ErrorCodeImpl.INTERNAL_ERROR
 
-        _exec_times_logger.tick("Before executing the step")
         _err_code = self.executescenario(
             _scenario_definition,
-            # Instanciation sometimes takes a while.
+            # Instantiation sometimes takes a while.
             # Ensure the starting time is set to when this method has actually been called.
             start_time=_t0,
-        )  # type: ErrorCode
-        _exec_times_logger.tick("After executing the step")
+        )  # type: _ErrorCodeType
 
-        _exec_times_logger.finish()
         return _err_code
 
     def executescenario(
@@ -277,22 +259,15 @@ class ScenarioRunner(_LoggerImpl):
         :return:
             Error code, but no :attr:`._errcodes.ErrorCode.TEST_ERROR`.
         """
-        from ._debugloggers import ExecTimesLogger
-        from ._errcodes import ErrorCode
-
-        _exec_times_logger = ExecTimesLogger("ScenarioRunner.executescenario()")  # type: ExecTimesLogger
-
         self.debug("Executing scenario %r", scenario_definition)
 
         # Build and begin the scenario.
-        _res = self._buildscenario(scenario_definition)  # type: ErrorCode
-        _exec_times_logger.tick("After _buildscenario()")
-        if _res != ErrorCode.SUCCESS:
+        _res = self._buildscenario(scenario_definition)  # type: _ErrorCodeType
+        if _res != _ErrorCodeImpl.SUCCESS:
             return _res
         assert scenario_definition.execution
         _res = self._beginscenario(scenario_definition)
-        _exec_times_logger.tick("After _beginscenario()")
-        if _res != ErrorCode.SUCCESS:
+        if _res != _ErrorCodeImpl.SUCCESS:
             return _res
         if start_time is not None:
             # Fix the starting time when the `starting_time` parameter is set.
@@ -308,17 +283,14 @@ class ScenarioRunner(_LoggerImpl):
             # Move to next step.
             if scenario_definition.execution.current_step_definition is not None:
                 scenario_definition.execution.nextstep()
-        _exec_times_logger.tick("After step executions")
 
         # End the scenario.
         _res = self._endscenario(scenario_definition)
-        if _res != ErrorCode.SUCCESS:
+        if _res != _ErrorCodeImpl.SUCCESS:
             return _res
-        _exec_times_logger.tick("After _endscenario()")
 
         # Whether a test error occurred or not, return SUCCESS in this method.
-        _exec_times_logger.finish()
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _buildscenario(
             self,
@@ -330,25 +302,19 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: :class:`._scenariodefinition.ScenarioDefinition` instance to populate with steps, actions and expected results definitions.
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
-        from ._scenariodefinition import ScenarioDefinitionHelper
-        from ._scenarioexecution import ScenarioExecution
-        from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinitionHelper
-
         self.debug("_buildscenario(scenario_definition=%r)", scenario_definition)
 
         with self.pushindentation():
             # Inspect the scenario definition class to build step definitions from methods
-            ScenarioDefinitionHelper(scenario_definition).buildsteps()
+            _ScenarioDefinitionHelperImpl(scenario_definition).buildsteps()
 
             # Feed the building context of the scenario stack with the scenario definition being built.
-            SCENARIO_STACK.building.pushscenariodefinition(scenario_definition)
+            _FAST_PATH.scenario_stack.building.pushscenariodefinition(scenario_definition)
 
             # Create the `ScenarioExecution` instance right now.
             # Even though we are only building objects for now,
             # this is required to make it possible to iterate over the step list (just after), and execute them in the `BUILD_OBJECTS` exection mode.
-            scenario_definition.execution = ScenarioExecution(scenario_definition)
+            scenario_definition.execution = _ScenarioExecutionImpl(scenario_definition)
 
             # Start iterating over the step list.
             scenario_definition.execution.startsteplist()
@@ -357,7 +323,7 @@ class ScenarioRunner(_LoggerImpl):
                     # Save *init* known issues for this step definition
                     # before executing the step and collecting other known issues registered at the definition level.
                     # These known issues shall be notified before the step is actually executed.
-                    StepDefinitionHelper(scenario_definition.execution.current_step_definition).saveinitknownissues()
+                    _StepDefinitionHelperImpl(scenario_definition.execution.current_step_definition).saveinitknownissues()
 
                     # Execute the step method in the `BUILD_OBJECTS` exection mode.
                     self._execstep(scenario_definition.execution.current_step_definition)
@@ -366,9 +332,9 @@ class ScenarioRunner(_LoggerImpl):
                 scenario_definition.execution.nextstep()
 
             # Eventually remove the scenario definition reference from the building context of the scenario stack.
-            SCENARIO_STACK.building.popscenariodefinition(scenario_definition)
+            _FAST_PATH.scenario_stack.building.popscenariodefinition(scenario_definition)
 
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _beginscenario(
             self,
@@ -380,15 +346,7 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: Scenario or subscenario which execution to start.
         :return: Error code.
         """
-        from ._enumutils import isin
-        from ._errcodes import ErrorCode
-        from ._handlers import HANDLERS
-        from ._loggermain import MAIN_LOGGER
         from ._scenarioattributes import CoreScenarioAttributes
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenariologging import SCENARIO_LOGGING
-        from ._scenariostack import SCENARIO_STACK
 
         self.debug("_beginscenario(scenario_definition=%r)", scenario_definition)
 
@@ -397,51 +355,51 @@ class ScenarioRunner(_LoggerImpl):
             # - Note: The scenario execution instance has already been created in `_buildscenario()`.
             assert scenario_definition.execution
             # - Before pushing the scenario execution to the stack, store the subscenario reference in the current action / expected result when applicable.
-            if SCENARIO_STACK.current_action_result_execution:
-                SCENARIO_STACK.current_action_result_execution.subscenarios.append(scenario_definition.execution)
+            if _FAST_PATH.scenario_stack.current_action_result_execution:
+                _FAST_PATH.scenario_stack.current_action_result_execution.subscenarios.append(scenario_definition.execution)
             # - Eventually push the scenario execution to the execution stack.
-            SCENARIO_STACK.pushscenarioexecution(scenario_definition.execution)
+            _FAST_PATH.scenario_stack.pushscenarioexecution(scenario_definition.execution)
 
             # Test intro.
-            SCENARIO_LOGGING.beginscenario(scenario_definition)
+            _FAST_PATH.scenario_logging.beginscenario(scenario_definition)
 
             # Check and display that the main scenario attributes.
             # (main scenario only)
-            if SCENARIO_STACK.ismainscenario(scenario_definition):
-                SCENARIO_LOGGING.beginheadinginfo()
+            if _FAST_PATH.scenario_stack.ismainscenario(scenario_definition):
+                _FAST_PATH.scenario_logging.beginheadinginfo()
 
                 # Display scenario attributes.
                 for _attribute_name in scenario_definition.getattributenames():  # type: str
                     # Skip empty core attributes.
-                    if isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
+                    if _enumutils.isin(_attribute_name, CoreScenarioAttributes) and (not scenario_definition.getattribute(_attribute_name)):
                         continue
-                    SCENARIO_LOGGING.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
+                    _FAST_PATH.scenario_logging.attribute(_attribute_name, scenario_definition.getattribute(_attribute_name))
 
                 # Check expected scenario attributes.
-                _expected_attribute_names = SCENARIO_CONFIG.expectedscenarioattributes()  # type: typing.List[str]
+                _expected_attribute_names = _FAST_PATH.scenario_config.expectedscenarioattributes()  # type: typing.List[str]
                 self.debug("Expected attributes: %r", _expected_attribute_names)
                 for _expected_attribute_name in _expected_attribute_names:  # type: str
                     if _expected_attribute_name not in scenario_definition.getattributenames():
-                        MAIN_LOGGER.error(f"Missing test attribute {_expected_attribute_name}")
+                        _FAST_PATH.main_logger.error(f"Missing test attribute {_expected_attribute_name}")
                         self.popindentation()
-                        return ErrorCode.INPUT_FORMAT_ERROR
+                        return _ErrorCodeImpl.INPUT_FORMAT_ERROR
 
                 # Requirement verifications.
-                SCENARIO_LOGGING.reqcoverage(scenario_definition)
+                _FAST_PATH.scenario_logging.reqcoverage(scenario_definition)
 
-                SCENARIO_LOGGING.endheadinginfo()
+                _FAST_PATH.scenario_logging.endheadinginfo()
 
             # Start execution time.
             assert scenario_definition.execution is not None
             scenario_definition.execution.time.setstarttime()
 
             # Execute *before test* handlers.
-            HANDLERS.callhandlers(ScenarioEvent.BEFORE_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST, _ScenarioEventDataImpl.Scenario(scenario_definition=scenario_definition))
 
             # Notify every known issues registered at the definition level.
             self._notifyknownissuedefinitions(scenario_definition)
 
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _endscenario(
             self,
@@ -453,16 +411,10 @@ class ScenarioRunner(_LoggerImpl):
         :param scenario_definition: Scenario or subscenario which execution to end.
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
-        from ._handlers import HANDLERS
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenariologging import SCENARIO_LOGGING
-        from ._scenariostack import SCENARIO_STACK
-
         self.debug("_endscenario(scenario_definition=%r)", scenario_definition)
 
         with self.pushindentation():
-            assert SCENARIO_STACK.iscurrentscenario(scenario_definition)
+            assert _FAST_PATH.scenario_stack.iscurrentscenario(scenario_definition)
             assert scenario_definition.execution
 
             # Known issues:
@@ -474,27 +426,27 @@ class ScenarioRunner(_LoggerImpl):
             self._notifyknownissuedefinitions(scenario_definition)
 
             # Execute *after test* handlers (whether the test is SUCCESS or not).
-            HANDLERS.callhandlers(ScenarioEvent.AFTER_TEST, ScenarioEventData.Scenario(scenario_definition=scenario_definition))
+            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST, _ScenarioEventDataImpl.Scenario(scenario_definition=scenario_definition))
 
             # End execution time.
             scenario_definition.execution.time.setendtime()
 
             # Test outro.
-            SCENARIO_LOGGING.endscenario(scenario_definition)
+            _FAST_PATH.scenario_logging.endscenario(scenario_definition)
 
             # Pop the scenario from the stack.
-            SCENARIO_STACK.popscenarioexecution()
+            _FAST_PATH.scenario_stack.popscenarioexecution()
 
-            if SCENARIO_STACK.size > 0:
+            if _FAST_PATH.scenario_stack.size > 0:
                 # When errors occurred, and this in not the main scenario,
                 # raise the last error in order to break the execution of the parent scenario.
                 if scenario_definition.execution.errors:
                     raise scenario_definition.execution.errors[-1]
 
-            if SCENARIO_STACK.size == 0:
-                SCENARIO_LOGGING.displaystatistics(scenario_definition.execution)
+            if _FAST_PATH.scenario_stack.size == 0:
+                _FAST_PATH.scenario_logging.displaystatistics(scenario_definition.execution)
 
-        return ErrorCode.SUCCESS
+        return _ErrorCodeImpl.SUCCESS
 
     def _execstep(
             self,
@@ -505,49 +457,41 @@ class ScenarioRunner(_LoggerImpl):
 
         :param step_definition: Step definition to execute.
         """
-        from ._handlers import HANDLERS
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenariologging import SCENARIO_LOGGING
-        from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinitionHelper
-        from ._stepexecution import StepExecution
-        from ._stepsection import StepSectionDescription
         from ._testerrors import ExceptionError, TestError
 
         self.debug("Beginning of %r", step_definition)
 
-        if isinstance(step_definition, StepSectionDescription):
+        if isinstance(step_definition, _FAST_PATH.step_section_description_cls):
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                SCENARIO_LOGGING.stepsectiondescription(step_definition)
+                _FAST_PATH.scenario_logging.stepsectiondescription(step_definition)
         else:
             # Step execution number, starting from 1.
             # Sum up step executions already known for the given scenario.
             _step_number = 1  # type: int
             for _step_definition in step_definition.scenario.steps:  # type: _StepDefinitionType
-                # Skip step sections.
-                if isinstance(_step_definition, StepSectionDescription):
+                # Skip step section descriptions.
+                if isinstance(_step_definition, _FAST_PATH.step_section_description_cls):
                     continue
                 _step_number += len(_step_definition.executions)
 
             # Execute *before step* handlers.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                HANDLERS.callhandlers(ScenarioEvent.BEFORE_STEP, ScenarioEventData.Step(step_definition=step_definition))
-                if self._shouldstop() or (not SCENARIO_STACK.current_step_definition):
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_STEP, _ScenarioEventDataImpl.Step(step_definition=step_definition))
+                if self._shouldstop() or (not _FAST_PATH.scenario_stack.current_step_definition):
                     self.debug("Execution of %r aborted after *before step* handlers", step_definition)
                     return
 
             # Create the step execution instance (will be dropped in DOC_ONLY mode in the end).
             # Start time by the way.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                step_definition.executions.append(StepExecution(step_definition, _step_number))
+                step_definition.executions.append(_StepExecutionImpl(step_definition, _step_number))
 
             # Display the step description.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                SCENARIO_LOGGING.stepdescription(step_definition)
+                _FAST_PATH.scenario_logging.stepdescription(step_definition)
 
             # Notify *init* known issues saved for this step before executing it.
-            self._notifyknownissuedefinitions(step_definition, StepDefinitionHelper(step_definition).getinitknownissues())
+            self._notifyknownissuedefinitions(step_definition, _StepDefinitionHelperImpl(step_definition).getinitknownissues())
 
             # Method execution.
             self.debug("Executing %r in %s mode", step_definition, self._execution_mode.name)
@@ -584,13 +528,13 @@ class ScenarioRunner(_LoggerImpl):
 
             # Execute *after step* handlers.
             if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-                HANDLERS.callhandlers(ScenarioEvent.AFTER_STEP, ScenarioEventData.Step(step_definition=step_definition))
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_STEP, _ScenarioEventDataImpl.Step(step_definition=step_definition))
 
         self.debug("End of %r", step_definition)
 
         # Delay between steps.
         if self._execution_mode == ScenarioRunner.ExecutionMode.EXECUTE:
-            _delay = SCENARIO_CONFIG.delaybetweensteps()  # type: float
+            _delay = _FAST_PATH.scenario_config.delaybetweensteps()  # type: float
             if self.doexecute() and (_delay > 0.0):
                 time.sleep(_delay)
 
@@ -603,16 +547,14 @@ class ScenarioRunner(_LoggerImpl):
 
         :param description: Step description.
         """
-        from ._scenariostack import SCENARIO_STACK
-
         self.debug("onstepdescription(description=%r)", description)
 
         if self._execution_mode == ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
             # Build objects.
-            if SCENARIO_STACK.building.step_definition:
-                SCENARIO_STACK.building.step_definition.description = description
+            if _FAST_PATH.scenario_stack.building.step_definition:
+                _FAST_PATH.scenario_stack.building.step_definition.description = description
             else:
-                SCENARIO_STACK.raisecontexterror("No building step definition")
+                _FAST_PATH.scenario_stack.raisecontexterror("No building step definition")
 
     def _notifyknownissuedefinitions(
             self,
@@ -639,7 +581,7 @@ class ScenarioRunner(_LoggerImpl):
     def onactionresult(
             self,
             action_result_type,  # type: _ActionResultDefinitionType.Type
-            description,  # type: _AnyLongTextType
+            description,  # type: _textutils.AnyLongTextType
     ):  # type: (...) -> None
         """
         Call redirection from :meth:`._stepuserapi.StepUserApi.ACTION()` or :meth:`._stepuserapi.StepUserApi.RESULT()`.
@@ -647,64 +589,59 @@ class ScenarioRunner(_LoggerImpl):
         :param action_result_type: ACTION or RESULT.
         :param description: Action or expected result description.
         """
-        from ._actionresultdefinition import ActionResultDefinition
-        from ._actionresultexecution import ActionResultExecution
-        from ._scenariologging import SCENARIO_LOGGING
-        from ._scenariostack import SCENARIO_STACK
-        from ._stepexecution import StepExecutionHelper
-        from ._textutils import anylongtext2str
-
         self.debug("onactionresult(action_result_type=%s, description=%r)", action_result_type, description)
 
         if self._execution_mode == ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
             # Build objects.
-            if not SCENARIO_STACK.building.step_definition:
-                SCENARIO_STACK.raisecontexterror("No building step definition")
+            if not _FAST_PATH.scenario_stack.building.step_definition:
+                _FAST_PATH.scenario_stack.raisecontexterror("No building step definition")
 
-            SCENARIO_STACK.building.step_definition.addactionresult(
-                ActionResultDefinition(
+            _FAST_PATH.scenario_stack.building.step_definition.addactionresult(
+                _ActionResultDefinitionImpl(
                     type=action_result_type,
                     description=description,
                 ),
             )
 
         else:
-            if not SCENARIO_STACK.current_step_execution:
-                SCENARIO_STACK.raisecontexterror("No current step definition")
+            if not _FAST_PATH.scenario_stack.current_step_execution:
+                _FAST_PATH.scenario_stack.raisecontexterror("No current step definition")
 
             # Terminate the previous action/result, if any.
             self._endcurrentactionresult()
 
             # Switch to this action/result.
-            _step_execution_helper = StepExecutionHelper(SCENARIO_STACK.current_step_execution)  # type: StepExecutionHelper
-            _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: ActionResultDefinition
-            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != anylongtext2str(description)):
-                SCENARIO_STACK.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
+            _step_execution_helper = _StepExecutionHelperImpl(_FAST_PATH.scenario_stack.current_step_execution)  # type: _StepExecutionHelperType
+            _action_result_definition = _step_execution_helper.getnextactionresultdefinition()  # type: _ActionResultDefinitionType
+            if (_action_result_definition.type != action_result_type) or (_action_result_definition.description != _textutils.anylongtext2str(description)):
+                _FAST_PATH.scenario_stack.raisecontexterror(f"Bad {_action_result_definition}, {action_result_type} {description!r} expected.")
 
             # Create the action/result execution instance (in EXECUTE mode only).
             if self._execution_mode == ScenarioRunner.ExecutionMode.EXECUTE:
-                _action_result_definition.executions.append(ActionResultExecution(_action_result_definition))
+                _action_result_definition.executions.append(_ActionResultExecutionImpl(_action_result_definition))
 
             # Display.
-            SCENARIO_LOGGING.actionresult(_action_result_definition)
+            _FAST_PATH.scenario_logging.actionresult(_action_result_definition)
 
     def _endcurrentactionresult(self):  # type: (...) -> None
         """
         Ends the current action or expected result section.
         """
-        from ._scenariostack import SCENARIO_STACK
-
         if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
-            if SCENARIO_STACK.current_step_execution and SCENARIO_STACK.current_action_result_definition and SCENARIO_STACK.current_action_result_execution:
+            if (
+                _FAST_PATH.scenario_stack.current_step_execution
+                and _FAST_PATH.scenario_stack.current_action_result_definition
+                and _FAST_PATH.scenario_stack.current_action_result_execution
+            ):
                 self.debug(
                     "_endcurrentactionresult(): type=%s, description=%r",
-                    SCENARIO_STACK.current_action_result_definition.type, SCENARIO_STACK.current_action_result_definition.description,
+                    _FAST_PATH.scenario_stack.current_action_result_definition.type, _FAST_PATH.scenario_stack.current_action_result_definition.description,
                 )
 
                 if self._execution_mode == ScenarioRunner.ExecutionMode.EXECUTE:
-                    SCENARIO_STACK.current_action_result_execution.time.setendtime()
+                    _FAST_PATH.scenario_stack.current_action_result_execution.time.setendtime()
 
-                SCENARIO_STACK.current_step_execution.current_action_result_definition = None
+                _FAST_PATH.scenario_stack.current_step_execution.current_action_result_definition = None
 
     def onevidence(
             self,
@@ -715,18 +652,15 @@ class ScenarioRunner(_LoggerImpl):
 
         :param evidence: Evidence text.
         """
-        from ._scenariologging import SCENARIO_LOGGING
-        from ._scenariostack import SCENARIO_STACK
-
         self.debug("onevidence(evidence=%r)", evidence)
 
-        if SCENARIO_STACK.current_action_result_execution:
+        if _FAST_PATH.scenario_stack.current_action_result_execution:
             # Save the execution data.
-            SCENARIO_STACK.current_action_result_execution.evidence.append(evidence)
+            _FAST_PATH.scenario_stack.current_action_result_execution.evidence.append(evidence)
             # Console display.
-            SCENARIO_LOGGING.evidence(evidence)
+            _FAST_PATH.scenario_logging.evidence(evidence)
         else:
-            SCENARIO_STACK.raisecontexterror("No current action / expected result execution")
+            _FAST_PATH.scenario_stack.raisecontexterror("No current action / expected result execution")
 
     def doexecute(self):  # type: (...) -> bool
         """
@@ -747,16 +681,6 @@ class ScenarioRunner(_LoggerImpl):
         :param error: Error that occurred.
         :param originator: Scenario or step definition that made the call to :meth:`onerror()`, set in :meth:.stepuserapi.StepUserApi.knownissue()`..
         """
-        from ._actionresultexecution import ActionResultExecution
-        from ._handlers import HANDLERS
-        from ._knownissues import KnownIssue
-        from ._scenarioevents import ScenarioEvent, ScenarioEventData
-        from ._scenarioexecution import ScenarioExecution
-        from ._scenariologging import SCENARIO_LOGGING
-        from ._scenariostack import SCENARIO_STACK
-        from ._stepdefinition import StepDefinition
-        from ._stepexecution import StepExecution
-
         self.debug("onerror(error=%r, originator=%r)", error, originator)
 
         # Return right away if the error is ignored.
@@ -766,11 +690,11 @@ class ScenarioRunner(_LoggerImpl):
 
         if self._execution_mode == ScenarioRunner.ExecutionMode.BUILD_OBJECTS:
             # Build objects.
-            if isinstance(error, KnownIssue):
+            if isinstance(error, _KnownIssueImpl):
                 if originator:
-                    SCENARIO_STACK.building.fromoriginator(originator).known_issues.append(error)
+                    _FAST_PATH.scenario_stack.building.fromoriginator(originator).known_issues.append(error)
                 else:
-                    SCENARIO_STACK.raisecontexterror("Originator missing for known issue while building objects")
+                    _FAST_PATH.scenario_stack.raisecontexterror("Originator missing for known issue while building objects")
             else:
                 # Cannot register the error while building objects.
                 # Just raise the error.
@@ -778,8 +702,8 @@ class ScenarioRunner(_LoggerImpl):
         else:
             # Discard duplicate `KnownIssue` instances created on consecutive `StepDefinition.step()` calls.
             # Stick with the first instance registered at definition level.
-            if isinstance(error, KnownIssue) and isinstance(originator, StepDefinition):
-                for _known_issue in originator.known_issues:  # type: KnownIssue
+            if isinstance(error, _KnownIssueImpl) and isinstance(originator, _StepDefinitionImpl):
+                for _known_issue in originator.known_issues:  # type: _KnownIssueType
                     if _known_issue == error:
                         self.debug(f"%r: discarding %r in favor of %r", originator, error, _known_issue)
                         error = _known_issue
@@ -787,18 +711,21 @@ class ScenarioRunner(_LoggerImpl):
 
             # Do not process errors twice.
             # Note: This filtering particularly applies to known issues possibly reprocessed from `_notifyknownissuedefinitions()`.
-            if SCENARIO_STACK.current_scenario_execution:
-                if (error in SCENARIO_STACK.current_scenario_execution.errors) or (error in SCENARIO_STACK.current_scenario_execution.warnings):
+            if _FAST_PATH.scenario_stack.current_scenario_execution:
+                if (
+                    (error in _FAST_PATH.scenario_stack.current_scenario_execution.errors)
+                    or (error in _FAST_PATH.scenario_stack.current_scenario_execution.warnings)
+                ):
                     self.debug(f"Error %r already processed", error)
                     return
 
             # Display the error.
             if not self._shouldstop():
-                SCENARIO_LOGGING.error(error)
+                _FAST_PATH.scenario_logging.error(error)
 
             # Memorize the error in the current execution context.
             def _store_error(
-                    obj,  # type: typing.Optional[typing.Union[ScenarioExecution, StepExecution, ActionResultExecution]]
+                    obj,  # type: typing.Optional[typing.Union[_ScenarioExecutionType, _StepExecutionType, _ActionResultExecutionType]]
             ):  # type: (...) -> bool
                 # Check the current object is valid.
                 if obj is None:
@@ -806,24 +733,24 @@ class ScenarioRunner(_LoggerImpl):
                 # Determine the candidate list to store the error into.
                 _list = obj.warnings if error.iswarning() else obj.errors  # type: typing.List[_TestErrorType]
                 # Do not store known issues twice (in the owner execution contexts among others).
-                if isinstance(error, KnownIssue) and (error in _list):
+                if isinstance(error, _KnownIssueImpl) and (error in _list):
                     return False
                 # Store the error in the candidate list.
                 _list.append(error)
                 self.debug(f"%r saved with %r => %d items", error, obj, len(_list))
                 return True
-            _store_error(SCENARIO_STACK.current_scenario_execution)
-            _store_error(SCENARIO_STACK.current_step_execution)
+            _store_error(_FAST_PATH.scenario_stack.current_scenario_execution)
+            _store_error(_FAST_PATH.scenario_stack.current_step_execution)
             # When the known issue has been registered at the definition level,
             # do not push it to a current action/expected result execution.
-            if SCENARIO_STACK.current_step_definition and (error in SCENARIO_STACK.current_step_definition.known_issues):
-                self.debug(f"%r registered at definition level => not saved with %r", error, SCENARIO_STACK.current_action_result_execution)
+            if _FAST_PATH.scenario_stack.current_step_definition and (error in _FAST_PATH.scenario_stack.current_step_definition.known_issues):
+                self.debug(f"%r registered at definition level => not saved with %r", error, _FAST_PATH.scenario_stack.current_action_result_execution)
             else:
-                _store_error(SCENARIO_STACK.current_action_result_execution)
+                _store_error(_FAST_PATH.scenario_stack.current_action_result_execution)
 
             # Call error handlers (if `error` is actually an error).
             if error.iserror():
-                HANDLERS.callhandlers(ScenarioEvent.ERROR, ScenarioEventData.Error(error=error))
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.ERROR, _ScenarioEventDataImpl.Error(error=error))
 
     def _shouldstop(self):  # type: (...) -> bool
         """
@@ -831,18 +758,10 @@ class ScenarioRunner(_LoggerImpl):
 
         :return: ``True`` when the scenario execution should stop, ``False`` when the scenario execution should continue on.
         """
-        from ._knownissues import KnownIssue
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._scenariostack import SCENARIO_STACK
-
-        if SCENARIO_STACK.current_scenario_execution and SCENARIO_STACK.current_scenario_execution.errors:
+        if _FAST_PATH.scenario_stack.current_scenario_execution and _FAST_PATH.scenario_stack.current_scenario_execution.errors:
             # Errors occurred.
             # Check whether these errors are real errors, or just known issues considered as errors.
-            _real_errors = 0  # type: int
-            for _error in SCENARIO_STACK.current_scenario_execution.errors:  # type: _TestErrorType
-                if not isinstance(_error, KnownIssue):
-                    _real_errors += 1
-            if not _real_errors:
+            if all([isinstance(_error, _KnownIssueImpl) for _error in _FAST_PATH.scenario_stack.current_scenario_execution.errors]):
                 # No real error, keep going.
                 return False
 
@@ -850,11 +769,11 @@ class ScenarioRunner(_LoggerImpl):
             # Let's stop by default, unless a configuration says not to.
 
             # First check whether a local configuration is set for the scenario.
-            if SCENARIO_STACK.current_scenario_definition and SCENARIO_STACK.current_scenario_definition.continue_on_error:
+            if _FAST_PATH.scenario_stack.current_scenario_definition and _FAST_PATH.scenario_stack.current_scenario_definition.continue_on_error:
                 return False
 
             # Check for a global configuration.
-            if SCENARIO_CONFIG.continueonerror():
+            if _FAST_PATH.scenario_config.continueonerror():
                 return False
 
             # Ok, let's stop then.
@@ -872,22 +791,19 @@ class ScenarioRunner(_LoggerImpl):
 
         :param to_step_specification: Specification of the next step to execute.
         """
-        from ._scenariostack import SCENARIO_STACK
-        from ._stepspecifications import StepDefinitionSpecification
-
         self.debug("Jumping to step %s", to_step_specification)
 
         # Resolve the *to-step* specification.
-        if not isinstance(to_step_specification, StepDefinitionSpecification):
-            to_step_specification = StepDefinitionSpecification(to_step_specification)
+        if not isinstance(to_step_specification, _StepDefinitionSpecificationImpl):
+            to_step_specification = _StepDefinitionSpecificationImpl(to_step_specification)
         _next_step_definition = to_step_specification.expect()  # type: _StepDefinitionType
 
         # Set it as the next step for execution, then break the current step execution by raising a `GotoException`.
-        if SCENARIO_STACK.current_scenario_execution:
-            SCENARIO_STACK.current_scenario_execution.setnextstep(_next_step_definition)
+        if _FAST_PATH.scenario_stack.current_scenario_execution:
+            _FAST_PATH.scenario_stack.current_scenario_execution.setnextstep(_next_step_definition)
             raise GotoException()
         else:
-            SCENARIO_STACK.raisecontexterror("No current scenario definition or execution")
+            _FAST_PATH.scenario_stack.raisecontexterror("No current scenario definition or execution")
 
 
 class GotoException(Exception):
@@ -897,4 +813,7 @@ class GotoException(Exception):
 
 
 #: Main instance of :class:`ScenarioRunner`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_runner`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_RUNNER = ScenarioRunner()  # type: ScenarioRunner

@@ -22,6 +22,10 @@ either a requirement, or a requiremnt with a sub-item specification.
 import abc
 import typing
 
+if True:
+    from . import _setutils as _setutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -30,7 +34,6 @@ if typing.TYPE_CHECKING:
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from ._setutils import OrderedSetType as _OrderedSetType
 
 
 class ReqRef:
@@ -43,16 +46,14 @@ class ReqRef:
     @staticmethod
     def orderedset(
             req_refs,  # type: typing.Iterable[ReqRef]
-    ):  # type: (...) -> _OrderedSetType[ReqRef]
+    ):  # type: (...) -> _setutils.OrderedSetType[ReqRef]
         """
         Ensures an ordered set of unique :class:`ReqRef` items.
 
         :param req_refs: Unordered list of :class:`ReqRef` items.
         :return: Ordered set of unique :class:`ReqRef` items, ordered by requirement reference id.
         """
-        from ._setutils import orderedset
-
-        return orderedset(
+        return _setutils.orderedset(
             req_refs,
             key=ReqRefHelper.sortkeyfunction,
         )
@@ -90,9 +91,7 @@ class ReqRef:
         """
         Canonical string representation of the requirement reference.
         """
-        from ._reflection import qualname
-
-        return f"<{qualname(type(self))} id={self.id!r}>"
+        return f"<{_qualname(type(self))} id={self.id!r}>"
 
     def __str__(self):  # type: () -> str
         """
@@ -111,11 +110,9 @@ class ReqRef:
         """
         Requirement reference identifier.
         """
-        from ._req import Req
-
         return "/".join([
             # Don't sollicitate the requirement database if we already have a `Req` instance for `_any_req`.
-            self._any_req.id if isinstance(self._any_req, Req) else self.req.id,
+            self._any_req.id if isinstance(self._any_req, _FAST_PATH.req_cls) else self.req.id,
             *self.subs,
         ])
 
@@ -127,22 +124,18 @@ class ReqRef:
         Resolution of :attr:`_any_req`.
         Cached with :attr:`_req`.
         """
-        from ._reqdb import REQ_DB
-
         if self._req is None:
-            self._req = REQ_DB.getreq(self._any_req, push_unknown=True)
+            self._req = _FAST_PATH.req_db.getreq(self._any_req, push_unknown=True)
         return self._req
 
     @property
-    def req_links(self):  # type: () -> _OrderedSetType[_ReqLinkType]
+    def req_links(self):  # type: () -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Links with requirement verifiers.
 
         See :meth:`._reqlink.ReqLink.orderedset()` for order details.
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(self._req_links)
+        return _FAST_PATH.req_link_cls.orderedset(self._req_links)
 
     def join(
             self,
@@ -206,9 +199,7 @@ class ReqRef:
         """
         Redirects to :meth:`matches()`.
         """
-        from ._req import Req
-
-        if isinstance(other, (ReqRef, Req, str)):
+        if isinstance(other, (ReqRef, _FAST_PATH.req_cls, str)):
             return self.matches(other)
         else:
             raise TypeError(f"Can't compare {self!r} with {other!r}")
@@ -218,7 +209,7 @@ class ReqRef:
             req_verifier=None,  # type: _ReqVerifierType
             *,
             walk_steps=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         Requirement links attached with this requirement reference,
         filtered with the given predicates.
@@ -236,9 +227,7 @@ class ReqRef:
         :return:
             Filtered set of requirement links (see :meth:`._reqlink.ReqLink.orderedset()` for order details).
         """
-        from ._reqlink import ReqLink
-
-        return ReqLink.orderedset(
+        return _FAST_PATH.req_link_cls.orderedset(
             # Filter links with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_verifier=req_verifier, walk_steps=walk_steps),
@@ -255,9 +244,7 @@ class ReqRef:
         Does not return :class:`._scenariodefinition.ScenarioDefinition` instances that track this reference through steps only.
         See :meth:`getscenarios()` for the purpose.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement reference.
             [self],
             # Get requirement verifiers from each link.
@@ -272,14 +259,11 @@ class ReqRef:
 
         Returns scenarios linked with this requirement reference, either directly or through one of their steps.
         """
-        from ._reqlink import ReqLinkHelper
-        from ._reqverifier import ReqVerifierHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Walk requirement links from the current requirement reference.
             [self],
             # Get scenarios from each link.
-            lambda req_link: map(ReqVerifierHelper.getscenario, req_link.req_verifiers),
+            lambda req_link: map(_FAST_PATH.req_verifier_helper_cls.getscenario, req_link.req_verifiers),
         )
 
 

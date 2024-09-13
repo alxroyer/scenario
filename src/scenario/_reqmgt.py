@@ -22,9 +22,13 @@ import sys
 import typing
 
 if True:
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
+    from ._path import Path as _PathType
 
 
 class ReqManagement(_LoggerImpl):
@@ -38,9 +42,7 @@ class ReqManagement(_LoggerImpl):
         """
         Configures logging for the :class:`ReqManagement` class.
         """
-        from ._debugclasses import DebugClass
-
-        _LoggerImpl.__init__(self, DebugClass.REQ_MANAGEMENT)
+        _LoggerImpl.__init__(self, _DebugClassImpl.REQ_MANAGEMENT)
 
     def main(self):  # type: (...) -> _ErrorCodeType
         """
@@ -48,12 +50,7 @@ class ReqManagement(_LoggerImpl):
 
         :return: Error code.
         """
-        from ._errcodes import ErrorCode
-        from ._loggermain import MAIN_LOGGER
-        from ._loggingservice import LOGGING_SERVICE
-        from ._path import Path
         from ._reqmgtargs import ReqManagementArgs
-        from ._reqtraceability import REQ_TRACEABILITY
 
         # Analyze program arguments, if not already set.
         if not ReqManagementArgs.isset():
@@ -62,54 +59,54 @@ class ReqManagement(_LoggerImpl):
                 return ReqManagementArgs.getinstance().error_code
 
         # Start log features.
-        LOGGING_SERVICE.start()
+        _FAST_PATH.logging_service.start()
 
-        _errors = []  # type: typing.List[ErrorCode]
+        _errors = []  # type: typing.List[_ErrorCodeType]
 
         # Requirement & scenario loading.
         try:
-            _campaign_results_path = ReqManagementArgs.getinstance().campaign_results_path  # type: typing.Optional[Path]
+            _campaign_results_path = ReqManagementArgs.getinstance().campaign_results_path  # type: typing.Optional[_PathType]
             if _campaign_results_path:
-                REQ_TRACEABILITY.loaddatafromcampaignresults(_campaign_results_path)
+                _FAST_PATH.req_traceability.loaddatafromcampaignresults(_campaign_results_path)
             else:
-                REQ_TRACEABILITY.loaddatafromfiles(
+                _FAST_PATH.req_traceability.loaddatafromfiles(
                     req_db_file_paths=ReqManagementArgs.getinstance().req_db_paths or None,
                     test_suite_paths=ReqManagementArgs.getinstance().test_suite_paths or None,
                 )
         except Exception as _err:
-            MAIN_LOGGER.logexceptiontraceback(_err)
-            _errors.append(ErrorCode.fromexception(_err))
+            _FAST_PATH.main_logger.logexceptiontraceback(_err)
+            _errors.append(_ErrorCodeImpl.fromexception(_err))
 
         # Execute `ReqManagementArgs` options.
         if not _errors:
             # Downstream traceability report.
-            _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[Path]
+            _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _downstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writedownstream(
+                    _FAST_PATH.req_traceability.writedownstream(
                         _downstream_traceability_path,
                         allow_results=ReqManagementArgs.getinstance().allow_results,
                     )
                 except Exception as _err:
-                    MAIN_LOGGER.logexceptiontraceback(_err)
-                    _errors.append(ErrorCode.fromexception(_err))
+                    _FAST_PATH.main_logger.logexceptiontraceback(_err)
+                    _errors.append(_ErrorCodeImpl.fromexception(_err))
 
             # Upstream traceability report.
-            _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[Path]
+            _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _upstream_traceability_path:
                 try:
-                    REQ_TRACEABILITY.writeupstream(
+                    _FAST_PATH.req_traceability.writeupstream(
                         _upstream_traceability_path,
                     )
                 except Exception as _err:
-                    MAIN_LOGGER.logexceptiontraceback(_err)
-                    _errors.append(ErrorCode.fromexception(_err))
+                    _FAST_PATH.main_logger.logexceptiontraceback(_err)
+                    _errors.append(_ErrorCodeImpl.fromexception(_err))
 
         # Terminate log features.
-        LOGGING_SERVICE.stop()
+        _FAST_PATH.logging_service.stop()
 
         # End.
-        return ErrorCode.worst(_errors)
+        return _ErrorCodeImpl.worst(_errors)
 
 
 #: Main instance of :class:`ReqManagement`.

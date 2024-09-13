@@ -26,10 +26,18 @@ import sys
 import threading
 import typing
 
+if True:
+    from . import _debugutils as _debugutils  # @perf
+    from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
+    from ._stats import TimeStats as _TimeStatsType
 
 
 class SubProcess:
@@ -45,9 +53,6 @@ class SubProcess:
             Command line arguments.
             May be the first arguments only, then rely on the :meth:`addargs()` method to add others.
         """
-        from ._path import Path
-        from ._stats import TimeStats
-
         #: Sub-process command line arguments.
         #:
         #: See :meth:`addargs()`.
@@ -55,7 +60,7 @@ class SubProcess:
         #: See :meth:`setenv()`.
         self.env = {}  # type: typing.Dict[str, typing.Union[str, _AnyPathType]]
         #: See :meth:`setcwd()`.
-        self.cwd = None  # type: typing.Optional[Path]
+        self.cwd = None  # type: typing.Optional[_PathType]
 
         #: See :meth:`setlogger()`.
         self._logger = None  # type: typing.Optional[_LoggerType]
@@ -73,7 +78,7 @@ class SubProcess:
         #: Standard error as a string.
         self.stderr = b''  # type: bytes
         #: Time statistics.
-        self.time = TimeStats()  # type: TimeStats
+        self.time = _TimeStatsImpl()  # type: _TimeStatsType
 
         #: ``subprocess.Popen`` instance.
         self._popen = None  # type: typing.Optional[subprocess.Popen[bytes]]
@@ -88,9 +93,7 @@ class SubProcess:
         """
         Canonical string representation.
         """
-        from ._reflection import qualname
-
-        return f"{qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
+        return f"{_qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
 
     def __str__(self):  # type: () -> str
         """
@@ -173,9 +176,7 @@ class SubProcess:
         :param cwd: Current working directory.
         :return: ``self``
         """
-        from ._path import Path
-
-        self.cwd = Path(cwd)
+        self.cwd = _PathImpl(cwd)
         return self
 
     def setlogger(
@@ -233,10 +234,8 @@ class SubProcess:
 
         The return code is available through the :attr:`returncode` attribute.
         """
-        from ._errcodes import ErrorCode
-
         if isinstance(exit_on_error_code, bool):
-            self._exit_on_error_code = ErrorCode.INTERNAL_ERROR if exit_on_error_code else None
+            self._exit_on_error_code = _ErrorCodeImpl.INTERNAL_ERROR if exit_on_error_code else None
         else:
             self._exit_on_error_code = exit_on_error_code
         return self
@@ -403,8 +402,6 @@ class SubProcess:
         :return: ``self``
         :raise TimeoutError: When the sub-process did not terminate within ``timeout`` seconds.
         """
-        from ._debugutils import saferepr
-
         if not self._popen:
             raise ValueError(f"{self}: Cannot wait before the process is created")
         try:
@@ -425,7 +422,7 @@ class SubProcess:
 
         self._log(logging.DEBUG, "%s returned %r", self.tolongstring(), self.returncode)
         if self.returncode != 0:
-            self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, saferepr(self.stderr))
+            self._onerror("%s failed: retcode=%r, stderr=%s", self.tolongstring(), self.returncode, _debugutils.saferepr(self.stderr))
 
         return self
 

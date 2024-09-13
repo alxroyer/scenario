@@ -21,8 +21,16 @@ Campaign reports.
 import typing
 
 if True:
-    from ._enumutils import StrEnum as _StrEnumImpl  # `StrEnum` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
+    from . import _datetimeutils as _datetimeutils  # @perf
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from . import _debugutils as _debugutils  # @perf
+    from . import _enumutils as _enumutils  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -55,7 +63,7 @@ class CampaignReport(_LoggerImpl):
     - Other useful resource: https://stackoverflow.com/questions/442556/spec-for-junit-xml-output
     """
 
-    class LinkPurpose(_StrEnumImpl):
+    class LinkPurpose(_enumutils.StrEnum):
         """
         ``<link/>`` reference purposes.
         """
@@ -70,7 +78,7 @@ class CampaignReport(_LoggerImpl):
         #: Scenario report file link.
         SCENARIO_REPORT = "report"
 
-    class StatAttrName(_StrEnumImpl):
+    class StatAttrName(_enumutils.StrEnum):
         """
         `scenario` specific attribute names for statistics.
         """
@@ -91,13 +99,10 @@ class CampaignReport(_LoggerImpl):
         """
         Configures logging for the :class:`CampaignReport` class.
         """
-        from ._debugclasses import DebugClass
-        from ._path import Path
-
-        _LoggerImpl.__init__(self, log_class=DebugClass.CAMPAIGN_REPORT)
+        _LoggerImpl.__init__(self, log_class=_DebugClassImpl.CAMPAIGN_REPORT)
 
         #: Campaign report path being written or read.
-        self._report_path = Path()  # type: Path
+        self._report_path = _PathImpl()  # type: _PathType
 
         #: Flag set to ``True`` when the requirement database should be fed with the requirement database file read from campaign results.
         self._feed_req_db = False  # type: bool
@@ -138,7 +143,6 @@ class CampaignReport(_LoggerImpl):
         :param campaign_execution: Campaign execution to generate the report for.
         :param report_path: Path to write the campaign report into.
         """
-        from ._path import Path
         from ._xmlutils import Xml
 
         try:
@@ -148,7 +152,7 @@ class CampaignReport(_LoggerImpl):
             # Create an XML document.
             _xml_doc = Xml.Document()  # type: Xml.Document
             # Create the top <testsuites/> node.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _xml_doc.root = self._campaign2xml(_xml_doc, campaign_execution)
 
             # Generate the JUnit XML outfile.
@@ -156,7 +160,7 @@ class CampaignReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
 
     def readjunitreport(
             self,
@@ -201,7 +205,6 @@ class CampaignReport(_LoggerImpl):
         :return:
             Campaign execution data read from the JUnit file.
         """
-        from ._path import Path
         from ._xmlutils import Xml
 
         try:
@@ -209,7 +212,7 @@ class CampaignReport(_LoggerImpl):
             self.debug("Reading campaign results from report '%s'", report_path)
 
             # Read and parse the JUnit XML file.
-            self._report_path = Path(report_path)
+            self._report_path = _PathImpl(report_path)
             _xml_doc = Xml.Document.readfile(self._report_path)  # type: Xml.Document
 
             # Analyze the JUnit XML content.
@@ -222,7 +225,7 @@ class CampaignReport(_LoggerImpl):
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
-            self._report_path = Path()
+            self._report_path = _PathImpl()
             self._feed_req_db = False
             self._read_scenario_logs = False
             self._read_scenario_reports = False
@@ -318,7 +321,6 @@ class CampaignReport(_LoggerImpl):
         :return: Campaign execution data.
         """
         from ._campaignexecution import CampaignExecution
-        from ._reqdb import REQ_DB
         from ._xmlutils import Xml
 
         _campaign_execution = CampaignExecution(outdir=self._report_path.parent)  # type: CampaignExecution
@@ -351,7 +353,7 @@ class CampaignReport(_LoggerImpl):
                 if self._feed_req_db:
                     # Read the requirement database file by the way.
                     self.debug("Feeding requirement database from '%s'", _campaign_execution.req_db_path)
-                    REQ_DB.load(_campaign_execution.req_db_path)
+                    _FAST_PATH.req_db.load(_campaign_execution.req_db_path)
             elif _link_purpose == CampaignReport.LinkPurpose.DOWNSTREAM_TRACEABILITY:
                 _campaign_execution.downstream_traceability_path = self._xmlattr2path(_xml_link, "href")
                 self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.downstream_traceability_path)
@@ -385,7 +387,6 @@ class CampaignReport(_LoggerImpl):
         :param test_suite_id: Test suite identifier.
         :return: Test suite JUnit XML.
         """
-        from ._datetimeutils import toiso8601
         from ._xmlutils import Xml
 
         _xml_test_suite = xml_doc.createnode("testsuite")  # type: Xml.Node
@@ -436,7 +437,7 @@ class CampaignReport(_LoggerImpl):
 
         # testsuite/@timestamp:
         # [CUBIC]: "when the test was executed in ISO 8601 format (2014-01-21T16:17:18). Timezone may not be specified. optional"
-        _xml_test_suite.setattr("timestamp", toiso8601(test_suite_execution.time.start) if test_suite_execution.time.start else "")
+        _xml_test_suite.setattr("timestamp", _datetimeutils.toiso8601(test_suite_execution.time.start) if test_suite_execution.time.start else "")
 
         # `scenario` statistics, non JUnit standard...
         self._objectstats2xmlattr(_xml_test_suite, test_suite_execution)
@@ -467,8 +468,6 @@ class CampaignReport(_LoggerImpl):
         :return: Test suite execution data.
         """
         from ._campaignexecution import TestSuiteExecution
-        from ._datetimeutils import f2strtime, fromiso8601
-        from ._debugutils import callback
         from ._xmlutils import Xml
 
         _test_suite_execution = TestSuiteExecution(campaign_execution, self._xmlattr2path(xml_test_suite, "name"))  # type: TestSuiteExecution
@@ -497,11 +496,11 @@ class CampaignReport(_LoggerImpl):
             _test_suite_execution.time.elapsed = float(xml_test_suite.getattr("time"))
             self.debug("testsuite/@time = %f", _test_suite_execution.time.elapsed)
         if xml_test_suite.hasattr("timestamp"):
-            _test_suite_execution.time.start = fromiso8601(xml_test_suite.getattr("timestamp"))
-            self.debug("testsuite/@timestamp = %s", callback(f2strtime, _test_suite_execution.time.start))
+            _test_suite_execution.time.start = _datetimeutils.fromiso8601(xml_test_suite.getattr("timestamp"))
+            self.debug("testsuite/@timestamp = %s", _debugutils.callback(_datetimeutils.f2strtime, _test_suite_execution.time.start))
             if _test_suite_execution.time.elapsed is not None:
                 _test_suite_execution.time.end = _test_suite_execution.time.start + _test_suite_execution.time.elapsed
-                self.debug("testsuite/@timestamp + elapsed => end = %s", callback(f2strtime, _test_suite_execution.time.end))
+                self.debug("testsuite/@timestamp + elapsed => end = %s", _debugutils.callback(_datetimeutils.f2strtime, _test_suite_execution.time.end))
 
         for _xml_test_case in xml_test_suite.getchildren("testcase"):  # type: Xml.Node
             self.debug("New testsuite/testcase")
@@ -525,7 +524,6 @@ class CampaignReport(_LoggerImpl):
         :param test_case_execution: Test case execution to generate the JUnit XML for.
         :return: Test case JUnit XML.
         """
-        from ._knownissues import KnownIssue
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
@@ -592,7 +590,7 @@ class CampaignReport(_LoggerImpl):
             # [CUBIC]: "# The type of the assert."
             if isinstance(_error, ExceptionError):
                 _xml_failure.setattr("type", _error.exception_type)
-            elif isinstance(_error, KnownIssue):
+            elif isinstance(_error, _KnownIssueImpl):
                 _xml_failure.setattr("type", "known-issue")
 
             # testcase/failure/[text]:
@@ -640,8 +638,6 @@ class CampaignReport(_LoggerImpl):
         """
         from ._campaignexecution import TestCaseExecution
         from ._executionstatus import ExecutionStatus
-        from ._knownissues import KnownIssue
-        from ._locations import CodeLocation
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
@@ -688,7 +684,7 @@ class CampaignReport(_LoggerImpl):
                     if _xml_failure.hasattr("type"):
                         if _xml_failure.getattr("type") == "known-issue":
                             self.debug("testcase/failure/@type = 'known-issue'")
-                            _error = KnownIssue.fromstr(_error.message)
+                            _error = _KnownIssueImpl.fromstr(_error.message)
                             self.debug("testcase/failure/@message => %r", _error)
                         else:
                             _error = ExceptionError(exception=None)
@@ -698,7 +694,7 @@ class CampaignReport(_LoggerImpl):
                     for _xml_text in _xml_failure.gettextnodes():  # type: Xml.TextNode
                         _last_line = _xml_text.data.splitlines()[-1]  # type: str
                         if _last_line.count(":") >= 3:
-                            _error.location = CodeLocation.fromlongstring(":".join(_last_line.split(":")[:3]))
+                            _error.location = _CodeLocationImpl.fromlongstring(":".join(_last_line.split(":")[:3]))
                             self.debug("testcase/failure/@location = '%s'", _error.location.tolongstring())
                     _test_case_execution.scenario_execution.errors.append(_error)
         if xml_test_case.hasattr("status"):
@@ -766,9 +762,7 @@ class CampaignReport(_LoggerImpl):
         :param attr_name: Attribute name to read.
         :return: Path computed.
         """
-        from ._path import Path
-
-        return Path(xml_node.getattr(attr_name), relative_to=self._report_path.parent)
+        return _PathImpl(xml_node.getattr(attr_name), relative_to=self._report_path.parent)
 
     def _path2xmllink(
             self,
@@ -879,11 +873,10 @@ class CampaignReport(_LoggerImpl):
         :return: Statistic read from ``stat_object``.
         """
         from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
-        from ._scenarioexecution import ScenarioExecution
 
         assert stat_name.count("-") == 1, f"Bad stat name {stat_name!r}"
         _stat_type, _exec_total = stat_name.split("-")  # type: str, str
-        if isinstance(stat_object, ScenarioExecution):
+        if isinstance(stat_object, _ScenarioExecutionImpl):
             return int(getattr(getattr(stat_object, _stat_type[:-1] + "_stats"), _exec_total))
         elif isinstance(stat_object, (CampaignExecution, TestSuiteExecution, TestCaseExecution)):
             return int(getattr(getattr(stat_object, _stat_type), _exec_total))
@@ -892,4 +885,7 @@ class CampaignReport(_LoggerImpl):
 
 
 #: Main instance of :class:`CampaignReport`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.campaign_report`.
+#: Please prefer the latter instead of using local imports of this module.
 CAMPAIGN_REPORT = CampaignReport()  # type: CampaignReport

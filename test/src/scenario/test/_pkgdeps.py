@@ -17,12 +17,14 @@
 
 def checkpkgdeps():  # type: (...) -> None
     import scenario
-    from scenario._reflection import extendnamespacepackagepath  # noqa  ## Access to protected module
-    from ._paths import ROOT_SCENARIO_PATH
+    from scenario._reflection import extendnamespacepackagepath  # noqa  ## Access to protected module  # check-imports: ignore
+    from ._paths import UTILS_SRC_PATH
 
-    # Ensure `scenario.text` can be loaded.
+    # Ensure `scenario.inners` and `scenario.text` can be loaded.
     try:
+        import scenario.inners
         import scenario.text
     except ImportError:
-        extendnamespacepackagepath(namespace_package=scenario, root_src_path=ROOT_SCENARIO_PATH / "utils" / "src")
+        extendnamespacepackagepath(namespace_package=scenario, root_src_path=UTILS_SRC_PATH)
+        import scenario.inners
         import scenario.text

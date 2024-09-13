@@ -18,151 +18,44 @@
 Scenario definition.
 """
 
-import abc
 import enum
 import inspect
 import types
 import typing
 
 if True:
-    from ._assertions import Assertions as _AssertionsImpl  # `Assertions` used for inheritance.
-    from ._logger import Logger as _LoggerImpl  # `Logger` used for inheritance.
-    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # `ReqVerifier` used for inheritance.
-    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # `StepUserApi` used for inheritance.
+    from . import _enumutils as _enumutils  # @perf
+    from . import _textutils as _textutils  # @perf
+    from ._assertions import Assertions as _AssertionsImpl  # @inheritance
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
+    from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._path import Path as _PathImpl  # @perf
+    from ._reflection import importmodulefrompath as _importmodulefrompath  # @perf
+    from ._reflection import qualname as _qualname  # @perf
+    from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @inheritance
+    from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # @metaclass
+    from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
+    from ._stepuserapi import StepUserApi as _StepUserApiImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from . import _setutils as _setutils
+    from ._locations import CodeLocation as _CodeLocationType
+    from ._logger import Logger as _LoggerType
     from ._path import AnyPathType as _AnyPathType
+    from ._path import Path as _PathType
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
     from ._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
-    from ._setutils import OrderedSetType as _OrderedSetType
+    from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepdefinition import VarStepDefinitionType as _VarStepDefinitionType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
-    from ._textutils import AnyLongTextType as _AnyLongTextType
 
 
-class MetaScenarioDefinition(abc.ABCMeta):
-    """
-    Meta-class for :class:`ScenarioDefinition`.
-
-    So that it can be a meta-class for :class:`ScenarioDefinition`,
-    :class:`MetaScenarioDefinition` must inherit from ``abc.ABCMeta`` (which makes it inherit from ``type`` by the way)
-    because the :class:`._stepuserapi.StepUserApi` base class inherits from ``abc.ABC``.
-    """
-
-    def __new__(
-            mcs,
-            name,  # type: str
-            bases,  # type: typing.Tuple[type, ...]
-            attrs,  # type: typing.Dict[str, typing.Any]
-            **kwargs  # type: typing.Any
-    ):  # type: (...) -> typing.Any
-        """
-        Overloads class definition of :class:`ScenarioDefinition` class and subclasses.
-
-        Sets :class:`MetaScenarioDefinition.InitWrapper` instances in place of ``__init__()`` methods,
-        in order to have :class:`ScenarioDefinition` initializers enclosed with
-        :meth:`._scenariostack.BuildingContext.pushscenariodefinition()` / :meth:`._scenariostack.BuildingContext.popscenariodefinition()` calls.
-
-        :param name: New class name.
-        :param bases: Base classes for the new class.
-        :param attrs: New class attributes and methods.
-        :param kwargs: Optional arguments.
-        """
-        attrs = attrs.copy()
-        if "__init__" in attrs:
-            attrs["__init__"] = MetaScenarioDefinition.InitWrapper(attrs["__init__"])
-        return type.__new__(mcs, name, bases, attrs, **kwargs)
-
-    class InitWrapper:
-        """
-        Wrapper for ``__init__()`` methods of :class:`ScenarioDefinition` instances.
-
-        Encloses the initializer's execution with
-        :meth:`._scenariostack.BuildingContext.pushscenariodefinition()` / :meth:`._scenariostack.BuildingContext.popscenariodefinition()` calls,
-        so that the building context of scenario stack knows about the scenario definition being built.
-        """
-
-        def __init__(
-                self,
-                init_method,  # type: types.FunctionType
-        ):  # type: (...) -> None
-            """
-            Stores the original ``__init__()`` method.
-
-            :param init_method: Original ``__init__()`` method.
-            """
-            # Note: `mypy` (as of 0.910) seems to mess up between `types.FunctionType` and `types.MethodType`
-            #       when assigning the `init_method` member variable below.
-            #       Let's use `typing.cast(Any)` to work around it.
-
-            #: Original ``__init__()`` method.
-            self.init_method = typing.cast(typing.Any, init_method)  # type: types.FunctionType
-
-        def __get__(
-                self,
-                obj,  # type: typing.Any
-                objtype=None,  # type: type
-        ):  # type: (...) -> types.MethodType
-            """
-            Wrapper descriptor: returns a ``__init__()`` bound method with ``obj``.
-
-            :param obj: Optional instance reference.
-            :param objtype: Unused.
-            :return: Bound initializer callable (as long as ``obj`` is not ``None``).
-
-            Inspired from:
-
-            - https://docs.python.org/3/howto/descriptor.html
-            - https://github.com/dabeaz/python-cookbook/blob/master/src/9/multiple_dispatch_with_function_annotations/example1.py
-            """
-            if obj is not None:
-                return types.MethodType(self, obj)
-            else:
-                return self  # type: ignore[return-value]  ## "InitWrapper", expected "MethodType"
-
-        def __call__(
-                self,
-                *args,  # type: typing.Any
-                **kwargs  # type: typing.Any
-        ):  # type: (...) -> None
-            """
-            ``__init__()`` wrapper call.
-
-            :param args:
-                Positional arguments.
-
-                First item should normally be the :class:`ScenarioDefinition` instance the initializer is executed for.
-            :param kwargs:
-                Named arguments.
-
-            Pushes the scenario definition to the building context of the scenario stack before the initializer's execution,
-            then removes it out after the initializer's execution.
-            """
-            from ._scenariostack import SCENARIO_STACK
-
-            _scenario_definition = None  # type: typing.Optional[ScenarioDefinition]
-            if (len(args) >= 1) and isinstance(args[0], ScenarioDefinition):
-                _scenario_definition = args[0]
-
-            # Push the scenario definition to the building context of the scenario stack.
-            if _scenario_definition:
-                SCENARIO_STACK.debug("MetaScenarioDefinition.InitWrapper.__call__(): Pushing scenario being built")
-                SCENARIO_STACK.building.pushscenariodefinition(_scenario_definition)
-
-            # Call the original ``__init__()`` method.
-            self.init_method(*args, **kwargs)
-
-            # Pop the scenario definition from the building context of the scenario stack.
-            if _scenario_definition:
-                SCENARIO_STACK.debug("MetaScenarioDefinition.InitWrapper.__call__(): Popping scenario being built")
-                SCENARIO_STACK.building.popscenariodefinition(_scenario_definition)
-
-
-class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl, metaclass=MetaScenarioDefinition):
+class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifierImpl, metaclass=_MetaScenarioDefinitionImpl):
     """
     Base class for any final test scenario.
 
@@ -182,19 +75,16 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
 
         Makes it possible to easily access the attributes and methods defined with a user scenario definition.
         """
-        from ._reflection import qualname
-        from ._scenariostack import SCENARIO_STACK
-
-        if isinstance(SCENARIO_STACK.building.scenario_definition, cls):
-            return SCENARIO_STACK.building.scenario_definition
-        if isinstance(SCENARIO_STACK.current_scenario_definition, cls):
-            return SCENARIO_STACK.current_scenario_definition
-        SCENARIO_STACK.raisecontexterror(f"Current scenario definition not of type {qualname(cls)}")
+        if isinstance(_FAST_PATH.scenario_stack.building.scenario_definition, cls):
+            return _FAST_PATH.scenario_stack.building.scenario_definition
+        if isinstance(_FAST_PATH.scenario_stack.current_scenario_definition, cls):
+            return _FAST_PATH.scenario_stack.current_scenario_definition
+        _FAST_PATH.scenario_stack.raisecontexterror(f"Current scenario definition not of type {_qualname(cls)}")
 
     def __init__(
             self,
             title=None,  # type: typing.Optional[str]
-            description=None,  # type: typing.Optional[_AnyLongTextType]
+            description=None,  # type: typing.Optional[_textutils.AnyLongTextType]
     ):  # type: (...) -> None
         """
         Initializes a scenario instance with optional title and description.
@@ -206,12 +96,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
 
         Activates debugging by default.
         """
-        from ._locations import CodeLocation
-        from ._path import Path
-        from ._scenarioconfig import SCENARIO_CONFIG
-        from ._scenarioexecution import ScenarioExecution
-        from ._textutils import anylongtext2str
-
         #: Scenario title, optional.
         #:
         #: As short as possible.
@@ -222,16 +106,24 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         #:
         #: More detailed explanation about the scenario than :attr:`title`.
         #: Commonly describes the purpose or objectives of the test.
-        self.description = anylongtext2str(description or "")  # type: str
+        self.description = _textutils.anylongtext2str(description or "")  # type: str
 
-        #: Definition location.
-        self.location = CodeLocation.fromclass(type(self))  # type: CodeLocation
+        #: Definition location cache.
+        #:
+        #: Computed on demand and cached by the :meth:`location()` property.
+        #: May be explicitly set by the :meth:`location()` setter.
+        self.__location_cache = None  # type: typing.Optional[_CodeLocationType]
 
-        #: Script path.
-        self.script_path = Path(self.location.file)  # type: Path
+        #: Script path cache.
+        #:
+        #: Computed on demand and cached by the :meth:`script_path()` property.
+        #: May be explicitly set by the :meth:`script_path()` setter.
+        self.__script_path_cache = None  # type: typing.Optional[_PathType]
 
-        #: Scenario name: i.e. script pretty path.
-        self.name = self.script_path.prettypath  # type: str
+        #: Scenario name, when explicitly set.
+        #:
+        #: Set by the :meth:`name()` setter.
+        self.__name = None  # type: typing.Optional[str]
 
         _StepUserApiImpl.__init__(self)
         _AssertionsImpl.__init__(self)
@@ -239,7 +131,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         _ReqVerifierImpl.__init__(self)
 
         # Depending on `SCENARIO_CONFIG.scenariodebugloggingenabled()`, enable debug logging for scenarios.
-        self.enabledebug(SCENARIO_CONFIG.scenariodebugloggingenabled())
+        self.enabledebug(_FAST_PATH.scenario_config.scenariodebugloggingenabled())
 
         #: Continue on error option.
         #:
@@ -261,17 +153,15 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         self.__step_definitions = []  # type: typing.List[_StepDefinitionType]
 
         #: Scenario execution, if any.
-        self.execution = None  # type: typing.Optional[ScenarioExecution]
+        self.execution = None  # type: typing.Optional[_ScenarioExecutionType]
 
     def __repr__(self):  # type: () -> str
         """
         Canonical string representation of the scenario definition.
         """
-        from ._reflection import qualname
-
         # Sometimes, `__repr__()` may be called on an object being built.
         if hasattr(self, "name"):
-            return f"<{qualname(type(self))} {self.name!r}>"
+            return f"<{_qualname(type(self))} {self.name!r}>"
         else:
             return super().__repr__()
 
@@ -280,6 +170,57 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Human readable string representation of the scenario definition.
         """
         return self.name
+
+    @property
+    def name(self):  # type: () -> str
+        """
+        Scenario name.
+
+        Script pretty path by default.
+        """
+        if self.__name is not None:
+            return self.__name
+        else:
+            return self.script_path.prettypath
+
+    @name.setter
+    def name(self, name):  # type: (str) -> None
+        """
+        Scenario name setter.
+        """
+        self.__name = name
+
+    @property
+    def script_path(self):  # type: () -> _PathType
+        """
+        Script path getter.
+        """
+        if self.__script_path_cache is None:
+            self.__script_path_cache = _PathImpl(self.location.file)
+        return self.__script_path_cache
+
+    @script_path.setter
+    def script_path(self, script_path):  # type: (_PathType) -> None
+        """
+        Script path setter.
+        """
+        self.__script_path_cache = script_path
+
+    @property
+    def location(self):  # type: () -> _CodeLocationType
+        """
+        Definition location getter.
+        """
+        if self.__location_cache is None:
+            self.__location_cache = _CodeLocationImpl.fromclass(type(self))
+        return self.__location_cache
+
+    @location.setter
+    def location(self, location):  # type: (_CodeLocationType) -> None
+        """
+        Definition location setter.
+        """
+        self.__location_cache = location
 
     def setattribute(
             self,
@@ -293,7 +234,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :param value: Attribute value.
         :return: ``self``
         """
-        from ._enumutils import enum2str
         from ._scenarioattributes import CoreScenarioAttributes
 
         # Core scenario attributes.
@@ -311,7 +251,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
 
         # User scenario attributes.
-        self.__user_attributes[enum2str(name)] = value
+        self.__user_attributes[_enumutils.enum2str(name)] = value
         return self
 
     def getattribute(
@@ -325,7 +265,6 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return: Attribute value.
         :raise KeyError: When the attribute name is not defined.
         """
-        from ._enumutils import enum2str
         from ._scenarioattributes import CoreScenarioAttributes
 
         # Core scenario attributes.
@@ -337,7 +276,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             raise NotImplementedError(f"Core scenario attribute {name!r} not handled")
 
         # User scenario attributes.
-        return self.__user_attributes[enum2str(name)]
+        return self.__user_attributes[_enumutils.enum2str(name)]
 
     def getattributenames(self):  # type: (...) -> typing.Sequence[str]
         """
@@ -371,9 +310,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return:
             Same as :meth:`._reqverifier.ReqVerifier.getreqs()`.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement verifiers to walk through, depending on `walk_steps`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement for each link.
@@ -397,9 +334,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return:
             Same as :meth:`._reqverifier.ReqVerifier.getreqrefs()`.
         """
-        from ._reqlink import ReqLinkHelper
-
-        return ReqLinkHelper.buildsetwithreqlinks(
+        return _FAST_PATH.req_link_helper_cls.buildsetwithreqlinks(
             # Determine the list of requirement verifiers to walk through, depending on `walk_steps`.
             [self] if not walk_steps else [self, *self.steps],
             # Get the requirement reference for each link.
@@ -412,7 +347,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             *,
             walk_steps=False,  # type: bool
             walk_subrefs=False,  # type: bool
-    ):  # type: (...) -> _OrderedSetType[_ReqLinkType]
+    ):  # type: (...) -> _setutils.OrderedSetType[_ReqLinkType]
         """
         :meth:`._reqverifier.ReqVerifier.getreqlinks()` override for the ``walk_steps`` option augmentation.
 
@@ -436,15 +371,13 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return:
             Same as :meth:`._reqverifier.ReqVerifier.getreqlinks()`.
         """
-        from ._reqlink import ReqLink
-
         # Constitute the whole list of requirement links to consider, depending on the `walk_steps` option.
         _req_links = list(self._req_links)  # type: typing.List[_ReqLinkType]
         if walk_steps:
             for _step in self.steps:  # type: _StepDefinitionType
                 _req_links.extend(_step._req_links)
 
-        return ReqLink.orderedset(
+        return _FAST_PATH.req_link_cls.orderedset(
             # Filter this list with the requirement predicates.
             filter(
                 lambda req_link: req_link.matches(req_ref=req_ref, walk_subrefs=walk_subrefs),
@@ -479,12 +412,10 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Takes the local configuration set with :meth:`expectstepreqrefinement()` at first,
         then the :meth:`._scenarioconfig.ScenarioConfig.expectstepreqrefinement()` global configuration.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         if self.__expect_step_req_refinement is not None:
             return self.__expect_step_req_refinement
         else:
-            return SCENARIO_CONFIG.expectstepreqrefinement()
+            return _FAST_PATH.scenario_config.expectstepreqrefinement()
 
     def section(
             self,
@@ -496,9 +427,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :param description: Description for the section.
         :return: The step section description step just added.
         """
-        from ._stepsection import StepSectionDescription
-
-        _step_section_description = StepSectionDescription(description)  # type: StepSectionDescription
+        _step_section_description = _FAST_PATH.step_section_description_cls(description)  # type: _StepSectionDescriptionType
         _step_section_description.scenario = self
         self.__step_definitions.append(_step_section_description)
         return _step_section_description
@@ -527,10 +456,8 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :param step_specification: Step specification (see :obj:`._stepspecifications.AnyStepDefinitionSpecificationType`).
         :return: Step definition found, if any. ``None`` otherwise.
         """
-        from ._stepspecifications import StepDefinitionSpecification
-
-        if not isinstance(step_specification, StepDefinitionSpecification):
-            step_specification = StepDefinitionSpecification(step_specification)
+        if not isinstance(step_specification, _StepDefinitionSpecificationImpl):
+            step_specification = _StepDefinitionSpecificationImpl(step_specification)
         return step_specification.resolve()
 
     def expectstep(
@@ -546,10 +473,8 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         :return: Expected step definition.
         :raise LookupError: When the step definition could not be found.
         """
-        from ._stepspecifications import StepDefinitionSpecification
-
-        if not isinstance(step_specification, StepDefinitionSpecification):
-            step_specification = StepDefinitionSpecification(step_specification)
+        if not isinstance(step_specification, _StepDefinitionSpecificationImpl):
+            step_specification = _StepDefinitionSpecificationImpl(step_specification)
         return step_specification.expect()
 
     @property
@@ -586,12 +511,10 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Takes the local configuration at first,
         then the :meth:`._scenarioconfig.ScenarioConfig.continueonerror()` global configuration.
         """
-        from ._scenarioconfig import SCENARIO_CONFIG
-
         if self.__continue_on_error is not None:
             return self.__continue_on_error
         else:
-            return SCENARIO_CONFIG.continueonerror()
+            return _FAST_PATH.scenario_config.continueonerror()
 
     @continue_on_error.setter
     def continue_on_error(self, continue_on_error):  # type: (typing.Optional[bool]) -> None
@@ -628,12 +551,9 @@ class ScenarioDefinitionHelper:
         :param sys_modules_cache: See :func:`._reflection.importmodulefrompath()`.
         :return: Scenario definition classes, if any.
         """
-        from ._path import Path
-        from ._reflection import importmodulefrompath
-
         # Load the test scenario module.
-        script_path = Path(script_path)
-        _module = importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
+        script_path = _PathImpl(script_path)
+        _module = _importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
 
         # Find out the scenario classes in that module.
         _scenario_definition_class = None  # type: typing.Optional[typing.Type[ScenarioDefinition]]
@@ -652,30 +572,26 @@ class ScenarioDefinitionHelper:
             definition,  # type: ScenarioDefinition
     ):  # type: (...) -> None
         """
-        Instanciates a helper for the given scenario definition.
+        Instantiates a helper for the given scenario definition.
 
         :param definition: Scenario definition instance this helper works for.
         """
-        from ._logger import Logger
-        from ._scenariorunner import SCENARIO_RUNNER
-
         #: Related scenario definition.
         self.definition = definition  # type: ScenarioDefinition
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
-        self._logger = SCENARIO_RUNNER  # type: Logger
+        self._logger = _FAST_PATH.scenario_runner  # type: _LoggerType
 
     def buildsteps(self):  # type: (...) -> None
         """
         Reads the scenario step list by inspecting the user scenario class,
         and feeds the scenario definition step list.
         """
-        from ._reflection import qualname
-        from ._stepdefinition import StepDefinition, StepMethods
+        from ._stepmethods import StepMethods
 
         # Scan methods.
         _methods = []  # type: typing.List[types.MethodType]
-        self._logger.debug("Searching for steps in %s:", qualname(type(self.definition)))
+        self._logger.debug("Searching for steps in %s:", _qualname(type(self.definition)))
         for _method_name, _method in inspect.getmembers(self.definition, predicate=inspect.ismethod):  # type: str, types.MethodType
             if _method_name.startswith("step"):
                 # According to https://stackoverflow.com/questions/41900639/python-unable-to-compare-bound-method-to-itself#41900748,
@@ -691,4 +607,4 @@ class ScenarioDefinitionHelper:
 
         # Eventually build the `StepDefinition` objects.
         for _method in _methods:  # `_method` already defined.
-            self.definition.addstep(StepDefinition(method=_method))
+            self.definition.addstep(_FAST_PATH.step_definition_cls(method=_method))

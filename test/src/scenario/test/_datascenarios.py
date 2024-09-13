@@ -18,8 +18,8 @@ import sys
 
 # Path management.
 if True:
-    from ._paths import DATA_PATH as _DATA_PATH  # `DATA_PATH` used for path management.
-    sys.path.append(str(_DATA_PATH))
+    from . import _paths as _paths  # @module-level-execution
+    sys.path.append(str(_paths.DATA_PATH))
 
 
 try:

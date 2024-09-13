@@ -19,7 +19,7 @@ import scenario.test
 import scenario.text
 
 if True:
-    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # `LogVerificationStep` used for inheritance.
+    from steps.common import LogVerificationStep as _LogVerificationStepImpl  # @inheritance
 
 
 class KnownIssues210(scenario.test.TestCase):

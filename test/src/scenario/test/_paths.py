@@ -24,6 +24,9 @@ DATA_PATH = ROOT_SCENARIO_PATH / "test" / "data"  # type: scenario.Path
 UNIT_TESTS_PATH = ROOT_SCENARIO_PATH / "test" / "cases"  # type: scenario.Path
 UNIT_RESULTS_PATH = ROOT_SCENARIO_PATH / "test" / "results"  # type: scenario.Path
 
+# Dependencies.
+UTILS_SRC_PATH = ROOT_SCENARIO_PATH / "utils" / "src"  # type: scenario.Path
+
 # Launchers.
 TEST_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-test.py"  # type: scenario.Path
 CAMPAIGN_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-campaign.py"  # type: scenario.Path

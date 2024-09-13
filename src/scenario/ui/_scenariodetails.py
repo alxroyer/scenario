@@ -21,7 +21,7 @@ User interface scenario details page.
 import typing
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # `RequestHandler` used for inheritance.
+    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from .._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from .._reqref import ReqRef as _ReqRefType
