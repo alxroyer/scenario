@@ -583,4 +583,7 @@ class ScenarioReport(_LoggerImpl):
 
 
 #: Main instance of :class:`ScenarioReport`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_report`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_REPORT = ScenarioReport()  # type: ScenarioReport

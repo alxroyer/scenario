@@ -336,4 +336,7 @@ class ScenarioLogging:
 
 
 #: Main instance of :class:`ScenarioLogging`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_logging`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_LOGGING = ScenarioLogging()  # type: ScenarioLogging

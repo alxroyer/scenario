@@ -62,4 +62,7 @@ class LoggingService:
 
 
 #: Main instance of :class:`LoggingService`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.logging_service`.
+#: Please prefer the latter instead of using local imports of this module.
 LOGGING_SERVICE = LoggingService()  # type: LoggingService

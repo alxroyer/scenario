@@ -464,4 +464,7 @@ class ScenarioStack(_LoggerImpl):
 
 
 #: Main instance of :class:`ScenarioStack`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_stack`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_STACK = ScenarioStack()  # type: ScenarioStack

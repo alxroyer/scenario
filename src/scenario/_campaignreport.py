@@ -885,4 +885,7 @@ class CampaignReport(_LoggerImpl):
 
 
 #: Main instance of :class:`CampaignReport`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.campaign_report`.
+#: Please prefer the latter instead of using local imports of this module.
 CAMPAIGN_REPORT = CampaignReport()  # type: CampaignReport

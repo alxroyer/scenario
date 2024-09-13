@@ -88,4 +88,7 @@ class MainLogger(_LoggerImpl):
 
 
 #: Main logger instance.
+#:
+#: Also available as :attr:`._fastpath.FastPath.main_logger`.
+#: Please prefer the latter instead of using local imports of this module.
 MAIN_LOGGER = MainLogger()  # type: MainLogger

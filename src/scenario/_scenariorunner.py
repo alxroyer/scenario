@@ -813,4 +813,7 @@ class GotoException(Exception):
 
 
 #: Main instance of :class:`ScenarioRunner`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_runner`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_RUNNER = ScenarioRunner()  # type: ScenarioRunner

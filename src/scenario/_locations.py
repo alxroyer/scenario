@@ -306,4 +306,7 @@ class ExecutionLocations(_LoggerImpl):
 
 
 #: Main instance of :class:`ExecutionLocations`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.execution_locations`.
+#: Please prefer the latter instead of using local imports of this module.
 EXECUTION_LOCATIONS = ExecutionLocations()  # type: ExecutionLocations

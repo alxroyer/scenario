@@ -383,4 +383,7 @@ class CampaignRunner(_LoggerImpl):
 
 
 #: Main instance of :class:`CampaignRunner`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.campaign_runner`.
+#: Please prefer the latter instead of using local imports of this module.
 CAMPAIGN_RUNNER = CampaignRunner()  # type: CampaignRunner

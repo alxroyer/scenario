@@ -179,4 +179,7 @@ class Handlers(_LoggerImpl):
 
 
 #: Main instance of :class:`Handlers`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.handlers`.
+#: Please prefer the latter instead of using local imports of this module.
 HANDLERS = Handlers()  # type: Handlers

@@ -193,4 +193,7 @@ class CampaignLogging:
 
 
 #: Main instance of :class:`CampaignLogging`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.campaign_logging`.
+#: Please prefer the latter instead of using local imports of this module.
 CAMPAIGN_LOGGING = CampaignLogging()  # type: CampaignLogging

@@ -852,4 +852,7 @@ if typing.TYPE_CHECKING:
 
 
 #: Main instance of :class:`ReqTraceability`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.req_traceability`.
+#: Please prefer the latter instead of using local imports of this module.
 REQ_TRACEABILITY = ReqTraceability()  # type: ReqTraceability

@@ -357,4 +357,7 @@ class ReqDatabase(_LoggerImpl):
 
 
 #: Main instance of :class:`ReqDatabase`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.req_db`.
+#: Please prefer the latter instead of using local imports of this module.
 REQ_DB = ReqDatabase()  # type: ReqDatabase

@@ -206,4 +206,7 @@ class ScenarioResults(_LoggerImpl):
 
 
 #: Main instance of :class:`ScenarioResults`.
+#:
+#: Also available as :attr:`._fastpath.FastPath.scenario_results`.
+#: Please prefer the latter instead of using local imports of this module.
 SCENARIO_RESULTS = ScenarioResults()  # type: ScenarioResults
