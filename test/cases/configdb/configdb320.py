@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -30,7 +31,7 @@ class ConfigDb320(scenario.test.TestCase):
             description="Check that an environment error is raised when 'pyyaml' is not installed.",
         )
         self.verifies(
-            scenario.test.reqs.CONFIG_DB,
+            scenario.reqs.CONFIG_DB,
         )
 
         self.section("'pyyaml' not installed")

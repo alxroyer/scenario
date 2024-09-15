@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -32,7 +33,7 @@ class Logging100(scenario.test.TestCase):
             description="Check log lines are displayed with timestamps (by default), and the ability to avoid them.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
+            scenario.reqs.LOGGING,
         )
 
         self.section("Logging date/time enabled by default")

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -33,7 +34,7 @@ class ConfigDb500(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.test.reqs.CONFIG_DB,
+            scenario.reqs.CONFIG_DB,
         )
 
         self.section("Conf1 then Conf2")

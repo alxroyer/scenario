@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,8 +30,8 @@ class Inheritance001(scenario.test.TestCase):
             description="Check step order when a scenario inherits from another one.",
         )
         self.verifies(
-            scenario.test.reqs.ALTERNATIVE_SCENARIOS,
-            scenario.test.reqs.SCENARIO_EXECUTION,
+            scenario.reqs.ALTERNATIVE_SCENARIOS,
+            scenario.reqs.SCENARIO_EXECUTION,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.INHERITING_SCENARIO))

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,7 +29,7 @@ class Stats010(scenario.test.TestCase):
             description="Check scenario execution statistics for a simple scenario.",
         )
         self.verifies(
-            scenario.test.reqs.STATISTICS,
+            scenario.reqs.STATISTICS,
         )
 
         # Scenario execution.

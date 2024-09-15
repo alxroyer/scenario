@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -32,8 +33,8 @@ class Campaign002(scenario.test.TestCase):
             description="Check that the campaign runner can execute several test suite files.",
         )
         self.verifies(
-            (scenario.test.reqs.CAMPAIGNS, ),
-            (scenario.test.reqs.STATISTICS, "Statistics by scenario, integrated by test suite, and globally for the campaign"),
+            (scenario.reqs.CAMPAIGNS, ),
+            (scenario.reqs.STATISTICS, "Statistics by scenario, integrated by test suite, and globally for the campaign"),
         )
 
         # Campaign execution.

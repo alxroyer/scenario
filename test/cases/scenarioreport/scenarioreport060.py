@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,11 +30,11 @@ class ScenarioReport060(scenario.test.TestCase):
             description="Check the scenario report is generated as expected for a scenario with long texts.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_REPORT,
-            (scenario.test.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
-            (scenario.test.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
-            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Long texts for requirements link comments"),
-            (scenario.test.reqs.EVIDENCE, "Long texts for evidence"),
+            scenario.reqs.SCENARIO_REPORT,
+            (scenario.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
+            (scenario.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
+            (scenario.reqs.REQUIREMENT_MANAGEMENT, "Long texts for requirements link comments"),
+            (scenario.reqs.EVIDENCE, "Long texts for evidence"),
         )
 
         self.addstep(ExecScenario(scenario.test.paths.LONG_TEXTS_SCENARIO, generate_report=True))

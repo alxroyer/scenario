@@ -16,6 +16,7 @@
 
 import typing
 
+import scenario.reqs
 import scenario.test
 
 
@@ -32,8 +33,8 @@ class KnownIssues390(scenario.test.TestCase):
             description="Check that known issue identifiers are displayed in the campaign log and in final results.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.CAMPAIGNS,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.CAMPAIGNS,
         )
 
         # Execution step.

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,8 +30,8 @@ class KnownIssues290(scenario.test.TestCase):
             description="Check that issue level names are displayed in campaign logs and in final results.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.CAMPAIGNS,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.CAMPAIGNS,
         )
 
         self.addstep(ExecCampaign(

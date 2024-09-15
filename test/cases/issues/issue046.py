@@ -18,6 +18,7 @@ import os
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 import scenario.text
 
@@ -38,8 +39,8 @@ class Issue46(scenario.test.TestCase):
             description="Check that a campaign does not halt on errors due the scenario scripts being tested.",
         )
         self.verifies(
-            scenario.test.reqs.CAMPAIGNS,
-            scenario.test.reqs.ERROR_HANDLING,
+            scenario.reqs.CAMPAIGNS,
+            scenario.reqs.ERROR_HANDLING,
         )
 
         # Campaign execution.

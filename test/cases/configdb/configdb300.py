@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -31,7 +32,7 @@ class ConfigDb300(scenario.test.TestCase):
             description="Check that a YAML configuration file can be loaded (when 'pyyaml' is installed).",
         )
         self.verifies(
-            scenario.test.reqs.CONFIG_DB,
+            scenario.reqs.CONFIG_DB,
         )
 
         _pyyaml_section = self.addstep(PythonPackageBegin("pyyaml", "yaml", True))  # type: scenario.StepSectionBegin

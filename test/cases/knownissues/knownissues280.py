@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -30,8 +31,8 @@ class KnownIssues280(scenario.test.TestCase):
             description="Check that issue level names are displayed in the console in multiple scenario results.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         self.addstep(ExecScenario(

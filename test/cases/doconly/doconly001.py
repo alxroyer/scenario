@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,9 +30,9 @@ class DocOnly001(scenario.test.TestCase):
         )
         self.verifies(
             # Main features:
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.DOC_ONLY,
             # Additional coverage:
-            (scenario.test.reqs.SCENARIO_LOGGING, "Scenario logging with --doc-only"),
+            (scenario.reqs.SCENARIO_LOGGING, "Scenario logging with --doc-only"),
         )
 
         self.section("Test execution in failure")

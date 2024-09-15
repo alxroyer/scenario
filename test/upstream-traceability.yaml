@@ -1,0 +1,1181 @@
+# -*- coding: utf-8 -*-
+
+$schema: https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/upstream-traceability.schema.json
+$version: 0.2.2
+test/cases/campaigns/campaign001.py:
+  name: test/cases/campaigns/campaign001.py
+  reqs:
+    ATTRIBUTES:
+      comments: Scenario attributes in campaign reports
+      subrefs: {}
+      title: Scenario attributes
+    CAMPAIGNS:
+      comments: Single test suite
+      subrefs:
+        CAMPAIGNS/logging:
+          comments: Campaign output files
+        CAMPAIGNS/reports:
+          comments: Requirement file content in campaign output files
+      title: Campaign executions
+    ERROR_HANDLING:
+      comments: A scenario error is tracked and does not break the campaign
+      subrefs: {}
+      title: Error handling
+    KNOWN_ISSUES:
+      comments: Known issues reported from scenario to campaign reports
+      subrefs: {}
+      title: Known issues
+    LOGGING:
+      comments: ''
+      subrefs:
+        LOGGING/File:
+          comments: Scenario logging saved with campaign output files
+      title: Logging facilities
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Campaign final results
+      subrefs: {}
+      title: Multiple scenario execution
+    REQUIREMENT_MANAGEMENT:
+      comments: Requirements in campaign reports
+      subrefs: {}
+      title: Requirement management
+    SCENARIO_LOGGING:
+      comments: Scenario log files gathered with campaign reports
+      subrefs: {}
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Scenario reports gathered with campaign reports
+      subrefs: {}
+      title: Scenario reports
+    STATISTICS:
+      comments: Statistics by scenario, integrated for the campaign
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Campaign execution & reports
+test/cases/campaigns/campaign002.py:
+  name: test/cases/campaigns/campaign002.py
+  reqs:
+    CAMPAIGNS:
+      comments: Campaign execution with several test suites
+      subrefs: {}
+      title: Campaign executions
+    STATISTICS:
+      comments: Statistics by scenario, integrated by test suite, and globally for
+        the campaign
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Campaign execution with several test suites
+test/cases/campaigns/campaign003.py:
+  name: test/cases/campaigns/campaign003.py
+  reqs:
+    CAMPAIGNS:
+      comments: Campaign --dt-subdir option
+      subrefs: {}
+      title: Campaign executions
+  title: Campaign --dt-subdir option
+test/cases/campaigns/campaign004.py:
+  name: test/cases/campaigns/campaign004.py
+  reqs:
+    CAMPAIGNS:
+      comments: Campaign --doc-only option
+      subrefs: {}
+      title: Campaign executions
+  title: Campaign --doc-only option
+test/cases/campaigns/campaign005.py:
+  name: test/cases/campaigns/campaign005.py
+  reqs:
+    ATTRIBUTES:
+      comments: Display with campaign final results
+      subrefs: {}
+      title: Scenario attributes
+    CAMPAIGNS:
+      comments: ''
+      subrefs:
+        CAMPAIGNS/logging:
+          comments: Campaign & extra info
+      title: Campaign executions
+  title: Campaign & extra info
+test/cases/campaigns/campaign006.py:
+  name: test/cases/campaigns/campaign006.py
+  reqs:
+    CAMPAIGNS:
+      comments: ''
+      subrefs:
+        CAMPAIGNS/reports:
+          comments: Campaign & requirement file
+      title: Campaign executions
+    REQUIREMENT_MANAGEMENT:
+      comments: Requirement output file management with campaigns
+      subrefs: {}
+      title: Requirement management
+  title: Campaign & requirement file
+test/cases/configdb/configdb010.py:
+  name: test/cases/configdb/configdb010.py
+  reqs:
+    CONFIG_DB:
+      comments: Configuration value from command line
+      subrefs: {}
+      title: General configuration database
+  title: Configuration value from command line
+test/cases/configdb/configdb020.py:
+  name: test/cases/configdb/configdb020.py
+  reqs:
+    CONFIG_DB:
+      comments: Configuration value from code
+      subrefs: {}
+      title: General configuration database
+  title: Configuration value from code
+test/cases/configdb/configdb030.py:
+  name: test/cases/configdb/configdb030.py
+  reqs:
+    CONFIG_DB:
+      comments: Configuration value types and conversions
+      subrefs: {}
+      title: General configuration database
+  title: Configuration value types and conversions
+test/cases/configdb/configdb040.py:
+  name: test/cases/configdb/configdb040.py
+  reqs:
+    CONFIG_DB:
+      comments: Configuration value unset
+      subrefs: {}
+      title: General configuration database
+  title: Configuration value unset
+test/cases/configdb/configdb100.py:
+  name: test/cases/configdb/configdb100.py
+  reqs:
+    CONFIG_DB:
+      comments: Load INI configuration file
+      subrefs: {}
+      title: General configuration database
+  title: Load INI configuration file
+test/cases/configdb/configdb110.py:
+  name: test/cases/configdb/configdb110.py
+  reqs:
+    CONFIG_DB:
+      comments: Save INI configuration file
+      subrefs: {}
+      title: General configuration database
+  title: Save INI configuration file
+test/cases/configdb/configdb120.py:
+  name: test/cases/configdb/configdb120.py
+  reqs:
+    CONFIG_DB:
+      comments: INI default values & sub-sections
+      subrefs: {}
+      title: General configuration database
+  title: INI default values & sub-sections
+test/cases/configdb/configdb200.py:
+  name: test/cases/configdb/configdb200.py
+  reqs:
+    CONFIG_DB:
+      comments: Load JSON configuration file
+      subrefs: {}
+      title: General configuration database
+  title: Load JSON configuration file
+test/cases/configdb/configdb210.py:
+  name: test/cases/configdb/configdb210.py
+  reqs:
+    CONFIG_DB:
+      comments: Save JSON configuration file
+      subrefs: {}
+      title: General configuration database
+  title: Save JSON configuration file
+test/cases/configdb/configdb300.py:
+  name: test/cases/configdb/configdb300.py
+  reqs:
+    CONFIG_DB:
+      comments: Load YAML configuration file
+      subrefs: {}
+      title: General configuration database
+  title: Load YAML configuration file
+test/cases/configdb/configdb310.py:
+  name: test/cases/configdb/configdb310.py
+  reqs:
+    CONFIG_DB:
+      comments: Save YAML configuration file
+      subrefs: {}
+      title: General configuration database
+  title: Save YAML configuration file
+test/cases/configdb/configdb320.py:
+  name: test/cases/configdb/configdb320.py
+  reqs:
+    CONFIG_DB:
+      comments: '''pyyaml'' environment error'
+      subrefs: {}
+      title: General configuration database
+  title: '''pyyaml'' environment error'
+test/cases/configdb/configdb500.py:
+  name: test/cases/configdb/configdb500.py
+  reqs:
+    CONFIG_DB:
+      comments: Configuration files overloading
+      subrefs: {}
+      title: General configuration database
+  title: Configuration files overloading
+test/cases/doconly/doconly001.py:
+  name: test/cases/doconly/doconly001.py
+  reqs:
+    DOC_ONLY:
+      comments: --doc-only execution
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_LOGGING:
+      comments: Scenario logging with --doc-only
+      subrefs: {}
+      title: '`scenario` logging'
+  title: --doc-only execution
+test/cases/doconly/doconly002.py:
+  name: test/cases/doconly/doconly002.py
+  reqs:
+    DOC_ONLY:
+      comments: --doc-only scenario report
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_REPORT:
+      comments: --doc-only scenario report
+      subrefs: {}
+      title: Scenario reports
+  title: --doc-only scenario report
+test/cases/errors/failingscenario001.py:
+  name: test/cases/errors/failingscenario001.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Failing scenario execution
+      subrefs: {}
+      title: Error handling
+    SCENARIO_LOGGING:
+      comments: Scenario logging with errors
+      subrefs: {}
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Scenario report with errors
+      subrefs: {}
+      title: Scenario reports
+  title: Failing scenario execution
+test/cases/errors/failingscenario002.py:
+  name: test/cases/errors/failingscenario002.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Continue on error
+      subrefs: {}
+      title: Error handling
+  title: Continue on error
+test/cases/goto/goto001.py:
+  name: test/cases/goto/goto001.py
+  reqs:
+    GOTO:
+      comments: Goto jumps
+      subrefs: {}
+      title: Jumping to another step
+  title: Goto jumps
+test/cases/goto/goto002.py:
+  name: test/cases/goto/goto002.py
+  reqs:
+    GOTO:
+      comments: Goto scenario reports
+      subrefs: {}
+      title: Jumping to another step
+    SCENARIO_REPORT:
+      comments: Goto scenario reports
+      subrefs: {}
+      title: Scenario reports
+  title: Goto scenario reports
+test/cases/issues/issue003.py:
+  name: test/cases/issues/issue003.py
+  reqs:
+    SCENARIO_EXECUTION:
+      comments: 'Issue #3! Actions / Results differenciation even at the same location'
+      subrefs: {}
+      title: Scenario steps execution
+    SCENARIO_LOGGING:
+      comments: 'Issue #3! Actions / Results differenciation even at the same location'
+      subrefs: {}
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: 'Issue #3! Actions / Results differenciation even at the same location'
+      subrefs: {}
+      title: Scenario reports
+  title: 'Issue #3! Actions / Results differenciation even at the same location'
+test/cases/issues/issue033.py:
+  name: test/cases/issues/issue033.py
+  reqs:
+    ERROR_HANDLING:
+      comments: 'Issue #33! Fully qualified name for code locations'
+      subrefs: {}
+      title: Error handling
+    KNOWN_ISSUES:
+      comments: 'Issue #33! Fully qualified name for code locations'
+      subrefs: {}
+      title: Known issues
+  title: 'Issue #33! Fully qualified name for code locations'
+test/cases/issues/issue042.py:
+  name: test/cases/issues/issue042.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: 'Issue #42! Bad known issue display on multiple test execution'
+      subrefs: {}
+      title: Known issues
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: 'Issue #42! Bad known issue display on multiple test execution'
+      subrefs: {}
+      title: Multiple scenario execution
+  title: 'Issue #42! Bad known issue display on multiple test execution'
+test/cases/issues/issue045.py:
+  name: test/cases/issues/issue045.py
+  reqs: {}
+  title: 'Issue #45! Test scripts in packages'
+test/cases/issues/issue046.py:
+  name: test/cases/issues/issue046.py
+  reqs:
+    CAMPAIGNS:
+      comments: 'Issue #46! Campaign halts on errors'
+      subrefs: {}
+      title: Campaign executions
+    ERROR_HANDLING:
+      comments: 'Issue #46! Campaign halts on errors'
+      subrefs: {}
+      title: Error handling
+  title: 'Issue #46! Campaign halts on errors'
+test/cases/issues/issue065a.py:
+  name: test/cases/issues/issue065a.py
+  reqs:
+    STATISTICS:
+      comments: 'Issue #65! Scenario execution lost time'
+      subrefs: {}
+      title: Scenario execution statistics
+  title: 'Issue #65! Scenario execution lost time'
+test/cases/issues/issue065b.py:
+  name: test/cases/issues/issue065b.py
+  reqs:
+    CAMPAIGNS:
+      comments: 'Issue #65! Campaign execution lost time'
+      subrefs: {}
+      title: Campaign executions
+    SCENARIO_REPORT:
+      comments: 'Issue #65! Campaign execution lost time'
+      subrefs: {}
+      title: Scenario reports
+    STATISTICS:
+      comments: 'Issue #65! Campaign execution lost time'
+      subrefs: {}
+      title: Scenario execution statistics
+  title: 'Issue #65! Campaign execution lost time'
+test/cases/knownissues/knownissues010.py:
+  name: test/cases/knownissues/knownissues010.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Known issues
+      subrefs: {}
+      title: Known issues
+  title: Known issues
+test/cases/knownissues/knownissues011.py:
+  name: test/cases/knownissues/knownissues011.py
+  reqs:
+    DOC_ONLY:
+      comments: Known issues --doc-only
+      subrefs: {}
+      title: Documentation generation
+    KNOWN_ISSUES:
+      comments: Known issues --doc-only
+      subrefs: {}
+      title: Known issues
+  title: Known issues --doc-only
+test/cases/knownissues/knownissues020.py:
+  name: test/cases/knownissues/knownissues020.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Known issue persistence v/s test errors
+      subrefs: {}
+      title: Error handling
+    KNOWN_ISSUES:
+      comments: Known issue persistence v/s test errors
+      subrefs: {}
+      title: Known issues
+    SCENARIO_LOGGING:
+      comments: Known issue persistence v/s test errors
+      subrefs: {}
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Known issue persistence v/s test errors
+      subrefs: {}
+      title: Scenario reports
+  title: Known issue persistence v/s test errors
+test/cases/knownissues/knownissues080.py:
+  name: test/cases/knownissues/knownissues080.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Known issues & multiple scenarios
+      subrefs: {}
+      title: Known issues
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Known issues & multiple scenarios
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Known issues & multiple scenarios
+test/cases/knownissues/knownissues090.py:
+  name: test/cases/knownissues/knownissues090.py
+  reqs:
+    CAMPAIGNS:
+      comments: Known issues & campaigns
+      subrefs: {}
+      title: Campaign executions
+    KNOWN_ISSUES:
+      comments: Known issues & campaigns
+      subrefs: {}
+      title: Known issues
+  title: Known issues & campaigns
+test/cases/knownissues/knownissues110.py:
+  name: test/cases/knownissues/knownissues110.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Known issue levels & ignored and error issue levels
+      subrefs: {}
+      title: Error handling
+    KNOWN_ISSUES:
+      comments: Known issue levels & ignored and error issue levels
+      subrefs: {}
+      title: Known issues
+    SCENARIO_LOGGING:
+      comments: Known issue levels & ignored and error issue levels
+      subrefs: {}
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Known issue levels & ignored and error issue levels
+      subrefs: {}
+      title: Scenario reports
+  title: Known issue levels & ignored and error issue levels
+test/cases/knownissues/knownissues120.py:
+  name: test/cases/knownissues/knownissues120.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Known errors & test continuation
+      subrefs: {}
+      title: Error handling
+    KNOWN_ISSUES:
+      comments: Known errors & test continuation
+      subrefs: {}
+      title: Known issues
+  title: Known errors & test continuation
+test/cases/knownissues/knownissues180.py:
+  name: test/cases/knownissues/knownissues180.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Known issue levels & multiple scenarios
+      subrefs: {}
+      title: Known issues
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Known issue levels & multiple scenarios
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Known issue levels & multiple scenarios
+test/cases/knownissues/knownissues190.py:
+  name: test/cases/knownissues/knownissues190.py
+  reqs:
+    CAMPAIGNS:
+      comments: Known issue levels & campaigns
+      subrefs: {}
+      title: Campaign executions
+    KNOWN_ISSUES:
+      comments: Known issue levels & campaigns
+      subrefs: {}
+      title: Known issues
+  title: Known issue levels & campaigns
+test/cases/knownissues/knownissues210.py:
+  name: test/cases/knownissues/knownissues210.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Issue level names
+      subrefs: {}
+      title: Known issues
+    SCENARIO_LOGGING:
+      comments: Issue level names
+      subrefs: {}
+      title: '`scenario` logging'
+  title: Issue level names
+test/cases/knownissues/knownissues280.py:
+  name: test/cases/knownissues/knownissues280.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Issue level names & multiple scenarios
+      subrefs: {}
+      title: Known issues
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Issue level names & multiple scenarios
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Issue level names & multiple scenarios
+test/cases/knownissues/knownissues290.py:
+  name: test/cases/knownissues/knownissues290.py
+  reqs:
+    CAMPAIGNS:
+      comments: Issue level names & campaigns
+      subrefs: {}
+      title: Campaign executions
+    KNOWN_ISSUES:
+      comments: Issue level names & campaigns
+      subrefs: {}
+      title: Known issues
+  title: Issue level names & campaigns
+test/cases/knownissues/knownissues310.py:
+  name: test/cases/knownissues/knownissues310.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Known issue ids
+      subrefs: {}
+      title: Known issues
+    SCENARIO_LOGGING:
+      comments: Known issue ids
+      subrefs: {}
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Known issue ids
+      subrefs: {}
+      title: Scenario reports
+  title: Known issue ids
+test/cases/knownissues/knownissues380.py:
+  name: test/cases/knownissues/knownissues380.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Known issue ids & multiple scenarios
+      subrefs: {}
+      title: Known issues
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Known issue ids & multiple scenarios
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Known issue ids & multiple scenarios
+test/cases/knownissues/knownissues390.py:
+  name: test/cases/knownissues/knownissues390.py
+  reqs:
+    CAMPAIGNS:
+      comments: Known issue ids & campaigns
+      subrefs: {}
+      title: Campaign executions
+    KNOWN_ISSUES:
+      comments: Known issue ids & campaigns
+      subrefs: {}
+      title: Known issues
+  title: Known issue ids & campaigns
+test/cases/knownissues/knownissues410.py:
+  name: test/cases/knownissues/knownissues410.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Known issue URLs
+      subrefs: {}
+      title: Known issues
+    SCENARIO_LOGGING:
+      comments: Known issue URLs
+      subrefs: {}
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Known issue URLs
+      subrefs: {}
+      title: Scenario reports
+  title: Known issue URLs
+test/cases/knownissues/knownissues480.py:
+  name: test/cases/knownissues/knownissues480.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Known issue URLs & multiple scenarios
+      subrefs: {}
+      title: Known issues
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Known issue URLs & multiple scenarios
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Known issue URLs & multiple scenarios
+test/cases/knownissues/knownissues490.py:
+  name: test/cases/knownissues/knownissues490.py
+  reqs:
+    CAMPAIGNS:
+      comments: Known issue URLs & campaigns
+      subrefs: {}
+      title: Campaign executions
+    KNOWN_ISSUES:
+      comments: Known issue URLs & campaigns
+      subrefs: {}
+      title: Known issues
+  title: Known issue URLs & campaigns
+test/cases/logutils/logging100.py:
+  name: test/cases/logutils/logging100.py
+  reqs:
+    LOGGING:
+      comments: Logging timestamps
+      subrefs: {}
+      title: Logging facilities
+  title: Logging timestamps
+test/cases/logutils/logging200.py:
+  name: test/cases/logutils/logging200.py
+  reqs:
+    LOGGING:
+      comments: Log levels and classes
+      subrefs: {}
+      title: Logging facilities
+  title: Log levels and classes
+test/cases/logutils/logging210.py:
+  name: test/cases/logutils/logging210.py
+  reqs:
+    DEBUG_LOGGING:
+      comments: Class logger debugging enabling
+      subrefs: {}
+      title: Debug logging facilities
+  title: Class logger debugging enabling
+test/cases/logutils/logging300.py:
+  name: test/cases/logutils/logging300.py
+  reqs:
+    LOGGING:
+      comments: Log colors
+      subrefs: {}
+      title: Logging facilities
+  title: Log colors
+test/cases/logutils/logging400.py:
+  name: test/cases/logutils/logging400.py
+  reqs:
+    SCENARIO_LOGGING:
+      comments: Scenario logging indentation
+      subrefs: {}
+      title: '`scenario` logging'
+  title: Scenario logging indentation
+test/cases/logutils/logging410.py:
+  name: test/cases/logutils/logging410.py
+  reqs:
+    LOGGING:
+      comments: Scenario stack indentation
+      subrefs: {}
+      title: Logging facilities
+  title: Scenario stack indentation
+test/cases/logutils/logging420.py:
+  name: test/cases/logutils/logging420.py
+  reqs:
+    LOGGING:
+      comments: Additional user indentation
+      subrefs: {}
+      title: Logging facilities
+  title: Additional user indentation
+test/cases/logutils/logging421.py:
+  name: test/cases/logutils/logging421.py
+  reqs:
+    LOGGING:
+      comments: Additional user indentation in subscenario
+      subrefs: {}
+      title: Logging facilities
+    SUBSCENARIOS:
+      comments: Additional user indentation in subscenario
+      subrefs: {}
+      title: Subscenarios
+  title: Additional user indentation in subscenario
+test/cases/logutils/logging500.py:
+  name: test/cases/logutils/logging500.py
+  reqs:
+    LOGGING:
+      comments: Console logging
+      subrefs: {}
+      title: Logging facilities
+  title: Console logging
+test/cases/logutils/logging510.py:
+  name: test/cases/logutils/logging510.py
+  reqs:
+    LOGGING:
+      comments: ''
+      subrefs:
+        LOGGING/File:
+          comments: File logging
+      title: Logging facilities
+  title: File logging
+test/cases/misc/datetime001.py:
+  name: test/cases/misc/datetime001.py
+  reqs: {}
+  title: Date/time ISO8601 formatting & parsing
+test/cases/misc/textutils001.py:
+  name: test/cases/misc/textutils001.py
+  reqs:
+    ATTRIBUTES:
+      comments: Long texts for scenario descriptions
+      subrefs: {}
+      title: Scenario attributes
+    EVIDENCE:
+      comments: Long texts for evidence
+      subrefs: {}
+      title: Evidence collection
+    REQUIREMENT_MANAGEMENT:
+      comments: Long texts for requirements & requirement link comments
+      subrefs: {}
+      title: Requirement management
+    SCENARIO_EXECUTION:
+      comments: Long texts for actions & expected results
+      subrefs: {}
+      title: Scenario steps execution
+  title: Long texts
+test/cases/misc/timezone001.py:
+  name: test/cases/misc/timezone001.py
+  reqs: {}
+  title: Timezones with ISO8601 datetimes and DST
+test/cases/misc/timezone002.py:
+  name: test/cases/misc/timezone002.py
+  reqs: {}
+  title: Timezone configuration
+test/cases/multiplescenarios/multiplescenarios000.py:
+  name: test/cases/multiplescenarios/multiplescenarios000.py
+  reqs:
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Multiple scenarios & incompatible options
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Multiple scenarios & incompatible options
+test/cases/multiplescenarios/multiplescenarios001.py:
+  name: test/cases/multiplescenarios/multiplescenarios001.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Multiple scenarios execution
+      subrefs: {}
+      title: Error handling
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Multiple scenarios execution
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Multiple scenarios execution
+test/cases/multiplescenarios/multiplescenarios002.py:
+  name: test/cases/multiplescenarios/multiplescenarios002.py
+  reqs:
+    DOC_ONLY:
+      comments: Multiple scenarios --doc-only
+      subrefs: {}
+      title: Documentation generation
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Multiple scenarios --doc-only
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Multiple scenarios --doc-only
+test/cases/multiplescenarios/multiplescenarios003.py:
+  name: test/cases/multiplescenarios/multiplescenarios003.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Multiple scenarios & known issues
+      subrefs: {}
+      title: Known issues
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Multiple scenarios & known issues
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Multiple scenarios & known issues
+test/cases/multiplescenarios/multiplescenarios004.py:
+  name: test/cases/multiplescenarios/multiplescenarios004.py
+  reqs:
+    ATTRIBUTES:
+      comments: Multiple scenarios & extra info
+      subrefs: {}
+      title: Scenario attributes
+    MULTIPLE_SCENARIO_EXECUTION:
+      comments: Multiple scenarios & extra info
+      subrefs: {}
+      title: Multiple scenario execution
+  title: Multiple scenarios & extra info
+test/cases/reqmgt/reqmgt010.py:
+  name: test/cases/reqmgt/reqmgt010.py
+  reqs:
+    REQUIREMENT_MANAGEMENT:
+      comments: Requirement database and queries
+      subrefs: {}
+      title: Requirement management
+  title: Requirement database and queries
+test/cases/scenarioexecution/inheritance001.py:
+  name: test/cases/scenarioexecution/inheritance001.py
+  reqs:
+    ALTERNATIVE_SCENARIOS:
+      comments: Inheritance & step order
+      subrefs: {}
+      title: Alternative scenarios
+    SCENARIO_EXECUTION:
+      comments: Inheritance & step order
+      subrefs: {}
+      title: Scenario steps execution
+  title: Inheritance & step order
+test/cases/scenarioexecution/scenarioexecution001.py:
+  name: test/cases/scenarioexecution/scenarioexecution001.py
+  reqs:
+    SCENARIO_EXECUTION:
+      comments: Scenario execution
+      subrefs: {}
+      title: Scenario steps execution
+  title: Scenario execution
+test/cases/scenariologging/scenariologging010.py:
+  name: test/cases/scenariologging/scenariologging010.py
+  reqs:
+    ATTRIBUTES:
+      comments: Attribute display with scenario logging
+      subrefs: {}
+      title: Scenario attributes
+    SCENARIO_LOGGING:
+      comments: Scenario logging simple scenario
+      subrefs: {}
+      title: '`scenario` logging'
+  title: Scenario logging simple scenario
+test/cases/scenariologging/scenariologging011.py:
+  name: test/cases/scenariologging/scenariologging011.py
+  reqs:
+    ATTRIBUTES:
+      comments: Attribute display in scenario logging --doc-only
+      subrefs: {}
+      title: Scenario attributes
+    DOC_ONLY:
+      comments: Scenario logging simple scenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_LOGGING:
+      comments: Scenario logging simple scenario --doc-only
+      subrefs: {}
+      title: '`scenario` logging'
+  title: Scenario logging simple scenario --doc-only
+test/cases/scenariologging/scenariologging060.py:
+  name: test/cases/scenariologging/scenariologging060.py
+  reqs:
+    ATTRIBUTES:
+      comments: Long texts for scenario descriptions
+      subrefs: {}
+      title: Scenario attributes
+    EVIDENCE:
+      comments: Long texts for evidence
+      subrefs: {}
+      title: Evidence collection
+    SCENARIO_EXECUTION:
+      comments: Long texts for actions & expected results
+      subrefs: {}
+      title: Scenario steps execution
+    SCENARIO_LOGGING:
+      comments: Scenario logging long texts
+      subrefs: {}
+      title: '`scenario` logging'
+  title: Scenario logging long texts
+test/cases/scenariologging/scenariologging061.py:
+  name: test/cases/scenariologging/scenariologging061.py
+  reqs:
+    ATTRIBUTES:
+      comments: Long texts for scenario descriptions
+      subrefs: {}
+      title: Scenario attributes
+    DOC_ONLY:
+      comments: Scenario logging long texts --doc-only
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_EXECUTION:
+      comments: Long texts for actions & expected results
+      subrefs: {}
+      title: Scenario steps execution
+    SCENARIO_LOGGING:
+      comments: Scenario logging long texts --doc-only
+      subrefs: {}
+      title: '`scenario` logging'
+  title: Scenario logging long texts --doc-only
+test/cases/scenarioreport/scenarioreport010.py:
+  name: test/cases/scenarioreport/scenarioreport010.py
+  reqs:
+    SCENARIO_REPORT:
+      comments: Scenario report simple scenario
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report simple scenario
+test/cases/scenarioreport/scenarioreport011.py:
+  name: test/cases/scenarioreport/scenarioreport011.py
+  reqs:
+    DOC_ONLY:
+      comments: Scenario report simple scenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_REPORT:
+      comments: Scenario report simple scenario --doc-only
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report simple scenario --doc-only
+test/cases/scenarioreport/scenarioreport020.py:
+  name: test/cases/scenarioreport/scenarioreport020.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Scenario report failing scenario
+      subrefs: {}
+      title: Error handling
+    SCENARIO_REPORT:
+      comments: Scenario report failing scenario
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report failing scenario
+test/cases/scenarioreport/scenarioreport021.py:
+  name: test/cases/scenarioreport/scenarioreport021.py
+  reqs:
+    DOC_ONLY:
+      comments: Scenario report failing scenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    ERROR_HANDLING:
+      comments: Scenario report failing scenario --doc-only
+      subrefs: {}
+      title: Error handling
+    SCENARIO_REPORT:
+      comments: Scenario report failing scenario --doc-only
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report failing scenario --doc-only
+test/cases/scenarioreport/scenarioreport030.py:
+  name: test/cases/scenarioreport/scenarioreport030.py
+  reqs:
+    GOTO:
+      comments: Scenario report goto scenario
+      subrefs: {}
+      title: Jumping to another step
+    SCENARIO_REPORT:
+      comments: Scenario report goto scenario
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report goto scenario
+test/cases/scenarioreport/scenarioreport031.py:
+  name: test/cases/scenarioreport/scenarioreport031.py
+  reqs:
+    DOC_ONLY:
+      comments: Scenario report goto scenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    GOTO:
+      comments: Scenario report goto scenario --doc-only
+      subrefs: {}
+      title: Jumping to another step
+    SCENARIO_REPORT:
+      comments: Scenario report goto scenario --doc-only
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report goto scenario --doc-only
+test/cases/scenarioreport/scenarioreport040.py:
+  name: test/cases/scenarioreport/scenarioreport040.py
+  reqs:
+    SCENARIO_REPORT:
+      comments: Scenario report subscenario
+      subrefs: {}
+      title: Scenario reports
+    SUBSCENARIOS:
+      comments: Scenario report subscenario
+      subrefs: {}
+      title: Subscenarios
+  title: Scenario report subscenario
+test/cases/scenarioreport/scenarioreport041.py:
+  name: test/cases/scenarioreport/scenarioreport041.py
+  reqs:
+    DOC_ONLY:
+      comments: Scenario report subscenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_REPORT:
+      comments: Scenario report subscenario --doc-only
+      subrefs: {}
+      title: Scenario reports
+    SUBSCENARIOS:
+      comments: Scenario report subscenario --doc-only
+      subrefs: {}
+      title: Subscenarios
+  title: Scenario report subscenario --doc-only
+test/cases/scenarioreport/scenarioreport050.py:
+  name: test/cases/scenarioreport/scenarioreport050.py
+  reqs:
+    KNOWN_ISSUES:
+      comments: Scenario report known issues
+      subrefs: {}
+      title: Known issues
+    SCENARIO_REPORT:
+      comments: Scenario report known issues
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report known issues
+test/cases/scenarioreport/scenarioreport051.py:
+  name: test/cases/scenarioreport/scenarioreport051.py
+  reqs:
+    DOC_ONLY:
+      comments: Scenario report known issues --doc-only
+      subrefs: {}
+      title: Documentation generation
+    KNOWN_ISSUES:
+      comments: Scenario report known issues --doc-only
+      subrefs: {}
+      title: Known issues
+    SCENARIO_REPORT:
+      comments: Scenario report known issues --doc-only
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report known issues --doc-only
+test/cases/scenarioreport/scenarioreport060.py:
+  name: test/cases/scenarioreport/scenarioreport060.py
+  reqs:
+    ATTRIBUTES:
+      comments: Long texts for scenario descriptions
+      subrefs: {}
+      title: Scenario attributes
+    EVIDENCE:
+      comments: Long texts for evidence
+      subrefs: {}
+      title: Evidence collection
+    REQUIREMENT_MANAGEMENT:
+      comments: Long texts for requirements link comments
+      subrefs: {}
+      title: Requirement management
+    SCENARIO_EXECUTION:
+      comments: Long texts for actions & expected results
+      subrefs: {}
+      title: Scenario steps execution
+    SCENARIO_REPORT:
+      comments: Scenario report long texts
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report long texts
+test/cases/scenarioreport/scenarioreport061.py:
+  name: test/cases/scenarioreport/scenarioreport061.py
+  reqs:
+    ATTRIBUTES:
+      comments: Long texts for scenario descriptions
+      subrefs: {}
+      title: Scenario attributes
+    DOC_ONLY:
+      comments: Scenario report long texts --doc-only
+      subrefs: {}
+      title: Documentation generation
+    REQUIREMENT_MANAGEMENT:
+      comments: Long texts for requirements link comments
+      subrefs: {}
+      title: Requirement management
+    SCENARIO_EXECUTION:
+      comments: Long texts for actions & expected results
+      subrefs: {}
+      title: Scenario steps execution
+    SCENARIO_REPORT:
+      comments: Scenario report long texts --doc-only
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report long texts --doc-only
+test/cases/stats/stats010.py:
+  name: test/cases/stats/stats010.py
+  reqs:
+    STATISTICS:
+      comments: Statistics simple scenario
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Statistics simple scenario
+test/cases/stats/stats011.py:
+  name: test/cases/stats/stats011.py
+  reqs:
+    DOC_ONLY:
+      comments: Statistics simple scenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    STATISTICS:
+      comments: Statistics simple scenario --doc-only
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Statistics simple scenario --doc-only
+test/cases/stats/stats020.py:
+  name: test/cases/stats/stats020.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Statistics failing scenario
+      subrefs: {}
+      title: Error handling
+    STATISTICS:
+      comments: Statistics failing scenario
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Statistics failing scenario
+test/cases/stats/stats021.py:
+  name: test/cases/stats/stats021.py
+  reqs:
+    DOC_ONLY:
+      comments: Statistics failing scenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    ERROR_HANDLING:
+      comments: Statistics failing scenario --doc-only
+      subrefs: {}
+      title: Error handling
+    STATISTICS:
+      comments: Statistics failing scenario --doc-only
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Statistics failing scenario --doc-only
+test/cases/stats/stats030.py:
+  name: test/cases/stats/stats030.py
+  reqs:
+    GOTO:
+      comments: Statistics goto scenario
+      subrefs: {}
+      title: Jumping to another step
+    STATISTICS:
+      comments: Statistics goto scenario
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Statistics goto scenario
+test/cases/stats/stats031.py:
+  name: test/cases/stats/stats031.py
+  reqs:
+    GOTO:
+      comments: Statistics goto scenario --doc-only
+      subrefs: {}
+      title: Jumping to another step
+    STATISTICS:
+      comments: Statistics goto scenario --doc-only
+      subrefs: {}
+      title: Scenario execution statistics
+  title: Statistics goto scenario --doc-only
+test/cases/stats/stats040.py:
+  name: test/cases/stats/stats040.py
+  reqs:
+    STATISTICS:
+      comments: Statistics subscenario
+      subrefs: {}
+      title: Scenario execution statistics
+    SUBSCENARIOS:
+      comments: Statistics subscenario
+      subrefs: {}
+      title: Subscenarios
+  title: Statistics subscenario
+test/cases/stats/stats041.py:
+  name: test/cases/stats/stats041.py
+  reqs:
+    DOC_ONLY:
+      comments: Statistics subscenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    STATISTICS:
+      comments: Statistics subscenario --doc-only
+      subrefs: {}
+      title: Scenario execution statistics
+    SUBSCENARIOS:
+      comments: Statistics subscenario --doc-only
+      subrefs: {}
+      title: Subscenarios
+  title: Statistics subscenario --doc-only
+test/cases/subscenario/subscenario001.py:
+  name: test/cases/subscenario/subscenario001.py
+  reqs:
+    SUBSCENARIOS:
+      comments: Subscenario execution
+      subrefs: {}
+      title: Subscenarios
+  title: Subscenario execution
+test/cases/subscenario/subscenario002.py:
+  name: test/cases/subscenario/subscenario002.py
+  reqs:
+    DOC_ONLY:
+      comments: Subscenario --doc-only
+      subrefs: {}
+      title: Documentation generation
+    SUBSCENARIOS:
+      comments: Subscenario --doc-only
+      subrefs: {}
+      title: Subscenarios
+  title: Subscenario --doc-only
+test/cases/subscenario/subscenario003.py:
+  name: test/cases/subscenario/subscenario003.py
+  reqs:
+    ERROR_HANDLING:
+      comments: Subscenario error
+      subrefs: {}
+      title: Error handling
+    SUBSCENARIOS:
+      comments: Subscenario error
+      subrefs: {}
+      title: Subscenarios
+  title: Subscenario error

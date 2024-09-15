@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -36,10 +37,10 @@ class KnownIssues110(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.ERROR_HANDLING,
-            scenario.test.reqs.SCENARIO_LOGGING,
-            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.ERROR_HANDLING,
+            scenario.reqs.SCENARIO_LOGGING,
+            scenario.reqs.SCENARIO_REPORT,
         )
 
         # Default mode

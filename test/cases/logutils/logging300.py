@@ -18,6 +18,7 @@ import logging
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -39,7 +40,7 @@ class Logging300(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
+            scenario.reqs.LOGGING,
         )
 
         self.section("Log colors enabled by default")

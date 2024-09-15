@@ -1,0 +1,1194 @@
+# -*- coding: utf-8 -*-
+
+$schema: https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/downstream-traceability.schema.json
+$version: 0.2.2
+ALTERNATIVE_SCENARIOS:
+  scenarios:
+    test/cases/scenarioexecution/inheritance001.py:
+      comments: Inheritance & step order
+      steps: {}
+      title: Inheritance & step order
+  text: 'A scenario may be derived from another one
+
+    (basically an error scenario derivating from a nominal one),
+
+    which can be done through different means:
+
+
+    - Step picking,
+
+    - Partial subscenarios execution,
+
+    - Inheritance.'
+  title: Alternative scenarios
+ATTRIBUTES:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Scenario attributes in campaign reports
+      steps:
+        step#7:
+          comments: Attributes saved in scenario reports in campaign output files
+          name: CheckCampaignScenarioReports
+      title: Campaign execution & reports
+    test/cases/campaigns/campaign005.py:
+      comments: Display with campaign final results
+      steps: {}
+      title: Campaign & extra info
+    test/cases/misc/textutils001.py:
+      comments: Long texts for scenario descriptions
+      steps: {}
+      title: Long texts
+    test/cases/multiplescenarios/multiplescenarios004.py:
+      comments: Multiple scenarios & extra info
+      steps: {}
+      title: Multiple scenarios & extra info
+    test/cases/scenariologging/scenariologging010.py:
+      comments: Attribute display with scenario logging
+      steps: {}
+      title: Scenario logging simple scenario
+    test/cases/scenariologging/scenariologging011.py:
+      comments: Attribute display in scenario logging --doc-only
+      steps: {}
+      title: Scenario logging simple scenario --doc-only
+    test/cases/scenariologging/scenariologging060.py:
+      comments: Long texts for scenario descriptions
+      steps: {}
+      title: Scenario logging long texts
+    test/cases/scenariologging/scenariologging061.py:
+      comments: Long texts for scenario descriptions
+      steps: {}
+      title: Scenario logging long texts --doc-only
+    test/cases/scenarioreport/scenarioreport060.py:
+      comments: Long texts for scenario descriptions
+      steps: {}
+      title: Scenario report long texts
+    test/cases/scenarioreport/scenarioreport061.py:
+      comments: Long texts for scenario descriptions
+      steps: {}
+      title: Scenario report long texts --doc-only
+  text: 'Scenario attributes can be set with scenario definitions.
+
+
+    They consist in free fields that are:
+
+
+    - displayed in the console with scenario logging (see SCENARIO_LOGGING),
+
+    - stored in scenario reports (see SCENARIO_REPORT).
+
+
+    They may be displayed with scenario results,
+
+    when executing multiple scenarios (see MULTIPLE_SCENARIO_EXECUTION),
+
+    or when executing a campaign (see CAMPAIGNS).
+
+
+    The `scenario` framework defines the following core attributes:
+
+
+    - TITLE: short title (displayed by default with MULTIPLE_SCENARIO_EXECUTION),
+
+    - DESCRIPTION: more detailed description for the scenario.'
+  title: Scenario attributes
+CAMPAIGNS:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Single test suite
+      steps: {}
+      title: Campaign execution & reports
+    test/cases/campaigns/campaign002.py:
+      comments: Campaign execution with several test suites
+      steps: {}
+      title: Campaign execution with several test suites
+    test/cases/campaigns/campaign003.py:
+      comments: Campaign --dt-subdir option
+      steps: {}
+      title: Campaign --dt-subdir option
+    test/cases/campaigns/campaign004.py:
+      comments: Campaign --doc-only option
+      steps: {}
+      title: Campaign --doc-only option
+    test/cases/issues/issue046.py:
+      comments: 'Issue #46! Campaign halts on errors'
+      steps: {}
+      title: 'Issue #46! Campaign halts on errors'
+    test/cases/issues/issue065b.py:
+      comments: 'Issue #65! Campaign execution lost time'
+      steps: {}
+      title: 'Issue #65! Campaign execution lost time'
+    test/cases/knownissues/knownissues090.py:
+      comments: Known issues & campaigns
+      steps: {}
+      title: Known issues & campaigns
+    test/cases/knownissues/knownissues190.py:
+      comments: Known issue levels & campaigns
+      steps: {}
+      title: Known issue levels & campaigns
+    test/cases/knownissues/knownissues290.py:
+      comments: Issue level names & campaigns
+      steps: {}
+      title: Issue level names & campaigns
+    test/cases/knownissues/knownissues390.py:
+      comments: Known issue ids & campaigns
+      steps: {}
+      title: Known issue ids & campaigns
+    test/cases/knownissues/knownissues490.py:
+      comments: Known issue URLs & campaigns
+      steps: {}
+      title: Known issue URLs & campaigns
+  text: 'A campaign is the execution of a set of test suites, each being a set of
+    test cases, i.e. scenarios.
+
+    Whether the tests succeed or fail, the campaign keeps going on.
+
+
+    An output directory is fed with the following files:
+
+    - test results: log files and reports (see SCENARIO_LOGGING and SCENARIO_REPORT
+    files),
+
+    - a requirement file, if requirements are involved (see REQUIREMENT_MANAGEMENT),
+
+    - a JUnit XML campaign report (format: XML Junit, schema: JUnit + `scenario` augmentations).
+
+
+    The log output, in the end, gives a summary of the scenario execution status,
+    and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).'
+  title: Campaign executions
+CAMPAIGNS/logging:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: ''
+      steps:
+        step#2:
+          comments: Main campaign logging
+          name: CheckCampaignLogExpectations
+        step#4:
+          comments: Campaign final results
+          name: CheckFinalResultsLogExpectations
+        step#5:
+          comments: Campaign output files
+          name: CheckCampaignOutdirFiles
+      title: Campaign execution & reports
+    test/cases/campaigns/campaign005.py:
+      comments: Campaign & extra info
+      steps: {}
+      title: Campaign & extra info
+CAMPAIGNS/reports:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: ''
+      steps:
+        step#6:
+          comments: Campaign report content
+          name: CheckCampaignReport
+        step#7:
+          comments: Scenario report content in campaign output files
+          name: CheckCampaignScenarioReports
+        step#8:
+          comments: Requirement file content in campaign output files
+          name: CheckCampaignReqDbFile
+      title: Campaign execution & reports
+    test/cases/campaigns/campaign006.py:
+      comments: Campaign & requirement file
+      steps: {}
+      title: Campaign & requirement file
+CONFIG_DB:
+  scenarios:
+    test/cases/configdb/configdb010.py:
+      comments: Configuration value from command line
+      steps: {}
+      title: Configuration value from command line
+    test/cases/configdb/configdb020.py:
+      comments: Configuration value from code
+      steps: {}
+      title: Configuration value from code
+    test/cases/configdb/configdb030.py:
+      comments: Configuration value types and conversions
+      steps: {}
+      title: Configuration value types and conversions
+    test/cases/configdb/configdb040.py:
+      comments: Configuration value unset
+      steps: {}
+      title: Configuration value unset
+    test/cases/configdb/configdb100.py:
+      comments: Load INI configuration file
+      steps: {}
+      title: Load INI configuration file
+    test/cases/configdb/configdb110.py:
+      comments: Save INI configuration file
+      steps: {}
+      title: Save INI configuration file
+    test/cases/configdb/configdb120.py:
+      comments: INI default values & sub-sections
+      steps: {}
+      title: INI default values & sub-sections
+    test/cases/configdb/configdb200.py:
+      comments: Load JSON configuration file
+      steps: {}
+      title: Load JSON configuration file
+    test/cases/configdb/configdb210.py:
+      comments: Save JSON configuration file
+      steps: {}
+      title: Save JSON configuration file
+    test/cases/configdb/configdb300.py:
+      comments: Load YAML configuration file
+      steps: {}
+      title: Load YAML configuration file
+    test/cases/configdb/configdb310.py:
+      comments: Save YAML configuration file
+      steps: {}
+      title: Save YAML configuration file
+    test/cases/configdb/configdb320.py:
+      comments: '''pyyaml'' environment error'
+      steps: {}
+      title: '''pyyaml'' environment error'
+    test/cases/configdb/configdb500.py:
+      comments: Configuration files overloading
+      steps: {}
+      title: Configuration files overloading
+  text: 'The scenario framework provides a general configuration database.
+
+    This database may be fed with configuration files or single values,
+
+    either from the command line or programmatically.
+
+    Configuration files may be in the INI, JSON or YAML format.
+
+
+    Configurations are key-value pairs.
+
+    Keys are in the ''section.subsection.(...).leaf'' form (1).
+
+    The configuration database also handles lists of values or sub-sections (2).
+
+    Final values can be basic types like strings, integers or float numbers.
+
+
+    (1) For INI files, the use of the dot character in section names can be used to
+    declare sub-sections.
+
+
+    (2) No lists available with INI files.
+
+
+    When several configuration files are given,
+
+    the configuration values from the latter overloads the ones from the formers.
+
+
+    Configuration files may also be saved from the configuration database eventually.'
+  title: General configuration database
+DEBUG_LOGGING:
+  scenarios:
+    test/cases/logutils/logging210.py:
+      comments: Class logger debugging enabling
+      steps: {}
+      title: Class logger debugging enabling
+  text: The logging facilites makes it possible to activate dynamically debug logging
+    for each log class.
+  title: Debug logging facilities
+DOC_ONLY:
+  scenarios:
+    test/cases/doconly/doconly001.py:
+      comments: --doc-only execution
+      steps: {}
+      title: --doc-only execution
+    test/cases/doconly/doconly002.py:
+      comments: --doc-only scenario report
+      steps: {}
+      title: --doc-only scenario report
+    test/cases/knownissues/knownissues011.py:
+      comments: Known issues --doc-only
+      steps: {}
+      title: Known issues --doc-only
+    test/cases/multiplescenarios/multiplescenarios002.py:
+      comments: Multiple scenarios --doc-only
+      steps: {}
+      title: Multiple scenarios --doc-only
+    test/cases/scenariologging/scenariologging011.py:
+      comments: Scenario logging simple scenario --doc-only
+      steps: {}
+      title: Scenario logging simple scenario --doc-only
+    test/cases/scenariologging/scenariologging061.py:
+      comments: Scenario logging long texts --doc-only
+      steps: {}
+      title: Scenario logging long texts --doc-only
+    test/cases/scenarioreport/scenarioreport011.py:
+      comments: Scenario report simple scenario --doc-only
+      steps: {}
+      title: Scenario report simple scenario --doc-only
+    test/cases/scenarioreport/scenarioreport021.py:
+      comments: Scenario report failing scenario --doc-only
+      steps: {}
+      title: Scenario report failing scenario --doc-only
+    test/cases/scenarioreport/scenarioreport031.py:
+      comments: Scenario report goto scenario --doc-only
+      steps: {}
+      title: Scenario report goto scenario --doc-only
+    test/cases/scenarioreport/scenarioreport041.py:
+      comments: Scenario report subscenario --doc-only
+      steps: {}
+      title: Scenario report subscenario --doc-only
+    test/cases/scenarioreport/scenarioreport051.py:
+      comments: Scenario report known issues --doc-only
+      steps: {}
+      title: Scenario report known issues --doc-only
+    test/cases/scenarioreport/scenarioreport061.py:
+      comments: Scenario report long texts --doc-only
+      steps: {}
+      title: Scenario report long texts --doc-only
+    test/cases/stats/stats011.py:
+      comments: Statistics simple scenario --doc-only
+      steps: {}
+      title: Statistics simple scenario --doc-only
+    test/cases/stats/stats021.py:
+      comments: Statistics failing scenario --doc-only
+      steps: {}
+      title: Statistics failing scenario --doc-only
+    test/cases/stats/stats041.py:
+      comments: Statistics subscenario --doc-only
+      steps: {}
+      title: Statistics subscenario --doc-only
+    test/cases/subscenario/subscenario002.py:
+      comments: Subscenario --doc-only
+      steps: {}
+      title: Subscenario --doc-only
+  text: The scenario framework shall generate the test documentation without executing
+    the test.
+  title: Documentation generation
+ERROR_HANDLING:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: A scenario error is tracked and does not break the campaign
+      steps:
+        step#2:
+          comments: Scenario errors logged with main campaign logging
+          name: CheckCampaignLogExpectations
+        step#4:
+          comments: Scenario errors logged with campaign final results
+          name: CheckFinalResultsLogExpectations
+        step#6:
+          comments: Scenario errors saved in campaign report content
+          name: CheckCampaignReport
+        step#7:
+          comments: Scenario errors saved in scenario reports in campaign output files
+          name: CheckCampaignScenarioReports
+      title: Campaign execution & reports
+    test/cases/errors/failingscenario001.py:
+      comments: Failing scenario execution
+      steps:
+        step#1:
+          comments: Failing scenario execution
+          name: ExecScenario
+        step#3:
+          comments: Failing scenario execution
+          name: CheckScenarioLogExpectations
+        step#4:
+          comments: Failing scenario execution
+          name: CheckLogOutputExceptionDisplay
+        step#5:
+          comments: Failing scenario execution
+          name: CheckScenarioReportExpectations
+        step#6:
+          comments: Failing scenario execution
+          name: CheckScenarioReportExceptionStorage
+      title: Failing scenario execution
+    test/cases/errors/failingscenario002.py:
+      comments: Continue on error
+      steps: {}
+      title: Continue on error
+    test/cases/issues/issue033.py:
+      comments: 'Issue #33! Fully qualified name for code locations'
+      steps: {}
+      title: 'Issue #33! Fully qualified name for code locations'
+    test/cases/issues/issue046.py:
+      comments: 'Issue #46! Campaign halts on errors'
+      steps: {}
+      title: 'Issue #46! Campaign halts on errors'
+    test/cases/knownissues/knownissues020.py:
+      comments: Known issue persistence v/s test errors
+      steps: {}
+      title: Known issue persistence v/s test errors
+    test/cases/knownissues/knownissues110.py:
+      comments: Known issue levels & ignored and error issue levels
+      steps: {}
+      title: Known issue levels & ignored and error issue levels
+    test/cases/knownissues/knownissues120.py:
+      comments: Known errors & test continuation
+      steps: {}
+      title: Known errors & test continuation
+    test/cases/multiplescenarios/multiplescenarios001.py:
+      comments: Multiple scenarios execution
+      steps: {}
+      title: Multiple scenarios execution
+    test/cases/scenarioreport/scenarioreport020.py:
+      comments: Scenario report failing scenario
+      steps: {}
+      title: Scenario report failing scenario
+    test/cases/scenarioreport/scenarioreport021.py:
+      comments: Scenario report failing scenario --doc-only
+      steps: {}
+      title: Scenario report failing scenario --doc-only
+    test/cases/stats/stats020.py:
+      comments: Statistics failing scenario
+      steps: {}
+      title: Statistics failing scenario
+    test/cases/stats/stats021.py:
+      comments: Statistics failing scenario --doc-only
+      steps: {}
+      title: Statistics failing scenario --doc-only
+    test/cases/subscenario/subscenario003.py:
+      comments: Subscenario error
+      steps: {}
+      title: Subscenario error
+  text: 'When an exception is thrown, the step ends in error immediately.
+
+    The consecutive steps are not executed by default.
+
+    The error information is eventually stored and displayed to help investigating
+    on it.
+
+    The test status falls to FAIL (see SCENARIO_EXECUTION).
+
+
+    Error known issues (see KNOWN_ISSUES) also make the test status fall to FAIL,
+
+    but they don''t break the test execution.'
+  title: Error handling
+EVIDENCE:
+  scenarios:
+    test/cases/misc/textutils001.py:
+      comments: Long texts for evidence
+      steps: {}
+      title: Long texts
+    test/cases/scenariologging/scenariologging060.py:
+      comments: Long texts for evidence
+      steps: {}
+      title: Scenario logging long texts
+    test/cases/scenarioreport/scenarioreport060.py:
+      comments: Long texts for evidence
+      steps: {}
+      title: Scenario report long texts
+  text: 'Evidence may be saved in the test reports
+
+    with their related actions and expected results.'
+  title: Evidence collection
+GOTO:
+  scenarios:
+    test/cases/goto/goto001.py:
+      comments: Goto jumps
+      steps: {}
+      title: Goto jumps
+    test/cases/goto/goto002.py:
+      comments: Goto scenario reports
+      steps: {}
+      title: Goto scenario reports
+    test/cases/scenarioreport/scenarioreport030.py:
+      comments: Scenario report goto scenario
+      steps: {}
+      title: Scenario report goto scenario
+    test/cases/scenarioreport/scenarioreport031.py:
+      comments: Scenario report goto scenario --doc-only
+      steps: {}
+      title: Scenario report goto scenario --doc-only
+    test/cases/stats/stats030.py:
+      comments: Statistics goto scenario
+      steps: {}
+      title: Statistics goto scenario
+    test/cases/stats/stats031.py:
+      comments: Statistics goto scenario --doc-only
+      steps: {}
+      title: Statistics goto scenario --doc-only
+  text: A scenario execution shall jump to another step within the scenario.
+  title: Jumping to another step
+KNOWN_ISSUES:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Known issues reported from scenario to campaign reports
+      steps:
+        step#2:
+          comments: Known issues logged with main campaign logging
+          name: CheckCampaignLogExpectations
+        step#4:
+          comments: Known issues logged with campaign final results
+          name: CheckFinalResultsLogExpectations
+        step#6:
+          comments: Known issues saved in campaign report content
+          name: CheckCampaignReport
+        step#7:
+          comments: Known issues saved in scenario reports in campaign output files
+          name: CheckCampaignScenarioReports
+      title: Campaign execution & reports
+    test/cases/issues/issue033.py:
+      comments: 'Issue #33! Fully qualified name for code locations'
+      steps: {}
+      title: 'Issue #33! Fully qualified name for code locations'
+    test/cases/issues/issue042.py:
+      comments: 'Issue #42! Bad known issue display on multiple test execution'
+      steps: {}
+      title: 'Issue #42! Bad known issue display on multiple test execution'
+    test/cases/knownissues/knownissues010.py:
+      comments: Known issues
+      steps: {}
+      title: Known issues
+    test/cases/knownissues/knownissues011.py:
+      comments: Known issues --doc-only
+      steps: {}
+      title: Known issues --doc-only
+    test/cases/knownissues/knownissues020.py:
+      comments: Known issue persistence v/s test errors
+      steps: {}
+      title: Known issue persistence v/s test errors
+    test/cases/knownissues/knownissues080.py:
+      comments: Known issues & multiple scenarios
+      steps: {}
+      title: Known issues & multiple scenarios
+    test/cases/knownissues/knownissues090.py:
+      comments: Known issues & campaigns
+      steps: {}
+      title: Known issues & campaigns
+    test/cases/knownissues/knownissues110.py:
+      comments: Known issue levels & ignored and error issue levels
+      steps: {}
+      title: Known issue levels & ignored and error issue levels
+    test/cases/knownissues/knownissues120.py:
+      comments: Known errors & test continuation
+      steps: {}
+      title: Known errors & test continuation
+    test/cases/knownissues/knownissues180.py:
+      comments: Known issue levels & multiple scenarios
+      steps: {}
+      title: Known issue levels & multiple scenarios
+    test/cases/knownissues/knownissues190.py:
+      comments: Known issue levels & campaigns
+      steps: {}
+      title: Known issue levels & campaigns
+    test/cases/knownissues/knownissues210.py:
+      comments: Issue level names
+      steps: {}
+      title: Issue level names
+    test/cases/knownissues/knownissues280.py:
+      comments: Issue level names & multiple scenarios
+      steps: {}
+      title: Issue level names & multiple scenarios
+    test/cases/knownissues/knownissues290.py:
+      comments: Issue level names & campaigns
+      steps: {}
+      title: Issue level names & campaigns
+    test/cases/knownissues/knownissues310.py:
+      comments: Known issue ids
+      steps: {}
+      title: Known issue ids
+    test/cases/knownissues/knownissues380.py:
+      comments: Known issue ids & multiple scenarios
+      steps: {}
+      title: Known issue ids & multiple scenarios
+    test/cases/knownissues/knownissues390.py:
+      comments: Known issue ids & campaigns
+      steps: {}
+      title: Known issue ids & campaigns
+    test/cases/knownissues/knownissues410.py:
+      comments: Known issue URLs
+      steps: {}
+      title: Known issue URLs
+    test/cases/knownissues/knownissues480.py:
+      comments: Known issue URLs & multiple scenarios
+      steps: {}
+      title: Known issue URLs & multiple scenarios
+    test/cases/knownissues/knownissues490.py:
+      comments: Known issue URLs & campaigns
+      steps: {}
+      title: Known issue URLs & campaigns
+    test/cases/multiplescenarios/multiplescenarios003.py:
+      comments: Multiple scenarios & known issues
+      steps: {}
+      title: Multiple scenarios & known issues
+    test/cases/scenarioreport/scenarioreport050.py:
+      comments: Scenario report known issues
+      steps: {}
+      title: Scenario report known issues
+    test/cases/scenarioreport/scenarioreport051.py:
+      comments: Scenario report known issues --doc-only
+      steps: {}
+      title: Scenario report known issues --doc-only
+  text: 'Known issues may be registered at the scenario definition level,
+
+    or during test execution.
+
+
+    By default, known issues generate execution warnings.
+
+    These warnings are stored in reports,
+
+    and make the test status fall to WARNINGS (see SCENARIO_EXECUTION)
+
+    unless the test is executed in --doc-only mode.
+
+
+    Known issues may be registered with an optional issue level,
+
+    an ``int`` value possibly linked with a meaningful name.
+
+    When an error issue level threshold is set, issue levels from and above are considered
+    as errors (see ERROR_HANDLING).
+
+    When an ignored issue level threshold is set, issue levels from and under are
+    ignored.
+
+
+    Known issues may also be registered with an optional issue id,
+
+    referencing a ticket in a tier bugtracking system.
+
+    A URL builder handler may be configured in order to facilitate the navigation
+    to from test reports.'
+  title: Known issues
+LOGGING:
+  scenarios:
+    test/cases/logutils/logging100.py:
+      comments: Logging timestamps
+      steps: {}
+      title: Logging timestamps
+    test/cases/logutils/logging200.py:
+      comments: Log levels and classes
+      steps: {}
+      title: Log levels and classes
+    test/cases/logutils/logging300.py:
+      comments: Log colors
+      steps: {}
+      title: Log colors
+    test/cases/logutils/logging410.py:
+      comments: Scenario stack indentation
+      steps: {}
+      title: Scenario stack indentation
+    test/cases/logutils/logging420.py:
+      comments: Additional user indentation
+      steps: {}
+      title: Additional user indentation
+    test/cases/logutils/logging421.py:
+      comments: Additional user indentation in subscenario
+      steps: {}
+      title: Additional user indentation in subscenario
+    test/cases/logutils/logging500.py:
+      comments: Console logging
+      steps: {}
+      title: Console logging
+  text: 'The scenario framework provides logging facilities
+
+    with the following characteristics in order to ease test execution analyses:
+
+
+    - Date/time timestamps,
+
+    - Log levels: ERROR, WARNING, INFO, DEBUG,
+
+    - Log classes,
+
+    - Log level colorization,
+
+    - Log class colorization,
+
+    - Scenario stack indentation,
+
+    - Additional user indentation,
+
+    - Console logging (by default) and/or file logging.'
+  title: Logging facilities
+LOGGING/File:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Scenario log files gathered with campaign reports
+      steps:
+        step#5:
+          comments: Scenario logging saved with campaign output files
+          name: CheckCampaignOutdirFiles
+      title: Campaign execution & reports
+    test/cases/logutils/logging510.py:
+      comments: File logging
+      steps: {}
+      title: File logging
+MULTIPLE_SCENARIO_EXECUTION:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Campaign final results
+      steps: {}
+      title: Campaign execution & reports
+    test/cases/issues/issue042.py:
+      comments: 'Issue #42! Bad known issue display on multiple test execution'
+      steps: {}
+      title: 'Issue #42! Bad known issue display on multiple test execution'
+    test/cases/knownissues/knownissues080.py:
+      comments: Known issues & multiple scenarios
+      steps: {}
+      title: Known issues & multiple scenarios
+    test/cases/knownissues/knownissues180.py:
+      comments: Known issue levels & multiple scenarios
+      steps: {}
+      title: Known issue levels & multiple scenarios
+    test/cases/knownissues/knownissues280.py:
+      comments: Issue level names & multiple scenarios
+      steps: {}
+      title: Issue level names & multiple scenarios
+    test/cases/knownissues/knownissues380.py:
+      comments: Known issue ids & multiple scenarios
+      steps: {}
+      title: Known issue ids & multiple scenarios
+    test/cases/knownissues/knownissues480.py:
+      comments: Known issue URLs & multiple scenarios
+      steps: {}
+      title: Known issue URLs & multiple scenarios
+    test/cases/multiplescenarios/multiplescenarios000.py:
+      comments: Multiple scenarios & incompatible options
+      steps: {}
+      title: Multiple scenarios & incompatible options
+    test/cases/multiplescenarios/multiplescenarios001.py:
+      comments: Multiple scenarios execution
+      steps: {}
+      title: Multiple scenarios execution
+    test/cases/multiplescenarios/multiplescenarios002.py:
+      comments: Multiple scenarios --doc-only
+      steps: {}
+      title: Multiple scenarios --doc-only
+    test/cases/multiplescenarios/multiplescenarios003.py:
+      comments: Multiple scenarios & known issues
+      steps: {}
+      title: Multiple scenarios & known issues
+    test/cases/multiplescenarios/multiplescenarios004.py:
+      comments: Multiple scenarios & extra info
+      steps: {}
+      title: Multiple scenarios & extra info
+  text: 'Several scenarios may be executed with a single command line.
+
+    Whether the tests succeed or fail, the command line executes every scenario given.
+
+    The log output, in the end, gives a summary of the scenario execution status,
+    and highlights the errors and warnings.'
+  title: Multiple scenario execution
+REQUIREMENT_MANAGEMENT:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Requirements in campaign reports
+      steps:
+        step#5:
+          comments: Requirements saved with campaign output files
+          name: CheckCampaignOutdirFiles
+        step#8:
+          comments: Requirement file content in campaign output files
+          name: CheckCampaignReqDbFile
+      title: Campaign execution & reports
+    test/cases/campaigns/campaign006.py:
+      comments: Requirement output file management with campaigns
+      steps: {}
+      title: Campaign & requirement file
+    test/cases/misc/textutils001.py:
+      comments: Long texts for requirements & requirement link comments
+      steps: {}
+      title: Long texts
+    test/cases/reqmgt/reqmgt010.py:
+      comments: Requirement database and queries
+      steps: {}
+      title: Requirement database and queries
+    test/cases/scenarioreport/scenarioreport060.py:
+      comments: Long texts for requirements link comments
+      steps: {}
+      title: Scenario report long texts
+    test/cases/scenarioreport/scenarioreport061.py:
+      comments: Long texts for requirements link comments
+      steps: {}
+      title: Scenario report long texts --doc-only
+  text: 'The scenario framework provides a way to track requirements, and cover them
+    by tests with justification.
+
+
+    Requirements are defined in a requirement database.
+
+    This database can be saved and reloaded throught requirement files
+
+    (format: JSON or YAML, schema: schema/req-db.schema.json).
+
+
+    Requirements may be traced at different levels:
+
+
+    - On the requirement side: requirements may be traced entirely, or just parts
+    of them.
+
+    - On the test side: the requirement item may be traced either by test scenarios
+    and/or steps.
+
+
+    These associations define requirement links which may be commented with textual
+    justifications.
+
+
+    The scenario framework provides a way to generate requirement traceability reports
+
+    (format: JSON or YAML, schema: schema/downstream-traceability.schema.json and
+    schema/upstream-traceability.schema.json):
+
+
+    - either from test suite files,
+
+    - or from campaign execution results (see CAMPAIGNS).
+
+
+    For a given scenario, a consolidation may be done between:
+
+
+    - the declared set of requirement coverage,
+
+    - and the coverage declared from its steps.'
+  title: Requirement management
+REQUIREMENT_MANAGEMENT/reports:
+  scenarios: {}
+REQUIREMENT_MANAGEMENT/scenario-consolidation:
+  scenarios: {}
+SCENARIO_EXECUTION:
+  scenarios:
+    test/cases/issues/issue003.py:
+      comments: 'Issue #3! Actions / Results differenciation even at the same location'
+      steps: {}
+      title: 'Issue #3! Actions / Results differenciation even at the same location'
+    test/cases/misc/textutils001.py:
+      comments: Long texts for actions & expected results
+      steps: {}
+      title: Long texts
+    test/cases/scenarioexecution/inheritance001.py:
+      comments: Inheritance & step order
+      steps: {}
+      title: Inheritance & step order
+    test/cases/scenarioexecution/scenarioexecution001.py:
+      comments: Scenario execution
+      steps: {}
+      title: Scenario execution
+    test/cases/scenariologging/scenariologging060.py:
+      comments: Long texts for actions & expected results
+      steps: {}
+      title: Scenario logging long texts
+    test/cases/scenariologging/scenariologging061.py:
+      comments: Long texts for actions & expected results
+      steps: {}
+      title: Scenario logging long texts --doc-only
+    test/cases/scenarioreport/scenarioreport060.py:
+      comments: Long texts for actions & expected results
+      steps: {}
+      title: Scenario report long texts
+    test/cases/scenarioreport/scenarioreport061.py:
+      comments: Long texts for actions & expected results
+      steps: {}
+      title: Scenario report long texts --doc-only
+  text: 'A scenario is an assertive context that defines an ordered list of test steps.
+
+
+    Each step contains a description, test actions and expected results.
+
+
+    A scenario execution gives a final status:
+
+
+    - SUCCESS,
+
+    - WARNINGS (in case of known issues, see KNOWN_ISSUES),
+
+    - FAIL (see ERROR_HANDLING).'
+  title: Scenario steps execution
+SCENARIO_LOGGING:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Scenario log files gathered with campaign reports
+      steps: {}
+      title: Campaign execution & reports
+    test/cases/doconly/doconly001.py:
+      comments: Scenario logging with --doc-only
+      steps: {}
+      title: --doc-only execution
+    test/cases/errors/failingscenario001.py:
+      comments: Scenario logging with errors
+      steps:
+        step#3:
+          comments: Actions & expected results displayed until the error occurs
+          name: CheckScenarioLogExpectations
+        step#4:
+          comments: Traceback displayed
+          name: CheckLogOutputExceptionDisplay
+      title: Failing scenario execution
+    test/cases/issues/issue003.py:
+      comments: 'Issue #3! Actions / Results differenciation even at the same location'
+      steps: {}
+      title: 'Issue #3! Actions / Results differenciation even at the same location'
+    test/cases/knownissues/knownissues020.py:
+      comments: Known issue persistence v/s test errors
+      steps: {}
+      title: Known issue persistence v/s test errors
+    test/cases/knownissues/knownissues110.py:
+      comments: Known issue levels & ignored and error issue levels
+      steps: {}
+      title: Known issue levels & ignored and error issue levels
+    test/cases/knownissues/knownissues210.py:
+      comments: Issue level names
+      steps: {}
+      title: Issue level names
+    test/cases/knownissues/knownissues310.py:
+      comments: Known issue ids
+      steps: {}
+      title: Known issue ids
+    test/cases/knownissues/knownissues410.py:
+      comments: Known issue URLs
+      steps: {}
+      title: Known issue URLs
+    test/cases/logutils/logging400.py:
+      comments: Scenario logging indentation
+      steps: {}
+      title: Scenario logging indentation
+    test/cases/scenariologging/scenariologging010.py:
+      comments: Scenario logging simple scenario
+      steps: {}
+      title: Scenario logging simple scenario
+    test/cases/scenariologging/scenariologging011.py:
+      comments: Scenario logging simple scenario --doc-only
+      steps: {}
+      title: Scenario logging simple scenario --doc-only
+    test/cases/scenariologging/scenariologging060.py:
+      comments: Scenario logging long texts
+      steps: {}
+      title: Scenario logging long texts
+    test/cases/scenariologging/scenariologging061.py:
+      comments: Scenario logging long texts --doc-only
+      steps: {}
+      title: Scenario logging long texts --doc-only
+  text: 'The scenario execution provides log information that lets the tester know
+    the useful information about it:
+
+
+    - The name of the scenario being executed,
+
+    - The scenario attributes declared with it (see ATTRIBUTES),
+
+    - The steps, actions and expected results being executed,
+
+    - The errors that occurred (see ERROR_HANDLING),
+
+    - The evidence collected (see EVIDENCE),
+
+    - The known issues registered (see KNOWN_ISSUES),
+
+    - The final status of the test execution.'
+  title: '`scenario` logging'
+SCENARIO_REPORT:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Scenario reports gathered with campaign reports
+      steps:
+        step#5:
+          comments: Scenario reports saved with campaign output files
+          name: CheckCampaignOutdirFiles
+        step#7:
+          comments: Scenario report content in campaign output files
+          name: CheckCampaignScenarioReports
+      title: Campaign execution & reports
+    test/cases/doconly/doconly002.py:
+      comments: --doc-only scenario report
+      steps: {}
+      title: --doc-only scenario report
+    test/cases/errors/failingscenario001.py:
+      comments: Scenario report with errors
+      steps:
+        step#5:
+          comments: All actions & expected results definitions saved, executed until
+            the error occurs
+          name: CheckScenarioReportExpectations
+        step#6:
+          comments: 'Error storage at each level: scenario, step, action & expected
+            result'
+          name: CheckScenarioReportExceptionStorage
+      title: Failing scenario execution
+    test/cases/goto/goto002.py:
+      comments: Goto scenario reports
+      steps: {}
+      title: Goto scenario reports
+    test/cases/issues/issue003.py:
+      comments: 'Issue #3! Actions / Results differenciation even at the same location'
+      steps: {}
+      title: 'Issue #3! Actions / Results differenciation even at the same location'
+    test/cases/issues/issue065b.py:
+      comments: 'Issue #65! Campaign execution lost time'
+      steps: {}
+      title: 'Issue #65! Campaign execution lost time'
+    test/cases/knownissues/knownissues020.py:
+      comments: Known issue persistence v/s test errors
+      steps: {}
+      title: Known issue persistence v/s test errors
+    test/cases/knownissues/knownissues110.py:
+      comments: Known issue levels & ignored and error issue levels
+      steps: {}
+      title: Known issue levels & ignored and error issue levels
+    test/cases/knownissues/knownissues310.py:
+      comments: Known issue ids
+      steps: {}
+      title: Known issue ids
+    test/cases/knownissues/knownissues410.py:
+      comments: Known issue URLs
+      steps: {}
+      title: Known issue URLs
+    test/cases/scenarioreport/scenarioreport010.py:
+      comments: Scenario report simple scenario
+      steps: {}
+      title: Scenario report simple scenario
+    test/cases/scenarioreport/scenarioreport011.py:
+      comments: Scenario report simple scenario --doc-only
+      steps: {}
+      title: Scenario report simple scenario --doc-only
+    test/cases/scenarioreport/scenarioreport020.py:
+      comments: Scenario report failing scenario
+      steps: {}
+      title: Scenario report failing scenario
+    test/cases/scenarioreport/scenarioreport021.py:
+      comments: Scenario report failing scenario --doc-only
+      steps: {}
+      title: Scenario report failing scenario --doc-only
+    test/cases/scenarioreport/scenarioreport030.py:
+      comments: Scenario report goto scenario
+      steps: {}
+      title: Scenario report goto scenario
+    test/cases/scenarioreport/scenarioreport031.py:
+      comments: Scenario report goto scenario --doc-only
+      steps: {}
+      title: Scenario report goto scenario --doc-only
+    test/cases/scenarioreport/scenarioreport040.py:
+      comments: Scenario report subscenario
+      steps: {}
+      title: Scenario report subscenario
+    test/cases/scenarioreport/scenarioreport041.py:
+      comments: Scenario report subscenario --doc-only
+      steps: {}
+      title: Scenario report subscenario --doc-only
+    test/cases/scenarioreport/scenarioreport050.py:
+      comments: Scenario report known issues
+      steps: {}
+      title: Scenario report known issues
+    test/cases/scenarioreport/scenarioreport051.py:
+      comments: Scenario report known issues --doc-only
+      steps: {}
+      title: Scenario report known issues --doc-only
+    test/cases/scenarioreport/scenarioreport060.py:
+      comments: Scenario report long texts
+      steps: {}
+      title: Scenario report long texts
+    test/cases/scenarioreport/scenarioreport061.py:
+      comments: Scenario report long texts --doc-only
+      steps: {}
+      title: Scenario report long texts --doc-only
+  text: 'A scenario execution shall output a report file
+
+    (format: JSON or YAML, schema: schema/scenario-report.schema.json).
+
+
+    This report saves a structured information for a test execution.
+
+    See SCENARIO_LOGGING for the list of items that scenario reports contain.'
+  title: Scenario reports
+STATISTICS:
+  scenarios:
+    test/cases/campaigns/campaign001.py:
+      comments: Statistics by scenario, integrated for the campaign
+      steps:
+        step#4:
+          comments: Statistics logged with campaign final results
+          name: CheckFinalResultsLogExpectations
+        step#6:
+          comments: Statistics saved in campaign report content
+          name: CheckCampaignReport
+        step#7:
+          comments: Statistics saved in scenario reports in campaign output files
+          name: CheckCampaignScenarioReports
+      title: Campaign execution & reports
+    test/cases/campaigns/campaign002.py:
+      comments: Statistics by scenario, integrated by test suite, and globally for
+        the campaign
+      steps: {}
+      title: Campaign execution with several test suites
+    test/cases/issues/issue065a.py:
+      comments: 'Issue #65! Scenario execution lost time'
+      steps: {}
+      title: 'Issue #65! Scenario execution lost time'
+    test/cases/issues/issue065b.py:
+      comments: 'Issue #65! Campaign execution lost time'
+      steps: {}
+      title: 'Issue #65! Campaign execution lost time'
+    test/cases/stats/stats010.py:
+      comments: Statistics simple scenario
+      steps: {}
+      title: Statistics simple scenario
+    test/cases/stats/stats011.py:
+      comments: Statistics simple scenario --doc-only
+      steps: {}
+      title: Statistics simple scenario --doc-only
+    test/cases/stats/stats020.py:
+      comments: Statistics failing scenario
+      steps: {}
+      title: Statistics failing scenario
+    test/cases/stats/stats021.py:
+      comments: Statistics failing scenario --doc-only
+      steps: {}
+      title: Statistics failing scenario --doc-only
+    test/cases/stats/stats030.py:
+      comments: Statistics goto scenario
+      steps: {}
+      title: Statistics goto scenario
+    test/cases/stats/stats031.py:
+      comments: Statistics goto scenario --doc-only
+      steps: {}
+      title: Statistics goto scenario --doc-only
+    test/cases/stats/stats040.py:
+      comments: Statistics subscenario
+      steps: {}
+      title: Statistics subscenario
+    test/cases/stats/stats041.py:
+      comments: Statistics subscenario --doc-only
+      steps: {}
+      title: Statistics subscenario --doc-only
+  text: The scenario execution shall give statistics on the number of steps, actions
+    and expected results.
+  title: Scenario execution statistics
+STEP_PICKING:
+  scenarios: {}
+  text: A scenario shall be constituted by picking steps already defined.
+  title: Step picking
+SUBSCENARIOS:
+  scenarios:
+    test/cases/logutils/logging421.py:
+      comments: Additional user indentation in subscenario
+      steps: {}
+      title: Additional user indentation in subscenario
+    test/cases/scenarioreport/scenarioreport040.py:
+      comments: Scenario report subscenario
+      steps: {}
+      title: Scenario report subscenario
+    test/cases/scenarioreport/scenarioreport041.py:
+      comments: Scenario report subscenario --doc-only
+      steps: {}
+      title: Scenario report subscenario --doc-only
+    test/cases/stats/stats040.py:
+      comments: Statistics subscenario
+      steps: {}
+      title: Statistics subscenario
+    test/cases/stats/stats041.py:
+      comments: Statistics subscenario --doc-only
+      steps: {}
+      title: Statistics subscenario --doc-only
+    test/cases/subscenario/subscenario001.py:
+      comments: Subscenario execution
+      steps: {}
+      title: Subscenario execution
+    test/cases/subscenario/subscenario002.py:
+      comments: Subscenario --doc-only
+      steps: {}
+      title: Subscenario --doc-only
+    test/cases/subscenario/subscenario003.py:
+      comments: Subscenario error
+      steps: {}
+      title: Subscenario error
+  text: A scenario shall execute all or part of other scenarios as subscenarios.
+  title: Subscenarios

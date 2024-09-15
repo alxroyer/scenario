@@ -16,6 +16,7 @@
 
 import typing
 
+import scenario.reqs
 import scenario.test
 
 
@@ -30,7 +31,7 @@ class ConfigDb120(scenario.test.TestCase):
             description="Check the way sub-sections are emulated in INI files, and default values are propagated along sections.",
         )
         self.verifies(
-            scenario.test.reqs.CONFIG_DB,
+            scenario.reqs.CONFIG_DB,
         )
 
         # Make this scenario continue on errors, in order to make sure temporary configuration keys are removed in the end.

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -30,8 +31,8 @@ class KnownIssues090(scenario.test.TestCase):
             description="Check that known issues in campaign results are displayed correctly: SUCCESS, then WARNINGS, then FAIL tests.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.CAMPAIGNS,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.CAMPAIGNS,
         )
 
         # Execution step.

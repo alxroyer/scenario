@@ -18,6 +18,7 @@ import abc
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -38,7 +39,7 @@ class Issue65a(scenario.test.TestCase):
             description="Avoid untracked time when executing a scenario.",
         )
         self.verifies(
-            scenario.test.reqs.STATISTICS,
+            scenario.reqs.STATISTICS,
         )
 
         self.addstep(ExecScenario(

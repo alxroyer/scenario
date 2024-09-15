@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -30,7 +31,7 @@ class Campaign003(scenario.test.TestCase):
             description="Check the creation of date/time subdirectory for campaign results when the --dt-subdir option is used.",
         )
         self.verifies(
-            scenario.test.reqs.CAMPAIGNS,
+            scenario.reqs.CAMPAIGNS,
         )
 
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations

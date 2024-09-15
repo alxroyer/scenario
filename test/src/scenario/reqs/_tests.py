@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Test results output directory.
-/test/results/
+import scenario
 
-# Sphinx output directories.
-/doc/src/py/
-/doc/html/
 
-# Python intermediate files.
-__pycache__/
-*.pyc
+def setdefaulttestsuites():  # type: (...) -> None
+    """
+    Sets :attr:`._paths.TEST_SUITE_FILES` as the default test suite files.
+    """
+    from . import _paths as _paths
 
-# Tier tool working directories.
-/.idea/
-/.mypy_cache/
+    scenario.conf.remove(scenario.ConfigKey.TEST_SUITE_FILES)
+    scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, [_path.abspath for _path in _paths.TEST_SUITE_FILES])

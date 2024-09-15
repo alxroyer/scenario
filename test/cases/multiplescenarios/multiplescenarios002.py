@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -32,8 +33,8 @@ class MultipleScenarios002(scenario.test.TestCase):
             description="Check that several scenarios can be executed with a single scenario launcher invocation with the --doc-only option set.",
         )
         self.verifies(
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.DOC_ONLY,
         )
 
         self.section("Test execution")

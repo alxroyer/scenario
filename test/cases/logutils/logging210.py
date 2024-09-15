@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,7 +30,7 @@ class Logging210(scenario.test.TestCase):
             description="Check that debugging is disabled by default for class loggers, and that it can be enabled.",
         )
         self.verifies(
-            scenario.test.reqs.DEBUG_LOGGING,
+            scenario.reqs.DEBUG_LOGGING,
         )
 
         self.section("Default behaviour")

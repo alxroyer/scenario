@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -31,9 +32,9 @@ class Issue003(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_EXECUTION,
-            scenario.test.reqs.SCENARIO_LOGGING,
-            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.reqs.SCENARIO_EXECUTION,
+            scenario.reqs.SCENARIO_LOGGING,
+            scenario.reqs.SCENARIO_REPORT,
         )
 
         # Scenario expectations.

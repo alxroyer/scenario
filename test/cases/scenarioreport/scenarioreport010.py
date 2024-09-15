@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,7 +30,7 @@ class ScenarioReport010(scenario.test.TestCase):
             description="Check the scenario report is generated as expected for a simple scenario.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.reqs.SCENARIO_REPORT,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, generate_report=True))

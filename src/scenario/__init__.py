@@ -832,6 +832,17 @@ if True:
 
 if True:
     __doc__ += """
+    .. py:attribute:: ReqManagementArgs
+
+        Inherit from this class in order to extend :class:`._reqmgtargs.ReqManagementArgs` arguments with your own launcher script ones.
+
+        .. seealso:: :class:`._reqmgtargs.ReqManagementArgs` implementation.
+    """
+    from ._reqmgtargs import ReqManagementArgs as ReqManagementArgs
+    __all__.append("ReqManagementArgs")
+
+if True:
+    __doc__ += """
     .. py:attribute:: ReqVerifier
 
         Requirement verifier class.

@@ -16,6 +16,7 @@
 
 import scenario
 import scenario.inners
+import scenario.reqs
 import scenario.test
 
 
@@ -30,8 +31,8 @@ class Logging421(scenario.test.TestCase):
             description="Check that additional user indentation still works in subscenarios.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
-            scenario.test.reqs.SUBSCENARIOS,
+            scenario.reqs.LOGGING,
+            scenario.reqs.SUBSCENARIOS,
         )
 
         self.addstep(ExecUserIndentation(

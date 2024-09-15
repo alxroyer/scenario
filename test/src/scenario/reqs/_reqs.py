@@ -302,11 +302,32 @@ def load():  # type: (...) -> None
     """
     Loads :mod:`scenario.test` features in the `scenario` requirement database.
     """
-    import scenario.test
+    import scenario.reqs
 
     # Inspect this module items.
-    for _name, _obj in vars(scenario.test.reqs).items():  # type: str, typing.Any
+    for _name, _obj in vars(scenario.reqs).items():  # type: str, typing.Any
         # For each `scenario.Req` instance above.
         if isinstance(_obj, (scenario.Req, scenario.ReqRef)):
             # Ensure the feature is known as a requirement.
             scenario.req_db.push(_obj)
+
+
+def savedbfile(
+        *,
+        set_default=False,  # type: bool
+):  # type: (...) -> None
+    """
+    Saves the requirements defined in this file as :attr:`._paths.REQ_DB`.
+
+    :param set_default: Set to ``True`` to set :attr:`._paths.REQ_DB` as the default requirement file.
+    """
+    from . import _paths as _paths
+
+    # Load requirements and save as a file.
+    load()
+    scenario.req_db.dump(_paths.REQ_DB)
+
+    if set_default:
+        # Configure this file as the default requirement file.
+        scenario.conf.remove(scenario.ConfigKey.REQ_DB_FILES)
+        scenario.conf.set(scenario.ConfigKey.REQ_DB_FILES, [_paths.REQ_DB])

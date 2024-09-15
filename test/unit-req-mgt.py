@@ -17,6 +17,7 @@
 
 import pathlib
 import sys
+import typing
 
 # Path management.
 _root_scenario_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
@@ -28,14 +29,36 @@ if True:
     import scenario  # @after-path-management
     import scenario.reqs  # @after-path-management
     import scenario.test  # @after-path-management
-    import scenario.ui  # @after-path-management
+
+
+# Command line arguments.
+class UnitReqManagementArgs(scenario.ReqManagementArgs):
+
+    def __init__(self):  # type: (...) -> None
+        scenario.ReqManagementArgs.__init__(self)
+        self.setdescription("Unit test requirement management.")
+
+    def _checkargs(
+            self,
+            args,  # type: typing.Any
+    ):  # type: (...) -> bool
+        if (not self.downstream_traceability_outfile) and (not self.upstream_traceability_outfile):
+            self.debug("Using default paths for upstream an downstream traceability outputs: '%s' and '%s'",
+                       scenario.reqs.paths.DOWNSTREAM_TRACEABILITY, scenario.reqs.paths.UPSTREAM_TRACEABILITY)
+            self.downstream_traceability_outfile = scenario.reqs.paths.DOWNSTREAM_TRACEABILITY
+            self.upstream_traceability_outfile = scenario.reqs.paths.UPSTREAM_TRACEABILITY
+
+        if not super()._checkargs(args):
+            return False
+
+        return True
 
 
 if __name__ == "__main__":
     # Parse arguments.
-    scenario.Args.setinstance(scenario.Args(class_debugging=True))
-    if not scenario.Args.getinstance().parse(sys.argv[1:]):
-        sys.exit(int(scenario.Args.getinstance().error_code))
+    scenario.ReqManagementArgs.setinstance(UnitReqManagementArgs())
+    if not UnitReqManagementArgs.getinstance().parse(sys.argv[1:]):
+        sys.exit(int(UnitReqManagementArgs.getinstance().error_code))
 
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
@@ -46,6 +69,8 @@ if __name__ == "__main__":
     # Configure default test suites.
     scenario.reqs.setdefaulttestsuites()
 
-    # UI execution.
-    _res = scenario.ui.main()  # type: scenario.ErrorCode
+    # Default outputs ensured with `UnitReqManagementArgs`.
+
+    # Requirement management execution.
+    _res = scenario.req_mgt.main()  # type: scenario.ErrorCode
     sys.exit(int(_res))

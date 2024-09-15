@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,8 +30,8 @@ class ScenarioReport050(scenario.test.TestCase):
             description="Check the scenario report is generated as expected for a scenario with known issues.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_REPORT,
-            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.reqs.SCENARIO_REPORT,
+            scenario.reqs.KNOWN_ISSUES,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.KNOWN_ISSUES_SCENARIO, generate_report=True))

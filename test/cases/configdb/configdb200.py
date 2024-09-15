@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -30,7 +31,7 @@ class ConfigDb200(scenario.test.TestCase):
             description="Check that a JSON configuration file can be loaded.",
         )
         self.verifies(
-            scenario.test.reqs.CONFIG_DB,
+            scenario.reqs.CONFIG_DB,
         )
 
         _conf_file = scenario.test.paths.datapath("conf.json")  # type: scenario.Path

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 import scenario.text
 
@@ -32,8 +33,8 @@ class Issue33(scenario.test.TestCase):
             description="Check that code locations for errors and known issues give the fully qualified names of the methods they occur in.",
         )
         self.verifies(
-            scenario.test.reqs.ERROR_HANDLING,
-            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.reqs.ERROR_HANDLING,
+            scenario.reqs.KNOWN_ISSUES,
         )
 
         self.section("Exception")

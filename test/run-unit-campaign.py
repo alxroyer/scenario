@@ -27,6 +27,7 @@ sys.path.append(str(_root_scenario_path / "test" / "src"))
 
 if True:
     import scenario  # @after-path-management
+    import scenario.reqs  # @after-path-management
     import scenario.test  # @after-path-management
 
 
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
     # Load requirements.
-    scenario.test.reqs.load()
+    scenario.reqs.load()
 
     # Campaign execution:
     # - Have the neighbour `UNIT_TEST_LAUNCHER` script be used as the scenario runner script.

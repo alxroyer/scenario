@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,9 +30,9 @@ class ScenarioReport021(scenario.test.TestCase):
             description="Check the scenario report is generated as expected for a failing scenario, executed with the --doc-only option set.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_REPORT,
-            scenario.test.reqs.ERROR_HANDLING,
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.SCENARIO_REPORT,
+            scenario.reqs.ERROR_HANDLING,
+            scenario.reqs.DOC_ONLY,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, generate_report=True, doc_only=True))

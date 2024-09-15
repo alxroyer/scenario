@@ -17,6 +17,7 @@
 import typing
 
 import scenario.inners
+import scenario.reqs
 import scenario.test
 
 
@@ -29,10 +30,10 @@ class TextUtils001(scenario.test.TestCase):
             description="Check the `anylongtext2str()` function.",
         )
         self.verifies(
-            (scenario.test.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
-            (scenario.test.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
-            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Long texts for requirements & requirement link comments"),
-            (scenario.test.reqs.EVIDENCE, "Long texts for evidence"),
+            (scenario.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
+            (scenario.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
+            (scenario.reqs.REQUIREMENT_MANAGEMENT, "Long texts for requirements & requirement link comments"),
+            (scenario.reqs.EVIDENCE, "Long texts for evidence"),
         )
 
     def step001(self):  # type: (...) -> None

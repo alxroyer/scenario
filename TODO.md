@@ -18,8 +18,11 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Enable check-imports.py to check main scripts with same module names.
+        - Remove "UNIT" terms in 'scenario/test/_paths.py', use "GENERAL" for 'bin/' launchers.
+        - Check "Unit" terms in 'test/' launchers.
+    - Automatically add comment header to req-db and traceability YAML files.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Improve test suites loading.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.
             - Make main logging indentation not shift the logging level?

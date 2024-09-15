@@ -44,6 +44,7 @@ _IMPORT_FORMS = {
     _paths.SRC_PATH / "scenario" / "_typeutils.py": ImportForm.IMPORT_MODULE_AS,
     _paths.SRC_PATH / "scenario" / "_xmlutils.py": ImportForm.FROM_MODULE_IMPORT,  # Single `Xml` class in '_xmlutils.py'.
     _paths.SRC_PATH / "scenario" / "ui" / "__init__.py": ImportForm.SYSTEM_IMPORT,
+    _paths.TEST_SRC_PATH / "scenario" / "reqs" / "__init__.py": ImportForm.SYSTEM_IMPORT,
     _paths.TEST_SRC_PATH / "scenario" / "test" / "__init__.py": ImportForm.SYSTEM_IMPORT,
     _paths.TEST_SRC_PATH / "scenario" / "test" / "_datascenarios.py": ImportForm.IMPORT_MODULE_AS,
     _paths.TEST_SRC_PATH / "scenario" / "test" / "_paths.py": ImportForm.IMPORT_MODULE_AS,

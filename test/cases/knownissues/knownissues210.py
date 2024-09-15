@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 import scenario.text
 
@@ -33,8 +34,8 @@ class KnownIssues210(scenario.test.TestCase):
             description="Check that issue levels can be configured with meaningful names, and that these names are displayed in the console.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.SCENARIO_LOGGING,
         )
 
         self.addstep(ExecScenario(

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -30,7 +31,7 @@ class ScenarioExecution001(scenario.test.TestCase):
             description="Check test steps are executed one after the other.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_EXECUTION,
+            scenario.reqs.SCENARIO_EXECUTION,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, expected_return_code=scenario.ErrorCode.SUCCESS))

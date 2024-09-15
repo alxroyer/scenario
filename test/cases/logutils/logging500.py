@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -29,7 +30,7 @@ class Logging500(scenario.test.TestCase):
             description="Check that logging is displayed by default in the console, and that it can be disabled.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
+            scenario.reqs.LOGGING,
         )
 
         self.section("Console output enabled by default")

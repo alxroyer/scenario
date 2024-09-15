@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -30,8 +31,8 @@ class Goto002(scenario.test.TestCase):
             description="Check scenario report generation for goto scenarios.",
         )
         self.verifies(
-            scenario.test.reqs.GOTO,
-            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.reqs.GOTO,
+            scenario.reqs.SCENARIO_REPORT,
         )
 
         self.section("Documentation generation")

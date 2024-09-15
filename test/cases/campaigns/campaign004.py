@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -30,7 +31,7 @@ class Campaign004(scenario.test.TestCase):
             description="Check campaign results when the --doc-only option is used.",
         )
         self.verifies(
-            scenario.test.reqs.CAMPAIGNS,
+            scenario.reqs.CAMPAIGNS,
         )
 
         self.section("--doc-only option not set")

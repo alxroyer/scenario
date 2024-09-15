@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,7 +29,7 @@ class SubScenario001(scenario.test.TestCase):
             description="Check log output and scenario report of a scenario that executes another scenario as a subscenario.",
         )
         self.verifies(
-            scenario.test.reqs.SUBSCENARIOS,
+            scenario.reqs.SUBSCENARIOS,
         )
 
         _scenario_expectations = scenario.test.data.scenarioexpectations(

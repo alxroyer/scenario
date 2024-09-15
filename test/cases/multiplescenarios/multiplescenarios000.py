@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -36,7 +37,7 @@ class MultipleScenarios000(scenario.test.TestCase):
             description="Check that a couple of options are incompatible with multiple scenario executions.",
         )
         self.verifies(
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         self.section("Successful execution")

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -35,8 +36,8 @@ class MultipleScenarios001(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
-            scenario.test.reqs.ERROR_HANDLING,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.ERROR_HANDLING,
         )
 
         self.addstep(ExecScenario(

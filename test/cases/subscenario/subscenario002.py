@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,8 +29,8 @@ class SubScenario002(scenario.test.TestCase):
             description="Check that a super scenario does not execute its subscenarios when the --doc-only option is set.",
         )
         self.verifies(
-            scenario.test.reqs.SUBSCENARIOS,
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.SUBSCENARIOS,
+            scenario.reqs.DOC_ONLY,
         )
 
         _scenario_expectations = scenario.test.data.scenarioexpectations(

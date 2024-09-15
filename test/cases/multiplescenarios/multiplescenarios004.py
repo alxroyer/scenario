@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -31,8 +32,8 @@ class MultipleScenarios004(scenario.test.TestCase):
             description="Check extra info display when executing multiple scenarios.",
         )
         self.verifies(
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
-            scenario.test.reqs.ATTRIBUTES,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.ATTRIBUTES,
         )
 
         self.section("No extra info")

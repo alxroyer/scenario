@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -36,7 +37,7 @@ class Logging400(scenario.test.TestCase):
             description="Check that action, result and evidence log lines are indented in a manner that helps reading the scenario execution log.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_LOGGING,
+            scenario.reqs.SCENARIO_LOGGING,
         )
 
         self.addstep(ExecScenario(

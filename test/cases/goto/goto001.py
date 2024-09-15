@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -29,7 +30,7 @@ class Goto001(scenario.test.TestCase):
             description="Check the capacity the make the scenario execution jump to backward or forward steps.",
         )
         self.verifies(
-            scenario.test.reqs.GOTO,
+            scenario.reqs.GOTO,
         )
 
         self.section("Documentation generation")

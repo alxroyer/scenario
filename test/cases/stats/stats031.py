@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,8 +29,8 @@ class Stats010(scenario.test.TestCase):
             description="Check scenario execution statistics for a scenario with goto jumps executed with the --doc-only option set.",
         )
         self.verifies(
-            scenario.test.reqs.STATISTICS,
-            scenario.test.reqs.GOTO,
+            scenario.reqs.STATISTICS,
+            scenario.reqs.GOTO,
         )
 
         # Scenario execution.

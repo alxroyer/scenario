@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -32,7 +33,7 @@ class Logging200(scenario.test.TestCase):
             description="Check log lines are tagged with a log level between DEBUG, INFO, WARNING and ERROR, and an optional log class.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
+            scenario.reqs.LOGGING,
         )
 
         self.addstep(ExecScenario(

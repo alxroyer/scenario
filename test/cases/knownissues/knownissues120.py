@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -32,8 +33,8 @@ class KnownIssues120(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.ERROR_HANDLING,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.ERROR_HANDLING,
         )
 
         # Execution step.

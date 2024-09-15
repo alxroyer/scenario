@@ -37,7 +37,6 @@ try:
     from ._expectations import StatExpectations as StatExpectations
     from ._expectations import StepExpectations as StepExpectations
     from ._expectations import TestSuiteExpectations as TestSuiteExpectations
-    from . import _reqs as reqs
     from ._knownissues import IssueLevel as IssueLevel
     from . import _paths as paths
     from . import _reflection as reflection

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -34,10 +35,10 @@ class KnownIssues020(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.ERROR_HANDLING,
-            scenario.test.reqs.SCENARIO_LOGGING,
-            scenario.test.reqs.SCENARIO_REPORT,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.ERROR_HANDLING,
+            scenario.reqs.SCENARIO_LOGGING,
+            scenario.reqs.SCENARIO_REPORT,
         )
 
         # Execution step.

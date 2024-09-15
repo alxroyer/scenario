@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -29,8 +30,8 @@ class Stats020(scenario.test.TestCase):
             description="Check scenario execution statistics for a failing scenario, with the display of the error information.",
         )
         self.verifies(
-            scenario.test.reqs.STATISTICS,
-            scenario.test.reqs.ERROR_HANDLING,
+            scenario.reqs.STATISTICS,
+            scenario.reqs.ERROR_HANDLING,
         )
 
         # Scenario execution.

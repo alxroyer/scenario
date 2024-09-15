@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,9 +29,9 @@ class Stats021(scenario.test.TestCase):
             description="Check scenario execution statistics for a failing scenario executed with the --doc-only option set.",
         )
         self.verifies(
-            scenario.test.reqs.STATISTICS,
-            scenario.test.reqs.ERROR_HANDLING,
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.STATISTICS,
+            scenario.reqs.ERROR_HANDLING,
+            scenario.reqs.DOC_ONLY,
         )
 
         # Scenario execution.

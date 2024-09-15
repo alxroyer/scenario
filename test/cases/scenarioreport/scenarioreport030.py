@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,8 +30,8 @@ class ScenarioReport030(scenario.test.TestCase):
             description="Check the scenario report is generated as expected for a scenario with goto jumps.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_REPORT,
-            scenario.test.reqs.GOTO,
+            scenario.reqs.SCENARIO_REPORT,
+            scenario.reqs.GOTO,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.GOTO_SCENARIO, generate_report=True))

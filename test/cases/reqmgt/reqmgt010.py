@@ -17,6 +17,7 @@
 import typing
 
 import scenario.inners
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -35,7 +36,7 @@ class ReqMgt010(scenario.test.TestCase):
             description="Check the requirement database can be fed from tests being loaded, and queried.",
         )
         self.verifies(
-            scenario.test.reqs.REQUIREMENT_MANAGEMENT,
+            scenario.reqs.REQUIREMENT_MANAGEMENT,
         )
 
         self.addstep(SaveScenarioTestReqs())

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,8 +29,8 @@ class KnownIssues011(scenario.test.TestCase):
             description="Check that known issues when declared at the definition level still generate warnings in --doc-only.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.DOC_ONLY,
         )
 
         self.section("Regular execution")

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -31,8 +32,8 @@ class MultipleScenarios003(scenario.test.TestCase):
             description="Check the way known issues are displayed in the final results reporting when executing multiple scenarios.",
         )
         self.verifies(
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
-            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.KNOWN_ISSUES,
         )
 
         self.section("Known issues only")

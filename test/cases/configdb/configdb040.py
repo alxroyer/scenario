@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -31,7 +32,7 @@ class ConfigDb040(scenario.test.TestCase):
             description="Check that a configuration value can be unset.",
         )
         self.verifies(
-            scenario.test.reqs.CONFIG_DB,
+            scenario.reqs.CONFIG_DB,
         )
 
         self.tmp_root_key = scenario.Path(__file__).stem  # type: str

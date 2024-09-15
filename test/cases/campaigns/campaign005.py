@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,8 +30,8 @@ class Campaign005(scenario.test.TestCase):
             description="Check extra info display with campaign results.",
         )
         self.verifies(
-            (scenario.test.reqs.CAMPAIGN_LOGGING, ),
-            (scenario.test.reqs.ATTRIBUTES, "Display with campaign final results"),
+            (scenario.reqs.CAMPAIGN_LOGGING, ),
+            (scenario.reqs.ATTRIBUTES, "Display with campaign final results"),
         )
 
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations

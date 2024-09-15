@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -30,10 +31,10 @@ class ScenarioLogging011(scenario.test.TestCase):
         )
         self.verifies(
             # Main features:
-            scenario.test.reqs.SCENARIO_LOGGING,
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.SCENARIO_LOGGING,
+            scenario.reqs.DOC_ONLY,
             # Additional coverage:
-            (scenario.test.reqs.ATTRIBUTES, "Attribute display in scenario logging --doc-only"),
+            (scenario.reqs.ATTRIBUTES, "Attribute display in scenario logging --doc-only"),
         )
 
         self.addstep(ExecScenario(scenario.test.paths.SIMPLE_SCENARIO, doc_only=True))

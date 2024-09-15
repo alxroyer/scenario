@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,8 +29,8 @@ class Issue42(scenario.test.TestCase):
             description="Check that known issues are correctly displayed when several tests are executed in a single command line.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         self.addstep(ExecScenario([

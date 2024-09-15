@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -32,7 +33,7 @@ class FailingScenario002(scenario.test.TestCase):
             description="Check steps following an error step continue being executed when the *continue_on_error* option is enabled.",
         )
         self.verifies(
-            scenario.test.reqs.ERROR_HANDLING,
+            scenario.reqs.ERROR_HANDLING,
         )
 
         self.section("Regular execution")

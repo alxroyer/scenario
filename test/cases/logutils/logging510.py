@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -32,7 +33,7 @@ class Logging510(scenario.test.TestCase):
             description="Check that logging can be saved into a file, even though console logging is turned off.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING_FILE,
+            scenario.reqs.LOGGING_FILE,
         )
 
         self.section("File logging activation (console logging enabled by default)")

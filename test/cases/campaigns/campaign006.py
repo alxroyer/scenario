@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -31,8 +32,8 @@ class Campaign006(scenario.test.TestCase):
             description="Check requirement file output with campaign results.",
         )
         self.verifies(
-            (scenario.test.reqs.CAMPAIGN_REPORTS, ),
-            (scenario.test.reqs.REQUIREMENT_MANAGEMENT, "Requirement output file management with campaigns"),
+            (scenario.reqs.CAMPAIGN_REPORTS, ),
+            (scenario.reqs.REQUIREMENT_MANAGEMENT, "Requirement output file management with campaigns"),
         )
 
         self.section("Tests without requirements, no input requirement file")

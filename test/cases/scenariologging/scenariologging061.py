@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -29,12 +30,12 @@ class ScenarioLogging061(scenario.test.TestCase):
             description="Check the scenario logging output is generated as expected for a scenario with long texts, executed with the --doc-only option set.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_LOGGING,
-            (scenario.test.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
-            (scenario.test.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
+            scenario.reqs.SCENARIO_LOGGING,
+            (scenario.reqs.ATTRIBUTES, "Long texts for scenario descriptions"),
+            (scenario.reqs.SCENARIO_EXECUTION, "Long texts for actions & expected results"),
             # No REQUIREMENT_MANAGEMENT: Long texts for requirements link comments not displayed with scenario logging.
             # No EVIDENCE: No evidence displayed in --doc-only.
-            scenario.test.reqs.DOC_ONLY,
+            scenario.reqs.DOC_ONLY,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.LONG_TEXTS_SCENARIO, doc_only=True))

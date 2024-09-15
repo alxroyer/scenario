@@ -151,7 +151,8 @@ class CheckImports:
                             _import.imported_module_original_name == "scenario.text",
                         ]),
                     ]),
-                    # Test launchers, cases, data and tool scripts may import `scenario`, `scenario.test`, `scenario.inners` and `scenario.text`.
+                    # Test launchers, cases, data and tool scripts may import
+                    # `scenario`, `scenario.reqs`, `scenario.test`, `scenario.inners` and `scenario.text`.
                     all([
                         any([
                             _import.importer_module_path.match(f"{_paths.TEST_PATH.abspath}/*.py"),
@@ -161,6 +162,7 @@ class CheckImports:
                         ]),
                         any([
                             _import.imported_module_original_name == "scenario",
+                            _import.imported_module_original_name == "scenario.reqs",
                             _import.imported_module_original_name == "scenario.test",
                             _import.imported_module_original_name == "scenario.inners",
                             _import.imported_module_original_name == "scenario.text",

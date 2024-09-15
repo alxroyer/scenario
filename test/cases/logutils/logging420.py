@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -33,7 +34,7 @@ class Logging420(scenario.test.TestCase):
             description="Check that the user test can add and remove extra indentation.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
+            scenario.reqs.LOGGING,
         )
 
         self.addstep(ExecUserIndentation(scenario.test.paths.LOGGING_INDENTATION_SCENARIO))

@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -38,9 +39,9 @@ class Issue65b(scenario.test.TestCase):
             description="Avoid untracked time when executing a campaign.",
         )
         self.verifies(
-            scenario.test.reqs.CAMPAIGNS,
-            scenario.test.reqs.SCENARIO_REPORT,
-            scenario.test.reqs.STATISTICS,
+            scenario.reqs.CAMPAIGNS,
+            scenario.reqs.SCENARIO_REPORT,
+            scenario.reqs.STATISTICS,
         )
 
         self.addstep(ExecCampaign(

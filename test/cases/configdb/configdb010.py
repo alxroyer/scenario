@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -30,7 +31,7 @@ class ConfigDb010(scenario.test.TestCase):
             description="Check that a configuration value can be set from the command line.",
         )
         self.verifies(
-            scenario.test.reqs.CONFIG_DB,
+            scenario.reqs.CONFIG_DB,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.CONFIG_DB_SCENARIO, config_values={"test_value": 100}))

@@ -16,6 +16,7 @@
 
 import typing
 
+import scenario.reqs
 import scenario.test
 
 
@@ -30,8 +31,8 @@ class KnownIssues080(scenario.test.TestCase):
             description="Check that known issues are displayed in multiple scenario results.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         # Execution step.

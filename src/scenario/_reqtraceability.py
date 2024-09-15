@@ -282,6 +282,8 @@ class ReqTraceability(_LoggerImpl):
             _json = {}  # type: _JsonDictType
             for _downstream_req_ref in downstream_traceability:  # type: ReqTraceability.Downstream.ReqRef
                 _json[_downstream_req_ref.req_ref.id] = _downstream_req_ref.tojson(allow_results=allow_results)
+                # Remove `ReqTraceability.Downstream.ReqRef` id field, already given as the key entry.
+                del _json[_downstream_req_ref.req_ref.id]["id"]
             return _json
 
         class ReqRef:
@@ -329,6 +331,8 @@ class ReqTraceability(_LoggerImpl):
 
                 for _downstream_scenario in self.scenarios:  # type: ReqTraceability.Downstream.Scenario
                     _json_req_ref["scenarios"][_downstream_scenario.scenario.name] = _downstream_scenario.tojson(allow_results=allow_results)
+                    # Remove `ReqTraceability.Downstream.Scenario` name field, already given as the key entry.
+                    del _json_req_ref["scenarios"][_downstream_scenario.scenario.name]["name"]
 
                 return _json_req_ref
 
@@ -410,6 +414,8 @@ class ReqTraceability(_LoggerImpl):
 
                 for _downstream_step in self.steps:  # type: ReqTraceability.Downstream.Step
                     _json_scenario["steps"][f"step#{_downstream_step.step.number}"] = _downstream_step.tojson(allow_results=allow_results)
+                    # Remove `ReqTraceability.Downstream.Step` number field, already given with the key entry.
+                    del _json_scenario["steps"][f"step#{_downstream_step.step.number}"]["number"]
 
                 return _json_scenario
 
@@ -627,6 +633,8 @@ class ReqTraceability(_LoggerImpl):
 
                 for _upstream_req in self.reqs:  # type: ReqTraceability.Upstream.Req
                     _json_scenario["reqs"][_upstream_req.req.id] = _upstream_req.tojson()
+                    # Remove `ReqTraceability.Upstream.Req` id field, already given as the key entry.
+                    del _json_scenario["reqs"][_upstream_req.req.id]["id"]
 
                 return _json_scenario
 
@@ -701,6 +709,8 @@ class ReqTraceability(_LoggerImpl):
 
                 for _upstream_req_subref in self.req_subrefs:  # type: ReqTraceability.Upstream.ReqSubref
                     _json_req["subrefs"][_upstream_req_subref.req_subref.id] = _upstream_req_subref.tojson()
+                    # Remove `ReqTraceability.Upstream.ReqSubref` id field, already given as the key entry.
+                    del _json_req["subrefs"][_upstream_req_subref.req_subref.id]["id"]
 
                 return _json_req
 

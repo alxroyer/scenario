@@ -229,6 +229,7 @@ class Import(_ErrorTrackerLoggerImpl):
             # `scenario` source root directories.
             for _scenario_root_name, _scenario_root_path in (
                 # The first match will break the loop.
+                ("scenario.reqs", _paths.TEST_SRC_PATH / "scenario" / "reqs"),
                 ("scenario.test", _paths.TEST_SRC_PATH / "scenario" / "test"),
                 ("scenario.tools", _paths.TOOLS_SRC_PATH / "scenario" / "tools"),
                 ("scenario.inners", _paths.UTILS_SRC_PATH / "scenario" / "inners"),

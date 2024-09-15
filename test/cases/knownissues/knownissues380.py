@@ -16,6 +16,7 @@
 
 import typing
 
+import scenario.reqs
 import scenario.test
 
 
@@ -30,8 +31,8 @@ class KnownIssues380(scenario.test.TestCase):
             description="Check that known issue identifiers are displayed in the console in multiple scenario results.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.MULTIPLE_SCENARIO_EXECUTION,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.MULTIPLE_SCENARIO_EXECUTION,
         )
 
         # Execution step.

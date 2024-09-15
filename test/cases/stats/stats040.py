@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,8 +29,8 @@ class Stats040(scenario.test.TestCase):
             description="Check scenario execution statistics for a super scenario executing a subscenario.",
         )
         self.verifies(
-            scenario.test.reqs.STATISTICS,
-            scenario.test.reqs.SUBSCENARIOS,
+            scenario.reqs.STATISTICS,
+            scenario.reqs.SUBSCENARIOS,
         )
 
         # Scenario execution.

@@ -18,6 +18,7 @@ import typing
 
 import scenario
 import scenario.inners
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -37,7 +38,7 @@ class Logging410(scenario.test.TestCase):
             description="Check that indentation is shifted for each subscenario being executed.",
         )
         self.verifies(
-            scenario.test.reqs.LOGGING,
+            scenario.reqs.LOGGING,
         )
 
         self.addstep(ExecScenario(

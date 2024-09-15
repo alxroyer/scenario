@@ -15,6 +15,7 @@
 # limitations under the License.
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 
@@ -30,8 +31,8 @@ class ScenarioReport020(scenario.test.TestCase):
             description="Check the scenario report is generated as expected for a failing scenario.",
         )
         self.verifies(
-            scenario.test.reqs.SCENARIO_REPORT,
-            scenario.test.reqs.ERROR_HANDLING,
+            scenario.reqs.SCENARIO_REPORT,
+            scenario.reqs.ERROR_HANDLING,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.FAILING_SCENARIO, expected_return_code=scenario.ErrorCode.TEST_ERROR, generate_report=True))

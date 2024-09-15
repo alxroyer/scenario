@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.reqs
 import scenario.test
 
 
@@ -28,7 +29,7 @@ class KnownIssues010(scenario.test.TestCase):
             description="Check known issues generate warnings by default, and that the status of the test is WARNINGS.",
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
+            scenario.reqs.KNOWN_ISSUES,
         )
 
         self.addstep(ExecScenario(scenario.test.paths.KNOWN_ISSUES_SCENARIO))

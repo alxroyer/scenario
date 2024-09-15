@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.reqs
 import scenario.test
 
 if True:
@@ -42,8 +43,8 @@ class KnownIssues190(scenario.test.TestCase, _KnownIssueLevelUtilsImpl):
             ),
         )
         self.verifies(
-            scenario.test.reqs.KNOWN_ISSUES,
-            scenario.test.reqs.CAMPAIGNS,
+            scenario.reqs.KNOWN_ISSUES,
+            scenario.reqs.CAMPAIGNS,
         )
 
         # Execution step.
