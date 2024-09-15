@@ -534,6 +534,12 @@ class Path:
         """
         return Path(self._abspath.with_suffix(suffix))
 
+    def __bool__(self):  # type: () -> bool
+        """
+        Tells whether this path is a valid path (i.e. non void).
+        """
+        return not self.is_void()
+
     def is_void(self):  # type: (...) -> bool
         """
         Tells whether this path is void.
