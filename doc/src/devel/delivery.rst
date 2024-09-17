@@ -62,7 +62,25 @@ On the ``feature/xxx``, ``enhancement/xxx``, ``bugfix/xxx`` branch:
    Fix things if needed.
    If files have been modified, commit them (probably with the ``--amend`` option).
 
-4. Check tests:
+4. Check requirements:
+
+   Update requirements and traceabilities:
+
+   .. code-block:: bash
+
+       ./test/req-mgt.py
+
+   Check the 'test/req-db.yaml', 'downstream-traceability.yaml' and 'upstream-traceability.yaml' changes look consistent.
+
+   .. tip::
+
+       Possibility to navigate more easily with 'test/launch-ui.py'.
+
+       .. code-block:: bash
+
+           ./test/launch-ui.py
+
+5. Check tests:
 
    Check test data is up-to-date:
 
@@ -80,7 +98,7 @@ On the ``feature/xxx``, ``enhancement/xxx``, ``bugfix/xxx`` branch:
 
    There may be warnings (with known issue references), but no error.
 
-5. Check documentation:
+6. Check documentation:
 
    a. Generate the documentation:
 
@@ -116,7 +134,7 @@ On the ``feature/xxx``, ``enhancement/xxx``, ``bugfix/xxx`` branch:
               git diff <base-rev> -- doc/data/run-demo.show-configs.log
               git diff <base-rev> -- demo/loggingdemo.py
 
-6. Check files encoding:
+7. Check files encoding:
 
    Check all files use utf-8 encoding and unix end-of-line characters, and have the appropriate permissions.
 
@@ -130,7 +148,7 @@ On the ``feature/xxx``, ``enhancement/xxx``, ``bugfix/xxx`` branch:
    Check line encoding modifications with ``git diff -b``.
    Commit the modifications (probably with the ``--amend`` option).
 
-7. Deliver into the integration branch:
+8. Deliver into the integration branch:
 
    See :ref:`coding-rules.git.deliver`.
 
