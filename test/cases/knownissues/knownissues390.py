@@ -39,7 +39,7 @@ class KnownIssues390(scenario.test.TestCase):
 
         # Execution step.
         self.addstep(ExecCampaign(
-            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            [scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE],
             config_values={
                 scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.ID: "#10",
             },
@@ -49,7 +49,7 @@ class KnownIssues390(scenario.test.TestCase):
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
         scenario.test.data.testsuiteexpectations(
             _campaign_expectations,
-            scenario.test.paths.TEST_DATA_TEST_SUITE,
+            scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE,
             config_values=ExecCampaign.getinstance().config_values,
             error_details=True,
         )

@@ -32,11 +32,11 @@ if True:
 
 
 # Command line arguments.
-class UnitReqManagementArgs(scenario.ReqManagementArgs):
+class ScenarioReqManagementArgs(scenario.ReqManagementArgs):
 
     def __init__(self):  # type: (...) -> None
         scenario.ReqManagementArgs.__init__(self)
-        self.setdescription("Unit test requirement management.")
+        self.setdescription("Scenario tests requirement management.")
 
     def _checkargs(
             self,
@@ -56,9 +56,9 @@ class UnitReqManagementArgs(scenario.ReqManagementArgs):
 
 if __name__ == "__main__":
     # Parse arguments.
-    scenario.ReqManagementArgs.setinstance(UnitReqManagementArgs())
-    if not UnitReqManagementArgs.getinstance().parse(sys.argv[1:]):
-        sys.exit(int(UnitReqManagementArgs.getinstance().error_code))
+    scenario.ReqManagementArgs.setinstance(ScenarioReqManagementArgs())
+    if not ScenarioReqManagementArgs.getinstance().parse(sys.argv[1:]):
+        sys.exit(int(ScenarioReqManagementArgs.getinstance().error_code))
 
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     # Configure default test suites.
     scenario.reqs.setdefaulttestsuites()
 
-    # Default outputs ensured with `UnitReqManagementArgs`.
+    # Default outputs ensured with `ScenarioReqManagementArgs`.
 
     # Requirement management execution.
     _res = scenario.req_mgt.main()  # type: scenario.ErrorCode

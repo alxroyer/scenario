@@ -156,7 +156,7 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
 
     def listpaths(self):  # type: (...) -> str
         """
-        Formats the list of scenario paths or unit test files of the related :class:`scenario.test.lib.subprocess.ScenarioSubProcess`.
+        Formats the list of scenario paths or test suite paths of the related :class:`scenario.test.lib.subprocess.ScenarioSubProcess`.
 
         :return: Coma-separated list of paths.
         """
@@ -165,6 +165,6 @@ class ExecCommonArgs(scenario.test.ExecutionStep):
         if isinstance(self.subprocess, scenario.test.ScenarioSubProcess):
             _paths = self.subprocess.scenario_paths
         if isinstance(self.subprocess, scenario.test.CampaignSubProcess):
-            _paths = self.subprocess.unit_paths
+            _paths = self.subprocess.test_suite_paths
 
         return scenario.text.commalist([self.test_case.getpathdesc(_path) for _path in _paths])

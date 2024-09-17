@@ -31,12 +31,12 @@ if True:
 
 
 # Command line arguments.
-class UnitTestArgs(scenario.ScenarioArgs):
+class ScenarioTestArgs(scenario.ScenarioArgs):
 
     def __init__(self):  # type: (...) -> None
         scenario.ScenarioArgs.__init__(self)
 
-        self.setdescription("Unit test scenario launcher.")
+        self.setdescription("Scenario test launcher.")
 
         self.check_expected_attributes = True
         self.addarg("Check expected attributes", "check_expected_attributes", bool).define(
@@ -62,9 +62,9 @@ if __name__ == "__main__":
     ))
 
     # Parse arguments.
-    scenario.Args.setinstance(UnitTestArgs())
-    if not UnitTestArgs.getinstance().parse(sys.argv[1:]):
-        sys.exit(int(UnitTestArgs.getinstance().error_code))
+    scenario.Args.setinstance(ScenarioTestArgs())
+    if not ScenarioTestArgs.getinstance().parse(sys.argv[1:]):
+        sys.exit(int(ScenarioTestArgs.getinstance().error_code))
 
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     scenario.reqs.load()
 
     # Declare expected attributes.
-    if UnitTestArgs.getinstance().check_expected_attributes:
+    if ScenarioTestArgs.getinstance().check_expected_attributes:
         # Memo: Enum definitions are stored as lists in the configuration database.
         scenario.conf.set(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES, [
             scenario.ScenarioAttributes.TITLE,

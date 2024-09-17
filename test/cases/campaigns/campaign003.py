@@ -35,14 +35,14 @@ class Campaign003(scenario.test.TestCase):
         )
 
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
-        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE)
+        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE)
 
         self.section("--dt-subdir option not set")
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], dt_subdir=False))
+        self.addstep(ExecCampaign([scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE], dt_subdir=False))
         self.addstep(CheckCampaignNoDtOutdir(ExecCampaign.getinstance(0)))
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(0), _campaign_expectations))
 
         self.section("--dt-subdir option set")
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], dt_subdir=True))
+        self.addstep(ExecCampaign([scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE], dt_subdir=True))
         self.addstep(CheckCampaignDtOutdir(ExecCampaign.getinstance(1)))
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(1), _campaign_expectations))

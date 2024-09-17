@@ -28,8 +28,8 @@ Launch the tests
 
 .. todo:: Documentation needed for testing:
 
-    - ``./test/run-unit-campaign.py``
-    - ``./test/run-unit-test.py test/cases/...``
+    - ``./test/run-campaign.py``
+    - ``./test/run-test.py test/cases/...``
 
 
 .. _env.type-checking:

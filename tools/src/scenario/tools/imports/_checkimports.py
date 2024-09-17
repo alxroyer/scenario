@@ -57,28 +57,33 @@ class CheckImports:
         # Set main path after arguments have been parsed.
         scenario.Path.setmainpath(_paths.ROOT_SCENARIO_PATH, log_level=logging.INFO)
 
-        # Check configuration data.
-        self._checkconfigdata()
+        try:
+            # Check configuration data.
+            self._checkconfigdata()
 
-        # Process paths.
-        for _start_path in (CheckImports.Args.getinstance().paths or (
-            _paths.BIN_PATH,
-            # _paths.DEMO_PATH,  # Don't process 'demo/' scripts.
-            _paths.SRC_PATH,
-            _paths.TEST_PATH,
-            _paths.TOOLS_PATH,
-        )):  # type: scenario.Path
-            self._walkpath(_start_path)
+            # Process paths.
+            for _start_path in (CheckImports.Args.getinstance().paths or (
+                _paths.BIN_PATH,
+                # _paths.DEMO_PATH,  # Don't process 'demo/' scripts.
+                _paths.SRC_PATH,
+                _paths.TEST_PATH,
+                _paths.TOOLS_PATH,
+            )):  # type: scenario.Path
+                self._walkpath(_start_path)
 
-        # Final result.
-        _modules = scenario.text.Countable("module", self.modules)  # type: scenario.text.Countable
-        _errors = scenario.text.Countable("import error", ErrorTrackerLogger.errors)  # type: scenario.text.Countable
-        if not ErrorTrackerLogger.errors:
-            scenario.logging.info(f"Success: no {_errors} in {len(_modules)} {_modules}")
-            return scenario.ErrorCode.SUCCESS
-        else:
-            scenario.logging.info(f"{len(_errors)} {_errors} in {len(_modules)} {_modules}")
-            return scenario.ErrorCode.TEST_ERROR
+            # Final result.
+            _modules = scenario.text.Countable("module", self.modules)  # type: scenario.text.Countable
+            _errors = scenario.text.Countable("import error", ErrorTrackerLogger.errors)  # type: scenario.text.Countable
+            if not ErrorTrackerLogger.errors:
+                scenario.logging.info(f"Success: no {_errors} in {len(_modules)} {_modules}")
+                return scenario.ErrorCode.SUCCESS
+            else:
+                scenario.logging.info(f"{len(_errors)} {_errors} in {len(_modules)} {_modules}")
+                return scenario.ErrorCode.TEST_ERROR
+
+        except Exception as _err:
+            scenario.logging.logexceptiontraceback(_err)
+            return scenario.ErrorCode.fromexception(_err)
 
     def _checkconfigdata(self):  # type: (...) -> None
         from ._optimized import OPTIMIZED_PATHS

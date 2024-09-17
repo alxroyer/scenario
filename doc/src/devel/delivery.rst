@@ -76,7 +76,7 @@ On the ``feature/xxx``, ``enhancement/xxx``, ``bugfix/xxx`` branch:
 
    .. code-block:: bash
 
-       ./test/run-unit-campaign.py
+       ./test/run-campaign.py
 
    There may be warnings (with known issue references), but no error.
 

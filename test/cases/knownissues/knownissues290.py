@@ -35,7 +35,7 @@ class KnownIssues290(scenario.test.TestCase):
         )
 
         self.addstep(ExecCampaign(
-            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            [scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE],
             config_values={
                 f"{scenario.ConfigKey.ISSUE_LEVEL_NAMES}.foo": 10,
                 scenario.test.data.scenarios.KnownIssueDetailsScenario.ConfigKey.LEVEL: 10,

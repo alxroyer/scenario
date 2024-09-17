@@ -68,12 +68,12 @@ class Campaign001(scenario.test.TestCase):
         )
 
         # Campaign execution.
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE]))
+        self.addstep(ExecCampaign([scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE]))
 
         # Campaign expectations.
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
         scenario.test.data.testsuiteexpectations(
-            _campaign_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE,
+            _campaign_expectations, scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE,
             # Make the verifications steps below cover:
             # - ATTRIBUTES
             attributes=True,
@@ -83,7 +83,7 @@ class Campaign001(scenario.test.TestCase):
             stats=True,
         )
         assert _campaign_expectations.all_test_case_expectations
-        _campaign_expectations.req_db_file.set(True, content=scenario.test.paths.REQ_DB_FILE)
+        _campaign_expectations.req_db_file.set(True, content=scenario.test.paths.SCENARIO_TEST_DATA_REQ_DB_FILE)
         _campaign_expectations.downstream_traceability.set(True)
         _campaign_expectations.upstream_traceability.set(True)
 

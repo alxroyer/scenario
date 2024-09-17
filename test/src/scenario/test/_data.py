@@ -574,8 +574,8 @@ def testsuiteexpectations(
     _test_suite_expectations = campaign_expectations.addtestsuite(test_suite_path)  # type: _TestTestSuiteExpectationsType
     _test_suite_expectations.test_case_expectations = []
 
-    if test_suite_path.samefile(_paths.TEST_DATA_TEST_SUITE):
-        for _script_path in _paths.DATA_PATH.glob("*.py"):  # type: scenario.Path
+    if test_suite_path.samefile(_paths.SCENARIO_TEST_DATA_TEST_SUITE):
+        for _script_path in _paths.SCENARIO_TEST_DATA_PATH.glob("*.py"):  # type: scenario.Path
             if _script_path == _paths.WAITING_SCENARIO:
                 continue
             _test_suite_expectations.test_case_expectations.append(scenarioexpectations(
@@ -585,8 +585,8 @@ def testsuiteexpectations(
                 config_values=config_values,
             ))
 
-    elif test_suite_path.samefile(_paths.DEMO_TEST_SUITE):
-        for _script_path in _paths.DEMO_PATH.glob("*.py"):  # type already declared above.
+    elif test_suite_path.samefile(_paths.SCENARIO_DEMO_TEST_SUITE):
+        for _script_path in _paths.SCENARIO_DEMO_PATH.glob("*.py"):  # type already declared above.
             if _script_path.name in ("htmltestlib.py", "run-demo.py"):
                 continue
             _test_suite_expectations.test_case_expectations.append(scenarioexpectations(

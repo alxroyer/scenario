@@ -19,52 +19,52 @@ import scenario
 
 # Directories.
 ROOT_SCENARIO_PATH = scenario.Path(__file__).parents[4]  # type: scenario.Path
-DEMO_PATH = ROOT_SCENARIO_PATH / "demo"  # type: scenario.Path
-DATA_PATH = ROOT_SCENARIO_PATH / "test" / "data"  # type: scenario.Path
-UNIT_TESTS_PATH = ROOT_SCENARIO_PATH / "test" / "cases"  # type: scenario.Path
-UNIT_RESULTS_PATH = ROOT_SCENARIO_PATH / "test" / "results"  # type: scenario.Path
+SCENARIO_DEMO_PATH = ROOT_SCENARIO_PATH / "demo"  # type: scenario.Path
+SCENARIO_TEST_DATA_PATH = ROOT_SCENARIO_PATH / "test" / "data"  # type: scenario.Path
+SCENARIO_TESTS_PATH = ROOT_SCENARIO_PATH / "test" / "cases"  # type: scenario.Path
+SCENARIO_RESULTS_PATH = ROOT_SCENARIO_PATH / "test" / "results"  # type: scenario.Path
 
 # Dependencies.
 UTILS_SRC_PATH = ROOT_SCENARIO_PATH / "utils" / "src"  # type: scenario.Path
 
 # Launchers.
-TEST_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-test.py"  # type: scenario.Path
-CAMPAIGN_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-campaign.py"  # type: scenario.Path
+BIN_TEST_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-test.py"  # type: scenario.Path
+BIN_CAMPAIGN_LAUNCHER = ROOT_SCENARIO_PATH / "bin" / "run-campaign.py"  # type: scenario.Path
 PACKAGE_BLACK_LIST_STARTER = ROOT_SCENARIO_PATH / "test" / "tools" / "package-black-list-starter.py"  # type: scenario.Path
-UNIT_TEST_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "run-unit-test.py"  # type: scenario.Path
-UNIT_CAMPAIGN_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "run-unit-campaign.py"  # type: scenario.Path
+SCENARIO_TEST_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "run-test.py"  # type: scenario.Path
+SCENARIO_CAMPAIGN_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "run-campaign.py"  # type: scenario.Path
 
 # Data scenarios.
-ACTION_RESULT_LOOP_SCENARIO = DATA_PATH / "actionresultloopscenario.py"  # type: scenario.Path
-CONFIG_DB_SCENARIO = DATA_PATH / "configdbscenario.py"  # type: scenario.Path
-FAILING_SCENARIO = DATA_PATH / "failingscenario.py"  # type: scenario.Path
-GOTO_SCENARIO = DATA_PATH / "gotoscenario.py"  # type: scenario.Path
-INHERITING_SCENARIO = DATA_PATH / "inheritingscenario.py"  # type: scenario.Path
-KNOWN_ISSUE_DETAILS_SCENARIO = DATA_PATH / "knownissuedetailsscenario.py"  # type: scenario.Path
-KNOWN_ISSUES_SCENARIO = DATA_PATH / "knownissuesscenario.py"  # type: scenario.Path
-LOGGER_SCENARIO = DATA_PATH / "loggerscenario.py"  # type: scenario.Path
-LOGGING_INDENTATION_SCENARIO = DATA_PATH / "loggingindentationscenario.py"  # type: scenario.Path
-LONG_TEXTS_SCENARIO = DATA_PATH / "longtextsscenario.py"  # type: scenario.Path
-MISSING_SCENARIO_CLASS_SCENARIO = DATA_PATH / "errors" / "missingscenarioclassscenario.py"  # type: scenario.Path
-NO_SUCH_FILE_SCENARIO = DATA_PATH / "errors" / "nosuchfilescenario.py"  # type: scenario.Path
-PACKAGE_SCENARIO = DATA_PATH / "xyz" / "packagescenario.py"  # type: scenario.Path
-REQ_SCENARIO1 = DATA_PATH / "reqscenario1.py"  # type: scenario.Path
-REQ_SCENARIO2 = DATA_PATH / "reqscenario2.py"  # type: scenario.Path
-SCENARIO_LOGGING_SCENARIO = DATA_PATH / "scenariologgingscenario.py"  # type: scenario.Path
-SIMPLE_SCENARIO = DATA_PATH / "simplescenario.py"  # type: scenario.Path
-SUPERSCENARIO_SCENARIO = DATA_PATH / "superscenario.py"  # type: scenario.Path
-SYNTAX_ERROR_SCENARIO = DATA_PATH / "errors" / "syntaxerrorscenario.py"  # type: scenario.Path
-WAITING_SCENARIO = DATA_PATH / "waitingscenario.py"  # type: scenario.Path
+ACTION_RESULT_LOOP_SCENARIO = SCENARIO_TEST_DATA_PATH / "actionresultloopscenario.py"  # type: scenario.Path
+CONFIG_DB_SCENARIO = SCENARIO_TEST_DATA_PATH / "configdbscenario.py"  # type: scenario.Path
+FAILING_SCENARIO = SCENARIO_TEST_DATA_PATH / "failingscenario.py"  # type: scenario.Path
+GOTO_SCENARIO = SCENARIO_TEST_DATA_PATH / "gotoscenario.py"  # type: scenario.Path
+INHERITING_SCENARIO = SCENARIO_TEST_DATA_PATH / "inheritingscenario.py"  # type: scenario.Path
+KNOWN_ISSUE_DETAILS_SCENARIO = SCENARIO_TEST_DATA_PATH / "knownissuedetailsscenario.py"  # type: scenario.Path
+KNOWN_ISSUES_SCENARIO = SCENARIO_TEST_DATA_PATH / "knownissuesscenario.py"  # type: scenario.Path
+LOGGER_SCENARIO = SCENARIO_TEST_DATA_PATH / "loggerscenario.py"  # type: scenario.Path
+LOGGING_INDENTATION_SCENARIO = SCENARIO_TEST_DATA_PATH / "loggingindentationscenario.py"  # type: scenario.Path
+LONG_TEXTS_SCENARIO = SCENARIO_TEST_DATA_PATH / "longtextsscenario.py"  # type: scenario.Path
+MISSING_SCENARIO_CLASS_SCENARIO = SCENARIO_TEST_DATA_PATH / "errors" / "missingscenarioclassscenario.py"  # type: scenario.Path
+NO_SUCH_FILE_SCENARIO = SCENARIO_TEST_DATA_PATH / "errors" / "nosuchfilescenario.py"  # type: scenario.Path
+PACKAGE_SCENARIO = SCENARIO_TEST_DATA_PATH / "xyz" / "packagescenario.py"  # type: scenario.Path
+REQ_SCENARIO1 = SCENARIO_TEST_DATA_PATH / "reqscenario1.py"  # type: scenario.Path
+REQ_SCENARIO2 = SCENARIO_TEST_DATA_PATH / "reqscenario2.py"  # type: scenario.Path
+SCENARIO_LOGGING_SCENARIO = SCENARIO_TEST_DATA_PATH / "scenariologgingscenario.py"  # type: scenario.Path
+SIMPLE_SCENARIO = SCENARIO_TEST_DATA_PATH / "simplescenario.py"  # type: scenario.Path
+SUPERSCENARIO_SCENARIO = SCENARIO_TEST_DATA_PATH / "superscenario.py"  # type: scenario.Path
+SYNTAX_ERROR_SCENARIO = SCENARIO_TEST_DATA_PATH / "errors" / "syntaxerrorscenario.py"  # type: scenario.Path
+WAITING_SCENARIO = SCENARIO_TEST_DATA_PATH / "waitingscenario.py"  # type: scenario.Path
 
 # Test suite files.
-DEMO_TEST_SUITE = DEMO_PATH / "demo.suite"  # type: scenario.Path
-TEST_DATA_TEST_SUITE = DATA_PATH / "test-data.suite"  # type: scenario.Path
+SCENARIO_DEMO_TEST_SUITE = SCENARIO_DEMO_PATH / "demo.suite"  # type: scenario.Path
+SCENARIO_TEST_DATA_TEST_SUITE = SCENARIO_TEST_DATA_PATH / "test-data.suite"  # type: scenario.Path
 
 # Requirement files.
-REQ_DB_FILE = DATA_PATH / "req-db.json"  # type: scenario.Path
+SCENARIO_TEST_DATA_REQ_DB_FILE = SCENARIO_TEST_DATA_PATH / "req-db.json"  # type: scenario.Path
 
 
 def datapath(
         basename,  # type: str
 ):  # type: (...) -> scenario.Path
-    return DATA_PATH / basename
+    return SCENARIO_TEST_DATA_PATH / basename

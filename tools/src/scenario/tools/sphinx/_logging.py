@@ -36,13 +36,13 @@ import scenario
 
 
 def loggingsetup():  # type: (...) -> None
-    from .._paths import TOOLS_CONF_PATH
+    from .. import _paths
 
     # Load 'tools/conf/sphinx/debug.yml' debug configurations.
     scenario.Args.setinstance(scenario.Args(class_debugging=True))
     scenario.Args.getinstance().parse([
         "--config-value", str(scenario.ConfigKey.LOG_DATETIME), "0",
-        "--config-file", str(TOOLS_CONF_PATH / "sphinx" / "debug.yml"),
+        "--config-file", str(_paths.TOOLS_CONF_PATH / "sphinx" / "debug.yml"),
     ])
 
 

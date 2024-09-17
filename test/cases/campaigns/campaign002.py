@@ -38,12 +38,12 @@ class Campaign002(scenario.test.TestCase):
         )
 
         # Campaign execution.
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE, scenario.test.paths.DEMO_TEST_SUITE]))
+        self.addstep(ExecCampaign([scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE, scenario.test.paths.SCENARIO_DEMO_TEST_SUITE]))
 
         # Campaign expectations.
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
-        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE)
-        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.DEMO_TEST_SUITE)
+        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE)
+        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.SCENARIO_DEMO_TEST_SUITE)
         assert _campaign_expectations.all_test_case_expectations
 
         # Verifications.

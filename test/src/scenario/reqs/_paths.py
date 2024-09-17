@@ -23,7 +23,7 @@ import scenario
 ROOT_SCENARIO_PATH = scenario.Path(__file__).parents[4]  # type: scenario.Path
 
 # Launchers.
-REQ_MGT_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "run-unit-req-mgt.py"  # type: scenario.Path
+REQ_MGT_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "req-mgt.py"  # type: scenario.Path
 
 # Requirement database.
 REQ_DB = ROOT_SCENARIO_PATH / "test" / "req-db.yaml"  # type: scenario.Path

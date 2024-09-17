@@ -25,6 +25,8 @@ try:
     #   Let's reexport them through intermediate shortcut variables.
     from scenario import _reflection as _reflection  # noqa  ## Access to a protected member
     reflection = _reflection
+    from scenario import _textfileutils as _textfileutils  # noqa  ## Access to a protected member
+    textfileutils = _textfileutils
     from scenario import _textutils as _textutils  # noqa  ## Access to a protected member
     textutils = _textutils
     from scenario._fastpath import FAST_PATH as FAST_PATH  # noqa  ## Access to a protected member

@@ -27,7 +27,7 @@ class TestData:
             self,
             path,  # type: scenario.Path
             expected_locations,  # type: typing.Dict[str, str]
-    ):
+    ):  # type: (...) -> None
         self.path = path  # type: scenario.Path
         #: Dictionary of {location key: code location}
         self.locations = {}  # type: typing.Dict[str, scenario.CodeLocation]
@@ -42,7 +42,7 @@ class TestData:
     @property
     def const_name(self):  # type: () -> str
         import scenario
-        from ._paths import TEST_SRC_PATH
+        from . import _paths
 
         if not self.__const_name:
             # Local import in order to avoid a `scenario.tools` -> `scenario.test` dependency.
@@ -50,7 +50,7 @@ class TestData:
             try:
                 import scenario.test
             except ImportError:
-                scenario.inners.reflection.extendnamespacepackagepath(namespace_package=scenario, root_src_path=TEST_SRC_PATH)
+                scenario.inners.reflection.extendnamespacepackagepath(namespace_package=scenario, root_src_path=_paths.TEST_SRC_PATH)
                 import scenario.test  # Local import in order to avoid a `scenario.tools` -> `scenario.test` dependency.
 
             # Search for the test data constant name in the `scenario.test.paths` module.
@@ -194,11 +194,11 @@ class DataExpectationsUpdater(FileUpdater):
             self,
             test_data,  # type: TestData
     ):  # type: (...) -> None
-        from ._paths import TEST_SRC_DATA_PATH
+        from . import _paths
 
         FileUpdater.__init__(
             self,
-            TEST_SRC_DATA_PATH, test_data,
+            _paths.TEST_SRC_DATA_PATH, test_data,
             lambda _, line: self.matchmodifyline(
                 rb'^(.*location=.*:)\d+(:.*, {2}# location: (.*)/(.*))$', line,
                 filter_match=lambda match: self._filtermatch(match, 3),

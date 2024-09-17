@@ -437,9 +437,9 @@ class CheckFinalResultsLogExpectations(scenario.test.VerificationStep):
                     self.debug("No %r attribute for %r", _expected_name, _scenario_expectations.name)
         else:
             # In case of no *extra-info* configurations, default should be TITLE.
-            if _scenario_expectations.script_path and _scenario_expectations.script_path.is_relative_to(scenario.test.paths.DEMO_PATH):
+            if _scenario_expectations.script_path and _scenario_expectations.script_path.is_relative_to(scenario.test.paths.SCENARIO_DEMO_PATH):
                 # No title expectations for 'demo/' scripts.
-                self.debug("No title expectation for '%s' script %r", scenario.test.paths.DEMO_PATH, _scenario_expectations.name)
+                self.debug("No title expectation for '%s' script %r", scenario.test.paths.SCENARIO_DEMO_PATH, _scenario_expectations.name)
             else:
                 assert _scenario_expectations.title, f"Title expectation missing for {_scenario_expectations.name!r}"
                 _expected_names_and_values = [(scenario.ScenarioAttributes.TITLE, _scenario_expectations.title)]

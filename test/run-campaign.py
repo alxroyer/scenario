@@ -32,22 +32,22 @@ if True:
 
 
 # Command line arguments.
-class UnitCampaignArgs(scenario.CampaignArgs):
+class ScenarioCampaignArgs(scenario.CampaignArgs):
 
     def __init__(self):  # type: (...) -> None
         scenario.CampaignArgs.__init__(
             self,
             default_outdir_cwd=False,  # Do not use the current directory as the default output directory.
         )
-        self.setdescription("Unit test campaign launcher.")
+        self.setdescription("Scenario tests campaign launcher.")
 
     def _checkargs(
             self,
             args,  # type: typing.Any
     ):  # type: (...) -> bool
         if self._outdir is None:
-            self.debug("Using output directory '%s' with --dt-subdir option", scenario.test.paths.UNIT_RESULTS_PATH)
-            self._outdir = scenario.test.paths.UNIT_RESULTS_PATH
+            self.debug("Using output directory '%s' with --dt-subdir option", scenario.test.paths.SCENARIO_RESULTS_PATH)
+            self._outdir = scenario.test.paths.SCENARIO_RESULTS_PATH
             self.create_dt_subdir = True
 
         if not super()._checkargs(args):
@@ -72,9 +72,9 @@ if __name__ == "__main__":
     ))
 
     # Parse arguments.
-    scenario.Args.setinstance(UnitCampaignArgs())
-    if not UnitCampaignArgs.getinstance().parse(sys.argv[1:]):
-        sys.exit(int(UnitCampaignArgs.getinstance().error_code))
+    scenario.Args.setinstance(ScenarioCampaignArgs())
+    if not ScenarioCampaignArgs.getinstance().parse(sys.argv[1:]):
+        sys.exit(int(ScenarioCampaignArgs.getinstance().error_code))
 
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
@@ -83,10 +83,10 @@ if __name__ == "__main__":
     scenario.reqs.load()
 
     # Campaign execution:
-    # - Have the neighbour `UNIT_TEST_LAUNCHER` script be used as the scenario runner script.
-    scenario.conf.set(scenario.ConfigKey.RUNNER_SCRIPT_PATH, scenario.test.paths.UNIT_TEST_LAUNCHER)
+    # - Have the neighbour `SCENARIO_TEST_LAUNCHER` script be used as the scenario runner script.
+    scenario.conf.set(scenario.ConfigKey.RUNNER_SCRIPT_PATH, scenario.test.paths.SCENARIO_TEST_LAUNCHER)
     # - Default test suite files.
-    scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, list(scenario.test.paths.UNIT_TESTS_PATH.glob("*/*.suite")))
+    scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, list(scenario.test.paths.SCENARIO_TESTS_PATH.glob("*/*.suite")))
     # - No need to make test titles be displayed as extra info, this is the default.
     # if not SCENARIO_CONFIG.resultsextrainfo():
     #     scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.ScenarioAttributes.TEST_TITLE])

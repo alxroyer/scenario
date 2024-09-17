@@ -92,7 +92,7 @@ class SphinxHandlers:
 
             Emitted when the config object has been initialized.
         """
-        from .._paths import DOC_SRC_PATH
+        from .. import _paths
         from ._commands import sphinxapidoc
         from ._logging import Logger, savesphinxverbosity
         from ._platform import Platform
@@ -117,9 +117,9 @@ class SphinxHandlers:
 
         # Fix 'doc/src/' path if needed.
         # Particularly useful when building on the readthedocs platform.
-        if pathlib.Path(app.srcdir) != DOC_SRC_PATH:
-            _logger.info(f"Fixing source directory from {app.srcdir!r} to {DOC_SRC_PATH.abspath!r}")
-            app.srcdir = DOC_SRC_PATH.abspath
+        if pathlib.Path(app.srcdir) != _paths.DOC_SRC_PATH:
+            _logger.info(f"Fixing source directory from {app.srcdir!r} to {_paths.DOC_SRC_PATH.abspath!r}")
+            app.srcdir = _paths.DOC_SRC_PATH.abspath
 
             # Another chance to identify when we are running on the readthedocs platform.
             Platform.savereadthedocs()
@@ -129,7 +129,7 @@ class SphinxHandlers:
 
     def builderinited(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
     ):  # type: (...) -> None
         """
         See https://www.sphinx-doc.org/en/master/extdev/appapi.html#event-builder-inited
@@ -179,7 +179,7 @@ class SphinxHandlers:
 
     def sourceread(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
             docname,  # type: str
             source,  # type: typing.List[str]
     ):  # type: (...) -> None
@@ -209,7 +209,7 @@ class SphinxHandlers:
 
     def doctreeread(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
             doctree,  # type: docutils.nodes.document
     ):  # type: (...) -> None
         """
@@ -228,7 +228,7 @@ class SphinxHandlers:
 
     def envupdated(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
             env,  # type: sphinx.application.BuildEnvironment
     ):  # type: (...) -> None
         """
@@ -252,7 +252,7 @@ class SphinxHandlers:
 
     def missingreference(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
             env,  # type: sphinx.application.BuildEnvironment
             node,  # type: docutils.nodes.Node
             contnode,  # type: docutils.nodes.Node
@@ -343,7 +343,7 @@ class SphinxHandlers:
 
     def doctreeresolved(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
             doctree,  # type: docutils.nodes.document
             docname,  # type: str
     ):  # type: (...) -> None
@@ -376,7 +376,7 @@ class SphinxHandlers:
 
     def buildfinished(
             self,
-            app,  # type: sphinx.application.Sphinx
+            app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
             exception,  # type: typing.Optional[Exception]
     ):  # type: (...) -> None
         """

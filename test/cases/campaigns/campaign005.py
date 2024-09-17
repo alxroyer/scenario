@@ -35,12 +35,12 @@ class Campaign005(scenario.test.TestCase):
         )
 
         _campaign_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
-        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE, attributes=True)
+        scenario.test.data.testsuiteexpectations(_campaign_expectations, scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE, attributes=True)
         assert _campaign_expectations.all_test_case_expectations
 
         self.section("No extra info")
         _e1 = self.addstep(ExecCampaign(
-            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            [scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE],
             config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: ""},
         ))
         _p1 = self.addstep(ParseFinalResultsLog(_e1))
@@ -48,7 +48,7 @@ class Campaign005(scenario.test.TestCase):
 
         self.section("Extra info = TITLE")
         _e2 = self.addstep(ExecCampaign(
-            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            [scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE],
             config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: "TITLE"},
         ))
         _p2 = self.addstep(ParseFinalResultsLog(_e2))
@@ -56,7 +56,7 @@ class Campaign005(scenario.test.TestCase):
 
         self.section("Extra info = TITLE and DESCRIPTION")
         _e3 = self.addstep(ExecCampaign(
-            [scenario.test.paths.TEST_DATA_TEST_SUITE],
+            [scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE],
             config_values={scenario.ConfigKey.RESULTS_EXTRA_INFO: "TITLE, DESCRIPTION"},
         ))
         _p3 = self.addstep(ParseFinalResultsLog(_e3))

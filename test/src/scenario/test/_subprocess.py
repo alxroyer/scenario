@@ -123,7 +123,7 @@ class SubProcess(scenario.SubProcess):
         :param report_path: Path of the output file used for report generation.
         :return: ``self``
         """
-        from ._paths import CAMPAIGN_LAUNCHER, TEST_LAUNCHER
+        from . import _paths
         from ._testcase import TestCase
 
         assert isinstance(self, SubProcess)
@@ -132,10 +132,10 @@ class SubProcess(scenario.SubProcess):
             report_path = TestCase.getinstance().mktmppath(prefix=self.launcher_path.name, suffix=".json")
         self.report_path = report_path
 
-        if self.launcher_path.samefile(TEST_LAUNCHER):
+        if self.launcher_path.samefile(_paths.BIN_TEST_LAUNCHER):
             assert not self.hasargs("--scenario-report")
             self.addargs("--scenario-report", report_path)
-        elif self.launcher_path.samefile(CAMPAIGN_LAUNCHER):
+        elif self.launcher_path.samefile(_paths.BIN_CAMPAIGN_LAUNCHER):
             scenario.Assertions.fail("Campaign reports not handled yet")
         else:
             scenario.Assertions.fail(f"Unknown launcher '{self.launcher_path}'")
@@ -167,7 +167,7 @@ class SubProcess(scenario.SubProcess):
 
         :return: See :meth:`SubProcess.run()`
         """
-        from ._paths import PACKAGE_BLACK_LIST_STARTER
+        from . import _paths
         from ._reflection import PACKAGE_BLACK_LIST, PACKAGE_BLACK_LIST_CONF_KEY
 
         # Avoid `sys.exit()` calls.
@@ -183,7 +183,7 @@ class SubProcess(scenario.SubProcess):
                     # Inserting multiple elements inspired from
                     # https://stackoverflow.com/questions/39541370/how-to-insert-multiple-elements-into-a-list#39541404.
                     self.cmd_line[_i:_i] = [
-                        PACKAGE_BLACK_LIST_STARTER,
+                        _paths.PACKAGE_BLACK_LIST_STARTER,
                         "--config-value", PACKAGE_BLACK_LIST_CONF_KEY, ",".join(PACKAGE_BLACK_LIST),  # Comma-separated list.
                     ]
                     break
@@ -211,9 +211,9 @@ class ScenarioSubProcess(SubProcess):
         :param scenario_paths: Target scenarios, as given to the 'run-test' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
-        from ._paths import TEST_LAUNCHER
+        from . import _paths
 
-        SubProcess.__init__(self, TEST_LAUNCHER)
+        SubProcess.__init__(self, _paths.BIN_TEST_LAUNCHER)
 
         self.scenario_paths = list(scenario_paths)  # type: typing.List[scenario.Path]
 
@@ -227,24 +227,24 @@ class CampaignSubProcess(SubProcess):
     def __init__(
             self,
             output_directory,  # type: scenario.Path
-            *unit_paths  # type: scenario.Path
+            *test_suite_paths  # type: scenario.Path
     ):  # type: (...) -> None
         """
         Prepares a campaign execution as a :class:`scenario.tools.SubProcess` object.
 
         :param output_directory: Campaign results output directory.
-        :param unit_paths: Test unit definition files, as given to the 'run-campaign' script.
+        :param test_suite_paths: Test suite paths, as given to the 'run-campaign' script.
         :return: :class:`ScriptExecution` ready for execution.
         """
-        from ._paths import CAMPAIGN_LAUNCHER
+        from . import _paths
 
-        SubProcess.__init__(self, CAMPAIGN_LAUNCHER)
+        SubProcess.__init__(self, _paths.BIN_CAMPAIGN_LAUNCHER)
 
-        self.unit_paths = list(unit_paths)  # type: typing.List[scenario.Path]
+        self.test_suite_paths = list(test_suite_paths)  # type: typing.List[scenario.Path]
 
         self.addargs("--outdir", output_directory)
-        for _unit_path in unit_paths:  # type: scenario.Path
-            self.addargs(_unit_path)
+        for _test_suite_path in test_suite_paths:  # type: scenario.Path
+            self.addargs(_test_suite_path)
         self.setenv(PYTHONPATH=os.pathsep.join(sys.path))
 
         # Ensure the tests are executed from the main path currently configured,

@@ -75,7 +75,7 @@ def _reloadscenariomoduleswithtypechecking():  # type: (...) -> None
 def _reloadmodulewithtypechecking(
         module_name,  # type: str
 ):  # type: (...) -> None
-    from .._paths import SRC_PATH
+    from .. import _paths
     from ._logging import Logger
 
     _logger = Logger.getinstance(Logger.Id.TYPE_CHECKING_RELOAD)  # type: Logger
@@ -218,7 +218,7 @@ def _reloadmodulewithtypechecking(
                     with _logger.scenario_logger.pushindentation("  "):
                         _reload(
                             module_name=_module_dependency,
-                            module_path=pathlib.Path(SRC_PATH / f"{_module_dependency.replace('.', '/')}.py"),
+                            module_path=pathlib.Path(_paths.SRC_PATH / f"{_module_dependency.replace('.', '/')}.py"),
                         )
 
                     # If the typing dependency could be reloaded successfully, try again reloading the module for this `_reload()` call.
@@ -273,7 +273,7 @@ def _trackscenariotypes():  # type: (...) -> None
 
 
 def configuretypealiases(
-        app,  # type: sphinx.application.Sphinx
+        app,  # type: sphinx.application.Sphinx  # noqa  ## Unused parameter
         env,  # type: sphinx.application.BuildEnvironment
 ):  # type: (...) -> None
     from ._logging import Logger

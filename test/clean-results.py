@@ -33,8 +33,8 @@ if __name__ == "__main__":
     if not scenario.Args.getinstance().parse(sys.argv[1:]):
         sys.exit(int(scenario.Args.getinstance().error_code))
 
-    if scenario.test.paths.UNIT_RESULTS_PATH.is_dir():
-        for _subpath in scenario.test.paths.UNIT_RESULTS_PATH.iterdir():  # type: scenario.Path
+    if scenario.test.paths.SCENARIO_RESULTS_PATH.is_dir():
+        for _subpath in scenario.test.paths.SCENARIO_RESULTS_PATH.iterdir():  # type: scenario.Path
             if _subpath.is_dir():
                 scenario.logging.info(f"Removing '{_subpath}'")
                 shutil.rmtree(_subpath)

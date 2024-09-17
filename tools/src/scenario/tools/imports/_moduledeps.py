@@ -59,13 +59,13 @@ class ModuleDeps(_ErrorTrackerLoggerImpl):
 
     @property
     def display_name(self):  # type: () -> str
-        from .._paths import SRC_PATH
+        from .. import _paths
 
-        return self.path.relative_to(SRC_PATH / "scenario")
+        return self.path.relative_to(_paths.SRC_PATH / "scenario")
 
     @property
     def deps(self):  # type: () -> typing.Sequence[ModuleDeps]
-        from .._paths import SRC_PATH
+        from .. import _paths
         from ._import import Import
 
         if self._deps is None:
@@ -74,7 +74,7 @@ class ModuleDeps(_ErrorTrackerLoggerImpl):
                 if (
                     (not _import.context.isifblocktype())
                     and _import.imported_module_final_path
-                    and _import.imported_module_final_path.is_relative_to(SRC_PATH)
+                    and _import.imported_module_final_path.is_relative_to(_paths.SRC_PATH)
                     and (_import.imported_module_final_path not in _deps)
                 ):
                     _deps[_import.imported_module_final_path] = ModuleDeps.get(_import.imported_module_final_path)

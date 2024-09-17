@@ -35,15 +35,15 @@ class Campaign004(scenario.test.TestCase):
         )
 
         self.section("--doc-only option not set")
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], doc_only=False))
+        self.addstep(ExecCampaign([scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE], doc_only=False))
         _regular_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
-        scenario.test.data.testsuiteexpectations(_regular_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE, stats=True, doc_only=False)
+        scenario.test.data.testsuiteexpectations(_regular_expectations, scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE, stats=True, doc_only=False)
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(0), _regular_expectations))
         self.addstep(CheckCampaignReport(ExecCampaign.getinstance(0), _regular_expectations))
 
         self.section("--doc-only option set")
-        self.addstep(ExecCampaign([scenario.test.paths.TEST_DATA_TEST_SUITE], doc_only=True))
+        self.addstep(ExecCampaign([scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE], doc_only=True))
         _doc_only_expectations = scenario.test.CampaignExpectations()  # type: scenario.test.CampaignExpectations
-        scenario.test.data.testsuiteexpectations(_doc_only_expectations, scenario.test.paths.TEST_DATA_TEST_SUITE, stats=True, doc_only=True)
+        scenario.test.data.testsuiteexpectations(_doc_only_expectations, scenario.test.paths.SCENARIO_TEST_DATA_TEST_SUITE, stats=True, doc_only=True)
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(1), _doc_only_expectations))
         self.addstep(CheckCampaignReport(ExecCampaign.getinstance(1), _doc_only_expectations))
