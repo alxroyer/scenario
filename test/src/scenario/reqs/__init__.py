@@ -48,7 +48,6 @@ finally:
 try:
     from . import _paths as paths
     from ._reqs import load as load
-    from ._reqs import savedbfile as savedbfile
     from ._tests import setdefaulttestsuites as setdefaulttestsuites
 finally:
     pass

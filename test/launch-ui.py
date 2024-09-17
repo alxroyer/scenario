@@ -41,7 +41,7 @@ if __name__ == "__main__":
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
     # Ensure requirement database update and configure as default.
-    scenario.reqs.savedbfile(set_default=True)
+    scenario.reqs.load(set_default_req_file=True)
 
     # Configure default test suites.
     scenario.reqs.setdefaulttestsuites()

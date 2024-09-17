@@ -42,11 +42,13 @@ class ScenarioReqManagementArgs(scenario.ReqManagementArgs):
             self,
             args,  # type: typing.Any
     ):  # type: (...) -> bool
-        if (not self.downstream_traceability_outfile) and (not self.upstream_traceability_outfile):
-            self.debug("Using default paths for upstream an downstream traceability outputs: '%s' and '%s'",
-                       scenario.reqs.paths.DOWNSTREAM_TRACEABILITY, scenario.reqs.paths.UPSTREAM_TRACEABILITY)
-            self.downstream_traceability_outfile = scenario.reqs.paths.DOWNSTREAM_TRACEABILITY
-            self.upstream_traceability_outfile = scenario.reqs.paths.UPSTREAM_TRACEABILITY
+        # In case of default requirements and default test suites, consider default outputs.
+        if (not self.req_db_paths) and (not self.test_suite_paths):
+            if (not self.downstream_traceability_outfile) and (not self.upstream_traceability_outfile):
+                self.debug("Using default paths for upstream an downstream traceability outputs: '%s' and '%s'",
+                           scenario.reqs.paths.DOWNSTREAM_TRACEABILITY, scenario.reqs.paths.UPSTREAM_TRACEABILITY)
+                self.downstream_traceability_outfile = scenario.reqs.paths.DOWNSTREAM_TRACEABILITY
+                self.upstream_traceability_outfile = scenario.reqs.paths.UPSTREAM_TRACEABILITY
 
         if not super()._checkargs(args):
             return False
@@ -63,13 +65,14 @@ if __name__ == "__main__":
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
-    # Ensure requirement database update and configure as default.
-    scenario.reqs.savedbfile(set_default=True)
-
-    # Configure default test suites.
-    scenario.reqs.setdefaulttestsuites()
-
-    # Default outputs ensured with `ScenarioReqManagementArgs`.
+    # Ensure defaults:
+    # - requirements,
+    if not ScenarioReqManagementArgs.getinstance().req_db_paths:
+        scenario.reqs.load(set_default_req_file=True)
+    # - test suites,
+    if not ScenarioReqManagementArgs.getinstance().test_suite_paths:
+        scenario.reqs.setdefaulttestsuites()
+    # - default outputs already ensured in `ScenarioReqManagementArgs._checkargs()`.
 
     # Requirement management execution.
     _res = scenario.req_mgt.main()  # type: scenario.ErrorCode

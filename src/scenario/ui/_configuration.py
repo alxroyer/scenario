@@ -123,7 +123,7 @@ class Configuration(_RequestHandlerImpl):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                     _text_node = html.addtext("")  # type: Xml.TextNode
                     # Then add a line for each requirement file.
-                    for _req_db_path in SCENARIO_CONFIG.reqdbfiles():  # type: Path
+                    for _req_db_path in SCENARIO_CONFIG.reqdbpaths():  # type: Path
                         if _text_node.data:
                             _text_node.data += "\n"
                         _text_node.data += _req_db_path.abspath
@@ -137,7 +137,7 @@ class Configuration(_RequestHandlerImpl):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                     _text_node = html.addtext("")  # Type already defined above.
                     # Then add a line for each test suite.
-                    for _test_suite_path in SCENARIO_CONFIG.testsuitefiles():  # type: Path
+                    for _test_suite_path in SCENARIO_CONFIG.testsuitepaths():  # type: Path
                         if _text_node.data:
                             _text_node.data += "\n"
                         _text_node.data += _test_suite_path.abspath
@@ -188,8 +188,8 @@ class Configuration(_RequestHandlerImpl):
 
         # Determine the data to reload.
         if request.getarg(Configuration.Arg.ACTION) == Configuration.Action.RELOAD_DEFAULT:
-            _req_db_paths = list(SCENARIO_CONFIG.reqdbfiles())
-            _test_suite_paths = list(SCENARIO_CONFIG.testsuitefiles())
+            _req_db_paths = list(SCENARIO_CONFIG.reqdbpaths())
+            _test_suite_paths = list(SCENARIO_CONFIG.testsuitepaths())
 
         elif request.getarg(Configuration.Arg.ACTION) == Configuration.Action.FORM1:
             for _req_db_path in request.getarg(Configuration.Arg.REQ_DB_PATHS, default="").splitlines():  # type: str

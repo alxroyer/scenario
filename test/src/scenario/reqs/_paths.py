@@ -25,11 +25,11 @@ ROOT_SCENARIO_PATH = scenario.Path(__file__).parents[4]  # type: scenario.Path
 # Launchers.
 REQ_MGT_LAUNCHER = ROOT_SCENARIO_PATH / "test" / "req-mgt.py"  # type: scenario.Path
 
-# Requirement database.
+# Requirements.
 REQ_DB = ROOT_SCENARIO_PATH / "test" / "req-db.yaml"  # type: scenario.Path
 
 # Test suite files.
-TEST_SUITE_FILES = tuple((ROOT_SCENARIO_PATH / "test" / "cases").glob("*/*.suite"))  # type: typing.Sequence[scenario.Path]
+TEST_SUITE_PATHS = tuple((ROOT_SCENARIO_PATH / "test" / "cases").glob("*/*.suite"))  # type: typing.Sequence[scenario.Path]
 
 # Requirement traceability outputs.
 DOWNSTREAM_TRACEABILITY = ROOT_SCENARIO_PATH / "test" / "downstream-traceability.yaml"  # type: scenario.Path

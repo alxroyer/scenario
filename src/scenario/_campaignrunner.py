@@ -80,7 +80,7 @@ class CampaignRunner(_LoggerImpl):
                 _CampaignArgsImpl.setinstance(_CampaignArgsImpl())
                 if not _CampaignArgsImpl.getinstance().parse(sys.argv[1:]):
                     return _CampaignArgsImpl.getinstance().error_code
-            _test_suite_files = _FAST_PATH.scenario_config.testsuitefiles()  # type: typing.Sequence[_PathType]
+            _test_suite_files = _FAST_PATH.scenario_config.testsuitepaths()  # type: typing.Sequence[_PathType]
             if not _test_suite_files:
                 _FAST_PATH.main_logger.error("No test suite files")
                 return _ErrorCodeImpl.INPUT_MISSING_ERROR
@@ -97,7 +97,7 @@ class CampaignRunner(_LoggerImpl):
             _FAST_PATH.logging_service.start()
 
             # Load requirements.
-            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
+            for _req_db_file in _FAST_PATH.scenario_config.reqdbpaths():  # type: _PathType
                 _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_file}'")
                 _FAST_PATH.req_db.load(_req_db_file)
 

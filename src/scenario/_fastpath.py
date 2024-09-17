@@ -44,6 +44,7 @@ if typing.TYPE_CHECKING:
     from ._reqdb import ReqDatabase as _ReqDatabaseType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqlink import ReqLinkHelper as _ReqLinkHelperType
+    from ._reqmgtargs import ReqManagementArgs as _ReqManagementArgsType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtraceability import ReqTraceability as _ReqTraceabilityType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
@@ -102,6 +103,7 @@ class FastPath:
         "_req_db",
         "_req_link_cls",
         "_req_link_helper_cls",
+        "_req_mgt_args",
         "_req_ref_cls",
         "_req_traceability",
         "_req_verifier_cls",
@@ -169,6 +171,11 @@ class FastPath:
         #:
         #: Reference set by :meth:`._args.Args.setinstance()` via the :meth:`args()` setter.
         self._campaign_args = None  # type: typing.Optional[_CampaignArgsType]
+
+        #: :class:`._reqmgtargs.ReqManagementArgs` instance installed.
+        #:
+        #: Reference set by :meth:`._args.Args.setinstance()` via the :meth:`args()` setter.
+        self._req_mgt_args = None  # type: typing.Optional[_ReqManagementArgsType]
 
         #: :class:`._configdb.ConfigDatabase` singleton reference.
         #:
@@ -400,6 +407,13 @@ class FastPath:
         :class:`._campaignargs.CampaignArgs` instance installed, if any.
         """
         return self._campaign_args
+
+    @property
+    def req_mgt_args(self):  # type: () -> typing.Optional[_ReqManagementArgsType]
+        """
+        :class:`._reqmgtargs.ReqManagementArgs` instance installed, if any.
+        """
+        return self._req_mgt_args
 
     @property
     def config_db(self):  # type: () -> _ConfigDatabaseType

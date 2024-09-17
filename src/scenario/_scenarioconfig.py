@@ -71,7 +71,7 @@ class ScenarioConfig(_LoggerImpl):
 
         # Requirement management.
 
-        #: Requirement files to load at the beginning of tests and campaigns. List of strings, or comma-separated string.
+        #: Default requirement files. List of strings, or comma-separated string.
         REQ_DB_FILES = "scenario.req_db_files"
         #: Should the scenario requirement coverage be refined on steps? Boolean value.
         EXPECT_STEP_REQ_REFINEMENT = "scenario.expect_step_req_refinement"
@@ -86,7 +86,7 @@ class ScenarioConfig(_LoggerImpl):
         DELAY_BETWEEN_STEPS = "scenario.delay_between_steps"
         #: Runner script path. Default is 'bin/run-test.py'.
         RUNNER_SCRIPT_PATH = "scenario.runner_script_path"
-        #: Test suite files. List of strings, or comma-separated string.
+        #: Default test suite files. List of strings, or comma-separated string.
         TEST_SUITE_FILES = "scenario.test_suite_files"
         #: Maximum time for a scenario execution. Useful when executing campaigns. Float value.
         SCENARIO_TIMEOUT = "scenario.scenario_timeout"
@@ -267,17 +267,24 @@ class ScenarioConfig(_LoggerImpl):
         self.debug("scenariodebugloggingenabled() -> %r", _debug_logging_enabled)
         return _debug_logging_enabled
 
-    def reqdbfiles(self):  # type: (...) -> typing.Sequence[_PathType]
+    def reqdbpaths(self):  # type: (...) -> typing.Sequence[_PathType]
         """
-        Retrieves the list of requirement files to load.
+        Retrieves the input requirement files to load.
 
-        :return: List of requirement files.
+        :return: Sequence of requirement file paths.
         """
-        _req_db_files = self._readpathlistfromconf(self.Key.REQ_DB_FILES)  # type: typing.Sequence[_PathType]
-        self.debug("reqdbfiles() -> %d files", len(_req_db_files))
-        for _req_db_file in _req_db_files:  # type: _PathType
-            self.debug(" -> %r", _req_db_file)
-        return _req_db_files
+        # Determine requirement files from...
+        _req_db_paths = []  # type: typing.List[_PathType]
+        # ...requirement arguments first (when applicable),
+        if _FAST_PATH.req_mgt_args:
+            _req_db_paths.extend(_FAST_PATH.req_mgt_args.test_suite_paths)
+        # ...or default configuration otherwise.
+        if not _req_db_paths:
+            _req_db_paths.extend(self._readpathlistfromconf(self.Key.REQ_DB_FILES))
+        self.debug("reqdbpaths() -> %d files", len(_req_db_paths))
+        for _req_db_path in _req_db_paths:  # type: _PathType
+            self.debug(" -> %r", _req_db_path)
+        return _req_db_paths
 
     def expectedscenarioattributes(self):  # type: (...) -> typing.List[str]
         """
@@ -336,28 +343,30 @@ class ScenarioConfig(_LoggerImpl):
         self.debug("runnerscriptpath() -> %r", _PathImpl(_abspath))
         return _PathImpl(_abspath)
 
-    def testsuitefiles(self):  # type: (...) -> typing.Sequence[_PathType]
+    def testsuitepaths(self):  # type: (...) -> typing.Sequence[_PathType]
         """
-        Test suite files to process.
+        Retrieves the input test suite files to load.
 
         Useful for campaign execution or requirement management.
 
         Read from campaign arguments (when applicable), or :attr:`ScenarioConfig.Key.TEST_SUITE_FILES` default configuration.
 
-        :return: Test suite files.
+        :return: Sequence of tTest suite file paths.
         """
-        # Determine test suite files to process from...
-        _test_suite_files = []  # type: typing.List[_PathType]
-        # ...campaign arguments first (when applicable),
+        # Determine test suite files from...
+        _test_suite_paths = []  # type: typing.List[_PathType]
+        # ...campaign or requirement arguments first (when applicable),
         if _FAST_PATH.campaign_args:
-            _test_suite_files.extend(_FAST_PATH.campaign_args.test_suite_paths)
+            _test_suite_paths.extend(_FAST_PATH.campaign_args.test_suite_paths)
+        if _FAST_PATH.req_mgt_args:
+            _test_suite_paths.extend(_FAST_PATH.req_mgt_args.test_suite_paths)
         # ...or default configuration otherwise.
-        if not _test_suite_files:
-            _test_suite_files.extend(self._readpathlistfromconf(self.Key.TEST_SUITE_FILES))
-        self.debug("testsuitefiles() -> %d files", len(_test_suite_files))
-        for _test_suite_file in _test_suite_files:  # type: _PathType
-            self.debug(" -> %r", _test_suite_file)
-        return _test_suite_files
+        if not _test_suite_paths:
+            _test_suite_paths.extend(self._readpathlistfromconf(self.Key.TEST_SUITE_FILES))
+        self.debug("testsuitepaths() -> %d files", len(_test_suite_paths))
+        for _test_suite_path in _test_suite_paths:  # type: _PathType
+            self.debug(" -> %r", _test_suite_path)
+        return _test_suite_paths
 
     def scenariotimeout(self):  # type: (...) -> float
         """

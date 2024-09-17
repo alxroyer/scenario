@@ -298,11 +298,23 @@ REQUIREMENT_MANAGEMENT_REPORTS = REQUIREMENT_MANAGEMENT / "reports"  # type: sce
 REQUIREMENT_MANAGEMENT_SCENARIO_CONSOLIDATION = REQUIREMENT_MANAGEMENT / "scenario-consolidation"  # type: scenario.ReqRef
 
 
-def load():  # type: (...) -> None
+def load(
+        *,
+        update_req_file=False,  # type: bool
+        set_default_req_file=False,  # type: bool
+):  # type: (...) -> None
     """
     Loads :mod:`scenario.test` features in the `scenario` requirement database.
+
+    :param update_req_file:
+        Set to ``True`` to get the :attr:`._paths.REQ_DB` file updated.
+    :param set_default_req_file:
+        Set to ``True`` to update and get the :attr:`._paths.REQ_DB` file
+        configured as :attr:`scenario._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILES`.
+        Implies ``update_req_file``.
     """
     import scenario.reqs
+    from . import _paths as _paths
 
     # Inspect this module items.
     for _name, _obj in vars(scenario.reqs).items():  # type: str, typing.Any
@@ -311,23 +323,12 @@ def load():  # type: (...) -> None
             # Ensure the feature is known as a requirement.
             scenario.req_db.push(_obj)
 
+    # Update `REQ_DB` file.
+    if update_req_file or set_default_req_file:
+        scenario.logging.info(f"Updating scenario requirement database '{_paths.REQ_DB}'")
+        scenario.req_db.dump(_paths.REQ_DB)
 
-def savedbfile(
-        *,
-        set_default=False,  # type: bool
-):  # type: (...) -> None
-    """
-    Saves the requirements defined in this file as :attr:`._paths.REQ_DB`.
-
-    :param set_default: Set to ``True`` to set :attr:`._paths.REQ_DB` as the default requirement file.
-    """
-    from . import _paths as _paths
-
-    # Load requirements and save as a file.
-    load()
-    scenario.req_db.dump(_paths.REQ_DB)
-
-    if set_default:
-        # Configure this file as the default requirement file.
+    # Configure `REQ_DB` file as 'scenario.req_db_files'.
+    if set_default_req_file:
         scenario.conf.remove(scenario.ConfigKey.REQ_DB_FILES)
         scenario.conf.set(scenario.ConfigKey.REQ_DB_FILES, [_paths.REQ_DB])

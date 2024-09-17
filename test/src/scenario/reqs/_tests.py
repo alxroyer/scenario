@@ -24,4 +24,4 @@ def setdefaulttestsuites():  # type: (...) -> None
     from . import _paths as _paths
 
     scenario.conf.remove(scenario.ConfigKey.TEST_SUITE_FILES)
-    scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, [_path.abspath for _path in _paths.TEST_SUITE_FILES])
+    scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, [_path.abspath for _path in _paths.TEST_SUITE_PATHS])

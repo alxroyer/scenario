@@ -96,11 +96,11 @@ class ReqTraceability(_LoggerImpl):
         # Requirements.
 
         if req_db_file_paths:
-            # Ensure persistent and countable list.
-            req_db_file_paths = list(req_db_file_paths)
+            # Ensure persistent and countable sequence.
+            req_db_file_paths = tuple(req_db_file_paths)
         else:
             # Default configuration.
-            req_db_file_paths = _FAST_PATH.scenario_config.reqdbfiles()
+            req_db_file_paths = _FAST_PATH.scenario_config.reqdbpaths()
 
         if req_db_file_paths:
             if log_info:
@@ -126,11 +126,11 @@ class ReqTraceability(_LoggerImpl):
         # Test suites.
 
         if test_suite_paths:
-            # Ensure persistent and countable list.
-            test_suite_paths = list(test_suite_paths)
+            # Ensure persistent and countable sequence.
+            test_suite_paths = tuple(test_suite_paths)
         else:
             # Default configuration.
-            test_suite_paths = _FAST_PATH.scenario_config.testsuitefiles()
+            test_suite_paths = _FAST_PATH.scenario_config.testsuitepaths()
 
         if test_suite_paths:
             if log_info:

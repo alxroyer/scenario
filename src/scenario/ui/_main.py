@@ -50,8 +50,8 @@ def main():  # type: (...) -> _ErrorCodeType
 
     # Load requirements and scenarios from `ScenarioConfig.Key.REQ_DB_FILES` and `TEST_SUITE_FILES` configurations.
     REQ_TRACEABILITY.loaddatafromfiles(
-        req_db_file_paths=SCENARIO_CONFIG.reqdbfiles() or None,
-        test_suite_paths=SCENARIO_CONFIG.testsuitefiles() or None,
+        req_db_file_paths=SCENARIO_CONFIG.reqdbpaths() or None,
+        test_suite_paths=SCENARIO_CONFIG.testsuitepaths() or None,
         log_info=True,
     )
 

@@ -118,9 +118,9 @@ class ScenarioRunner(_LoggerImpl):
             _FAST_PATH.logging_service.start()
 
             # Load requirements.
-            for _req_db_file in _FAST_PATH.scenario_config.reqdbfiles():  # type: _PathType
-                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_file}'")
-                _FAST_PATH.req_db.load(_req_db_file)
+            for _req_db_path in _FAST_PATH.scenario_config.reqdbpaths():  # type: _PathType
+                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_path}'")
+                _FAST_PATH.req_db.load(_req_db_path)
 
             # Execute tests.
             _errors = []  # type: typing.List[_ErrorCodeType]
