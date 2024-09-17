@@ -15,6 +15,12 @@
 # limitations under the License.
 
 
+# Package dependencies.
+if True:
+    from ._pkgdeps import checkpkgdeps as _checkpkgdeps  # @module-level-execution
+    _checkpkgdeps()
+
+
 # Requirement reexports, in order of definition.
 try:
     from ._reqs import SCENARIO_EXECUTION as SCENARIO_EXECUTION
@@ -49,5 +55,6 @@ try:
     from . import _paths as paths
     from ._reqs import load as load
     from ._tests import setdefaulttestsuites as setdefaulttestsuites
+    from ._tools import ensurelicenseheader as ensurelicenseheader
 finally:
     pass

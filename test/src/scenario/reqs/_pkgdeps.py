@@ -14,11 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: "1.0"
-paths:
-  # Do not modify the APACHE-2.0 license file.
-  "/LICENSES/APACHE-LICENSE-2.0.txt": "binary"
 
-  # Text file specifications.
-  "*.suite": "text"
-  "*.uml": "text"
+def checkpkgdeps():  # type: (...) -> None
+    import scenario
+    from scenario._reflection import extendnamespacepackagepath  # noqa  ## Access to protected module  # check-imports: ignore
+    from . import _paths
+
+    # Ensure `scenario.inners` can be loaded.
+    try:
+        import scenario.inners
+    except ImportError:
+        extendnamespacepackagepath(namespace_package=scenario, root_src_path=_paths.UTILS_SRC_PATH)
+        import scenario.inners

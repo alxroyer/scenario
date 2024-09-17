@@ -315,6 +315,7 @@ def load(
     """
     import scenario.reqs
     from . import _paths as _paths
+    from ._tools import ensurelicenseheader
 
     # Inspect this module items.
     for _name, _obj in vars(scenario.reqs).items():  # type: str, typing.Any
@@ -327,6 +328,7 @@ def load(
     if update_req_file or set_default_req_file:
         scenario.logging.info(f"Updating scenario requirement database '{_paths.REQ_DB}'")
         scenario.req_db.dump(_paths.REQ_DB)
+        ensurelicenseheader(_paths.REQ_DB)
 
     # Configure `REQ_DB` file as 'scenario.req_db_files'.
     if set_default_req_file:

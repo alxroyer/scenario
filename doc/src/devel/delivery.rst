@@ -70,7 +70,7 @@ On the ``feature/xxx``, ``enhancement/xxx``, ``bugfix/xxx`` branch:
 
        ./test/req-mgt.py
 
-   Check the 'test/req-db.yaml', 'downstream-traceability.yaml' and 'upstream-traceability.yaml' changes look consistent.
+   Check the 'test/req-db.yml', 'downstream-traceability.yml' and 'upstream-traceability.yml' changes look consistent.
 
    .. tip::
 

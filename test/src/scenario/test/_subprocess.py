@@ -163,7 +163,7 @@ class SubProcess(scenario.SubProcess):
             timeout=None,  # type: float
     ):  # type: (...) -> SubProcess
         """
-        Base :meth:`scenario.tools.SubProcess.run()` override.
+        Base :meth:`scenario.SubProcess.run()` override.
 
         :return: See :meth:`SubProcess.run()`
         """
@@ -206,7 +206,7 @@ class ScenarioSubProcess(SubProcess):
             *scenario_paths  # type: scenario.Path
     ):  # type: (...) -> None
         """
-        Prepares a scenario execution as a :class:`scenario.tools.SubProcess` object.
+        Prepares a scenario execution.
 
         :param scenario_paths: Target scenarios, as given to the 'run-test' script.
         :return: :class:`ScriptExecution` ready for execution.
@@ -230,7 +230,7 @@ class CampaignSubProcess(SubProcess):
             *test_suite_paths  # type: scenario.Path
     ):  # type: (...) -> None
         """
-        Prepares a campaign execution as a :class:`scenario.tools.SubProcess` object.
+        Prepares a campaign execution.
 
         :param output_directory: Campaign results output directory.
         :param test_suite_paths: Test suite paths, as given to the 'run-campaign' script.

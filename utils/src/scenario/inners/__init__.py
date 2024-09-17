@@ -23,6 +23,7 @@ try:
     # Memo:
     #   Module reexports with renamings are not considered as reexports when imported from `scenario` (and not '.' probably? tbc).
     #   Let's reexport them through intermediate shortcut variables.
+    from scenario._jsondictutils import JsonDict as JsonDict  # noqa  ## Access to a protected member
     from scenario import _reflection as _reflection  # noqa  ## Access to a protected member
     reflection = _reflection
     from scenario import _textfileutils as _textfileutils  # noqa  ## Access to a protected member

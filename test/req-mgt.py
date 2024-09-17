@@ -76,4 +76,15 @@ if __name__ == "__main__":
 
     # Requirement management execution.
     _res = scenario.req_mgt.main()  # type: scenario.ErrorCode
+
+    # Add license headers to default traceability files if updated.
+    try:
+        if ScenarioReqManagementArgs.getinstance().downstream_traceability_outfile == scenario.reqs.paths.DOWNSTREAM_TRACEABILITY:
+            scenario.reqs.ensurelicenseheader(scenario.reqs.paths.DOWNSTREAM_TRACEABILITY)
+        if ScenarioReqManagementArgs.getinstance().upstream_traceability_outfile == scenario.reqs.paths.UPSTREAM_TRACEABILITY:
+            scenario.reqs.ensurelicenseheader(scenario.reqs.paths.UPSTREAM_TRACEABILITY)
+    except Exception as _err:
+        scenario.logging.logexceptiontraceback(_err)
+        _res = scenario.ErrorCode.worst([_res, scenario.ErrorCode.fromexception(_err)])
+
     sys.exit(int(_res))
