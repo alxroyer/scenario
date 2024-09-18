@@ -325,7 +325,7 @@ class Logger:
         (see :meth:`enabledebug()`).
         """
         # Optimization: If debug is disabled, return right away.
-        if self._debug_enabled:
+        if self.isdebugenabled():
             self._logger.debug(msg, *args, **kwargs)
 
     def log(
@@ -339,7 +339,7 @@ class Logger:
         Logs a message with a configurable severity.
         """
         # Optimization: If debug is disabled, return right away, unless `level` is higher than `logging.DEBUG`.
-        if self._debug_enabled or (level > logging.DEBUG):
+        if (level > logging.DEBUG) or self.isdebugenabled():
             self._logger.log(level, msg, *args, **kwargs)
 
     def _log(
