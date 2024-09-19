@@ -29,13 +29,13 @@ if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class UpstreamTraceability(_RequestHandlerImpl):
+class UpstreamTraceabilityPage(_RequestHandlerImpl):
     """
     Upstream traceability page.
     """
 
     #: Base URL for the upstream traceability page.
-    URL = "/upstream-traceability"
+    URL = "/upstream-traceability"  # type: str
 
     @staticmethod
     def mkurl(
@@ -49,7 +49,7 @@ class UpstreamTraceability(_RequestHandlerImpl):
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(UpstreamTraceability.URL, anchor=scenario.name)
+        return HttpRequest.encodeurl(UpstreamTraceabilityPage.URL, anchor=scenario.name)
 
     @staticmethod
     def scenario2unnamedhtmllink(
@@ -62,36 +62,50 @@ class UpstreamTraceability(_RequestHandlerImpl):
         :param scenario: Scenario to build an upstream traceability link for.
         :param html: HTML output page to feed.
         """
-        html.addcontent(f'<a class="unnamed upstream-traceability" href="{UpstreamTraceability.mkurl(scenario)}">(upstream traceability)</a>')
+        html.addcontent(f'<a class="unnamed upstream-traceability" href="{UpstreamTraceabilityPage.mkurl(scenario)}">(upstream traceability)</a>')
 
-    def matches(
-            self,
-            request,  # type: _HttpRequestType
-    ):  # type: (...) -> bool
-        return request.base_path == UpstreamTraceability.URL
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the logger instance.
+        """
+        from .._debugclasses import DebugClass
+
+        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_REQS_UP)
 
     def process(
             self,
             request,  # type: _HttpRequestType
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
+    ):  # type: (...) -> bool
         from .._reqtraceability import REQ_TRACEABILITY
+        from ._htmldoc import HtmlDocument
 
-        html.settitle("Upstream traceability")
+        # Filter `request`.
+        if request.base_path != UpstreamTraceabilityPage.URL:
+            self.debug("Request base path %r not matching %r", request.base_path, UpstreamTraceabilityPage.URL)
+            self.debug("%r not processed", request)
+            return False
+        self.debug("Processing %r", request)
 
-        with html.addcontent('<div id="downstream-traceability"></div>'):
+        self.debug("Generating HTML content")
+        _html = HtmlDocument()
+        _html.settitle("Upstream traceability")
+
+        with _html.addcontent('<div id="downstream-traceability"></div>'):
             _upstream_traceability = REQ_TRACEABILITY.getupstream()  # type: typing.Sequence[_ReqTraceabilityType.Upstream.Scenario]
 
-            with html.addcontent('<table></table>'):
+            with _html.addcontent('<table></table>'):
                 # Heading row.
-                with html.addcontent('<tr></tr>'):
-                    html.addcontent('<th class="scenario name">Name</th>')
-                    html.addcontent('<th class="scenario title">Title</th>')
-                    html.addcontent('<th class="scenario coverage">Requirement coverage</th>')
+                with _html.addcontent('<tr></tr>'):
+                    _html.addcontent('<th class="scenario name">Name</th>')
+                    _html.addcontent('<th class="scenario title">Title</th>')
+                    _html.addcontent('<th class="scenario coverage">Requirement coverage</th>')
 
                 # Scenario rows.
                 for _upstream_scenario in _upstream_traceability:  # type: _ReqTraceabilityType.Upstream.Scenario
-                    self._scenario2html(_upstream_scenario, html)
+                    self._scenario2html(_upstream_scenario, _html)
+
+        request.sendhtml(_html)
+        return True
 
     def _scenario2html(
             self,
@@ -104,7 +118,7 @@ class UpstreamTraceability(_RequestHandlerImpl):
         :param upstream_scenario: Scenario to build HTML content for.
         :param html: HTML output page to feed.
         """
-        from ._scenariodetails import ScenarioDetails
+        from ._pagescenario import ScenarioPage
 
         with html.addcontent(f'<tr class="scenario"></tr>'):
             # Scenario name.
@@ -112,7 +126,7 @@ class UpstreamTraceability(_RequestHandlerImpl):
                 # With anchor.
                 html.addcontent(f'<a name="{html.encode(upstream_scenario.scenario.name)}" />')
                 # With link to scenario details page.
-                with html.addcontent(f'<a href="{ScenarioDetails.mkurl(upstream_scenario.scenario)}"></a>'):
+                with html.addcontent(f'<a href="{ScenarioPage.mkurl(upstream_scenario.scenario)}"></a>'):
                     html.addtext(upstream_scenario.scenario.name)
 
             # Title.
@@ -135,18 +149,18 @@ class UpstreamTraceability(_RequestHandlerImpl):
         :param upstream_req: Requirement to build HTML content for.
         :param html: HTML output page to feed.
         """
-        from ._downstreamtraceability import DownstreamTraceability
-        from ._requirements import Requirements
+        from ._pagereqs import RequirementsPage
+        from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addcontent('<li class="req"></li>'):
             # Requirement id.
             with html.addcontent('<span class="req id"></span>'):
                 # With link to requirements page.
-                with html.addcontent(f'<a href="{Requirements.mkurl(upstream_req.req.main_ref)}"></a>'):
+                with html.addcontent(f'<a href="{RequirementsPage.mkurl(upstream_req.req.main_ref)}"></a>'):
                     html.addtext(upstream_req.req.id)
 
             # Downstream traceability link.
-            DownstreamTraceability.reqref2unnamedhtmllink(upstream_req.req.main_ref, html)
+            DownstreamTraceabilityPage.reqref2unnamedhtmllink(upstream_req.req.main_ref, html)
 
             # Traceability comments.
             if upstream_req.comments:
@@ -170,18 +184,18 @@ class UpstreamTraceability(_RequestHandlerImpl):
         :param upstream_req_subref: Requirement subreference to build HTML content for.
         :param html: HTML output page to feed.
         """
-        from ._downstreamtraceability import DownstreamTraceability
-        from ._requirements import Requirements
+        from ._pagereqs import RequirementsPage
+        from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addcontent('<li class="req-subref"></li>'):
             # Requirement subreference id.
             with html.addcontent('<span class="req-subref id"></span>'):
                 # With link to requirements page.
-                with html.addcontent(f'<a href="{Requirements.mkurl(upstream_req_subref.req_subref)}"></a>'):
+                with html.addcontent(f'<a href="{RequirementsPage.mkurl(upstream_req_subref.req_subref)}"></a>'):
                     html.addtext(upstream_req_subref.req_subref.id)
 
             # Downstream traceability link.
-            DownstreamTraceability.reqref2unnamedhtmllink(upstream_req_subref.req_subref, html)
+            DownstreamTraceabilityPage.reqref2unnamedhtmllink(upstream_req_subref.req_subref, html)
 
             # Traceability comments.
             if upstream_req_subref.comments:

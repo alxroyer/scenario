@@ -23,7 +23,6 @@ import typing
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -33,19 +32,34 @@ class Homepage(_RequestHandlerImpl):
     """
 
     #: Base URL for the homepage.
-    URL = "/"
+    URL = "/"  # type: str
 
-    def matches(
-            self,
-            request,  # type: _HttpRequestType
-    ):  # type: (...) -> bool
-        return request.base_path == Homepage.URL
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the logger instance.
+        """
+        from .._debugclasses import DebugClass
+
+        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_HOME)
 
     def process(
             self,
             request,  # type: _HttpRequestType
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
-        html.settitle("Scenario User Interface")
+    ):  # type: (...) -> bool
+        from ._htmldoc import HtmlDocument
 
-        html.addcontent('<p>Hello world!</p>')
+        # Filter `request`.
+        if request.base_path != Homepage.URL:
+            self.debug("Request base path %r not matching %r", request.base_path, Homepage.URL)
+            self.debug("%r not processed", request)
+            return False
+        self.debug("Processing %r", request)
+
+        self.debug("Generating HTML content")
+        _html = HtmlDocument()  # type: HtmlDocument
+        _html.settitle("Scenario User Interface")
+
+        _html.addcontent('<p>Hello world!</p>')
+
+        request.sendhtml(_html)
+        return True

@@ -19,7 +19,7 @@ import pathlib
 import sys
 
 # Path management.
-_root_scenario_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
+_root_scenario_path = pathlib.Path(__file__).parents[1].resolve()  # type: pathlib.Path
 sys.path.append(str(_root_scenario_path / "src"))
 sys.path.append(str(_root_scenario_path / "test" / "cases"))
 sys.path.append(str(_root_scenario_path / "test" / "src"))

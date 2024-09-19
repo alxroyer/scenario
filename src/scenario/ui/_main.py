@@ -59,8 +59,6 @@ def main():  # type: (...) -> _ErrorCodeType
     try:
         MAIN_LOGGER.info("")
         HTTP_SERVER.serve()
-    except KeyboardInterrupt as _err:
-        HTTP_SERVER.debug("KeyboardInterrupt: %s", _err)
     except Exception as _err:
         MAIN_LOGGER.logexceptiontraceback(_err)
         return ErrorCode.fromexception(_err)

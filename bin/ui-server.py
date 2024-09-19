@@ -30,7 +30,7 @@ if __name__ == "__main__":
         import scenario
         import scenario.ui
     except ImportError:
-        _root_scenario_path = pathlib.Path(__file__).parents[1]  # type: pathlib.Path
+        _root_scenario_path = pathlib.Path(__file__).parents[1].resolve()  # type: pathlib.Path
         sys.path.append(str(_root_scenario_path / "src"))
         import scenario
         import scenario.ui

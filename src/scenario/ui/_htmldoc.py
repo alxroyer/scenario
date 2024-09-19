@@ -82,6 +82,7 @@ class HtmlDocument(_LoggerImpl):
         and sets the current node with the main div of the page.
         """
         from .._debugclasses import DebugClass
+        from .._scenarioconfig import SCENARIO_CONFIG
         from .._xmlutils import Xml
 
         _LoggerImpl.__init__(self, DebugClass.UI_HTML_DOCUMENT)
@@ -100,6 +101,8 @@ class HtmlDocument(_LoggerImpl):
             self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
             #: HTML head title node, which text content will be set with :meth:`settitle()`.
             self._head_title = self.addcontent('<title>...</title>').new_child  # type: Xml.Node
+            self.addcontent(f'<link rel="stylesheet" href="{SCENARIO_CONFIG.uicssurl()}" type="text/css" />')
+            self.addcontent(f'<script src="{SCENARIO_CONFIG.uijsurl()}"></script>', auto_closing=False)
 
         #: HTML ``<body/>`` section node.
         self.body = self.xml_doc.createnode("body")  # type: Xml.Node
@@ -121,29 +124,29 @@ class HtmlDocument(_LoggerImpl):
         """
         Builds the navigation menu HTML.
         """
-        from ._configuration import Configuration
-        from ._downstreamtraceability import DownstreamTraceability
-        from ._homepage import Homepage
-        from ._requirements import Requirements
-        from ._scenarios import Scenarios
-        from ._upstreamtraceability import UpstreamTraceability
+        from ._pageconfig import ConfigurationPage
+        from ._pagehome import Homepage
+        from ._pagereqs import RequirementsPage
+        from ._pagereqsdown import DownstreamTraceabilityPage
+        from ._pagereqsup import UpstreamTraceabilityPage
+        from ._pagescenarios import ScenarioListPage
 
         with self.addcontent('<div id="menu"></div>'):
             self.addcontent(f'<a class="menu" href="{Homepage.URL}">Home</a>')
-            self.addcontent(f'<a class="menu" href="{Configuration.URL}">Configuration</a>')
-            self.addcontent(f'<a class="menu" href="{Requirements.URL}">Requirements</a>')
-            self.addcontent(f'<a class="menu" href="{Scenarios.URL}">Scenarios</a>')
-            self.addcontent(f'<a class="menu" href="{DownstreamTraceability.URL}">Downstream traceability</a>')
-            self.addcontent(f'<a class="menu" href="{UpstreamTraceability.URL}">Upstream traceability</a>')
+            self.addcontent(f'<a class="menu" href="{ConfigurationPage.URL}">Configuration</a>')
+            self.addcontent(f'<a class="menu" href="{RequirementsPage.URL}">Requirements</a>')
+            self.addcontent(f'<a class="menu" href="{ScenarioListPage.URL}">Scenarios</a>')
+            self.addcontent(f'<a class="menu" href="{DownstreamTraceabilityPage.URL}">Downstream traceability</a>')
+            self.addcontent(f'<a class="menu" href="{UpstreamTraceabilityPage.URL}">Upstream traceability</a>')
 
     def _reloadbutton2html(self):  # type: (...) -> None
         """
         Builds the reload button HTML.
         """
-        from ._configuration import Configuration
+        from ._pageconfig import ConfigurationPage
 
         with self.addcontent('<div id="reload-default"></div>'):
-            self.addcontent(f'<a href="{Configuration.mkreloaddefaulturl()}">Reload default data</a>')
+            self.addcontent(f'<a href="{ConfigurationPage.mkreloaddefaulturl()}">Reload default data</a>')
 
     def settitle(
             self,
@@ -160,6 +163,8 @@ class HtmlDocument(_LoggerImpl):
     def addcontent(
             self,
             content,  # type: str
+            *,
+            auto_closing=True,  # type: bool
     ):  # type: (...) -> HtmlDocument.NodeContext
         """
         Adds HTML content to the current node.
@@ -168,6 +173,8 @@ class HtmlDocument(_LoggerImpl):
             HTML content.
 
             .. note:: The :meth:`encode()` method shall be used to ensure HTML encoding for text data.
+        :param auto_closing:
+            Set to ``False`` to avoid auto-closing node.
         :return:
             Context manager that controls the current node further content will be added to.
         """
@@ -177,6 +184,10 @@ class HtmlDocument(_LoggerImpl):
         _child = self.xml_doc.parsestream(content)  # type: Xml.INode
         if not isinstance(_child, Xml.Node):
             raise ValueError(f"Unexpected XML content {content!r}, parsed as {_child!r} (not a node)")
+
+        # Avoid auto-closing.
+        if not auto_closing:
+            _child.appendchild(self.xml_doc.createtextnode(""))
 
         # Append it as a child to the current node.
         self.current_node.appendchild(_child)

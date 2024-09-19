@@ -332,7 +332,7 @@ def extendnamespacepackagepath(
 
     # Eventually add the source root path in `sys.path` (if not already in).
     if not any([pathlib.Path(_sys_path).exists() and pathlib.Path(_sys_path).samefile(root_src_path) for _sys_path in sys.path]):
-        sys.path.append(str(pathlib.Path(root_src_path)))
+        sys.path.append(str(pathlib.Path(root_src_path).resolve()))
 
 
 def checkfuncqualname(

@@ -32,13 +32,13 @@ if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class ScenarioDetails(_RequestHandlerImpl):
+class ScenarioPage(_RequestHandlerImpl):
     """
     Scenario details page.
     """
 
     #: Base URL for the scenario details page.
-    URL = "/scenario"
+    URL = "/scenario"  # type: str
 
     @staticmethod
     def mkurl(
@@ -60,7 +60,15 @@ class ScenarioDetails(_RequestHandlerImpl):
         if isinstance(req_verifier, StepDefinition):
             _step_anchor = f"step#{req_verifier.number}"
 
-        return HttpRequest.encodeurl(ScenarioDetails.URL, args={'name': _scenario.name}, anchor=_step_anchor)
+        return HttpRequest.encodeurl(ScenarioPage.URL, args={'name': _scenario.name}, anchor=_step_anchor)
+
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the logger instance.
+        """
+        from .._debugclasses import DebugClass
+
+        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_SCENARIO)
 
     def _getscenario(
             self,
@@ -102,34 +110,43 @@ class ScenarioDetails(_RequestHandlerImpl):
                 return _scenario_definition
         raise KeyError(f"No such scenario {scenario_name!r}")
 
-    def matches(
-            self,
-            request,  # type: _HttpRequestType
-    ):  # type: (...) -> bool
-        return request.base_path == ScenarioDetails.URL
-
     def process(
             self,
             request,  # type: _HttpRequestType
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
+    ):  # type: (...) -> bool
+        from ._htmldoc import HtmlDocument
+
+        # Filter `request`.
+        if request.base_path != ScenarioPage.URL:
+            self.debug("Request base path %r not matching %r", request.base_path, ScenarioPage.URL)
+            self.debug("%r not processed", request)
+            return False
+        self.debug("Processing %r", request)
+
         # Retrieve the scenario name from request arguments.
         _scenario_name = request.getarg("name")  # type: str
+        self.debug("Scenario name: %r", _scenario_name)
         # Then find the scenario instance from the loaded scenarios.
         _scenario = self._getscenario(_scenario_name)  # type: _ScenarioDefinitionType
+        self.debug("Scenario: %r", _scenario)
 
         # HTML content.
-        html.settitle(_scenario.name)
+        self.debug("Generating HTML content")
+        _html = HtmlDocument()
+        _html.settitle(_scenario.name)
 
-        with html.addcontent('<div id="scenario"></div>'):
+        with _html.addcontent('<div id="scenario"></div>'):
             if _scenario.getattributenames():
-                self._scenarioattributes2html(_scenario, html)
+                self._scenarioattributes2html(_scenario, _html)
 
             _req_refs = _scenario.getreqrefs(walk_steps=True)  # type: _SetWithReqLinksType[_ReqRefType]
             if _req_refs:
-                self._reqrefs2html(_scenario, _req_refs, html)
+                self._reqrefs2html(_scenario, _req_refs, _html)
 
-            self._steps2html(_scenario, html)
+            self._steps2html(_scenario, _html)
+
+        request.sendhtml(_html)
+        return True
 
     def _scenarioattributes2html(
             self,
@@ -238,9 +255,9 @@ class ScenarioDetails(_RequestHandlerImpl):
         from .._reqlink import ReqLink
         from .._scenariodefinition import ScenarioDefinition
         from .._stepdefinition import StepDefinition
-        from ._downstreamtraceability import DownstreamTraceability
-        from ._requirements import Requirements
-        from ._upstreamtraceability import UpstreamTraceability
+        from ._pagereqs import RequirementsPage
+        from ._pagereqsdown import DownstreamTraceabilityPage
+        from ._pagereqsup import UpstreamTraceabilityPage
 
         # Determine the HTML object class depending on the type of `req_verifier`.
         _obj_class = ""  # type: str
@@ -256,12 +273,12 @@ class ScenarioDetails(_RequestHandlerImpl):
                     with html.addcontent(f'<li class="{_obj_class} req-ref"></li>'):
                         # Requirement reference id.
                         with html.addcontent(f'<span class="{_obj_class} req-ref id"></span>'):
-                            with html.addcontent(f'<a href="{Requirements.mkurl(_req_ref)}"></a>'):
+                            with html.addcontent(f'<a href="{RequirementsPage.mkurl(_req_ref)}"></a>'):
                                 html.addtext(_req_ref.id)
 
                         # Downstream traceability link.
                         with html.addcontent(f'<span class="{_obj_class} req-ref coverage"></span>'):
-                            DownstreamTraceability.reqref2unnamedhtmllink(_req_ref, html)
+                            DownstreamTraceabilityPage.reqref2unnamedhtmllink(_req_ref, html)
 
                         # Find out the req-links which comments to display.
                         _req_links = list(filter(
@@ -279,4 +296,4 @@ class ScenarioDetails(_RequestHandlerImpl):
 
             # Upstream traceability link.
             if isinstance(req_verifier, ScenarioDefinition):
-                UpstreamTraceability.scenario2unnamedhtmllink(req_verifier, html)
+                UpstreamTraceabilityPage.scenario2unnamedhtmllink(req_verifier, html)

@@ -29,13 +29,13 @@ if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class Requirements(_RequestHandlerImpl):
+class RequirementsPage(_RequestHandlerImpl):
     """
     Requirements page.
     """
 
     #: Base URL for the requirements page.
-    URL = "/requirements"
+    URL = "/requirements"  # type: str
 
     @staticmethod
     def mkurl(
@@ -49,28 +49,42 @@ class Requirements(_RequestHandlerImpl):
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(Requirements.URL, anchor=req_ref.id)
+        return HttpRequest.encodeurl(RequirementsPage.URL, anchor=req_ref.id)
 
-    def matches(
-            self,
-            request,  # type: _HttpRequestType
-    ):  # type: (...) -> bool
-        return request.base_path == Requirements.URL
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the logger instance.
+        """
+        from .._debugclasses import DebugClass
+
+        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_REQS)
 
     def process(
             self,
             request,  # type: _HttpRequestType
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
+    ):  # type: (...) -> bool
         from .._req import Req
         from .._reqdb import REQ_DB
+        from ._htmldoc import HtmlDocument
 
-        html.settitle("Requirements")
+        # Filter `request`.
+        if request.base_path != RequirementsPage.URL:
+            self.debug("Request base path %r not matching %r", request.base_path, RequirementsPage.URL)
+            self.debug("%r not processed", request)
+            return False
+        self.debug("Processing %r", request)
 
-        with html.addcontent('<div id="requirements"></div>'):
-            with html.addcontent('<ul></ul>'):
+        self.debug("Generating HTML content")
+        _html = HtmlDocument()
+        _html.settitle("Requirements")
+
+        with _html.addcontent('<div id="requirements"></div>'):
+            with _html.addcontent('<ul></ul>'):
                 for _req in REQ_DB.getallreqs():  # type: Req
-                    self._req2html(_req, html)
+                    self._req2html(_req, _html)
+
+        request.sendhtml(_html)
+        return True
 
     def _req2html(
             self,
@@ -83,7 +97,7 @@ class Requirements(_RequestHandlerImpl):
         :param req: Requirement to build HTML content for.
         :param html: HTML output page to feed.
         """
-        from ._downstreamtraceability import DownstreamTraceability
+        from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addcontent('<li class="req"></li>'):
             # Anchor.
@@ -111,7 +125,7 @@ class Requirements(_RequestHandlerImpl):
 
             # Downstream traceability link.
             with html.addcontent('<div class="req downstream-traceability"></div>'):
-                DownstreamTraceability.reqref2unnamedhtmllink(req.main_ref, html)
+                DownstreamTraceabilityPage.reqref2unnamedhtmllink(req.main_ref, html)
 
             # Subreferences.
             if req.subrefs:
@@ -132,7 +146,7 @@ class Requirements(_RequestHandlerImpl):
         :param req_subref: Requirement subreference to build HTML content for.
         :param html: HTML output page to feed.
         """
-        from ._downstreamtraceability import DownstreamTraceability
+        from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addcontent('<li class="req-subref"></li>'):
             # Anchor.
@@ -143,4 +157,4 @@ class Requirements(_RequestHandlerImpl):
 
             # Downstream traceability link.
             with html.addcontent('<span class="req-subref downstream-traceabiliy"></span>'):
-                DownstreamTraceability.reqref2unnamedhtmllink(req_subref, html)
+                DownstreamTraceabilityPage.reqref2unnamedhtmllink(req_subref, html)

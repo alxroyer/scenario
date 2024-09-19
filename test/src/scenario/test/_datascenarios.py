@@ -19,7 +19,7 @@ import sys
 # Path management.
 if True:
     from . import _paths as _paths  # @module-level-execution
-    sys.path.append(str(_paths.SCENARIO_TEST_DATA_PATH))
+    sys.path.append(_paths.SCENARIO_TEST_DATA_PATH.abspath)
 
 
 try:

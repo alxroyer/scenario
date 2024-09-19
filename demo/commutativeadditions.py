@@ -4,7 +4,7 @@ import pathlib
 import scenario
 import sys
 
-sys.path.append(str(pathlib.Path(__file__).parent))
+sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
 from commutativeaddition import CommutativeAddition  # noqa  ## Module level import not at top of file
 
 

@@ -30,7 +30,7 @@ import sys
 import typing
 
 # Path management.
-_root_scenario_path = pathlib.Path(__file__).parents[3]  # type: pathlib.Path
+_root_scenario_path = pathlib.Path(__file__).parents[3].resolve()  # type: pathlib.Path
 sys.path.append(str(_root_scenario_path / "src"))
 sys.path.append(str(_root_scenario_path / "tools" / "src"))
 

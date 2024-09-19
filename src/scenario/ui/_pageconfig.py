@@ -28,13 +28,13 @@ if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class Configuration(_RequestHandlerImpl):
+class ConfigurationPage(_RequestHandlerImpl):
     """
     Configuration page.
     """
 
     #: Base URL for the configuration page.
-    URL = "/configuration"
+    URL = "/configuration"  # type: str
 
     @staticmethod
     def mkreloaddefaulturl():  # type: (...) -> str
@@ -45,7 +45,9 @@ class Configuration(_RequestHandlerImpl):
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(Configuration.URL, args={Configuration.Arg.ACTION: Configuration.Action.RELOAD_DEFAULT})
+        return HttpRequest.encodeurl(ConfigurationPage.URL, args={
+            ConfigurationPage.Arg.ACTION: ConfigurationPage.Action.RELOAD_DEFAULT,
+        })
 
     class Arg(_enumutils.StrEnum):
         """
@@ -53,7 +55,7 @@ class Configuration(_RequestHandlerImpl):
         """
         #: GET action parameter or hidden POST input that gives the id of the form executed.
         #:
-        #: See :class:`Configuration.Action` for possible values.
+        #: See :class:`ConfigurationPage.Action` for possible values.
         ACTION = "action"
 
         #: Form#1: Multiline input text that gives requirement file paths.
@@ -66,7 +68,7 @@ class Configuration(_RequestHandlerImpl):
 
     class Action(_enumutils.StrEnum):
         """
-        :attr:`Configuration.Arg.ACTION` values.
+        :attr:`ConfigurationPage.Arg.ACTION` values.
         """
         #: Reload default data.
         RELOAD_DEFAULT = "reload-default"
@@ -75,26 +77,41 @@ class Configuration(_RequestHandlerImpl):
         #: Execute form#2.
         FORM2 = "form#2"
 
-    def matches(
-            self,
-            request,  # type: _HttpRequestType
-    ):  # type: (...) -> bool
-        return request.base_path == Configuration.URL
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the logger instance.
+        """
+        from .._debugclasses import DebugClass
+
+        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_CONFIG)
 
     def process(
             self,
             request,  # type: _HttpRequestType
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
-        html.settitle("Configuration")
+    ):  # type: (...) -> bool
+        from ._htmldoc import HtmlDocument
+
+        # Filter `request`.
+        if request.base_path != ConfigurationPage.URL:
+            self.debug("Request base path %r not matching %r", request.base_path, ConfigurationPage.URL)
+            self.debug("%r not processed", request)
+            return False
+        self.debug("Processing %r", request)
+
+        self.debug("Generating HTML content")
+        _html = HtmlDocument()
+        _html.settitle("Configuration")
 
         # Execution.
-        if request.getarg(Configuration.Arg.ACTION, default=""):
-            self._loaddata(request, html)
+        if request.getarg(ConfigurationPage.Arg.ACTION, default=""):
+            self._loaddata(request, _html)
 
         # General page content.
-        self._form1html(html)
-        self._form2html(html)
+        self._form1html(_html)
+        self._form2html(_html)
+
+        request.sendhtml(_html)
+        return True
 
     def _form1html(
             self,
@@ -109,15 +126,15 @@ class Configuration(_RequestHandlerImpl):
         from .._scenarioconfig import SCENARIO_CONFIG
         from .._xmlutils import Xml
 
-        with html.addcontent(f'<div id="{html.encode(Configuration.Action.FORM1)}"></div>'):
-            with html.addcontent(f'<form action="{Configuration.URL}" method="post"></form>'):
+        with html.addcontent(f'<div id="{html.encode(ConfigurationPage.Action.FORM1)}"></div>'):
+            with html.addcontent(f'<form action="{ConfigurationPage.URL}" method="post"></form>'):
                 # Form id.
-                html.addcontent(f'<input type="hidden" name="{Configuration.Arg.ACTION}" value="{html.encode(Configuration.Action.FORM1)}" />')
+                html.addcontent(f'<input type="hidden" name="{ConfigurationPage.Arg.ACTION}" value="{html.encode(ConfigurationPage.Action.FORM1)}" />')
 
                 # Requirements file.
                 html.addcontent('<p>Requirements:</p>')
                 with html.addcontent(
-                    f'<textarea name="{Configuration.Arg.REQ_DB_PATHS}" rows="10" '
+                    f'<textarea name="{ConfigurationPage.Arg.REQ_DB_PATHS}" rows="10" '
                     'placeholder="List of requirement files (absolute paths)"></textarea>',
                 ):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
@@ -131,7 +148,7 @@ class Configuration(_RequestHandlerImpl):
                 # Test suite files.
                 html.addcontent('<p>Test suites:</p>')
                 with html.addcontent(
-                    f'<textarea name="{Configuration.Arg.TEST_SUITE_PATHS}" rows="10" '
+                    f'<textarea name="{ConfigurationPage.Arg.TEST_SUITE_PATHS}" rows="10" '
                     'placeholder="List of test suite file (absolute paths)"></textarea>',
                 ):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
@@ -154,14 +171,14 @@ class Configuration(_RequestHandlerImpl):
 
         :param html: Output HTML document.
         """
-        with html.addcontent(f'<div id="{html.encode(Configuration.Action.FORM2)}"></div>'):
+        with html.addcontent(f'<div id="{html.encode(ConfigurationPage.Action.FORM2)}"></div>'):
             with html.addcontent('<form action="/configuration" method="post"></form>'):
                 # Form id.
-                html.addcontent(f'<input type="hidden" name="{Configuration.Arg.ACTION}" value="{html.encode(Configuration.Action.FORM2)}" />')
+                html.addcontent(f'<input type="hidden" name="{ConfigurationPage.Arg.ACTION}" value="{html.encode(ConfigurationPage.Action.FORM2)}" />')
 
                 # Campaign path (directory or campaign report).
                 html.addcontent('<p>Campaign:</p>')
-                html.addcontent(f'<input type="text" name="{Configuration.Arg.CAMPAIGN_PATH}" />')
+                html.addcontent(f'<input type="text" name="{ConfigurationPage.Arg.CAMPAIGN_PATH}" />')
 
                 # Submit.
                 html.addcontent('<input type="submit" value="Apply" />')
@@ -187,25 +204,25 @@ class Configuration(_RequestHandlerImpl):
         _campaign_path = None  # type: typing.Optional[Path]
 
         # Determine the data to reload.
-        if request.getarg(Configuration.Arg.ACTION) == Configuration.Action.RELOAD_DEFAULT:
+        if request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.RELOAD_DEFAULT:
             _req_db_paths = list(SCENARIO_CONFIG.reqdbpaths())
             _test_suite_paths = list(SCENARIO_CONFIG.testsuitepaths())
 
-        elif request.getarg(Configuration.Arg.ACTION) == Configuration.Action.FORM1:
-            for _req_db_path in request.getarg(Configuration.Arg.REQ_DB_PATHS, default="").splitlines():  # type: str
+        elif request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.FORM1:
+            for _req_db_path in request.getarg(ConfigurationPage.Arg.REQ_DB_PATHS, default="").splitlines():  # type: str
                 if _req_db_path.strip():
                     _req_db_paths.append(Path(_req_db_path.strip()))
 
-            for _test_suite_path in request.getarg(Configuration.Arg.TEST_SUITE_PATHS, default="").splitlines():  # type: str
+            for _test_suite_path in request.getarg(ConfigurationPage.Arg.TEST_SUITE_PATHS, default="").splitlines():  # type: str
                 if _test_suite_path.strip():
                     _test_suite_paths.append(Path(_test_suite_path.strip()))
 
-        elif request.getarg(Configuration.Arg.ACTION) == Configuration.Action.FORM2:
-            if request.getarg(Configuration.Arg.CAMPAIGN_PATH).strip():
-                _campaign_path = Path(request.getarg(Configuration.Arg.CAMPAIGN_PATH).strip())
+        elif request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.FORM2:
+            if request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip():
+                _campaign_path = Path(request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip())
 
         else:
-            raise KeyError(f"Unexpected action {request.getarg(Configuration.Arg.ACTION)!r}")
+            raise KeyError(f"Unexpected action {request.getarg(ConfigurationPage.Arg.ACTION)!r}")
 
         # Reload data.
         if _req_db_paths or _test_suite_paths:

@@ -28,6 +28,7 @@ if True:
     from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
+    from ._path import ROOT_SCENARIO_PATH as _ROOT_SCENARIO_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
@@ -62,7 +63,7 @@ class ScenarioConfig(_LoggerImpl):
         LOG_COLOR_ENABLED = "scenario.log_color"
         #: Log color per log level. Integer value.
         LOG_COLOR = "scenario.log_%s_color"
-        #: Should the log lines be written in a log file? File path string.
+        #: Should the log lines be written in a log file? Absolute path string.
         LOG_FILE = "scenario.log_file"
         #: Which debug classes to display? List of strings, or comma-separated string.
         DEBUG_CLASSES = "scenario.debug_classes"
@@ -71,7 +72,7 @@ class ScenarioConfig(_LoggerImpl):
 
         # Requirement management.
 
-        #: Default requirement files. List of strings, or comma-separated string.
+        #: Default requirement files. List of absolute path strings, or comma-separated string.
         REQ_DB_FILES = "scenario.req_db_files"
         #: Should the scenario requirement coverage be refined on steps? Boolean value.
         EXPECT_STEP_REQ_REFINEMENT = "scenario.expect_step_req_refinement"
@@ -84,11 +85,11 @@ class ScenarioConfig(_LoggerImpl):
         CONTINUE_ON_ERROR = "scenario.continue_on_error"
         #: Should we wait between two step executions? Float value.
         DELAY_BETWEEN_STEPS = "scenario.delay_between_steps"
-        #: Runner script path. Default is 'bin/run-test.py'.
+        #: Runner script path. Absolute path string. Default is 'bin/run-test.py' in the :mod:`scenario` repository directory.
         RUNNER_SCRIPT_PATH = "scenario.runner_script_path"
-        #: Default test suite files. List of strings, or comma-separated string.
+        #: Default test suite files. List of absolute path strings, or comma-separated string.
         TEST_SUITE_FILES = "scenario.test_suite_files"
-        #: Maximum time for a scenario execution. Useful when executing campaigns. Float value.
+        #: Maximum time for a scenario execution. Useful when executing campaigns. Float value in seconds.
         SCENARIO_TIMEOUT = "scenario.scenario_timeout"
 
         # Results & reports.
@@ -116,6 +117,15 @@ class ScenarioConfig(_LoggerImpl):
         ISSUE_LEVEL_ERROR = "scenario.issue_level_error"
         #: Issue level from and under which known issues should be ignored.
         ISSUE_LEVEL_IGNORED = "scenario.issue_level_ignored"
+
+        # User Interface.
+
+        #: Main path for `scenario.ui` execution. Absolute path string. Default is 'ui/' in the :mod:`scenario` repository directory.
+        UI_MAIN_PATH = "scenario.ui.main_path"
+        #: Main `scenario.ui` CSS URL. String. Defaults to 'css/ui.css'.
+        UI_CSS_URL = "scenario.ui.css_url"
+        #: Main `scenario.ui` Javascript URL. String. Default to 'js/ui.js'.
+        UI_JS_URL = "scenario.ui.js_url"
 
     def __init__(self):  # type: (...) -> None
         """
@@ -338,7 +348,7 @@ class ScenarioConfig(_LoggerImpl):
         # Note: Using the `or` fallback below ensures our default value will hide empty strings.
         _abspath = (
             _FAST_PATH.config_db.get(self.Key.RUNNER_SCRIPT_PATH, type=str)
-            or (_PathImpl(__file__).parents[2] / "bin" / "run-test.py").abspath
+            or (_ROOT_SCENARIO_PATH / "bin" / "run-test.py").abspath
         )  # type: str
         self.debug("runnerscriptpath() -> %r", _PathImpl(_abspath))
         return _PathImpl(_abspath)
@@ -549,6 +559,39 @@ class ScenarioConfig(_LoggerImpl):
                 # type: typing.Optional[_AnyIssueLevelType]
             self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
             return _issue_level_ignored
+
+    def uimainpath(self):  # type: (...) -> _PathType
+        """
+        Retrieves the working directory path for `scenario.ui`.
+
+        :return: `scenario.ui` main working directory.
+        """
+        _abspath = (
+            _FAST_PATH.config_db.get(self.Key.UI_MAIN_PATH, type=str)
+            or (_ROOT_SCENARIO_PATH / "ui").abspath
+        )  # type: str
+        self.debug("uimainpath() -> %r", _PathImpl(_abspath))
+        return _PathImpl(_abspath)
+
+    def uicssurl(self):  # type: (...) -> str
+        """
+        Retrieves the URL for the main `scenario.ui` CSS file.
+
+        :return: URL from `scenario.ui` main path.
+        """
+        _ui_css_url = _FAST_PATH.config_db.get(self.Key.UI_CSS_URL, type=str, default="css/ui.css")  # type: str
+        self.debug("uicssurl() -> %r", _ui_css_url)
+        return _ui_css_url
+
+    def uijsurl(self):  # type: (...) -> str
+        """
+        Retrieves the URL for the main `scenario.ui` Javascript file.
+
+        :return: URL from `scenario.ui` main path.
+        """
+        _ui_js_url = _FAST_PATH.config_db.get(self.Key.UI_JS_URL, type=str, default="js/ui.js")  # type: str
+        self.debug("uijsurl() -> %r", _ui_js_url)
+        return _ui_js_url
 
     def _readstringlistfromconf(
             self,

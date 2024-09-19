@@ -19,11 +19,17 @@ HTTP request management.
 """
 
 import http.server
+import io
+import shutil
+import sys
 import typing
 import urllib.parse
 
 if True:
     from .. import _enumutils as _enumutils  # @inheritance
+if typing.TYPE_CHECKING:
+    from .._path import Path as _PathType
+    from ._htmldoc import HtmlDocument as _HtmlDocumentType
 
 
 class HttpRequest(http.server.BaseHTTPRequestHandler):
@@ -76,6 +82,16 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         Canonical string representation of the request.
         """
         return f"<HttpRequest {self.requestline!r}>"
+
+    def version_string(self):  # type: (...) -> str
+        """
+        ``http.server.BaseHTTPRequestHandler`` override.
+
+        Used by ``http.server.BaseHTTPRequestHandler.send_response()`` for header information.
+        """
+        from .._pkginfo import PKG_INFO
+
+        return f"scenario.ui/{PKG_INFO.version} Python/{sys.version.split()[0]}"
 
     def do_GET(self):  # type: (...) -> None  # noqa  ## Function name should be lowercase
         """
@@ -181,6 +197,53 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         if default is not None:
             return default
         raise KeyError(f"No such argument {name!r}")
+
+    def sendhtml(
+            self,
+            html,  # type: _HtmlDocumentType
+    ):  # type: (...) -> None
+        """
+        Responds the request successfully with HTML content.
+
+        :param html: HTML content to send.
+        """
+        _content = html.dump()  # type: bytes
+
+        self.send_response(http.HTTPStatus.OK)
+        self.send_header("Content-type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(_content)))
+        self.end_headers()
+
+        _stream = io.BytesIO()  # type: io.BytesIO
+        try:
+            _stream.write(_content)
+            _stream.seek(0)
+            shutil.copyfileobj(_stream, self.wfile)
+        finally:
+            _stream.close()
+
+    def sendfile(
+            self,
+            path,  # type: _PathType
+    ):  # type: (...) -> None
+        """
+        Responds the request successfully with file content.
+
+        :param path: File to send the content.
+        """
+        _content = path.read_bytes()  # type: bytes
+
+        self.send_response(http.HTTPStatus.OK)
+        self.send_header("Content-Length", str(len(_content)))
+        self.end_headers()
+
+        _stream = io.BytesIO()  # type: io.BytesIO
+        try:
+            _stream.write(_content)
+            _stream.seek(0)
+            shutil.copyfileobj(_stream, self.wfile)
+        finally:
+            _stream.close()
 
     def log_error(
             self,

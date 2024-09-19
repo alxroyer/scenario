@@ -21,41 +21,45 @@ Request management.
 import abc
 import typing
 
+if True:
+    from .._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from ._htmldoc import HtmlDocument as _HtmlDocumentType
+    from .._debugclasses import DebugClass as _DebugClassType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class RequestHandler(abc.ABC):
+class RequestHandler(abc.ABC, _LoggerImpl):
     """
     Request handler base class.
 
     Usually a HTML page generator.
     """
 
-    @abc.abstractmethod
-    def matches(
+    def __init__(
             self,
-            request,  # type: _HttpRequestType
-    ):  # type: (...) -> bool
+            debug_class,  # type: _DebugClassType
+    ):  # type: (...) -> None
         """
-        States whether this handler can process the given request.
+        Configures the logger instance.
 
-        :param request: Input request to process.
-        :return: ``True`` if the request can been processed, ``False`` if not.
+        :param debug_class: Debug class for this request handler.
         """
-        raise NotImplementedError()
+        _LoggerImpl.__init__(self, debug_class)
 
     @abc.abstractmethod
     def process(
             self,
             request,  # type: _HttpRequestType
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
+    ):  # type: (...) -> bool
         """
         Request handling abstract method.
 
-        :param request: Input request to process.
-        :param html: HTML output page to feed.
+        :param request:
+            Input request to process.
+        :return:
+            ``False`` if this handler does not accept the given request.
+            ``True`` if the request has been successfully processed.
+        :raise:
+            When this handler accepted the request, but an error occurred.
         """
         raise NotImplementedError()

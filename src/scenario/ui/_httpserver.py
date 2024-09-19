@@ -19,13 +19,13 @@ Requirement management HTTP interface.
 """
 
 import http.server
-import io
-import shutil
+import os
 import typing
 
 if True:
     from .._logger import Logger as _LoggerImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from .._path import Path as _PathType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -42,27 +42,38 @@ class HttpServer(_LoggerImpl):
         and initializes request handlers / page generators.
         """
         from .._debugclasses import DebugClass
-        from ._configuration import Configuration
-        from ._downstreamtraceability import DownstreamTraceability
-        from ._homepage import Homepage
+        from ._filedelivery import FileDelivery
+        from ._pageconfig import ConfigurationPage
+        from ._pagehome import Homepage
+        from ._pagereqs import RequirementsPage
+        from ._pagereqsdown import DownstreamTraceabilityPage
+        from ._pagereqsup import UpstreamTraceabilityPage
+        from ._pagescenario import ScenarioPage
+        from ._pagescenarios import ScenarioListPage
         from ._requesthandler import RequestHandler
-        from ._requirements import Requirements
-        from ._scenariodetails import ScenarioDetails
-        from ._scenarios import Scenarios
-        from ._upstreamtraceability import UpstreamTraceability
 
         _LoggerImpl.__init__(self, DebugClass.UI_HTTP_SERVER)
 
         #: Request handlers / page generators.
         self._request_handlers = [
-            Homepage,
-            Configuration,
-            Requirements,
-            Scenarios,
-            ScenarioDetails,
-            DownstreamTraceability,
-            UpstreamTraceability,
-        ]  # type: typing.Sequence[typing.Type[RequestHandler]]
+            Homepage(),
+            ConfigurationPage(),
+            RequirementsPage(),
+            ScenarioListPage(),
+            ScenarioPage(),
+            DownstreamTraceabilityPage(),
+            UpstreamTraceabilityPage(),
+            FileDelivery(),
+        ]  # type: typing.Sequence[RequestHandler]
+
+    @property
+    def main_path(self):  # type: () -> _PathType
+        """
+        `scenario.ui` main execution path.
+        """
+        from .._scenarioconfig import SCENARIO_CONFIG
+
+        return SCENARIO_CONFIG.uimainpath()
 
     def serve(self):  # type: (...) -> None
         """
@@ -70,14 +81,21 @@ class HttpServer(_LoggerImpl):
         """
         from ._httprequest import HttpRequest
 
+        # Ensure current working directory.
+        os.chdir(self.main_path)
+
         self.info("Serving on http://localhost:8000/")
+        self.debug("Current working directory: '%s'", self.main_path.abspath)
         _server = http.server.HTTPServer(
             ("localhost", 8000),
             # The `HttpRequest` class will be instantiated for each request.
             # The `do_GET()` and `do_POST()` methods will be called automatically.
             HttpRequest,
         )  # type: http.server.HTTPServer
-        _server.serve_forever()
+        try:
+            _server.serve_forever()
+        except KeyboardInterrupt as _err:
+            self.debug("KeyboardInterrupt: %s", _err)
 
     def process(
             self,
@@ -88,35 +106,15 @@ class HttpServer(_LoggerImpl):
 
         :param request: GET or POST request to process.
         """
-        from ._htmldoc import HtmlDocument
         from ._requesthandler import RequestHandler
 
         self.debug("Processing %r", request)
 
         try:
-            for _request_handler_cls in self._request_handlers:  # type: typing.Type[RequestHandler]
-                _request_handler = _request_handler_cls()  # type: RequestHandler
-                if _request_handler.matches(request):
-                    _html = HtmlDocument()  # type: HtmlDocument
-                    _request_handler.process(request, _html)
-                    _content = _html.dump()  # type: bytes
-
-                    request.send_response(http.HTTPStatus.OK)
-                    request.send_header("Content-type", "text/html; charset=utf-8")
-                    request.send_header("Content-Length", str(len(_content)))
-                    request.end_headers()
-
-                    _stream = io.BytesIO()  # type: io.BytesIO
-                    try:
-                        _stream.write(_content)
-                        _stream.seek(0)
-                        shutil.copyfileobj(_stream, request.wfile)
-                    finally:
-                        _stream.close()
-
+            for _request_handler in self._request_handlers:  # type: RequestHandler
+                if _request_handler.process(request):
                     break
             else:
-                self.warning(f"404 error for {request!r}")
                 try:
                     request.send_error(
                         http.HTTPStatus.NOT_FOUND,
