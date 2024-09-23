@@ -32,6 +32,59 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
 
 
+class Hack:
+    """
+    Function hack installer.
+    """
+
+    def __init__(
+            self,
+            obj,  # type: object
+            name,  # type: str
+            hack,  # type: typing.Any
+    ):  # type: (...) -> None
+        """
+        Saves ``hack`` function and where it should be installed.
+
+        :param obj: Object which function ``name`` should be hacked.
+        :param name: Name of the function to heck in ``obj``.
+        :param hack: Replacement function for ``obj.name()``.
+        """
+        #: Object which function ``name`` should be hacked.
+        self.obj = obj  # type: object
+        #: Name of the function to heck in ``obj``.
+        self.name = name  # type: str
+        #: Replacement function for ``obj.name()``.
+        self.hack_handler = hack  # type: types.FunctionType
+
+        #: Original function handler for ``obj.name()`` when the hack is installed.
+        self._original_handler = None  # type: typing.Optional[typing.Any]
+
+    def install(self):  # type: (...) -> None
+        """
+        Installs the hack, and saves :attr:`_original_handler`.
+        """
+        assert self._original_handler is None, f"Don't install hack {qualname(self.obj)}.{self.name}() twice"
+        self._original_handler = getattr(self.obj, self.name)
+        setattr(self.obj, self.name, lambda *args, **kwargs: self.hack_handler(*args, **kwargs))
+
+    def uninstall(self):  # type: (...) -> None
+        """
+        Uninstalls the hack, and restores :attr:`_original_handler`.
+        """
+        assert self._original_handler is not None, f"Hack {qualname(self.obj)}.{self.name}() not installed"
+        setattr(self.obj, self.name, self._original_handler)
+        self._original_handler = None
+
+    @property
+    def original_handler(self):  # type: () -> typing.Any
+        """
+        Original handler accessor, assuming that the hack is currently installed.
+        """
+        assert self._original_handler is not None, f"Hack {qualname(self.obj)}.{self.name}() not installed"
+        return self._original_handler
+
+
 def qualname(
         obj,  # type: typing.Any
 ):  # type: (...) -> str
@@ -94,7 +147,44 @@ def isiterable(
         return False
 
 
-def _ensureabsolute(
+#: Current working directory history.
+#:
+#: Initiated with current working directory at very beginning.
+#: Then fed by :func:`_oschdirhack()` each time ``os.chdir()`` is called.
+#:
+#: Useful for :func:`_ensureabsolutepath()` to resolve relative paths
+#: even though the current working has changed.
+_cwd_history = [
+    pathlib.Path.cwd(),
+]  # type: typing.List[pathlib.Path]
+
+
+def _oschdirhack(
+        path,  # type: typing.Any
+):  # type: (...) -> None
+    """
+    Replacement hack function for ``os.chdir()``.
+
+    :param path:
+        New working directory.
+
+        Memo: Full typehint a bit more complex than just :obj:`._path.AnyPathType`. Let's consider ``typing.Any``.
+    """
+    # Regular call to `os.chdir()`.
+    _os_chdir_hack.original_handler(path)
+
+    # Feed `_cwd_history` with the new working directory.
+    _cwd_history.append(pathlib.Path.cwd())
+    _FAST_PATH.reflection_logger.debug("CWD changed from %r to %r", _cwd_history[-2], _cwd_history[-1])
+
+
+if True:
+    #: Hack installer for ``os.chdir()``.
+    _os_chdir_hack = Hack(os, "chdir", _oschdirhack)  # type: Hack
+    _os_chdir_hack.install()
+
+
+def _ensureabsolutepath(
         script_path,  # type: _AnyPathType
 ):  # type: (...) -> pathlib.Path
     """
@@ -108,11 +198,17 @@ def _ensureabsolute(
     """
     if isinstance(script_path, pathlib.Path):
         if not script_path.is_absolute():
+            for _cwd in _cwd_history:  # type: pathlib.Path
+                if (_cwd / script_path).exists():
+                    script_path = _cwd / script_path
+                    break
+            else:
+                raise FileNotFoundError(f"No such file or directory '{script_path}'")
             script_path = script_path.resolve()
     elif isinstance(script_path, _FAST_PATH.path_cls):
-        return script_path._abspath  # noqa  ## Cannot find reference '_abspath' in 'str | PathLike'
+        script_path = script_path._abspath  # noqa  ## Cannot find reference '_abspath' in 'str | PathLike'
     else:
-        script_path = pathlib.Path(script_path).resolve()
+        script_path = _ensureabsolutepath(pathlib.Path(script_path))
     return script_path
 
 
@@ -127,7 +223,7 @@ def modulenamefrompath(
     :param script_path: Script path to compute a module name for.
     :return: Fully qualified module name computed.
     """
-    script_path = _ensureabsolute(script_path)
+    script_path = _ensureabsolutepath(script_path)
 
     # Use the directory name in case of a '__init__.py' file.
     if script_path.name == "__init__.py":
@@ -184,7 +280,7 @@ def importmodulefrompath(
 
         - ``__path__`` definition is missing, preventing usage of `pkgutil.extend_path()` consequently.
     """
-    script_path = _ensureabsolute(script_path)
+    script_path = _ensureabsolutepath(script_path)
     assert script_path.is_file(), f"No such file '{script_path}'"
     assert script_path.suffix == ".py", f"Not a Python script '{script_path}'"
 
@@ -248,7 +344,7 @@ def _inspectgetfilehack(
     """
     Replacement hack function for ``inspect.getfile()``.
 
-    :param object: Object to find the file path from from.
+    :param object: Object to find the file path from.
     :return: File path as a string.
     """
     # Class defined in modules registered in `_non_cached_modules`.
@@ -259,14 +355,13 @@ def _inspectgetfilehack(
                 return str(_module.__file__)
 
     # Call the original `inspect.getfile()` implementation by default.
-    return _inspect_getfile_origin(object)
+    return _inspect_getfile_hack.original_handler(object)  # type: ignore[no-any-return]
 
 
-#: Original `inspect.getfile()` implementation.
-_inspect_getfile_origin = inspect.getfile  # type: typing.Callable[[typing.Any], str]
-
-# Install `_inspectgetfilehack()`.
-inspect.getfile = _inspectgetfilehack
+if True:
+    #: Hack installer for ``inspect.getfile()``.
+    _inspect_getfile_hack = Hack(inspect, "getfile", _inspectgetfilehack)  # type: Hack
+    _inspect_getfile_hack.install()
 
 
 def getloadedmodulefrompath(
@@ -293,8 +388,11 @@ def getloadedmodulefrompath(
     if _module is None:
         for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
             for _module_name in _module_registry:  # Type already declared above.
-                if hasattr(_module_registry[_module_name], "__file__"):
-                    if pathlib.Path(_module_registry[_module_name].__file__ or "").samefile(script_path):
+                _path = getattr(_module_registry[_module_name], "__file__", None)  # type: typing.Optional[_AnyPathType]
+                if _path is not None:
+                    # Memo: `__file__` may be relative, especially for main launcher scripts.
+                    _path = _ensureabsolutepath(_path)
+                    if _path.samefile(script_path):  # noqa  ## Cannot find reference 'samefile' in 'str | PathLike | None'
                         _module = _module_registry[_module_name]
                         break
 
