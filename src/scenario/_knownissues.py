@@ -81,6 +81,7 @@ class KnownIssue(_TestErrorImpl):
             level=None,  # type: _AnyIssueLevelType
             id=None,  # type: str  # noqa  ## Shadows built-in name 'id'
             url=None,  # type: str
+            location=None,  # type: _CodeLocationType
     ):  # type: (...) -> None
         """
         Creates a known issue instance from the info given and the current execution stack.
@@ -89,11 +90,12 @@ class KnownIssue(_TestErrorImpl):
         :param level: Issue level. Optional.
         :param id: Issue identifier. Optional.
         :param url: Issue URL. Optional.
+        :param location: Issue location. Optional. Defaults from current stack.
         """
         _TestErrorImpl.__init__(
             self,
             message=message,
-            location=_FAST_PATH.execution_locations.fromcurrentstack(limit=1, fqn=True)[-1],
+            location=location or _FAST_PATH.execution_locations.fromcurrentstack(limit=1, fqn=True)[-1],
         )
 
         #: Issue level.
@@ -277,8 +279,8 @@ class KnownIssue(_TestErrorImpl):
         # Mandatory fields.
         _known_issue = KnownIssue(
             message=json_data["message"],
+            location=_CodeLocationImpl.fromlongstring(json_data["location"]),
         )  # type: KnownIssue
-        _known_issue.location = _CodeLocationImpl.fromlongstring(json_data["location"])
 
         # Optional fields.
         if "level" in json_data:
