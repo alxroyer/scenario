@@ -120,20 +120,17 @@ class HttpServer(_LoggerImpl):
                     break
             else:
                 try:
-                    request.send_error(
-                        http.HTTPStatus.NOT_FOUND,
-                        f"404 error for {request!r}",
-                    )
+                    request.send_error(http.HTTPStatus.NOT_FOUND, message=f"{request.requestline!r} not found")
                 except ConnectionAbortedError as _err:
-                    self.warning(str(_err))
+                    self.warning(repr(_err))
 
         except Exception as _err:
             self.logexceptiontraceback(_err)
 
-            request.send_error(
-                http.HTTPStatus.INTERNAL_SERVER_ERROR,
-                repr(_err),
-            )
+            try:
+                request.send_error(http.HTTPStatus.INTERNAL_SERVER_ERROR, message=repr(_err))
+            except ConnectionAbortedError as _err:
+                self.warning(repr(_err))
 
 
 #: Main instance of :class:`HttpServer`.

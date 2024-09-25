@@ -19,9 +19,8 @@ HTTP request management.
 """
 
 import http.server
-import io
-import shutil
 import sys
+import time
 import typing
 import urllib.parse
 
@@ -77,6 +76,24 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         #: POST arguments, if any.
         self._post_args = {}  # type: typing.Dict[str, str]
 
+        #: Request starting time.
+        #:
+        #: ..warning::
+        #:     Don't save :attr:`start_time` in :meth:`__init__()`
+        #:     since ``http.server`` seems to clone objects in a certain way that :attr:`start_time` may be lost
+        #:     when the execution reaches in :meth:`do_GET()` or :meth:`do_POST()` with another instance.
+        #:
+        #:     Let's declare :attr:`start_time` in :meth:`__init__()`,
+        #:     but set it for real in :meth:`do_GET()` or :meth:`do_POST()`.
+        self.start_time = 0.0  # type: float
+
+        #: Number of bytes of content sent.
+        #:
+        #: .. warning::
+        #:     Same as for :attr:`start_time`:
+        #:     set for real to ``None`` in :meth:`do_GET()` or :meth:`do_POST()`.
+        self.content_size = None  # type: typing.Optional[int]
+
     def __repr__(self):  # type: () -> str
         """
         Canonical string representation of the request.
@@ -103,6 +120,10 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         from ._httpserver import HTTP_SERVER
 
         try:
+            # Initialize/ensure members.
+            self.start_time = time.time()
+            self.content_size = None
+
             self._parseurl()
             HTTP_SERVER.process(self)
         except Exception as _err:
@@ -119,6 +140,10 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         from ._httpserver import HTTP_SERVER
 
         try:
+            # Initialize/ensure members.
+            self.start_time = time.time()
+            self.content_size = None
+
             self._parseurl()
             HTTP_SERVER.process(self)
         except Exception as _err:
@@ -208,19 +233,13 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         :param html: HTML content to send.
         """
         _content = html.dump()  # type: bytes
+        self.content_size = len(_content)
 
         self.send_response(http.HTTPStatus.OK)
         self.send_header("Content-type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(_content)))
         self.end_headers()
-
-        _stream = io.BytesIO()  # type: io.BytesIO
-        try:
-            _stream.write(_content)
-            _stream.seek(0)
-            shutil.copyfileobj(_stream, self.wfile)
-        finally:
-            _stream.close()
+        self.wfile.write(_content)
 
     def sendfile(
             self,
@@ -232,18 +251,41 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         :param path: File to send the content.
         """
         _content = path.read_bytes()  # type: bytes
+        self.content_size = len(_content)
 
         self.send_response(http.HTTPStatus.OK)
         self.send_header("Content-Length", str(len(_content)))
         self.end_headers()
+        self.wfile.write(_content)
 
-        _stream = io.BytesIO()  # type: io.BytesIO
-        try:
-            _stream.write(_content)
-            _stream.seek(0)
-            shutil.copyfileobj(_stream, self.wfile)
-        finally:
-            _stream.close()
+    def log_request(
+            self,
+            code=None,  # type: typing.Any
+            size=None,  # type: typing.Any
+    ):  # type: (...) -> None
+        """
+        Logs the request when done.
+
+        ``http.server.BaseHTTPRequestHandler`` override.
+
+        :param code: Return code.
+        :param size: Unused parameter. Replaced by :attr:`content_size`.
+        """
+        from ._httpserver import HTTP_SERVER
+
+        if isinstance(code, http.HTTPStatus):
+            code = f"{code.value} ({code.phrase})"
+
+        _log_parts = [
+            f"'{self.requestline}'",
+            f"{code}",
+        ]  # type: typing.List[str]
+        if self.content_size is not None:
+            _log_parts.append(f"{self.content_size} {'byte' if self.content_size == 1 else 'bytes'}")
+        _log_parts.extend([
+            f"{time.time() - self.start_time:.6f} seconds",
+        ])
+        HTTP_SERVER.info(", ".join(_log_parts))
 
     def log_error(
             self,
@@ -251,7 +293,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
             *args: typing.Any
     ) -> None:
         """
-        ``http.server.BaseHTTPRequestHandler`` overload to redirect to our log system.
+        ``http.server.BaseHTTPRequestHandler`` override to redirect to our log system.
         """
         from ._httpserver import HTTP_SERVER
 
@@ -263,7 +305,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
             *args: typing.Any,
     ) -> None:
         """
-        ``http.server.BaseHTTPRequestHandler`` overload to redirect to our log system.
+        ``http.server.BaseHTTPRequestHandler`` override to redirect to our log system.
         """
         from ._httpserver import HTTP_SERVER
 
