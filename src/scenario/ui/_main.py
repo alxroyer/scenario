@@ -32,11 +32,11 @@ def main():  # type: (...) -> _ErrorCodeType
     :return: Error code.
     """
     from .._args import Args
+    from .._campaigndb import CAMPAIGN_DB
     from .._errcodes import ErrorCode
     from .._loggermain import MAIN_LOGGER
     from .._loggingservice import LOGGING_SERVICE
     from .._reqtraceability import REQ_TRACEABILITY
-    from .._scenarioconfig import SCENARIO_CONFIG
     from ._httpserver import HTTP_SERVER
 
     # Analyze program arguments, if not already set.
@@ -48,12 +48,10 @@ def main():  # type: (...) -> _ErrorCodeType
     # Start log features.
     LOGGING_SERVICE.start()
 
-    # Load requirements and scenarios from `ScenarioConfig.Key.REQ_DB_FILES` and `TEST_SUITE_FILES` configurations.
-    REQ_TRACEABILITY.loaddatafromfiles(
-        req_db_file_paths=SCENARIO_CONFIG.reqdbpaths() or None,
-        test_suite_paths=SCENARIO_CONFIG.testsuitepaths() or None,
-        log_info=True,
-    )
+    # Load default requirements and scenarios from `ScenarioConfig.Key.REQ_DB_FILES` and `TEST_SUITE_FILES` configurations.
+    REQ_TRACEABILITY.loaddatafromfiles()
+    # Load campaign results.
+    CAMPAIGN_DB.load()
 
     # Launch the HTTP server.
     try:

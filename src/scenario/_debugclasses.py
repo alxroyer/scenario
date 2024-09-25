@@ -30,6 +30,8 @@ class DebugClass(_enumutils.StrEnum):
     """
     #: Program arguments debugging.
     ARGS = "scenario.Args"
+    #: Campaign database debugging.
+    CAMPAIGN_DB = "scenario.CampaignDatabase"
     #: Campaign report debugging.
     CAMPAIGN_REPORT = "scenario.CampaignReport"
     #: Campaign runner debugging.
@@ -69,6 +71,10 @@ class DebugClass(_enumutils.StrEnum):
     UI_HTML_DOCUMENT = "scenario.ui.HtmlDocument"
     #: UI HTTP server debugging.
     UI_HTTP_SERVER = "scenario.ui.HttpServer"
+    #: UI campaign page debugging.
+    UI_PAGE_CAMPAIGN = "scenario.ui.CampaignPage"
+    #: UI campaign list page debugging.
+    UI_PAGE_CAMPAIGNS = "scenario.ui.CampaignListPage"
     #: UI configuration page debugging.
     UI_PAGE_CONFIG = "scenario.ui.ConfigurationPage"
     #: UI homepage debugging.

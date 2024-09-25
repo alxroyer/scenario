@@ -113,6 +113,7 @@ class ScenarioRunner(_LoggerImpl):
                 _ScenarioArgsImpl.setinstance(_ScenarioArgsImpl())
                 if not _ScenarioArgsImpl.getinstance().parse(sys.argv[1:]):
                     return _ScenarioArgsImpl.getinstance().error_code
+            assert _FAST_PATH.scenario_args
 
             # Start log features.
             _FAST_PATH.logging_service.start()
@@ -124,7 +125,7 @@ class ScenarioRunner(_LoggerImpl):
 
             # Execute tests.
             _errors = []  # type: typing.List[_ErrorCodeType]
-            for _scenario_path in _ScenarioArgsImpl.getinstance().scenario_paths:  # type: _PathType
+            for _scenario_path in _FAST_PATH.scenario_args.scenario_paths:  # type: _PathType
                 self.debug("Executing '%s'...", _scenario_path)
 
                 _res = self.executepath(_scenario_path)  # type: _ErrorCodeType
@@ -149,7 +150,7 @@ class ScenarioRunner(_LoggerImpl):
                 _FAST_PATH.scenario_results.add(_scenario_execution)
 
                 # Generate scenario report if required.
-                _scenario_report = _ScenarioArgsImpl.getinstance().scenario_report  # type: typing.Optional[_PathType]
+                _scenario_report = _FAST_PATH.scenario_args.scenario_report  # type: typing.Optional[_PathType]
                 if _scenario_report:
                     try:
                         _FAST_PATH.scenario_report.writescenarioreport(_scenario_execution.definition, _scenario_report)

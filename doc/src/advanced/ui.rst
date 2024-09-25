@@ -13,32 +13,19 @@
 .. limitations under the License.
 
 
-.. _advanced:
+.. _ui:
 
-Advanced usage
+User interface
 ==============
 
-.. toctree::
-    :maxdepth: 2
+.. todo:: Documentation needed for user interface:
 
-    assertions
-    logging
-    evidence
-    error-management
-    stability
-    known-issues
-    test-libs
-    handlers
-    config-db
-    step-objects
-    step-sections
-    subscenarios
-    goto
-    multiple-executions
-    campaigns
-    reports
-    scenario-attributes
-    req-management
-    ui
-    launcher
-    scenario-stack
+    - Interest: faster to analyze information across a set of tests that comes to be large with time.
+    - HTML view for:
+
+        - Scenarios defined in current repository, with :ref:`known issues <known-issues>`.
+        - :ref:`Campaign results <campaigns>`
+        - :ref:`Requirement management <req-mgt>`
+
+    - Server started with 'ui-server.py'.
+    - 'ui-server.py' launcher :ref:`extendable <launcher.ui-server>`.

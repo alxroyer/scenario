@@ -80,17 +80,17 @@ class CampaignRunner(_LoggerImpl):
                 _CampaignArgsImpl.setinstance(_CampaignArgsImpl())
                 if not _CampaignArgsImpl.getinstance().parse(sys.argv[1:]):
                     return _CampaignArgsImpl.getinstance().error_code
+            assert _FAST_PATH.campaign_args
             _test_suite_files = _FAST_PATH.scenario_config.testsuitepaths()  # type: typing.Sequence[_PathType]
             if not _test_suite_files:
                 _FAST_PATH.main_logger.error("No test suite files")
                 return _ErrorCodeImpl.INPUT_MISSING_ERROR
 
-            # Create the date/time output directory (if required).
-            if _CampaignArgsImpl.getinstance().create_dt_subdir:
+            # Determine and ensure the campaign output directory.
+            _outdir = _FAST_PATH.scenario_config.campaignoutdir()  # type: _PathType
+            if _FAST_PATH.campaign_args.create_dt_subdir:
                 _outdir_basename = _datetimeutils.toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
-                _outdir = _CampaignArgsImpl.getinstance().outdir / _outdir_basename  # type: _PathType
-            else:
-                _outdir = _CampaignArgsImpl.getinstance().outdir
+                _outdir = _FAST_PATH.campaign_args.outdir / _outdir_basename
             _outdir.mkdir(parents=True, exist_ok=True)
 
             # Start log features.
@@ -237,7 +237,7 @@ class CampaignRunner(_LoggerImpl):
                 :param ext: Extension for the new file.
                 :return: Output file path.
                 """
-                return test_case_execution.test_suite_execution.campaign_execution.outdir / (test_case_execution.script_path.stem + ext)
+                return test_case_execution.test_suite_execution.campaign_execution.outdir / test_case_execution.script_path.with_suffix(ext).name
 
             test_case_execution.report.path = _mkoutpath(_FAST_PATH.scenario_config.scenarioreportsuffix())
             test_case_execution.log.path = _mkoutpath(".log")
@@ -245,12 +245,13 @@ class CampaignRunner(_LoggerImpl):
             # Prepare the command line.
             _subprocess = SubProcess(sys.executable, _FAST_PATH.scenario_config.runnerscriptpath())  # type: SubProcess
             # Report configuration files and single configuration values from campaign to scenario execution.
-            for _config_path in _CampaignArgsImpl.getinstance().config_paths:  # type: _PathType
+            assert _FAST_PATH.campaign_args
+            for _config_path in _FAST_PATH.campaign_args.config_paths:  # type: _PathType
                 _subprocess.addargs("--config-file", _config_path)
-            for _config_name in _CampaignArgsImpl.getinstance().config_values:  # type: str
-                _subprocess.addargs("--config-value", _config_name, _CampaignArgsImpl.getinstance().config_values[_config_name])
+            for _config_name in _FAST_PATH.campaign_args.config_values:  # type: str
+                _subprocess.addargs("--config-value", _config_name, _FAST_PATH.campaign_args.config_values[_config_name])
             # Report common execution options from campaign to scenario execution.
-            _CampaignArgsImpl.reportexecargs(_CampaignArgsImpl.getinstance(), _subprocess)
+            _CampaignArgsImpl.reportexecargs(_FAST_PATH.campaign_args, _subprocess)
             # --scenario-report option.
             _subprocess.addargs("--scenario-report", test_case_execution.report.path)
             # Log outfile specification.

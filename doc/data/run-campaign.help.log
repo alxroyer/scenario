@@ -33,10 +33,11 @@ optional arguments:
                         issues should be ignored. None by default, i.e. no
                         known issue ignored by default.
   --outdir OUTDIR_PATH  Output directory to store test results into. Defaults
-                        to the current directory.
-  --dt-subdir           Do not store the test results directly in OUTDIR_PATH,
-                        but within a subdirectory named with the current date
-                        and time.
+                        to 'scenario.campaign_dir' configuration, or current
+                        working directory.
+  --dt-subdir           Do not store test results directly in OUTDIR_PATH (or
+                        configured path), but within a subdirectory named with
+                        current date and time.
   --extra-info ATTRIBUTE_NAME
                         Scenario attribute to display for extra info when
                         displaying results. This option may be called several

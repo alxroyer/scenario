@@ -30,6 +30,7 @@ if typing.TYPE_CHECKING:
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._args import Args as _ArgsType
     from ._campaignargs import CampaignArgs as _CampaignArgsType
+    from ._campaigndb import CampaignDatabase as _CampaignDatabaseType
     from ._campaignlogging import CampaignLogging as _CampaignLoggingType
     from ._campaignreport import CampaignReport as _CampaignReportType
     from ._campaignrunner import CampaignRunner as _CampaignRunnerType
@@ -88,6 +89,7 @@ class FastPath:
         "_action_result_execution_cls",
         "_args",
         "_campaign_args",
+        "_campaign_db",
         "_campaign_logging",
         "_campaign_report",
         "_campaign_runner",
@@ -226,6 +228,11 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`campaign_report()` property.
         self._campaign_report = None  # type: typing.Optional[_CampaignReportType]
+
+        #: :class:`._campaigndb.CampaignDatabase` singelton reference.
+        #:
+        #: Reference resolved by :meth:`campaign_db()` property.
+        self._campaign_db = None  # type: typing.Optional[_CampaignDatabaseType]
 
         #: :class:`._handlers.Handlers` singleton reference.
         #:
@@ -514,6 +521,16 @@ class FastPath:
             from ._campaignreport import CAMPAIGN_REPORT  # check-imports: ignore  ## `FastPath` local import.
             self._campaign_report = CAMPAIGN_REPORT
         return self._campaign_report
+
+    @property
+    def campaign_db(self):  # type: () -> _CampaignDatabaseType
+        """
+        :class:`._campaigndb.CampaignDatabase` singleton.
+        """
+        if self._campaign_db is None:
+            from ._campaigndb import CAMPAIGN_DB  # check-imports: ignore  ## `FastPath` local import.
+            self._campaign_db = CAMPAIGN_DB
+        return self._campaign_db
 
     @property
     def handlers(self):  # type: () -> _HandlersType

@@ -69,10 +69,7 @@ class ReqManagement(_LoggerImpl):
             if _campaign_results_path:
                 _FAST_PATH.req_traceability.loaddatafromcampaignresults(_campaign_results_path)
             else:
-                _FAST_PATH.req_traceability.loaddatafromfiles(
-                    req_db_file_paths=ReqManagementArgs.getinstance().req_db_paths or None,
-                    test_suite_paths=ReqManagementArgs.getinstance().test_suite_paths or None,
-                )
+                _FAST_PATH.req_traceability.loaddatafromfiles()
         except Exception as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
             _errors.append(_ErrorCodeImpl.fromexception(_err))

@@ -98,7 +98,9 @@ class ScenarioConfig(_LoggerImpl):
         #: after a campaign execution, or when executing several tests in a single command line.
         #: List of strings, or comma-separated string.
         RESULTS_EXTRA_INFO = "scenario.results_extra_info"
-        #: Scenario report suffix. Default is '.json'.
+        #: Campaign output directory path. Absolute path string. Defaults to the current working directory.
+        CAMPAIGN_OUTDIR = "scenario.campaign_dir"
+        #: Scenario report suffix when writing campaign results. Default is '.json'.
         SCENARIO_REPORT_SUFFIX = "scenario.scenario_report_suffix"
         #: Campaign report file name used when reading / writing campaign results. String value. Default is 'campaign.xml'.
         CAMPAIGN_REPORT_FILENAME = "scenario.campaign_report_filename"
@@ -421,6 +423,28 @@ class ScenarioConfig(_LoggerImpl):
 
         self.debug("resultsextrainfo() -> %r", _attribute_names)
         return list(_attribute_names)
+
+    def campaignoutdir(self):  # type: (...) -> _PathType
+        """
+        Campaign output directory.
+
+        Read from campaign arguments,
+        or from configurations,
+        or defaults to current working directory.
+        """
+        _outdir = _PathImpl()  # type: _PathType
+        # Read from campaign arguments first.
+        if _FAST_PATH.campaign_args and _FAST_PATH.campaign_args.outdir:
+            _outdir = _FAST_PATH.campaign_args.outdir
+        # Then read from configuration database.
+        if not _outdir:
+            _outdir = _PathImpl(_FAST_PATH.config_db.get(self.Key.CAMPAIGN_OUTDIR, type=str, default=None))
+        # Default to current working directory.
+        if not _outdir:
+            _outdir = _PathImpl.cwd()
+
+        self.debug("campaignoutdir() -> %r", _outdir)
+        return _outdir
 
     def scenarioreportsuffix(self):  # type: (...) -> str
         """

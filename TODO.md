@@ -17,7 +17,19 @@
 
 ## Roadmap to v0.2.3
 
+- Issue #65: Add '_executionstatus.py' in `OPTIMIZED_PATHS`.
 - Issue #83: Add the ability to track requirements.
+    - Make '--dt-subdir' enabled by default.
+        - Add configurations for the purpose.
+    - Add a `scenario.ui.Args` class.
+         - Update 'launcher.rst', `launcher.ui-server` section.
+    - Extract `REQ_TRACEABILITY.scenarios` as a standalone `SCENARIO_DB` for consistency with `REQ_DB` and `CAMPAIGNS_DB`.
+    - Display campaign result details.
+    - Make it possible to refresh the campaign database.
+    - Make it possible to view scenarios and requirements for a given campaign.
+        - Multiple instantiations of `ReqTraceability`? And not the single `REQ_TRACEABILITY` singleton?
+        - Remove campaign configuration from the configuration page?
+    - Compare campaign result details?
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.
@@ -40,6 +52,7 @@
         - Test scenario reports in YAML: single scenario & campaign executions (#74).
         - Check step requirement refinement.
     - Documentation:
+        - Find out why we can't reference `scenario` symbols from `scenario.ui` with `..` in directives (like `:class:` at least).
         - Add demo for requirement management.
         - Req management: command line & HTTP server.
         - Document logging indentation context.

@@ -43,6 +43,8 @@ class HttpServer(_LoggerImpl):
         """
         from .._debugclasses import DebugClass
         from ._filedelivery import FileDelivery
+        from ._pagecampaign import CampaignPage
+        from ._pagecampaigns import CampaignListPage
         from ._pageconfig import ConfigurationPage
         from ._pagehome import Homepage
         from ._pagereqs import RequirementsPage
@@ -61,6 +63,8 @@ class HttpServer(_LoggerImpl):
             RequirementsPage(),
             ScenarioListPage(),
             ScenarioPage(),
+            CampaignListPage(),
+            CampaignPage(),
             DownstreamTraceabilityPage(),
             UpstreamTraceabilityPage(),
             FileDelivery(),

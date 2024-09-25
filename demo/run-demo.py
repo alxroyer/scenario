@@ -53,6 +53,13 @@ class DemoArgs(scenario.ScenarioArgs):
 
 
 if __name__ == "__main__":
+    # General configurations:
+    # - Expected scenario attributes.
+    scenario.conf.set(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES, [
+        scenario.ScenarioAttributes.TITLE,
+        scenario.ScenarioAttributes.DESCRIPTION,
+    ])
+
     # Command line arguments.
     scenario.Args.setinstance(DemoArgs())
     if not scenario.Args.getinstance().parse(sys.argv[1:]):
@@ -73,12 +80,6 @@ if __name__ == "__main__":
     _outpath = DemoArgs.getinstance().scenario_paths[0].with_suffix(".log")
     scenario.conf.set(scenario.ConfigKey.LOG_FILE, _outpath)
     scenario.logging.info(f"Test log saved in '{_outpath}'")
-
-    # Configure the list of expected scenario attributes.
-    scenario.conf.set(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES, [
-        scenario.ScenarioAttributes.TITLE,
-        scenario.ScenarioAttributes.DESCRIPTION,
-    ])
 
     # Scenario execution.
     _res = scenario.runner.main()

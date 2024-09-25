@@ -49,7 +49,13 @@ class ScenarioTestArgs(scenario.ScenarioArgs):
 if __name__ == "__main__":
     from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to protected module
 
-    # Configure issue level names and URL builder.
+    # General configurations:
+    # - Expected scenario attributes.
+    scenario.conf.set(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES, [
+        scenario.ScenarioAttributes.TITLE,
+        scenario.ScenarioAttributes.DESCRIPTION,
+    ])
+    # - Issue level names and URL builder.
     scenario.IssueLevel.definenames(scenario.test.IssueLevel)
     scenario.KnownIssue.seturlbuilder(lambda issue_id: (
         f"https://github.com/alxroyer/scenario/issues/{issue_id.lstrip('#')}"
@@ -69,19 +75,12 @@ if __name__ == "__main__":
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
+    # Adjust general configurations:
+    if not ScenarioTestArgs.getinstance().check_expected_attributes:
+        scenario.conf.remove(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES)
+
     # Load requirements.
     scenario.reqs.load()
-
-    # Declare expected attributes.
-    if ScenarioTestArgs.getinstance().check_expected_attributes:
-        # Memo: Enum definitions are stored as lists in the configuration database.
-        scenario.conf.set(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES, [
-            scenario.ScenarioAttributes.TITLE,
-            scenario.ScenarioAttributes.DESCRIPTION,
-        ])
-    # No need to configure test titles as extra info to de displayed, this is the default.
-    # if not SCENARIO_CONFIG.resultsextrainfo():
-    #     scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.ScenarioAttributes.TITLE])
 
     # Scenario execution.
     _res = scenario.runner.main()  # type: scenario.ErrorCode

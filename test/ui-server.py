@@ -32,6 +32,12 @@ if True:
 
 
 if __name__ == "__main__":
+    # General configurations:
+    # - Default test suites.
+    scenario.reqs.setdefaulttestsuites()
+    # - Campaign output directory.
+    scenario.conf.set(scenario.ConfigKey.CAMPAIGN_OUTDIR, scenario.test.paths.SCENARIO_RESULTS_PATH)
+
     # Parse arguments.
     scenario.Args.setinstance(scenario.Args(class_debugging=True))
     if not scenario.Args.getinstance().parse(sys.argv[1:]):
@@ -42,9 +48,6 @@ if __name__ == "__main__":
 
     # Ensure requirement database update and configure as default.
     scenario.reqs.load(set_default_req_file=True)
-
-    # Configure default test suites.
-    scenario.reqs.setdefaulttestsuites()
 
     # UI execution.
     _res = scenario.ui.main()  # type: scenario.ErrorCode

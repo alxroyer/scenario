@@ -35,19 +35,15 @@ if True:
 class ScenarioCampaignArgs(scenario.CampaignArgs):
 
     def __init__(self):  # type: (...) -> None
-        scenario.CampaignArgs.__init__(
-            self,
-            default_outdir_cwd=False,  # Do not use the current directory as the default output directory.
-        )
+        scenario.CampaignArgs.__init__(self)
         self.setdescription("Scenario tests campaign launcher.")
 
     def _checkargs(
             self,
             args,  # type: typing.Any
     ):  # type: (...) -> bool
-        if self._outdir is None:
-            self.debug("Using output directory '%s' with --dt-subdir option", scenario.test.paths.SCENARIO_RESULTS_PATH)
-            self._outdir = scenario.test.paths.SCENARIO_RESULTS_PATH
+        if not self.outdir:
+            self.debug("Using --dt-subdir option by default")
             self.create_dt_subdir = True
 
         if not super()._checkargs(args):
@@ -59,7 +55,14 @@ class ScenarioCampaignArgs(scenario.CampaignArgs):
 if __name__ == "__main__":
     from scenario._scenarioconfig import SCENARIO_CONFIG  # noqa  ## Access to protected module
 
-    # Configure issue level names and URL builder.
+    # General configurations:
+    # - Have the neighbour `SCENARIO_TEST_LAUNCHER` script be used as the scenario runner script.
+    scenario.conf.set(scenario.ConfigKey.RUNNER_SCRIPT_PATH, scenario.test.paths.SCENARIO_TEST_LAUNCHER)
+    # - Default test suite files.
+    scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, list(scenario.test.paths.SCENARIO_TESTS_PATH.glob("*/*.suite")))
+    # - Default output directory.
+    scenario.conf.set(scenario.ConfigKey.CAMPAIGN_OUTDIR, scenario.test.paths.SCENARIO_RESULTS_PATH)
+    # - Issue level names and URL builder.
     scenario.IssueLevel.definenames(scenario.test.IssueLevel)
     scenario.KnownIssue.seturlbuilder(lambda issue_id: (
         f"https://github.com/alxroyer/scenario/issues/{issue_id.lstrip('#')}"
@@ -82,14 +85,6 @@ if __name__ == "__main__":
     # Load requirements.
     scenario.reqs.load()
 
-    # Campaign execution:
-    # - Have the neighbour `SCENARIO_TEST_LAUNCHER` script be used as the scenario runner script.
-    scenario.conf.set(scenario.ConfigKey.RUNNER_SCRIPT_PATH, scenario.test.paths.SCENARIO_TEST_LAUNCHER)
-    # - Default test suite files.
-    scenario.conf.set(scenario.ConfigKey.TEST_SUITE_FILES, list(scenario.test.paths.SCENARIO_TESTS_PATH.glob("*/*.suite")))
-    # - No need to make test titles be displayed as extra info, this is the default.
-    # if not SCENARIO_CONFIG.resultsextrainfo():
-    #     scenario.conf.set(scenario.ConfigKey.RESULTS_EXTRA_INFO, [scenario.ScenarioAttributes.TEST_TITLE])
-    # - Eventually launch the campaign execution.
+    # Campaign execution.
     _res = scenario.campaign_runner.main()  # type: scenario.ErrorCode
     sys.exit(int(_res))

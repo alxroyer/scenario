@@ -95,7 +95,7 @@ class ReqTraceability(_LoggerImpl):
 
         # Requirements.
 
-        if req_db_file_paths:
+        if req_db_file_paths is not None:
             # Ensure persistent and countable sequence.
             req_db_file_paths = tuple(req_db_file_paths)
         else:
@@ -125,7 +125,7 @@ class ReqTraceability(_LoggerImpl):
 
         # Test suites.
 
-        if test_suite_paths:
+        if test_suite_paths is not None:
             # Ensure persistent and countable sequence.
             test_suite_paths = tuple(test_suite_paths)
         else:

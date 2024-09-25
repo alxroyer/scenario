@@ -71,6 +71,15 @@ class CampaignExecution:
         #: Time statistics.
         self.time = _TimeStatsImpl()  # type: _TimeStatsType
 
+    @property
+    def name(self):  # type: () -> str
+        """
+        Campaign execution display name.
+
+        Name of the directory containing the campaign results.
+        """
+        return self.outdir.name
+
     def __repr__(self):  # type: () -> str
         """
         Canonical string representation.
@@ -206,6 +215,24 @@ class CampaignExecution:
         # Consider the default file in the end (for future writing, don't log).
         return _default_file
 
+    def gettestsuite(
+            self,
+            *,
+            from_path,  # type: _PathType
+    ):  # type: (...) -> typing.Optional[TestSuiteExecution]
+        """
+        Searches for a test suite execution instance from criteria.
+
+        :param from_path: Test suite path criteria.
+        :return: :class:`TestSuiteExecution` instance when found. ``None`` otherwise.
+        """
+        for _test_suite_execution in self.test_suite_executions:  # type: TestSuiteExecution
+            if _test_suite_execution.test_suite_file.path != from_path:
+                continue
+
+            return _test_suite_execution
+        return None
+
     @property
     def steps(self):  # type: () -> _ExecTotalStatsType
         """
@@ -293,6 +320,51 @@ class TestSuiteExecution:
         Canonical string representation.
         """
         return f"<{_qualname(type(self))} of '{self.test_suite_file.path}'>"
+
+    @property
+    def status(self):  # type: () -> _ExecutionStatusType
+        """
+        Test suite execution status.
+
+        :return: Merged status from test case executions.
+        """
+        from ._executionstatus import ExecutionStatus
+
+        # List of execution status for the test cases of this test suite.
+        _execution_status = [_test_case_execution.status for _test_case_execution in self.test_case_executions]  # type: typing.Sequence[ExecutionStatus]
+
+        # Merge results.
+        if ExecutionStatus.FAIL in _execution_status:
+            return ExecutionStatus.FAIL  # If any FAIL, consider FAIL.
+        if ExecutionStatus.UNKNOWN in _execution_status:
+            return ExecutionStatus.FAIL  # If any UNKNOWN, consider FAIL.
+        if ExecutionStatus.WARNINGS in _execution_status:
+            return ExecutionStatus.WARNINGS  # If none above but WARNINGS, consider WARNINGS.
+        if ExecutionStatus.SUCCESS in _execution_status:
+            return ExecutionStatus.SUCCESS  # If none above but SUCCESS, consider SUCCESS.
+        if ExecutionStatus.SKIPPED in _execution_status:
+            return ExecutionStatus.SKIPPED  # If SKIPPED only, consider SKIPPED.
+        if not _execution_status:
+            return ExecutionStatus.UNKNOWN  # No test case, consider UNKNOWN.
+        return ExecutionStatus.UNKNOWN  # Any other situation, consider UNKNOWN by default.
+
+    def gettestcase(
+            self,
+            *,
+            from_path,  # type: _PathType
+    ):  # type: (...) -> typing.Optional[TestCaseExecution]
+        """
+        Searches for a test case execution instance from criteria.
+
+        :param from_path: Test script path criteria.
+        :return: :class:`TestCaseExecution` instance when found. ``None`` otherwise.
+        """
+        for _test_case_execution in self.test_case_executions:  # type: TestCaseExecution
+            if _test_case_execution.script_path != from_path:
+                continue
+
+            return _test_case_execution
+        return None
 
     @property
     def steps(self):  # type: () -> _ExecTotalStatsType

@@ -60,7 +60,7 @@ class ScenarioPage(_RequestHandlerImpl):
         if isinstance(req_verifier, StepDefinition):
             _step_anchor = f"step#{req_verifier.number}"
 
-        return HttpRequest.encodeurl(ScenarioPage.URL, args={'name': _scenario.name}, anchor=_step_anchor)
+        return HttpRequest.encodeurl(ScenarioPage.URL, args={"name": _scenario.name}, anchor=_step_anchor)
 
     def __init__(self):  # type: (...) -> None
         """

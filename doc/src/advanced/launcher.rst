@@ -47,7 +47,7 @@ To do so, our 'demo/run-demo.py' first overloads the :py:class:`scenario._scenar
     :end-before: def _checkargs
 
 The :py:meth:`scenario._args.Args._checkargs()` method may be overloaded in order to check additional constraints,
-after the arguments have been parsed, and the :py:class:`scenario._args.Args` attributes have been updated:
+after the arguments have been parsed:
 
 - Start or finish with calling the mother class's :py:meth:`scenario._scenarioargs.ScenarioArgs._checkargs()` method.
 - This method is expected to return ``True`` or ``False`` whether an error has been detected or not.
@@ -71,7 +71,7 @@ Then, in the *main* part, prior to calling the :py:meth:`scenario._scenariorunne
     :dedent:
 
 At this point, the user test environment can use the extra arguments added with the :py:class:`DemoArgs` class,
-but regular arguments as well.
+but regular `scenario` arguments as well.
 
 .. Use of arguments.
 .. literalinclude:: ../../../demo/run-demo.py
@@ -93,12 +93,31 @@ Using the ``--help`` option displays both:
     :language: none
 
 
+.. _launcher.scenario-config:
+
+`scenario` configurations
+-------------------------
+
+Please note the ability to configure `scenario` framework behaviours
+with the help of the :ref:`configuration database <config-db.scenario>`.
+
+It is generally a good idea to set such configurations before program arguments are analyzed,
+in as much as program arguments processing may depend on these configurations:
+
+.. General configurations, before command line arguments processing.
+.. literalinclude:: ../../../demo/run-demo.py
+    :language: python
+    :start-at: # General configurations:
+    :end-at: sys.exit(int(scenario.Args.getinstance().error_code))
+    :dedent:
+
+
 .. _launcher.pre-post:
 
 Pre & post-operations
 ---------------------
 
-As introduced above, extending the launcher script gives you the opportunity to add
+As introduced before, extending the launcher script gives you the opportunity to add
 pre-operations, as soon as the command line arguments have been parsed,
 and post-operations after the test execution.
 
@@ -106,54 +125,39 @@ Our `demo/run-demo.py <https://github.com/alxroyer/scenario/blob/master/demo/run
 
 - a welcome message displayed before the test is executed:
 
-.. Welcome message.
-.. literalinclude:: ../../../demo/run-demo.py
-    :language: python
-    :start-at: # Welcome message.
-    :end-at: scenario.logging.info
-    :dedent:
+  .. Welcome message.
+  .. literalinclude:: ../../../demo/run-demo.py
+      :language: python
+      :start-at: # Welcome message.
+      :end-at: scenario.logging.info
+      :dedent:
 
 - a bye message displayed just before the command line ends:
 
-.. Bye message.
-.. literalinclude:: ../../../demo/run-demo.py
-    :language: python
-    :start-at: # Bye message.
-    :end-at: scenario.logging.info
-    :dedent:
+  .. Bye message.
+  .. literalinclude:: ../../../demo/run-demo.py
+      :language: python
+      :start-at: # Bye message.
+      :end-at: scenario.logging.info
+      :dedent:
 
 - optional display of the configuration database:
 
-.. Configuration database display.
-.. literalinclude:: ../../../demo/run-demo.py
-    :language: python
-    :start-at: # --show-configs option.
-    :end-at: sys.exit
-    :dedent:
+  .. Configuration database display.
+  .. literalinclude:: ../../../demo/run-demo.py
+      :language: python
+      :start-at: # --show-configs option.
+      :end-at: sys.exit
+      :dedent:
 
 - :ref:`file logging <logging.outfile>` enabling:
 
-.. File logging.
-.. literalinclude:: ../../../demo/run-demo.py
-    :language: python
-    :start-at: # File logging:
-    :end-at: scenario.logging.info
-    :dedent:
-
-.. admonition:: Launchers and configuration database.
-    :class: tip
-
-    Please note the ability to configure the `scenario` framework behaviours
-    with the help of the :ref:`configuration database <config-db.scenario>`.
-
-- configuration of the :ref:`scenario attributes <scenario-attributes>` expected for each:
-
-.. Expected scenario attributes.
-.. literalinclude:: ../../../demo/run-demo.py
-    :language: python
-    :start-at: # Configure the list of expected scenario attributes.
-    :end-at: ])
-    :dedent:
+  .. File logging.
+  .. literalinclude:: ../../../demo/run-demo.py
+      :language: python
+      :start-at: # File logging:
+      :end-at: scenario.logging.info
+      :dedent:
 
 
 .. _launcher.execution:
@@ -193,10 +197,32 @@ so that the error can be handled in the shell that launched the command line.
 Campaign launcher script extension
 ----------------------------------
 
-Extending the campaign launcher script works the same, except that:
+Extending the :ref:`campaign <campaigns>` launcher script works the same, with:
 
-- the :py:class:`scenario._campaignargs.CampaignArgs` class may be overloaded to add extra command line arguments,
-- the :py:meth:`scenario._campaignrunner.CampaignRunner.main()` must be called in the end.
+- The :py:class:`scenario._campaignargs.CampaignArgs` class may be overloaded to add extra command line arguments.
+- The :py:meth:`scenario._campaignrunner.CampaignRunner.main()` function must be called in the end.
+
+
+.. _launcher.req-mgt:
+
+Requirement management script extension
+---------------------------------------
+
+Same for the :ref:`requirement management <req-mgt>` script extension, with:
+
+- The :py:class:`scenario._reqmgtargs.ReqManagementArgs` class may be overloaded to add extra command line arguments.
+- The :py:meth:`scenario._reqmgt.ReqManagement.main()` function must be called in the end.
+
+
+.. _launcher.ui-server:
+
+UI launcher script extension
+----------------------------
+
+Same for the :ref:`user interface <ui>` launcher script extension, with:
+
+- The base :py:class:`scenario._args.Args` class may be overloaded to add extra command line arguments.
+- The :py:meth:`scenario.ui._main.main()` function must be called in the end.
 
 
 .. _launcher.main-path:

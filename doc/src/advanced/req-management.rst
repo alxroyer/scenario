@@ -19,3 +19,10 @@ Requirement management
 ======================
 
 .. todo:: Documentation needed for requirement management
+
+    - Requirement database.
+    - Track requirements with scenarios and steps with justification.
+    - Step covergae required for scenarios?
+    - 'req-mgt.py' launcher.
+    - 'req-mgt.py' :ref:`extendable <launcher.req-mgt>`.
+    - Easier with :ref:`user interface <ui>`.

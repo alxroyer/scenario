@@ -124,6 +124,7 @@ class HtmlDocument(_LoggerImpl):
         """
         Builds the navigation menu HTML.
         """
+        from ._pagecampaigns import CampaignListPage
         from ._pageconfig import ConfigurationPage
         from ._pagehome import Homepage
         from ._pagereqs import RequirementsPage
@@ -136,6 +137,7 @@ class HtmlDocument(_LoggerImpl):
             self.addcontent(f'<a class="menu" href="{ConfigurationPage.URL}">Configuration</a>')
             self.addcontent(f'<a class="menu" href="{RequirementsPage.URL}">Requirements</a>')
             self.addcontent(f'<a class="menu" href="{ScenarioListPage.URL}">Scenarios</a>')
+            self.addcontent(f'<a class="menu" href="{CampaignListPage.URL}">Campaigns</a>')
             self.addcontent(f'<a class="menu" href="{DownstreamTraceabilityPage.URL}">Downstream traceability</a>')
             self.addcontent(f'<a class="menu" href="{UpstreamTraceabilityPage.URL}">Upstream traceability</a>')
 
