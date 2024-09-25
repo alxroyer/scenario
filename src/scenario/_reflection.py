@@ -385,8 +385,8 @@ def getloadedmodulefrompath(
         _module = sys.modules.get(_module_name)
 
     # If not found yet, try to match with `__file__` attributes of loaded modules.
-    if _module is None:
-        for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
+    for _module_registry in [_non_cached_modules, sys.modules]:  # type: typing.Dict[str, types.ModuleType]
+        if _module is None:
             for _module_name in _module_registry:  # Type already declared above.
                 _path = getattr(_module_registry[_module_name], "__file__", None)  # type: typing.Optional[_AnyPathType]
                 if _path is not None:
