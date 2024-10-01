@@ -29,7 +29,6 @@ if True:
     from ._configkey import ConfigKey as _ConfigKeyImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._configtypes import KeyType as _KeyType
     from ._configtypes import OriginType as _OriginType
@@ -83,7 +82,7 @@ class ConfigNode:
 
         Gives the configuration key and type of data.
         """
-        _repr = f"<{_qualname(type(self))}"  # type: str
+        _repr = f"<{_FAST_PATH.reflection.qualname(type(self))}"  # type: str
         _repr += f" key='{self.key}'"
         if isinstance(self._data, dict):
             _repr += " data={...}"
@@ -477,7 +476,7 @@ class ConfigNode:
             # Convert the configuration value in the ``type`` type.
             return _castreturntype(typing.cast(typing.Any, type)(self._data))
         except ValueError:
-            raise ValueError(self.errmsg(f"{self._data!r} not a valid {_qualname(type)} value"))
+            raise ValueError(self.errmsg(f"{self._data!r} not a valid {_FAST_PATH.reflection.qualname(type)} value"))
 
     @property
     def origin(self):  # type: () -> _OriginType

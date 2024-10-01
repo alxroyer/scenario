@@ -26,7 +26,6 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import qualname as _qualname  # @perf
     from ._reqref import ReqRef as _ReqRefImpl  # @perf
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @perf
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
@@ -531,7 +530,8 @@ class ReqTraceability(_LoggerImpl):
                     else:
                         raise ValueError(f"Unexpected verifier {_req_verifier!r}")
 
-        self.debug("ReqTraceability.downstream() -> %d %s objects", len(_downstream_req_refs), _qualname(ReqTraceability.Downstream.ReqRef))
+        self.debug("ReqTraceability.downstream() -> %d %s objects",
+                   len(_downstream_req_refs), _FAST_PATH.reflection.qualname(ReqTraceability.Downstream.ReqRef))
         return _downstream_req_refs
 
     def writedownstream(
@@ -805,7 +805,8 @@ class ReqTraceability(_LoggerImpl):
                             req_subref=_req_ref, req_link=_req_link,
                         )  # type: ReqTraceability.Upstream.ReqSubref
 
-        self.debug("ReqTraceability.upstream() -> %d %s objects", len(_upstream_scenarios), _qualname(ReqTraceability.Upstream.Scenario))
+        self.debug("ReqTraceability.upstream() -> %d %s objects",
+                   len(_upstream_scenarios), _FAST_PATH.reflection.qualname(ReqTraceability.Upstream.Scenario))
         return _upstream_scenarios
 
     def writeupstream(

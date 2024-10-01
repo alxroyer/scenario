@@ -24,7 +24,6 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -91,7 +90,7 @@ class StepDefinitionSpecification:
         if isinstance(self._m_spec, str):
             _spec = repr(self._m_spec)
         if isinstance(self._m_spec, type):
-            _spec = _qualname(self._m_spec)
+            _spec = _FAST_PATH.reflection.qualname(self._m_spec)
 
         # Multiple match index (mi-spec).
         if self._m_spec_index is not None:

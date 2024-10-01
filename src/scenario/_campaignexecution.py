@@ -27,7 +27,6 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import qualname as _qualname  # @perf
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -319,7 +318,7 @@ class TestSuiteExecution:
         """
         Canonical string representation.
         """
-        return f"<{_qualname(type(self))} of '{self.test_suite_file.path}'>"
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} of '{self.test_suite_file.path}'>"
 
     @property
     def status(self):  # type: () -> _ExecutionStatusType
@@ -450,7 +449,7 @@ class TestCaseExecution:
         """
         Canonical string representation.
         """
-        return f"<{_qualname(type(self))} of '{self.script_path}'>"
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} of '{self.script_path}'>"
 
     @property
     def scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]

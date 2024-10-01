@@ -37,10 +37,10 @@ if typing.TYPE_CHECKING:
     from ._configdb import ConfigDatabase as _ConfigDatabaseType
     from ._handlers import Handlers as _HandlersType
     from ._locations import ExecutionLocations as _ExecutionLocationsType
-    from ._logger import Logger as _LoggerType
     from ._loggermain import MainLogger as _MainLoggerType
     from ._loggingservice import LoggingService as _LoggingServiceType
     from ._path import Path as _PathType
+    from ._reflection import Reflection as _ReflectionType
     from ._req import Req as _ReqType
     from ._reqdb import ReqDatabase as _ReqDatabaseType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -100,7 +100,7 @@ class FastPath:
         "_logging_service",
         "_main_logger",
         "_path_cls",
-        "_reflection_logger",
+        "_reflection",
         "_req_cls",
         "_req_db",
         "_req_link_cls",
@@ -132,6 +132,11 @@ class FastPath:
         """
         # Instances.
 
+        #: :class:`._reflection.Reflection` singleton reference.
+        #:
+        #: Reference resolved by :meth:`reflection()` property.
+        self._reflection = None  # type: typing.Optional[_ReflectionType]
+
         #: :class:`._locations.ExecutionLocations` singleton reference.
         #:
         #: Reference resolved by :meth:`execution_locations()` property.
@@ -146,13 +151,6 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`main_logger()` property.
         self._main_logger = None  # type: typing.Optional[_MainLoggerType]
-
-        #: :class:`._logger.Logger` singleton for reflective programming.
-        #:
-        #: Instantiated by :meth:`reflection_logger()` property.
-        #:
-        #: .. note:: Not instantiated in :mod:`._reflection`, but here with this :class:`FastPath` class.
-        self._reflection_logger = None  # type: typing.Optional[_LoggerType]
 
         #: :class:`._args.Args` instance installed.
         #:
@@ -332,6 +330,16 @@ class FastPath:
         self._req_link_helper_cls = None  # type: typing.Optional[typing.Type[_ReqLinkHelperType]]
 
     @property
+    def reflection(self):  # type: () -> _ReflectionType
+        """
+        :class:`._reflection.Reflection` singleton.
+        """
+        if self._reflection is None:
+            from ._reflection import REFLECTION  # check-imports: ignore  ## `FastPath` local import.
+            self._reflection = REFLECTION
+        return self._reflection
+
+    @property
     def execution_locations(self):  # type: () -> _ExecutionLocationsType
         """
         :class:`._locations.ExecutionLocations` singleton.
@@ -360,18 +368,6 @@ class FastPath:
             from ._loggermain import MAIN_LOGGER  # check-imports: ignore  ## `FastPath` local import.
             self._main_logger = MAIN_LOGGER
         return self._main_logger
-
-    @property
-    def reflection_logger(self):  # type: () -> _LoggerType
-        """
-        :class:`._logger.Logger` singleton for reflective programming.
-        """
-        if self._reflection_logger is None:
-            from ._debugclasses import DebugClass  # check-imports: ignore  ## `FastPath` local import.
-            from ._logger import Logger  # check-imports: ignore  ## `FastPath` local import.
-
-            self._reflection_logger = Logger(log_class=DebugClass.REFLECTION)
-        return self._reflection_logger
 
     @property
     def args(self):  # type: () -> typing.Optional[_ArgsType]

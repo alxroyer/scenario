@@ -25,7 +25,6 @@ if True:
     from . import _setutils as _setutils  # @perf
     from . import _textutils as _textutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from . import _typeutils as _typeutils
     from ._req import Req as _ReqType
@@ -98,7 +97,7 @@ class ReqLink:
         Canonical string representation of the requirement link.
         """
         return "".join([
-            f"<{_qualname(type(self))}",
+            f"<{_FAST_PATH.reflection.qualname(type(self))}",
             f" req_ref={self.req_ref!r}",
             f" req_verifiers={[_FAST_PATH.req_verifier_helper_cls.tolongstring(_req_verifier) for _req_verifier in self.req_verifiers]!r}",
             f" comments={self.comments!r}" if self.comments else "",

@@ -25,7 +25,6 @@ if True:
     from . import _setutils as _setutils  # @perf
     from . import _textutils as _textutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
@@ -91,7 +90,7 @@ class Req:
         Canonical string representation of the requirement instance.
         """
         return "".join([
-            f"<{_qualname(type(self))}",
+            f"<{_FAST_PATH.reflection.qualname(type(self))}",
             f" id={self.id!r}",
             f" title={self.title!r}" if self.title else "",
             f">",

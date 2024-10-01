@@ -45,7 +45,7 @@ class DebugClass(_enumutils.StrEnum):
     #: Logging statistics.
     LOG_STATS = "scenario.LogStats"
     #: Reflective programmation debugging.
-    REFLECTION = "scenario.reflection"
+    REFLECTION = "scenario.Reflection"
     #: Requirement database debugging.
     REQ_DATABASE = "scenario.ReqDatabase"
     #: Requirement management runner debugging.

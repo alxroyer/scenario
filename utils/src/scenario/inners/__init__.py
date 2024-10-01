@@ -21,11 +21,11 @@ This subpackage makes a couple of inner :mod:`scenario` symbols available for :m
 # Reexports.
 try:
     # Memo:
-    #   Module reexports with renamings are not considered as reexports when imported from `scenario` (and not '.' probably? tbc).
+    #   Module and variable reexports with renamings are not considered as reexports when imported from `scenario` (and not '.' probably? tbc).
     #   Let's reexport them through intermediate shortcut variables.
     from scenario._jsondictutils import JsonDict as JsonDict  # noqa  ## Access to a protected member
-    from scenario import _reflection as _reflection  # noqa  ## Access to a protected member
-    reflection = _reflection
+    from scenario._reflection import REFLECTION as _REFLECTION  # noqa  ## Access to a protected member
+    reflection = _REFLECTION
     from scenario import _textfileutils as _textfileutils  # noqa  ## Access to a protected member
     textfileutils = _textfileutils
     from scenario import _textutils as _textutils  # noqa  ## Access to a protected member

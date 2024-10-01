@@ -34,7 +34,6 @@ if True:
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._loggingargs import CommonLoggingArgs as _CommonLoggingArgsImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import Path as _PathType
@@ -90,9 +89,9 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         .. note:: Also available (but untyped) as :attr:`._fastpath.FastPath.args`.
         """
         if Args._instance is None:
-            raise ValueError(f"No {_qualname(cls)} instance available")
+            raise ValueError(f"No {_FAST_PATH.reflection.qualname(cls)} instance available")
         if not isinstance(Args._instance, cls):
-            raise TypeError(f"Wrong type {_qualname(type(Args._instance))}, {_qualname(cls)} expected")
+            raise TypeError(f"Wrong type {_FAST_PATH.reflection.qualname(type(Args._instance))}, {_FAST_PATH.reflection.qualname(cls)} expected")
         return Args._instance
 
     @classmethod
@@ -363,7 +362,7 @@ class ArgInfo:
         """
         # Retrieve and check members from both: the :class:`Args` instance on the one hand, and the opaque parsed object on the other hand.
         if self.member_name not in vars(args_instance):
-            raise KeyError(f"No such attribute '{self.member_name}' in {_qualname(type(args_instance))}")
+            raise KeyError(f"No such attribute '{self.member_name}' in {_FAST_PATH.reflection.qualname(type(args_instance))}")
         _args_member = getattr(args_instance, self.member_name)  # type: typing.Any
         _parsed_member = getattr(parsed_args, self.member_name)  # type: typing.Any
         args_instance.debug("ArgInfo['%s'].process(): _parsed_member = %r", self.member_name, _parsed_member)
@@ -373,7 +372,7 @@ class ArgInfo:
             return
         if self.key_type is not None:
             if not isinstance(_args_member, dict):
-                raise TypeError(f"Attribute '{self.member_name}' in {_qualname(type(args_instance))} should be a dictionary")
+                raise TypeError(f"Attribute '{self.member_name}' in {_FAST_PATH.reflection.qualname(type(args_instance))} should be a dictionary")
 
         # Build the list of parsed values to process.
         _parsed_values = []  # type: typing.List[typing.Any]
@@ -401,7 +400,7 @@ class ArgInfo:
                 _parsed_value = self.value_type(_parsed_value)
             if _parsed_value is not None:
                 if (not inspect.isfunction(self.value_type)) and (not isinstance(_parsed_value, typing.cast(type, self.value_type))):
-                    raise TypeError(f"Wrong type {_parsed_value!r}, {_qualname(self.value_type)} expected")
+                    raise TypeError(f"Wrong type {_parsed_value!r}, {_FAST_PATH.reflection.qualname(self.value_type)} expected")
 
             # Save the value in the :class:`Args` instance.
             if self.key_type is not None:

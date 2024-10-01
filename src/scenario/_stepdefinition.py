@@ -26,7 +26,6 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
-    from ._reflection import qualname as _qualname  # @perf
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @inheritance
     from ._stepuserapi import StepUserApi as _StepUserApiImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -77,7 +76,7 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         if not (_FAST_PATH.scenario_stack.building.scenario_definition or _FAST_PATH.scenario_stack.current_scenario_definition):
             _FAST_PATH.scenario_stack.raisecontexterror("No current scenario definition")
         else:
-            _FAST_PATH.scenario_stack.raisecontexterror(f"No such step definition of type {_qualname(cls)}")
+            _FAST_PATH.scenario_stack.raisecontexterror(f"No such step definition of type {_FAST_PATH.reflection.qualname(cls)}")
 
     def __init__(
             self,
@@ -133,9 +132,9 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         Canonical string representation.
         """
         if type(self) is StepDefinition:
-            return f"<{_qualname(type(self))} {self.name!r}>"
+            return f"<{_FAST_PATH.reflection.qualname(type(self))} {self.name!r}>"
         else:
-            return f"<{_qualname(type(self))}#{self.number}>"
+            return f"<{_FAST_PATH.reflection.qualname(type(self))}#{self.number}>"
 
     def __str__(self):  # type: () -> str
         """
@@ -150,9 +149,9 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         if self.__name_cache is None:
             if self.method:
-                self.__name_cache = _qualname(self.method)
+                self.__name_cache = _FAST_PATH.reflection.qualname(self.method)
             else:
-                self.__name_cache = _qualname(type(self))
+                self.__name_cache = _FAST_PATH.reflection.qualname(type(self))
         return self.__name_cache
 
     @property

@@ -42,6 +42,6 @@ every package should contain a dedicated '__init__.py' file in order to explicit
     - Same with :py:mod:`scenario.tools`, defined in 'tools/src/'.
     - :py:mod:`scenario.text`, defined in 'utils/src/',
       comes as a dependency for :py:mod:`scenario.test` and :py:mod:`scenario.tools`
-      (dynamically loaded thanks to :py:func:`scenario._reflection.extendnamespacepackagepath()`).
+      (dynamically loaded thanks to :py:func:`scenario._reflection.Reflection.extendnamespacepackagepath()`).
 
     This avoids mixing test and tools sources with the core :py:mod:`scenario` implementation.

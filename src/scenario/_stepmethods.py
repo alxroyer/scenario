@@ -23,7 +23,7 @@ import types
 import typing
 
 if True:
-    from ._reflection import qualname as _qualname  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
@@ -53,7 +53,7 @@ class StepMethods:
                 if _method_name == method.__name__:
                     _count += 1
 
-        logger.debug("StepMethods._hierarchycount(%s) -> %d", _qualname(method), _count)
+        logger.debug("StepMethods._hierarchycount(%s) -> %d", _FAST_PATH.reflection.qualname(method), _count)
         return _count
 
     @staticmethod
@@ -66,7 +66,7 @@ class StepMethods:
         :param methods: Array of methods to debug.
         :return: Debug representation.
         """
-        return f"[{', '.join(_qualname(_method) for _method in methods)}]"
+        return f"[{', '.join(_FAST_PATH.reflection.qualname(_method) for _method in methods)}]"
 
     @staticmethod
     def sortbynames(

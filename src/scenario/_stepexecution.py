@@ -21,7 +21,7 @@ Step execution management.
 import typing
 
 if True:
-    from ._reflection import qualname as _qualname  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
@@ -80,7 +80,7 @@ class StepExecution:
         """
         Canonical string representation.
         """
-        return f"<{_qualname(type(self))}#{self.number} of {self.definition!r}>"
+        return f"<{_FAST_PATH.reflection.qualname(type(self))}#{self.number} of {self.definition!r}>"
 
     @property
     def status(self):  # type: () -> _ExecutionStatusType

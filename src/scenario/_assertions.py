@@ -30,9 +30,8 @@ if True:
     from . import _assertionhelpers as _assertionhelpers  # @perf
     from . import _datetimeutils as _datetimeutils  # @perf
     from . import _debugutils as _debugutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import isiterable as _isiterable  # @perf
-    from ._reflection import qualname as _qualname  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
     from ._stepspecifications import StepExecutionSpecification as _StepExecutionSpecificationImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -906,7 +905,7 @@ class Assertions(abc.ABC):
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
-        assert _isiterable(obj), _assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", _debugutils.saferepr(obj))
+        assert _FAST_PATH.reflection.isiterable(obj), _assertionhelpers.ctxmsg("assertisempty()", "invalid object type %s", _debugutils.saferepr(obj))
 
         assert not _AssertionHelperFunctions.safecontainer(obj), _assertionhelpers.errmsg(
             err,
@@ -932,7 +931,7 @@ class Assertions(abc.ABC):
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         assert obj is not None, _assertionhelpers.isnonemsg("assertisempty()", "obj")
-        assert _isiterable(obj), _assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", _debugutils.saferepr(obj))
+        assert _FAST_PATH.reflection.isiterable(obj), _assertionhelpers.ctxmsg("assertisnotempty()", "invalid object type %s", _debugutils.saferepr(obj))
 
         assert _AssertionHelperFunctions.safecontainer(obj), _assertionhelpers.errmsg(
             err,
@@ -960,7 +959,7 @@ class Assertions(abc.ABC):
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         assert obj is not None, _assertionhelpers.isnonemsg("assertlen()", "obj")
-        assert _isiterable(obj), _assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", _debugutils.saferepr(obj))
+        assert _FAST_PATH.reflection.isiterable(obj), _assertionhelpers.ctxmsg("assertlen()", "invalid object type %s", _debugutils.saferepr(obj))
         assert length is not None, _assertionhelpers.isnonemsg("assertlen()", "length")
 
         _len = len(_AssertionHelperFunctions.safecontainer(obj))  # type: int
@@ -991,7 +990,8 @@ class Assertions(abc.ABC):
         if isinstance(container, (str, bytes)):
             assert obj is not None, _assertionhelpers.isnonemsg("assertin()", "obj")
         assert container is not None, _assertionhelpers.isnonemsg("assertin()", "container")
-        assert _isiterable(container), _assertionhelpers.ctxmsg("assertin()", "invalid container type %s", _debugutils.saferepr(container))
+        assert _FAST_PATH.reflection.isiterable(container), _assertionhelpers.ctxmsg("assertin()", "invalid container type %s",
+                                                                                     _debugutils.saferepr(container))
 
         # Note 1: The error display proposed by unittest does not truncate the strings, which makes the reading hard.
         # assertionhelpers.unittest.assertIn(obj, container, err)
@@ -1023,7 +1023,8 @@ class Assertions(abc.ABC):
         if isinstance(container, (str, bytes)):
             assert obj is not None, _assertionhelpers.isnonemsg("assertnotin()", "obj")
         assert container is not None, _assertionhelpers.isnonemsg("assertnotin()", "container")
-        assert _isiterable(container), _assertionhelpers.ctxmsg("assertnotin()", "invalid container type %s", _debugutils.saferepr(container))
+        assert _FAST_PATH.reflection.isiterable(container), _assertionhelpers.ctxmsg("assertnotin()", "invalid container type %s",
+                                                                                     _debugutils.saferepr(container))
 
         # Note 1: The error display proposed by unittest does not truncate the strings (for assertIn() at least), which makes the reading hard.
         # assertionhelpers.unittest.assertNotIn(obj, container, err)
@@ -1056,7 +1057,8 @@ class Assertions(abc.ABC):
         :param evidence: Evidence activation (see the :ref:`dedicated note <assertions.evidence-param>`).
         """
         assert container is not None, _assertionhelpers.isnonemsg("assertcount()", "container")
-        assert _isiterable(container), _assertionhelpers.ctxmsg("assertcount()", "invalid container type %s", _debugutils.saferepr(container))
+        assert _FAST_PATH.reflection.isiterable(container), _assertionhelpers.ctxmsg("assertcount()", "invalid container type %s",
+                                                                                     _debugutils.saferepr(container))
         assert obj is not None, _assertionhelpers.isnonemsg("assertcount()", "obj")
         assert count is not None, _assertionhelpers.isnonemsg("assertcount()", "count")
 
@@ -1164,7 +1166,7 @@ class Assertions(abc.ABC):
         # Check types and values.
         for _item in _items:  # type: typing.Union[_JsonDictType, int, str]
             if type is not None:
-                assert isinstance(_item, type), _errormsg("Wrong type %r, %s expected", _item, _qualname(type))
+                assert isinstance(_item, type), _errormsg("Wrong type %r, %s expected", _item, _FAST_PATH.reflection.qualname(type))
             if value is not None:
                 assert _json_data == value, _errormsg("Wrong value %r, %r expected", _item, value)
         # Check the number of matching items.

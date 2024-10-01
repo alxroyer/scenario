@@ -21,7 +21,7 @@ Action / expected result execution management.
 import typing
 
 if True:
-    from ._reflection import qualname as _qualname  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
@@ -62,4 +62,4 @@ class ActionResultExecution:
         """
         Canonical string representation.
         """
-        return f"<{_qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} of {self.definition.type} {self.definition.description!r}>"

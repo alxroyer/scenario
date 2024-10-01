@@ -25,7 +25,6 @@ import typing
 if True:
     from . import _setutils as _setutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -91,7 +90,7 @@ class ReqRef:
         """
         Canonical string representation of the requirement reference.
         """
-        return f"<{_qualname(type(self))} id={self.id!r}>"
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} id={self.id!r}>"
 
     def __str__(self):  # type: () -> str
         """

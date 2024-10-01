@@ -28,7 +28,6 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     #: Type for path-like data: either a simple string or a ``os.PathLike`` instance.
     AnyPathType = typing.Union[str, os.PathLike]
@@ -278,7 +277,7 @@ class Path:
         Canonical string representation.
         """
         if self._repr_cache is None:
-            self._repr_cache = f"<{_qualname(type(self))} object for '{self.prettypath}'>"
+            self._repr_cache = f"<{_FAST_PATH.reflection.qualname(type(self))} object for '{self.prettypath}'>"
         return self._repr_cache
 
     def __str__(self):  # type: () -> str

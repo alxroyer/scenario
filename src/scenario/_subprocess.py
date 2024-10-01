@@ -29,8 +29,8 @@ import typing
 if True:
     from . import _debugutils as _debugutils  # @perf
     from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import qualname as _qualname  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
@@ -93,7 +93,7 @@ class SubProcess:
         """
         Canonical string representation.
         """
-        return f"{_qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
+        return f"{_FAST_PATH.reflection.qualname(type(self))}({self.cmd_line!r}, cwd={self.cwd!r}, env={self.env!r})"
 
     def __str__(self):  # type: () -> str
         """

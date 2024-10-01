@@ -24,9 +24,9 @@ if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._errcodes import ErrorCodeError as _ErrorCodeErrorImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import qualname as _qualname  # @perf
     from ._textfileutils import TextFile as _TextFileImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
@@ -63,7 +63,7 @@ class TestSuiteFile(_LoggerImpl):
         """
         Canonical string representation.
         """
-        return f"<{_qualname(type(self))} path='{self.path}'>"
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} path='{self.path}'>"
 
     def read(self):  # type: (...) -> None
         """

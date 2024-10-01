@@ -24,7 +24,6 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
-    from ._reflection import qualname as _qualname  # @perf
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -79,7 +78,7 @@ class ScenarioExecution:
         """
         Canonical string representation.
         """
-        return f"<{_qualname(type(self))} {self.definition.name!r}>"
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} {self.definition.name!r}>"
 
     # Execution methods.
 

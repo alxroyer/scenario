@@ -32,11 +32,10 @@ import typing
 
 if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._path import SRC_SCENARIO_PATH as _SRC_SCENARIO_PATH  # @perf
-    from ._reflection import checkfuncqualname as _checkfuncqualname  # @perf
-    from ._reflection import qualname as _qualname  # @perf
 if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -80,7 +79,7 @@ class CodeLocation:
         return CodeLocation(
             file=_PathImpl(_source_file),
             line=inspect.getsourcelines(method)[1],
-            qualname=_qualname(method),
+            qualname=_FAST_PATH.reflection.qualname(method),
         )
 
     #: Cache for :meth:`fromclass()`.
@@ -116,7 +115,7 @@ class CodeLocation:
         _location = CodeLocation(
             file=_PathImpl(_source_file),
             line=_line,
-            qualname=_qualname(cls),
+            qualname=_FAST_PATH.reflection.qualname(cls),
         )  # type: CodeLocation
 
         # Save it in the cache and return.
@@ -290,7 +289,7 @@ class ExecutionLocations(_LoggerImpl):
                     self.debug("Location stack trace - %s:%d: %s", _location.file, _location.line, _location.qualname)
                     if fqn:
                         # Ensure the location function name is fully qualified.
-                        _location.qualname = _checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
+                        _location.qualname = _FAST_PATH.reflection.checkfuncqualname(file=_location.file, line=_location.line, func_name=_location.qualname)
                         # Fix the `traceback` item as well.
                         _tb_item.name = _location.qualname
                     _locations.insert(0, _location)

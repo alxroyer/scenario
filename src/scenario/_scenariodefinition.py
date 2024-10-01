@@ -31,8 +31,6 @@ if True:
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
-    from ._reflection import importmodulefrompath as _importmodulefrompath  # @perf
-    from ._reflection import qualname as _qualname  # @perf
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @inheritance
     from ._scenariodefinitionmeta import MetaScenarioDefinition as _MetaScenarioDefinitionImpl  # @metaclass
     from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
@@ -79,7 +77,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
             return _FAST_PATH.scenario_stack.building.scenario_definition
         if isinstance(_FAST_PATH.scenario_stack.current_scenario_definition, cls):
             return _FAST_PATH.scenario_stack.current_scenario_definition
-        _FAST_PATH.scenario_stack.raisecontexterror(f"Current scenario definition not of type {_qualname(cls)}")
+        _FAST_PATH.scenario_stack.raisecontexterror(f"Current scenario definition not of type {_FAST_PATH.reflection.qualname(cls)}")
 
     def __init__(
             self,
@@ -161,7 +159,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         """
         # Sometimes, `__repr__()` may be called on an object being built.
         if hasattr(self, "name"):
-            return f"<{_qualname(type(self))} {self.name!r}>"
+            return f"<{_FAST_PATH.reflection.qualname(type(self))} {self.name!r}>"
         else:
             return super().__repr__()
 
@@ -548,12 +546,12 @@ class ScenarioDefinitionHelper:
         Retrieves the scenario definitions classes from a Python script.
 
         :param script_path: Path of a Python script.
-        :param sys_modules_cache: See :func:`._reflection.importmodulefrompath()`.
+        :param sys_modules_cache: See :meth:`._reflection.Reflection.importmodulefrompath()`.
         :return: Scenario definition classes, if any.
         """
         # Load the test scenario module.
         script_path = _PathImpl(script_path)
-        _module = _importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
+        _module = _FAST_PATH.reflection.importmodulefrompath(script_path, sys_modules_cache=sys_modules_cache)  # type: types.ModuleType
 
         # Find out the scenario classes in that module.
         _scenario_definition_class = None  # type: typing.Optional[typing.Type[ScenarioDefinition]]
@@ -591,7 +589,7 @@ class ScenarioDefinitionHelper:
 
         # Scan methods.
         _methods = []  # type: typing.List[types.MethodType]
-        self._logger.debug("Searching for steps in %s:", _qualname(type(self.definition)))
+        self._logger.debug("Searching for steps in %s:", _FAST_PATH.reflection.qualname(type(self.definition)))
         for _method_name, _method in inspect.getmembers(self.definition, predicate=inspect.ismethod):  # type: str, types.MethodType
             if _method_name.startswith("step"):
                 # According to https://stackoverflow.com/questions/41900639/python-unable-to-compare-bound-method-to-itself#41900748,
