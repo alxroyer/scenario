@@ -35,6 +35,7 @@ Memo for python profiling with ``cProfile`` and ``pstats``:
         pstats.Stats(_profile)
         .strip_dirs()
         .sort_stats(pstats.SortKey.CUMULATIVE)
+        .reverse_order()
     )
     _stats.print_stats()
 """
@@ -48,6 +49,7 @@ import typing
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from . import _debugutils as _debugutils  # @perf
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
 if typing.TYPE_CHECKING:
     from ._logger import Logger as _LoggerType
 
@@ -317,14 +319,23 @@ class CallTracker:
         MY_CALL_TRACKER.call(f"...")
     """
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            name,  # type: str
+    ):  # type: (...) -> None
         """
         Instantiates a new call tracker object.
+
+        :param name: Name of the call tracker.
         """
+        #: Call tracker name.
+        self.name = name  # type: str
+
         #: Skipped call locations.
         #: Fed by :meth:`skip()`.
         #: Cleared by :meth:`clear()`.
         self._skipped_locations = []  # type: typing.List[CallLocation]
+
         #: Keyword entries.
         #: Fed by :meth:`call()`.
         self._keyword_entries = {}  # type: typing.Dict[str, CallTracker._KeywordEntry]
@@ -394,36 +405,40 @@ class CallTracker:
             ``False`` to start with highest counts (same default presentation as ``cProfile`` / ``pstats``,
             ``True`` to end with highest counts.
         """
-        def _logtotal():  # type: (...) -> None
-            _total_count = sum([_.count for _ in self._keyword_entries.values()])  # type: int
-            _total_cumulative_time = sum([_.cumulative_time for _ in self._keyword_entries.values()])  # type: float
-            logger.log(level, f"{_total_count} / {_total_cumulative_time:.3f}: TOTAL")
+        logger.log(level, f"{self.name}:")
 
-        if not self._keyword_entries:
-            logger.log(level, "No entry")
+        with logger.pushindentation("  "):
+            def _logtotal():  # type: (...) -> None
+                _total_count = sum([_.count for _ in self._keyword_entries.values()])  # type: int
+                _total_cumulative_time = sum([_.cumulative_time for _ in self._keyword_entries.values()])  # type: float
+                logger.log(level, f"    {_total_count} / {_total_cumulative_time:.3f}: TOTAL")
 
-        else:
-            if (not reverse) and (len(self._keyword_entries) > 1):
-                _logtotal()
-                logger.log(level, "---")
+            if not self._keyword_entries:
+                logger.log(level, "No entry")
 
-            for _keyword_entry in sorted(
-                self._keyword_entries.values(),
-                key=lambda keyword_entry: keyword_entry.count,
-                reverse=not reverse,
-            ):  # type: CallTracker._KeywordEntry
-                logger.log(level, f"{_keyword_entry.count} / {_keyword_entry.cumulative_time:.3f}: {_keyword_entry.keyword or '(all)'}:")
+            else:
+                if (not reverse) and (len(self._keyword_entries) > 1):
+                    _logtotal()
+                    logger.log(level, "---")
 
-                for _location, _location_entry in sorted(
-                    _keyword_entry.locations.items(),
-                    key=lambda t: t[1].count,  # Sort on location counts.
+                for _keyword_entry in sorted(
+                    self._keyword_entries.values(),
+                    key=lambda keyword_entry: keyword_entry.count,
                     reverse=not reverse,
-                ):  # type: CallLocation, CallTracker._LocationEntry
-                    logger.log(level, f"    {_location_entry.count} / {_location_entry.cumulative_time:.3f}: {_location}")
+                ):  # type: CallTracker._KeywordEntry
+                    logger.log(level, f"{_keyword_entry.count} / {_keyword_entry.cumulative_time:.3f}: {_keyword_entry.keyword or '(all)'}:")
 
-            if reverse and (len(self._keyword_entries) > 1):
-                logger.log(level, "---")
-                _logtotal()
+                    with logger.pushindentation("  "):
+                        for _location, _location_entry in sorted(
+                            _keyword_entry.locations.items(),
+                            key=lambda t: t[1].count,  # Sort on location counts.
+                            reverse=not reverse,
+                        ):  # type: CallLocation, CallTracker._LocationEntry
+                            logger.log(level, f"{_location_entry.count} / {_location_entry.cumulative_time:.3f}: {_location}")
+
+                if reverse and (len(self._keyword_entries) > 1):
+                    logger.log(level, "---")
+                    _logtotal()
 
     class _KeywordEntry:
         """
@@ -526,16 +541,16 @@ class WrapperCallTracker(CallTracker):
         """
         Saves the owner object and name of the function to wrap.
 
-        :param obj: See :attr:`obj`.
-        :param name: See :attr:`name`.
+        :param obj: See :attr:`wrapped_obj`.
+        :param name: See :attr:`wrapped_name`.
         :param keyword: Optional keyword computation handler.
         """
-        CallTracker.__init__(self)
+        CallTracker.__init__(self, f"{_FAST_PATH.reflection.qualname(obj)}.{name}()")
 
         #: Object owning the function to wrap.
-        self.obj = obj  # type: object
-        #: Name of the function to wrap in :attr:`obj`.
-        self.name = name  # type: str
+        self.wrapped_obj = obj  # type: object
+        #: Name of the function to wrap in :attr:`wrapped_obj`.
+        self.wrapped_name = name  # type: str
 
         #: Keyword computation handler.
         self.keyword = keyword or (lambda arg, kwargs, ret: "")  # type: WrapperCallTracker.KeywordHandlerType
@@ -550,9 +565,9 @@ class WrapperCallTracker(CallTracker):
 
         .. warning:: Don't install twice in a row! Please :meth:`uninstall()` before.
         """
-        assert self._initial_function is None, "Don't install the function wrapper twice in a row"
-        self._initial_function = getattr(self.obj, self.name)
-        setattr(self.obj, self.name, lambda *args, **kwargs: WrapperCallTracker._wrapper(self, args, kwargs))
+        assert self._initial_function is None, f"{self.name}: Don't install the function wrapper twice in a row"
+        self._initial_function = getattr(self.wrapped_obj, self.wrapped_name)
+        setattr(self.wrapped_obj, self.wrapped_name, lambda *args, **kwargs: WrapperCallTracker._wrapper(self, args, kwargs))
 
     def uninstall(self):  # type: (...) -> None
         """
@@ -560,8 +575,8 @@ class WrapperCallTracker(CallTracker):
 
         .. warning:: Don't uninstall if not installed! :meth:`install()` should have been called before.
         """
-        assert self._initial_function is not None, "Function wrapper not installed"
-        setattr(self.obj, self.name, self._initial_function)
+        assert self._initial_function is not None, f"{self.name}: Function wrapper not installed"
+        setattr(self.wrapped_obj, self.wrapped_name, self._initial_function)
         self._initial_function = None
 
     @staticmethod
