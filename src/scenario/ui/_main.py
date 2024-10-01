@@ -48,13 +48,13 @@ def main():  # type: (...) -> _ErrorCodeType
     # Start log features.
     LOGGING_SERVICE.start()
 
-    # Load default requirements and scenarios from `ScenarioConfig.Key.REQ_DB_FILES` and `TEST_SUITE_FILES` configurations.
-    REQ_TRACEABILITY.loaddatafromfiles()
-    # Load campaign results.
-    CAMPAIGN_DB.load()
-
-    # Launch the HTTP server.
     try:
+        # Load default requirements and scenarios from `ScenarioConfig.Key.REQ_DB_FILES` and `TEST_SUITE_FILES` configurations.
+        REQ_TRACEABILITY.loaddatafromfiles()
+        # Load campaign results.
+        CAMPAIGN_DB.load()
+
+        # Launch the HTTP server.
         MAIN_LOGGER.info("")
         HTTP_SERVER.serve()
     except Exception as _err:
