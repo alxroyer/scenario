@@ -213,26 +213,13 @@ class Timer:
         _current_time = time.time()  # type: float
         self.logger.log(
             self.log_level,
-            "%s: %s: %s (+%s)",
-            self.context, message,
-            _debugutils.callback(_datetimeutils.f2strduration, _current_time - self.t0),
-            _debugutils.callback(_datetimeutils.f2strduration, _current_time - self._last_tick),
-        )
-        self.ticks.append((message, _current_time - self._last_tick))
-        self._last_tick = _current_time
-
-    def finish(self):  # type: (...) -> None
-        """
-        Terminates logging for the given timer.
-        """
-        _current_time = time.time()  # type: float
-        self.logger.log(
-            self.log_level,
-            "%s: Total time: %s (+%s)",
+            "%s: %s (+%s) - %s",
             self.context,
             _debugutils.callback(_datetimeutils.f2strduration, _current_time - self.t0),
             _debugutils.callback(_datetimeutils.f2strduration, _current_time - self._last_tick),
+            message,
         )
+        self.ticks.append((message, _current_time - self._last_tick))
         self._last_tick = _current_time
 
     @property
