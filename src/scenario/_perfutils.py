@@ -41,7 +41,6 @@ Memo for python profiling with ``cProfile`` and ``pstats``:
 """
 
 import builtins
-import os
 import pathlib
 import time
 import traceback
