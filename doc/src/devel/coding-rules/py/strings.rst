@@ -21,9 +21,16 @@ Strings
 .. todo:: Documentation needed for string coding rules:
 
     - Differenciate strings and byte-strings:
-        - Use of ``""`` / ``r""`` / ``f""`` (double quote) to enclose ``str`` strings
+        - Usage of ``""`` / ``r""`` / ``f""`` (double quote) to enclose ``str`` strings
             - Except for strings in f-string {}-blocks => simple quotes
-        - Use of ``b''`` / ``rb''`` (simple quotes) to enclose ``bytes`` strings
+            - Except for strings containing lots of ``"`` characters (HTML generation for instance)
+            - Justification:
+                - `Python Single vs. Double Quotes - Which Should You Use And Why? | Better Data Science <https://betterdatascience.com/python-single-vs-double-quotes/>`_
+                - `PEP8: PEP 8 – Style Guide for Python Code | peps.python.org <https://peps.python.org/pep-0008/#string-quotes>`_
+                - PEP8 gives no clear recommendation on the subject, which makes our choice compatible.
+                - Other languages usually use ``"`` for strings, so this choice looks natural.
+                - Better to have systematic presentation for uniformity, and avoid merge conflicts.
+        - Usage of ``b''`` / ``rb''`` (simple quotes) to enclose ``bytes`` strings
     - Use f-strings
         - Except for debugging (for optimization concerns)
         - Except for assertion errors and evidence (for optimization concerns)
