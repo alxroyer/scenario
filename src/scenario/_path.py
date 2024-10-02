@@ -417,11 +417,25 @@ class Path:
         and presented in the POSIX style.
         """
         if self._prettypath_cache is None:
-            _ref_path = Path._main_path or Path.cwd()  # type: Path
-            if self.is_relative_to(_ref_path) and (self != _ref_path):
-                self._prettypath_cache = self.relative_to(_ref_path)
+            if self.is_void():
+                # Posix absolute path for the void path.
+                self._prettypath_cache = self.abspath
+
             else:
-                self._prettypath_cache = self._abspath.as_posix()
+                # Determine the reference directory: main path, or current working directory.
+                _ref_path = Path._main_path or Path.cwd()  # type: Path
+
+                if self.is_relative_to(_ref_path) and (self != _ref_path):
+                    # Posix relative path from the reference path if applicable.
+                    self._prettypath_cache = self.relative_to(_ref_path)
+                else:
+                    # Posix absolute path otherwise.
+                    self._prettypath_cache = self.abspath
+
+                # Ensure a final '/' for directories.
+                if self.is_dir() and (not self._prettypath_cache.endswith("/")):
+                    self._prettypath_cache += "/"
+
         return self._prettypath_cache
 
     def resolve(self):  # type: (...) -> Path

@@ -161,7 +161,7 @@ class MkDoc:
                 _log_line = re.sub(rb'^(INFO +)Main path: \'.*\'$', b'\\1Main path: \'/path/to/scenario\'', _log_line)
                 if _tmp_outdir:
                     # Fix `_tmp_outdir` pretty path with 'out/'.
-                    _log_line = re.sub(rb'%s/' % _tmp_outdir.prettypath.encode("utf-8"), b'out/', _log_line)
+                    _log_line = re.sub(rb'%s/' % _tmp_outdir.prettypath.rstrip("/").encode("utf-8"), b'out/', _log_line)
 
                 # Ensure the execution time does not fluctuate in the output log, for documentation purpose.
                 _log_line = re.sub(_str_duration_regex, _str_duration_subst, _log_line)
