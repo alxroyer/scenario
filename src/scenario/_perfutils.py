@@ -42,6 +42,7 @@ Memo for python profiling with ``cProfile`` and ``pstats``:
 
 import builtins
 import os
+import pathlib
 import time
 import traceback
 import typing
@@ -62,7 +63,7 @@ class CallLocation:
     #: Base list of paths to skip.
     _base_skipped_paths = [
         # Skip any location from this source file.
-        os.path.relpath(__file__, os.getcwd()),
+        pathlib.Path(__file__).resolve().as_posix(),
     ]  # type: typing.Sequence[str]
 
     def __init__(
@@ -80,9 +81,8 @@ class CallLocation:
         :param func: See :attr:`func`.
         """
         #: Path of source file.
-        #: Usually a relative path from the current working directory.
-        #: Unix separators.
-        self.file = file.replace("\\", "/")  # type: str
+        #: Resolved and stored in POSIX style.
+        self.file = pathlib.Path(file).resolve().as_posix()  # type: str
         #: Line number in :attr:`file`.
         #: 0 stands for not set.
         self.line = line  # type: int
@@ -98,6 +98,9 @@ class CallLocation:
         Skips :attr:`line` and :attr:`func` if not relevant.
         """
         _location = self.file  # type: str
+        _cwd = pathlib.Path.cwd().resolve().as_posix()  # type: str
+        if _location.startswith(_cwd):
+            _location = _location[len(_cwd):].lstrip("/")
         if self.line > 0:
             _location += f":{self.line}"
         if self.func:
