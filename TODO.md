@@ -17,7 +17,7 @@
 
 ## Roadmap to v0.2.3
 
-- Issue #65: Add '_executionstatus.py' in `OPTIMIZED_PATHS`.
+- Issue #65: Add '_testerrors.py' in `OPTIMIZED_PATHS`.
 - Issue #83: Add the ability to track requirements.
     - Make '--dt-subdir' enabled by default.
         - Add configurations for the purpose.

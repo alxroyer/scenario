@@ -21,6 +21,7 @@ Step execution management.
 import typing
 
 if True:
+    from ._executionstatus import ExecutionStatus as _ExecutionStatusImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -95,16 +96,14 @@ class StepExecution:
             - :attr:`._executionstatus.ExecutionStatus.SUCCESS` if the execution has passed without errors or warnings.
             - :attr:`._executionstatus.ExecutionStatus.UNKNOWN` if the execution is not terminated.
         """
-        from ._executionstatus import ExecutionStatus
-
         if self.errors:
-            return ExecutionStatus.FAIL
+            return _ExecutionStatusImpl.FAIL
         elif self.warnings:
-            return ExecutionStatus.WARNINGS
+            return _ExecutionStatusImpl.WARNINGS
         elif self.time.end is not None:
-            return ExecutionStatus.SUCCESS
+            return _ExecutionStatusImpl.SUCCESS
         else:
-            return ExecutionStatus.UNKNOWN
+            return _ExecutionStatusImpl.UNKNOWN
 
 
 class StepExecutionHelper:

@@ -22,6 +22,7 @@ import abc
 import typing
 
 if True:
+    from ._executionstatus import ExecutionStatus as _ExecutionStatusImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
@@ -173,16 +174,14 @@ class ScenarioExecution:
             - :attr:`._executionstatus.ExecutionStatus.SUCCESS` if the execution has passed without errors or warnings.
             - :attr:`._executionstatus.ExecutionStatus.UNKNOWN` if the execution is not terminated.
         """
-        from ._executionstatus import ExecutionStatus
-
         if self.errors:
-            return ExecutionStatus.FAIL
+            return _ExecutionStatusImpl.FAIL
         elif self.warnings:
-            return ExecutionStatus.WARNINGS
+            return _ExecutionStatusImpl.WARNINGS
         elif self.time.end is not None:
-            return ExecutionStatus.SUCCESS
+            return _ExecutionStatusImpl.SUCCESS
         else:
-            return ExecutionStatus.UNKNOWN
+            return _ExecutionStatusImpl.UNKNOWN
 
     @property
     def step_stats(self):  # type: () -> _ExecTotalStatsType
@@ -265,16 +264,15 @@ class ScenarioExecutionHelper(abc.ABC):
             4. Number of unqualified level warnings,
             5. Highest warning level (or -INFINITY).
         """
-        from ._executionstatus import ExecutionStatus
         from ._testerrors import TestError
 
         def _statusscore():  # type: () -> int
             return {
-                ExecutionStatus.SUCCESS: 0,
-                ExecutionStatus.SKIPPED: 1,
-                ExecutionStatus.WARNINGS: 2,
-                ExecutionStatus.UNKNOWN: 3,
-                ExecutionStatus.FAIL: 4,
+                _ExecutionStatusImpl.SUCCESS: 0,
+                _ExecutionStatusImpl.SKIPPED: 1,
+                _ExecutionStatusImpl.WARNINGS: 2,
+                _ExecutionStatusImpl.UNKNOWN: 3,
+                _ExecutionStatusImpl.FAIL: 4,
             }[scenario_execution.status]
 
         def _unqualifiedlevels(test_errors):  # type: (typing.Sequence[TestError]) -> int

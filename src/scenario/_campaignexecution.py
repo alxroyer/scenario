@@ -25,6 +25,7 @@ which owns a list of :class:`TestCaseExecution` instances (one test case per sce
 import typing
 
 if True:
+    from ._executionstatus import ExecutionStatus as _ExecutionStatusImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
@@ -327,25 +328,23 @@ class TestSuiteExecution:
 
         :return: Merged status from test case executions.
         """
-        from ._executionstatus import ExecutionStatus
-
         # List of execution status for the test cases of this test suite.
-        _execution_status = [_test_case_execution.status for _test_case_execution in self.test_case_executions]  # type: typing.Sequence[ExecutionStatus]
+        _execution_status = [_test_case_execution.status for _test_case_execution in self.test_case_executions]  # type: typing.Sequence[_ExecutionStatusType]
 
         # Merge results.
-        if ExecutionStatus.FAIL in _execution_status:
-            return ExecutionStatus.FAIL  # If any FAIL, consider FAIL.
-        if ExecutionStatus.UNKNOWN in _execution_status:
-            return ExecutionStatus.FAIL  # If any UNKNOWN, consider FAIL.
-        if ExecutionStatus.WARNINGS in _execution_status:
-            return ExecutionStatus.WARNINGS  # If none above but WARNINGS, consider WARNINGS.
-        if ExecutionStatus.SUCCESS in _execution_status:
-            return ExecutionStatus.SUCCESS  # If none above but SUCCESS, consider SUCCESS.
-        if ExecutionStatus.SKIPPED in _execution_status:
-            return ExecutionStatus.SKIPPED  # If SKIPPED only, consider SKIPPED.
+        if _ExecutionStatusImpl.FAIL in _execution_status:
+            return _ExecutionStatusImpl.FAIL  # If any FAIL, consider FAIL.
+        if _ExecutionStatusImpl.UNKNOWN in _execution_status:
+            return _ExecutionStatusImpl.FAIL  # If any UNKNOWN, consider FAIL.
+        if _ExecutionStatusImpl.WARNINGS in _execution_status:
+            return _ExecutionStatusImpl.WARNINGS  # If none above but WARNINGS, consider WARNINGS.
+        if _ExecutionStatusImpl.SUCCESS in _execution_status:
+            return _ExecutionStatusImpl.SUCCESS  # If none above but SUCCESS, consider SUCCESS.
+        if _ExecutionStatusImpl.SKIPPED in _execution_status:
+            return _ExecutionStatusImpl.SKIPPED  # If SKIPPED only, consider SKIPPED.
         if not _execution_status:
-            return ExecutionStatus.UNKNOWN  # No test case, consider UNKNOWN.
-        return ExecutionStatus.UNKNOWN  # Any other situation, consider UNKNOWN by default.
+            return _ExecutionStatusImpl.UNKNOWN  # No test case, consider UNKNOWN.
+        return _ExecutionStatusImpl.UNKNOWN  # Any other situation, consider UNKNOWN by default.
 
     def gettestcase(
             self,
@@ -476,13 +475,11 @@ class TestCaseExecution:
         """
         Scenario execution status.
         """
-        from ._executionstatus import ExecutionStatus
-
         if self.scenario_execution:
             return self.scenario_execution.status
         else:
             # FAIL by default.
-            return ExecutionStatus.FAIL
+            return _ExecutionStatusImpl.FAIL
 
     @property
     def errors(self):  # type: () -> typing.List[_TestErrorType]

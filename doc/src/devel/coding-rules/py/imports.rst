@@ -62,7 +62,9 @@ We consider the following groups of imports:
     - Underscore characters before letters.
     - Case insensitive comparison.
     - After case insensistive comparison, consider lower case letters before their capital equivalent.
-    - ``from <modulename> import ...`` forms follow right after the ``import <modulename>`` form for the same module if any.
+    - In ``from <package> import <module>`` imports,
+      consider ``<package>`` as the module name to sort alphabetically,
+      then ``<module>`` as the imported symbol.
 
     .. admonition:: Justification for ordering imports
         :class: note

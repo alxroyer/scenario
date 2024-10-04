@@ -27,6 +27,8 @@ if True:
 try:
     from . import _configvalues as configvalues
     from . import _data as data
+    from . import _paths as paths
+    from . import _reflection as reflection
     from ._expectations import ActionResultExpectations as ActionResultExpectations
     from ._expectations import CampaignExpectations as CampaignExpectations
     from ._expectations import ErrorExpectations as ErrorExpectations
@@ -38,8 +40,6 @@ try:
     from ._expectations import StepExpectations as StepExpectations
     from ._expectations import TestSuiteExpectations as TestSuiteExpectations
     from ._knownissues import IssueLevel as IssueLevel
-    from . import _paths as paths
-    from . import _reflection as reflection
     if typing.TYPE_CHECKING:
         from ._steps import AnyExecutionStepType as AnyExecutionStepType
     from ._steps import ExecutionStep as ExecutionStep

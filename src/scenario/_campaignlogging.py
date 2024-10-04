@@ -24,6 +24,7 @@ import typing
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from . import _enumutils as _enumutils  # @inheritance
+    from ._executionstatus import ExecutionStatus as _ExecutionStatusImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
 if typing.TYPE_CHECKING:
@@ -112,7 +113,6 @@ class CampaignLogging:
 
         :param test_case_execution:Test case being executed.
         """
-        from ._executionstatus import ExecutionStatus
         from ._testerrors import TestError
 
         if test_case_execution.log.path and test_case_execution.log.path.is_file():
@@ -120,9 +120,9 @@ class CampaignLogging:
         if test_case_execution.report.path and test_case_execution.report.path.is_file():
             _FAST_PATH.main_logger.debug("Scenario report: '%s'", test_case_execution.report.path)
 
-        if test_case_execution.status == ExecutionStatus.WARNINGS:
+        if test_case_execution.status == _ExecutionStatusImpl.WARNINGS:
             _FAST_PATH.main_logger.warning(test_case_execution.status)
-        elif test_case_execution.status != ExecutionStatus.SUCCESS:
+        elif test_case_execution.status != _ExecutionStatusImpl.SUCCESS:
             _FAST_PATH.main_logger.error(test_case_execution.status)
 
         for _warning in test_case_execution.warnings:  # type: TestError

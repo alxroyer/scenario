@@ -22,9 +22,10 @@ import typing
 
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
-    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from . import _debugutils as _debugutils  # @perf
     from . import _enumutils as _enumutils  # @inheritance
+    from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
+    from ._executionstatus import ExecutionStatus as _ExecutionStatusImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
@@ -637,7 +638,6 @@ class CampaignReport(_LoggerImpl):
         :return: Test case execution data.
         """
         from ._campaignexecution import TestCaseExecution
-        from ._executionstatus import ExecutionStatus
         from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
@@ -702,9 +702,9 @@ class CampaignReport(_LoggerImpl):
             self.debug("testcase/@status = %r", _status)
             # Don't check testcase/@status v/s errors when the scenario report has not been read.
             if _test_case_execution.report.content is not None:
-                if _test_case_execution.errors and (_status != str(ExecutionStatus.FAIL)):
+                if _test_case_execution.errors and (_status != str(_ExecutionStatusImpl.FAIL)):
                     self.warning(f"{_test_case_execution.name}: Mismatching status {_status!r} with {len(_test_case_execution.errors)} error count")
-                if (not _test_case_execution.errors) and (_status == str(ExecutionStatus.FAIL)):
+                if (not _test_case_execution.errors) and (_status == str(_ExecutionStatusImpl.FAIL)):
                     self.warning(f"{_test_case_execution.name}: Mismatching status {_status!r} while no error")
 
         if _test_case_execution.scenario_execution:

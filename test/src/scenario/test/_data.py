@@ -107,8 +107,8 @@ def scenarioexpectations(
     :return: :class:`._expectations.ScenarioExpectations` instance.
     """
     from . import _configvalues as _configvalues
-    from ._expectations import ErrorExpectations, NOT_SET, ScenarioExpectations
     from . import _paths as _paths
+    from ._expectations import ErrorExpectations, NOT_SET, ScenarioExpectations
 
     _reqs = _ExpectationRequirements(
         attributes=attributes,

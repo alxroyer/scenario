@@ -26,14 +26,15 @@ INFO                                         _stepspecifications.py, _textutils.
 INFO     <10>          _scenariostack.py => [_debugclasses.py, _logextradata.py, _logger.py, _scenariodefinition.py,
 INFO                                         _scenarioexecution.py]
 INFO     <10>            _stepsection.py => [_stepdefinition.py]
-INFO     <09>         _campaignreport.py => [_datetimeutils.py, _debugclasses.py, _debugutils.py, _enumutils.py, _fastpath.py,
-INFO                                         _knownissues.py, _locations.py, _logger.py, _path.py, _scenarioexecution.py]
+INFO     <09>         _campaignreport.py => [_datetimeutils.py, _debugclasses.py, _debugutils.py, _enumutils.py,
+INFO                                         _executionstatus.py, _fastpath.py, _knownissues.py, _locations.py, _logger.py,
+INFO                                         _path.py, _scenarioexecution.py]
 INFO     <09>     _scenariodefinition.py => [_assertions.py, _enumutils.py, _fastpath.py, _locations.py, _logger.py, _path.py,
 INFO                                         _reqverifier.py, _scenariodefinitionmeta.py, _stepspecifications.py,
 INFO                                         _stepuserapi.py, _textutils.py]
 INFO     <09>         _stepdefinition.py => [_assertions.py, _fastpath.py, _locations.py, _logger.py, _reqverifier.py,
 INFO                                         _stepuserapi.py]
-INFO     <08>      _scenarioexecution.py => [_fastpath.py, _knownissues.py, _stats.py]
+INFO     <08>      _scenarioexecution.py => [_executionstatus.py, _fastpath.py, _knownissues.py, _stats.py]
 INFO     <08>        _scenariologging.py => [_datetimeutils.py, _enumutils.py, _fastpath.py, _knownissues.py]
 INFO     <08>            _stepuserapi.py => [_fastpath.py, _knownissues.py, _logger.py, _textutils.py]
 INFO     <07>           _campaignargs.py => [_args.py, _fastpath.py, _path.py, _scenarioargs.py]
@@ -76,12 +77,13 @@ INFO     <05>      ui/_requesthandler.py => [_logger.py]
 INFO     <04>  _actionresultexecution.py => [_fastpath.py, _stats.py]
 INFO     <04>             _assertions.py => [_assertionhelpers.py, _datetimeutils.py, _debugutils.py, _fastpath.py, _path.py,
 INFO                                         _stats.py, _stepspecifications.py]
-INFO     <04>      _campaignexecution.py => [_fastpath.py, _path.py, _stats.py]
+INFO     <04>      _campaignexecution.py => [_executionstatus.py, _fastpath.py, _path.py, _stats.py]
 INFO     <04>                 _logger.py => [_enumutils.py, _fastpath.py, _logextradata.py, _logfilters.py, _loggingcontext.py]
 INFO     <04>         _loggingservice.py => [_fastpath.py, _logfilters.py, _loghandler.py]
-INFO     <04>          _stepexecution.py => [_fastpath.py, _stats.py]
+INFO     <04>          _stepexecution.py => [_executionstatus.py, _fastpath.py, _stats.py]
 INFO     <04>             _subprocess.py => [_debugutils.py, _errcodes.py, _fastpath.py, _path.py, _stats.py]
-INFO     <03>        _campaignlogging.py => [_datetimeutils.py, _enumutils.py, _fastpath.py, _logextradata.py]
+INFO     <03>        _campaignlogging.py => [_datetimeutils.py, _enumutils.py, _executionstatus.py, _fastpath.py,
+INFO                                         _logextradata.py]
 INFO     <03>             _configargs.py => [_path.py]
 INFO     <03>             _confignode.py => [_configkey.py, _debugutils.py, _enumutils.py, _fastpath.py, _path.py]
 INFO     <03>          _jsondictutils.py => [_debugutils.py, _path.py, _textfileutils.py]
