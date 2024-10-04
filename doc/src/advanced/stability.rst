@@ -20,4 +20,4 @@ Stability tracking
 
 .. todo:: Documentation needed for stability tracking facilities.
 
-    Feature coming soon (#63).
+    Feature coming soon (#69).

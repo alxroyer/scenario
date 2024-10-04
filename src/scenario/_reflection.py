@@ -451,7 +451,8 @@ class Reflection(_LoggerImpl):
             func_name,  # type: str
     ):  # type: (...) -> str
         """
-        Tries to retrieve the fully qualified name of a function or method.
+        Tries to retrieve the fully qualified name of a function or method,
+        from a file location and a short name.
 
         :param file: Path of the file the function is defined int.
         :param line: Line number inside the function.
