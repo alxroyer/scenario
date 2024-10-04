@@ -78,6 +78,7 @@ OPTIMIZED_PATHS = [
     _paths.SRC_PATH / "scenario" / "_stepexecution.py",
     _paths.SRC_PATH / "scenario" / "_stepsection.py",
     _paths.SRC_PATH / "scenario" / "_stepspecifications.py",
+    _paths.SRC_PATH / "scenario" / "_testerrors.py",
     _paths.SRC_PATH / "scenario" / "_textfileutils.py",
     _paths.SRC_PATH / "scenario" / "_textutils.py",
     _paths.SRC_PATH / "scenario" / "_timezoneutils.py",

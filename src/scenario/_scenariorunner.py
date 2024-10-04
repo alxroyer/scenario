@@ -43,6 +43,8 @@ if True:
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
     from ._stepexecution import StepExecutionHelper as _StepExecutionHelperImpl  # @perf
     from ._stepspecifications import StepDefinitionSpecification as _StepDefinitionSpecificationImpl  # @perf
+    from ._testerrors import ExceptionError as _ExceptionErrorImpl  # @perf
+    from ._testerrors import TestError as _TestErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
@@ -458,8 +460,6 @@ class ScenarioRunner(_LoggerImpl):
 
         :param step_definition: Step definition to execute.
         """
-        from ._testerrors import ExceptionError, TestError
-
         self.debug("Beginning of %r", step_definition)
 
         if isinstance(step_definition, _FAST_PATH.step_section_description_cls):
@@ -503,15 +503,15 @@ class ScenarioRunner(_LoggerImpl):
                     # This exception was raised to stop the execution in the step,
                     # but is not representative of an error.
                     pass
-                except TestError as _error:
+                except _TestErrorImpl as _error:
                     # Test error propagation as is.
                     self.onerror(_error)
                 except Exception as _exception:
                     # An exception occurred during the test.
-                    self.onerror(ExceptionError(exception=_exception))
+                    self.onerror(_ExceptionErrorImpl(exception=_exception))
                 except KeyboardInterrupt as _interrupt:
                     # CTRL+C.
-                    self.onerror(ExceptionError(exception=_interrupt))
+                    self.onerror(_ExceptionErrorImpl(exception=_interrupt))
                 finally:
                     # Ensure the current action/result (if any) is terminated after the step execution.
                     if self._execution_mode != ScenarioRunner.ExecutionMode.BUILD_OBJECTS:

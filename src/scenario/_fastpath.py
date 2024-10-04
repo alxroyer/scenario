@@ -65,6 +65,8 @@ if typing.TYPE_CHECKING:
     from ._stepsection import StepSectionBegin as _StepSectionBeginType
     from ._stepsection import StepSectionDescription as _StepSectionDescriptionType
     from ._stepsection import StepSectionEnd as _StepSectionEndType
+    from ._testerrors import ExceptionError as _ExceptionErrorType
+    from ._testerrors import TestError as _TestErrorType
 
 
 class FastPath:
@@ -94,6 +96,7 @@ class FastPath:
         "_campaign_report",
         "_campaign_runner",
         "_config_db",
+        "_exception_error_cls",
         "_exec_args",
         "_execution_locations",
         "_handlers",
@@ -124,6 +127,7 @@ class FastPath:
         "_step_section_begin_cls",
         "_step_section_description_cls",
         "_step_section_end_cls",
+        "_test_error_cls",
     ]
 
     def __init__(self):  # type: (...) -> None
@@ -253,6 +257,16 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`path_cls()` property.
         self._path_cls = None  # type: typing.Optional[typing.Type[_PathType]]
+
+        #: :class:`._testerrors.TestError` class reference.
+        #:
+        #: Reference resolved by :meth:`test_error_cls()` property.
+        self._test_error_cls = None  # type: typing.Optional[typing.Type[_TestErrorType]]
+
+        #: :class:`._testerrors.ExceptionError` class reference.
+        #:
+        #: Reference resolved by :meth:`exception_error_cls()` property
+        self._exception_error_cls = None  # type: typing.Optional[typing.Type[_ExceptionErrorType]]
 
         #: :class:`._scenariodefinition.ScenarioDefinition` class reference.
         #:
@@ -563,12 +577,36 @@ class FastPath:
         """
         :class:`._path.Path` class reference.
 
-        .. warning:: Prefer importing the class with implementation symbols if possible.
+        .. warning:: Prefer importing the class with implementation imports if possible.
         """
         if self._path_cls is None:
             from ._path import Path  # check-imports: ignore  ## `FastPath` local import.
             self._path_cls = Path
         return self._path_cls
+
+    @property
+    def test_error_cls(self):  # type: () -> typing.Type[_TestErrorType]
+        """
+        :class:`._testerrors.TestError` class reference.
+
+        .. warning:: Prefer importing the class with implementation imports if possible.
+        """
+        if self._test_error_cls is None:
+            from ._testerrors import TestError  # check-imports: ignore  ## `FastPath` local import.
+            self._test_error_cls = TestError
+        return self._test_error_cls
+
+    @property
+    def exception_error_cls(self):  # type: () -> typing.Type[_ExceptionErrorType]
+        """
+        :class:`._testerrors.ExceptionError` class reference.
+
+        .. warning:: Prefer importing the class with implementation imports if possible.
+        """
+        if self._exception_error_cls is None:
+            from ._testerrors import ExceptionError  # check-imports: ignore  ## `FastPath` local import.
+            self._exception_error_cls = ExceptionError
+        return self._exception_error_cls
 
     @property
     def scenario_definition_cls(self):  # type: () -> typing.Type[_ScenarioDefinitionType]

@@ -26,6 +26,7 @@ if True:
     from . import _enumutils as _enumutils  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
+    from ._testerrors import ExceptionError as _ExceptionErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType
@@ -225,8 +226,6 @@ class ScenarioLogging:
 
         :param error: Error to display.
         """
-        from ._testerrors import ExceptionError
-
         # Display known issues once only.
         if isinstance(error, _KnownIssueImpl):
             if any([_known_issue == error for _known_issue in self._known_issues]):
@@ -237,11 +236,11 @@ class ScenarioLogging:
 
         # Display the error.
         _log_level = logging.ERROR if error.iserror() else logging.WARNING  # type: int
-        if isinstance(error, ExceptionError):
+        if isinstance(error, _ExceptionErrorImpl):
             _FAST_PATH.main_logger.log(_log_level, "")
             _FAST_PATH.main_logger.log(_log_level, "!!! EXCEPTION !!!")
         error.logerror(_FAST_PATH.main_logger, level=_log_level)
-        if isinstance(error, ExceptionError):
+        if isinstance(error, _ExceptionErrorImpl):
             _FAST_PATH.main_logger.log(_log_level, "!!! EXCEPTION !!!")
             _FAST_PATH.main_logger.log(_log_level, "")
 

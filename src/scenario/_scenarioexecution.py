@@ -35,6 +35,7 @@ if typing.TYPE_CHECKING:
     from ._stats import ExecTotalStats as _ExecTotalStatsType
     from ._stats import TimeStats as _TimeStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._testerrors import TestError as _TestErrorType
 
 
 class ScenarioExecution:
@@ -54,8 +55,6 @@ class ScenarioExecution:
             Related scenario definition under execution.
             May be ``None`` when the :class:`ScenarioExecution` instance is created as a data container only.
         """
-        from ._testerrors import TestError
-
         #: Related scenario definition.
         self.definition = definition  # type: _ScenarioDefinitionType
 
@@ -68,9 +67,9 @@ class ScenarioExecution:
         #: Time statistics.
         self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Errors.
-        self.errors = []  # type: typing.List[TestError]
+        self.errors = []  # type: typing.List[_TestErrorType]
         #: Warnings.
-        self.warnings = []  # type: typing.List[TestError]
+        self.warnings = []  # type: typing.List[_TestErrorType]
 
         #: Make this class log as if it was part of the :class:`._scenariorunner.ScenarioRunner` execution.
         self._logger = _FAST_PATH.scenario_runner  # type: _LoggerType
@@ -264,8 +263,6 @@ class ScenarioExecutionHelper(abc.ABC):
             4. Number of unqualified level warnings,
             5. Highest warning level (or -INFINITY).
         """
-        from ._testerrors import TestError
-
         def _statusscore():  # type: () -> int
             return {
                 _ExecutionStatusImpl.SUCCESS: 0,
@@ -275,15 +272,15 @@ class ScenarioExecutionHelper(abc.ABC):
                 _ExecutionStatusImpl.FAIL: 4,
             }[scenario_execution.status]
 
-        def _unqualifiedlevels(test_errors):  # type: (typing.Sequence[TestError]) -> int
+        def _unqualifiedlevels(test_errors):  # type: (typing.Sequence[_TestErrorType]) -> int
             return len(list(filter(
                 lambda test_error: (not isinstance(test_error, _KnownIssueImpl)) or (test_error.level is None),
                 test_errors,
             )))
 
-        def _highestissuelevel(test_errors):  # type: (typing.Sequence[TestError]) -> float
+        def _highestissuelevel(test_errors):  # type: (typing.Sequence[_TestErrorType]) -> float
             _issue_levels = [- float("inf")]  # type: typing.List[float]
-            for _test_error in test_errors:  # type: TestError
+            for _test_error in test_errors:  # type: _TestErrorType
                 if isinstance(_test_error, _KnownIssueImpl) and (_test_error.level is not None):
                     _issue_levels.append(float(_test_error.level))
             return max(_issue_levels)

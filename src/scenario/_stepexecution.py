@@ -29,6 +29,7 @@ if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._stats import TimeStats as _TimeStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
+    from ._testerrors import TestError as _TestErrorType
 
 
 class StepExecution:
@@ -53,8 +54,6 @@ class StepExecution:
         :param definition: Step definition this instance describes an execution for.
         :param number: Execution number. See :attr:`number`.
         """
-        from ._testerrors import TestError
-
         #: Owner step reference.
         self.definition = definition  # type: _StepDefinitionType
         #: Step execution number.
@@ -71,9 +70,9 @@ class StepExecution:
         #: Time statistics.
         self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Error.
-        self.errors = []  # type: typing.List[TestError]
+        self.errors = []  # type: typing.List[_TestErrorType]
         #: Warnings.
-        self.warnings = []  # type: typing.List[TestError]
+        self.warnings = []  # type: typing.List[_TestErrorType]
 
         self.time.setstarttime()
 

@@ -23,6 +23,9 @@ Error codes returned by the :class:`._scenariorunner.ScenarioRunner` or :class:`
 import enum
 import typing
 
+if True:
+    from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+
 
 class ErrorCode(enum.IntEnum):
     """
@@ -63,11 +66,9 @@ class ErrorCode(enum.IntEnum):
         :param exception: Exception to compute a :class:`ErrorCode` value for.
         :return: Error code computed.
         """
-        from ._testerrors import TestError
-
         if isinstance(exception, ErrorCodeError):
             return exception.error_code
-        if isinstance(exception, TestError):
+        if isinstance(exception, _FAST_PATH.test_error_cls):
             return ErrorCode.TEST_ERROR
         if isinstance(exception, EnvironmentError):
             return ErrorCode.ENVIRONMENT_ERROR

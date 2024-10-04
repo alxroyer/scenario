@@ -31,6 +31,7 @@ if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
+    from ._testerrors import TestError as _TestErrorType
 
 
 class CampaignLogging:
@@ -113,8 +114,6 @@ class CampaignLogging:
 
         :param test_case_execution:Test case being executed.
         """
-        from ._testerrors import TestError
-
         if test_case_execution.log.path and test_case_execution.log.path.is_file():
             _FAST_PATH.main_logger.debug("Log file:        '%s'", test_case_execution.log.path)
         if test_case_execution.report.path and test_case_execution.report.path.is_file():
@@ -125,9 +124,9 @@ class CampaignLogging:
         elif test_case_execution.status != _ExecutionStatusImpl.SUCCESS:
             _FAST_PATH.main_logger.error(test_case_execution.status)
 
-        for _warning in test_case_execution.warnings:  # type: TestError
+        for _warning in test_case_execution.warnings:  # type: _TestErrorType
             _warning.logerror(_FAST_PATH.main_logger, level=logging.WARNING)
-        for _error in test_case_execution.errors:  # type: TestError
+        for _error in test_case_execution.errors:  # type: _TestErrorType
             _error.logerror(_FAST_PATH.main_logger, level=logging.ERROR)
 
         # Break the test case logging indentation set in :meth:`begintestcase()`.

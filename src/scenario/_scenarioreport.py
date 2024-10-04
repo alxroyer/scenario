@@ -35,6 +35,7 @@ if True:
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
+    from ._testerrors import TestError as _TestErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
@@ -48,6 +49,7 @@ if typing.TYPE_CHECKING:
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
+    from ._testerrors import TestError as _TestErrorType
 
 
 class ScenarioReport(_LoggerImpl):
@@ -195,7 +197,6 @@ class ScenarioReport(_LoggerImpl):
         :return: JSON content.
         """
         from ._scenarioattributes import CoreScenarioAttributes
-        from ._testerrors import TestError
 
         self.debug("Generating JSON content for scenario %r", scenario_definition)
 
@@ -230,11 +231,11 @@ class ScenarioReport(_LoggerImpl):
                 _json_scenario["status"] = str(scenario_definition.execution.status)
 
                 _json_scenario["errors"] = []
-                for _error in scenario_definition.execution.errors:  # type: TestError
+                for _error in scenario_definition.execution.errors:  # type: _TestErrorType
                     _json_scenario["errors"].append(_error.tojson())
 
                 _json_scenario["warnings"] = []
-                for _warning in scenario_definition.execution.warnings:  # type: TestError
+                for _warning in scenario_definition.execution.warnings:  # type: _TestErrorType
                     _json_scenario["warnings"].append(_warning.tojson())
 
                 # Time & statistics.
@@ -261,8 +262,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_scenario: Scenario JSON content to read.
         :return: Scenario data.
         """
-        from ._testerrors import TestError
-
         self.debug("Reading scenario from JSON: %s", _debugutils.jsondump(json_scenario, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
@@ -293,12 +292,12 @@ class ScenarioReport(_LoggerImpl):
             # Status & errors.
             _scenario_definition.execution = _ScenarioExecutionImpl(_scenario_definition)
             for _json_error in json_scenario["errors"]:  # type: _JsonDictType
-                _scenario_definition.execution.errors.append(TestError.fromjson(_json_error))
+                _scenario_definition.execution.errors.append(_TestErrorImpl.fromjson(_json_error))
                 self.debug("Error: %s", _scenario_definition.execution.errors[-1])
             self.debug("Errors: %d", len(_scenario_definition.execution.errors))
 
             for _json_warning in json_scenario["warnings"]:  # type: _JsonDictType
-                _scenario_definition.execution.warnings.append(TestError.fromjson(_json_warning))
+                _scenario_definition.execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
                 self.debug("Warning: %s", _scenario_definition.execution.warnings[-1])
             self.debug("Warnings: %d", len(_scenario_definition.execution.warnings))
 
@@ -318,8 +317,6 @@ class ScenarioReport(_LoggerImpl):
         :param step_definition: Step definition (with execution) to generate JSON content for.
         :return: JSON content.
         """
-        from ._testerrors import TestError
-
         self.debug("Generating JSON content for %r", step_definition)
 
         with self.pushindentation():
@@ -348,10 +345,10 @@ class ScenarioReport(_LoggerImpl):
                         "warnings": [],
                     }  # type: _JsonDictType
 
-                    for _error in _step_execution.errors:  # type: TestError
+                    for _error in _step_execution.errors:  # type: _TestErrorType
                         _json_step_execution["errors"].append(_error.tojson())
 
-                    for _warning in _step_execution.warnings:  # type: TestError
+                    for _warning in _step_execution.warnings:  # type: _TestErrorType
                         _json_step_execution["warnings"].append(_warning.tojson())
 
                     _json_step_definition["executions"].append(_json_step_execution)
@@ -370,8 +367,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_step_definition: Step definition JSON content to read.
         :return: :class:`._stepdefinition.StepDefinition` data.
         """
-        from ._testerrors import TestError
-
         self.debug("Reading step instance from JSON: %s", _debugutils.jsondump(json_step_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
@@ -409,12 +404,12 @@ class ScenarioReport(_LoggerImpl):
                         self.debug("Time: %s", _step_execution.time)
 
                         for _json_error in _json_step_execution["errors"]:  # type: _JsonDictType
-                            _step_execution.errors.append(TestError.fromjson(_json_error))
+                            _step_execution.errors.append(_TestErrorImpl.fromjson(_json_error))
                             self.debug("Error: %s", _step_execution.errors[-1])
                         self.debug("Errors: %d", len(_step_execution.errors))
 
                         for _json_warning in _json_step_execution["warnings"]:  # type: _JsonDictType
-                            _step_execution.warnings.append(TestError.fromjson(_json_warning))
+                            _step_execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
                             self.debug("Warning: %s", _step_execution.warnings[-1])
                         self.debug("Warnings: %d", len(_step_execution.warnings))
 
@@ -487,8 +482,6 @@ class ScenarioReport(_LoggerImpl):
         :param action_result_definition: Action or expected result to generate JSON content for.
         :return: JSON content object.
         """
-        from ._testerrors import TestError
-
         self.debug("Generating JSON content for %r", action_result_definition)
 
         with self.pushindentation():
@@ -507,10 +500,10 @@ class ScenarioReport(_LoggerImpl):
                     "subscenarios": [],
                 }  # type: _JsonDictType
 
-                for _error in _action_result_execution.errors:  # type: TestError
+                for _error in _action_result_execution.errors:  # type: _TestErrorType
                     _json_action_result_execution["errors"].append(_error.tojson())
 
-                for _warning in _action_result_execution.warnings:  # type: TestError
+                for _warning in _action_result_execution.warnings:  # type: _TestErrorType
                     _json_action_result_execution["warnings"].append(_warning.tojson())
 
                 for _subscenario_execution in _action_result_execution.subscenarios:  # type: _ScenarioExecutionType
@@ -533,8 +526,6 @@ class ScenarioReport(_LoggerImpl):
         :param json_action_result_definition: Action / expected result JSON content to read.
         :return: :class:`._actionresultdefinition.ActionResultDefinition` data.
         """
-        from ._testerrors import TestError
-
         self.debug("Reading action/result instance from JSON: %s", _debugutils.jsondump(json_action_result_definition, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
@@ -562,12 +553,12 @@ class ScenarioReport(_LoggerImpl):
                     self.debug("Evidence: %r", _action_result_execution.evidence)
 
                     for _json_error in _json_action_result_execution["errors"]:  # type: _JsonDictType
-                        _action_result_execution.errors.append(TestError.fromjson(_json_error))
+                        _action_result_execution.errors.append(_TestErrorImpl.fromjson(_json_error))
                         self.debug("Error: %s", _action_result_execution.errors[-1])
                     self.debug("Error: %d", len(_action_result_execution.errors))
 
                     for _json_warning in _json_action_result_execution["warnings"]:  # type: _JsonDictType
-                        _action_result_execution.warnings.append(TestError.fromjson(_json_warning))
+                        _action_result_execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
                         self.debug("Warning: %s", _action_result_execution.warnings[-1])
                     self.debug("Warning: %d", len(_action_result_execution.warnings))
 

@@ -28,6 +28,8 @@ if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
+    from ._testerrors import ExceptionError as _ExceptionErrorImpl  # @perf
+    from ._testerrors import TestError as _TestErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
@@ -195,12 +197,10 @@ class ScenarioResults(_LoggerImpl):
         :param log_level: Log level to use.
         :param error: Test error to display.
         """
-        from ._testerrors import ExceptionError, TestError
-
-        if isinstance(error, ExceptionError):
+        if isinstance(error, _ExceptionErrorImpl):
             # `ExceptionError.logerror()` prints out the exception traceback.
             # Call the base `TestError.logerror()` instead.
-            TestError.logerror(error, logger=_FAST_PATH.main_logger, level=log_level, indent="  ")
+            _TestErrorImpl.logerror(error, logger=_FAST_PATH.main_logger, level=log_level, indent="  ")
         else:
             error.logerror(logger=_FAST_PATH.main_logger, level=log_level, indent="  ")
 

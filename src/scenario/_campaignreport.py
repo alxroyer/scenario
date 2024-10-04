@@ -32,6 +32,8 @@ if True:
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
+    from ._testerrors import ExceptionError as _ExceptionErrorImpl  # @perf
+    from ._testerrors import TestError as _TestErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -39,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from ._testerrors import TestError as _TestErrorType
     from ._xmlutils import Xml as _XmlType
 
 
@@ -525,7 +528,6 @@ class CampaignReport(_LoggerImpl):
         :param test_case_execution: Test case execution to generate the JUnit XML for.
         :return: Test case JUnit XML.
         """
-        from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
         _xml_test_case = xml_doc.createnode("testcase")  # type: Xml.Node
@@ -570,7 +572,7 @@ class CampaignReport(_LoggerImpl):
             ))  # type: Xml.Node
 
         # Create a <failure/> node for each test error.
-        for _error in test_case_execution.errors:  # type: TestError
+        for _error in test_case_execution.errors:  # type: _TestErrorType
             # testcase/failure:
             # [CUBIC]: "failure indicates that the test failed. A failure is a test which the code has explicitly failed by using the mechanisms for that
             #           purpose. For example via an assertEquals. (...) optional"
@@ -578,7 +580,7 @@ class CampaignReport(_LoggerImpl):
 
             # testcase/failure/@message:
             # [CUBIC]: "# The message specified in the assert."
-            if isinstance(_error, ExceptionError):
+            if isinstance(_error, _ExceptionErrorImpl):
                 # When this is an exception error, just give the message here, do not repeat the exception type,
                 # which will be set in testcase/failure/@type.
                 _xml_failure.setattr("message", _error.message)
@@ -589,7 +591,7 @@ class CampaignReport(_LoggerImpl):
 
             # testcase/failure/@type:
             # [CUBIC]: "# The type of the assert."
-            if isinstance(_error, ExceptionError):
+            if isinstance(_error, _ExceptionErrorImpl):
                 _xml_failure.setattr("type", _error.exception_type)
             elif isinstance(_error, _KnownIssueImpl):
                 _xml_failure.setattr("type", "known-issue")
@@ -598,7 +600,7 @@ class CampaignReport(_LoggerImpl):
             # [CUBIC]: "Contains as a text node relevant data for the failure, e.g., a stack trace."
             # Exception detail: put the log trailer
             _text = ""  # type: str
-            if isinstance(_error, ExceptionError) and _error.exception:
+            if isinstance(_error, _ExceptionErrorImpl) and _error.exception:
                 _text = "".join(_error.exception.format())
                 _text += "\n"
             if _error.location:
@@ -638,7 +640,6 @@ class CampaignReport(_LoggerImpl):
         :return: Test case execution data.
         """
         from ._campaignexecution import TestCaseExecution
-        from ._testerrors import ExceptionError, TestError
         from ._xmlutils import Xml
 
         # Note: The testcase/@name attribute is filled with the pretty path.
@@ -679,7 +680,7 @@ class CampaignReport(_LoggerImpl):
             for _xml_failure in xml_test_case.getchildren("failure"):  # type: Xml.Node
                 self.debug("New testcase/failure")
                 if _xml_failure.hasattr("message") and (_test_case_execution.scenario_execution is not None):
-                    _error = TestError(_xml_failure.getattr("message"))  # type: TestError
+                    _error = _TestErrorImpl(_xml_failure.getattr("message"))  # type: _TestErrorType
                     self.debug("testcase/failure/@message = %r", _error.message)
                     if _xml_failure.hasattr("type"):
                         if _xml_failure.getattr("type") == "known-issue":
@@ -687,7 +688,7 @@ class CampaignReport(_LoggerImpl):
                             _error = _KnownIssueImpl.fromstr(_error.message)
                             self.debug("testcase/failure/@message => %r", _error)
                         else:
-                            _error = ExceptionError(exception=None)
+                            _error = _ExceptionErrorImpl(exception=None)
                             _error.exception_type = _xml_failure.getattr("type")
                             self.debug("testcase/failure/@type = '%s'", _error.exception_type)
                             _error.message = _xml_failure.getattr("message")

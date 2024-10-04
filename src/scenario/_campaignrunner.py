@@ -34,6 +34,7 @@ if True:
     from ._scenarioevents import ScenarioEvent as _ScenarioEventImpl  # @perf
     from ._scenarioevents import ScenarioEventData as _ScenarioEventDataImpl  # @perf
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
+    from ._testerrors import TestError as _TestErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._campaignexecution import TestCaseExecution as _TestCaseExecutionType
@@ -43,6 +44,7 @@ if typing.TYPE_CHECKING:
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
+    from ._testerrors import TestError as _TestErrorType
 
 
 class CampaignRunner(_LoggerImpl):
@@ -219,7 +221,6 @@ class CampaignRunner(_LoggerImpl):
         :raise: Exception when something worse than test errors occured.
         """
         from ._subprocess import SubProcess
-        from ._testerrors import TestError
 
         _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_TEST_CASE, _ScenarioEventDataImpl.TestCase(test_case_execution=test_case_execution))
 
@@ -281,7 +282,7 @@ class CampaignRunner(_LoggerImpl):
                 if extend_last_line and _fallback_errors.execution.errors:
                     _fallback_errors.execution.errors[-1].message += f"\n{error_message}"
                 else:
-                    _fallback_errors.execution.errors.append(TestError(error_message))
+                    _fallback_errors.execution.errors.append(_TestErrorImpl(error_message))
 
             # Execute the scenario.
             _subprocess.setlogger(self).run(timeout=_FAST_PATH.scenario_config.scenariotimeout())
@@ -374,7 +375,7 @@ class CampaignRunner(_LoggerImpl):
 
             # Dispatch handlers.
             if test_case_execution.scenario_execution is not None:
-                for _error in test_case_execution.scenario_execution.errors:  # type: TestError
+                for _error in test_case_execution.scenario_execution.errors:  # type: _TestErrorType
                     _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.ERROR, _error)
             _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_TEST_CASE, _ScenarioEventDataImpl.TestCase(test_case_execution=test_case_execution))
 

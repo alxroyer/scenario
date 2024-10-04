@@ -27,6 +27,7 @@ if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import TimeStats as _TimeStatsType
+    from ._testerrors import TestError as _TestErrorType
 
 
 class ActionResultExecution:
@@ -41,8 +42,6 @@ class ActionResultExecution:
         """
         Sets the start time automatically.
         """
-        from ._testerrors import TestError
-
         #: Owner action/result reference.
         self.definition = definition  # type: _ActionResultDefinitionType
         #: Time statistics.
@@ -52,9 +51,9 @@ class ActionResultExecution:
         #: Subscenario executions.
         self.subscenarios = []  # type: typing.List[_ScenarioExecutionType]
         #: Errors.
-        self.errors = []  # type: typing.List[TestError]
+        self.errors = []  # type: typing.List[_TestErrorType]
         #: Warnings.
-        self.warnings = []  # type: typing.List[TestError]
+        self.warnings = []  # type: typing.List[_TestErrorType]
 
         self.time.setstarttime()
 
