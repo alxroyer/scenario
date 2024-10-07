@@ -57,3 +57,14 @@ if True:
     """
     from ._main import main as main
     __all__.append("main")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: Args
+
+        User interface program arguments.
+
+        .. seealso:: :class:`._args.UIArgs` implementation.
+    """
+    from ._args import UIArgs as Args
+    __all__.append("Args")

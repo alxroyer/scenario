@@ -39,7 +39,7 @@ if __name__ == "__main__":
     scenario.conf.set(scenario.ConfigKey.CAMPAIGN_OUTDIR, scenario.test.paths.SCENARIO_RESULTS_PATH)
 
     # Parse arguments.
-    scenario.Args.setinstance(scenario.Args(class_debugging=True))
+    scenario.Args.setinstance(scenario.ui.Args())
     if not scenario.Args.getinstance().parse(sys.argv[1:]):
         sys.exit(int(scenario.Args.getinstance().error_code))
 

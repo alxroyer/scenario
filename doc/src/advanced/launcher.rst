@@ -221,7 +221,7 @@ UI launcher script extension
 
 Same for the :ref:`user interface <ui>` launcher script extension, with:
 
-- The base :py:class:`scenario._args.Args` class may be overloaded to add extra command line arguments.
+- The :py:class:`scenario.ui.Args` class may be overloaded to add extra command line arguments.
 - The :py:meth:`scenario.ui._main.main()` function must be called in the end.
 
 

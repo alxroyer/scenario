@@ -31,19 +31,19 @@ def main():  # type: (...) -> _ErrorCodeType
 
     :return: Error code.
     """
-    from .._args import Args
     from .._campaigndb import CAMPAIGN_DB
     from .._errcodes import ErrorCode
     from .._loggermain import MAIN_LOGGER
     from .._loggingservice import LOGGING_SERVICE
     from .._reqtraceability import REQ_TRACEABILITY
+    from ._args import UIArgs
     from ._httpserver import HTTP_SERVER
 
     # Analyze program arguments, if not already set.
-    if not Args.isset():
-        Args.setinstance(Args(class_debugging=True))
-        if not Args.getinstance().parse(sys.argv[1:]):
-            return Args.getinstance().error_code
+    if not UIArgs.isset():
+        UIArgs.setinstance(UIArgs())
+        if not UIArgs.getinstance().parse(sys.argv[1:]):
+            return UIArgs.getinstance().error_code
 
     # Start log features.
     LOGGING_SERVICE.start()

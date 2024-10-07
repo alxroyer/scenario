@@ -49,7 +49,6 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         Defines program arguments for :class:`._campaignrunner.CampaignRunner`.
         """
         _ArgsImpl.__init__(self, class_debugging=True)
-
         self.setdescription("Scenario campaign execution.")
 
         _CommonExecArgsImpl.__init__(self)

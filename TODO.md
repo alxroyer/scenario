@@ -18,8 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Add a `scenario.ui.Args` class.
-         - Update 'launcher.rst', `launcher.ui-server` section.
     - Extract `REQ_TRACEABILITY.scenarios` as a standalone `SCENARIO_DB` for consistency with `REQ_DB` and `CAMPAIGNS_DB`.
     - Display campaign result details.
     - Make it possible to refresh the campaign database.
