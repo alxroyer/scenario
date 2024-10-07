@@ -116,9 +116,9 @@ CAMPAIGNS:
       steps: {}
       title: Campaign execution with several test suites
     test/cases/campaigns/campaign003.py:
-      comments: Campaign --dt-subdir option
+      comments: Campaign --subdir option
       steps: {}
-      title: Campaign --dt-subdir option
+      title: Campaign --subdir option
     test/cases/campaigns/campaign004.py:
       comments: Campaign --doc-only option
       steps: {}

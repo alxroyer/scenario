@@ -30,6 +30,7 @@ if True:
     from ._path import Path as _PathImpl  # @perf
     from ._path import ROOT_SCENARIO_PATH as _ROOT_SCENARIO_PATH  # @perf
 if typing.TYPE_CHECKING:
+    from ._campaignargs import CampaignArgs as _CampaignArgsType
     from ._confignode import ConfigNode as _ConfigNodeType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
     from ._path import Path as _PathType
@@ -100,6 +101,8 @@ class ScenarioConfig(_LoggerImpl):
         RESULTS_EXTRA_INFO = "scenario.results_extra_info"
         #: Campaign output directory path. Absolute path string. Defaults to the current working directory.
         CAMPAIGN_OUTDIR = "scenario.campaign_dir"
+        #: Campaign output subdirectory mode. One of :class:`._campaignargs.CampaignArgs.SubdirMode`.
+        CAMPAIGN_SUBDIR_MODE = "scenario.campaign_subdir_mode"
         #: Scenario report suffix when writing campaign results. Default is '.json'.
         SCENARIO_REPORT_SUFFIX = "scenario.scenario_report_suffix"
         #: Campaign report file name used when reading / writing campaign results. String value. Default is 'campaign.xml'.
@@ -445,6 +448,30 @@ class ScenarioConfig(_LoggerImpl):
 
         self.debug("campaignoutdir() -> %r", _outdir)
         return _outdir
+
+    def campaignsubdirmode(self):  # type: (...) -> _CampaignArgsType.SubdirMode
+        """
+        Campaign output subdirectory mode.
+
+        Read from campaign arguments,
+        or from configurations,
+        or defaults to date/time subdirectory mode.
+        """
+        from ._campaignargs import CampaignArgs  # check-imports: ignore  ## `CampaignArgs` implementation required, even for default value.
+
+        _subdir_mode = None  # type: typing.Optional[_CampaignArgsType.SubdirMode]
+        # Read from campaign arguments first.
+        if _FAST_PATH.campaign_args and _FAST_PATH.campaign_args.subdir_mode:
+            _subdir_mode = _FAST_PATH.campaign_args.subdir_mode
+        # Then read from configuration database.
+        if (_subdir_mode is None) and _FAST_PATH.campaign_args:
+            _subdir_mode = _FAST_PATH.config_db.get(self.Key.CAMPAIGN_SUBDIR_MODE, type=CampaignArgs.SubdirMode, default=None)
+        # Default to date/time subdirectory mode.
+        if _subdir_mode is None:
+            _subdir_mode = CampaignArgs.SubdirMode.DATE_TIME
+
+        self.debug("campaignsubdirmode() -> %r", _subdir_mode)
+        return _subdir_mode
 
     def scenarioreportsuffix(self):  # type: (...) -> str
         """

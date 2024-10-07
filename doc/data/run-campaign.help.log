@@ -2,7 +2,7 @@ usage: run-campaign.py [-h] [--config-file CONFIG_PATH]
                        [--config-value KEY VALUE] [--debug-class DEBUG_CLASS]
                        [--doc-only] [--issue-level-error ISSUE_LEVEL]
                        [--issue-level-ignored ISSUE_LEVEL]
-                       [--outdir OUTDIR_PATH] [--dt-subdir]
+                       [--outdir OUTDIR_PATH] [--subdir SUBDIR_MODE]
                        [--extra-info ATTRIBUTE_NAME]
                        [TEST_SUITE_PATH [TEST_SUITE_PATH ...]]
 
@@ -35,9 +35,12 @@ optional arguments:
   --outdir OUTDIR_PATH  Output directory to store test results into. Defaults
                         to 'scenario.campaign_dir' configuration, or current
                         working directory.
-  --dt-subdir           Do not store test results directly in OUTDIR_PATH (or
-                        configured path), but within a subdirectory named with
-                        current date and time.
+  --subdir SUBDIR_MODE  Choose the subdirectory mode in OUTDIR_PATH (or
+                        configured path) to store test results into.
+                        'date/time' (default behaviour): to create a
+                        subdirectory named with current date and time ('YYYY-
+                        MM-DD_HH-MM-SS' pattern). 'none': to store test
+                        results directly in OUTDIR_PATH.
   --extra-info ATTRIBUTE_NAME
                         Scenario attribute to display for extra info when
                         displaying results. This option may be called several

@@ -23,19 +23,19 @@ import scenario
 import scenario.test
 
 
-class CheckCampaignNoDtOutdir(scenario.test.VerificationStep):
+class CheckCampaignSubdirNone(scenario.test.VerificationStep):
 
     def step(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign
 
-        self.STEP("No date/time output directory")
+        self.STEP(f"Subdir mode: '{scenario.CampaignArgs.SubdirMode.NONE}'")
 
         _outdir_content = []  # type: typing.List[scenario.Path]
         if self.ACTION("Read the directory pointed by the campaign command line."):
             self.evidence(f"Reading '{self.getexecstep(ExecCampaign).cmdline_outdir_path}'")
             _outdir_content = list(self.getexecstep(ExecCampaign).cmdline_outdir_path.iterdir())
 
-        if self.RESULT("The directory contains no subdirectories."):
+        if self.RESULT("The directory contains no subdirectory."):
             self.assertisnotempty(
                 _outdir_content,
                 evidence="Output directory content",
@@ -47,12 +47,12 @@ class CheckCampaignNoDtOutdir(scenario.test.VerificationStep):
                 )
 
 
-class CheckCampaignDtOutdir(scenario.test.VerificationStep):
+class CheckCampaignSubdirDateTime(scenario.test.VerificationStep):
 
     def step(self):  # type: (...) -> None
         from campaigns.steps.execution import ExecCampaign
 
-        self.STEP("Date/time output directory")
+        self.STEP(f"Subdir mode: '{scenario.CampaignArgs.SubdirMode.DATE_TIME}'")
 
         _outdir_content = []  # type: typing.List[scenario.Path]
         if self.ACTION("Read the directory pointed by the campaign command line."):

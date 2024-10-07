@@ -83,10 +83,10 @@ test/cases/campaigns/campaign003.py:
   name: test/cases/campaigns/campaign003.py
   reqs:
     CAMPAIGNS:
-      comments: Campaign --dt-subdir option
+      comments: Campaign --subdir option
       subrefs: {}
       title: Campaign executions
-  title: Campaign --dt-subdir option
+  title: Campaign --subdir option
 test/cases/campaigns/campaign004.py:
   name: test/cases/campaigns/campaign004.py
   reqs:

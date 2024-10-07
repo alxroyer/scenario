@@ -90,9 +90,9 @@ class CampaignRunner(_LoggerImpl):
 
             # Determine and ensure the campaign output directory.
             _outdir = _FAST_PATH.scenario_config.campaignoutdir()  # type: _PathType
-            if _FAST_PATH.campaign_args.create_dt_subdir:
-                _outdir_basename = _datetimeutils.toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
-                _outdir = _FAST_PATH.campaign_args.outdir / _outdir_basename
+            if _FAST_PATH.scenario_config.campaignsubdirmode() == _CampaignArgsImpl.SubdirMode.DATE_TIME:
+                _subdir_basename = _datetimeutils.toiso8601(time.time())[:len("XXXX-XX-XXTXX:XX:XX")].replace(":", "-").replace("T", "_")  # type: str
+                _outdir /= _subdir_basename
             _outdir.mkdir(parents=True, exist_ok=True)
 
             # Start log features.

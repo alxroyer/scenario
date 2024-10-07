@@ -87,12 +87,10 @@ Campaign reports
 
 The ``--outdir`` option specifies the directory where the execution reports should be stored.
 
-.. admonition:: ``--dt-subdir`` option
-    :class: tip
+The ``--subdir`` option specifies the subdirectory mode in OUTDIR_PATH to use:
 
-    In conjonction with it, the ``--dt-subdir`` option tells the 'run-campaign.py' launcher to create a date/time subdirectory in the output directory.
-
-    The date/time subdirectory is formed on the 'YYYY-MM-DD_HH-MM-SS' pattern.
+- ``date/time``: Default behaviour. Create a subdirectory named with current date and time ('YYYY-MM-DD_HH-MM-SS' pattern).
+- ``none``: Store test results directly in OUTDIR_PATH.
 
 For each scenario executed, a :ref:`scenario report <reports>` is stored in the output directory.
 

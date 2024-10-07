@@ -24,6 +24,7 @@ or whatever :class:`Args` derived-class instance.
 
 import argparse
 import inspect
+import logging
 import typing
 
 if True:
@@ -208,13 +209,30 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
         # Parse command line arguments.
         _parsed_args = self.__arg_parser.parse_args(args)  # type: typing.Any
 
+        def _processexception(
+                err,  # type: Exception
+                *,
+                error_code=None,  # type: _ErrorCodeType
+        ):  # type: (...) -> bool
+            """
+            Common processing of exceptions.
+
+            :param err: Exception caught.
+            :param error_code: Optional error code, if not the default.
+            :return: ``False``
+            """
+            if error_code is not None:
+                self.error_code = error_code
+            self.logexceptiontraceback(err, level=logging.DEBUG)
+            _FAST_PATH.main_logger.error(str(err))
+            return False
+
         # Copy arguments from the untyped `_parsed_args` object to `self`.
         for _member_name in self.__arg_infos:  # type: str
             try:
                 self.__arg_infos[_member_name].process(self, _parsed_args)
             except Exception as _err:
-                _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                return False
+                return _processexception(_err)
 
         # Load configurations:
         # - 1) load the single configuration values so that they are taken in account immediately,
@@ -222,28 +240,23 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
             try:
                 _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                return False
+                return _processexception(_err)
         # - 2) load configuration files,
         for _config_path in self.config_paths:  # type: _PathType
             try:
                 _FAST_PATH.main_logger.info(f"Loading '{_config_path}'")
                 _FAST_PATH.config_db.loadfile(_config_path)
-            except EnvironmentError as _env_err:
-                self.error_code = _ErrorCodeImpl.ENVIRONMENT_ERROR
-                # Don't log the full traceback for an environment error, just the error message.
-                _FAST_PATH.main_logger.error(str(_env_err))
-                return False
             except Exception as _err:
-                _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                return False
+                return _processexception(
+                    _err,
+                    error_code=_ErrorCodeImpl.ENVIRONMENT_ERROR if isinstance(_err, EnvironmentError) else None,
+                )
         # - 3) reload the single configuration values, so that they prevail on configuration files.
         for _key in self.config_values:  # Type already declared above.
             try:
                 _FAST_PATH.config_db.set(_key, data=Args.getinstance().config_values[_key], origin="<args>")
             except Exception as _err:
-                _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                return False
+                return _processexception(_err)
 
         # Configure unclassed debugging.
         _FAST_PATH.main_logger.enabledebug(self.debug_main)
@@ -255,9 +268,7 @@ class Args(_LoggerImpl, _CommonConfigArgsImpl, _CommonLoggingArgsImpl):
                 self.__arg_parser.print_usage()
                 return False
         except Exception as _err:
-            # Unexpected error: print the exception traceback, don't show argument usage.
-            _FAST_PATH.main_logger.logexceptiontraceback(_err)
-            return False
+            return _processexception(_err)
 
         self.error_code = _ErrorCodeImpl.SUCCESS
         self.parsed = True

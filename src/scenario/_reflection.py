@@ -651,7 +651,7 @@ class Reflection(_LoggerImpl):
                 _fqn = _walkmodule(_module)
 
         if not _fqn:
-            self.warning(f"Could not find fully qualified name for {file}:{line}:{func_name}()")
+            self.debug(f"Could not find fully qualified name for {file}:{line}:{func_name}()")
         # Return `func_name` as is by default.
         self.debug("checkfuncqualname(file='%s', line=%d, func_name=%r) -> %r", file, line, func_name, _fqn or func_name)
         return _fqn or func_name

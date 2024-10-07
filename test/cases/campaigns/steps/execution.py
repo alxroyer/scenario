@@ -35,7 +35,7 @@ class ExecCampaign(_ExecCommonArgsImpl):
             config_files=None,  # type: typing.List[scenario.Path]
             debug_classes=None,  # type: typing.Optional[typing.List[str]]
             log_outfile=None,  # type: bool
-            dt_subdir=None,  # type: bool
+            subdir_mode=None,  # type: typing.Optional[scenario.CampaignArgs.SubdirMode]
             doc_only=None,  # type: bool
     ):  # type: (...) -> None
         _ExecCommonArgsImpl.__init__(
@@ -50,7 +50,7 @@ class ExecCampaign(_ExecCommonArgsImpl):
         self.test_suite_paths = test_suite_paths  # type: typing.Sequence[scenario.Path]
         self._cmdline_outdir_path = None  # type: typing.Optional[scenario.Path]
         self._final_outdir_path = None  # type: typing.Optional[scenario.Path]
-        self.dt_subdir = dt_subdir  # type: typing.Optional[bool]
+        self.subdir_mode = subdir_mode  # type: typing.Optional[scenario.CampaignArgs.SubdirMode]
 
         # Eventually propose a default step description.
         self.description = description
@@ -91,12 +91,10 @@ class ExecCampaign(_ExecCommonArgsImpl):
                 [self.test_case.getpathdesc(_test_suite_path) for _test_suite_path in self.test_suite_paths]
             ) + " test suite files")
 
-        if self.dt_subdir is True:
-            _action_description += ", with the --dt-subdir option set"
+        if self.subdir_mode is not None:
+            _action_description += f", with the --subdir option set to '{self.subdir_mode}'"
             if self.doexecute():
-                self.subprocess.addargs("--dt-subdir")
-        if self.dt_subdir is False:
-            _action_description += ", without the --dt-subdir option set"
+                self.subprocess.addargs(f"--subdir={self.subdir_mode}")
 
         _action_description1, _action_description2 = self._preparecommonargs()  # type: str, str
         _action_description += _action_description1
@@ -127,17 +125,16 @@ class ExecCampaign(_ExecCommonArgsImpl):
 
     def _checkfinaloutdir(self):  # type: (...) -> None
         if (self._final_outdir_path is None) and (self._cmdline_outdir_path is not None):
-            if self.dt_subdir:
+            self._final_outdir_path = self._cmdline_outdir_path
+            if self.subdir_mode != scenario.CampaignArgs.SubdirMode.NONE:
                 for _subpath in self._cmdline_outdir_path.iterdir():  # type: scenario.Path
                     if _subpath.is_dir():
                         self._final_outdir_path = _subpath
-            else:
-                self._final_outdir_path = self._cmdline_outdir_path
 
     def _rmfinaloutdir(
             self,
-            event,  # type: str
-            data,  # type: typing.Any
+            event,  # type: str  # noqa  ## Parameter not used.
+            data,  # type: typing.Any  # noqa  ## Parameter not used.
     ):  # type: (...) -> None
         if self._final_outdir_path:
             if scenario.stack.current_scenario_execution and scenario.stack.current_scenario_execution.errors:

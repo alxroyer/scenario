@@ -21,6 +21,7 @@ Campaign runner program arguments.
 import typing
 
 if True:
+    from . import _enumutils as _enumutils  # @inheritance
     from ._args import Args as _ArgsImpl  # @inheritance
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
@@ -33,6 +34,15 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
     """
     Campaign runner program arguments.
     """
+
+    class SubdirMode(_enumutils.StrEnum):
+        """
+        Campaign subdirectory mode.
+        """
+        #: No subdirectory.
+        NONE = "none"
+        #: Date/time subdirectory.
+        DATE_TIME = "date/time"
 
     def __init__(self):  # type: (...) -> None
         """
@@ -58,12 +68,14 @@ class CampaignArgs(_ArgsImpl, _CommonExecArgsImpl):
         )
 
         #: ``True`` when an output subdirectory in :attr:`CampaignArgs.outdir` named with the campaign execution date and time should be created.
-        self.create_dt_subdir = False  # type: bool
-        self.addarg("Create date-time subdirectory", "create_dt_subdir", bool).define(
-            "--dt-subdir",
-            action="store_true", default=False,
-            help="Do not store test results directly in OUTDIR_PATH (or configured path), "
-                 "but within a subdirectory named with current date and time.",
+        self.subdir_mode = None  # type: typing.Optional[CampaignArgs.SubdirMode]
+        self.addarg("Subdirectory mode", "subdir_mode", CampaignArgs.SubdirMode).define(
+            "--subdir", metavar="SUBDIR_MODE",
+            action="store",
+            help="Choose the subdirectory mode in OUTDIR_PATH (or configured path) to store test results into. "
+                 f"'{CampaignArgs.SubdirMode.DATE_TIME}' (default behaviour): to create a subdirectory named with current date and time "
+                 f"('YYYY-MM-DD_HH-MM-SS' pattern). "
+                 f"'{CampaignArgs.SubdirMode.NONE}': to store test results directly in OUTDIR_PATH.",
         )
 
         #: Attribute names to display for extra info.

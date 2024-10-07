@@ -261,7 +261,9 @@ class MkDoc:
 
         # Campaign executions.
         _generatelog(
-            _paths.BIN_PATH / "run-campaign.py", positionals=[_paths.DEMO_PATH / "demo.suite"],
+            _paths.BIN_PATH / "run-campaign.py",
+            options=[f"--subdir={scenario.CampaignArgs.SubdirMode.NONE}"],
+            positionals=[_paths.DEMO_PATH / "demo.suite"],
             suffix=".campaign", summary=True, campaign_report=True,
         )
 
