@@ -102,7 +102,7 @@ intermediate private instances may be used:
 Explicit ``__all__`` declaration
 --------------------------------
 
-If exported classes are renamed, use explicit ``__all__`` declarations
+If exported constants and classes are renamed, use explicit ``__all__`` declarations
 (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
 For consistency reasons, back every export of such module with an ``__all__`` declaration,
 even though non renamed exports don't really need it.

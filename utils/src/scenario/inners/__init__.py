@@ -18,21 +18,25 @@
 This subpackage makes a couple of inner :mod:`scenario` symbols available for :mod:`scenario.test`, :mod:`scenario.tools`, ...
 """
 
+import typing
+
+
 # Reexports.
 try:
-    # Regular reexports.
-    from scenario._fastpath import FAST_PATH as FAST_PATH  # noqa  ## Access to a protected member
-    from scenario._jsondictutils import JsonDict as JsonDict  # noqa  ## Access to a protected member
+    # Explicit export declarations (see https://docs.python.org/3/tutorial/modules.html#importing-from-a-package).
+    __all__ = []  # type: typing.List[str]
 
-    # Module and variable reexports with renamings are not considered as reexports when imported from `scenario` (and not '.' probably? tbc).
-    # Let's reexport them through intermediate shortcut variables.
-    from scenario import _perfutils as _perfutils
-    perfutils = _perfutils
-    from scenario import _textfileutils as _textfileutils
-    textfileutils = _textfileutils
-    from scenario import _textutils as _textutils
-    textutils = _textutils
-    from scenario._reflection import REFLECTION as _REFLECTION  # noqa  ## Access to a protected member
-    reflection = _REFLECTION
+    from scenario import _perfutils as perfutils
+    __all__.append("perfutils")
+    from scenario import _textfileutils as textfileutils
+    __all__.append("textfileutils")
+    from scenario import _textutils as textutils
+    __all__.append("textutils")
+    from scenario._fastpath import FAST_PATH as FAST_PATH  # noqa  ## Access to a protected member
+    __all__.append("FAST_PATH")
+    from scenario._jsondictutils import JsonDict as JsonDict  # noqa  ## Access to a protected member
+    __all__.append("JsonDict")
+    from scenario._reflection import REFLECTION as reflection  # noqa  ## Access to a protected member + Constant variable imported as non-constant
+    __all__.append("reflection")
 finally:
     pass
