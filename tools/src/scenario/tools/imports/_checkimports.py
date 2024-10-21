@@ -42,6 +42,24 @@ class CheckImports:
                 help="Path(s) to check.",
             )
 
+    class JustificationTag(scenario.enum.StrEnum):
+        AFTER_PATH_MANAGEMENT = "@after-path-management"
+        INHERITANCE = "@inheritance"
+        METACLASS = "@metaclass"
+        MODULE_LEVEL_INSTANTIATION = "@module-level-instantiation"
+        CLASS_MEMBER_INSTANTIATION = "@class-member-instantiation"
+        MODULE_LEVEL_EXECUTION = "@module-level-execution"
+        PERF = "@perf"
+
+        @staticmethod
+        def frombytes(
+                bytes,  # type: bytes  # noqa  ## Shadows built-in name 'bytes'
+        ):  # type: (...) -> CheckImports.JustificationTag
+            for _enum in CheckImports.JustificationTag:  # type: CheckImports.JustificationTag
+                if bytes == _enum.encode("utf-8"):
+                    return _enum
+            raise KeyError(f"No such justification tag {bytes!r}")
+
     def __init__(self):  # type: (...) -> None
         self.modules = []  # type: typing.List[_ModuleParserType]
 
@@ -144,6 +162,11 @@ class CheckImports:
                 if any([
                     # Pure system import.
                     _import.issystemimport(),
+                    # `scenario.ui` may import `scenario`.
+                    all([
+                        _import.importer_module_path.is_relative_to(_paths.SRC_PATH / "scenario" / "ui"),
+                        _import.imported_module_original_name == "scenario",
+                    ]),
                     # `scenario.test` and `scenario.tools` may import `scenario`, `scenario.inners` and `scenario.text`.
                     all([
                         any([
@@ -316,6 +339,8 @@ class CheckImports:
             self,
             module_parser,  # type: _ModuleParserType
     ):  # type: (...) -> None
+        from ._optimized import OPTIMIZED_PATHS
+
         for _import in module_parser.module_level_imports:  # type: _ImportType
             # ---
             # RULE: Avoid `# noqa` on module level imports
@@ -327,10 +352,11 @@ class CheckImports:
             # ---
             # RULE: Implementation imports shall be justified.
             # ---
+            _justifications = []  # type: typing.List[CheckImports.JustificationTag]
             if _import.context.isifblockimpl() and (not _import.isreexport()):
                 _match = re.match(rb"^[^#]*#(.*)$", _import.raw_src)  # type: typing.Optional[typing.Match[bytes]]
                 if (not _match) or (not _match.group(1).strip()):
-                    _import.error("Justification missing with implementation import")
+                    _import.error("Justification missing with implementation import. Choose one of %s.", ", ".join(CheckImports.JustificationTag))
                 else:
                     # ---
                     # RULE: Implementation import shall be justified with justfification tags.
@@ -340,18 +366,22 @@ class CheckImports:
                     _match = re.search(rb'# +(@[^#]+)(#.*|)$', _justification)
                     if _match:
                         _justification = _match.group(1).strip()
-                    _justification_tags = [
-                        b'@after-path-management',
-                        b'@inheritance', b'@metaclass',
-                        b'@module-level-instantiation', b'@class-member-instantiation',
-                        b'@module-level-execution',
-                        b'@perf',
-                    ]  # type: typing.Sequence[bytes]
-                    if not all([
-                        _part in _justification_tags
-                        for _part in map(lambda b: b.strip(), _justification.split(b','))
-                    ]):
-                        _import.warning("Unclassified justification %r", _justification)
+                    for _part in map(lambda b: b.strip(), _justification.split(b',')):  # type: bytes
+                        try:
+                            _justifications.append(CheckImports.JustificationTag.frombytes(_part))
+                        except KeyError as _err:
+                            _import.warning("Unclassified justification %r: %r", _justification, _err)
+
+            # ---
+            # RULE: @perf imports shall be declared in optimized paths.
+            # ---
+            if (
+                (CheckImports.JustificationTag.PERF in _justifications)
+                # @perf only...
+                and (len(_justifications) == 1)
+            ):
+                if _import.imported_module_final_path not in OPTIMIZED_PATHS:
+                    _import.error("Unexpected optimized import: %r", _import.raw_src)
 
     def _checklocalimports(
             self,

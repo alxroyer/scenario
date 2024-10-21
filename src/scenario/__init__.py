@@ -337,6 +337,19 @@ if True:
 
 if True:
     __doc__ += """
+    .. py:attribute:: logging_service
+
+        Logging service management.
+
+        Useful to write main programs.
+
+        .. seealso:: :class:`._loggingservice.LoggingService` implementation.
+    """
+    from ._loggingservice import LOGGING_SERVICE as logging_service  # noqa  ## Constant variable imported as non-constant
+    __all__.append("logging_service")
+
+if True:
+    __doc__ += """
     .. py:attribute:: LoggingContext
 
         Logging context.
@@ -737,6 +750,17 @@ if True:
     from ._campaignreport import CAMPAIGN_REPORT as campaign_report  # noqa  ## Constant variable imported as non-constant
     __all__.append("campaign_report")
 
+if True:
+    __doc__ += """
+    .. py:attribute:: campaign_db
+
+        Campaign results database.
+
+        .. seealso:: :class:`._campaigndb.CampaignDatabase` implementation.
+    """
+    from ._campaigndb import CAMPAIGN_DB as campaign_db  # noqa  ## Constant variable imported as non-constant
+    __all__.append("campaign_db")
+
 
 __doc__ += """
 Scenario attributes
@@ -810,39 +834,6 @@ if typing.TYPE_CHECKING:
 
 if True:
     __doc__ += """
-    .. py:attribute:: req_db
-
-        Requirement database.
-
-        .. seealso:: :class:`._reqdb.ReqDatabase` implementation.
-    """
-    from ._reqdb import REQ_DB as req_db  # noqa  ## Constant variable imported as non-constant
-    __all__.append("req_db")
-
-if True:
-    __doc__ += """
-    .. py:attribute:: req_mgt
-
-        Requirement management runner.
-
-        .. seealso:: :class:`._reqmgt.ReqManagement` implementation.
-    """
-    from ._reqmgt import REQ_MANAGEMENT as req_mgt  # noqa  ## Constant variable imported as non-constant
-    __all__.append("req_mgt")
-
-if True:
-    __doc__ += """
-    .. py:attribute:: ReqManagementArgs
-
-        Inherit from this class in order to extend :class:`._reqmgtargs.ReqManagementArgs` arguments with your own launcher script ones.
-
-        .. seealso:: :class:`._reqmgtargs.ReqManagementArgs` implementation.
-    """
-    from ._reqmgtargs import ReqManagementArgs as ReqManagementArgs
-    __all__.append("ReqManagementArgs")
-
-if True:
-    __doc__ += """
     .. py:attribute:: ReqVerifier
 
         Requirement verifier class.
@@ -885,6 +876,71 @@ if typing.TYPE_CHECKING:
     """
     from ._reqtypes import SetWithReqLinksType as SetWithReqLinksType
     __all__.append("SetWithReqLinksType")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqBaseline
+
+        Requirement baseline.
+
+        .. seealso:: :class:`._reqbl.ReqBaseline` implementation.
+    """
+    from ._reqbl import ReqBaseline as ReqBaseline
+    __all__.append("ReqBaseline")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqBaselineObject
+
+        Base class for requirement baseline related objects.
+
+        .. seealso:: :class:`._reqblobj.ReqBaselineObject` implementation.
+    """
+    from ._reqblobj import ReqBaselineObject as ReqBaselineObject
+    __all__.append("ReqBaselineObject")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqDatabase
+
+        Requirement database.
+        One requirement database owned by each requirement baseline.
+    """
+    from ._reqdb import ReqDatabase as ReqDatabase
+    __all__.append("ReqDatabase")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqTraceability
+
+        Requirement traceability computation.
+
+        .. seealso:: :class:`._reqtraceability.ReqTraceability` implementation.
+    """
+    from ._reqtraceability import ReqTraceability as ReqTraceability
+    __all__.append("ReqTraceability")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: req_mgt
+
+        Requirement management runner.
+
+        .. seealso:: :class:`._reqmgt.ReqManagement` implementation.
+    """
+    from ._reqmgt import REQ_MANAGEMENT as req_mgt  # noqa  ## Constant variable imported as non-constant
+    __all__.append("req_mgt")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ReqManagementArgs
+
+        Inherit from this class in order to extend :class:`._reqmgtargs.ReqManagementArgs` arguments with your own launcher script ones.
+
+        .. seealso:: :class:`._reqmgtargs.ReqManagementArgs` implementation.
+    """
+    from ._reqmgtargs import ReqManagementArgs as ReqManagementArgs
+    __all__.append("ReqManagementArgs")
 
 
 __doc__ += """

@@ -18,6 +18,7 @@ import enum
 import typing
 
 import scenario
+import scenario.inners
 import scenario.test
 import scenario.text
 
@@ -94,14 +95,12 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
         self._scenario_tested_items = []  # type: typing.List[_ScenarioTestedItems]
 
     def step(self):  # type: (...) -> None
-        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
-
         self.STEP("Scenario report expectations")
 
         scenario.logging.resetindentation()
         # Read the scenario report file.
         if self.ACTION("Read the scenario report file."):
-            self.json = JsonDict.readfile(self.report_path)
+            self.json = scenario.inners.JsonDict.readfile(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
                        extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 

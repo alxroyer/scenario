@@ -20,10 +20,11 @@ User interface campaign details page.
 
 import typing
 
+import scenario
+
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from .._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -37,7 +38,7 @@ class CampaignPage(_RequestHandlerImpl):
 
     @staticmethod
     def mkurl(
-            campaign_execution,  # type: _CampaignExecutionType
+            campaign_execution,  # type: scenario.CampaignExecution
     ):  # type: (...) -> str
         """
         Builds a campaign details URL for the given campaign.
@@ -47,15 +48,15 @@ class CampaignPage(_RequestHandlerImpl):
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(CampaignPage.URL, args={"report": campaign_execution.campaign_report_path.abspath})
+        return HttpRequest.encodeurl(CampaignPage.URL, args={HttpRequest.CAMPAIGN_NAME_ARG: campaign_execution.name})
 
     def __init__(self):  # type: (...) -> None
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_CAMPAIGN)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGN)
 
     def process(
             self,

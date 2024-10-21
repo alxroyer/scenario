@@ -30,6 +30,7 @@ if True:
     from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
     from ._scenarioevents import ScenarioEvent as _ScenarioEventImpl  # @perf
     from ._scenarioevents import ScenarioEventData as _ScenarioEventDataImpl  # @perf
@@ -43,11 +44,12 @@ if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._testerrors import TestError as _TestErrorType
 
 
-class CampaignRunner(_LoggerImpl):
+class CampaignRunner(_LoggerImpl, _ReqBaselineObjectImpl):
     """
     Campaign execution engine: runs test scenarios from input files.
 
@@ -67,14 +69,25 @@ class CampaignRunner(_LoggerImpl):
         Configures logging for the :class:`CampaignRunner` class.
         """
         _LoggerImpl.__init__(self, log_class=_DebugClassImpl.CAMPAIGN_RUNNER)
+        _ReqBaselineObjectImpl.__init__(self)
 
-    def main(self):  # type: (...) -> _ErrorCodeType
+    def main(
+            self,
+            req_baseline=None,  # type: _ReqBaselineType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Campaign runner main function, as a member method.
 
-        :return: Error code.
+        :param req_baseline:
+            Optional applicable requirement baseline.
+
+            Determined from :attr:`._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILES` otherwise.
+        :return:
+            Error code.
         """
         from ._campaignexecution import CampaignExecution
+        from ._reqbl import ReqBaseline
+        from ._reqtraceability import ReqTraceability
 
         try:
             # Analyze program arguments, if not already set.
@@ -98,58 +111,60 @@ class CampaignRunner(_LoggerImpl):
             # Start log features.
             _FAST_PATH.logging_service.start()
 
-            # Load requirements.
-            for _req_db_file in _FAST_PATH.scenario_config.reqdbpaths():  # type: _PathType
-                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_file}'")
-                _FAST_PATH.req_db.load(_req_db_file)
+            # Determine the requirement baseline.
+            if req_baseline:
+                self._setreqbaseline(req_baseline)
+            else:
+                self._setreqbaseline(ReqBaseline.fromfiles(
+                    name=_DebugClassImpl.CAMPAIGN_RUNNER,  # Use debug class as requirement baseline name.
+                    req_db_paths=None,  # Load default requirement files.
+                    test_suite_paths=[],  # Don't load test suite files, they we will be loaded hereafter.
+                    log_info=True,
+                ))
+            with self.req_baseline:
+                _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
 
-            _campaign_execution = CampaignExecution(_outdir)  # type: CampaignExecution
+                # *before-campaign* handlers.
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
-            # *before-campaign* handlers.
-            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.BEFORE_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
+                # Start logging.
+                _FAST_PATH.campaign_logging.begincampaign(_campaign_execution)
 
-            # Start logging.
-            _FAST_PATH.campaign_logging.begincampaign(_campaign_execution)
+                # Execute the campaign.
+                _campaign_execution.time.setstarttime()
+                for _test_suite_path in _test_suite_files:  # type: _PathType
+                    self._exectestsuitefile(_campaign_execution, _test_suite_path)
+                _campaign_execution.time.setendtime()
 
-            # Execute the campaign.
-            _campaign_execution.time.setstarttime()
-            for _test_suite_path in _test_suite_files:  # type: _PathType
-                self._exectestsuitefile(_campaign_execution, _test_suite_path)
-            _campaign_execution.time.setendtime()
+                # Dump requirement files (only when there are requirements).
+                if self.req_db.getallreqs():
+                    # Requirement database.
+                    self.req_db.dump(_campaign_execution.req_db_path)
+                    # Downstream & upstream traceability reports.
+                    ReqTraceability(self.req_baseline).writedownstream(
+                        _campaign_execution.downstream_traceability_path,
+                        log_info=False,  # Don't log info messages.
+                        allow_results=True,  # Save test results in traceability reports.
+                    )
+                    ReqTraceability(self.req_baseline).writeupstream(
+                        _campaign_execution.upstream_traceability_path,
+                        log_info=False,  # Don't log info messages.
+                    )
 
-            # Dump requirement files (only when there are requirements).
-            if _FAST_PATH.req_db.getallreqs():
-                # Requirement database.
-                _FAST_PATH.req_db.dump(_campaign_execution.req_db_path)
-                # Downstream & upstream traceability reports.
-                _FAST_PATH.req_traceability.loaddatafromcampaignresults(
-                    _campaign_execution,
-                    log_info=False,  # Don't log info messages.
-                )
-                _FAST_PATH.req_traceability.writedownstream(
-                    _campaign_execution.downstream_traceability_path,
-                    log_info=False,  # Don't log info messages.
-                    allow_results=True,  # Save test results in traceability reports.
-                )
-                _FAST_PATH.req_traceability.writeupstream(
-                    _campaign_execution.upstream_traceability_path,
-                    log_info=False,  # Don't log info messages.
-                )
+                # Eventually write the JUnit campaign report (depends on requirement files generated before).
+                try:
+                    _FAST_PATH.campaign_report.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
+                except Exception as _err:
+                    _FAST_PATH.main_logger.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
+                    _FAST_PATH.main_logger.logexceptiontraceback(_err)
+                    return _ErrorCodeImpl.fromexception(_err)
 
-            # Eventually write the JUnit campaign report (depends on requirement files generated before).
-            try:
-                _FAST_PATH.campaign_report.writecampaignreport(_campaign_execution, _campaign_execution.campaign_report_path)
-            except Exception as _err:
-                _FAST_PATH.main_logger.error(f"Error while writing '{_campaign_execution.campaign_report_path}': {_err}")
-                _FAST_PATH.main_logger.logexceptiontraceback(_err)
-                return _ErrorCodeImpl.fromexception(_err)
+                # Final logging (after reports generation).
+                _FAST_PATH.campaign_logging.endcampaign(_campaign_execution)
+                _FAST_PATH.scenario_results.display()
 
-            # Final logging (after reports generation).
-            _FAST_PATH.campaign_logging.endcampaign(_campaign_execution)
-            _FAST_PATH.scenario_results.display()
-
-            # *after-campaign* handlers.
-            _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
+                # *after-campaign* handlers.
+                _FAST_PATH.handlers.callhandlers(_ScenarioEventImpl.AFTER_CAMPAIGN, _ScenarioEventDataImpl.Campaign(campaign_execution=_campaign_execution))
 
             # Terminate log features.
             _FAST_PATH.logging_service.stop()
@@ -314,6 +329,10 @@ class CampaignRunner(_LoggerImpl):
                 self.debug("Reading '%s'", test_case_execution.report.path)
                 try:
                     test_case_execution.report.read()
+
+                    # Save the scenario with the requirement baseline.
+                    assert test_case_execution.scenario_execution, "Scenario execution should be available once the report has been read"
+                    self.req_baseline.scenarios.append(test_case_execution.scenario_execution.definition)
                 except Exception as _err:
                     # Don't bother with errors, just debug and keep going on.
                     self.debug("Error while reading %s scenario report: %s", test_case_execution.name, _err)

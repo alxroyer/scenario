@@ -57,12 +57,8 @@ def anylongtext2str(
         # Compute the number of leading spaces or tabs.
         # Memo: `re.search()` can't return `None` here, let's use `typing.cast(typing.Any)` to work around the typing error below.
         len(typing.cast(typing.Any, re.search(r"^([ \t]*)", _line)).group(1))
-        # Iterate over `any_text` lines...
-        for _line in filter(
-            # ...except empty lines.
-            lambda line: True if line.strip() else False,
-            any_text,
-        )
+        # Iterate over `any_text` non-empty lines...
+        for _line in any_text if _line.strip()
     ]  # type: typing.List[int]
     if not _left_blank_indentations:
         # In case of non-relevant lines.
@@ -70,8 +66,8 @@ def anylongtext2str(
     _left_blank_indentation = min(_left_blank_indentations)  # type: int
 
     # Eventually (re)join the lines with '\n' characters...
-    return "\n".join(map(
+    return "\n".join([
         # ...by removing the left blank indentation computed just before.
-        lambda line: line[_left_blank_indentation:],
-        any_text,
-    ))
+        _line[_left_blank_indentation:].rstrip()
+        for _line in any_text
+    ])

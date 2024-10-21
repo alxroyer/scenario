@@ -87,6 +87,7 @@ class ModuleParser(_ErrorTrackerLoggerImpl):
                     re.match(rb'^(__doc__ *\+= *)?"""$', _line),
                     re.match(rb'^try *:$', _line),
                     re.match(rb'^if +(.*) *:$', _line),
+                    re.match(rb'^with +(.*) *:$', _line),
                     re.match(rb'^def .*\(.*$', _line),
                     re.match(rb'^class .*:$', _line),
                 ]):

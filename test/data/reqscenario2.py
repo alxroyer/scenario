@@ -21,16 +21,17 @@ import scenario.test
 class ReqScenario2(scenario.Scenario):
 
     def __init__(self):  # type: (...) -> None
-        # Ensure the requirement database is loaded.
-        try:
-            scenario.req_db.getreq("REQ-001")
-        except KeyError:
-            scenario.req_db.load(scenario.test.paths.SCENARIO_TEST_DATA_REQ_DB_FILE)
-
         scenario.Scenario.__init__(
             self,
             title="Requirement scenario 2",
         )
+
+        # Ensure the requirement database is loaded.
+        try:
+            self.req_db.getreq("REQ-001")
+        except KeyError:
+            self.req_db.load(scenario.test.paths.SCENARIO_TEST_DATA_REQ_DB_FILE)
+
         self.verifies(
             ("REQ-001/1", "Justification for REQ-001/1 covered by ReqScenario2"),
             ("REQ-002", ),  # No justification for REQ-002.

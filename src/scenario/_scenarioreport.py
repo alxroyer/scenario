@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
@@ -70,30 +71,6 @@ class ScenarioReport(_LoggerImpl):
 
         #: JSON / YAML report path being written or read.
         self._report_path = _PathImpl()  # type: _PathType
-
-        #: ``True`` to feed automatically the requirement database with verified requirement references.
-        self._feed_req_db = False  # type: bool
-
-    def writejsonreport(
-            self,
-            scenario_definition,  # type: _ScenarioDefinitionType
-            report_path,  # type: _AnyPathType
-    ):  # type: (...) -> bool
-        """
-        Deprecated.
-        Use :meth:`writescenarioreport()` instead.
-        """
-        self.warning(f"ScenarioReport.writejsonreport() deprecated, please use ScenarioReport.writescenarioreport() instead")
-        try:
-            self.writescenarioreport(
-                scenario_definition,
-                report_path,
-            )
-            return True
-        except Exception as _err:
-            self.error(f"Could not write report '{self._report_path}': {_err}")
-            self.logexceptiontraceback(_err)
-            return False
 
     def writescenarioreport(
             self,
@@ -127,43 +104,30 @@ class ScenarioReport(_LoggerImpl):
             self.resetindentation()
             self._report_path = _PathImpl()
 
-    def readjsonreport(
-            self,
-            report_path,  # type: _AnyPathType
-            feed_req_db=False,  # type: bool
-    ):  # type: (...) -> typing.Optional[_ScenarioDefinitionType]
-        """
-        Deprecated.
-        Use :meth:`readscenarioreport()` instead.
-        """
-        self.warning(f"ScenarioReport.readjsonreport() deprecated, please use ScenarioReport.readscenarioreport() instead")
-        try:
-            return self.readscenarioreport(
-                report_path,
-                feed_req_db=feed_req_db,
-            )
-        except Exception as _err:
-            self.error(f"Could not read report '{self._report_path}': {_err}")
-            self.logexceptiontraceback(_err)
-            return None
-
     def readscenarioreport(
             self,
             report_path,  # type: _AnyPathType
             *,
-            feed_req_db=False,  # type: bool
+            req_baseline=None,  # type: typing.Optional[_ReqBaselineType]
     ):  # type: (...) -> _ScenarioDefinitionType
         """
         Reads the scenario report file.
 
         :param report_path:
             Scenario report path to read.
-        :param feed_req_db:
-            ``True`` to feed automatically the requirement database with verified requirement references.
+        :param req_baseline:
+            Requirement baseline to feed.
+
+            Automatically instantiated if not provided (default behaviour).
+
+            The requirement baseline (either provided or automatically instantiated)
+            is returned as the :attr:`._reqblobj.ReqBaselineObject.req_baseline` attribute
+            of the resulting :class:`._scenariodefinition.ScenarioDefinition` instance.
         :return:
             Scenario data read from the scenario report file.
         """
         from ._jsondictutils import JsonDict
+        from ._reqbl import ReqBaseline
 
         try:
             self.resetindentation()
@@ -173,16 +137,20 @@ class ScenarioReport(_LoggerImpl):
             self._report_path = _PathImpl(report_path)
             _json = JsonDict.readfile(self._report_path)  # type: _JsonDictType
 
-            # Analyze the JSON content.
-            self._feed_req_db = feed_req_db
-            _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
+            # Determine the requirement baseline.
+            if req_baseline is None:
+                # Build a new baseline.
+                req_baseline = ReqBaseline(self._report_path.prettypath)
+
+            with req_baseline:
+                # Analyze the JSON content.
+                _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
 
             return _scenario_definition
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
             self._report_path = _PathImpl()
-            self._feed_req_db = False
 
     def _scenario2json(
             self,
@@ -457,14 +425,10 @@ class ScenarioReport(_LoggerImpl):
             for _json_req_link in json_req_verifier["reqs"]:  # type: _JsonDictType
                 _req_ref_id = _json_req_link["ref"]  # type: str
                 try:
-                    _req_ref = _FAST_PATH.req_db.getreqref(_req_ref_id, push_unknown=self._feed_req_db)  # type: _ReqRefType
+                    _req_ref = req_verifier.req_db.getreqref(_req_ref_id)  # type: _ReqRefType
                 except KeyError:
-                    if self._feed_req_db:
-                        # Requirement reference should have been added automatically.
-                        raise
-                    else:
-                        self.warning(f"Unknown requirement reference {_req_ref_id!r}")
-                        continue
+                    self.warning(f"Unknown requirement reference {_req_ref_id!r}")
+                    continue
 
                 _req_link_def = _req_ref  # type: ReqLinkDefType
                 if "comments" in _json_req_link:

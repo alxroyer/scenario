@@ -28,12 +28,14 @@ if True:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._path import Path as _PathImpl  # @perf
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
     from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._executionstatus import ExecutionStatus as _ExecutionStatusType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stats import ExecTotalStats as _ExecTotalStatsType
@@ -41,7 +43,7 @@ if typing.TYPE_CHECKING:
     from ._testerrors import TestError as _TestErrorType
 
 
-class CampaignExecution:
+class CampaignExecution(_ReqBaselineObjectImpl):
     """
     Main campaign result object.
     """
@@ -56,6 +58,9 @@ class CampaignExecution:
 
             ``None`` initializes the output directory path with the current working directory.
         """
+        # Get the requirement baseline from the scenario stack.
+        _ReqBaselineObjectImpl.__init__(self, _FAST_PATH.scenario_stack.reqs.baseline)
+
         #: Output directory path.
         self.outdir = _PathImpl(outdir)  # type: _PathType
         #: Campaign report path, when explicitly set.
@@ -117,12 +122,13 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
+        from ._reqdb import ReqDatabase
 
         if self._req_db_path is None:
             self._req_db_path = self._guessfilepath(
                 file_description="requirement database",
                 default_filename=_FAST_PATH.scenario_config.reqdbfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_db.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
             )
         return self._req_db_path
 
@@ -141,12 +147,13 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
+        from ._reqtraceability import ReqTraceability
 
         if self._downstream_traceability_path is None:
             self._downstream_traceability_path = self._guessfilepath(
                 file_description="downstream traceability",
                 default_filename=_FAST_PATH.scenario_config.downstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_traceability.Downstream.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH),
             )
         return self._downstream_traceability_path
 
@@ -165,12 +172,13 @@ class CampaignExecution:
         Default path when not set yet.
         """
         from ._jsondictutils import JsonDict
+        from ._reqtraceability import ReqTraceability
 
         if self._upstream_traceability_path is None:
             self._upstream_traceability_path = self._guessfilepath(
                 file_description="upstream traceability",
                 default_filename=_FAST_PATH.scenario_config.upstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, _FAST_PATH.req_traceability.Upstream.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH),
             )
         return self._upstream_traceability_path
 
@@ -282,7 +290,7 @@ class CampaignExecution:
         return _stats
 
 
-class TestSuiteExecution:
+class TestSuiteExecution(_ReqBaselineObjectImpl):
     """
     Test suite execution object.
     """
@@ -303,6 +311,9 @@ class TestSuiteExecution:
             This path can be fixed programmatically later on.
         """
         from ._testsuitefile import TestSuiteFile
+
+        # Same requirement baseline as the owner campaign.
+        _ReqBaselineObjectImpl.__init__(self, campaign_execution.req_baseline)
 
         #: Owner campaign execution.
         self.campaign_execution = campaign_execution  # type: CampaignExecution
@@ -414,7 +425,7 @@ class TestSuiteExecution:
         return _stats
 
 
-class TestCaseExecution:
+class TestCaseExecution(_ReqBaselineObjectImpl):
     """
     Test case (i.e. test scenario) execution object.
     """
@@ -433,6 +444,9 @@ class TestCaseExecution:
             ``None`` initializes the :attr:`script_path` member with a *void* file path.
             This path can be fixed programmatically later on.
         """
+        # Same requirement baseline as the owner test suite.
+        _ReqBaselineObjectImpl.__init__(self, test_suite_execution.req_baseline)
+
         #: Owner test suite execution.
         self.test_suite_execution = test_suite_execution  # type: TestSuiteExecution
         #: Scenario script path.
@@ -440,9 +454,9 @@ class TestCaseExecution:
         #: Time statistics.
         self.time = _TimeStatsImpl()  # type: _TimeStatsType
         #: Test case log output.
-        self.log = LogFileReader()  # type: LogFileReader
+        self.log = LogFileReader(self.req_baseline)  # type: LogFileReader
         #: Test case report output.
-        self.report = ReportFileReader()  # type: ReportFileReader
+        self.report = ReportFileReader(self.req_baseline)  # type: ReportFileReader
 
     def __repr__(self):  # type: () -> str
         """
@@ -560,15 +574,25 @@ class CampaignStats:
         self.errors = 0  # type: int
 
 
-class LogFileReader:
+class LogFileReader(_ReqBaselineObjectImpl):
     """
     Log file path and content.
     """
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            req_baseline,  # type: _ReqBaselineType
+    ):  # type: (...) -> None
         """
         Initializes :attr:`path` and :attr:`content` attributes with ``None``.
+
+        :param req_baseline:
+            Related requirement baseline.
+
+            .. note:: Information useless for reading a simple log file, but kept for consistency with :class:`ReportFileReader`.
         """
+        _ReqBaselineObjectImpl.__init__(self, req_baseline)
+
         #: Test case log file path.
         self.path = None  # type: typing.Optional[_PathType]
         #: Test case log file content.
@@ -583,15 +607,22 @@ class LogFileReader:
         self.content = self.path.read_bytes()
 
 
-class ReportFileReader:
+class ReportFileReader(_ReqBaselineObjectImpl):
     """
     Scenario report file path and content.
     """
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            req_baseline,  # type: _ReqBaselineType
+    ):  # type: (...) -> None
         """
         Initializes :attr:`path` and :attr:`content` attributes with ``None``.
+
+        :param req_baseline: Requirement baseline to use for reading the scenario report.
         """
+        _ReqBaselineObjectImpl.__init__(self, req_baseline)
+
         #: Test case JSON file path.
         self.path = None  # type: typing.Optional[_PathType]
         #: Scenario execution data read from the test case JSON file.
@@ -603,4 +634,4 @@ class ReportFileReader:
         """
         if not self.path:
             raise FileNotFoundError("No scenario report to read")
-        self.content = _FAST_PATH.scenario_report.readscenarioreport(self.path, feed_req_db=True)
+        self.content = _FAST_PATH.scenario_report.readscenarioreport(self.path, req_baseline=self.req_baseline)

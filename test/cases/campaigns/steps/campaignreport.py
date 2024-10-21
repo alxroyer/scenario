@@ -47,15 +47,22 @@ class CheckCampaignReport(scenario.test.VerificationStep):
         if self.doexecute():
             self.campaign_expectations.outdir_path = self.getexecstep(ExecCampaign).final_outdir_path
 
-        _campaign_execution = scenario.CampaignExecution(outdir=None)  # type: scenario.CampaignExecution
+        with scenario.ReqBaseline("tmp"):  # For tmp `CampaignExecution` instantiation.
+            _campaign_execution = scenario.CampaignExecution(outdir=None)  # type: scenario.CampaignExecution
         if self.ACTION("Read the .xml campaign report file (with scenario reports)."):
             self.evidence(f"Campaign report path: '{self.campaign_expectations.campaign_report_path}'")
             _t0 = time.time()  # type: float
             _campaign_execution = scenario.campaign_report.readcampaignreport(
                 self.campaign_expectations.campaign_report_path,
                 read_scenario_reports=True,
+                # Let the requirement baseline be automatically instantiated.
+                req_baseline=None,
             )
             self.evidence(f"Campaign report read in {time.time() - _t0:.2f} seconds")
+
+            # Save the resulting requirement baseline with the `ExecCampaign` step.
+            self.getexecstep(ExecCampaign).campaign_req_baseline = _campaign_execution.req_baseline
+            self.info(f"Requirement baseline {_campaign_execution.req_baseline!r} saved with {self.getexecstep(ExecCampaign)}")
 
         if self.campaign_expectations.test_suite_expectations is not None:
             _test_suites_txt = scenario.text.Countable("test suite", self.campaign_expectations.test_suite_expectations)  # type: scenario.text.Countable

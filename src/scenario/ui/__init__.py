@@ -24,6 +24,10 @@
 - displays test case details (steps, actions, expected results),
 - displays campaign results,
 - displays requirement traceability reports.
+
+Subpackage of :mod:`scenario`,
+but designed as an independant package, relying on it as some tier user software would do
+(except for a couple of inner symbols not officially exported by :mod:`scenario`).
 """
 
 import typing
@@ -68,3 +72,16 @@ if True:
     """
     from ._args import UIArgs as Args
     __all__.append("Args")
+
+if True:
+    __doc__ += """
+    .. py:attribute:: ConfigKey
+
+        `scenario` configuration keys.
+
+        .. seealso:: :class:`._scenarioconfig.ScenarioConfig.Key` implementation.
+    """
+    # Note: Can't reexport `ScenarioConfig.Key` as `ConfigKey` with a single `import` statement. Use an intermediate private instance.
+    from ._configdb import UIConfig as _UIConfigImpl  # @module-level-instantiation
+    ConfigKey = _UIConfigImpl.Key
+    __all__.append("ConfigKey")

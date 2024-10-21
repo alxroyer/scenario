@@ -26,12 +26,14 @@ if True:
     from ._errcodes import ErrorCode as _ErrorCodeImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._errcodes import ErrorCode as _ErrorCodeType
     from ._path import Path as _PathType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
 
 
-class ReqManagement(_LoggerImpl):
+class ReqManagement(_LoggerImpl, _ReqBaselineObjectImpl):
     """
     Requirement management main program.
 
@@ -43,14 +45,21 @@ class ReqManagement(_LoggerImpl):
         Configures logging for the :class:`ReqManagement` class.
         """
         _LoggerImpl.__init__(self, _DebugClassImpl.REQ_MANAGEMENT)
+        _ReqBaselineObjectImpl.__init__(self)
 
-    def main(self):  # type: (...) -> _ErrorCodeType
+    def main(
+            self,
+            req_baseline=None,  # type: _ReqBaselineType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Requirement management main function, as a member method.
 
+        :param req_baseline: Optional applicable requirement baseline.
         :return: Error code.
         """
+        from ._reqbl import ReqBaseline
         from ._reqmgtargs import ReqManagementArgs
+        from ._reqtraceability import ReqTraceability
 
         # Analyze program arguments, if not already set.
         if not ReqManagementArgs.isset():
@@ -63,13 +72,24 @@ class ReqManagement(_LoggerImpl):
 
         _errors = []  # type: typing.List[_ErrorCodeType]
 
-        # Requirement & scenario loading.
+        # Requirement & scenario baseline.
         try:
             _campaign_results_path = ReqManagementArgs.getinstance().campaign_results_path  # type: typing.Optional[_PathType]
             if _campaign_results_path:
-                _FAST_PATH.req_traceability.loaddatafromcampaignresults(_campaign_results_path)
+                # Use the given campaign results.
+                self._setreqbaseline(ReqBaseline.fromcampaignresults(
+                    _campaign_results_path,
+                    name=None,  # Let the requirement baseline take its name from the campaign results.
+                    log_info=True,
+                ))
+            elif req_baseline:
+                self._setreqbaseline(req_baseline)
             else:
-                _FAST_PATH.req_traceability.loaddatafromfiles()
+                # Load default requirement and test suite files.
+                self._setreqbaseline(ReqBaseline.fromfiles(
+                    name=_DebugClassImpl.REQ_MANAGEMENT,  # Use debug class as requirement baseline name.
+                    log_info=True,
+                ))
         except Exception as _err:
             _FAST_PATH.main_logger.logexceptiontraceback(_err)
             _errors.append(_ErrorCodeImpl.fromexception(_err))
@@ -80,7 +100,7 @@ class ReqManagement(_LoggerImpl):
             _downstream_traceability_path = ReqManagementArgs.getinstance().downstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _downstream_traceability_path:
                 try:
-                    _FAST_PATH.req_traceability.writedownstream(
+                    ReqTraceability(self.req_baseline).writedownstream(
                         _downstream_traceability_path,
                         allow_results=ReqManagementArgs.getinstance().allow_results,
                     )
@@ -92,7 +112,7 @@ class ReqManagement(_LoggerImpl):
             _upstream_traceability_path = ReqManagementArgs.getinstance().upstream_traceability_outfile  # type: typing.Optional[_PathType]
             if _upstream_traceability_path:
                 try:
-                    _FAST_PATH.req_traceability.writeupstream(
+                    ReqTraceability(self.req_baseline).writeupstream(
                         _upstream_traceability_path,
                     )
                 except Exception as _err:

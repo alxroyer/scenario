@@ -82,9 +82,6 @@ if __name__ == "__main__":
     # Set main path after arguments have been parsed.
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
-    # Load requirements.
-    scenario.reqs.load()
-
     # Campaign execution.
-    _res = scenario.campaign_runner.main()  # type: scenario.ErrorCode
+    _res = scenario.campaign_runner.main(scenario.reqs.req_baseline)  # type: scenario.ErrorCode
     sys.exit(int(_res))

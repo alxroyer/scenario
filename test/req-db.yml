@@ -82,7 +82,9 @@ CAMPAIGNS:
 
 
     The log output, in the end, gives a summary of the scenario execution status,
-    and highlights the errors and warnings (see MULTIPLE_SCENARIO_EXECUTION).'
+    and highlights the errors and warnings
+
+    (see MULTIPLE_SCENARIO_EXECUTION).'
   title: Campaign executions
 CONFIG_DB:
   id: CONFIG_DB

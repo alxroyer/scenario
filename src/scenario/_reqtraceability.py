@@ -25,17 +25,16 @@ if True:
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
-    from ._path import Path as _PathImpl  # @perf
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
     from ._reqref import ReqRef as _ReqRefImpl  # @perf
     from ._reqverifier import ReqVerifier as _ReqVerifierImpl  # @perf
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
-    from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
 if typing.TYPE_CHECKING:
-    from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
     from ._req import Req as _ReqType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
@@ -44,216 +43,22 @@ if typing.TYPE_CHECKING:
     from ._stepexecution import StepExecution as _StepExecutionType
 
 
-class ReqTraceability(_LoggerImpl):
+class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
     """
     Requirement traceability computation.
-
-    Instantiated once with the :data:`REQ_TRACEABILITY` singleton.
     """
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            req_baseline,  # type: _ReqBaselineType
+    ):  # type: (...) -> None
         """
-        Initializes instance attributes and configures logging for the :class:`ReqTraceability` class.
+        Stores the related baseline reference and configures logging for :class:`ReqTraceability`.
+
+        :param req_baseline: Requirement baseline to compute traceability for.
         """
         _LoggerImpl.__init__(self, _DebugClassImpl.REQ_TRACEABILITY)
-
-        #: Scenarios loaded with :meth:`loaddatafromfiles()` or :meth:`loaddatafromcampaignresults()`.
-        self.scenarios = []  # type: typing.List[_ScenarioDefinitionType]
-
-    def loaddatafromfiles(
-            self,
-            *,
-            req_db_file_paths=None,  # type: typing.Iterable[_PathType]
-            test_suite_paths=None,  # type: typing.Iterable[_PathType]
-            log_info=True,  # type: bool
-    ):  # type: (...) -> None
-        """
-        Loads or reloads input data for requirement traceability computation,
-        from requirement and/or test suite files.
-
-        :param req_db_file_paths:
-            Optional requirement database file to load.
-
-            If not set, the :attr:`._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILES` configuration will be taken into account.
-
-            If :attr:`._scenarioconfig.ScenarioConfig.Key.REQ_DB_FILES` configuration is not set,
-            the requirement database is left as is.
-        :param test_suite_paths:
-            Optional test suite paths to load scenarios from.
-
-            If not set, the :attr:`._scenarioconfig.ScenarioConfig.Key.TEST_SUITE_FILES` configuration will be taken into account.
-
-            If :attr:`._scenarioconfig.ScenarioConfig.Key.TEST_SUITE_FILES` configuration is not set,
-            the scenario list is left as is.
-        :param log_info:
-            ``True`` (by default) to generate info logging.
-        """
-        from ._testsuitefile import TestSuiteFile
-
-        self.debug("ReqTraceability.loaddatafromfiles(req_db_file_paths=%r, test_suite_paths=%r)", req_db_file_paths, test_suite_paths)
-
-        # Requirements.
-
-        if req_db_file_paths is not None:
-            # Ensure persistent and countable sequence.
-            req_db_file_paths = tuple(req_db_file_paths)
-        else:
-            # Default configuration.
-            req_db_file_paths = _FAST_PATH.scenario_config.reqdbpaths()
-
-        if req_db_file_paths:
-            if log_info:
-                _FAST_PATH.main_logger.info("Loading requirements")
-            with _FAST_PATH.main_logger.pushindentation("  "):
-                if _FAST_PATH.req_db.getallreqs():
-                    if log_info:
-                        _FAST_PATH.main_logger.info("Resetting requirement database")
-                    _FAST_PATH.req_db.clear()
-
-                self.debug("Reading %d req-db file(s)", len(list(req_db_file_paths)))
-                for _req_db_file_path in req_db_file_paths:  # type: _PathType
-                    if log_info:
-                        _FAST_PATH.main_logger.info(f"Loading '{_req_db_file_path}'")
-                    _FAST_PATH.req_db.load(_req_db_file_path)
-        else:
-            self.debug("Requirement database left as is")
-
-        if log_info:
-            _req_ref_count = len(_FAST_PATH.req_db.getallrefs())  # type: int
-            _FAST_PATH.main_logger.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
-
-        # Test suites.
-
-        if test_suite_paths is not None:
-            # Ensure persistent and countable sequence.
-            test_suite_paths = tuple(test_suite_paths)
-        else:
-            # Default configuration.
-            test_suite_paths = _FAST_PATH.scenario_config.testsuitepaths()
-
-        if test_suite_paths:
-            if log_info:
-                _FAST_PATH.main_logger.info("Loading scenarios")
-            with _FAST_PATH.main_logger.pushindentation("  "):
-                self.scenarios.clear()
-
-                try:
-                    # Disable scenario debug logging.
-                    _initial_scenario_debug_logging = (
-                        _FAST_PATH.config_db.get(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, type=bool)
-                    )  # type: typing.Optional[bool]
-                    _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, False)
-
-                    self.debug("Reading %d test suite file(s)", len(list(test_suite_paths)))
-                    for _test_suite_path in test_suite_paths:  # type: _PathType
-                        if log_info:
-                            _FAST_PATH.main_logger.info("Loading '%s'", _test_suite_path)
-                        with _FAST_PATH.main_logger.pushindentation("  "):
-                            _test_suite_file = TestSuiteFile(_test_suite_path)  # type: TestSuiteFile
-                            _test_suite_file.read()
-                            for _test_script_path in _test_suite_file.script_paths:  # type: _PathType
-                                if log_info:
-                                    _FAST_PATH.main_logger.info("Loading '%s'", _test_script_path)
-
-                                # Find the scenario class.
-                                _scenario_definition_class = _ScenarioDefinitionHelperImpl.getscenariodefinitionclassfromscript(
-                                    _test_script_path,
-                                    # Avoid loaded module being saved in `sys.modules`,
-                                    # so that the function can be called again, and traceability refreshed.
-                                    sys_modules_cache=False,
-                                )  # type: typing.Type[_ScenarioDefinitionType]
-                                self.debug("_scenario_definition_class=%r", _scenario_definition_class)
-
-                                # Create the scenario instance.
-                                _scenario = _scenario_definition_class()  # type: _ScenarioDefinitionType
-                                self.debug("_scenario=%r", _scenario)
-                                self.scenarios.append(_scenario)
-                finally:
-                    # Restore initial scenario debug logging configuration.
-                    _FAST_PATH.config_db.set(_FAST_PATH.scenario_config.Key.SCENARIO_DEBUG_LOGGING_ENABLED, _initial_scenario_debug_logging)
-        else:
-            self.debug("Scenario list left as is")
-
-        if log_info:
-            _scenario_count = len(self.scenarios)  # type: int
-            _FAST_PATH.main_logger.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
-
-    def loaddatafromcampaignresults(
-            self,
-            campaign_results,  # type: typing.Union[_PathType, _CampaignExecutionType]
-            log_info=True,  # type: bool
-    ):  # type: (...) -> None
-        """
-        Loads or reloads input data for requirement traceability computation,
-        from campaign execution results.
-
-        :param campaign_results:
-            Campaign results to load data from.
-
-            The campaign may have been executed with ``--doc-only``.
-        :param log_info:
-            ``True`` (by default) to generate info logging.
-        """
-        from ._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
-
-        self.debug("ReqTraceability.loaddatafromcampaignresults(campaign_results='%s')", campaign_results)
-
-        if isinstance(campaign_results, _PathImpl):
-            # Determine the path of the campaign report file.
-            _campaign_report_path = campaign_results  # type: _PathType
-            if _campaign_report_path.is_dir():
-                _campaign_report_path = CampaignExecution(_campaign_report_path).campaign_report_path
-                if not _campaign_report_path.is_file():
-                    raise FileNotFoundError(f"No campaign file  found in '{campaign_results}'")
-            self.debug("Campaign report file: '%s'", _campaign_report_path)
-
-            # Clear the requirement database before reloading it while reading campaign results.
-            if _FAST_PATH.req_db.getallreqs():
-                if log_info:
-                    _FAST_PATH.main_logger.info("Resetting requirement database")
-                _FAST_PATH.req_db.clear()
-
-            if log_info:
-                _FAST_PATH.main_logger.info(f"Loading campaign results from '{_campaign_report_path}'")
-            _campaign_execution = _FAST_PATH.campaign_report.readcampaignreport(
-                _campaign_report_path,
-                feed_req_db=True,
-                # Let's read scenario reports one by one after.
-                read_scenario_reports=False,
-            )  # type: CampaignExecution
-
-            if log_info:
-                _req_ref_count = len(_FAST_PATH.req_db.getallrefs())  # type: int
-                _FAST_PATH.main_logger.info(f"{_req_ref_count} requirement reference{'' if (_req_ref_count == 1) else 's'} loaded")
-        else:
-            _campaign_report_path = campaign_results.campaign_report_path  # Type already declared above.
-            _campaign_execution = campaign_results  # Type already declared above.
-
-        self.debug("Saving scenarios from %r", _campaign_execution)
-        with self.pushindentation("  "):
-            self.scenarios.clear()
-
-            self.debug("Walking through %d test suite execution(s)", len(_campaign_execution.test_suite_executions))
-            for _test_suite_execution in _campaign_execution.test_suite_executions:  # type: TestSuiteExecution
-                self.debug("Test suite '%s': Walking through %d test case execution(s)",
-                           _test_suite_execution.test_suite_file.path, len(_test_suite_execution.test_case_executions))
-                with self.pushindentation("  "):
-                    for _test_case_execution in _test_suite_execution.test_case_executions:  # type: TestCaseExecution
-                        try:
-                            if not _test_case_execution.scenario_execution:
-                                _test_case_execution.report.read()
-                                assert _test_case_execution.scenario_execution
-                            self.scenarios.append(_test_case_execution.scenario_execution.definition)
-                        except Exception as _err:
-                            _FAST_PATH.main_logger.warning("".join([
-                                f"Can't load scenario {_test_case_execution.name!r}",
-                                f" from '{_test_case_execution.report.path}'" if _test_case_execution.report.path else "",
-                                f": {_err}",
-                            ]))
-
-        if log_info:
-            _scenario_count = len(self.scenarios)  # type: int
-            _FAST_PATH.main_logger.info(f"{_scenario_count} scenario{'' if (_scenario_count == 1) else 's'} loaded")
+        _ReqBaselineObjectImpl.__init__(self, req_baseline)
 
     class Downstream(abc.ABC):
         """
@@ -486,15 +291,15 @@ class ReqTraceability(_LoggerImpl):
 
     def getdownstream(self):  # type: (...) -> ReqDownstreamTraceabilityType
         """
-        Computes downstream traceability from data previously loaded with :meth:`loaddatafromfiles()` or :meth:`loaddatafromcampaignresults()`.
+        Computes downstream traceability from the related baseline.
 
         :return: Downstream traceability.
         """
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
 
-        _all_req_refs = _FAST_PATH.req_db.getallrefs()  # type: typing.Sequence[_ReqRefType]
-        self.debug("ReqTraceability.getdownstream(): Computing downstream traceability from %d requirement references in database", len(_all_req_refs))
+        _all_req_refs = self.req_db.getallrefs()  # type: typing.Sequence[_ReqRefType]
+        self.debug("ReqTraceability.getdownstream(): Computing downstream traceability from %d requirement references", len(_all_req_refs))
         _downstream_req_refs = []  # type: typing.List[ReqTraceability.Downstream.ReqRef]
         for _req_ref in _all_req_refs:  # type: _ReqRefType
             _downstream_req_ref = ReqTraceability.Downstream.ReqRef(req_ref=_req_ref)  # type: ReqTraceability.Downstream.ReqRef
@@ -764,16 +569,16 @@ class ReqTraceability(_LoggerImpl):
 
     def getupstream(self):  # type: (...) -> ReqUpstreamTraceabilityType
         """
-        Computes upstream traceability from data previously loaded with :meth:`loaddatafromfiles()` or :meth:`loaddatafromcampaignresults()`.
+        Computes upstream traceability for the related baseline.
 
         :return: Upstream traceability.
         """
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
 
-        self.debug("ReqTraceability.upstream(): Computing upstream traceability from %d loaded scenarios", len(self.scenarios))
+        self.debug("ReqTraceability.upstream(): Computing upstream traceability from %d scenarios", len(self.req_baseline.scenarios))
         _upstream_scenarios = []  # type: typing.List[ReqTraceability.Upstream.Scenario]
-        for _scenario in self.scenarios:  # type: _ScenarioDefinitionType
+        for _scenario in self.req_baseline.scenarios:  # type: _ScenarioDefinitionType
             _upstream_scenario = ReqTraceability.Upstream.Scenario(scenario=_scenario)  # type: ReqTraceability.Upstream.Scenario
             _upstream_scenarios.append(_upstream_scenario)
 
@@ -856,14 +661,7 @@ if typing.TYPE_CHECKING:
 
     #: Upstream traceability type.
     #:
-    #: Sequence of :class:`ReqTracibility.Upstream.Scenario` instances,
+    #: Sequence of :class:`ReqTraceability.Upstream.Scenario` instances,
     #: each owning a sequence of :class:`ReqTraceability.Upstream.Req` instances,
     #: each possibly owning :class:`ReqTraceability.Upstream.ReqSubref` instances.
     ReqUpstreamTraceabilityType = typing.Sequence[ReqTraceability.Upstream.Scenario]
-
-
-#: Main instance of :class:`ReqTraceability`.
-#:
-#: Also available as :attr:`._fastpath.FastPath.req_traceability`.
-#: Please prefer the latter instead of using local imports of this module.
-REQ_TRACEABILITY = ReqTraceability()  # type: ReqTraceability

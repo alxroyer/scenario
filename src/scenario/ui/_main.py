@@ -19,25 +19,19 @@ User interface launching.
 """
 
 import sys
-import typing
 
-if typing.TYPE_CHECKING:
-    from .._errcodes import ErrorCode as _ErrorCodeType
+import scenario
 
 
-def main():  # type: (...) -> _ErrorCodeType
+def main():  # type: (...) -> scenario.ErrorCode
     """
     User interface launcher function.
 
     :return: Error code.
     """
-    from .._campaigndb import CAMPAIGN_DB
-    from .._errcodes import ErrorCode
-    from .._loggermain import MAIN_LOGGER
-    from .._loggingservice import LOGGING_SERVICE
-    from .._reqtraceability import REQ_TRACEABILITY
     from ._args import UIArgs
     from ._httpserver import HTTP_SERVER
+    from ._mainreqbaseline import UI_MAIN_REQ_BASELINE
 
     # Analyze program arguments, if not already set.
     if not UIArgs.isset():
@@ -46,22 +40,31 @@ def main():  # type: (...) -> _ErrorCodeType
             return UIArgs.getinstance().error_code
 
     # Start log features.
-    LOGGING_SERVICE.start()
+    scenario.logging_service.start()
 
     try:
         # Load default requirements and scenarios from `ScenarioConfig.Key.REQ_DB_FILES` and `TEST_SUITE_FILES` configurations.
-        REQ_TRACEABILITY.loaddatafromfiles()
+        UI_MAIN_REQ_BASELINE.set(scenario.ReqBaseline.fromfiles(
+            name="scenario.ui",
+            log_info=True,
+        ))
         # Load campaign results.
-        CAMPAIGN_DB.load()
+        scenario.campaign_db.load(
+            # Don't read scenario logs and reports right now for performance concerns.
+            # They will be read later if needed.
+            read_scenario_logs=False,
+            read_scenario_reports=False,
+            log_info=True,
+        )
 
         # Launch the HTTP server.
-        MAIN_LOGGER.info("")
+        scenario.logging.info("")
         HTTP_SERVER.serve()
     except Exception as _err:
-        MAIN_LOGGER.logexceptiontraceback(_err)
-        return ErrorCode.fromexception(_err)
+        scenario.logging.logexceptiontraceback(_err)
+        return scenario.ErrorCode.fromexception(_err)
 
     # Terminate log features.
-    LOGGING_SERVICE.stop()
+    scenario.logging_service.stop()
 
-    return ErrorCode.SUCCESS
+    return scenario.ErrorCode.SUCCESS

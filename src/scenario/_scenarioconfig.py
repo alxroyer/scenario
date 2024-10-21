@@ -42,7 +42,7 @@ class ScenarioConfig(_LoggerImpl):
 
     Instantiated once with the :data:`SCENARIO_CONFIG` singleton.
 
-    This class defines static methods that help reading `scenario` configurations:
+    This class defines methods that help reading `scenario` configurations:
     from the program arguments (see: :class:`._args.Args`),
     and the configuration database (see: :class:`._configdb.ConfigDatabase`).
     """
@@ -122,15 +122,6 @@ class ScenarioConfig(_LoggerImpl):
         ISSUE_LEVEL_ERROR = "scenario.issue_level_error"
         #: Issue level from and under which known issues should be ignored.
         ISSUE_LEVEL_IGNORED = "scenario.issue_level_ignored"
-
-        # User Interface.
-
-        #: Main path for `scenario.ui` execution. Absolute path string. Default is 'ui/' in the :mod:`scenario` repository directory.
-        UI_MAIN_PATH = "scenario.ui.main_path"
-        #: Main `scenario.ui` CSS URL. String. Defaults to 'css/ui.css'.
-        UI_CSS_URL = "scenario.ui.css_url"
-        #: Main `scenario.ui` Javascript URL. String. Default to 'js/ui.js'.
-        UI_JS_URL = "scenario.ui.js_url"
 
     def __init__(self):  # type: (...) -> None
         """
@@ -610,39 +601,6 @@ class ScenarioConfig(_LoggerImpl):
                 # type: typing.Optional[_AnyIssueLevelType]
             self.debug("issuelevelignored() -> %r (from config-db)", _issue_level_ignored)
             return _issue_level_ignored
-
-    def uimainpath(self):  # type: (...) -> _PathType
-        """
-        Retrieves the working directory path for `scenario.ui`.
-
-        :return: `scenario.ui` main working directory.
-        """
-        _abspath = (
-            _FAST_PATH.config_db.get(self.Key.UI_MAIN_PATH, type=str)
-            or (_ROOT_SCENARIO_PATH / "ui").abspath
-        )  # type: str
-        self.debug("uimainpath() -> %r", _PathImpl(_abspath))
-        return _PathImpl(_abspath)
-
-    def uicssurl(self):  # type: (...) -> str
-        """
-        Retrieves the URL for the main `scenario.ui` CSS file.
-
-        :return: URL from `scenario.ui` main path.
-        """
-        _ui_css_url = _FAST_PATH.config_db.get(self.Key.UI_CSS_URL, type=str, default="css/ui.css")  # type: str
-        self.debug("uicssurl() -> %r", _ui_css_url)
-        return _ui_css_url
-
-    def uijsurl(self):  # type: (...) -> str
-        """
-        Retrieves the URL for the main `scenario.ui` Javascript file.
-
-        :return: URL from `scenario.ui` main path.
-        """
-        _ui_js_url = _FAST_PATH.config_db.get(self.Key.UI_JS_URL, type=str, default="js/ui.js")  # type: str
-        self.debug("uijsurl() -> %r", _ui_js_url)
-        return _ui_js_url
 
     def _readstringlistfromconf(
             self,

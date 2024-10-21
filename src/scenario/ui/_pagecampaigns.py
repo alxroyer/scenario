@@ -20,12 +20,11 @@ User interface campaign list page.
 
 import typing
 
+import scenario
+
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from .._campaignexecution import CampaignExecution as _CampaignExecutionType
-    from .._campaignexecution import TestCaseExecution as _TestCaseExecutionType
-    from .._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
@@ -42,9 +41,9 @@ class CampaignListPage(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_CAMPAIGNS)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGNS)
 
     def process(
             self,
@@ -60,10 +59,10 @@ class CampaignListPage(_RequestHandlerImpl):
         self.debug("Processing %r", request)
 
         # Sort campaign executions.
-        _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[_CampaignExecutionType]
+        _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]
 
         # Identify common list of test suites & test cases reference.
-        _campaign_execution_ref = self._mergecampaignexecutionref(_campaign_executions)  # type: _CampaignExecutionType
+        _campaign_execution_ref = self._mergecampaignexecutionref(_campaign_executions)  # type: scenario.CampaignExecution
 
         self.debug("Generating HTML content")
         _html = HtmlDocument()
@@ -75,13 +74,13 @@ class CampaignListPage(_RequestHandlerImpl):
                 self._campaignlist2tablehead(_campaign_executions, _html)
 
                 # Test suites and cases with execution status.
-                for _test_suite_execution_ref in _campaign_execution_ref.test_suite_executions:  # type: _TestSuiteExecutionType
-                    self._testsuiteexecution2html(_campaign_executions, _test_suite_execution_ref, _html)
+                for _test_suite_execution_ref in _campaign_execution_ref.test_suite_executions:  # type: scenario.TestSuiteExecution
+                    self._testsuiteexecution2html(request, _campaign_executions, _test_suite_execution_ref, _html)
 
         request.sendhtml(_html)
         return True
 
-    def _sortedcampaignlist(self):  # type: (...) -> typing.Sequence[_CampaignExecutionType]
+    def _sortedcampaignlist(self):  # type: (...) -> typing.Sequence[scenario.CampaignExecution]
         """
         Returns a sorted list of campaign executions from the campaign database.
 
@@ -89,18 +88,16 @@ class CampaignListPage(_RequestHandlerImpl):
 
         :return: Sorted list of campaign executions.
         """
-        from .._campaigndb import CAMPAIGN_DB
-
         return tuple(sorted(
-            CAMPAIGN_DB.campaign_executions,
+            scenario.campaign_db.campaign_executions,
             key=lambda campaign_execution: campaign_execution.campaign_report_path.parent.name,
             reverse=True,
         ))
 
     def _mergecampaignexecutionref(
             self,
-            campaign_executions,  # type: typing.Sequence[_CampaignExecutionType]
-    ):  # type: (...) -> _CampaignExecutionType
+            campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
+    ):  # type: (...) -> scenario.CampaignExecution
         """
         Returns a reference :class:`scenario._campaignexecution.CampaignExecution` instance
         that merges tests suites and test cases listed in ``campaign_executions``.
@@ -110,28 +107,25 @@ class CampaignListPage(_RequestHandlerImpl):
         :param campaign_executions: List of campaign executions to merge test suites and cases from.
         :return: Reference :class:`scenario._campaignexecution.CampaignExecution` instance.
         """
-        from .._campaignexecution import CampaignExecution, TestCaseExecution, TestSuiteExecution
-        from .._path import Path
-
         self.debug("Identifying reference test suite and test case lists")
-        _campaign_execution_ref = CampaignExecution(
-            outdir=Path(),  # Whatever. This is not a real campaign execution.
+        _campaign_execution_ref = scenario.CampaignExecution(
+            outdir=scenario.Path(),  # Whatever. This is not a real campaign execution.
         )
-        for _campaign_execution in campaign_executions:  # type: _CampaignExecutionType
-            for _test_suite_execution in _campaign_execution.test_suite_executions:  # type: _TestSuiteExecutionType
+        for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
+            for _test_suite_execution in _campaign_execution.test_suite_executions:  # type: scenario.TestSuiteExecution
                 _test_suite_execution_ref = _campaign_execution_ref.gettestsuite(from_path=_test_suite_execution.test_suite_file.path) \
-                    # type: typing.Optional[TestSuiteExecution]
+                    # type: typing.Optional[scenario.TestSuiteExecution]
                 if not _test_suite_execution_ref:
                     self.debug("New suite %s (from %s)", _test_suite_execution.name, _campaign_execution.name)
-                    _test_suite_execution_ref = TestSuiteExecution(_campaign_execution_ref, _test_suite_execution.test_suite_file.path)
+                    _test_suite_execution_ref = scenario.TestSuiteExecution(_campaign_execution_ref, _test_suite_execution.test_suite_file.path)
                     _campaign_execution_ref.test_suite_executions.append(_test_suite_execution_ref)
 
-                for _test_case_execution in _test_suite_execution.test_case_executions:  # type: TestCaseExecution
+                for _test_case_execution in _test_suite_execution.test_case_executions:  # type: scenario.TestCaseExecution
                     _test_case_execution_ref = _test_suite_execution_ref.gettestcase(from_path=_test_case_execution.script_path) \
-                        # type: typing.Optional[TestCaseExecution]
+                        # type: typing.Optional[scenario.TestCaseExecution]
                     if not _test_case_execution_ref:
                         self.debug("New case %s.%s (from %s)", _test_suite_execution.name, _test_case_execution.name, _campaign_execution.name)
-                        _test_case_execution_ref = TestCaseExecution(_test_suite_execution_ref, _test_case_execution.script_path)
+                        _test_case_execution_ref = scenario.TestCaseExecution(_test_suite_execution_ref, _test_case_execution.script_path)
                         _test_suite_execution_ref.test_case_executions.append(_test_case_execution_ref)
 
                     # Ensure test case report is loaded.
@@ -146,7 +140,7 @@ class CampaignListPage(_RequestHandlerImpl):
 
     def _campaignlist2tablehead(
             self,
-            campaign_executions,  # type: typing.Sequence[_CampaignExecutionType]
+            campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -162,36 +156,36 @@ class CampaignListPage(_RequestHandlerImpl):
             html.addcontent('<th>Name</th>')
 
             # One column per campaign.
-            for _campaign_execution in campaign_executions:  # type: _CampaignExecutionType
+            for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
                 with html.addcontent('<th></th>'):
                     html.addcontent(f'<a href="{CampaignPage.mkurl(_campaign_execution)}">{_campaign_execution.name}</a>')
 
     def _testsuiteexecution2html(
             self,
-            campaign_executions,  # type: typing.Sequence[_CampaignExecutionType]
-            test_suite_execution_ref,  # type: _TestSuiteExecutionType
+            request,  # type: _HttpRequestType
+            campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
+            test_suite_execution_ref,  # type: scenario.TestSuiteExecution
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Generates HTML for a given reference test suite across every campaign.
 
+        :param request: Input request being processed.
         :param campaign_executions: Ordered list of campaigns to displays execution status for.
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
         :param html: HTML output page to feed.
         """
-        from .._executionstatus import ExecutionStatus
-
         # One first line for the test suite name, with execution status for each campaign.
         with html.addcontent('<tr></tr>'):
             # Test suite name.
             html.addcontent(f'<th class="suite">{test_suite_execution_ref.name}</th>')
 
             # Test suite result for each campaign.
-            for _campaign_execution in campaign_executions:  # type: _CampaignExecutionType
+            for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
                 # Determine execution status.
-                _execution_status = None  # type: typing.Optional[ExecutionStatus]
+                _execution_status = None  # type: typing.Optional[scenario.ExecutionStatus]
                 _test_suite_execution = _campaign_execution.gettestsuite(from_path=test_suite_execution_ref.test_suite_file.path) \
-                    # type: typing.Optional[_TestSuiteExecutionType]
+                    # type: typing.Optional[scenario.TestSuiteExecution]
                 if _test_suite_execution:
                     _execution_status = _test_suite_execution.status
 
@@ -202,33 +196,32 @@ class CampaignListPage(_RequestHandlerImpl):
                     html.addcontent('<td></td>')
 
         # Test case lines.
-        for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: _TestCaseExecutionType
-            self._testcaseexecution2html(campaign_executions, test_suite_execution_ref, _test_case_execution_ref, html)
+        for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: scenario.TestCaseExecution
+            self._testcaseexecution2html(request, campaign_executions, test_suite_execution_ref, _test_case_execution_ref, html)
 
     def _testcaseexecution2html(
             self,
-            campaign_executions,  # type: typing.Sequence[_CampaignExecutionType]
-            test_suite_execution_ref,  # type: _TestSuiteExecutionType
-            test_case_execution_ref,  # type: _TestCaseExecutionType
+            request,  # type: _HttpRequestType
+            campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
+            test_suite_execution_ref,  # type: scenario.TestSuiteExecution
+            test_case_execution_ref,  # type: scenario.TestCaseExecution
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Generates HTML for a given reference test case across every campaign.
 
+        :param request: Input request being processed.
         :param campaign_executions: Ordered list of campaigns to displays execution status for.
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
         :param test_case_execution_ref: Reference test case to search in each campaign test suite found from ``test_suite_execution_ref``.
         :param html: HTML output page to feed.
         """
-        from .._executionstatus import ExecutionStatus
-        from .._reqtraceability import REQ_TRACEABILITY
-        from .._scenariodefinition import ScenarioDefinition
         from ._pagescenario import ScenarioPage
 
         with html.addcontent('<tr></tr>'):
             # Test case name, with scenario URL from the `REQ_TRACEABILITY.scenarios` database if available.
             _url = ""  # type: str
-            for _scenario_definition in REQ_TRACEABILITY.scenarios:  # type: ScenarioDefinition
+            for _scenario_definition in request.req_baseline.scenarios:  # type: scenario.ScenarioDefinition
                 if _scenario_definition.script_path == test_case_execution_ref.script_path:
                     _url = ScenarioPage.mkurl(_scenario_definition)
                     break
@@ -238,14 +231,14 @@ class CampaignListPage(_RequestHandlerImpl):
                 html.addcontent(f'<th>{test_case_execution_ref.name}</th>')
 
             # Test case result for each campaign.
-            for _campaign_execution in campaign_executions:  # type: _CampaignExecutionType
+            for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
                 # Determine execution status.
-                _execution_status = None  # type: typing.Optional[ExecutionStatus]
+                _execution_status = None  # type: typing.Optional[scenario.ExecutionStatus]
                 _test_suite_execution = _campaign_execution.gettestsuite(from_path=test_suite_execution_ref.test_suite_file.path) \
-                    # type: typing.Optional[_TestSuiteExecutionType]
+                    # type: typing.Optional[scenario.TestSuiteExecution]
                 if _test_suite_execution:
                     _test_case_execution = _test_suite_execution.gettestcase(from_path=test_case_execution_ref.script_path) \
-                        # type: typing.Optional[_TestCaseExecutionType]
+                        # type: typing.Optional[scenario.TestCaseExecution]
                     if _test_case_execution:
                         _execution_status = _test_case_execution.status
 

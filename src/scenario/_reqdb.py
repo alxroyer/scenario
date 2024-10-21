@@ -34,6 +34,7 @@ if typing.TYPE_CHECKING:
     from ._jsondictutils import JsonDictType as _JsonDictType
     from ._path import Path as _PathType
     from ._req import Req as _ReqType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
     from ._reqtypes import AnyReqRefType as _AnyReqRefType
@@ -46,9 +47,7 @@ class ReqDatabase(_LoggerImpl):
     """
     Requirement database.
 
-    Instantiated once with the :data:`REQ_DB` singleton.
-
-    Stores requirements and links with verifiers (:meth:`push()`).
+    Stores requirements and links with verifiers for a given baseline.
 
     Provides a couple of query methods:
 
@@ -65,73 +64,75 @@ class ReqDatabase(_LoggerImpl):
     #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
     JSON_SCHEMA_SUBPATH = "schemas/req-db.schema.json"  # type: str
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            req_baseline,  # type: _ReqBaselineType
+    ):  # type: (...) -> None
         """
-        Initializes a empty database.
+        Initializes an empty database.
+
+        :param req_baseline: Owner baseline.
         """
         _LoggerImpl.__init__(self, _DebugClassImpl.REQ_DATABASE)
+
+        #: Owner baseline.
+        self.req_baseline = req_baseline  # type: _ReqBaselineType
 
         #: Database of requirement references, keyed by identifiers.
         self._req_db = {}  # type: typing.Dict[str, _ReqRefType]
 
-    def clear(self):  # type: (...) -> None
-        """
-        Clears the database.
-
-        Removes all requirement, requirement references with links and related verifiers.
-        """
-        self._req_db.clear()
-
     def load(
             self,
-            req_db_file,  # type: _PathType
+            req_db_file_path,  # type: _PathType
     ):  # type: (...) -> None
         """
-        Load requirements from a JSON file.
+        Load requirements from a file.
 
-        :param req_db_file: JSON file to read.
+        :param req_db_file_path: Requirement file to read.
         """
         from ._jsondictutils import JsonDict
 
-        # Read the JSON file.
-        self.debug("Reading '%s'", req_db_file)
-        _req_db_json = JsonDict.readfile(req_db_file)  # type: _JsonDictType
+        # Set `req_baseline` as the applicable baseline for `Req` and `ReqRef` object creations.
+        with self.req_baseline:
+            # Read the JSON file.
+            self.debug("Reading '%s'", req_db_file_path)
+            _req_db_json = JsonDict.readfile(req_db_file_path)  # type: _JsonDictType
 
-        # Feed the database from the JSON content.
-        for _key in _req_db_json:  # type: str
-            if _key.startswith("$"):
-                continue
-            _req_id = _key  # type: str
+            # Feed the database from the JSON content.
+            for _key in _req_db_json:  # type: str
+                if _key.startswith("$"):
+                    continue
+                _req_id = _key  # type: str
 
-            _req_json = _req_db_json[_req_id]  # type: _JsonDictType
+                _req_json = _req_db_json[_req_id]  # type: _JsonDictType
 
-            # Check requirement id redundancy in the input file.
-            if _req_id != _req_json["id"]:
-                self.warning(
-                    f"{req_db_file}: Requirement id mismatch: {_req_id!r} (JSON key) != {_req_json['id']!r} (\"id\" field), "
-                    f"keeping {_req_json['id']!r}"
-                )
+                # Check requirement id redundancy in the input file.
+                if _req_id != _req_json["id"]:
+                    self.warning(
+                        f"{req_db_file_path}: Requirement id mismatch: {_req_id!r} (JSON key) != {_req_json['id']!r} (\"id\" field), "
+                        f"keeping {_req_json['id']!r}"
+                    )
 
-            _req = self.push(_ReqImpl(
-                id=_req_json["id"],
-                title=_req_json["title"],
-                text=_req_json["text"],
-            ))  # type: _ReqType
+                _req = self._push(_ReqImpl(
+                    id=_req_json["id"],
+                    title=_req_json["title"],
+                    text=_req_json["text"],
+                ))  # type: _ReqType
 
-            for _reqref_id in _req_json["subrefs"]:  # type: str
-                self.push(_ReqRefImpl(
-                    _req,
-                    *_reqref_id.split("/")[1:],
-                ))
+                for _reqref_id in _req_json["subrefs"]:  # type: str
+                    self._push(_ReqRefImpl(
+                        _req,
+                        *_reqref_id.split("/")[1:],
+                    ))
 
     def dump(
             self,
-            req_db_file,  # type: _PathType
+            req_db_file_path,  # type: _PathType
     ):  # type: (...) -> None
         """
-        Dump the requirement database to a JSON file.
+        Dump the requirement database to a file.
 
-        :param req_db_file: JSON file to write.
+        :param req_db_file_path: Requirement file to write.
         """
         from ._jsondictutils import JsonDict
 
@@ -146,23 +147,23 @@ class ReqDatabase(_LoggerImpl):
                 "subrefs": [_subref.id for _subref in _req.subrefs],
             }
 
-        # Write the JSON file.
-        self.debug(f"Writing {req_db_file}")
+        # Write the requirement file.
+        self.debug("Writing '%s'", req_db_file_path)
         JsonDict.writefile(
             schema_subpath=ReqDatabase.JSON_SCHEMA_SUBPATH,
             content=_req_db_json,
-            output_path=req_db_file,
+            output_path=req_db_file_path,
         )
 
     @typing.overload
-    def push(self, obj):  # type: (_ReqType) -> _ReqType
+    def _push(self, obj):  # type: (_ReqType) -> _ReqType
         ...
 
     @typing.overload
-    def push(self, obj):  # type: (_ReqRefType) -> _ReqRefType
+    def _push(self, obj):  # type: (_ReqRefType) -> _ReqRefType
         ...
 
-    def push(
+    def _push(
             self,
             obj,  # type: typing.Union[_ReqType, _ReqRefType]
     ):  # type: (...) -> typing.Union[_ReqType, _ReqRefType]
@@ -219,7 +220,7 @@ class ReqDatabase(_LoggerImpl):
         # `Req` instance.
         if isinstance(req, _ReqImpl):
             if push_unknown and (req.id not in self._req_db):
-                return self.push(req)
+                return self._push(req)
             else:
                 return self.getreq(req.id)
 
@@ -227,7 +228,7 @@ class ReqDatabase(_LoggerImpl):
         elif isinstance(req, str):
             if req not in self._req_db:
                 if push_unknown:
-                    return self.push(_ReqImpl(id=req))
+                    return self._push(_ReqImpl(id=req))
                 else:
                     raise KeyError(f"Unknown requirement id {req!r}")
             return self._req_db[req].req
@@ -251,7 +252,7 @@ class ReqDatabase(_LoggerImpl):
         # `Req` or `ReqRef` instance.
         if isinstance(req_ref, (_ReqImpl, _ReqRefImpl)):
             if push_unknown and (req_ref.id not in self._req_db):
-                req_ref = self.push(req_ref)
+                req_ref = self._push(req_ref)
                 return req_ref if isinstance(req_ref, _ReqRefImpl) else req_ref.main_ref
             else:
                 return self.getreqref(req_ref.id)
@@ -354,10 +355,3 @@ class ReqDatabase(_LoggerImpl):
 
         self.debug("getallscenarios() -> %r", _scenarios)
         return _scenarios
-
-
-#: Main instance of :class:`ReqDatabase`.
-#:
-#: Also available as :attr:`._fastpath.FastPath.req_db`.
-#: Please prefer the latter instead of using local imports of this module.
-REQ_DB = ReqDatabase()  # type: ReqDatabase

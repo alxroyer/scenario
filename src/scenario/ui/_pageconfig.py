@@ -20,8 +20,9 @@ User interface configuration page.
 
 import typing
 
+import scenario
+
 if True:
-    from .. import _enumutils as _enumutils  # @inheritance
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
@@ -49,7 +50,7 @@ class ConfigurationPage(_RequestHandlerImpl):
             ConfigurationPage.Arg.ACTION: ConfigurationPage.Action.RELOAD_DEFAULT,
         })
 
-    class Arg(_enumutils.StrEnum):
+    class Arg(scenario.enum.StrEnum):
         """
         GET parameter or form input names.
         """
@@ -66,7 +67,7 @@ class ConfigurationPage(_RequestHandlerImpl):
         #: Form#2: Input text that gives a path for a campaign directory or report file.
         CAMPAIGN_PATH = "campaign-path"
 
-    class Action(_enumutils.StrEnum):
+    class Action(scenario.enum.StrEnum):
         """
         :attr:`ConfigurationPage.Arg.ACTION` values.
         """
@@ -81,9 +82,9 @@ class ConfigurationPage(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_CONFIG)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CONFIG)
 
     def process(
             self,
@@ -122,9 +123,8 @@ class ConfigurationPage(_RequestHandlerImpl):
 
         :param html: Output HTML document.
         """
-        from .._path import Path
-        from .._scenarioconfig import SCENARIO_CONFIG
-        from .._xmlutils import Xml
+        from .._scenarioconfig import SCENARIO_CONFIG  # Access `scenario` inner symbols.
+        from .._xmlutils import Xml  # Access `scenario` inner symbols.
 
         with html.addcontent(f'<div id="{html.encode(ConfigurationPage.Action.FORM1)}"></div>'):
             with html.addcontent(f'<form action="{ConfigurationPage.URL}" method="post"></form>'):
@@ -140,7 +140,7 @@ class ConfigurationPage(_RequestHandlerImpl):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                     _text_node = html.addtext("")  # type: Xml.TextNode
                     # Then add a line for each requirement file.
-                    for _req_db_path in SCENARIO_CONFIG.reqdbpaths():  # type: Path
+                    for _req_db_path in SCENARIO_CONFIG.reqdbpaths():  # type: scenario.Path
                         if _text_node.data:
                             _text_node.data += "\n"
                         _text_node.data += _req_db_path.abspath
@@ -154,7 +154,7 @@ class ConfigurationPage(_RequestHandlerImpl):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                     _text_node = html.addtext("")  # Type already defined above.
                     # Then add a line for each test suite.
-                    for _test_suite_path in SCENARIO_CONFIG.testsuitepaths():  # type: Path
+                    for _test_suite_path in SCENARIO_CONFIG.testsuitepaths():  # type: scenario.Path
                         if _text_node.data:
                             _text_node.data += "\n"
                         _text_node.data += _test_suite_path.abspath
@@ -194,14 +194,12 @@ class ConfigurationPage(_RequestHandlerImpl):
         :param request: Input request with form data.
         :param html: Output HTML document.
         """
-        from .._path import Path
-        from .._reqdb import REQ_DB
-        from .._reqtraceability import REQ_TRACEABILITY
-        from .._scenarioconfig import SCENARIO_CONFIG
+        from .._scenarioconfig import SCENARIO_CONFIG  # Access `scenario` inner symbols.
+        from ._mainreqbaseline import UI_MAIN_REQ_BASELINE
 
-        _req_db_paths = []  # type: typing.List[Path]
-        _test_suite_paths = []  # type: typing.List[Path]
-        _campaign_path = None  # type: typing.Optional[Path]
+        _req_db_paths = []  # type: typing.List[scenario.Path]
+        _test_suite_paths = []  # type: typing.List[scenario.Path]
+        _campaign_path = None  # type: typing.Optional[scenario.Path]
 
         # Determine the data to reload.
         if request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.RELOAD_DEFAULT:
@@ -211,36 +209,42 @@ class ConfigurationPage(_RequestHandlerImpl):
         elif request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.FORM1:
             for _req_db_path in request.getarg(ConfigurationPage.Arg.REQ_DB_PATHS, default="").splitlines():  # type: str
                 if _req_db_path.strip():
-                    _req_db_paths.append(Path(_req_db_path.strip()))
+                    _req_db_paths.append(scenario.Path(_req_db_path.strip()))
 
             for _test_suite_path in request.getarg(ConfigurationPage.Arg.TEST_SUITE_PATHS, default="").splitlines():  # type: str
                 if _test_suite_path.strip():
-                    _test_suite_paths.append(Path(_test_suite_path.strip()))
+                    _test_suite_paths.append(scenario.Path(_test_suite_path.strip()))
 
         elif request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.FORM2:
             if request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip():
-                _campaign_path = Path(request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip())
+                _campaign_path = scenario.Path(request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip())
 
         else:
             raise KeyError(f"Unexpected action {request.getarg(ConfigurationPage.Arg.ACTION)!r}")
 
         # Reload data.
-        if _req_db_paths or _test_suite_paths:
-            REQ_TRACEABILITY.loaddatafromfiles(
-                req_db_file_paths=_req_db_paths or None,
+        # Use file names for baseline name.
+        if _campaign_path:
+            UI_MAIN_REQ_BASELINE.set(scenario.ReqBaseline.fromcampaignresults(
+                _campaign_path,
+                name=_campaign_path.prettypath,
+                log_info=True,
+            ))
+        else:
+            UI_MAIN_REQ_BASELINE.set(scenario.ReqBaseline.fromfiles(
+                name=(
+                    ", ".join([_path.prettypath for _path in [*_req_db_paths, *_test_suite_paths]])
+                    or "(default requirement and test suite files)"
+                ),
+                req_db_paths=_req_db_paths or None,
                 test_suite_paths=_test_suite_paths or None,
                 log_info=True,
-            )
-        elif _campaign_path:
-            REQ_TRACEABILITY.loaddatafromcampaignresults(
-                campaign_results=_campaign_path,
-                log_info=True,
-            )
+            ))
 
         # Execution results.
         with html.addcontent('<div class="exec-result"></div>'):
             html.addcontent('<h2>Execution result</h2>')
             if _req_db_paths or _campaign_path:
-                html.addcontent(f'<p>{len(REQ_DB.getallreqs())} requirements loaded</p>')
+                html.addcontent(f'<p>{len(UI_MAIN_REQ_BASELINE.req_baseline.req_db.getallreqs())} requirements loaded</p>')
             if _test_suite_paths or _campaign_path:
-                html.addcontent(f'<p>{len(REQ_TRACEABILITY.scenarios)} scenarios loaded</p>')
+                html.addcontent(f'<p>{len(UI_MAIN_REQ_BASELINE.req_baseline.scenarios)} scenarios loaded</p>')

@@ -24,6 +24,7 @@ import typing
 if True:
     from . import _setutils as _setutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -36,7 +37,7 @@ if typing.TYPE_CHECKING:
     from ._stepdefinition import StepDefinition as _StepDefinitionType
 
 
-class ReqVerifier(abc.ABC):
+class ReqVerifier(abc.ABC, _ReqBaselineObjectImpl):
     """
     Requirement verifier objects.
 
@@ -72,6 +73,9 @@ class ReqVerifier(abc.ABC):
             isinstance(self, _FAST_PATH.step_definition_cls),
         ]):
             raise TypeError(f"Cannot subclass ReqVerifier if not a scenario nor step definition")
+
+        # Get the requirement baseline from the scenario stack.
+        _ReqBaselineObjectImpl.__init__(self, _FAST_PATH.scenario_stack.reqs.baseline)
 
         #: Links to the verified requirements.
         self._req_links = set()  # type: typing.Set[_ReqLinkType]
@@ -116,7 +120,7 @@ class ReqVerifier(abc.ABC):
                 _req_link.verifiedby(self)
 
                 # Let's debug the upstream requirement link after.
-                _FAST_PATH.req_db.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
+                self.req_db.debug("Requirement link: %s <- %r", _req_link.req_ref.id, self)
 
         return self
 

@@ -308,7 +308,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.ui_main_path:
 
-        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.UI_MAIN_PATH`
+        :py:attr:`scenario.ui._configdb.UIConfig.Key.MAIN_PATH`
       - ``scenario.ui.main_path``
       - Absolute path string
       - Main path for `scenario.ui` execution.
@@ -316,7 +316,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.ui_css_url:
 
-        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.UI_CSS_URL`
+        :py:attr:`scenario.ui._configdb.UIConfig.Key.CSS_URL`
       - ``scenario.ui.css_url``
       - String
       - Main `scenario.ui` CSS URL.
@@ -324,7 +324,7 @@ The following table describes the `scenario` configurable keys & values.
 
     * - .. _config-db.scenario.ui_js_url:
 
-        :py:attr:`scenario._scenarioconfig.ScenarioConfig.Key.UI_JS_URL`
+        :py:attr:`scenario.ui._configdb.UIConfig.Key.JS_URL`
       - ``scenario.ui.js_url``
       - String
       - Main `scenario.ui` Javascript URL.

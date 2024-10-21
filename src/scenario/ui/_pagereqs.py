@@ -20,11 +20,11 @@ User interface requirements page.
 
 import typing
 
+import scenario
+
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from .._req import Req as _ReqType
-    from .._reqref import ReqRef as _ReqRefType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
@@ -39,7 +39,7 @@ class RequirementsPage(_RequestHandlerImpl):
 
     @staticmethod
     def mkurl(
-            req_ref,  # type: _ReqRefType
+            req_ref,  # type: scenario.ReqRef
     ):  # type: (...) -> str
         """
         Builds an anchor URL in the requirements page, for the given requirement reference.
@@ -55,16 +55,14 @@ class RequirementsPage(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_REQS)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_REQS)
 
     def process(
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
-        from .._req import Req
-        from .._reqdb import REQ_DB
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
@@ -80,7 +78,7 @@ class RequirementsPage(_RequestHandlerImpl):
 
         with _html.addcontent('<div id="requirements"></div>'):
             with _html.addcontent('<ul></ul>'):
-                for _req in REQ_DB.getallreqs():  # type: Req
+                for _req in request.req_baseline.req_db.getallreqs():  # type: scenario.Req
                     self._req2html(_req, _html)
 
         request.sendhtml(_html)
@@ -88,7 +86,7 @@ class RequirementsPage(_RequestHandlerImpl):
 
     def _req2html(
             self,
-            req,  # type: _ReqType
+            req,  # type: scenario.Req
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -132,12 +130,12 @@ class RequirementsPage(_RequestHandlerImpl):
                 with html.addcontent('<div class="subrefs"></div>'):
                     html.addcontent('<p>Subreferences:</p>')
                     with html.addcontent('<ul></ul>'):
-                        for _req_ref in req.subrefs:  # type: _ReqRefType
+                        for _req_ref in req.subrefs:  # type: scenario.ReqRef
                             self._reqsubref2html(_req_ref, html)
 
     def _reqsubref2html(
             self,
-            req_subref,  # type: _ReqRefType
+            req_subref,  # type: scenario.ReqRef
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """

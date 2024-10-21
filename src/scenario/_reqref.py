@@ -25,6 +25,7 @@ import typing
 if True:
     from . import _setutils as _setutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._req import Req as _ReqType
     from ._reqlink import ReqLink as _ReqLinkType
@@ -35,7 +36,7 @@ if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
-class ReqRef:
+class ReqRef(_ReqBaselineObjectImpl):
     """
     Requirement reference class.
 
@@ -68,6 +69,9 @@ class ReqRef:
         :param req: Requirement to define a reference for.
         :param subs: Optional sub-item specifications.
         """
+        # Get the requirement baseline from the scenario stack.
+        _ReqBaselineObjectImpl.__init__(self, _FAST_PATH.scenario_stack.reqs.baseline)
+
         #: Requirement this :class:`ReqRef` refers to.
         #:
         #: Unresolved input data for the :meth:`req()` property.
@@ -85,6 +89,9 @@ class ReqRef:
 
         #: Unordered links with requirement verifiers.
         self._req_links = set()  # type: typing.Set[_ReqLinkType]
+
+        # Ensure the requirement is referenced in the requirement baseline.
+        self.req_db.getreqref(self, push_unknown=True)
 
     def __repr__(self):  # type: () -> str
         """
@@ -124,7 +131,7 @@ class ReqRef:
         Cached with :attr:`_req`.
         """
         if self._req is None:
-            self._req = _FAST_PATH.req_db.getreq(self._any_req, push_unknown=True)
+            self._req = self.req_db.getreq(self._any_req, push_unknown=True)
         return self._req
 
     @property

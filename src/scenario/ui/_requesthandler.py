@@ -21,14 +21,14 @@ Request management.
 import abc
 import typing
 
-if True:
-    from .._logger import Logger as _LoggerImpl  # @inheritance
+import scenario
+
 if typing.TYPE_CHECKING:
-    from .._debugclasses import DebugClass as _DebugClassType
+    from ._debugclasses import UIDebugClass as _UIDebugClassType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class RequestHandler(abc.ABC, _LoggerImpl):
+class RequestHandler(abc.ABC, scenario.Logger):
     """
     Request handler base class.
 
@@ -37,14 +37,14 @@ class RequestHandler(abc.ABC, _LoggerImpl):
 
     def __init__(
             self,
-            debug_class,  # type: _DebugClassType
+            debug_class,  # type: _UIDebugClassType
     ):  # type: (...) -> None
         """
         Configures the logger instance.
 
         :param debug_class: Debug class for this request handler.
         """
-        _LoggerImpl.__init__(self, debug_class)
+        scenario.Logger.__init__(self, debug_class)
 
     @abc.abstractmethod
     def process(

@@ -46,16 +46,25 @@ class CampaignDatabase(_LoggerImpl):
     def load(
             self,
             *,
+            read_scenario_logs=False,  # type: bool
+            read_scenario_reports=False,  # type: bool
             log_info=True,  # type: bool
     ):  # type: (...) -> None
         """
         Relaods the database from the campaign output directory.
 
+        :param read_scenario_logs:
+            ``True`` to read automatically scenario log files.
+        :param read_scenario_reports:
+            ``True`` to read automatically scenario report files, and feed the requirement baseline by the way.
+
+            Feeds the requirement baseline with the scenario definitions read from the reports.
         :param log_info: ``True`` (by default) to generate info logging.
 
         .. seealso:: :meth:`._scenarioconfig.ScenarioConfig.campaignoutdir()` for campaign output directory configuration.
         """
         from ._campaignexecution import CampaignExecution
+        from ._reqbl import ReqBaseline
 
         if log_info:
             _FAST_PATH.main_logger.info("Loading campaign results")
@@ -71,16 +80,24 @@ class CampaignDatabase(_LoggerImpl):
                 if not _path.is_dir():
                     self.debug("Not a directory '%s'", _path)
                     continue
-                _campaign_execution = CampaignExecution(_path)  # type: _CampaignExecutionType
-                if not _campaign_execution.campaign_report_path.is_file():
-                    self.debug("No '%s' report file in '%s'", _campaign_execution.campaign_report_path, _path)
-                    continue
+                with ReqBaseline(name="tmp"):  # For tmp `CampaignExecution` instantiation below.
+                    _campaign_execution = CampaignExecution(_path)  # type: _CampaignExecutionType
+                    if not _campaign_execution.campaign_report_path.is_file():
+                        self.debug("No '%s' report file in '%s'", _campaign_execution.campaign_report_path, _path)
+                        continue
 
                 try:
                     if log_info:
                         _FAST_PATH.main_logger.info(f"Loading '{_path}'")
                     self.campaign_executions.append(
-                        _FAST_PATH.campaign_report.readcampaignreport(_campaign_execution.campaign_report_path),
+                        _FAST_PATH.campaign_report.readcampaignreport(
+                            _campaign_execution.campaign_report_path,
+                            # Let the requirement baseline be automatically instantiated.
+                            req_baseline=None,
+                            # Save scenario logs and reports as required.
+                            read_scenario_logs=read_scenario_logs,
+                            read_scenario_reports=read_scenario_reports,
+                        ),
                     )
                 except Exception as _err:
                     self.warning(f"Error while loading campaign results for '{_path}': {_err!r}")
@@ -89,19 +106,38 @@ class CampaignDatabase(_LoggerImpl):
 
     def get(
             self,
-            campaign_report_path,  # type: _PathType
+            *,
+            name=None,  # type: str
+            path=None,  # type: _PathType
     ):  # type: (...) -> _CampaignExecutionType
         """
         Retrieves the campaign execution instance for the given campaign report path.
 
-        :param campaign_report_path: Campaign report path describing the campaign execution researched.
+        :param name: Search a campaign from its name.
+        :param path: Search a campaign from a path, either its output directory or its report path.
         :return: Campaign execution if found.
         :raise KeyError: If not found.
         """
+        _invalid_args_exception = Exception("No campaign criteria provided")  # type: Exception
+        if not any([
+            name is not None,
+            path is not None,
+        ]):
+            raise _invalid_args_exception
+
+        # Search for a campaign matching all criteria.
         for _campaign_execution in self.campaign_executions:  # type: _CampaignExecutionType
-            if _campaign_execution.campaign_report_path == campaign_report_path:
-                return _campaign_execution
-        raise KeyError(f"No such campaign report '{campaign_report_path}'")
+            if (name is not None) and (_campaign_execution.name != name):
+                continue
+            if (path is not None) and (_campaign_execution.outdir != path) and (_campaign_execution.campaign_report_path != path):
+                continue
+            return _campaign_execution
+
+        if name is not None:
+            raise KeyError(f"No such campaign name {name!r}")
+        if path is not None:
+            raise KeyError(f"No such campaign path '{path}'")
+        raise _invalid_args_exception
 
 
 #: Main instance of :class:`CampaignDatabase`.

@@ -38,9 +38,9 @@ class Homepage(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_HOME)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_HOME)
 
     def process(
             self,

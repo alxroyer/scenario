@@ -79,9 +79,6 @@ if __name__ == "__main__":
     if not ScenarioTestArgs.getinstance().check_expected_attributes:
         scenario.conf.remove(scenario.ConfigKey.EXPECTED_SCENARIO_ATTRIBUTES)
 
-    # Load requirements.
-    scenario.reqs.load()
-
     # Scenario execution.
-    _res = scenario.runner.main()  # type: scenario.ErrorCode
+    _res = scenario.runner.main(scenario.reqs.req_baseline)  # type: scenario.ErrorCode
     sys.exit(int(_res))

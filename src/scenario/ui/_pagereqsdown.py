@@ -20,11 +20,11 @@ User interface downstream traceability page.
 
 import typing
 
+import scenario
+
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from .._reqref import ReqRef as _ReqRefType
-    from .._reqtraceability import ReqTraceability as _ReqTraceabilityType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
@@ -39,7 +39,7 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
 
     @staticmethod
     def mkurl(
-            req_ref,  # type: _ReqRefType
+            req_ref,  # type: scenario.ReqRef
     ):  # type: (...) -> str
         """
         Builds an anchor URL in the downstream traceability page, for the given requirement reference.
@@ -53,7 +53,7 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
 
     @staticmethod
     def reqref2unnamedhtmllink(
-            req_ref,  # type: _ReqRefType
+            req_ref,  # type: scenario.ReqRef
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -68,15 +68,14 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_REQS_DOWN)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_REQS_DOWN)
 
     def process(
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
-        from .._reqtraceability import REQ_TRACEABILITY
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
@@ -91,7 +90,8 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
         _html.settitle("Downstream traceability")
 
         with _html.addcontent('<div id="downstream-traceability"></div>'):
-            _downstream_traceability = REQ_TRACEABILITY.getdownstream()  # type: typing.Sequence[_ReqTraceabilityType.Downstream.ReqRef]
+            _downstream_traceability = scenario.ReqTraceability(request.req_baseline).getdownstream() \
+                # type: typing.Sequence[scenario.ReqTraceability.Downstream.ReqRef]
 
             with _html.addcontent('<table></table>'):
                 # Heading row.
@@ -101,7 +101,7 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
                     _html.addcontent('<th class="req-ref coverage">Test coverage</th>')
 
                 # Requirement reference rows.
-                for _downstream_req_ref in _downstream_traceability:  # type: _ReqTraceabilityType.Downstream.ReqRef
+                for _downstream_req_ref in _downstream_traceability:  # type: scenario.ReqTraceability.Downstream.ReqRef
                     self._reqref2html(_downstream_req_ref, _html)
 
         request.sendhtml(_html)
@@ -109,7 +109,7 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
 
     def _reqref2html(
             self,
-            downstream_req_ref,  # type: _ReqTraceabilityType.Downstream.ReqRef
+            downstream_req_ref,  # type: scenario.ReqTraceability.Downstream.ReqRef
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -136,12 +136,12 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
             # Test coverage.
             with html.addcontent(f'<td class="req-ref coverage"></td>'):
                 with html.addcontent('<ul></ul>'):
-                    for _downstream_scenario in downstream_req_ref.scenarios:  # type: _ReqTraceabilityType.Downstream.Scenario
+                    for _downstream_scenario in downstream_req_ref.scenarios:  # type: scenario.ReqTraceability.Downstream.Scenario
                         self._scenario2html(_downstream_scenario, html)
 
     def _scenario2html(
             self,
-            downstream_scenario,  # type: _ReqTraceabilityType.Downstream.Scenario
+            downstream_scenario,  # type: scenario.ReqTraceability.Downstream.Scenario
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -171,12 +171,12 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
             # Optional steps.
             if downstream_scenario.steps:
                 with html.addcontent('<ul></ul>'):
-                    for _downstream_step in downstream_scenario.steps:  # type: _ReqTraceabilityType.Downstream.Step
+                    for _downstream_step in downstream_scenario.steps:  # type: scenario.ReqTraceability.Downstream.Step
                         self._step2html(_downstream_step, html)
 
     def _step2html(
             self,
-            downstream_step,  # type: _ReqTraceabilityType.Downstream.Step
+            downstream_step,  # type: scenario.ReqTraceability.Downstream.Step
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """

@@ -21,13 +21,12 @@ HTML page generation.
 import html
 import typing
 
-if True:
-    from .._logger import Logger as _LoggerImpl  # @inheritance
+import scenario
 if typing.TYPE_CHECKING:
-    from .._xmlutils import Xml as _XmlType
+    from .._xmlutils import Xml as _XmlType  # Access `scenario` inner symbols.
 
 
-class HtmlDocument(_LoggerImpl):
+class HtmlDocument(scenario.Logger):
     """
     HTML document generator.
     """
@@ -81,11 +80,11 @@ class HtmlDocument(_LoggerImpl):
         Initializes the HTML document
         and sets the current node with the main div of the page.
         """
-        from .._debugclasses import DebugClass
-        from .._scenarioconfig import SCENARIO_CONFIG
-        from .._xmlutils import Xml
+        from .._xmlutils import Xml  # Access `scenario` inner symbols.
+        from ._configdb import UI_CONFIG
+        from ._debugclasses import UIDebugClass
 
-        _LoggerImpl.__init__(self, DebugClass.UI_HTML_DOCUMENT)
+        scenario.Logger.__init__(self, UIDebugClass.HTML_DOCUMENT)
 
         #: XML document of the HTML page.
         self.xml_doc = Xml.Document()  # type: Xml.Document
@@ -101,8 +100,8 @@ class HtmlDocument(_LoggerImpl):
             self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
             #: HTML head title node, which text content will be set with :meth:`settitle()`.
             self._head_title = self.addcontent('<title>...</title>').new_child  # type: Xml.Node
-            self.addcontent(f'<link rel="stylesheet" href="{SCENARIO_CONFIG.uicssurl()}" type="text/css" />')
-            self.addcontent(f'<script src="{SCENARIO_CONFIG.uijsurl()}"></script>', auto_closing=False)
+            self.addcontent(f'<link rel="stylesheet" href="{UI_CONFIG.cssurl()}" type="text/css" />')
+            self.addcontent(f'<script src="{UI_CONFIG.jsurl()}"></script>', auto_closing=False)
 
         #: HTML ``<body/>`` section node.
         self.body = self.xml_doc.createnode("body")  # type: Xml.Node
@@ -180,7 +179,7 @@ class HtmlDocument(_LoggerImpl):
         :return:
             Context manager that controls the current node further content will be added to.
         """
-        from .._xmlutils import Xml
+        from .._xmlutils import Xml  # Access `scenario` inner symbols.
 
         # Parse the XML content as a new node.
         _child = self.xml_doc.parsestream(content)  # type: Xml.INode

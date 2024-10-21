@@ -68,7 +68,7 @@ if __name__ == "__main__":
     # Ensure defaults:
     # - requirements,
     if not ScenarioReqManagementArgs.getinstance().req_db_paths:
-        scenario.reqs.load(set_default_req_file=True)
+        scenario.reqs.save(set_default_req_file=True)
     # - test suites,
     if not ScenarioReqManagementArgs.getinstance().test_suite_paths:
         scenario.reqs.setdefaulttestsuites()

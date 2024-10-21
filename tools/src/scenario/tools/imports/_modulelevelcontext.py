@@ -57,9 +57,9 @@ class ModuleLevelContext:
         #: Indentation.
         self.indentation = b''  # type: bytes
         if src:
-            _match = re.match(rb'^([ \t]*)[^ \t].*$', src)  # type: typing.Optional[typing.Match[bytes]]
+            _match = re.match(rb'^([ \t]*)([^ \t].*)?$', src)  # type: typing.Optional[typing.Match[bytes]]
             if not _match:
-                raise SyntaxError(f"Invalid line {src!r}")
+                raise SyntaxError(f"Invalid line {self.line_number}: {src!r}")
             self.indentation = _match.group(1)
 
         #: Upper context, if any.

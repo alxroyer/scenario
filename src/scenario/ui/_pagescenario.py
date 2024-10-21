@@ -20,14 +20,11 @@ User interface scenario details page.
 
 import typing
 
+import scenario
+
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from .._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
-    from .._reqref import ReqRef as _ReqRefType
-    from .._reqtypes import SetWithReqLinksType as _SetWithReqLinksType
-    from .._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
-    from .._stepdefinition import StepDefinition as _StepDefinitionType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
@@ -42,7 +39,7 @@ class ScenarioPage(_RequestHandlerImpl):
 
     @staticmethod
     def mkurl(
-            req_verifier,  # type: typing.Union[_ScenarioDefinitionType, _StepDefinitionType]
+            req_verifier,  # type: typing.Union[scenario.ScenarioDefinition, scenario.StepDefinition]
     ):  # type: (...) -> str
         """
         Builds a scenario details URL for the given scenario.
@@ -50,14 +47,12 @@ class ScenarioPage(_RequestHandlerImpl):
         :param req_verifier: Scenario or step to build the URL for.
         :return: Scenario details URL for the given scenario.
         """
-        from .._scenariodefinition import ScenarioDefinition
-        from .._stepdefinition import StepDefinition
         from ._httprequest import HttpRequest
 
-        _scenario = req_verifier if isinstance(req_verifier, ScenarioDefinition) else req_verifier.scenario  # type: ScenarioDefinition
+        _scenario = req_verifier if isinstance(req_verifier, scenario.ScenarioDefinition) else req_verifier.scenario  # type: scenario.ScenarioDefinition
 
         _step_anchor = None  # type: typing.Optional[str]
-        if isinstance(req_verifier, StepDefinition):
+        if isinstance(req_verifier, scenario.StepDefinition):
             _step_anchor = f"step#{req_verifier.number}"
 
         return HttpRequest.encodeurl(ScenarioPage.URL, args={"name": _scenario.name}, anchor=_step_anchor)
@@ -66,36 +61,36 @@ class ScenarioPage(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_SCENARIO)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_SCENARIO)
 
     def _getscenario(
             self,
-            scenario_name,  # type: str
-    ):  # type: (...) -> _ScenarioDefinitionType
+            request,  # type: _HttpRequestType
+    ):  # type: (...) -> scenario.ScenarioDefinition
         """
         Retrieves the scenario instance with details.
 
         Ensures steps are executed at once to build actions and expected results.
 
-        :param scenario_name: Name of the scenario searched.
+        :param request: Input request.
         :return: Scenario found from its name.
         """
-        from .._reqtraceability import REQ_TRACEABILITY
-        from .._scenarioexecution import ScenarioExecution
-        from .._scenariostack import SCENARIO_STACK
+        # Retrieve the scenario name from request arguments.
+        _scenario_name = request.getarg("name")  # type: str
+        self.debug("Scenario name: %r", _scenario_name)
 
         # Search for the scenario in the loaded scenarios.
-        for _scenario_definition in REQ_TRACEABILITY.scenarios:  # type: _ScenarioDefinitionType
-            if _scenario_definition.name == scenario_name:
+        for _scenario_definition in request.req_baseline.scenarios:  # type: scenario.ScenarioDefinition
+            if _scenario_definition.name == _scenario_name:
                 # Scenario found.
                 if not _scenario_definition.execution:
                     # Load scenario details.
                     try:
                         # Prepare the scenario for working with `ScenarioRunner` and `ScenarioStack`.
-                        _scenario_definition.execution = ScenarioExecution(_scenario_definition)
-                        SCENARIO_STACK.building.pushscenariodefinition(_scenario_definition)
+                        _scenario_definition.execution = scenario.ScenarioExecution(_scenario_definition)
+                        scenario.stack.building.pushscenariodefinition(_scenario_definition)
 
                         # Start iterating over the scenario steps.
                         _scenario_definition.execution.startsteplist()
@@ -106,9 +101,9 @@ class ScenarioPage(_RequestHandlerImpl):
                             # Switch to the next step.
                             _scenario_definition.execution.nextstep()
                     finally:
-                        SCENARIO_STACK.building.popscenariodefinition(_scenario_definition)
+                        scenario.stack.building.popscenariodefinition(_scenario_definition)
                 return _scenario_definition
-        raise KeyError(f"No such scenario {scenario_name!r}")
+        raise KeyError(f"No such scenario {_scenario_name!r}")
 
     def process(
             self,
@@ -123,11 +118,8 @@ class ScenarioPage(_RequestHandlerImpl):
             return False
         self.debug("Processing %r", request)
 
-        # Retrieve the scenario name from request arguments.
-        _scenario_name = request.getarg("name")  # type: str
-        self.debug("Scenario name: %r", _scenario_name)
         # Then find the scenario instance from the loaded scenarios.
-        _scenario = self._getscenario(_scenario_name)  # type: _ScenarioDefinitionType
+        _scenario = self._getscenario(request)  # type: scenario.ScenarioDefinition
         self.debug("Scenario: %r", _scenario)
 
         # HTML content.
@@ -139,7 +131,7 @@ class ScenarioPage(_RequestHandlerImpl):
             if _scenario.getattributenames():
                 self._scenarioattributes2html(_scenario, _html)
 
-            _req_refs = _scenario.getreqrefs(walk_steps=True)  # type: _SetWithReqLinksType[_ReqRefType]
+            _req_refs = _scenario.getreqrefs(walk_steps=True)  # type: scenario.SetWithReqLinksType[scenario.ReqRef]
             if _req_refs:
                 self._reqrefs2html(_scenario, _req_refs, _html)
 
@@ -150,44 +142,44 @@ class ScenarioPage(_RequestHandlerImpl):
 
     def _scenarioattributes2html(
             self,
-            scenario,  # type: _ScenarioDefinitionType
+            scenario_definition,  # type: scenario.ScenarioDefinition
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Builds the HTML content for scenario attributes.
 
-        :param scenario: Scenario which attributes to build HTML content for.
+        :param scenario_definition: Scenario which attributes to build HTML content for.
         :param html: HTML output page to feed.
         """
         with html.addcontent('<div class="scenario attributes"></div>'):
             html.addcontent('<p>Attributes:</p>')
             with html.addcontent('<ul></ul>'):
-                for _attr_name in scenario.getattributenames():  # type: str
+                for _attr_name in scenario_definition.getattributenames():  # type: str
                     with html.addcontent('<li class="scenario attribute"></li>'):
                         html.addcontent(f'<span class="scenario attribute name">{html.encode(_attr_name)}</span>')
                         html.addcontent('<span class="scenario attribute sep">:</span>')
-                        html.addcontent(f'<span class="scenario attribute value">{html.encode(scenario.getattribute(_attr_name))}</span>')
+                        html.addcontent(f'<span class="scenario attribute value">{html.encode(scenario_definition.getattribute(_attr_name))}</span>')
 
     def _steps2html(
             self,
-            scenario,  # type: _ScenarioDefinitionType
+            scenario_definition,  # type: scenario.ScenarioDefinition
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Builds the HTML content for scenario steps.
 
-        :param scenario: Scenario which steps to build HTML content for.
+        :param scenario_definition: Scenario which steps to build HTML content for.
         :param html: HTML output page to feed.
         """
         with html.addcontent('<div id="steps"></div>'):
             html.addcontent('<p>Steps:</p>')
             with html.addcontent('<ul></ul>'):
-                for _step in scenario.steps:  # type: _StepDefinitionType
+                for _step in scenario_definition.steps:  # type: scenario.StepDefinition
                     self._step2html(_step, html)
 
     def _step2html(
             self,
-            step,  # type: _StepDefinitionType
+            step,  # type: scenario.StepDefinition
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -196,10 +188,8 @@ class ScenarioPage(_RequestHandlerImpl):
         :param step: Step to build HTML content for.
         :param html: HTML output page to feed.
         """
-        from .._stepsection import StepSectionDescription
-
         with html.addcontent('<li class="step"></li>'):
-            if isinstance(step, StepSectionDescription) and step.description:
+            if isinstance(step, scenario.StepSectionDescription) and step.description:
                 html.addcontent(f'<h2 class="step">{html.encode(step.description)}</h2>')
             else:
                 # Step anchor.
@@ -213,19 +203,19 @@ class ScenarioPage(_RequestHandlerImpl):
                 html.addcontent(f'<span class="step name">({step.name})</span>')
 
                 # Step requirements coverage.
-                _req_refs = step.getreqrefs()  # type: _SetWithReqLinksType[_ReqRefType]
+                _req_refs = step.getreqrefs()  # type: scenario.SetWithReqLinksType[scenario.ReqRef]
                 if _req_refs:
                     self._reqrefs2html(step, _req_refs, html)
 
                 # Actions & expected results.
                 with html.addcontent(f'<div class="actions-results"></div>'):
                     with html.addcontent('<ul></ul>'):
-                        for _action_result in step.actions_results:  # type: _ActionResultDefinitionType
+                        for _action_result in step.actions_results:  # type: scenario.ActionResultDefinition
                             self._actionresult2html(_action_result, html)
 
     def _actionresult2html(
             self,
-            action_result,  # type: _ActionResultDefinitionType
+            action_result,  # type: scenario.ActionResultDefinition
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -241,8 +231,8 @@ class ScenarioPage(_RequestHandlerImpl):
 
     def _reqrefs2html(
             self,
-            req_verifier,  # type: typing.Union[_ScenarioDefinitionType, _StepDefinitionType]
-            req_refs,  # type: _SetWithReqLinksType[_ReqRefType]
+            req_verifier,  # type: typing.Union[scenario.ScenarioDefinition, scenario.StepDefinition]
+            req_refs,  # type: scenario.SetWithReqLinksType[scenario.ReqRef]
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
@@ -252,24 +242,21 @@ class ScenarioPage(_RequestHandlerImpl):
         :param req_refs: Scenario or step requirement coverage.
         :param html: HTML output page to feed.
         """
-        from .._reqlink import ReqLink
-        from .._scenariodefinition import ScenarioDefinition
-        from .._stepdefinition import StepDefinition
         from ._pagereqs import RequirementsPage
         from ._pagereqsdown import DownstreamTraceabilityPage
         from ._pagereqsup import UpstreamTraceabilityPage
 
         # Determine the HTML object class depending on the type of `req_verifier`.
         _obj_class = ""  # type: str
-        if isinstance(req_verifier, ScenarioDefinition):
+        if isinstance(req_verifier, scenario.ScenarioDefinition):
             _obj_class = "scenario"
-        if isinstance(req_verifier, StepDefinition):
+        if isinstance(req_verifier, scenario.StepDefinition):
             _obj_class = "step"
 
         with html.addcontent(f'<div class="{_obj_class} requirements"></div>'):
             html.addcontent('<p>Requirements:</p>')
             with html.addcontent('<ul></ul>'):
-                for _req_ref in req_refs:  # type: _ReqRefType
+                for _req_ref in req_refs:  # type: scenario.ReqRef
                     with html.addcontent(f'<li class="{_obj_class} req-ref"></li>'):
                         # Requirement reference id.
                         with html.addcontent(f'<span class="{_obj_class} req-ref id"></span>'):
@@ -285,7 +272,7 @@ class ScenarioPage(_RequestHandlerImpl):
                             # Filter on `obj` only.
                             lambda req_link: req_verifier in req_link.req_verifiers,
                             req_refs[_req_ref],
-                        ))  # type: typing.Sequence[ReqLink]
+                        ))  # type: typing.Sequence[scenario.ReqLink]
                         # Determine the comments to display from the latter.
                         _comments = ', '.join(map(lambda req_link: req_link.comments, _req_links))  # type: str
                         if not _comments:
@@ -295,5 +282,5 @@ class ScenarioPage(_RequestHandlerImpl):
                         html.addcontent(f'<span class="{_obj_class} req-ref comments">{html.encode(_comments)}</span>')
 
             # Upstream traceability link.
-            if isinstance(req_verifier, ScenarioDefinition):
+            if isinstance(req_verifier, scenario.ScenarioDefinition):
                 UpstreamTraceabilityPage.scenario2unnamedhtmllink(req_verifier, html)

@@ -25,6 +25,7 @@ if True:
     from . import _setutils as _setutils  # @perf
     from . import _textutils as _textutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from . import _typeutils as _typeutils
     from ._req import Req as _ReqType
@@ -36,7 +37,7 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifier as _ReqVerifierType
 
 
-class ReqLink:
+class ReqLink(_ReqBaselineObjectImpl):
     """
     Link between
     a requirement item (requirement or part of requirement)
@@ -70,6 +71,9 @@ class ReqLink:
 
         :param req_link_def: Requirement link definition.
         """
+        # Get the requirement baseline from the scenario stack.
+        _ReqBaselineObjectImpl.__init__(self, _FAST_PATH.scenario_stack.reqs.baseline)
+
         #: Verified requirement reference.
         #:
         #: Unresolved input data for the :meth:`req_ref()` property.
@@ -135,7 +139,7 @@ class ReqLink:
 
         Resolution of :attr:`_any_req_ref`.
         """
-        return _FAST_PATH.req_db.getreqref(self._any_req_ref, push_unknown=True)
+        return self.req_db.getreqref(self._any_req_ref, push_unknown=True)
 
     @property
     def req_verifiers(self):  # type: () -> _setutils.OrderedSetType[_ReqVerifierType]
@@ -178,7 +182,7 @@ class ReqLink:
         """
         # Requirement reference predicates.
         if req_ref is not None:
-            req_ref = _FAST_PATH.req_db.getreqref(req_ref)
+            req_ref = self.req_db.getreqref(req_ref)
             if not self.req_ref.matches(req_ref):
                 # Requirement reference mismatch.
                 if walk_subrefs and req_ref.ismain():
@@ -215,21 +219,18 @@ class ReqLink:
         :param req_verifier: Requirement verifier that traces the requirement reference with this link.
         :return: ``self``
         """
-        # As soon as the link is actually traced by verifiers:
-        # - ensure the database knows the requirement reference (subreferences only),
-        if self.req_ref.issubref():
-            _FAST_PATH.req_db.push(self.req_ref)
-        # - ensure the link is saved in the requirement reference link set,
+        # As soon as the link is actually used by verifiers,
+        # ensure the link is saved in the requirement reference link set.
         if self not in self.req_ref.req_links:
             self.req_ref._req_links.add(self)  # noqa  ## Access to protected member
 
-        # Try to save the requirement verifier with this link.
+        # Ensure the requirement verifier is saved in this link verifiers set.
         if req_verifier not in self.req_verifiers:
             # New requirement verifier.
             self._req_verifiers.add(req_verifier)
 
             # Debug the downstream requirement link.
-            _FAST_PATH.req_db.debug("Requirement link: %s -> %r", self.req_ref.id, req_verifier)
+            self.req_db.debug("Requirement link: %s -> %r", self.req_ref.id, req_verifier)
 
             # Link <-> verifier cross-reference.
             req_verifier.verifies(self)

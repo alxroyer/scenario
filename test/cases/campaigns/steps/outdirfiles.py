@@ -25,41 +25,46 @@ if typing.TYPE_CHECKING:
 
 class CampaignScenarioResultsReader:
     """
-    Helper class for reading scenario log and reports in campaign results.
+    Base class for reading scenario log and reports in campaign results.
+
+    Shall be inherited by a :class:`scenario.test._steps.VerificationStep` relating to a :class:`campaigns.steps.execution.ExecCampaign` step.
     """
 
-    def __init__(
-            self,
-            outdir_path,  # type: scenario.Path
-    ):  # type: (...) -> None
-        self._outdir_path = outdir_path  # type: scenario.Path
+    def __init__(self):  # type: (...) -> None
         #: {*Pretty path*: :class:`CampaignOutdirFilesManager.ScenarioResults`} dictionary.
-        self._scenario_results = {}  # type: typing.Dict[str, CampaignScenarioResultsReader.ScenarioResults]
+        self.__scenario_results = {}  # type: typing.Dict[str, CampaignScenarioResultsReader.ScenarioResults]
 
-    def get(
+    @property
+    def __exec_step(self):  # type: () -> _ExecCampaignType
+        from campaigns.steps.execution import ExecCampaign
+
+        assert isinstance(self, scenario.test.VerificationStep)
+        return self.getexecstep(ExecCampaign)
+
+    def getscenarioresults(
             self,
             script_path,  # type: scenario.Path
     ):  # type: (...) -> CampaignScenarioResultsReader.ScenarioResults
-        if script_path.prettypath not in self._scenario_results:
-            self._scenario_results[script_path.prettypath] = CampaignScenarioResultsReader.ScenarioResults(self._outdir_path, script_path)
-        return self._scenario_results[script_path.prettypath]
+        if script_path.prettypath not in self.__scenario_results:
+            self.__scenario_results[script_path.prettypath] = CampaignScenarioResultsReader.ScenarioResults(self.__exec_step, script_path)
+        return self.__scenario_results[script_path.prettypath]
 
     class ScenarioResults:
         def __init__(
                 self,
-                outdir_path,  # type: scenario.Path
+                exec_step,  # type: _ExecCampaignType
                 scenario_path,  # type: scenario.Path
         ):  # type: (...) -> None
             from scenario._campaignexecution import LogFileReader, ReportFileReader  # noqa  ## Access to protected module
 
             self.scenario_path = scenario_path  # type: scenario.Path
-            self.log = LogFileReader()  # type: LogFileReader
-            self.log.path = outdir_path / scenario_path.name.replace(".py", ".log")
-            self.report = ReportFileReader()  # type: ReportFileReader
-            self.report.path = outdir_path / scenario_path.name.replace(".py", ".json")
+            self.log = LogFileReader(exec_step.campaign_req_baseline)  # type: LogFileReader
+            self.log.path = exec_step.final_outdir_path / scenario_path.name.replace(".py", ".log")
+            self.report = ReportFileReader(exec_step.campaign_req_baseline)  # type: ReportFileReader
+            self.report.path = exec_step.final_outdir_path / scenario_path.name.replace(".py", ".json")
 
 
-class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
+class CheckCampaignOutdirFiles(scenario.test.VerificationStep, CampaignScenarioResultsReader):
 
     def __init__(
             self,
@@ -67,6 +72,7 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
             campaign_expectations,  # type: scenario.test.CampaignExpectations
     ):  # type: (...) -> None
         scenario.test.VerificationStep.__init__(self, exec_step)
+        CampaignScenarioResultsReader.__init__(self)
 
         self.campaign_expectations = campaign_expectations  # type: scenario.test.CampaignExpectations
         self._outdir_content = []  # type: typing.List[scenario.Path]
@@ -90,17 +96,16 @@ class CheckCampaignOutdirFiles(scenario.test.VerificationStep):
         _outfiles_expectation["scenario reports"] = self.campaign_expectations.test_suite_expectations is not None
         if self.campaign_expectations.test_suite_expectations is not None:
             if self.RESULT("This directory contains 1 '.log' and 1 '.json' file for each scenario executed."):
-                _scenario_results = CampaignScenarioResultsReader(self.campaign_expectations.outdir_path)  # type: CampaignScenarioResultsReader
                 for _test_suite_expectations in self.campaign_expectations.test_suite_expectations:  # type: scenario.test.TestSuiteExpectations
                     assert _test_suite_expectations.test_case_expectations is not None
                     for _test_case_expectations in _test_suite_expectations.test_case_expectations:  # type: scenario.test.ScenarioExpectations
                         assert _test_case_expectations.script_path is not None
                         self._assertoutfile(
-                            _scenario_results.get(_test_case_expectations.script_path).log.path,
+                            self.getscenarioresults(_test_case_expectations.script_path).log.path,
                             evidence=f"'{_test_case_expectations.script_path}' '.log' file",
                         )
                         self._assertoutfile(
-                            _scenario_results.get(_test_case_expectations.script_path).report.path,
+                            self.getscenarioresults(_test_case_expectations.script_path).report.path,
                             evidence=f"'{_test_case_expectations.script_path}' '.json' file",
                         )
 

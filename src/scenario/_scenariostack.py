@@ -30,11 +30,68 @@ if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
     from ._stepuserapi import StepUserApi as _StepUserApiType
+
+
+class ReqContext:
+    """
+    Stack of applicable requirement baselines.
+
+    Instantiated once with the :data:`SCENARIO_STACK` singleton.
+
+    The applicable requirement baseline is the one holding the requirement database related to
+    :class:`._req.Req`, :class:`._reqref.ReqRef`, :class:`._reqverifier.ReqVerifier` (scenarios and steps) and :class:`._reqlink.ReqLink`
+    being built.
+    """
+
+    def __init__(self):  # type: (...) -> None
+        """
+        Initializes an empty requirement baseline stack.
+        """
+        #: Stack of applicable requirement baselines.
+        self.__req_baselines = []  # type: typing.List[_ReqBaselineType]
+
+    def pushbaseline(
+            self,
+            req_baseline,  # type: _ReqBaselineType
+    ):  # type: (...) -> None
+        """
+        Pushes ``req_baseline`` as the applicable baseline.
+
+        :param req_baseline: New applicable requirement baseline.
+
+        .. seealso:: :class:`._reqbl.ReqBaseline` as a context.
+        """
+        self.__req_baselines.append(req_baseline)
+
+    def popbaseline(
+            self,
+            req_baseline,  # type: _ReqBaselineType
+    ):  # type: (...) -> None
+        """
+        Pops ``req_baseline`` from the requirement baseline stack.
+
+        :param req_baseline: Requirement baseline being removed from the stack (should be the applicable one).
+
+        .. seealso:: :class:`._reqbl.ReqBaseline` as a context.
+        """
+        if self.__req_baselines[-1] is not req_baseline:
+            raise ScenarioStack.ContextError()
+        self.__req_baselines.pop()
+
+    @property
+    def baseline(self):  # type: () -> _ReqBaselineType
+        """
+        Applicable requirement baseline.
+        """
+        if not self.__req_baselines:
+            raise ScenarioStack.ContextError()
+        return self.__req_baselines[-1]
 
 
 class BuildingContext:
@@ -188,6 +245,9 @@ class ScenarioStack(_LoggerImpl):
         """
         _LoggerImpl.__init__(self, log_class=_DebugClassImpl.SCENARIO_STACK)
         self.setextradata(_LogExtraDataImpl.ACTION_RESULT_MARGIN, False)
+
+        #: Requirement context.
+        self.reqs = ReqContext()  # type: ReqContext
 
         #: Instances under construction.
         self.building = BuildingContext()  # type: BuildingContext

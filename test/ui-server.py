@@ -47,7 +47,7 @@ if __name__ == "__main__":
     scenario.Path.setmainpath(scenario.test.paths.ROOT_SCENARIO_PATH)
 
     # Ensure requirement database update and configure as default.
-    scenario.reqs.load(set_default_req_file=True)
+    scenario.reqs.save(set_default_req_file=True)
 
     # UI execution.
     _res = scenario.ui.main()  # type: scenario.ErrorCode

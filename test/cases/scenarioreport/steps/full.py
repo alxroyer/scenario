@@ -17,6 +17,7 @@
 import typing
 
 import scenario
+import scenario.inners
 import scenario.test
 import scenario.text
 
@@ -32,8 +33,6 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
             self,
             exec_step,  # type: _ExecScenarioType
     ):  # type: (...) -> None
-        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
-
         _ScenarioReportFileVerificationStepImpl.__init__(self, exec_step)
 
         # Read the reference scenario report file.
@@ -42,14 +41,12 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
             exec_step.scenario_paths[0].with_suffix(".doc-only.json" if exec_step.doc_only else ".executed.json").name,
         )  # type: scenario.Path
         self.assertisfile(self._json_path_ref)
-        self._json_ref = JsonDict.readfile(self._json_path_ref)  # type: scenario.types.JsonDict
+        self._json_ref = scenario.inners.JsonDict.readfile(self._json_path_ref)  # type: scenario.types.JsonDict
 
         #: JSON data read from the report file.
         self.json = {}  # type: scenario.types.JsonDict
 
     def step(self):  # type: (...) -> None
-        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
-
         self.STEP("Full scenario report")
 
         scenario.logging.resetindentation()
@@ -61,7 +58,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
 
         # Read the scenario report file.
         if self.ACTION("Read the scenario report file."):
-            self.json = JsonDict.readfile(self.report_path)
+            self.json = scenario.inners.JsonDict.readfile(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
                        extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 

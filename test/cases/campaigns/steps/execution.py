@@ -51,6 +51,7 @@ class ExecCampaign(_ExecCommonArgsImpl):
         self._cmdline_outdir_path = None  # type: typing.Optional[scenario.Path]
         self._final_outdir_path = None  # type: typing.Optional[scenario.Path]
         self.subdir_mode = subdir_mode  # type: typing.Optional[scenario.CampaignArgs.SubdirMode]
+        self._campaign_req_baseline = None  # type: typing.Optional[scenario.ReqBaseline]
 
         # Eventually propose a default step description.
         self.description = description
@@ -66,6 +67,41 @@ class ExecCampaign(_ExecCommonArgsImpl):
     def final_outdir_path(self):  # type: () -> scenario.Path
         assert self._final_outdir_path is not None
         return self._final_outdir_path
+
+    @property
+    def campaign_req_baseline(self):  # type: () -> scenario.ReqBaseline
+        """
+        Campaign requirement baseline accessor.
+
+        Read from campaign result files
+        if not saved before by another step like :class:`._campaignreport.CheckCampaignReport`.
+        """
+        if self._campaign_req_baseline is None:
+            # Determine the campaign report path.
+            _campaign_expectations = scenario.test.CampaignExpectations()
+            _campaign_expectations.outdir_path = self.final_outdir_path
+
+            # Read the campaign report.
+            self.debug("Reading '%s'", _campaign_expectations.campaign_report_path)
+            _campaign_execution = scenario.campaign_report.readcampaignreport(
+                _campaign_expectations.campaign_report_path,
+                # Let the requirement baseline be automatically instantiated.
+                req_baseline=None,
+                # Don't read scenario logs and reports.
+                read_scenario_logs=False,
+                read_scenario_reports=False,
+            )  # type: scenario.CampaignExecution
+
+            # Save the requirement baseline from the campaign execution just read.
+            self._campaign_req_baseline = _campaign_execution.req_baseline
+        return self._campaign_req_baseline
+
+    @campaign_req_baseline.setter
+    def campaign_req_baseline(self, req_baseline):  # type: (scenario.ReqBaseline) -> None
+        """
+        Campaign requirement baseline setter.
+        """
+        self._campaign_req_baseline = req_baseline
 
     def step(self):  # type: (...) -> None
         # Description already set programmatically.

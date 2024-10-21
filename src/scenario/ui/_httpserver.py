@@ -22,14 +22,13 @@ import http.server
 import os
 import typing
 
-if True:
-    from .._logger import Logger as _LoggerImpl  # @inheritance
+import scenario
+
 if typing.TYPE_CHECKING:
-    from .._path import Path as _PathType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class HttpServer(_LoggerImpl):
+class HttpServer(scenario.Logger):
     """
     :mod:`scenario.ui` HTTP server.
 
@@ -41,7 +40,7 @@ class HttpServer(_LoggerImpl):
         Configures logging for the :class:`HttpServer` class,
         and initializes request handlers / page generators.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
         from ._filedelivery import FileDelivery
         from ._pagecampaign import CampaignPage
         from ._pagecampaigns import CampaignListPage
@@ -54,7 +53,7 @@ class HttpServer(_LoggerImpl):
         from ._pagescenarios import ScenarioListPage
         from ._requesthandler import RequestHandler
 
-        _LoggerImpl.__init__(self, DebugClass.UI_HTTP_SERVER)
+        scenario.Logger.__init__(self, UIDebugClass.HTTP_SERVER)
 
         #: Request handlers / page generators.
         self._request_handlers = [
@@ -71,13 +70,13 @@ class HttpServer(_LoggerImpl):
         ]  # type: typing.Sequence[RequestHandler]
 
     @property
-    def main_path(self):  # type: () -> _PathType
+    def main_path(self):  # type: () -> scenario.Path
         """
         `scenario.ui` main execution path.
         """
-        from .._scenarioconfig import SCENARIO_CONFIG
+        from ._configdb import UI_CONFIG
 
-        return SCENARIO_CONFIG.uimainpath()
+        return UI_CONFIG.mainpath()
 
     def serve(self):  # type: (...) -> None
         """

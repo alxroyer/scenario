@@ -42,12 +42,10 @@ if typing.TYPE_CHECKING:
     from ._path import Path as _PathType
     from ._reflection import Reflection as _ReflectionType
     from ._req import Req as _ReqType
-    from ._reqdb import ReqDatabase as _ReqDatabaseType
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqlink import ReqLinkHelper as _ReqLinkHelperType
     from ._reqmgtargs import ReqManagementArgs as _ReqManagementArgsType
     from ._reqref import ReqRef as _ReqRefType
-    from ._reqtraceability import ReqTraceability as _ReqTraceabilityType
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._reqverifier import ReqVerifierHelper as _ReqVerifierHelperType
     from ._scenarioargs import CommonExecArgs as _CommonExecArgsType
@@ -105,12 +103,10 @@ class FastPath:
         "_path_cls",
         "_reflection",
         "_req_cls",
-        "_req_db",
         "_req_link_cls",
         "_req_link_helper_cls",
         "_req_mgt_args",
         "_req_ref_cls",
-        "_req_traceability",
         "_req_verifier_cls",
         "_req_verifier_helper_cls",
         "_scenario_args",
@@ -240,16 +236,6 @@ class FastPath:
         #:
         #: Reference resolved by :meth:`handlers()` property.
         self._handlers = None  # type: typing.Optional[_HandlersType]
-
-        #: :class:`._reqdb.ReqDatabase` singleton reference.
-        #:
-        #: Reference resolved by :meth:`req_db()` property.
-        self._req_db = None  # type: typing.Optional[_ReqDatabaseType]
-
-        #: :class:`._reqtraceability.ReqTraceability` singleton reference.
-        #:
-        #: Reference resolved by :meth:`req_traceability()` property.
-        self._req_traceability = None  # type: typing.Optional[_ReqTraceabilityType]
 
         # Classes.
 
@@ -551,26 +537,6 @@ class FastPath:
             from ._handlers import HANDLERS  # check-imports: ignore  ## `FastPath` local import.
             self._handlers = HANDLERS
         return self._handlers
-
-    @property
-    def req_db(self):  # type: () -> _ReqDatabaseType
-        """
-        :class:`._reqdb.ReqDatabase` singleton.
-        """
-        if self._req_db is None:
-            from ._reqdb import REQ_DB  # check-imports: ignore  ## `FastPath` local import.
-            self._req_db = REQ_DB
-        return self._req_db
-
-    @property
-    def req_traceability(self):  # type: () -> _ReqTraceabilityType
-        """
-        :class:`._reqtraceability.ReqTraceability` singleton.
-        """
-        if self._req_traceability is None:
-            from ._reqtraceability import REQ_TRACEABILITY  # check-imports: ignore  ## `FastPath` local import.
-            self._req_traceability = REQ_TRACEABILITY
-        return self._req_traceability
 
     @property
     def path_cls(self):  # type: () -> typing.Type[_PathType]

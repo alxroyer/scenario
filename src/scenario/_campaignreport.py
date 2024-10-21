@@ -40,6 +40,7 @@ if typing.TYPE_CHECKING:
     from ._campaignexecution import TestSuiteExecution as _TestSuiteExecutionType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._testerrors import TestError as _TestErrorType
     from ._xmlutils import Xml as _XmlType
@@ -108,33 +109,10 @@ class CampaignReport(_LoggerImpl):
         #: Campaign report path being written or read.
         self._report_path = _PathImpl()  # type: _PathType
 
-        #: Flag set to ``True`` when the requirement database should be fed with the requirement database file read from campaign results.
-        self._feed_req_db = False  # type: bool
         #: Flag set to ``True`` when scenario log files should be automatically read.
         self._read_scenario_logs = False  # type: bool
         #: Falg set to ``True`` when scenario report files should be automatically read.
         self._read_scenario_reports = False  # type: bool
-
-    def writejunitreport(
-            self,
-            campaign_execution,  # type: _CampaignExecutionType
-            junit_path,  # type: _AnyPathType
-    ):  # type: (...) -> bool
-        """
-        Deprecated.
-        Use :meth:`writecampaignreport()` instead.
-        """
-        self.warning("CampaignReport.writejunitreport() deprecated, please use CampaignReport.writecampaignreport() instead")
-        try:
-            self.writecampaignreport(
-                campaign_execution,
-                junit_path,
-            )
-            return True
-        except Exception as _err:
-            self.error(f"Could not write report '{junit_path}': {_err}")
-            self.logexceptiontraceback(_err)
-            return False
 
     def writecampaignreport(
             self,
@@ -166,32 +144,11 @@ class CampaignReport(_LoggerImpl):
             self.resetindentation()
             self._report_path = _PathImpl()
 
-    def readjunitreport(
-            self,
-            junit_path,  # type: _AnyPathType
-    ):  # type: (...) -> typing.Optional[_CampaignExecutionType]
-        """
-        Deprecated.
-        Use :meth:`readcampaignreport()` instead.
-        """
-        self.warning(f"CampaignReport.readjunitreport() deprecated, please use CampaignReport.readcampaignreport() instead")
-        try:
-            return self.readcampaignreport(
-                junit_path,
-                feed_req_db=False,
-                read_scenario_logs=True,
-                read_scenario_reports=True,
-            )
-        except Exception as _err:
-            self.error(f"Could not read report '{junit_path}': {_err}")
-            self.logexceptiontraceback(_err)
-            return None
-
     def readcampaignreport(
             self,
             report_path,  # type: _AnyPathType
             *,
-            feed_req_db=False,  # type: bool
+            req_baseline=None,  # type: typing.Optional[_ReqBaselineType]
             read_scenario_logs=False,  # type: bool
             read_scenario_reports=False,  # type: bool
     ):  # type: (...) -> _CampaignExecutionType
@@ -200,15 +157,24 @@ class CampaignReport(_LoggerImpl):
 
         :param report_path:
             Path of the campaign report file to read.
-        :param feed_req_db:
-            ``True`` to feed automatically the requirement database with verified requirement references.
+        :param req_baseline:
+            Requirement baseline to feed.
+
+            Automatically instantiated if not provided (default behaviour).
+
+            The requirement baseline (either provided or automatically instantiated)
+            is returned as the :attr:`._reqblobj.ReqBaselineObject.req_baseline` attribute
+            of the resulting :class:`._campaignexecution.CampaignExecution` instance.
         :param read_scenario_logs:
             ``True`` to read automatically scenario log files.
         :param read_scenario_reports:
             ``True`` to read automatically scenario report files.
+
+            Also feeds the requirement baseline with the scenario definitions read from the reports.
         :return:
             Campaign execution data read from the JUnit file.
         """
+        from ._reqbl import ReqBaseline
         from ._xmlutils import Xml
 
         try:
@@ -219,18 +185,28 @@ class CampaignReport(_LoggerImpl):
             self._report_path = _PathImpl(report_path)
             _xml_doc = Xml.Document.readfile(self._report_path)  # type: Xml.Document
 
-            # Analyze the JUnit XML content.
-            self._feed_req_db = feed_req_db
-            self._read_scenario_logs = read_scenario_logs
-            self._read_scenario_reports = read_scenario_reports
-            _campaign_execution = self._xml2campaign(_xml_doc)  # type: _CampaignExecutionType
+            # Determine the requirement baseline.
+            _req_baseline = (
+                req_baseline
+                # Build a new baseline, if not provided.
+                or ReqBaseline(name=self._report_path.prettypath)
+            )  # type: _ReqBaselineType
+
+            with _req_baseline:
+                # Analyze the JUnit XML content.
+                self._read_scenario_logs = read_scenario_logs
+                self._read_scenario_reports = read_scenario_reports
+                _campaign_execution = self._xml2campaign(_xml_doc)  # type: _CampaignExecutionType
+
+            # If the baseline has been automatically created, adjust its name from the campaign name.
+            if req_baseline is None:
+                _req_baseline.name = _campaign_execution.name
 
             return _campaign_execution
         finally:
             # Reset logging indentation and member variables.
             self.resetindentation()
             self._report_path = _PathImpl()
-            self._feed_req_db = False
             self._read_scenario_logs = False
             self._read_scenario_reports = False
 
@@ -354,10 +330,10 @@ class CampaignReport(_LoggerImpl):
             if _link_purpose == CampaignReport.LinkPurpose.REQ_DB:
                 _campaign_execution.req_db_path = self._xmlattr2path(_xml_link, "href")
                 self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.req_db_path)
-                if self._feed_req_db:
-                    # Read the requirement database file by the way.
-                    self.debug("Feeding requirement database from '%s'", _campaign_execution.req_db_path)
-                    _FAST_PATH.req_db.load(_campaign_execution.req_db_path)
+
+                # Feed the requirement database by the way.
+                self.debug("Feeding requirement database from '%s'", _campaign_execution.req_db_path)
+                _campaign_execution.req_db.load(_campaign_execution.req_db_path)
             elif _link_purpose == CampaignReport.LinkPurpose.DOWNSTREAM_TRACEABILITY:
                 _campaign_execution.downstream_traceability_path = self._xmlattr2path(_xml_link, "href")
                 self.debug("testsuites/link[@rel=%r]/@href = '%s'", _link_purpose, _campaign_execution.downstream_traceability_path)
@@ -667,9 +643,20 @@ class CampaignReport(_LoggerImpl):
                 _test_case_execution.report.path = self._xmlattr2path(_xml_link, "href")
                 self.debug("testcase/link[@rel=%r]/@href = '%s'", _link_purpose, _test_case_execution.report.path)
                 if self._read_scenario_reports:
-                    # Read the scenario report by the way.
-                    self.debug("Reading scenario report from '%s'", _test_case_execution.report.path)
-                    _test_case_execution.report.read()  # Let exceptions raise up.
+                    try:
+                        # Read the scenario report by the way.
+                        self.debug("Reading scenario report from '%s'", _test_case_execution.report.path)
+                        _test_case_execution.report.read()  # Let exceptions raise up.
+
+                        # Feed the requirement baseline with the scenario definition read from the report.
+                        assert _test_case_execution.scenario_execution, "Scenario execution should be available once the report has been read"
+                        _test_case_execution.req_baseline.scenarios.append(_test_case_execution.scenario_execution.definition)
+                    except Exception as _err:
+                        _FAST_PATH.main_logger.warning("".join([
+                            f"Can't load scenario {_test_case_execution.name!r}",
+                            f" from '{_test_case_execution.report.path}'" if _test_case_execution.report.path else "",
+                            f": {_err}",
+                        ]))
             else:
                 self.warning(f"Unknown testcase/link/@rel value {_link_purpose!r}")
 

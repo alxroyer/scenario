@@ -46,6 +46,8 @@ class DebugClass(_enumutils.StrEnum):
     LOG_STATS = "scenario.LogStats"
     #: Reflective programmation debugging.
     REFLECTION = "scenario.Reflection"
+    #: Requirement baseline debugging.
+    REQ_BASELINE = "scenario.ReqBaseline"
     #: Requirement database debugging.
     REQ_DATABASE = "scenario.ReqDatabase"
     #: Requirement management runner debugging.
@@ -64,28 +66,3 @@ class DebugClass(_enumutils.StrEnum):
     SCENARIO_STACK = "scenario.ScenarioStack"
     #: Test suite file debugging.
     TEST_SUITE_FILE = "scenario.TestSuiteFile"
-
-    #: UI file delivery debugging.
-    UI_FILE_DELIVERY = "scenario.ui.FileDelivery"
-    #: UI HTML document debugging.
-    UI_HTML_DOCUMENT = "scenario.ui.HtmlDocument"
-    #: UI HTTP server debugging.
-    UI_HTTP_SERVER = "scenario.ui.HttpServer"
-    #: UI campaign page debugging.
-    UI_PAGE_CAMPAIGN = "scenario.ui.CampaignPage"
-    #: UI campaign list page debugging.
-    UI_PAGE_CAMPAIGNS = "scenario.ui.CampaignListPage"
-    #: UI configuration page debugging.
-    UI_PAGE_CONFIG = "scenario.ui.ConfigurationPage"
-    #: UI homepage debugging.
-    UI_PAGE_HOME = "scenario.ui.Homepage"
-    #: UI requirements page debugging.
-    UI_PAGE_REQS = "scenario.ui.RequirementsPage"
-    #: UI downstream traceability page debugging.
-    UI_PAGE_REQS_DOWN = "scenario.ui.DownstreamTraceabilityPage"
-    #: UI upstream traceability page debugging.
-    UI_PAGE_REQS_UP = "scenario.ui.UpstreamTraceabilityPage"
-    #: UI scenario page debugging.
-    UI_PAGE_SCENARIO = "scenario.ui.ScenarioPage"
-    #: UI scenario list page debugging.
-    UI_PAGE_SCENARIOS = "scenario.ui.ScenarioListPage"

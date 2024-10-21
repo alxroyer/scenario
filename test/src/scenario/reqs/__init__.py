@@ -22,7 +22,11 @@ if True:
 
 
 # Requirement reexports, in order of definition.
-try:
+if True:
+    from ._reqs import SCENARIO_REQ_BASELINE as _SCENARIO_REQ_BASELINE  # @module-level-instantiation
+    req_baseline = _SCENARIO_REQ_BASELINE
+    req_db = _SCENARIO_REQ_BASELINE.req_db
+
     from ._reqs import SCENARIO_EXECUTION as SCENARIO_EXECUTION
     from ._reqs import DOC_ONLY as DOC_ONLY
     from ._reqs import ERROR_HANDLING as ERROR_HANDLING
@@ -47,14 +51,10 @@ try:
     from ._reqs import REQUIREMENT_MANAGEMENT as REQUIREMENT_MANAGEMENT
     from ._reqs import REQUIREMENT_MANAGEMENT_REPORTS as REQUIREMENT_MANAGEMENT_REPORTS
     from ._reqs import REQUIREMENT_MANAGEMENT_SCENARIO_CONSOLIDATION as REQUIREMENT_MANAGEMENT_SCENARIO_CONSOLIDATION
-finally:
-    pass
 
-# Reexports.
-try:
+# Other reexports.
+if True:
     from . import _paths as paths
-    from ._reqs import load as load
+    from ._reqs import save as save
     from ._tests import setdefaulttestsuites as setdefaulttestsuites
     from ._tools import ensurelicenseheader as ensurelicenseheader
-finally:
-    pass

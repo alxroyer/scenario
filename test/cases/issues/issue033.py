@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import scenario.inners
 import scenario.reqs
 import scenario.test
 import scenario.text
@@ -73,14 +74,12 @@ class CheckExceptionLocation(_ScenarioReportFileVerificationStepImpl):
         self.expected_fqn = expected_fqn  # type: str
 
     def step(self):  # type: (...) -> None
-        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
-
         self.STEP("Exception location")
 
         _json_error = {}  # type: scenario.types.JsonDict
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} error info from the scenario report."):
             _json_error = self.assertjson(
-                JsonDict.readfile(self.report_path), f"errors[{self.index}]", type=dict,
+                scenario.inners.JsonDict.readfile(self.report_path), f"errors[{self.index}]", type=dict,
                 evidence="Error info",
             )
 
@@ -105,14 +104,12 @@ class CheckKnownIssueLocation(_ScenarioReportFileVerificationStepImpl):
         self.expected_fqn = expected_fqn  # type: str
 
     def step(self):  # type: (...) -> None
-        from scenario._jsondictutils import JsonDict  # noqa  ## Access to protected module
-
         self.STEP("Known issue location")
 
         _json_known_issue = {}  # type: scenario.types.JsonDict
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} known issue info from the scenario report."):
             _json_known_issue = self.assertjson(
-                JsonDict.readfile(self.report_path), f"warnings[{self.index}]", type=dict,
+                scenario.inners.JsonDict.readfile(self.report_path), f"warnings[{self.index}]", type=dict,
                 evidence="Known issue info",
             )
 

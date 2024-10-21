@@ -24,10 +24,9 @@ import time
 import typing
 import urllib.parse
 
-if True:
-    from .. import _enumutils as _enumutils  # @inheritance
+import scenario
+
 if typing.TYPE_CHECKING:
-    from .._path import Path as _PathType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
 
 
@@ -49,7 +48,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
     in order to redirect ``http.server`` logging to our logging system.
     """
 
-    class Method(_enumutils.StrEnum):
+    class Method(scenario.enum.StrEnum):
         """
         HTTP methods as an enum.
         """
@@ -57,6 +56,9 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         GET = "GET"
         #: POST method.
         POST = "POST"
+
+    #: Argument name for campaign selection.
+    CAMPAIGN_NAME_ARG = "campaign"
 
     def __init__(
             self,
@@ -106,9 +108,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
 
         Used by ``http.server.BaseHTTPRequestHandler.send_response()`` for header information.
         """
-        from .._pkginfo import PKG_INFO
-
-        return f"scenario.ui/{PKG_INFO.version} Python/{sys.version.split()[0]}"
+        return f"scenario.ui/{scenario.info.version} Python/{sys.version.split()[0]}"
 
     def do_GET(self):  # type: (...) -> None  # noqa  ## Function name should be lowercase
         """
@@ -160,7 +160,6 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         - GET arguments (in the query part, if any),
         - POST arguments (if any).
         """
-        from .._debugutils import jsondump
         from ._httpserver import HTTP_SERVER
 
         HTTP_SERVER.debug("HTTP request: %r", self)
@@ -177,7 +176,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
                 if len(_get_args[_get_arg_name]) != 1:
                     HTTP_SERVER.warning(f"Unexpected GET argument {_get_arg_name!r}: {_get_args[_get_arg_name]!r}")
                 self._get_args[_get_arg_name] = ",".join(_get_args[_get_arg_name])
-            HTTP_SERVER.debug("HttpRequest._get_args=%s", jsondump(self._get_args, indent=2))
+            HTTP_SERVER.debug("HttpRequest._get_args=%s", scenario.debug.jsondump(self._get_args, indent=2))
 
         # Restore the attribute, which may be deleted at this point...
         self._post_args = {}
@@ -189,7 +188,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
                     if len(_post_args[_post_arg_name]) != 1:
                         HTTP_SERVER.warning(f"Unexpected POST argument {_post_arg_name!r}: {_post_args[_post_arg_name]!r}")
                     self._post_args[_post_arg_name] = ",".join(_post_args[_post_arg_name])
-            HTTP_SERVER.debug("HttpRequest._post_args=%s", jsondump(self._post_args, indent=2))
+            HTTP_SERVER.debug("HttpRequest._post_args=%s", scenario.debug.jsondump(self._post_args, indent=2))
 
     @property
     def method(self):  # type: () -> Method
@@ -223,6 +222,20 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
             return default
         raise KeyError(f"No such argument {name!r}")
 
+    @property
+    def req_baseline(self):  # type: () -> scenario.ReqBaseline
+        """
+        Applicable requirement baseline for the given request.
+        """
+        from ._mainreqbaseline import UI_MAIN_REQ_BASELINE
+
+        _campaign_name = self.getarg(self.CAMPAIGN_NAME_ARG, default="")  # type: str
+        if _campaign_name:
+            _campaign_execution = scenario.campaign_db.get(name=_campaign_name)  # type: scenario.CampaignExecution
+            return _campaign_execution.req_baseline
+
+        return UI_MAIN_REQ_BASELINE.req_baseline
+
     def sendhtml(
             self,
             html,  # type: _HtmlDocumentType
@@ -243,7 +256,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
 
     def sendfile(
             self,
-            path,  # type: _PathType
+            path,  # type: scenario.Path
     ):  # type: (...) -> None
         """
         Responds the request successfully with file content.

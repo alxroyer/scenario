@@ -20,10 +20,11 @@ User interface file handler.
 
 import typing
 
+import scenario
+
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from .._path import Path as _PathType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -38,9 +39,9 @@ class FileDelivery(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_FILE_DELIVERY)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.FILE_DELIVERY)
 
     def process(
             self,
@@ -53,7 +54,7 @@ class FileDelivery(_RequestHandlerImpl):
             self.debug("Unexpected base path %r", request.base_path)
             self.debug("%r not processed", request)
             return False
-        _file = HTTP_SERVER.main_path / request.base_path[1:]  # type: _PathType
+        _file = HTTP_SERVER.main_path / request.base_path[1:]  # type: scenario.Path
         if not _file.is_file():
             self.debug("No such file '%s'", _file)
             self.debug("%r not processed", request)

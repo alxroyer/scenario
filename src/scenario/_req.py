@@ -25,6 +25,7 @@ if True:
     from . import _setutils as _setutils  # @perf
     from . import _textutils as _textutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._reqlink import ReqLink as _ReqLinkType
     from ._reqref import ReqRef as _ReqRefType
@@ -33,7 +34,7 @@ if typing.TYPE_CHECKING:
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
 
 
-class Req:
+class Req(_ReqBaselineObjectImpl):
     """
     Requirement class.
     """
@@ -70,6 +71,9 @@ class Req:
         :param title: Short title for the requirement.
         :param text: Full text of the requirement.
         """
+        # Get the requirement baseline from the scenario stack.
+        _ReqBaselineObjectImpl.__init__(self, _FAST_PATH.scenario_stack.reqs.baseline)
+
         #: Requirement identifier.
         #:
         #: Mandatory.
@@ -84,6 +88,9 @@ class Req:
         #:
         #: Optional.
         self.text = _textutils.anylongtext2str(text)  # type: str
+
+        # Ensure the requirement is referenced in the requirement baseline.
+        self.req_db.getreq(self, push_unknown=True)
 
     def __repr__(self):  # type: () -> str
         """
@@ -130,7 +137,7 @@ class Req:
         """
         Reference to the main part of this requirement.
         """
-        return _FAST_PATH.req_db.getreqref(self)
+        return self.req_db.getreqref(self)
 
     @property
     def subrefs(self):  # type: () -> _setutils.OrderedSetType[_ReqRefType]
@@ -143,7 +150,7 @@ class Req:
             # Filter requirement references that point to subparts of this requirement.
             filter(
                 lambda req_ref: (req_ref.req is self) and req_ref.issubref(),
-                _FAST_PATH.req_db.getallrefs(),
+                self.req_db.getallrefs(),
             ),
         )
 

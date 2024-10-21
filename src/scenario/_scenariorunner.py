@@ -33,6 +33,7 @@ if True:
     from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._logextradata import LogExtraData as _LogExtraDataImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
+    from ._reqblobj import ReqBaselineObject as _ReqBaselineObjectImpl  # @inheritance
     from ._scenarioargs import ScenarioArgs as _ScenarioArgsImpl  # @perf
     from ._scenariodefinition import ScenarioDefinitionHelper as _ScenarioDefinitionHelperImpl  # @perf
     from ._scenarioevents import ScenarioEvent as _ScenarioEventImpl  # @perf
@@ -52,6 +53,7 @@ if typing.TYPE_CHECKING:
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
@@ -62,7 +64,7 @@ if typing.TYPE_CHECKING:
     from ._testerrors import TestError as _TestErrorType
 
 
-class ScenarioRunner(_LoggerImpl):
+class ScenarioRunner(_LoggerImpl, _ReqBaselineObjectImpl):
     """
     Test execution engine: runs scenarios, i.e. instances derived from the :class:`._scenariodefinition.ScenarioDefinition` class.
 
@@ -103,12 +105,20 @@ class ScenarioRunner(_LoggerImpl):
         _LoggerImpl.__init__(self, log_class=_DebugClassImpl.SCENARIO_RUNNER)
         self.setextradata(_LogExtraDataImpl.ACTION_RESULT_MARGIN, False)
 
-    def main(self):  # type: (...) -> _ErrorCodeType
+        _ReqBaselineObjectImpl.__init__(self)
+
+    def main(
+            self,
+            req_baseline=None,  # type: _ReqBaselineType
+    ):  # type: (...) -> _ErrorCodeType
         """
         Scenario runner main function, as a member method.
 
+        :param req_baseline: Optional applicable requirement baseline.
         :return: Error code.
         """
+        from ._reqbl import ReqBaseline
+
         try:
             # Analyze program arguments, if not already set.
             if not _ScenarioArgsImpl.isset():
@@ -120,50 +130,61 @@ class ScenarioRunner(_LoggerImpl):
             # Start log features.
             _FAST_PATH.logging_service.start()
 
-            # Load requirements.
-            for _req_db_path in _FAST_PATH.scenario_config.reqdbpaths():  # type: _PathType
-                _FAST_PATH.main_logger.info(f"Loading requirements from '{_req_db_path}'")
-                _FAST_PATH.req_db.load(_req_db_path)
+            # Determine the requirement baseline.
+            if req_baseline:
+                self._setreqbaseline(req_baseline)
+            else:
+                self._setreqbaseline(ReqBaseline.fromfiles(
+                    name=_DebugClassImpl.SCENARIO_RUNNER,  # Use debug class as requirement baseline name.
+                    req_db_paths=None,  # Read requirements from default requirement files.
+                    test_suite_paths=[],  # Don't load test suite files, scenarios we will be loaded hereafter.
+                    log_info=False,
+                ))
+            with self.req_baseline:
+                # Execute tests.
+                _errors = []  # type: typing.List[_ErrorCodeType]
+                for _scenario_path in _FAST_PATH.scenario_args.scenario_paths:  # type: _PathType
+                    self.debug("Executing '%s'...", _scenario_path)
 
-            # Execute tests.
-            _errors = []  # type: typing.List[_ErrorCodeType]
-            for _scenario_path in _FAST_PATH.scenario_args.scenario_paths:  # type: _PathType
-                self.debug("Executing '%s'...", _scenario_path)
+                    _res = self.executepath(_scenario_path)  # type: _ErrorCodeType
+                    if _res != _ErrorCodeImpl.SUCCESS:
+                        # The `executepath()` and `execute()` methods don't return `ErrorCode.TEST_ERROR`.
+                        # If the return code is not `ErrorCode.SUCCESS` at this point, it means this is a serious error.
+                        # Stop processing right away.
+                        return _res
 
-                _res = self.executepath(_scenario_path)  # type: _ErrorCodeType
-                if _res != _ErrorCodeImpl.SUCCESS:
-                    # The `executepath()` and `execute()` methods don't return `ErrorCode.TEST_ERROR`.
-                    # If the return code is not `ErrorCode.SUCCESS` at this point, it means this is a serious error.
-                    # Stop processing right away.
-                    return _res
+                    # Retrieve the last scenario execution.
+                    if _FAST_PATH.scenario_stack.size != 0:
+                        self.error("Scenario stack not empty after scenario execution")
+                        return _ErrorCodeImpl.INTERNAL_ERROR
+                    if not _FAST_PATH.scenario_stack.history:
+                        self.error("No last scenario after execution")
+                        return _ErrorCodeImpl.INTERNAL_ERROR
+                    _scenario_execution = _FAST_PATH.scenario_stack.history[-1]  # type: _ScenarioExecutionType
 
-                # Retrieve the last scenario execution.
-                assert _FAST_PATH.scenario_stack.size == 0
-                if not _FAST_PATH.scenario_stack.history:
-                    self.error("No last scenario after execution")
-                    return _ErrorCodeImpl.INTERNAL_ERROR
-                _scenario_execution = _FAST_PATH.scenario_stack.history[-1]  # type: _ScenarioExecutionType
+                    # Feed the requirement baseline with the scenario definition.
+                    self.req_baseline.scenarios.append(_scenario_execution.definition)
 
-                # Manage test errors.
-                if _scenario_execution.errors:
-                    _errors.append(_ErrorCodeImpl.TEST_ERROR)
+                    # Manage test errors.
+                    if _scenario_execution.errors:
+                        _errors.append(_ErrorCodeImpl.TEST_ERROR)
 
-                # Feed the `SCENARIO_RESULTS` instance.
-                _FAST_PATH.scenario_results.add(_scenario_execution)
+                    # Feed the `SCENARIO_RESULTS` instance.
+                    _FAST_PATH.scenario_results.add(_scenario_execution)
 
-                # Generate scenario report if required.
-                _scenario_report = _FAST_PATH.scenario_args.scenario_report  # type: typing.Optional[_PathType]
-                if _scenario_report:
-                    try:
-                        _FAST_PATH.scenario_report.writescenarioreport(_scenario_execution.definition, _scenario_report)
-                    except Exception as _err:
-                        _FAST_PATH.main_logger.error(f"Error while writing '{_scenario_report}': {_err}")
-                        # Note: Full traceback will be displayed in the main `except` block below.
-                        raise
+                    # Generate scenario report if required.
+                    _scenario_report = _FAST_PATH.scenario_args.scenario_report  # type: typing.Optional[_PathType]
+                    if _scenario_report:
+                        try:
+                            _FAST_PATH.scenario_report.writescenarioreport(_scenario_execution.definition, _scenario_report)
+                        except Exception as _err:
+                            _FAST_PATH.main_logger.error(f"Error while writing '{_scenario_report}': {_err}")
+                            # Note: Full traceback will be displayed in the main `except` block below.
+                            raise
 
-            # Display final results (when applicable).
-            if _FAST_PATH.scenario_results.count > 1:
-                _FAST_PATH.scenario_results.display()
+                # Display final results (when applicable).
+                if _FAST_PATH.scenario_results.count > 1:
+                    _FAST_PATH.scenario_results.display()
 
             # Terminate log features.
             _FAST_PATH.logging_service.stop()

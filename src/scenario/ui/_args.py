@@ -18,11 +18,10 @@
 `scenario.ui` program arguments.
 """
 
-if True:
-    from .._args import Args as _ArgsImpl  # @inheritance
+import scenario
 
 
-class UIArgs(_ArgsImpl):
+class UIArgs(scenario.Args):
     """
     User interface program arguments.
     """
@@ -31,5 +30,5 @@ class UIArgs(_ArgsImpl):
         """
         Sets program arguments description.
         """
-        _ArgsImpl.__init__(self, class_debugging=True)
+        scenario.Args.__init__(self, class_debugging=True)
         self.setdescription("User interface server launcher.")

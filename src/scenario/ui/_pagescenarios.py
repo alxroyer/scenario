@@ -20,6 +20,8 @@ User interface scenario list page.
 
 import typing
 
+import scenario
+
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
@@ -38,16 +40,14 @@ class ScenarioListPage(_RequestHandlerImpl):
         """
         Configures the logger instance.
         """
-        from .._debugclasses import DebugClass
+        from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, DebugClass.UI_PAGE_SCENARIOS)
+        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_SCENARIOS)
 
     def process(
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
-        from .._reqtraceability import REQ_TRACEABILITY
-        from .._scenariodefinition import ScenarioDefinition
         from ._htmldoc import HtmlDocument
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
@@ -65,7 +65,7 @@ class ScenarioListPage(_RequestHandlerImpl):
 
         with _html.addcontent('<div id="scenarios"></div>'):
             with _html.addcontent('<ul></ul>'):
-                for _scenario in REQ_TRACEABILITY.scenarios:  # type: ScenarioDefinition
+                for _scenario in request.req_baseline.scenarios:  # type: scenario.ScenarioDefinition
                     with _html.addcontent('<li class="scenario"></li>'):
                         # Scenario name.
                         with _html.addcontent(f'<span class="scenario name"></span>'):
