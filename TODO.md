@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Bug: Many "WARNING  [scenario.ui.UIReqBaselines] <scenario._reqbl.ReqBaseline object>: No such scenario report 'test/results/2024-10-09_01-51-12/xxx.json'"
     - Bug: Campaign requirements don't give requirement texts (no title nor content).
     - Bug?: Scenario page confuses requirements and action/result texts.
     - Display campaign result details.

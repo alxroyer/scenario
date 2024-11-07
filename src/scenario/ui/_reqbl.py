@@ -145,9 +145,9 @@ class UIReqBaselines(scenario.Logger):
         """
         if not test_case_execution.report.content:
             if not test_case_execution.report.path:
-                self.warning("%r: No scenario report path for test case %r", test_case_execution.req_baseline, test_case_execution)
+                self.debug("%r: No scenario report path for test case %r", test_case_execution.req_baseline, test_case_execution)
             elif not test_case_execution.report.path.is_file():
-                self.warning("%r: No such scenario report '%s'", test_case_execution.req_baseline, test_case_execution.report.path)
+                self.debug("%r: No such scenario report '%s'", test_case_execution.req_baseline, test_case_execution.report.path)
             else:
                 try:
                     self.debug("%r: Reading '%s'", test_case_execution.req_baseline, test_case_execution.report.path)
