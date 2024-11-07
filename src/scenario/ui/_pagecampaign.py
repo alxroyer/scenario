@@ -34,41 +34,82 @@ class CampaignPage(_RequestHandlerImpl):
     """
 
     #: Base URL for the campaign details page.
-    URL = "/campaign"  # type: str
+    _URL = "/campaign"  # type: str
 
     @staticmethod
     def mkurl(
             campaign_execution,  # type: scenario.CampaignExecution
+            *,
+            html_escape=True,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a campaign details URL for the given campaign.
 
         :param campaign_execution: Campaign execution.
+        :param html_escape: ``True`` (default) to get HTML escaped text.
         :return: Campaign details URL for the given path.
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(CampaignPage.URL, args={HttpRequest.CAMPAIGN_NAME_ARG: campaign_execution.name})
+        return HttpRequest.encodeurl(
+            CampaignPage._URL,
+            args={
+                **HttpRequest.mkurlargs(obj=campaign_execution),
+            },
+            html_escape=html_escape,
+        )
 
     def __init__(self):  # type: (...) -> None
         """
         Configures the logger instance.
         """
         from ._debugclasses import UIDebugClass
+        from ._pagereqs import RequirementsPage
+        from ._pagescenarios import ScenarioListPage
 
         _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGN)
+
+        #: Requirements page instantiated as a member for implementation.
+        self._page_reqs = RequirementsPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: RequirementsPage
+        #: Scenario list page instantiated as a member for implementation.
+        self._page_scenarios = ScenarioListPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: ScenarioListPage
 
     def process(
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
         from ._htmldoc import HtmlDocument
+        from ._pagereqs import RequirementsPage
+        from ._pagescenarios import ScenarioListPage
 
         # Filter `request`.
-        if request.base_path != CampaignPage.URL:
-            self.debug("Request base path %r not matching %r", request.base_path, CampaignPage.URL)
+        if request.base_path != CampaignPage._URL:
+            self.debug("Request base path %r not matching %r", request.base_path, CampaignPage._URL)
             self.debug("%r not processed", request)
             return False
         self.debug("Processing %r", request)
 
-        raise NotImplementedError()
+        # Applicable baseline.
+        self.debug("Requirement baseline: %r", request.req_baseline)
+
+        # Campaign.
+        self.debug("Campaign execution: %r", request.campaign_execution)
+        if request.campaign_execution is None:
+            self.warning("Campaign execution missing")
+            return False
+
+        self.debug("Generating HTML content")
+        _html = HtmlDocument()
+        _html.settitle(request, f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
+
+        _html.addcontent('<a name="scenarios" />')
+        _html.addcontent(f'<h2 class="scenarios"><a href="{ScenarioListPage.mkurl(request.req_baseline)}">Scenarios</a></h2>')
+        self._page_scenarios.scenarios2html(request.req_baseline.scenarios, _html)
+
+        if request.req_baseline.req_db.getallreqs():
+            _html.addcontent('<a name="reqs" />')
+            _html.addcontent(f'<h2 class="reqs"><a href="{RequirementsPage.mkurl(request.req_baseline)}">Requirements</a></h2>')
+            self._page_reqs.reqs2html(request.req_baseline.req_db, _html)
+
+        request.sendhtml(_html)
+        return True

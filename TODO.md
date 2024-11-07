@@ -18,12 +18,13 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Bug: Many "WARNING  [scenario.ui.UIReqBaselines] <scenario._reqbl.ReqBaseline object>: No such scenario report 'test/results/2024-10-09_01-51-12/xxx.json'"
+    - Bug: Campaign requirements don't give requirement texts (no title nor content).
+    - Bug?: Scenario page confuses requirements and action/result texts.
     - Display campaign result details.
-    - Make it possible to refresh the campaign database.
-    - Make it possible to view scenarios and requirements for a given campaign.
-        - Multiple instantiations of `ReqTraceability`? And not the single `REQ_TRACEABILITY` singleton?
-        - Remove campaign configuration from the configuration page?
+        - Add links to traceability pages from campaign page.
     - Compare campaign result details?
+    - Set `scenario.ui` home page useful content.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.

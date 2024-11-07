@@ -27,6 +27,7 @@ if True:
 if typing.TYPE_CHECKING:
     from ._campaignexecution import CampaignExecution as _CampaignExecutionType
     from ._path import Path as _PathType
+    from ._reqbl import ReqBaseline as _ReqBaselineType
 
 
 class CampaignDatabase(_LoggerImpl):
@@ -109,21 +110,23 @@ class CampaignDatabase(_LoggerImpl):
             *,
             name=None,  # type: str
             path=None,  # type: _PathType
+            req_baseline=None,  # type: _ReqBaselineType
     ):  # type: (...) -> _CampaignExecutionType
         """
         Retrieves the campaign execution instance for the given campaign report path.
 
         :param name: Search a campaign from its name.
         :param path: Search a campaign from a path, either its output directory or its report path.
+        :param req_baseline: Search a campaign from a requirement baseline.
         :return: Campaign execution if found.
         :raise KeyError: If not found.
         """
-        _invalid_args_exception = Exception("No campaign criteria provided")  # type: Exception
         if not any([
             name is not None,
             path is not None,
+            req_baseline is not None,
         ]):
-            raise _invalid_args_exception
+            raise Exception("No campaign criteria provided")
 
         # Search for a campaign matching all criteria.
         for _campaign_execution in self.campaign_executions:  # type: _CampaignExecutionType
@@ -131,13 +134,18 @@ class CampaignDatabase(_LoggerImpl):
                 continue
             if (path is not None) and (_campaign_execution.outdir != path) and (_campaign_execution.campaign_report_path != path):
                 continue
+            if (req_baseline is not None) and (_campaign_execution.req_baseline is not req_baseline):
+                continue
             return _campaign_execution
 
+        _criteria = []  # type: typing.List[str]
         if name is not None:
-            raise KeyError(f"No such campaign name {name!r}")
+            _criteria.append(f"name {name!r}")
         if path is not None:
-            raise KeyError(f"No such campaign path '{path}'")
-        raise _invalid_args_exception
+            _criteria.append(f"path '{path}'")
+        if req_baseline:
+            _criteria.append(f"requirement baseline {req_baseline!r}")
+        raise KeyError(f"No such campaign with {', '.join(_criteria)}")
 
 
 #: Main instance of :class:`CampaignDatabase`.

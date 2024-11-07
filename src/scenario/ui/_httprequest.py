@@ -57,8 +57,49 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         #: POST method.
         POST = "POST"
 
-    #: Argument name for campaign selection.
-    CAMPAIGN_NAME_ARG = "campaign"
+    class Arg(scenario.enum.StrEnum):
+        """
+        URL argument names.
+        """
+        #: Campaign name (selector).
+        CAMPAIGN_NAME = "campaign"
+
+    @staticmethod
+    def mkurlargs(
+            *,
+            obj,  # type: typing.Optional[typing.Union[scenario.ReqBaseline, scenario.ReqBaselineObject]]
+    ):  # type: (...) -> typing.Dict[str, str]
+        """
+        Returns general URL arguments.
+
+        Mainly sets the selected campaign name,
+        or no arguments if the applicable baseline is the main one.
+
+        :param obj: Target object. Can be either a requirement baseline, or a requirement baseline owner, or ``None``.
+        :return: General URL arguments as a dictionary.
+        """
+        from ._reqbl import UI_REQ_BASELINES
+
+        # Determine the campaign execution from `obj`.
+        _campaign_execution = None  # type: typing.Optional[scenario.CampaignExecution]
+        if isinstance(obj, scenario.CampaignExecution):
+            _campaign_execution = obj
+        elif isinstance(obj, scenario.TestSuiteExecution):
+            _campaign_execution = obj.campaign_execution
+        elif isinstance(obj, scenario.TestCaseExecution):
+            _campaign_execution = obj.test_suite_execution.campaign_execution
+        elif isinstance(obj, scenario.ReqBaseline):
+            if obj is not UI_REQ_BASELINES.main:
+                _campaign_execution = scenario.campaign_db.get(req_baseline=obj)
+        elif isinstance(obj, scenario.ReqBaselineObject):
+            if obj.req_baseline is not UI_REQ_BASELINES.main:
+                _campaign_execution = scenario.campaign_db.get(req_baseline=obj.req_baseline)
+
+        # Build common arguments.
+        if _campaign_execution:
+            return {HttpRequest.Arg.CAMPAIGN_NAME: _campaign_execution.name}
+        else:
+            return {}
 
     def __init__(
             self,
@@ -223,18 +264,29 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         raise KeyError(f"No such argument {name!r}")
 
     @property
+    def campaign_execution(self):  # type: () -> typing.Optional[scenario.CampaignExecution]
+        """
+        Campaign execution corresponding to the campaign name if given in URL arguments.
+
+        :return: Campaign execution corresponding to the name given in URL arguments if any, or ``None`` otherwise.
+        """
+        _campaign_name = self.getarg(HttpRequest.Arg.CAMPAIGN_NAME, default="")  # type: str
+        if _campaign_name:
+            return scenario.campaign_db.get(name=_campaign_name)
+        return None
+
+    @property
     def req_baseline(self):  # type: () -> scenario.ReqBaseline
         """
         Applicable requirement baseline for the given request.
         """
-        from ._mainreqbaseline import UI_MAIN_REQ_BASELINE
+        from ._reqbl import UI_REQ_BASELINES
 
-        _campaign_name = self.getarg(self.CAMPAIGN_NAME_ARG, default="")  # type: str
-        if _campaign_name:
-            _campaign_execution = scenario.campaign_db.get(name=_campaign_name)  # type: scenario.CampaignExecution
-            return _campaign_execution.req_baseline
+        if self.campaign_execution:
+            UI_REQ_BASELINES.checkcampaignloaded(self.campaign_execution)
+            return self.campaign_execution.req_baseline
 
-        return UI_MAIN_REQ_BASELINE.req_baseline
+        return UI_REQ_BASELINES.main
 
     def sendhtml(
             self,
@@ -282,7 +334,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         ``http.server.BaseHTTPRequestHandler`` override.
 
         :param code: Return code.
-        :param size: Unused parameter. Replaced by :attr:`content_size`.
+        :param size: Unused parameter (inherited from ``http.server.BaseHTTPRequestHandler`` API). Replaced by :attr:`content_size`.
         """
         from ._httpserver import HTTP_SERVER
 
@@ -330,17 +382,24 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
             *,
             args=None,  # type: typing.Optional[typing.Dict[str, str]]
             anchor=None,  # type: typing.Optional[str]
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
-        Encodes an URL with GET parameters.
+        Encodes an URL with GET arguments.
 
         :param base_path: Base path of the URL.
-        :param args: GET parameters to encode.
+        :param args: GET arguments to encode.
         :param anchor: Optional anchor name.
+        :param html_escape: ``True`` to get HTML escaped URL. ``False`` by default.
+        :return: URL string.
         """
+        from ._htmldoc import HtmlDocument
+
         _url = urllib.parse.quote(base_path)  # type: str
         if args:
             _url += f"?{urllib.parse.urlencode(args)}"
         if anchor:
             _url += f"#{urllib.parse.quote(anchor)}"
+        if html_escape:
+            _url = HtmlDocument.escape(_url)
         return _url

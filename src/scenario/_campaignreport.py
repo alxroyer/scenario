@@ -649,8 +649,9 @@ class CampaignReport(_LoggerImpl):
                         _test_case_execution.report.read()  # Let exceptions raise up.
 
                         # Feed the requirement baseline with the scenario definition read from the report.
-                        assert _test_case_execution.scenario_execution, "Scenario execution should be available once the report has been read"
-                        _test_case_execution.req_baseline.scenarios.append(_test_case_execution.scenario_execution.definition)
+                        if not _test_case_execution.scenario_definition:
+                            raise Exception(f"Scenario definition for {_test_case_execution!r} should be available once the report has been read")
+                        _test_case_execution.req_baseline.scenarios.append(_test_case_execution.scenario_definition)
                     except Exception as _err:
                         _FAST_PATH.main_logger.warning("".join([
                             f"Can't load scenario {_test_case_execution.name!r}",

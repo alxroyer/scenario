@@ -35,21 +35,36 @@ class UpstreamTraceabilityPage(_RequestHandlerImpl):
     """
 
     #: Base URL for the upstream traceability page.
-    URL = "/upstream-traceability"  # type: str
+    _URL = "/upstream-traceability"  # type: str
 
     @staticmethod
     def mkurl(
-            scenario_definition,  # type: scenario.ScenarioDefinition
+            obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ScenarioDefinition]
+            *,
+            html_escape=True,  # type: bool
     ):  # type: (...) -> str
         """
-        Builds an anchor URL in the upstream traceability page, for the given scenario.
+        Builds an upstream traceability page URL.
 
-        :param scenario_definition: Scenario to build an anchor URL for.
-        :return: Anchor URL for the given scenario.
+        :param obj:
+            Applicable requirement baseline, or scenario to build an anchor URL for.
+
+            If a :class:`scenario._scenariodefinition.ScenarioDefinition` is given, determines the requirement baseline by the way.
+
+            Main requirement baseline used by default.
+        :param html_escape:
+            ``True`` (default) to get HTML escaped text.
+        :return:
+            Upstream traceability page URL.
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(UpstreamTraceabilityPage.URL, anchor=scenario_definition.name)
+        return HttpRequest.encodeurl(
+            UpstreamTraceabilityPage._URL,
+            args=HttpRequest.mkurlargs(obj=obj),
+            anchor=obj.name if isinstance(obj, scenario.ScenarioDefinition) else None,
+            html_escape=html_escape,
+        )
 
     @staticmethod
     def scenario2unnamedhtmllink(
@@ -79,15 +94,18 @@ class UpstreamTraceabilityPage(_RequestHandlerImpl):
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
-        if request.base_path != UpstreamTraceabilityPage.URL:
-            self.debug("Request base path %r not matching %r", request.base_path, UpstreamTraceabilityPage.URL)
+        if request.base_path != UpstreamTraceabilityPage._URL:
+            self.debug("Request base path %r not matching %r", request.base_path, UpstreamTraceabilityPage._URL)
             self.debug("%r not processed", request)
             return False
         self.debug("Processing %r", request)
 
+        # Applicable baseline.
+        self.debug("Requirement baseline: %r", request.req_baseline)
+
         self.debug("Generating HTML content")
         _html = HtmlDocument()
-        _html.settitle("Upstream traceability")
+        _html.settitle(request, "Upstream traceability", campaign_subtitle=True)
 
         with _html.addcontent('<div id="downstream-traceability"></div>'):
             _upstream_traceability = scenario.ReqTraceability(request.req_baseline).getupstream() \
@@ -124,13 +142,13 @@ class UpstreamTraceabilityPage(_RequestHandlerImpl):
             # Scenario name.
             with html.addcontent('<td class="scenario name"></td>'):
                 # With anchor.
-                html.addcontent(f'<a name="{html.encode(upstream_scenario.scenario.name)}" />')
+                html.addcontent(f'<a name="{html.escape(upstream_scenario.scenario.name)}" />')
                 # With link to scenario details page.
                 with html.addcontent(f'<a href="{ScenarioPage.mkurl(upstream_scenario.scenario)}"></a>'):
                     html.addtext(upstream_scenario.scenario.name)
 
             # Title.
-            html.addcontent(f'<td class="scenario title">{html.encode(upstream_scenario.scenario.title)}</td>')
+            html.addcontent(f'<td class="scenario title">{html.escape(upstream_scenario.scenario.title)}</td>')
 
             # Requirement coverage.
             with html.addcontent(f'<td class="scenario coverage"></td>'):
@@ -165,7 +183,7 @@ class UpstreamTraceabilityPage(_RequestHandlerImpl):
             # Traceability comments.
             if upstream_req.comments:
                 html.addcontent('<span class="req sep">:</span>')
-                html.addcontent(f'<span class="req comments">{html.encode(upstream_req.comments)}</span>')
+                html.addcontent(f'<span class="req comments">{html.escape(upstream_req.comments)}</span>')
 
             # Optional subrefs.
             if upstream_req.req_subrefs:
@@ -200,4 +218,4 @@ class UpstreamTraceabilityPage(_RequestHandlerImpl):
             # Traceability comments.
             if upstream_req_subref.comments:
                 html.addcontent('<span class="req-subref sep">:</span>')
-                html.addcontent(f'<span class="req-subref comments">{html.encode(upstream_req_subref.comments)}</span>')
+                html.addcontent(f'<span class="req-subref comments">{html.escape(upstream_req_subref.comments)}</span>')

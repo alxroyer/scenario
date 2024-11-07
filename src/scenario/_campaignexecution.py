@@ -465,9 +465,18 @@ class TestCaseExecution(_ReqBaselineObjectImpl):
         return f"<{_FAST_PATH.reflection.qualname(type(self))} of '{self.script_path}'>"
 
     @property
+    def scenario_definition(self):  # type: () -> typing.Optional[_ScenarioDefinitionType]
+        """
+        Scenario definition data, if available.
+        """
+        if self.report.content and self.report.content.execution:
+            return self.report.content.execution.definition
+        return None
+
+    @property
     def scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]
         """
-        Scenario execution data.
+        Scenario execution data, if available.
         """
         if self.report.content:
             return self.report.content.execution
@@ -478,8 +487,8 @@ class TestCaseExecution(_ReqBaselineObjectImpl):
         """
         Test case name.
         """
-        if self.scenario_execution:
-            return self.scenario_execution.definition.name
+        if self.scenario_definition:
+            return self.scenario_definition.name
         else:
             # Use the script pretty path by default (base info to constitute the scenario name actually).
             return self.script_path.prettypath

@@ -25,6 +25,8 @@ import scenario
 if True:
     from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from ._debugclasses import UIDebugClass as _UIDebugClassType
+    from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -34,51 +36,103 @@ class ScenarioListPage(_RequestHandlerImpl):
     """
 
     #: Base URL for the scenario list page.
-    URL = "/scenarios"  # type: str
+    _URL = "/scenarios"  # type: str
 
-    def __init__(self):  # type: (...) -> None
+    @staticmethod
+    def mkurl(
+            req_baseline=None,  # type: scenario.ReqBaseline
+            *,
+            html_escape=True,  # type: bool
+    ):  # type: (...) -> str
+        """
+        Builds a scenario list page URL.
+
+        :param req_baseline:
+            Applicable requirement baseline
+
+            Main requirement baseline by default.
+        :param html_escape:
+            ``True`` (default) to get HTML escaped text.
+        :return:
+            Scenario list page URL.
+        """
+        from ._httprequest import HttpRequest
+
+        return HttpRequest.encodeurl(
+            ScenarioListPage._URL,
+            args=HttpRequest.mkurlargs(obj=req_baseline),
+            html_escape=html_escape,
+        )
+
+    def __init__(
+            self,
+            *,
+            debug_class=None,  # type: _UIDebugClassType
+    ):  # type: (...) -> None
         """
         Configures the logger instance.
+
+        :param debug_class:
+            Optional debug class, in case of instantiation as a member of another page.
+
+            .. seealso:: :meth:`._pagecampaign.CampaignPage.__init__()`
         """
         from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_SCENARIOS)
+        _RequestHandlerImpl.__init__(self, debug_class or UIDebugClass.PAGE_SCENARIOS)
 
     def process(
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
         from ._htmldoc import HtmlDocument
-        from ._pagereqsup import UpstreamTraceabilityPage
-        from ._pagescenario import ScenarioPage
 
         # Filter `request`.
-        if request.base_path != ScenarioListPage.URL:
-            self.debug("Request base path %r not matching %r", request.base_path, ScenarioListPage.URL)
+        if request.base_path != ScenarioListPage._URL:
+            self.debug("Request base path %r not matching %r", request.base_path, ScenarioListPage._URL)
             self.debug("%r not processed", request)
             return False
         self.debug("Processing %r", request)
 
+        # Applicable baseline.
+        self.debug("Requirement baseline: %r", request.req_baseline)
+
         self.debug("Generating HTML content")
         _html = HtmlDocument()
-        _html.settitle("Scenarios")
+        _html.settitle(request, "Scenarios", campaign_subtitle=True)
 
-        with _html.addcontent('<div id="scenarios"></div>'):
-            with _html.addcontent('<ul></ul>'):
-                for _scenario in request.req_baseline.scenarios:  # type: scenario.ScenarioDefinition
-                    with _html.addcontent('<li class="scenario"></li>'):
-                        # Scenario name.
-                        with _html.addcontent(f'<span class="scenario name"></span>'):
-                            with _html.addcontent(f'<a href="{ScenarioPage.mkurl(_scenario)}"></a>'):
-                                _html.addtext(_scenario.name)
-
-                        # Upstream traceability link.
-                        UpstreamTraceabilityPage.scenario2unnamedhtmllink(_scenario, _html)
-
-                        # Title.
-                        if _scenario.title:
-                            _html.addcontent('<span class="scenario sep">:</span>')
-                            _html.addcontent(f'<span class="scenario title">{_html.encode(_scenario.title)}</span>')
+        self.scenarios2html(request.req_baseline.scenarios, _html)
 
         request.sendhtml(_html)
         return True
+
+    def scenarios2html(
+            self,
+            scenario_definitions,  # type: typing.Sequence[scenario.ScenarioDefinition]
+            html,  # type: _HtmlDocumentType
+    ):  # type: (...) -> None
+        """
+        Builds the HTML content for the given scenario list.
+
+        :param scenario_definitions: Scenario list to process.
+        :param html: HTML output page to feed.
+        """
+        from ._pagereqsup import UpstreamTraceabilityPage
+        from ._pagescenario import ScenarioPage
+
+        with html.addcontent('<div id="scenarios"></div>'):
+            with html.addcontent('<ul></ul>'):
+                for _scenario_definition in scenario_definitions:  # type: scenario.ScenarioDefinition
+                    with html.addcontent('<li class="scenario"></li>'):
+                        # Scenario name.
+                        with html.addcontent(f'<span class="scenario name"></span>'):
+                            with html.addcontent(f'<a href="{ScenarioPage.mkurl(_scenario_definition)}"></a>'):
+                                html.addtext(_scenario_definition.name)
+
+                        # Upstream traceability link.
+                        UpstreamTraceabilityPage.scenario2unnamedhtmllink(_scenario_definition, html)
+
+                        # Title.
+                        if _scenario_definition.title:
+                            html.addcontent('<span class="scenario sep">:</span>')
+                            html.addcontent(f'<span class="scenario title">{html.escape(_scenario_definition.title)}</span>')

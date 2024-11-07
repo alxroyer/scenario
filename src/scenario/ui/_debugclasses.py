@@ -53,3 +53,5 @@ class UIDebugClass(scenario.enum.StrEnum):
     PAGE_SCENARIO = "scenario.ui.ScenarioPage"
     #: UI scenario list page debugging.
     PAGE_SCENARIOS = "scenario.ui.ScenarioListPage"
+    #: UI requirement baselines debugging.
+    REQ_BASELINES = "scenario.ui.UIReqBaselines"

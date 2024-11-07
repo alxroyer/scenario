@@ -35,21 +35,36 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
     """
 
     #: Base URL for the downstream traceability page.
-    URL = "/downstream-traceability"  # type: str
+    _URL = "/downstream-traceability"  # type: str
 
     @staticmethod
     def mkurl(
-            req_ref,  # type: scenario.ReqRef
+            obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ReqRef]
+            *,
+            html_escape=True,  # type: bool
     ):  # type: (...) -> str
         """
-        Builds an anchor URL in the downstream traceability page, for the given requirement reference.
+        Builds a downstream traceability page URL.
 
-        :param req_ref: Requirement reference to build an anchor URL for.
-        :return: Anchor URL for the given requirement reference.
+        :param obj:
+            Applicable requirement baseline, or requirement reference to build an anchor URL for.
+
+            If a :class:`scenario._reqref.ReqRef` is given, determines the requirement baseline by the way.
+
+            Main requirement baseline by default.
+        :param html_escape:
+            ``True`` (default) to get HTML escaped text.
+        :return:
+            Downstream traceability page URL.
         """
         from ._httprequest import HttpRequest
 
-        return HttpRequest.encodeurl(DownstreamTraceabilityPage.URL, anchor=req_ref.id)
+        return HttpRequest.encodeurl(
+            DownstreamTraceabilityPage._URL,
+            args=HttpRequest.mkurlargs(obj=obj),
+            anchor=obj.id if isinstance(obj, scenario.ReqRef) else None,
+            html_escape=html_escape,
+        )
 
     @staticmethod
     def reqref2unnamedhtmllink(
@@ -79,15 +94,18 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
-        if request.base_path != DownstreamTraceabilityPage.URL:
-            self.debug("Request base path %r not matching %r", request.base_path, DownstreamTraceabilityPage.URL)
+        if request.base_path != DownstreamTraceabilityPage._URL:
+            self.debug("Request base path %r not matching %r", request.base_path, DownstreamTraceabilityPage._URL)
             self.debug("%r not processed", request)
             return False
         self.debug("Processing %r", request)
 
+        # Applicable baseline.
+        self.debug("Requirement baseline: %r", request.req_baseline)
+
         self.debug("Generating HTML content")
         _html = HtmlDocument()
-        _html.settitle("Downstream traceability")
+        _html.settitle(request, "Downstream traceability", campaign_subtitle=True)
 
         with _html.addcontent('<div id="downstream-traceability"></div>'):
             _downstream_traceability = scenario.ReqTraceability(request.req_baseline).getdownstream() \
@@ -124,14 +142,14 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
             # Requirement id.
             with html.addcontent('<td class="req-ref id"></td>'):
                 # With anchor.
-                html.addcontent(f'<a name="{html.encode(downstream_req_ref.req_ref.id)}" />')
+                html.addcontent(f'<a name="{html.escape(downstream_req_ref.req_ref.id)}" />')
                 # With link to requirements page.
                 with html.addcontent(f'<a href="{RequirementsPage.mkurl(downstream_req_ref.req_ref)}"></a>'):
                     html.addtext(downstream_req_ref.req_ref.id)
 
             # Title.
             _title = downstream_req_ref.req_ref.req.title if downstream_req_ref.req_ref.ismain() else ""  # type: str
-            html.addcontent(f'<td class="req-ref title">{html.encode(_title)}</td>')
+            html.addcontent(f'<td class="req-ref title">{html.escape(_title)}</td>')
 
             # Test coverage.
             with html.addcontent(f'<td class="req-ref coverage"></td>'):
@@ -166,7 +184,7 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
             # Traceability comments.
             if downstream_scenario.comments:
                 html.addcontent('<span class="req-verifier scenario sep">:</span>')
-                html.addcontent(f'<span class="req-verifier scenario comments">{html.encode(downstream_scenario.comments)}</span>')
+                html.addcontent(f'<span class="req-verifier scenario comments">{html.escape(downstream_scenario.comments)}</span>')
 
             # Optional steps.
             if downstream_scenario.steps:
@@ -197,4 +215,4 @@ class DownstreamTraceabilityPage(_RequestHandlerImpl):
             # Traceability comments.
             if downstream_step.comments:
                 html.addcontent('<span class="req-verifier step sep">:</span>')
-                html.addcontent(f'<span class="req-verifier step comments">{html.encode(downstream_step.comments)}</span>')
+                html.addcontent(f'<span class="req-verifier step comments">{html.escape(downstream_step.comments)}</span>')

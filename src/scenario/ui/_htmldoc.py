@@ -25,6 +25,9 @@ import scenario
 if typing.TYPE_CHECKING:
     from .._xmlutils import Xml as _XmlType  # Access `scenario` inner symbols.
 
+if typing.TYPE_CHECKING:
+    from ._httprequest import HttpRequest as _HttpRequestType
+
 
 class HtmlDocument(scenario.Logger):
     """
@@ -100,8 +103,8 @@ class HtmlDocument(scenario.Logger):
             self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
             #: HTML head title node, which text content will be set with :meth:`settitle()`.
             self._head_title = self.addcontent('<title>...</title>').new_child  # type: Xml.Node
-            self.addcontent(f'<link rel="stylesheet" href="{UI_CONFIG.cssurl()}" type="text/css" />')
-            self.addcontent(f'<script src="{UI_CONFIG.jsurl()}"></script>', auto_closing=False)
+            self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')
+            self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>', auto_closing=False)
 
         #: HTML ``<body/>`` section node.
         self.body = self.xml_doc.createnode("body")  # type: Xml.Node
@@ -132,13 +135,13 @@ class HtmlDocument(scenario.Logger):
         from ._pagescenarios import ScenarioListPage
 
         with self.addcontent('<div id="menu"></div>'):
-            self.addcontent(f'<a class="menu" href="{Homepage.URL}">Home</a>')
-            self.addcontent(f'<a class="menu" href="{ConfigurationPage.URL}">Configuration</a>')
-            self.addcontent(f'<a class="menu" href="{RequirementsPage.URL}">Requirements</a>')
-            self.addcontent(f'<a class="menu" href="{ScenarioListPage.URL}">Scenarios</a>')
-            self.addcontent(f'<a class="menu" href="{CampaignListPage.URL}">Campaigns</a>')
-            self.addcontent(f'<a class="menu" href="{DownstreamTraceabilityPage.URL}">Downstream traceability</a>')
-            self.addcontent(f'<a class="menu" href="{UpstreamTraceabilityPage.URL}">Upstream traceability</a>')
+            self.addcontent(f'<a class="menu" href="{Homepage.mkurl()}">Home</a>')
+            self.addcontent(f'<a class="menu" href="{ConfigurationPage.mkurl()}">Configuration</a>')
+            self.addcontent(f'<a class="menu" href="{RequirementsPage.mkurl()}">Requirements</a>')
+            self.addcontent(f'<a class="menu" href="{ScenarioListPage.mkurl()}">Scenarios</a>')
+            self.addcontent(f'<a class="menu" href="{CampaignListPage.mkurl()}">Campaigns</a>')
+            self.addcontent(f'<a class="menu" href="{DownstreamTraceabilityPage.mkurl()}">Downstream traceability</a>')
+            self.addcontent(f'<a class="menu" href="{UpstreamTraceabilityPage.mkurl()}">Upstream traceability</a>')
 
     def _reloadbutton2html(self):  # type: (...) -> None
         """
@@ -147,19 +150,39 @@ class HtmlDocument(scenario.Logger):
         from ._pageconfig import ConfigurationPage
 
         with self.addcontent('<div id="reload-default"></div>'):
-            self.addcontent(f'<a href="{ConfigurationPage.mkreloaddefaulturl()}">Reload default data</a>')
+            self.addcontent(f'<a href="{ConfigurationPage.mkurl(reload_default=True)}">Reload default data</a>')
 
     def settitle(
             self,
+            request,  # type: _HttpRequestType
             title,  # type: str
+            *,
+            campaign_subtitle=False,  # type: bool
     ):  # type: (...) -> None
         """
         Sets the title of the HTML page.
 
+        :param request: Input request.
         :param title: New title. Not HTML-encoded.
+        :param campaign_subtitle: Set to ``True`` to add campaign subtitle.
         """
-        self._head_title.gettextnodes()[0].data = self.encode(title)
-        self._h1.gettextnodes()[0].data = self.encode(title)
+        from ._pagecampaign import CampaignPage
+        from ._reqbl import UI_REQ_BASELINES
+
+        _req_baseline_desc = UI_REQ_BASELINES.getdesc(request.req_baseline)  # type: str
+
+        self._head_title.gettextnodes()[0].data = self.escape(title)
+        if campaign_subtitle and request.campaign_execution:
+            self._head_title.gettextnodes()[0].data += f" ({self.escape(_req_baseline_desc)})"
+
+        self._h1.gettextnodes()[0].data = ""
+        with HtmlDocument.NodeContext(self, self._h1):
+            self.addcontent(f'<span class="title main">{self.escape(title)}</span>')
+            if campaign_subtitle and request.campaign_execution:
+                self.addcontent('<span class="title sep"></span>')
+
+                _url = CampaignPage.mkurl(request.campaign_execution)  # type: str
+                self.addcontent(f'<span class="title req-baseline"><a href="{_url}">{self.escape(_req_baseline_desc)}</a></span>')
 
     def addcontent(
             self,
@@ -173,7 +196,7 @@ class HtmlDocument(scenario.Logger):
         :param content:
             HTML content.
 
-            .. note:: The :meth:`encode()` method shall be used to ensure HTML encoding for text data.
+            .. note:: The :meth:`escape()` method shall be used to ensure HTML encoding for uncontrolled text data.
         :param auto_closing:
             Set to ``False`` to avoid auto-closing node.
         :return:
@@ -200,26 +223,28 @@ class HtmlDocument(scenario.Logger):
     def addtext(
             self,
             text,  # type: str
+            *,
+            html_escape=True,  # type: bool
     ):  # type: (...) -> _XmlType.TextNode
         """
         Adds text to the current node.
 
         :param text:
             Text to add.
+        :param html_escape:
+            If ``True`` (default), :meth:`escape()` will be automatically called on ``text``.
 
-            Not HTML-encoded. Will be encoded by this function
+            Set to ``False`` to avoid :meth:`escape()` being called.
         :return:
             Text node created.
         """
-        return self.current_node.appendchild(
-            self.xml_doc.createtextnode(
-                # HTML encoding.
-                self.encode(text),
-            ),
-        )
+        if html_escape:
+            # HTML encoding.
+            text = self.escape(text)
+        return self.current_node.appendchild(self.xml_doc.createtextnode(text))
 
     @staticmethod
-    def encode(
+    def escape(
             text,  # type: str
     ):  # type: (...) -> str
         """
@@ -227,6 +252,8 @@ class HtmlDocument(scenario.Logger):
 
         :param text: Text to encode.
         :return: HTML-encoded text.
+
+        .. tip:: Use only in case of risk of uncontrolled data.
         """
         return html.escape(text)
 

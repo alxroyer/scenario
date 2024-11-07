@@ -32,7 +32,26 @@ class Homepage(_RequestHandlerImpl):
     """
 
     #: Base URL for the homepage.
-    URL = "/"  # type: str
+    _URL = "/"  # type: str
+
+    @staticmethod
+    def mkurl(
+            *,
+            html_escape=True,  # type: bool
+    ):  # type: (...) -> str
+        """
+        Builds a homepage URL.
+
+        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :return: Homepage URL.
+        """
+        from ._httprequest import HttpRequest
+
+        return HttpRequest.encodeurl(
+            Homepage._URL,
+            args=HttpRequest.mkurlargs(obj=None),
+            html_escape=html_escape,
+        )
 
     def __init__(self):  # type: (...) -> None
         """
@@ -49,15 +68,15 @@ class Homepage(_RequestHandlerImpl):
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
-        if request.base_path != Homepage.URL:
-            self.debug("Request base path %r not matching %r", request.base_path, Homepage.URL)
+        if request.base_path != Homepage._URL:
+            self.debug("Request base path %r not matching %r", request.base_path, Homepage._URL)
             self.debug("%r not processed", request)
             return False
         self.debug("Processing %r", request)
 
         self.debug("Generating HTML content")
         _html = HtmlDocument()  # type: HtmlDocument
-        _html.settitle("Scenario User Interface")
+        _html.settitle(request, "Scenario User Interface", campaign_subtitle=False)
 
         _html.addcontent('<p>Hello world!</p>')
 

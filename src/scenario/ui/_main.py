@@ -31,7 +31,7 @@ def main():  # type: (...) -> scenario.ErrorCode
     """
     from ._args import UIArgs
     from ._httpserver import HTTP_SERVER
-    from ._mainreqbaseline import UI_MAIN_REQ_BASELINE
+    from ._reqbl import UI_REQ_BASELINES
 
     # Analyze program arguments, if not already set.
     if not UIArgs.isset():
@@ -44,10 +44,10 @@ def main():  # type: (...) -> scenario.ErrorCode
 
     try:
         # Load default requirements and scenarios from `ScenarioConfig.Key.REQ_DB_FILES` and `TEST_SUITE_FILES` configurations.
-        UI_MAIN_REQ_BASELINE.set(scenario.ReqBaseline.fromfiles(
+        UI_REQ_BASELINES.main = scenario.ReqBaseline.fromfiles(
             name="scenario.ui",
             log_info=True,
-        ))
+        )
         # Load campaign results.
         scenario.campaign_db.load(
             # Don't read scenario logs and reports right now for performance concerns.

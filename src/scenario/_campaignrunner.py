@@ -331,8 +331,9 @@ class CampaignRunner(_LoggerImpl, _ReqBaselineObjectImpl):
                     test_case_execution.report.read()
 
                     # Save the scenario with the requirement baseline.
-                    assert test_case_execution.scenario_execution, "Scenario execution should be available once the report has been read"
-                    self.req_baseline.scenarios.append(test_case_execution.scenario_execution.definition)
+                    if not test_case_execution.scenario_definition:
+                        raise Exception(f"Scenario definition for {test_case_execution!r} should be available once the report has been read")
+                    self.req_baseline.scenarios.append(test_case_execution.scenario_definition)
                 except Exception as _err:
                     # Don't bother with errors, just debug and keep going on.
                     self.debug("Error while reading %s scenario report: %s", test_case_execution.name, _err)
