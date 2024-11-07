@@ -65,22 +65,26 @@ class CampaignPage(_RequestHandlerImpl):
         """
         from ._debugclasses import UIDebugClass
         from ._pagereqs import RequirementsPage
+        from ._pagereqsdown import DownstreamTraceabilityPage
+        from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenarios import ScenarioListPage
 
         _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGN)
 
-        #: Requirements page instantiated as a member for implementation.
-        self._page_reqs = RequirementsPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: RequirementsPage
         #: Scenario list page instantiated as a member for implementation.
         self._page_scenarios = ScenarioListPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: ScenarioListPage
+        #: Requirements page instantiated as a member for implementation.
+        self._page_reqs = RequirementsPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: RequirementsPage
+        #: Downstream traceability page instantiated as a member for implementation.
+        self._page_reqs_down = DownstreamTraceabilityPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: DownstreamTraceabilityPage
+        #: Upsatream traceability page instantiated as a member for implementation.
+        self._page_reqs_up = UpstreamTraceabilityPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: UpstreamTraceabilityPage
 
     def process(
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
         from ._htmldoc import HtmlDocument
-        from ._pagereqs import RequirementsPage
-        from ._pagescenarios import ScenarioListPage
 
         # Filter `request`.
         if request.base_path != CampaignPage._URL:
@@ -103,13 +107,21 @@ class CampaignPage(_RequestHandlerImpl):
         _html.settitle(request, f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
 
         _html.addcontent('<a name="scenarios" />')
-        _html.addcontent(f'<h2 class="scenarios"><a href="{ScenarioListPage.mkurl(request.req_baseline)}">Scenarios</a></h2>')
-        self._page_scenarios.scenarios2html(request.req_baseline.scenarios, _html)
+        _html.addcontent(f'<h2 class="scenarios"><a href="{self._page_scenarios.mkurl(request.req_baseline)}">Scenarios</a></h2>')
+        self._page_scenarios.scenarios2html(request.req_baseline, _html)
 
         if request.req_baseline.req_db.getallreqs():
             _html.addcontent('<a name="reqs" />')
-            _html.addcontent(f'<h2 class="reqs"><a href="{RequirementsPage.mkurl(request.req_baseline)}">Requirements</a></h2>')
-            self._page_reqs.reqs2html(request.req_baseline.req_db, _html)
+            _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs.mkurl(request.req_baseline)}">Requirements</a></h2>')
+            self._page_reqs.reqs2html(request.req_baseline, _html)
+
+            _html.addcontent('<a name="downstream-traceability" />')
+            _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs_down.mkurl(request.req_baseline)}">Downstream traceability</a></h2>')
+            self._page_reqs_down.downstreamtraceability2html(request.req_baseline, _html)
+
+            _html.addcontent('<a name="upstream-traceability" />')
+            _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs_up.mkurl(request.req_baseline)}">Upstream traceability</a></h2>')
+            self._page_reqs_up.upstreamtraceability2html(request.req_baseline, _html)
 
         request.sendhtml(_html)
         return True

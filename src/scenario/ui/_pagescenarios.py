@@ -75,7 +75,7 @@ class ScenarioListPage(_RequestHandlerImpl):
         :param debug_class:
             Optional debug class, in case of instantiation as a member of another page.
 
-            .. seealso:: :meth:`._pagecampaign.CampaignPage.__init__()`
+            .. seealso:: :class:`._pagecampaign.CampaignPage`
         """
         from ._debugclasses import UIDebugClass
 
@@ -101,20 +101,20 @@ class ScenarioListPage(_RequestHandlerImpl):
         _html = HtmlDocument()
         _html.settitle(request, "Scenarios", campaign_subtitle=True)
 
-        self.scenarios2html(request.req_baseline.scenarios, _html)
+        self.scenarios2html(request.req_baseline, _html)
 
         request.sendhtml(_html)
         return True
 
     def scenarios2html(
             self,
-            scenario_definitions,  # type: typing.Sequence[scenario.ScenarioDefinition]
+            req_baseline,  # type: scenario.ReqBaseline
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Builds the HTML content for the given scenario list.
 
-        :param scenario_definitions: Scenario list to process.
+        :param req_baseline: Requirement baseline holding the scenario list to process.
         :param html: HTML output page to feed.
         """
         from ._pagereqsup import UpstreamTraceabilityPage
@@ -122,7 +122,7 @@ class ScenarioListPage(_RequestHandlerImpl):
 
         with html.addcontent('<div id="scenarios"></div>'):
             with html.addcontent('<ul></ul>'):
-                for _scenario_definition in scenario_definitions:  # type: scenario.ScenarioDefinition
+                for _scenario_definition in req_baseline.scenarios:  # type: scenario.ScenarioDefinition
                     with html.addcontent('<li class="scenario"></li>'):
                         # Scenario name.
                         with html.addcontent(f'<span class="scenario name"></span>'):

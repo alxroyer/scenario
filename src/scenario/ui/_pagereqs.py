@@ -78,7 +78,7 @@ class RequirementsPage(_RequestHandlerImpl):
         :param debug_class:
             Optional debug class, in case of instantiation as a member of another page.
 
-            .. seealso:: :meth:`._pagecampaign.CampaignPage.__init__()`
+            .. seealso:: :class:`._pagecampaign.CampaignPage`
         """
         from ._debugclasses import UIDebugClass
 
@@ -104,25 +104,25 @@ class RequirementsPage(_RequestHandlerImpl):
         _html = HtmlDocument()
         _html.settitle(request, "Requirements", campaign_subtitle=True)
 
-        self.reqs2html(request.req_baseline.req_db, _html)
+        self.reqs2html(request.req_baseline, _html)
 
         request.sendhtml(_html)
         return True
 
     def reqs2html(
             self,
-            req_db,  # type: scenario.ReqDatabase
+            req_baseline,  # type: scenario.ReqBaseline
             html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
-        Builds the HTML content for the given requirement database.
+        Builds the HTML content for the requirement database given with the requirement baseline.
 
-        :param req_db: Requirement database to process.
+        :param req_baseline: Requirement baseline holding the requirement database to process.
         :param html: HTML output page to feed.
         """
         with html.addcontent('<div id="requirements"></div>'):
             with html.addcontent('<ul></ul>'):
-                for _req in req_db.getallreqs():  # type: scenario.Req
+                for _req in req_baseline.req_db.getallreqs():  # type: scenario.Req
                     self._req2html(_req, html)
 
     def _req2html(

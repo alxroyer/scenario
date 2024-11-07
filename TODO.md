@@ -18,10 +18,8 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Bug: Campaign requirements don't give requirement texts (no title nor content).
+    - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Bug?: Scenario page confuses requirements and action/result texts.
-    - Display campaign result details.
-        - Add links to traceability pages from campaign page.
     - Compare campaign result details?
     - Set `scenario.ui` home page useful content.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
