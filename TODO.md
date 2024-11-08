@@ -21,7 +21,6 @@
     - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Bug?: Scenario page confuses requirements and action/result texts.
     - Compare campaign result details?
-    - Set `scenario.ui` home page useful content.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.

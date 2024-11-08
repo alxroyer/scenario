@@ -66,6 +66,11 @@ class Homepage(_RequestHandlerImpl):
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
         from ._htmldoc import HtmlDocument
+        from ._pagecampaigns import CampaignListPage
+        from ._pagereqs import RequirementsPage
+        from ._pagereqsdown import DownstreamTraceabilityPage
+        from ._pagereqsup import UpstreamTraceabilityPage
+        from ._pagescenarios import ScenarioListPage
 
         # Filter `request`.
         if request.base_path != Homepage._URL:
@@ -78,7 +83,20 @@ class Homepage(_RequestHandlerImpl):
         _html = HtmlDocument()  # type: HtmlDocument
         _html.settitle(request, "Scenario User Interface", campaign_subtitle=False)
 
-        _html.addcontent('<p>Hello world!</p>')
+        _html.addcontent(
+            f'<p>'
+            f'Browse <a href="{ScenarioListPage.mkurl()}">scenarios</a> described in test scripts, '
+            f'and <a href="{CampaignListPage.mkurl()}">campaign results</a>.'
+            f'</p>'
+        )
+
+        _html.addcontent(
+            f'<p>'
+            f'Working with <a href="{RequirementsPage.mkurl()}">requirements</a>? '
+            f'Browse <a href="{DownstreamTraceabilityPage.mkurl()}">downstream</a> '
+            f'and <a href="{UpstreamTraceabilityPage.mkurl()}">upstream</a> traceability tables.'
+            f'</p>'
+        )
 
         request.sendhtml(_html)
         return True
