@@ -18,11 +18,11 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Bug?: Scenario page confuses requirements and action/result texts.
     - Compare campaign result details?
     - Make reload button applicable to all pages.
         - Avoid having a `reload` parameter remain in the URL (so that refresshing the page does reexecute the relaod action).
+    - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.

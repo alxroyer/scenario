@@ -96,17 +96,25 @@ class UIReqBaselines(scenario.Logger):
         Used for scenarios of the :attr:`main` baseline, to be read from Python scripts.
         Called by :meth:`._pagescenario.ScenarioPage._getscenario()`.
         """
+        from .._scenariodefinition import ScenarioDefinitionHelper
+
         # Once the scenario definition has been loaded, a `ScenarioExecution` instance is attached with it.
         # If the scenario definition does not own its `ScenarioExecution` instance yet, try to load it.
         if not scenario_definition.execution:
             if scenario_definition.req_baseline is not self.main:
                 raise Exception(f"Unexpected unloaded scenario for non-main baseline {scenario_definition.req_baseline!r}")
 
+            # Create the `ScenarioExecution` instance.
+            scenario_definition.execution = scenario.ScenarioExecution(scenario_definition)
+
             # Load scenario details.
             try:
                 # Prepare the scenario for working with `ScenarioRunner` and `ScenarioStack`.
-                scenario_definition.execution = scenario.ScenarioExecution(scenario_definition)
                 scenario.stack.building.pushscenariodefinition(scenario_definition)
+
+                # Inspect the scenario definition class to build step definitions from methods.
+                with scenario_definition.req_baseline:
+                    ScenarioDefinitionHelper(scenario_definition).buildsteps()
 
                 # Start iterating over the scenario steps.
                 scenario_definition.execution.startsteplist()

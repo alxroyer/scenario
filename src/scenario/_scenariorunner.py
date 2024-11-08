@@ -329,7 +329,7 @@ class ScenarioRunner(_LoggerImpl, _ReqBaselineObjectImpl):
         self.debug("_buildscenario(scenario_definition=%r)", scenario_definition)
 
         with self.pushindentation():
-            # Inspect the scenario definition class to build step definitions from methods
+            # Inspect the scenario definition class to build step definitions from methods.
             _ScenarioDefinitionHelperImpl(scenario_definition).buildsteps()
 
             # Feed the building context of the scenario stack with the scenario definition being built.
