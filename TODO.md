@@ -21,6 +21,8 @@
     - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Bug?: Scenario page confuses requirements and action/result texts.
     - Compare campaign result details?
+    - Make reload button applicable to all pages.
+        - Avoid having a `reload` parameter remain in the URL (so that refresshing the page does reexecute the relaod action).
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.

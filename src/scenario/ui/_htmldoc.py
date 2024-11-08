@@ -136,12 +136,12 @@ class HtmlDocument(scenario.Logger):
 
         with self.addcontent('<div id="menu"></div>'):
             self.addcontent(f'<a class="menu" href="{Homepage.mkurl()}">Home</a>')
-            self.addcontent(f'<a class="menu" href="{ConfigurationPage.mkurl()}">Configuration</a>')
-            self.addcontent(f'<a class="menu" href="{RequirementsPage.mkurl()}">Requirements</a>')
             self.addcontent(f'<a class="menu" href="{ScenarioListPage.mkurl()}">Scenarios</a>')
             self.addcontent(f'<a class="menu" href="{CampaignListPage.mkurl()}">Campaigns</a>')
+            self.addcontent(f'<a class="menu" href="{RequirementsPage.mkurl()}">Requirements</a>')
             self.addcontent(f'<a class="menu" href="{DownstreamTraceabilityPage.mkurl()}">Downstream traceability</a>')
             self.addcontent(f'<a class="menu" href="{UpstreamTraceabilityPage.mkurl()}">Upstream traceability</a>')
+            self.addcontent(f'<a class="menu" href="{ConfigurationPage.mkurl()}">Configuration</a>')
 
     def _reloadbutton2html(self):  # type: (...) -> None
         """
