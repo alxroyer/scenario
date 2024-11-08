@@ -23,12 +23,12 @@ import typing
 import scenario
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
+    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class CampaignPage(_RequestHandlerImpl):
+class CampaignPage(_HttpRequestHandlerImpl):
     """
     Campaign details page.
     """
@@ -69,7 +69,7 @@ class CampaignPage(_RequestHandlerImpl):
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenarios import ScenarioListPage
 
-        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGN)
+        _HttpRequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGN)
 
         #: Scenario list page instantiated as a member for implementation.
         self._page_scenarios = ScenarioListPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: ScenarioListPage
@@ -99,7 +99,7 @@ class CampaignPage(_RequestHandlerImpl):
         # Campaign.
         self.debug("Campaign execution: %r", request.campaign_execution)
         if request.campaign_execution is None:
-            self.warning("Campaign execution missing")
+            self.warning(f"No campaign from {request.req_baseline!r}")
             return False
 
         self.debug("Generating HTML content")

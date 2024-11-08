@@ -28,9 +28,9 @@ if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class RequestHandler(abc.ABC, scenario.Logger):
+class HttpRequestHandler(abc.ABC, scenario.Logger):
     """
-    Request handler base class.
+    HTTP request handler base class.
 
     Usually a HTML page generator.
     """

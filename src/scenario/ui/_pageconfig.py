@@ -23,13 +23,13 @@ import typing
 import scenario
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
+    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class ConfigurationPage(_RequestHandlerImpl):
+class ConfigurationPage(_HttpRequestHandlerImpl):
     """
     Configuration page.
     """
@@ -95,7 +95,7 @@ class ConfigurationPage(_RequestHandlerImpl):
         """
         from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CONFIG)
+        _HttpRequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CONFIG)
 
     def process(
             self,
@@ -115,7 +115,7 @@ class ConfigurationPage(_RequestHandlerImpl):
         _html.settitle(request, "Configuration", campaign_subtitle=False)
 
         # Execution.
-        if request.getarg(ConfigurationPage.Arg.ACTION, default=""):
+        if request.getarg(ConfigurationPage.Arg.ACTION, default="") and request.processonce(self):
             self._processaction(request, _html)
 
         # General page content.

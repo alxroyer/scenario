@@ -23,14 +23,14 @@ import typing
 import scenario
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
+    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._debugclasses import UIDebugClass as _UIDebugClassType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class RequirementsPage(_RequestHandlerImpl):
+class RequirementsPage(_HttpRequestHandlerImpl):
     """
     Requirements page.
     """
@@ -82,7 +82,7 @@ class RequirementsPage(_RequestHandlerImpl):
         """
         from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, debug_class or UIDebugClass.PAGE_REQS)
+        _HttpRequestHandlerImpl.__init__(self, debug_class or UIDebugClass.PAGE_REQS)
 
     def process(
             self,

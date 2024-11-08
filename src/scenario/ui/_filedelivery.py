@@ -23,12 +23,12 @@ import typing
 import scenario
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
+    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class FileDelivery(_RequestHandlerImpl):
+class FileDelivery(_HttpRequestHandlerImpl):
     """
     File delivery request handler.
 
@@ -41,7 +41,7 @@ class FileDelivery(_RequestHandlerImpl):
         """
         from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, UIDebugClass.FILE_DELIVERY)
+        _HttpRequestHandlerImpl.__init__(self, UIDebugClass.FILE_DELIVERY)
 
     def process(
             self,

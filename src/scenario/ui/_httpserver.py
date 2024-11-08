@@ -42,6 +42,7 @@ class HttpServer(scenario.Logger):
         """
         from ._debugclasses import UIDebugClass
         from ._filedelivery import FileDelivery
+        from ._httprequesthandler import HttpRequestHandler
         from ._pagecampaign import CampaignPage
         from ._pagecampaigns import CampaignListPage
         from ._pageconfig import ConfigurationPage
@@ -51,7 +52,6 @@ class HttpServer(scenario.Logger):
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
         from ._pagescenarios import ScenarioListPage
-        from ._requesthandler import RequestHandler
 
         scenario.Logger.__init__(self, UIDebugClass.HTTP_SERVER)
 
@@ -67,7 +67,7 @@ class HttpServer(scenario.Logger):
             DownstreamTraceabilityPage(),
             UpstreamTraceabilityPage(),
             FileDelivery(),
-        ]  # type: typing.Sequence[RequestHandler]
+        ]  # type: typing.Sequence[HttpRequestHandler]
 
     @property
     def main_path(self):  # type: () -> scenario.Path
@@ -109,12 +109,12 @@ class HttpServer(scenario.Logger):
 
         :param request: GET or POST request to process.
         """
-        from ._requesthandler import RequestHandler
+        from ._httprequesthandler import HttpRequestHandler
 
         self.debug("Processing %r", request)
 
         try:
-            for _request_handler in self._request_handlers:  # type: RequestHandler
+            for _request_handler in self._request_handlers:  # type: HttpRequestHandler
                 if _request_handler.process(request):
                     break
             else:

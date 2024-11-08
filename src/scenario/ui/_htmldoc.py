@@ -116,7 +116,7 @@ class HtmlDocument(scenario.Logger):
             #: Main ``<h1/>`` node, which text content will be set with :meth:`settitle()`.
             self._h1 = self.addcontent('<h1>...</h1>').new_child   # type: Xml.Node
 
-            #: Main ``<div/>`` node, which page content will be added to by :class:`._requesthandler.RequestHandler` subclasses.
+            #: Main ``<div/>`` node, which page content will be added to by :class:`._httprequesthandler.HttpRequestHandler` subclasses.
             self.main_div = self.addcontent('<div id="main"></div>').new_child  # type: Xml.Node
 
         # Set main <div/> as the current node in the end.

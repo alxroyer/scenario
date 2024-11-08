@@ -23,13 +23,13 @@ import typing
 import scenario
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
+    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class CampaignListPage(_RequestHandlerImpl):
+class CampaignListPage(_HttpRequestHandlerImpl):
     """
     Campaign list page.
     """
@@ -83,7 +83,7 @@ class CampaignListPage(_RequestHandlerImpl):
         """
         from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGNS)
+        _HttpRequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGNS)
 
     def process(
             self,
@@ -103,7 +103,7 @@ class CampaignListPage(_RequestHandlerImpl):
         _html.settitle(request, "Campaigns", campaign_subtitle=False)
 
         # Execution.
-        if request.getarg(CampaignListPage.Arg.ACTION, default=""):
+        if request.getarg(CampaignListPage.Arg.ACTION, default="") and request.processonce(self):
             self._processaction(request, _html)
 
         # General page content.

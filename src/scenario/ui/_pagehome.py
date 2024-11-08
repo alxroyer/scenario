@@ -21,12 +21,12 @@ User interface home page.
 import typing
 
 if True:
-    from ._requesthandler import RequestHandler as _RequestHandlerImpl  # @inheritance
+    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
-class Homepage(_RequestHandlerImpl):
+class Homepage(_HttpRequestHandlerImpl):
     """
     Home page.
     """
@@ -59,7 +59,7 @@ class Homepage(_RequestHandlerImpl):
         """
         from ._debugclasses import UIDebugClass
 
-        _RequestHandlerImpl.__init__(self, UIDebugClass.PAGE_HOME)
+        _HttpRequestHandlerImpl.__init__(self, UIDebugClass.PAGE_HOME)
 
     def process(
             self,
