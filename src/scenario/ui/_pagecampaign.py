@@ -53,9 +53,7 @@ class CampaignPage(_HttpRequestHandlerImpl):
 
         return HttpRequest.encodeurl(
             CampaignPage._URL,
-            args={
-                **HttpRequest.mkurlargs(obj=campaign_execution),
-            },
+            args=HttpRequest.mkurlargs(obj=campaign_execution),
             html_escape=html_escape,
         )
 
@@ -103,8 +101,8 @@ class CampaignPage(_HttpRequestHandlerImpl):
             return False
 
         self.debug("Generating HTML content")
-        _html = HtmlDocument()
-        _html.settitle(request, f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
+        _html = HtmlDocument(request)
+        _html.settitle(f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
 
         _html.addcontent('<a name="scenarios" />')
         _html.addcontent(f'<h2 class="scenarios"><a href="{self._page_scenarios.mkurl(request.req_baseline)}">Scenarios</a></h2>')

@@ -37,32 +37,14 @@ class CampaignListPage(_HttpRequestHandlerImpl):
     #: Base URL for the campaign list page.
     _URL = "/campaigns"  # type: str
 
-    class Arg(scenario.enum.StrEnum):
-        """
-        URL argument names.
-        """
-        #: Action argument.
-        #:
-        #: See :class:`CampaignListPage.Action` for possible values.
-        ACTION = "action"
-
-    class Action(scenario.enum.StrEnum):
-        """
-        :attr:`CampaignListPage.Arg.ACTION` values.
-        """
-        #: Reload campaign database.
-        RELOAD_CAMPAIGN_DB = "reload"
-
     @staticmethod
     def mkurl(
             *,
-            reload_campaign_db=False,  # type: bool
             html_escape=True,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a campaign list URL.
 
-        :param reload_campaign_db: ``True`` to set ``action=reload`` URL argument. ``False`` by default.
         :param html_escape: ``True`` (default) to get HTML escaped text.
         :return: Campaign list URL.
         """
@@ -70,10 +52,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
         return HttpRequest.encodeurl(
             CampaignListPage._URL,
-            args={
-                **({CampaignListPage.Arg.ACTION: CampaignListPage.Action.RELOAD_CAMPAIGN_DB} if reload_campaign_db else {}),
-                **HttpRequest.mkurlargs(obj=None),
-            },
+            args=HttpRequest.mkurlargs(obj=None),
             html_escape=html_escape,
         )
 
@@ -89,6 +68,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
+        from ._exec import Exec
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
@@ -99,40 +79,15 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         self.debug("Processing %r", request)
 
         self.debug("Generating HTML content")
-        _html = HtmlDocument()
-        _html.settitle(request, "Campaigns", campaign_subtitle=False)
+        _html = HtmlDocument(request)
+        _html.settitle("Campaigns", campaign_subtitle=False)
 
-        # Execution.
-        if request.getarg(CampaignListPage.Arg.ACTION, default="") and request.processonce(self):
-            self._processaction(request, _html)
+        Exec.actionbutton2html(request, Exec.Action.RELOAD_CAMPAIGN_DB, _html)
 
-        # General page content.
         self._campaigndb2html(request, _html)
 
         request.sendhtml(_html)
         return True
-
-    def _processaction(
-            self,
-            request,  # type: _HttpRequestType
-            html,  # type: _HtmlDocumentType
-    ):  # type: (...) -> None
-        """
-        Process the :attr:`CampaignListPage.Arg.ACTION` argument.
-
-        :param request: Input request being processed.
-        :param html: Output HTML document.
-        """
-        if request.getarg(CampaignListPage.Arg.ACTION, default="") == CampaignListPage.Action.RELOAD_CAMPAIGN_DB:
-            scenario.campaign_db.load()
-
-            # Execution results.
-            with html.addcontent(f'<div class="{CampaignListPage.Arg.ACTION} result"></div>'):
-                html.addcontent('<h2>Execution result</h2>')
-                html.addcontent(f'<p>{len(scenario.campaign_db.campaign_executions)} campaigns loaded</p>')
-
-        else:
-            raise KeyError(f"Unexpected action {request.getarg(CampaignListPage.Arg.ACTION)!r}")
 
     def _campaigndb2html(
             self,
@@ -145,8 +100,6 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param request: Input request being processed.
         :param html: HTML output page to feed.
         """
-        html.addcontent(f'<a href="{CampaignListPage.mkurl(reload_campaign_db=True)}">Reload</a>')
-
         # Sort campaign executions.
         _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]
 
@@ -282,7 +235,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
     def _testcaseexecution2tablecell(
             self,
-            request,  # type: _HttpRequestType
+            request,  # type: _HttpRequestType  # noqa  ## Unused parameter
             campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             test_suite_execution_ref,  # type: scenario.TestSuiteExecution
             test_case_execution_ref,  # type: scenario.TestCaseExecution

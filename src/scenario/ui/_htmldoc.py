@@ -78,16 +78,23 @@ class HtmlDocument(scenario.Logger):
             """
             self.html.current_node = self.parent_node
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            request,  # type: _HttpRequestType
+    ):  # type: (...) -> None
         """
-        Initializes the HTML document
+        Initializes an HTML document for the given request
         and sets the current node with the main div of the page.
+
+        :param request: Input request.
         """
         from .._xmlutils import Xml  # Access `scenario` inner symbols.
-        from ._configdb import UI_CONFIG
         from ._debugclasses import UIDebugClass
 
         scenario.Logger.__init__(self, UIDebugClass.HTML_DOCUMENT)
+
+        #: Input request.
+        self.request = request  # type: _HttpRequestType
 
         #: XML document of the HTML page.
         self.xml_doc = Xml.Document()  # type: Xml.Document
@@ -99,28 +106,48 @@ class HtmlDocument(scenario.Logger):
 
         #: HTML ``<head/>`` section node.
         self.head = self.xml_doc.createnode("head")  # type: Xml.Node
-        with self.addcontent('<head></head>') as self.head:
-            self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
-            #: HTML head title node, which text content will be set with :meth:`settitle()`.
-            self._head_title = self.addcontent('<title>...</title>').new_child  # type: Xml.Node
-            self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')
-            self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>', auto_closing=False)
-
+        #: HTML head title node, which text content will be set with :meth:`settitle()`.
+        self._head_title = self.xml_doc.createnode("title")  # type: Xml.Node
         #: HTML ``<body/>`` section node.
         self.body = self.xml_doc.createnode("body")  # type: Xml.Node
-        with self.addcontent('<body></body>') as self.body:
-            # Menu and reload button.
-            self._menu2html()
-            self._reloadbutton2html()
+        #: Main ``<h1/>`` node, which text content will be set with :meth:`settitle()`.
+        self._h1 = self.xml_doc.createnode("h1")  # type: Xml.Node
+        #: Main ``<div/>`` node, which page content will be added to by :class:`._httprequesthandler.HttpRequestHandler` subclasses.
+        self.main_div = self.xml_doc.createnode("div")  # type: Xml.Node
 
-            #: Main ``<h1/>`` node, which text content will be set with :meth:`settitle()`.
-            self._h1 = self.addcontent('<h1>...</h1>').new_child   # type: Xml.Node
-
-            #: Main ``<div/>`` node, which page content will be added to by :class:`._httprequesthandler.HttpRequestHandler` subclasses.
-            self.main_div = self.addcontent('<div id="main"></div>').new_child  # type: Xml.Node
+        self._head2html()
+        self._body2html()
+        self._finaljs2html()
 
         # Set main <div/> as the current node in the end.
         self.current_node = self.main_div
+
+    def _head2html(self):  # type: (...) -> None
+        """
+        Generates ``<head></head>`` content.
+
+        Instantiates :attr:`head` and :attr:`_head_title`.
+        """
+        from ._configdb import UI_CONFIG
+
+        with self.addcontent('<head></head>') as self.head:
+            self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
+            self._head_title = self.addcontent('<title></title>', auto_closing=False).new_child
+            self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')
+            self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>', auto_closing=False)
+
+    def _body2html(self):  # type: (...) -> None
+        """
+        Generates ``<body></body>`` content.
+
+        Instantiates :attr:`body`, :attr:`_h1` and :attr:`main_div`.
+        """
+        with self.addcontent('<body></body>') as self.body:
+            # Menu and reload button.
+            self._menu2html()
+            self._execresultdiv2html()
+            self._h1 = self.addcontent('<h1></h1>', auto_closing=False).new_child
+            self.main_div = self.addcontent('<div id="main"></div>').new_child
 
     def _menu2html(self):  # type: (...) -> None
         """
@@ -143,18 +170,29 @@ class HtmlDocument(scenario.Logger):
             self.addcontent(f'<a class="menu" href="{UpstreamTraceabilityPage.mkurl()}">Upstream traceability</a>')
             self.addcontent(f'<a class="menu" href="{ConfigurationPage.mkurl()}">Configuration</a>')
 
-    def _reloadbutton2html(self):  # type: (...) -> None
+    def _execresultdiv2html(self):  # type: (...) -> None
         """
-        Builds the reload button HTML.
-        """
-        from ._pageconfig import ConfigurationPage
+        Generates the hidden ``.exec-result`` popup div.
 
-        with self.addcontent('<div id="reload-default"></div>'):
-            self.addcontent(f'<a href="{ConfigurationPage.mkurl(reload_default=True)}">Reload default data</a>')
+        Hidden by default.
+        Used by '_exec.js' to display execution results.
+        """
+        with self.addcontent('<div id="exec-result" style="display: none;"></div>'):
+            self.addcontent('<div class="exec-result title"></div>', auto_closing=False)
+            self.addcontent('<div class="exec-result text"></div>', auto_closing=False)
+            self.addcontent('<a href="#" class="exec-result button validate">OK</a>')
+
+    def _finaljs2html(self):  # type: (...) -> None
+        """
+        Embeds '_exec.js' in an inner ``<script></script>`` element.
+        """
+        with self.addcontent('<script></script>'):
+            _js_path = scenario.Path(__file__).parent / "_exec.js"  # type: scenario.Path
+            for _line in _js_path.read_text(encoding="utf-8").splitlines():  # type: str
+                self.addtext(_line, html_escape=False)
 
     def settitle(
             self,
-            request,  # type: _HttpRequestType
             title,  # type: str
             *,
             campaign_subtitle=False,  # type: bool
@@ -162,26 +200,25 @@ class HtmlDocument(scenario.Logger):
         """
         Sets the title of the HTML page.
 
-        :param request: Input request.
         :param title: New title. Not HTML-encoded.
         :param campaign_subtitle: Set to ``True`` to add campaign subtitle.
         """
         from ._pagecampaign import CampaignPage
         from ._reqbl import UI_REQ_BASELINES
 
-        _req_baseline_desc = UI_REQ_BASELINES.getdesc(request.req_baseline)  # type: str
+        _req_baseline_desc = UI_REQ_BASELINES.getdesc(self.request.req_baseline)  # type: str
 
         self._head_title.gettextnodes()[0].data = self.escape(title)
-        if campaign_subtitle and request.campaign_execution:
+        if campaign_subtitle and self.request.campaign_execution:
             self._head_title.gettextnodes()[0].data += f" ({self.escape(_req_baseline_desc)})"
 
         self._h1.gettextnodes()[0].data = ""
         with HtmlDocument.NodeContext(self, self._h1):
             self.addcontent(f'<span class="title main">{self.escape(title)}</span>')
-            if campaign_subtitle and request.campaign_execution:
+            if campaign_subtitle and self.request.campaign_execution:
                 self.addcontent('<span class="title sep"></span>')
 
-                _url = CampaignPage.mkurl(request.campaign_execution)  # type: str
+                _url = CampaignPage.mkurl(self.request.campaign_execution)  # type: str
                 self.addcontent(f'<span class="title req-baseline"><a href="{_url}">{self.escape(_req_baseline_desc)}</a></span>')
 
     def addcontent(
@@ -241,7 +278,7 @@ class HtmlDocument(scenario.Logger):
         if html_escape:
             # HTML encoding.
             text = self.escape(text)
-        return self.current_node.appendchild(self.xml_doc.createtextnode(text))
+        return self.current_node.appendchild(self.xml_doc.createtextnode(text, xml_escape=html_escape))
 
     @staticmethod
     def escape(

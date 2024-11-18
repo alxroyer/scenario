@@ -19,6 +19,7 @@ HTTP request management.
 """
 
 import http.server
+import json
 import sys
 import time
 import typing
@@ -28,7 +29,6 @@ import scenario
 
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
-    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerType
 
 
 class HttpRequest(http.server.BaseHTTPRequestHandler):
@@ -62,13 +62,8 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         """
         URL argument names.
         """
-        #: Request identifier.
-        ID = "req-id"
         #: Campaign name (selector).
         CAMPAIGN_NAME = "campaign"
-
-    #: Next requirement identifier to allocate.
-    _next_req_id = 1  # type: int
 
     #: Antireplay requirement identifier memory.
     _processed = set()  # type: typing.Set[int]
@@ -105,10 +100,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
                 _campaign_execution = scenario.campaign_db.get(req_baseline=obj.req_baseline)
 
         # Build common arguments.
-        _url_args = {
-            HttpRequest.Arg.ID: str(HttpRequest._next_req_id),
-        }  # type: typing.Dict[str, str]
-        HttpRequest._next_req_id += 1
+        _url_args = {}  # type: typing.Dict[str, str]
         if _campaign_execution:
             _url_args[HttpRequest.Arg.CAMPAIGN_NAME] = _campaign_execution.name
         return _url_args
@@ -276,33 +268,6 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         raise KeyError(f"No such argument {name!r}")
 
     @property
-    def req_id(self):  # type: () -> int
-        """
-        Request identifier.
-        """
-        return int(self.getarg(HttpRequest.Arg.ID, default="0"))
-
-    def processonce(
-            self,
-            page,  # type: _HttpRequestHandlerType
-    ):  # type: (...) -> bool
-        """
-        Tells whether the request, expected to be processed once only, may be processed.
-
-        :param page: Page processing the request.
-        :return: ``True`` when the given request has actually been allocated, and not processed yet.
-        """
-        if (self.req_id < 0) or (self.req_id >= HttpRequest._next_req_id):
-            page.debug("Invalid request %d", self.req_id)
-            return False
-        if self.req_id in HttpRequest._processed:
-            page.debug("Request id %d already processed", self.req_id)
-            return False
-        page.debug("Processing request id %d", self.req_id)
-        HttpRequest._processed.add(self.req_id)
-        return True
-
-    @property
     def campaign_execution(self):  # type: () -> typing.Optional[scenario.CampaignExecution]
         """
         Campaign execution corresponding to the campaign name if given in URL arguments.
@@ -341,7 +306,25 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
 
         self.send_response(http.HTTPStatus.OK)
         self.send_header("Content-type", "text/html; charset=utf-8")
-        self.send_header("Content-Length", str(len(_content)))
+        self.send_header("Content-Length", str(self.content_size))
+        self.end_headers()
+        self.wfile.write(_content)
+
+    def sendjson(
+            self,
+            data,  # type: scenario.types.JsonDict
+    ):  # type: (...) -> None
+        """
+        Responds the request successfully with JSON content.
+
+        :param data: JSON content to send.
+        """
+        _content = json.dumps(data).encode("utf-8")  # type: bytes
+        self.content_size = len(_content)
+
+        self.send_response(http.HTTPStatus.OK)
+        self.send_header("Content-type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(self.content_size))
         self.end_headers()
         self.wfile.write(_content)
 
@@ -358,7 +341,7 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         self.content_size = len(_content)
 
         self.send_response(http.HTTPStatus.OK)
-        self.send_header("Content-Length", str(len(_content)))
+        self.send_header("Content-Length", str(self.content_size))
         self.end_headers()
         self.wfile.write(_content)
 

@@ -29,6 +29,8 @@ class UIDebugClass(scenario.enum.StrEnum):
     """
     #: UI configuration database debugging.
     CONFIG_DB = "scenario.ui.UIConfig"
+    #: UI action execution debugging.
+    EXEC = "scenario.ui.Exec"
     #: UI file delivery debugging.
     FILE_DELIVERY = "scenario.ui.FileDelivery"
     #: UI HTML document debugging.

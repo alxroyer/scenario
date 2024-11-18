@@ -41,6 +41,7 @@ class HttpServer(scenario.Logger):
         and initializes request handlers / page generators.
         """
         from ._debugclasses import UIDebugClass
+        from ._exec import Exec
         from ._filedelivery import FileDelivery
         from ._httprequesthandler import HttpRequestHandler
         from ._pagecampaign import CampaignPage
@@ -57,16 +58,17 @@ class HttpServer(scenario.Logger):
 
         #: Request handlers / page generators.
         self._request_handlers = [
-            Homepage(),
+            CampaignListPage(),
+            CampaignPage(),
             ConfigurationPage(),
+            DownstreamTraceabilityPage(),
+            Exec(),
+            FileDelivery(),
+            Homepage(),
             RequirementsPage(),
             ScenarioListPage(),
             ScenarioPage(),
-            CampaignListPage(),
-            CampaignPage(),
-            DownstreamTraceabilityPage(),
             UpstreamTraceabilityPage(),
-            FileDelivery(),
         ]  # type: typing.Sequence[HttpRequestHandler]
 
     @property

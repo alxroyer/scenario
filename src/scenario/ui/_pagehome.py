@@ -80,8 +80,8 @@ class Homepage(_HttpRequestHandlerImpl):
         self.debug("Processing %r", request)
 
         self.debug("Generating HTML content")
-        _html = HtmlDocument()  # type: HtmlDocument
-        _html.settitle(request, "Scenario User Interface", campaign_subtitle=False)
+        _html = HtmlDocument(request)  # type: HtmlDocument
+        _html.settitle("Scenario User Interface", campaign_subtitle=False)
 
         _html.addcontent(
             f'<p>'

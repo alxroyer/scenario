@@ -54,6 +54,8 @@ class FileDelivery(_HttpRequestHandlerImpl):
             self.debug("Unexpected base path %r", request.base_path)
             self.debug("%r not processed", request)
             return False
+
+        # Read the file.
         _file = HTTP_SERVER.main_path / request.base_path[1:]  # type: scenario.Path
         if not _file.is_file():
             self.debug("No such file '%s'", _file)
@@ -61,6 +63,7 @@ class FileDelivery(_HttpRequestHandlerImpl):
             return False
         self.debug("Processing %r", request)
 
+        # Deliver the file.
         self.debug("Delivering file '%s'", _file)
         request.sendfile(_file)
         return True

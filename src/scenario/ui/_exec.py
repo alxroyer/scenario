@@ -1,0 +1,196 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+User interface action execution handler.
+"""
+import typing
+
+import scenario
+
+if True:
+    from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
+if typing.TYPE_CHECKING:
+    from ._htmldoc import HtmlDocument as _HtmlDocumentType
+    from ._httprequest import HttpRequest as _HttpRequestType
+
+
+class Exec(_HttpRequestHandlerImpl):
+    """
+    Action execution request handler.
+
+    Executes actions and returns a ``{"return_code": int, "title": str, "text": str}`` JSON result.
+    """
+
+    #: Base URL for action executions.
+    _URL = "/execute"  # type: str
+
+    class Arg(scenario.enum.StrEnum):
+        """
+        URL argument names.
+        """
+        #: Action argument.
+        #:
+        #: See :class:`Exec.Action` for possible values.
+        ACTION = "action"
+
+    class Action(scenario.enum.StrEnum):
+        """
+        :attr:`Exec.Arg.ACTION` values.
+        """
+        #: Reload the main requirement baseline.
+        RELOAD_MAIN_REQ_BASELINE = "reload-main-req-baseline"
+        #: Reload the campaign database.
+        RELOAD_CAMPAIGN_DB = "reload-campaign-db"
+
+    @staticmethod
+    def mkurl(
+            *,
+            req_baseline=None,  # type: typing.Optional[scenario.ReqBaseline]
+            action,  # type: Exec.Action
+            html_escape=True,  # type: bool
+    ):  # type: (...) -> str
+        """
+        Builds an action execution URL.
+
+        :param req_baseline: Baseline to execute the action for. Main requirement baseline by default.
+        :param action: Action to create an URL for.
+        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :return: Action execution URL.
+        """
+        from ._reqbl import UI_REQ_BASELINES
+        from ._httprequest import HttpRequest
+
+        return HttpRequest.encodeurl(
+            Exec._URL,
+            args={
+                **HttpRequest.mkurlargs(obj=req_baseline or UI_REQ_BASELINES.main),
+                Exec.Arg.ACTION: action,
+            },
+            html_escape=html_escape,
+        )
+
+    @staticmethod
+    def actionbutton2html(
+            request,  # type: _HttpRequestType
+            action,  # type: Exec.Action
+            html,  # type: _HtmlDocumentType
+    ):  # type: (...) -> None
+        """
+        Creates an action execution button.
+
+        :param request: Current request being processed.
+        :param action: Action to create a button for.
+        :param html: HTML output page to feed.
+        """
+        from ._reqbl import UI_REQ_BASELINES
+
+        _url = ""  # type: str
+        _classes = ["exec", "button"]  # type: typing.List[str]
+        _text = "..."  # type: str
+
+        if action == Exec.Action.RELOAD_MAIN_REQ_BASELINE:
+            # Don't display the `.reload-main-req-baseline` button if the page is not for it.
+            if request.req_baseline is not UI_REQ_BASELINES.main:
+                return
+
+            _url = Exec.mkurl(action=Exec.Action.RELOAD_MAIN_REQ_BASELINE)
+            _classes.append(Exec.Action.RELOAD_MAIN_REQ_BASELINE)
+            _text = "Reload"
+
+        elif action == Exec.Action.RELOAD_CAMPAIGN_DB:
+            _url = Exec.mkurl(action=Exec.Action.RELOAD_CAMPAIGN_DB)
+            _classes.append(Exec.Action.RELOAD_CAMPAIGN_DB)
+            _text = "Reload campaigns"
+
+        else:
+            raise ValueError(f"Unknown action {action!r}")
+
+        html.addcontent(f'<a href="{_url}" class="{" ".join(_classes)}">{_text}</a>')
+
+    def __init__(self):  # type: (...) -> None
+        """
+        Configures the logger instance.
+        """
+        from ._debugclasses import UIDebugClass
+
+        _HttpRequestHandlerImpl.__init__(self, UIDebugClass.EXEC)
+
+    def process(
+            self,
+            request,  # type: _HttpRequestType
+    ):  # type: (...) -> bool
+        from .._scenarioconfig import SCENARIO_CONFIG
+        from ._reqbl import UI_REQ_BASELINES
+
+        # Filter `request`.
+        if not request.base_path.startswith(Exec._URL):
+            self.debug("Unexpected base path %r", request.base_path)
+            self.debug("%r not processed", request)
+            return False
+
+        # Prepare return values.
+        _title = ""  # type: str
+        _return_code = scenario.ErrorCode.INPUT_MISSING_ERROR  # type: scenario.ErrorCode
+        _text = f"'{Exec.Arg.ACTION}' parameter missing."  # type: str
+
+        # Read ACTION parameter.
+        _action = request.getarg(Exec.Arg.ACTION, default="")  # type: str
+
+        # Execute actions.
+        try:
+            if _action == Exec.Action.RELOAD_MAIN_REQ_BASELINE:
+                _title = "Reload main requirement baseline"
+
+                UI_REQ_BASELINES.main = scenario.ReqBaseline.fromfiles(
+                    name=UI_REQ_BASELINES.main.name,
+                    req_db_paths=SCENARIO_CONFIG.reqdbpaths() or None,
+                    test_suite_paths=SCENARIO_CONFIG.testsuitepaths() or None,
+                    log_info=True,
+                )
+
+                _return_code = scenario.ErrorCode.SUCCESS
+                _text = "Main requirement baseline reloaded successfully: "
+                if UI_REQ_BASELINES.main.req_db.getallreqs():
+                    _text += f"{len(UI_REQ_BASELINES.main.req_db.getallreqs())} requirements and "
+                _text += f"{len(UI_REQ_BASELINES.main.scenarios)} tests loaded."
+
+            elif _action == Exec.Action.RELOAD_CAMPAIGN_DB:
+                _title = "Reload campaigns"
+
+                scenario.campaign_db.load()
+
+                _return_code = scenario.ErrorCode.SUCCESS
+                _text = f"{len(scenario.campaign_db.campaign_executions)} campaigns reloaded successfully."
+
+            else:
+                _title = "Action error"
+                _return_code = scenario.ErrorCode.INPUT_FORMAT_ERROR
+                _text = f"Invalid '{Exec.Arg.ACTION}' parameter {_action!r}"
+
+        except Exception as _err:
+            _return_code = scenario.ErrorCode.fromexception(_err)
+            _text = repr(_err)
+
+        # Return result.
+        _res = {
+            "return_code": _return_code.value,
+            "title": _title,
+            "text": _text,
+        }  # type: scenario.types.JsonDict
+        self.debug("Execution result: %r", _res)
+        request.sendjson(_res)
+        return True

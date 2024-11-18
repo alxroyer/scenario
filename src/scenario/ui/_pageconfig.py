@@ -58,8 +58,6 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         """
         :attr:`ConfigurationPage.Arg.ACTION` values.
         """
-        #: Reload default data.
-        RELOAD_DEFAULT = "reload-default"
         #: Execute form#1.
         FORM1 = "form1"
         #: Execute form#2.
@@ -68,13 +66,11 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
     @staticmethod
     def mkurl(
             *,
-            reload_default=False,  # type: bool
             html_escape=True,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a configuration page URL.
 
-        :param reload_default: ``True`` to set ``action=reload-default`` URL argument. ``False`` by default.
         :param html_escape: ``True`` (default) to get HTML escaped text.
         :return: Configuration page URL.
         """
@@ -82,10 +78,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
 
         return HttpRequest.encodeurl(
             ConfigurationPage._URL,
-            args={
-                **({ConfigurationPage.Arg.ACTION: ConfigurationPage.Action.RELOAD_DEFAULT} if reload_default else {}),
-                **HttpRequest.mkurlargs(obj=None),
-            },
+            args=HttpRequest.mkurlargs(obj=None),
             html_escape=html_escape,
         )
 
@@ -111,11 +104,11 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         self.debug("Processing %r", request)
 
         self.debug("Generating HTML content")
-        _html = HtmlDocument()
-        _html.settitle(request, "Configuration", campaign_subtitle=False)
+        _html = HtmlDocument(request)
+        _html.settitle("Configuration", campaign_subtitle=False)
 
         # Execution.
-        if request.getarg(ConfigurationPage.Arg.ACTION, default="") and request.processonce(self):
+        if request.getarg(ConfigurationPage.Arg.ACTION, default=""):
             self._processaction(request, _html)
 
         # General page content.
@@ -207,19 +200,15 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         :param request: Input request with form data.
         :param html: Output HTML document.
         """
-        from .._scenarioconfig import SCENARIO_CONFIG  # Access `scenario` inner symbols.
         from ._reqbl import UI_REQ_BASELINES
 
+        # Read ACTION parameter.
+        _action = request.getarg(ConfigurationPage.Arg.ACTION)  # type: str
         _req_db_paths = []  # type: typing.List[scenario.Path]
         _test_suite_paths = []  # type: typing.List[scenario.Path]
-        _campaign_path = None  # type: typing.Optional[scenario.Path]
+        _campaign_path = scenario.Path()  # type: scenario.Path
 
-        # Determine the data to reload.
-        if request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.RELOAD_DEFAULT:
-            _req_db_paths = list(SCENARIO_CONFIG.reqdbpaths())
-            _test_suite_paths = list(SCENARIO_CONFIG.testsuitepaths())
-
-        elif request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.FORM1:
+        if _action == ConfigurationPage.Action.FORM1:
             for _req_db_path in request.getarg(ConfigurationPage.Arg.REQ_DB_PATHS, default="").splitlines():  # type: str
                 if _req_db_path.strip():
                     _req_db_paths.append(scenario.Path(_req_db_path.strip()))
@@ -228,23 +217,8 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
                 if _test_suite_path.strip():
                     _test_suite_paths.append(scenario.Path(_test_suite_path.strip()))
 
-        elif request.getarg(ConfigurationPage.Arg.ACTION) == ConfigurationPage.Action.FORM2:
-            if request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip():
-                _campaign_path = scenario.Path(request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip())
-
-        else:
-            raise KeyError(f"Unexpected action {request.getarg(ConfigurationPage.Arg.ACTION)!r}")
-
-        # Reload data.
-        # Use file names for baseline name.
-        if _campaign_path:
-            UI_REQ_BASELINES.main = scenario.ReqBaseline.fromcampaignresults(
-                _campaign_path,
-                name=_campaign_path.prettypath,
-                log_info=True,
-            )
-        else:
             UI_REQ_BASELINES.main = scenario.ReqBaseline.fromfiles(
+                # Use file names for baseline name.
                 name=(
                     ", ".join([_path.prettypath for _path in [*_req_db_paths, *_test_suite_paths]])
                     or "(default requirement and test suite files)"
@@ -253,6 +227,18 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
                 test_suite_paths=_test_suite_paths or None,
                 log_info=True,
             )
+
+        elif _action == ConfigurationPage.Action.FORM2:
+            _campaign_path = scenario.Path(request.getarg(ConfigurationPage.Arg.CAMPAIGN_PATH).strip())
+
+            UI_REQ_BASELINES.main = scenario.ReqBaseline.fromcampaignresults(
+                _campaign_path,
+                name=_campaign_path.prettypath,
+                log_info=True,
+            )
+
+        else:
+            raise KeyError(f"Unexpected action {_action!r}")
 
         # Execution results.
         with html.addcontent(f'<div class="{ConfigurationPage.Arg.ACTION} result"></div>'):

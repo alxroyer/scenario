@@ -61,8 +61,8 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         return HttpRequest.encodeurl(
             ScenarioPage._URL,
             args={
-                "name": _scenario.name,
                 **HttpRequest.mkurlargs(obj=_scenario),
+                "name": _scenario.name,
             },
             anchor=_step_anchor,
             html_escape=html_escape,
@@ -106,6 +106,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
+        from ._exec import Exec
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
@@ -124,8 +125,10 @@ class ScenarioPage(_HttpRequestHandlerImpl):
 
         # HTML content.
         self.debug("Generating HTML content")
-        _html = HtmlDocument()
-        _html.settitle(request, _scenario.name, campaign_subtitle=True)
+        _html = HtmlDocument(request)
+        _html.settitle(_scenario.name, campaign_subtitle=True)
+
+        Exec.actionbutton2html(request, Exec.Action.RELOAD_MAIN_REQ_BASELINE, _html)
 
         with _html.addcontent('<div id="scenario"></div>'):
             if _scenario.getattributenames():

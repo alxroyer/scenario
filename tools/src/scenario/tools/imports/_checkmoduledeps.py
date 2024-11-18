@@ -60,7 +60,7 @@ class CheckModuleDeps:
                     with scenario.logging.pushindentation("  "):
                         self._parseimports(_src_path)
             else:
-                raise FileExistsError(f"Unexpected file or directory '{_src_path}'")
+                scenario.logging.debug("File '%s' ignored", _src_path)
 
     def _computedeps(self):  # type: (...) -> None
         from ._moduledeps import ModuleDeps

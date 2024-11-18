@@ -159,15 +159,57 @@ class Xml(abc.ABC):
         def createtextnode(
                 self,
                 text,  # type: str
+                *,
+                xml_escape=True,  # type: bool
         ):  # type: (...) -> Xml.TextNode
             """
             Create a text node.
 
-            :param text: Initial text for the new node.
-            :return: New text node.
+            :param text:
+                Initial text for the new node.
+            :param xml_escape:
+                ``False`` to avoid regular XML escapes for ``&``, ``<``, ``"`` and ``>`` characters in ``text``.
+
+                May be useful to embed Javascript code for instance.
+            :return:
+                New text node.
             """
+            class _RawText(xml.dom.minidom.Text):
+                """
+                ``xml.dom.minidom.Text`` subclass to take into account the ``xml_escape`` option.
+                """
+
+                def writexml(
+                        self,
+                        # `writer` actually of type `_typeshed.SupportsRead[str]`,
+                        # but `import _typeshed` raises a `ModuleNotFoundError` in Python 3.7.9.
+                        writer,  # type: typing.Any
+                        indent="",  # type: str
+                        addindent="",  # type: str
+                        newl="",  # type: str
+                ):  # type: (...) -> None
+                    """
+                    ``xml.dom.minidom.Text.writexml()`` override to take into account the ``xml_escape`` option.
+                    """
+                    _data = "%s%s%s" % (indent, self.data, newl)  # type: str
+                    if xml_escape:
+                        # Inpired from ``xml.dom.minidom._write_data()`.
+                        _data = (
+                            _data
+                            .replace("&", "&amp;")
+                            .replace("<", "&lt;")
+                            .replace('"', "&quot;")
+                            .replace(">", "&gt;")
+                        )
+                    writer.write(_data)
+
+            # Inspired from `xml.dom.minidom.Document.createTextNode()`.
+            _xml_text = _RawText()  # type: xml.dom.minidom.Text
+            _xml_text.data = text
+            _xml_text.ownerDocument = self._xml_doc
+
             return Xml.TextNode(
-                xml_text=self._xml_doc.createTextNode(text),
+                xml_text=_xml_text,
             )
 
         def parsestream(

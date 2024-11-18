@@ -101,6 +101,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
+        from ._exec import Exec
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
@@ -114,8 +115,10 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         self.debug("Requirement baseline: %r", request.req_baseline)
 
         self.debug("Generating HTML content")
-        _html = HtmlDocument()
-        _html.settitle(request, "Upstream traceability", campaign_subtitle=True)
+        _html = HtmlDocument(request)
+        _html.settitle("Upstream traceability", campaign_subtitle=True)
+
+        Exec.actionbutton2html(request, Exec.Action.RELOAD_MAIN_REQ_BASELINE, _html)
 
         self.upstreamtraceability2html(request.req_baseline, _html)
 
