@@ -18,9 +18,15 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Make reload button applicable to all pages.
-        - Avoid redirecting to the configuration page, and make the data be refreshed in the current page.
-            - Avoid reloading a POST page with parameters.
+    - Error "Le script à l’adresse « http://localhost:8000/js/ui.js » a été chargé alors que son type MIME («  ») n’est pas un type MIME JavaScript valide."
+      See https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Content-Type-Options?utm_source=mozilla&utm_medium=firefox-console-errors&utm_campaign=default
+    - Error "Erreur dans les liens source : request failed with status 404
+      URL de la ressource : null
+      URL du lien source : installHook.js.map"
+      See https://firefox-source-docs.mozilla.org/devtools-user/debugger/source_map_errors/?utm_source=mozilla&utm_medium=firefox-console-errors&utm_campaign=default
+    - Add a 'favico.ico' file in 'scenario/ui/' directory, or disable.
+    - Use `.exec-result` popup for configuration page.
+        - Possibly don't use POST? not sure.
     - Compare campaign result details?
     - Implement first .js and .css files.
     - Save campaign args in reports, in order to make it clear for partial campaign executions.

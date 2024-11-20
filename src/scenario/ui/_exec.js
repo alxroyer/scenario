@@ -146,6 +146,10 @@ _scenarioConfigureExecResultOkButton();
  * @returns {void}
  */
 function _scenarioRefreshCurrentPage() {
-    console.debug("Refreshing the page");
-    window.location.reload();
+    console.debug(`Refreshing page '${window.location.href}'`);
+
+    // Avoid reloading POST pages with parameters.
+    // Inspired from https://stackoverflow.com/questions/1226714/how-to-get-the-browser-to-navigate-to-url-in-javascript#1226718
+    //window.location.reload();
+    window.location.href = window.location.href;
 }
