@@ -38,21 +38,46 @@ _scenarioConfigureExecButtons();
  * @returns {void}
  */
 function _scenarioExec(url) {
-    // Process the given URL.
+    // Process the given URL asynchronously.
+    // Inspired from https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Synchronous_and_Asynchronous_Requests.
     console.debug(`Executing '${url}'...`);
-    const _xmlHttp = new XMLHttpRequest();
-    _xmlHttp.open(
+
+    const _req = new XMLHttpRequest();
+    _req.open(
         "GET", url,
-        false,  // Synchronous request.
+        true,  // Asynchronous request.
     );
-    _xmlHttp.send();
-    console.debug(`'${url}' returned '${_xmlHttp.responseText}'`);
+    /** @var {string} */ let _title = `Request '${url}' error`;
+    /** @var {string} */ let _message = "";
+    _req.onload = (e) => {
+        // Check state is DONE (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState).
+        if (_req.readyState !== 4) {
+            _message = `Request '${url}' bad state ${_req.status}`;
+            console.error(_message);
+        } else {
+            _message = `Request '${url}' returned ${_req.status} - ${_req.statusText}`;
 
-    // Parse the JSON execution result.
-    const _json = JSON.parse(_xmlHttp.responseText);
+            // Check HTTP status is OK.
+            if (_req.status !== 200) {
+                console.error(_message);
+            } else {
+                console.debug(_message);
 
-    // Show execution result.
-    scenarioShowExecResultPopup(_json.title, _json.text);
+                // Parse the JSON execution result.
+                console.debug(`JSON content: '${_req.responseText}'`);
+                const _json = JSON.parse(_req.responseText);
+                _title = _json.title;
+                _message = _json.text;
+            }
+        }
+
+        // Show execution result.
+        scenarioShowExecResultPopup(_title, _message);
+    };
+    _req.onerror = (e) => {
+        scenarioShowExecResultPopup(_title, _req.statusText);
+    };
+    _req.send();
 }
 
 

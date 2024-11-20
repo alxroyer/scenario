@@ -19,7 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Make reload button applicable to all pages.
-        - Don't use synchronous requests (https://xhr.spec.whatwg.org/#sync-warning).
         - Avoid redirecting to the configuration page, and make the data be refreshed in the current page.
             - Avoid reloading a POST page with parameters.
     - Compare campaign result details?
