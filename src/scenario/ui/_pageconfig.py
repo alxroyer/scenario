@@ -109,7 +109,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
 
         # Execution.
         if request.getarg(ConfigurationPage.Arg.ACTION, default=""):
-            self._processaction(request, _html)
+            self._processaction(_html, request)
 
         # General page content.
         self._form1html(_html)
@@ -189,16 +189,16 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
 
     def _processaction(
             self,
-            request,  # type: _HttpRequestType
             html,  # type: _HtmlDocumentType
+            request,  # type: _HttpRequestType
     ):  # type: (...) -> None
         """
         Process the :attr:`ConfigurationPage.Arg.ACTION` argument.
 
         Executes form data, or reloads default data.
 
-        :param request: Input request with form data.
         :param html: Output HTML document.
+        :param request: Input request with form data.
         """
         from ._reqbl import UI_REQ_BASELINES
 

@@ -58,16 +58,16 @@ class Exec(_HttpRequestHandlerImpl):
 
     @staticmethod
     def mkurl(
+            action,  # type: Exec.Action
             *,
             req_baseline=None,  # type: typing.Optional[scenario.ReqBaseline]
-            action,  # type: Exec.Action
             html_escape=True,  # type: bool
     ):  # type: (...) -> str
         """
         Builds an action execution URL.
 
-        :param req_baseline: Baseline to execute the action for. Main requirement baseline by default.
         :param action: Action to create an URL for.
+        :param req_baseline: Baseline to execute the action for. Main requirement baseline by default.
         :param html_escape: ``True`` (default) to get HTML escaped text.
         :return: Action execution URL.
         """
@@ -85,16 +85,16 @@ class Exec(_HttpRequestHandlerImpl):
 
     @staticmethod
     def actionbutton2html(
+            html,  # type: _HtmlDocumentType
             request,  # type: _HttpRequestType
             action,  # type: Exec.Action
-            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Creates an action execution button.
 
+        :param html: HTML output page to feed.
         :param request: Current request being processed.
         :param action: Action to create a button for.
-        :param html: HTML output page to feed.
         """
         from ._reqbl import UI_REQ_BASELINES
 
@@ -107,12 +107,12 @@ class Exec(_HttpRequestHandlerImpl):
             if request.req_baseline is not UI_REQ_BASELINES.main:
                 return
 
-            _url = Exec.mkurl(action=Exec.Action.RELOAD_MAIN_REQ_BASELINE)
+            _url = Exec.mkurl(Exec.Action.RELOAD_MAIN_REQ_BASELINE)
             _classes.append(Exec.Action.RELOAD_MAIN_REQ_BASELINE)
             _text = "Reload"
 
         elif action == Exec.Action.RELOAD_CAMPAIGN_DB:
-            _url = Exec.mkurl(action=Exec.Action.RELOAD_CAMPAIGN_DB)
+            _url = Exec.mkurl(Exec.Action.RELOAD_CAMPAIGN_DB)
             _classes.append(Exec.Action.RELOAD_CAMPAIGN_DB)
             _text = "Reload campaigns"
 

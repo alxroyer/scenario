@@ -105,39 +105,39 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)
         _html.settitle("Requirements", campaign_subtitle=True)
 
-        Exec.actionbutton2html(request, Exec.Action.RELOAD_MAIN_REQ_BASELINE, _html)
+        Exec.actionbutton2html(_html, request, Exec.Action.RELOAD_MAIN_REQ_BASELINE)
 
-        self.reqs2html(request.req_baseline, _html)
+        self.reqs2html(_html, request.req_baseline)
 
         request.sendhtml(_html)
         return True
 
     def reqs2html(
             self,
-            req_baseline,  # type: scenario.ReqBaseline
             html,  # type: _HtmlDocumentType
+            req_baseline,  # type: scenario.ReqBaseline
     ):  # type: (...) -> None
         """
         Builds the HTML content for the requirement database given with the requirement baseline.
 
-        :param req_baseline: Requirement baseline holding the requirement database to process.
         :param html: HTML output page to feed.
+        :param req_baseline: Requirement baseline holding the requirement database to process.
         """
         with html.addcontent('<div id="requirements"></div>'):
             with html.addcontent('<ul></ul>'):
                 for _req in req_baseline.req_db.getallreqs():  # type: scenario.Req
-                    self._req2html(_req, html)
+                    self._req2html(html, _req)
 
     def _req2html(
             self,
-            req,  # type: scenario.Req
             html,  # type: _HtmlDocumentType
+            req,  # type: scenario.Req
     ):  # type: (...) -> None
         """
         Buils the HTML content for a requirement.
 
-        :param req: Requirement to build HTML content for.
         :param html: HTML output page to feed.
+        :param req: Requirement to build HTML content for.
         """
         from ._pagereqsdown import DownstreamTraceabilityPage
 
@@ -167,7 +167,7 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
             # Downstream traceability link.
             with html.addcontent('<div class="req downstream-traceability"></div>'):
-                DownstreamTraceabilityPage.reqref2unnamedhtmllink(req.main_ref, html)
+                DownstreamTraceabilityPage.reqref2unnamedhtmllink(html, req.main_ref)
 
             # Subreferences.
             if req.subrefs:
@@ -175,18 +175,18 @@ class RequirementsPage(_HttpRequestHandlerImpl):
                     html.addcontent('<p>Subreferences:</p>')
                     with html.addcontent('<ul></ul>'):
                         for _req_ref in req.subrefs:  # type: scenario.ReqRef
-                            self._reqsubref2html(_req_ref, html)
+                            self._reqsubref2html(html, _req_ref)
 
     def _reqsubref2html(
             self,
-            req_subref,  # type: scenario.ReqRef
             html,  # type: _HtmlDocumentType
+            req_subref,  # type: scenario.ReqRef
     ):  # type: (...) -> None
         """
         Buils the HTML content for a requirement subreference.
 
-        :param req_subref: Requirement subreference to build HTML content for.
         :param html: HTML output page to feed.
+        :param req_subref: Requirement subreference to build HTML content for.
         """
         from ._pagereqsdown import DownstreamTraceabilityPage
 
@@ -199,4 +199,4 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
             # Downstream traceability link.
             with html.addcontent('<span class="req-subref downstream-traceabiliy"></span>'):
-                DownstreamTraceabilityPage.reqref2unnamedhtmllink(req_subref, html)
+                DownstreamTraceabilityPage.reqref2unnamedhtmllink(html, req_subref)

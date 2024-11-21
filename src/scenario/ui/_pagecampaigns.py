@@ -82,23 +82,23 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)
         _html.settitle("Campaigns", campaign_subtitle=False)
 
-        Exec.actionbutton2html(request, Exec.Action.RELOAD_CAMPAIGN_DB, _html)
+        Exec.actionbutton2html(_html, request, Exec.Action.RELOAD_CAMPAIGN_DB)
 
-        self._campaigndb2html(request, _html)
+        self._campaigndb2html(_html, request)
 
         request.sendhtml(_html)
         return True
 
     def _campaigndb2html(
             self,
-            request,  # type: _HttpRequestType
             html,  # type: _HtmlDocumentType
+            request,  # type: _HttpRequestType
     ):  # type: (...) -> None
         """
         Builds the HTML content for the campaigns loaded in the database.
 
-        :param request: Input request being processed.
         :param html: HTML output page to feed.
+        :param request: Input request being processed.
         """
         # Sort campaign executions.
         _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]
@@ -109,11 +109,11 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         with html.addcontent('<div id="campaigns"></div>'):
             with html.addcontent('<table></table>'):
                 # Table head: list of campaign names (recent first order, as given by `_sortedcampaignlist()` before).
-                self._campaignlist2tablehead(_campaign_executions, html)
+                self._campaignlist2tablehead(html, _campaign_executions)
 
                 # Test suites and cases with execution status.
                 for _test_suite_execution_ref in _campaign_execution_ref.test_suite_executions:  # type: scenario.TestSuiteExecution
-                    self._testsuiteexecution2tablerow(request, _campaign_executions, _test_suite_execution_ref, html)
+                    self._testsuiteexecution2tablerow(html, request, _campaign_executions, _test_suite_execution_ref)
 
     def _sortedcampaignlist(self):  # type: (...) -> typing.Sequence[scenario.CampaignExecution]
         """
@@ -174,14 +174,14 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
     def _campaignlist2tablehead(
             self,
-            campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             html,  # type: _HtmlDocumentType
+            campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
     ):  # type: (...) -> None
         """
         Generates HTML for the table head: one column per campaign.
 
-        :param campaign_executions: Ordered list of campaigns.
         :param html: HTML output page to feed.
+        :param campaign_executions: Ordered list of campaigns.
         """
         from ._pagecampaign import CampaignPage
 
@@ -196,18 +196,18 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
     def _testsuiteexecution2tablerow(
             self,
+            html,  # type: _HtmlDocumentType
             request,  # type: _HttpRequestType
             campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             test_suite_execution_ref,  # type: scenario.TestSuiteExecution
-            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Generates HTML for a given reference test suite across every campaign.
 
+        :param html: HTML output page to feed.
         :param request: Input request being processed.
         :param campaign_executions: Ordered list of campaigns to displays execution status for.
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
-        :param html: HTML output page to feed.
         """
         # One first line for the test suite name, with execution status for each campaign.
         with html.addcontent('<tr></tr>'):
@@ -231,24 +231,24 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
         # Test case lines.
         for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: scenario.TestCaseExecution
-            self._testcaseexecution2tablecell(request, campaign_executions, test_suite_execution_ref, _test_case_execution_ref, html)
+            self._testcaseexecution2tablecell(html, request, campaign_executions, test_suite_execution_ref, _test_case_execution_ref)
 
     def _testcaseexecution2tablecell(
             self,
+            html,  # type: _HtmlDocumentType
             request,  # type: _HttpRequestType  # noqa  ## Unused parameter
             campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             test_suite_execution_ref,  # type: scenario.TestSuiteExecution
             test_case_execution_ref,  # type: scenario.TestCaseExecution
-            html,  # type: _HtmlDocumentType
     ):  # type: (...) -> None
         """
         Generates HTML for a given reference test case across every campaign.
 
+        :param html: HTML output page to feed.
         :param request: Input request being processed.
         :param campaign_executions: Ordered list of campaigns to displays execution status for.
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
         :param test_case_execution_ref: Reference test case to search in each campaign test suite found from ``test_suite_execution_ref``.
-        :param html: HTML output page to feed.
         """
         from ._pagescenario import ScenarioPage
         from ._reqbl import UI_REQ_BASELINES

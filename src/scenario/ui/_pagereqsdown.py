@@ -69,14 +69,14 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
     @staticmethod
     def reqref2unnamedhtmllink(
-            req_ref,  # type: scenario.ReqRef
             html,  # type: _HtmlDocumentType
+            req_ref,  # type: scenario.ReqRef
     ):  # type: (...) -> None
         """
         Builds a HTML link to the given requirement reference in the downstream tracebility page, with default text.
 
-        :param req_ref: Requirement reference to build a downstream traceability link for.
         :param html: HTML output page to feed.
+        :param req_ref: Requirement reference to build a downstream traceability link for.
         """
         html.addcontent(f'<a class="unnamed downstream-traceability" href="{DownstreamTraceabilityPage.mkurl(req_ref)}">(downstream traceability)</a>')
 
@@ -118,23 +118,23 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)
         _html.settitle("Downstream traceability", campaign_subtitle=True)
 
-        Exec.actionbutton2html(request, Exec.Action.RELOAD_MAIN_REQ_BASELINE, _html)
+        Exec.actionbutton2html(_html, request, Exec.Action.RELOAD_MAIN_REQ_BASELINE)
 
-        self.downstreamtraceability2html(request.req_baseline, _html)
+        self.downstreamtraceability2html(_html, request.req_baseline)
 
         request.sendhtml(_html)
         return True
 
     def downstreamtraceability2html(
             self,
-            req_baseline,  # type: scenario.ReqBaseline
             html,  # type: _HtmlDocumentType
+            req_baseline,  # type: scenario.ReqBaseline
     ):  # type: (...) -> None
         """
         Builds the HTML content for the downstream traceability given with the requirement baseline.
 
-        :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         :param html: HTML output page to feed.
+        :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         """
         with html.addcontent('<div id="downstream-traceability"></div>'):
             _downstream_traceability = scenario.ReqTraceability(req_baseline).getdownstream() \
@@ -149,18 +149,18 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
                 # Requirement reference rows.
                 for _downstream_req_ref in _downstream_traceability:  # type: scenario.ReqTraceability.Downstream.ReqRef
-                    self._reqref2html(_downstream_req_ref, html)
+                    self._reqref2html(html, _downstream_req_ref)
 
     def _reqref2html(
             self,
-            downstream_req_ref,  # type: scenario.ReqTraceability.Downstream.ReqRef
             html,  # type: _HtmlDocumentType
+            downstream_req_ref,  # type: scenario.ReqTraceability.Downstream.ReqRef
     ):  # type: (...) -> None
         """
         Builds the HTML content for a requirement reference.
 
-        :param downstream_req_ref: Requirement reference to build HTML content for.
         :param html: HTML output page to feed.
+        :param downstream_req_ref: Requirement reference to build HTML content for.
         """
         from ._pagereqs import RequirementsPage
 
@@ -181,18 +181,18 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
             with html.addcontent(f'<td class="req-ref coverage"></td>'):
                 with html.addcontent('<ul></ul>'):
                     for _downstream_scenario in downstream_req_ref.scenarios:  # type: scenario.ReqTraceability.Downstream.Scenario
-                        self._scenario2html(_downstream_scenario, html)
+                        self._scenario2html(html, _downstream_scenario)
 
     def _scenario2html(
             self,
-            downstream_scenario,  # type: scenario.ReqTraceability.Downstream.Scenario
             html,  # type: _HtmlDocumentType
+            downstream_scenario,  # type: scenario.ReqTraceability.Downstream.Scenario
     ):  # type: (...) -> None
         """
         Builds the HTML content for a scenario.
 
-        :param downstream_scenario: Scenario to build HTML content for.
         :param html: HTML output page to feed.
+        :param downstream_scenario: Scenario to build HTML content for.
         """
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
@@ -205,7 +205,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     html.addtext(downstream_scenario.scenario.name)
 
             # Upstream traceability link.
-            UpstreamTraceabilityPage.scenario2unnamedhtmllink(downstream_scenario.scenario, html)
+            UpstreamTraceabilityPage.scenario2unnamedhtmllink(html, downstream_scenario.scenario)
 
             # Traceability comments.
             if downstream_scenario.comments:
@@ -216,18 +216,18 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
             if downstream_scenario.steps:
                 with html.addcontent('<ul></ul>'):
                     for _downstream_step in downstream_scenario.steps:  # type: scenario.ReqTraceability.Downstream.Step
-                        self._step2html(_downstream_step, html)
+                        self._step2html(html, _downstream_step)
 
     def _step2html(
             self,
-            downstream_step,  # type: scenario.ReqTraceability.Downstream.Step
             html,  # type: _HtmlDocumentType
+            downstream_step,  # type: scenario.ReqTraceability.Downstream.Step
     ):  # type: (...) -> None
         """
         Builds the HTML content for a step.
 
-        :param downstream_step: Step to build HTML content for.
         :param html: HTML output page to feed.
+        :param downstream_step: Step to build HTML content for.
         """
         from ._pagescenario import ScenarioPage
 

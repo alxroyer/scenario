@@ -106,20 +106,20 @@ class CampaignPage(_HttpRequestHandlerImpl):
 
         _html.addcontent('<a name="scenarios" />')
         _html.addcontent(f'<h2 class="scenarios"><a href="{self._page_scenarios.mkurl(request.req_baseline)}">Scenarios</a></h2>')
-        self._page_scenarios.scenarios2html(request.req_baseline, _html)
+        self._page_scenarios.scenarios2html(_html, request.req_baseline)
 
         if request.req_baseline.req_db.getallreqs():
             _html.addcontent('<a name="reqs" />')
             _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs.mkurl(request.req_baseline)}">Requirements</a></h2>')
-            self._page_reqs.reqs2html(request.req_baseline, _html)
+            self._page_reqs.reqs2html(_html, request.req_baseline)
 
             _html.addcontent('<a name="downstream-traceability" />')
             _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs_down.mkurl(request.req_baseline)}">Downstream traceability</a></h2>')
-            self._page_reqs_down.downstreamtraceability2html(request.req_baseline, _html)
+            self._page_reqs_down.downstreamtraceability2html(_html, request.req_baseline)
 
             _html.addcontent('<a name="upstream-traceability" />')
             _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs_up.mkurl(request.req_baseline)}">Upstream traceability</a></h2>')
-            self._page_reqs_up.upstreamtraceability2html(request.req_baseline, _html)
+            self._page_reqs_up.upstreamtraceability2html(_html, request.req_baseline)
 
         request.sendhtml(_html)
         return True

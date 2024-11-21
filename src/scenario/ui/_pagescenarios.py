@@ -102,23 +102,23 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)
         _html.settitle("Scenarios", campaign_subtitle=True)
 
-        Exec.actionbutton2html(request, Exec.Action.RELOAD_MAIN_REQ_BASELINE, _html)
+        Exec.actionbutton2html(_html, request, Exec.Action.RELOAD_MAIN_REQ_BASELINE)
 
-        self.scenarios2html(request.req_baseline, _html)
+        self.scenarios2html(_html, request.req_baseline)
 
         request.sendhtml(_html)
         return True
 
     def scenarios2html(
             self,
-            req_baseline,  # type: scenario.ReqBaseline
             html,  # type: _HtmlDocumentType
+            req_baseline,  # type: scenario.ReqBaseline
     ):  # type: (...) -> None
         """
         Builds the HTML content for the given scenario list.
 
-        :param req_baseline: Requirement baseline holding the scenario list to process.
         :param html: HTML output page to feed.
+        :param req_baseline: Requirement baseline holding the scenario list to process.
         """
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
@@ -133,7 +133,7 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
                                 html.addtext(_scenario_definition.name)
 
                         # Upstream traceability link.
-                        UpstreamTraceabilityPage.scenario2unnamedhtmllink(_scenario_definition, html)
+                        UpstreamTraceabilityPage.scenario2unnamedhtmllink(html, _scenario_definition)
 
                         # Title.
                         if _scenario_definition.title:
