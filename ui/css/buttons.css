@@ -17,10 +17,22 @@
 
 /**
  * @file
- * @brief Main Javascript file.
+ * @brief Button CSS rules.
+ *
+ * Inspired from https://www.w3schools.com/csS/css3_buttons.asp
  */
 
 
-import("/js/menu.js").then((mod) => {
-    console.debug("'menu.js' successfully loaded");
-});
+/* Padding to make the buttons larger. */
+a.button { padding: 4px 8px; }
+a.button { display: inline-block; }  /* Ensure buttons with padding remain clipped in their owner div. */
+/* Round borders. */
+a.button { border: 2px solid; border-radius: 8px; }
+
+/* Color: grey. */
+a.button { background-color: #e7e7e7; border-color: #e7e7e7; color: black; }
+/* Text styles. */
+a.button { text-align: center; text-decoration: none; font-size: 16px; }
+
+/* Hover effect. */
+a.button:hover { background-color: white; }

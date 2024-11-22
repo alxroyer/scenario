@@ -17,10 +17,9 @@
 
 /**
  * @file
- * @brief Main Javascript file.
+ * @brief General styles.
  */
 
 
-import("/js/menu.js").then((mod) => {
-    console.debug("'menu.js' successfully loaded");
-});
+body { font-family: helvetica, arial; font-size: medium; font-weight: normal; font-style: normal; color: #000000; text-align: left; }
+code { font-size: medium; }

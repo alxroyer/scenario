@@ -17,10 +17,9 @@
 
 /**
  * @file
- * @brief Main Javascript file.
+ * @brief Execution result CSS rules.
  */
 
 
-import("/js/menu.js").then((mod) => {
-    console.debug("'menu.js' successfully loaded");
-});
+/* Position execution buttons at the right top right corner of the window (fixed v/s scrolling). */
+.exec.button { position: fixed; top: 15px; right: 15px; }

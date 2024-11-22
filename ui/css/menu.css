@@ -17,10 +17,14 @@
 
 /**
  * @file
- * @brief Main Javascript file.
+ * @brief Menu CSS styles.
+ *
+ * Memo: Menu links displayed as buttons
+ * => see 'js/menu.js' and 'ui/buttons.css'.
  */
 
 
-import("/js/menu.js").then((mod) => {
-    console.debug("'menu.js' successfully loaded");
-});
+/* Ensure same spacing with top of page for menu buttons as for execution buttons (on the top right corner of the window). */
+div#menu { margin-top: 15px; }
+/* Avoid the menu buttons overlap with execution buttons. */
+div#menu { width: 90%; }
