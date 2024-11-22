@@ -131,6 +131,7 @@ class HtmlDocument(scenario.Logger):
         from ._configdb import UI_CONFIG
 
         with self.addcontent('<head></head>') as self.head:
+            self.addcontent(f'<link rel="shortcut icon" href="{self.escape(UI_CONFIG.faviconurl())}" />')
             self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
             self._head_title = self.addcontent('<title></title>', auto_closing=False).new_child
             self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')

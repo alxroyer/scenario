@@ -24,7 +24,6 @@
       URL de la ressource : null
       URL du lien source : installHook.js.map"
       See https://firefox-source-docs.mozilla.org/devtools-user/debugger/source_map_errors/?utm_source=mozilla&utm_medium=firefox-console-errors&utm_campaign=default
-    - Add a 'favico.ico' file in 'scenario/ui/' directory, or disable.
     - Use `.exec-result` popup for configuration page.
         - Possibly don't use POST? not sure.
     - Compare campaign result details?

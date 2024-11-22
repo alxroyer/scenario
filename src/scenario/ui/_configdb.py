@@ -39,6 +39,8 @@ class UIConfig(scenario.Logger):
 
         #: Main path for `scenario.ui` execution. Absolute path string. Default is 'ui/' in the :mod:`scenario` repository directory.
         MAIN_PATH = "scenario.ui.main_path"
+        #: `scenario.ui` favicon URL. String. Defaults to ``data:...`` specification.
+        FAVICON_URL = "scenario.ui.favicon_url"
         #: Main `scenario.ui` CSS URL. String. Defaults to 'css/ui.css'.
         CSS_URL = "scenario.ui.css_url"
         #: Main `scenario.ui` Javascript URL. String. Default to 'js/ui.js'.
@@ -66,6 +68,20 @@ class UIConfig(scenario.Logger):
         )  # type: str
         self.debug("uimainpath() -> %r", scenario.Path(_abspath))
         return scenario.Path(_abspath)
+
+    def faviconurl(self):  # type: (...) -> str
+        """
+        Retrieves the URL for the `scenario.ui` favicon.
+
+        :return: URL from :attr:`UIConfig.Key.MAIN_PATH`, or ``data:`` URL.
+        """
+        _favicon_url = scenario.conf.get(
+            self.Key.FAVICON_URL, type=str,
+            # Inspired from https://stackoverflow.com/questions/1321878/how-to-prevent-favicon-ico-requests#13416784
+            default="data:;base64,=",
+        )  # type: str
+        self.debug("faviconurl() -> %r", _favicon_url)
+        return _favicon_url
 
     def cssurl(self):  # type: (...) -> str
         """
