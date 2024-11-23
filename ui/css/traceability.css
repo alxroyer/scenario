@@ -1,0 +1,30 @@
+/*
+ * Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+/**
+ * @file
+ * @brief Traceability styles.
+ */
+
+
+/* Replace traceability default texts with icons. */
+a.traceability.default-text span { display: none; }  /* Hide the <span></span> default text. */
+a.traceability.default-text { width: 1em; height: 1em; }  /* Size. */
+a.traceability.default-text { display: inline-block; }  /* Avoid width to be shrinked, and keep *inline* displayed. */
+a.downstream.traceability.default-text { background-image: url('/img/double-right-chevron-svgrepo-com.svg'); }  /* Downstream traceability icon. */
+a.upstream.traceability.default-text { background-image: url('/img/double-left-chevron-svgrepo-com.svg'); }  /* Upstream traceability icon. */
+a.traceability.default-text { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */

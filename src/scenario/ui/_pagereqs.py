@@ -167,7 +167,7 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
             # Downstream traceability link.
             with html.addcontent('<div class="req downstream-traceability"></div>'):
-                DownstreamTraceabilityPage.reqref2unnamedhtmllink(html, req.main_ref)
+                DownstreamTraceabilityPage.reqref2htmllink(html, req.main_ref, text="Downstream traceability")
 
             # Subreferences.
             if req.subrefs:
@@ -199,4 +199,4 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
             # Downstream traceability link.
             with html.addcontent('<span class="req-subref downstream-traceabiliy"></span>'):
-                DownstreamTraceabilityPage.reqref2unnamedhtmllink(html, req_subref)
+                DownstreamTraceabilityPage.reqref2htmllink(html, req_subref)

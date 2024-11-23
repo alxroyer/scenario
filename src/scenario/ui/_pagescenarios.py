@@ -127,13 +127,13 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
             with html.addcontent('<ul></ul>'):
                 for _scenario_definition in req_baseline.scenarios:  # type: scenario.ScenarioDefinition
                     with html.addcontent('<li class="scenario"></li>'):
+                        # Upstream traceability link.
+                        UpstreamTraceabilityPage.scenario2htmllink(html, _scenario_definition)
+
                         # Scenario name.
                         with html.addcontent(f'<span class="scenario name"></span>'):
                             with html.addcontent(f'<a href="{ScenarioPage.mkurl(_scenario_definition)}"></a>'):
                                 html.addtext(_scenario_definition.name)
-
-                        # Upstream traceability link.
-                        UpstreamTraceabilityPage.scenario2unnamedhtmllink(html, _scenario_definition)
 
                         # Title.
                         if _scenario_definition.title:

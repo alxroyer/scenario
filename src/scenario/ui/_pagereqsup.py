@@ -68,17 +68,30 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         )
 
     @staticmethod
-    def scenario2unnamedhtmllink(
+    def scenario2htmllink(
             html,  # type: _HtmlDocumentType
             scenario_definition,  # type: scenario.ScenarioDefinition
+            *,
+            text="",  # type: str
     ):  # type: (...) -> None
         """
-        Builds a HTML link to the given scenario in the upstream tracebility page, with default text.
+        Builds a HTML link to the given scenario in the upstream tracebility page.
 
-        :param html: HTML output page to feed.
-        :param scenario_definition: Scenario to build an upstream traceability link for.
+        :param html:
+            HTML output page to feed.
+        :param scenario_definition:
+            Scenario to build an upstream traceability link for.
+        :param text:
+            Link text (not HTML escaped).
+
+            Sets the `.default-text` class if not provided.
         """
-        html.addcontent(f'<a class="unnamed upstream-traceability" href="{UpstreamTraceabilityPage.mkurl(scenario_definition)}">(upstream traceability)</a>')
+        _classes = ["upstream", "traceability"]  # type: typing.List[str]
+        if not text:
+            _classes.append("default-text")
+            text = "(<<)"
+        with html.addcontent(f'<a class="{" ".join(_classes)}" href="{UpstreamTraceabilityPage.mkurl(scenario_definition)}"></a>'):
+            html.addcontent(f'<span>{html.escape(text)}</span>')
 
     def __init__(
             self,
@@ -143,9 +156,8 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             with html.addcontent('<table></table>'):
                 # Heading row.
                 with html.addcontent('<tr></tr>'):
-                    html.addcontent('<th class="scenario name">Name</th>')
-                    html.addcontent('<th class="scenario title">Title</th>')
-                    html.addcontent('<th class="scenario coverage">Requirement coverage</th>')
+                    html.addcontent('<th class="req-ref">Requirement coverage</th>')
+                    html.addcontent('<th class="req-verifier">Scenario</th>')
 
                 # Scenario rows.
                 for _upstream_scenario in _upstream_traceability:  # type: scenario.ReqTraceability.Upstream.Scenario
@@ -165,22 +177,24 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         from ._pagescenario import ScenarioPage
 
         with html.addcontent(f'<tr class="scenario"></tr>'):
-            # Scenario name.
-            with html.addcontent('<td class="scenario name"></td>'):
-                # With anchor.
-                html.addcontent(f'<a name="{html.escape(upstream_scenario.scenario.name)}" />')
-                # With link to scenario details page.
-                with html.addcontent(f'<a href="{ScenarioPage.mkurl(upstream_scenario.scenario)}"></a>'):
-                    html.addtext(upstream_scenario.scenario.name)
-
-            # Title.
-            html.addcontent(f'<td class="scenario title">{html.escape(upstream_scenario.scenario.title)}</td>')
-
             # Requirement coverage.
-            with html.addcontent(f'<td class="scenario coverage"></td>'):
+            with html.addcontent(f'<td class="req-ref"></td>'):
                 with html.addcontent('<ul></ul>'):
                     for _upstream_req in upstream_scenario.reqs:  # type: scenario.ReqTraceability.Upstream.Req
                         self._req2html(html, _upstream_req)
+
+            # Scenario.
+            with html.addcontent('<td class="req-verifier"></td>'):
+                # Anchor.
+                html.addcontent(f'<a name="{html.escape(upstream_scenario.scenario.name)}" />')
+
+                # Scenario name, with link to scenario details page.
+                with html.addcontent(f'<a href="{ScenarioPage.mkurl(upstream_scenario.scenario)}" class="scenario name"></a>'):
+                    html.addtext(upstream_scenario.scenario.name)
+
+                # Title.
+                html.addcontent('<span class="scenario sep">:</span>')
+                html.addcontent(f'<span class="scenario title">{html.escape(upstream_scenario.scenario.title)}</span>')
 
     def _req2html(
             self,
@@ -204,7 +218,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     html.addtext(upstream_req.req.id)
 
             # Downstream traceability link.
-            DownstreamTraceabilityPage.reqref2unnamedhtmllink(html, upstream_req.req.main_ref)
+            DownstreamTraceabilityPage.reqref2htmllink(html, upstream_req.req.main_ref)
 
             # Traceability comments.
             if upstream_req.comments:
@@ -239,7 +253,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     html.addtext(upstream_req_subref.req_subref.id)
 
             # Downstream traceability link.
-            DownstreamTraceabilityPage.reqref2unnamedhtmllink(html, upstream_req_subref.req_subref)
+            DownstreamTraceabilityPage.reqref2htmllink(html, upstream_req_subref.req_subref)
 
             # Traceability comments.
             if upstream_req_subref.comments:

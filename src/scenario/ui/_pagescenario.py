@@ -258,6 +258,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
 
         with html.addcontent(f'<div class="{_obj_class} requirements"></div>'):
             html.addcontent('<p>Requirements:</p>')
+
             with html.addcontent('<ul></ul>'):
                 for _req_ref in req_refs:  # type: scenario.ReqRef
                     with html.addcontent(f'<li class="{_obj_class} req-ref"></li>'):
@@ -268,7 +269,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
 
                         # Downstream traceability link.
                         with html.addcontent(f'<span class="{_obj_class} req-ref coverage"></span>'):
-                            DownstreamTraceabilityPage.reqref2unnamedhtmllink(html, _req_ref)
+                            DownstreamTraceabilityPage.reqref2htmllink(html, _req_ref)
 
                         # Find out the req-links which comments to display.
                         _req_links = list(filter(
@@ -286,4 +287,4 @@ class ScenarioPage(_HttpRequestHandlerImpl):
 
             # Upstream traceability link.
             if isinstance(req_verifier, scenario.ScenarioDefinition):
-                UpstreamTraceabilityPage.scenario2unnamedhtmllink(html, req_verifier)
+                UpstreamTraceabilityPage.scenario2htmllink(html, req_verifier, text="Upstream traceability")
