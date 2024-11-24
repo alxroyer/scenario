@@ -56,14 +56,29 @@ class FileDelivery(_HttpRequestHandlerImpl):
             return False
 
         # Read the file.
-        _file = HTTP_SERVER.main_path / request.base_path[1:]  # type: scenario.Path
-        if not _file.is_file():
-            self.debug("No such file '%s'", _file)
+        _path = HTTP_SERVER.main_path / request.base_path[1:]  # type: scenario.Path
+        if not _path.is_file():
+            self.debug("No such file '%s'", _path)
             self.debug("%r not processed", request)
             return False
         self.debug("Processing %r", request)
 
+        # Determine the MIME type.
+        _mime_type = None  # type: typing.Optional[str]
+        if _path.suffix.lower() in [".css"]:
+            _mime_type = "text/css"
+        if _path.suffix.lower() in [".cjs", ".js", ".mjs"]:
+            _mime_type = "text/javascript"
+        if _path.suffix.lower() in [".gif"]:
+            _mime_type = "image/gif"
+        if _path.suffix.lower() in [".jpeg", ".jpg"]:
+            _mime_type = "image/jpeg"
+        if _path.suffix.lower() in [".png"]:
+            _mime_type = "image/png"
+        if _path.suffix.lower() in [".svg"]:
+            _mime_type = "image/svg+xml"
+
         # Deliver the file.
-        self.debug("Delivering file '%s'", _file)
-        request.sendfile(_file)
+        self.debug("Delivering file '%s' (MIME type: %r)", _path, _mime_type)
+        request.sendfile(_path, mime_type=_mime_type)
         return True

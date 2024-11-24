@@ -331,16 +331,21 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
     def sendfile(
             self,
             path,  # type: scenario.Path
+            *,
+            mime_type=None,  # type: str
     ):  # type: (...) -> None
         """
         Responds the request successfully with file content.
 
         :param path: File to send the content.
+        :param mime_type: Optional MIME type.
         """
         _content = path.read_bytes()  # type: bytes
         self.content_size = len(_content)
 
         self.send_response(http.HTTPStatus.OK)
+        if mime_type:
+            self.send_header("Content-Type", mime_type)
         self.send_header("Content-Length", str(self.content_size))
         self.end_headers()
         self.wfile.write(_content)

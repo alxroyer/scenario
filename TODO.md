@@ -18,8 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Error "Le script à l’adresse « http://localhost:8000/js/ui.js » a été chargé alors que son type MIME («  ») n’est pas un type MIME JavaScript valide."
-      See https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Content-Type-Options?utm_source=mozilla&utm_medium=firefox-console-errors&utm_campaign=default
     - Error "Erreur dans les liens source : request failed with status 404
       URL de la ressource : null
       URL du lien source : installHook.js.map"
