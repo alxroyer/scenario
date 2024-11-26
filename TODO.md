@@ -18,6 +18,32 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Implement first .js and .css files:
+        - Improve campaign list page:
+            - Show table borders.
+            - Highlight test suite lines.
+            - Expand/fold test suites.
+        - Improve requirement list page:
+            - Add space between requirements.
+        - Improve downstream traceability page:
+            - Show table borders.
+            - Align cells top.
+            - Expand/fold subrefs, folded by default.
+            - Expand/fold steps under scenarios.
+                - Sum-up step comments when the scenario does not have its own comments.
+        - Improve upstream traceability page:
+            - Show table borders.
+            - Align cells top.
+        - Improve configuration page:
+            - Size text areas.
+    - Display scenario results in campaign details page.
+    - Highlight items for anchor URLs.
+    - Display requirement texts with downstream traceability.
+    - Upstream traceability:
+        - Restore column order: req-verifiers on the left, req-ref on the right.
+        - Display req comments.
+        - Display step upstream traceability, folded by default.
+    - Display scenario results (when applicable) in scenario pages.
     - Error "Erreur dans les liens source : request failed with status 404
       URL de la ressource : null
       URL du lien source : installHook.js.map"
@@ -26,7 +52,6 @@
     - Use `.exec-result` popup for configuration page.
         - Possibly don't use POST? not sure.
     - Compare campaign result details?
-    - Implement first .js and .css files.
     - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
