@@ -42,7 +42,7 @@ class RequirementsPage(_HttpRequestHandlerImpl):
     def mkurl(
             obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ReqRef]
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a requirement page URL.
@@ -54,7 +54,7 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
             Main requirement baseline by default.
         :param html_escape:
-            ``True`` (default) to get HTML escaped text.
+            ``True`` to get HTML escaped text.
         :return:
             Requirement page URL.
         """

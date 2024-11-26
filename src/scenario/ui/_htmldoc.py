@@ -163,13 +163,13 @@ class HtmlDocument(scenario.Logger):
         from ._pagescenarios import ScenarioListPage
 
         with self.addcontent('<div id="menu"></div>'):
-            self.addcontent(f'<a class="menu" href="{Homepage.mkurl()}">Home</a>')
-            self.addcontent(f'<a class="menu" href="{ScenarioListPage.mkurl()}">Scenarios</a>')
-            self.addcontent(f'<a class="menu" href="{CampaignListPage.mkurl()}">Campaigns</a>')
-            self.addcontent(f'<a class="menu" href="{RequirementsPage.mkurl()}">Requirements</a>')
-            self.addcontent(f'<a class="menu" href="{DownstreamTraceabilityPage.mkurl()}">Downstream traceability</a>')
-            self.addcontent(f'<a class="menu" href="{UpstreamTraceabilityPage.mkurl()}">Upstream traceability</a>')
-            self.addcontent(f'<a class="menu" href="{ConfigurationPage.mkurl()}">Configuration</a>')
+            self.addlink(classes=["menu"], href=Homepage.mkurl(), text="Home")
+            self.addlink(classes=["menu"], href=ScenarioListPage.mkurl(), text="Scenarios")
+            self.addlink(classes=["menu"], href=CampaignListPage.mkurl(), text="Campaigns")
+            self.addlink(classes=["menu"], href=RequirementsPage.mkurl(), text="Requirements")
+            self.addlink(classes=["menu"], href=DownstreamTraceabilityPage.mkurl(), text="Downstream traceability")
+            self.addlink(classes=["menu"], href=UpstreamTraceabilityPage.mkurl(), text="Upstream traceability")
+            self.addlink(classes=["menu"], href=ConfigurationPage.mkurl(), text="Configuration")
 
     def _execresultdiv2html(self):  # type: (...) -> None
         """
@@ -181,7 +181,7 @@ class HtmlDocument(scenario.Logger):
         with self.addcontent('<div id="exec-result" style="display: none;"></div>'):
             self.addcontent('<div class="exec-result title"></div>', auto_closing=False)
             self.addcontent('<div class="exec-result text"></div>', auto_closing=False)
-            self.addcontent('<a href="#" class="exec-result button validate">OK</a>')
+            self.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
 
     def _finaljs2html(self):  # type: (...) -> None
         """
@@ -219,8 +219,8 @@ class HtmlDocument(scenario.Logger):
             if campaign_subtitle and self.request.campaign_execution:
                 self.addcontent('<span class="title sep"></span>')
 
-                _url = CampaignPage.mkurl(self.request.campaign_execution)  # type: str
-                self.addcontent(f'<span class="title req-baseline"><a href="{_url}">{self.escape(_req_baseline_desc)}</a></span>')
+                with self.addcontent('<span class="title req-baseline"></span>'):
+                    self.addlink(href=CampaignPage.mkurl(self.request.campaign_execution), title="Campaign details", text=_req_baseline_desc)
 
     def addcontent(
             self,
@@ -257,6 +257,51 @@ class HtmlDocument(scenario.Logger):
 
         # Return a context that positions the new child as the current node.
         return HtmlDocument.NodeContext(self, _child)
+
+    def addlink(
+            self,
+            *,
+            classes=(),  # type: typing.Sequence[str]
+            html_escape_classes=True,  # type: bool
+            href,  # type: str
+            html_escape_href=True,  # type: bool
+            title="",  # type: str
+            html_escape_title=True,  # type: bool
+            text="",  # type: str
+            html_escape_text=True,  # type: bool
+    ):  # type: (...) -> HtmlDocument.NodeContext
+        """
+        Adds a ``<a ...>...</a>`` link in the document,
+        with ``@class``, ``@href``, ``@title`` attributes and text content.
+
+        :param classes: Classes to set for ``@class`` attribute. No ``@class`` attribute if no class provided.
+        :param html_escape_classes: ``True`` (default) to HTML escape class names.
+        :param href: URL to set for ``@href`` attribute.
+        :param html_escape_href: ``True`` (default) to HTML escape the ``@href`` URL.
+        :param title: ``@title`` attribute value, used for popup info on link hover. None by default for no ``@title`` attribute.
+        :param html_escape_title: ``True`` (default) to HTML escape the ``@title`` value.
+        :param text: Text content for the link. Empty by default.
+        :param html_escape_text: ``True`` (default) to HTML escape the text content.
+        :return: Context manager focused on the new ``<a ...></a>`` node created.
+        """
+        if html_escape_classes:
+            classes = [self.escape(_class) for _class in classes]
+        if html_escape_href:
+            href = self.escape(href)
+        if html_escape_title:
+            title = self.escape(title)
+        if html_escape_text:
+            text = self.escape(text)
+
+        _attrs = []  # type: typing.List[str]
+        if classes:
+            _attrs.append(f'class="{" ".join(classes)}"')
+        if href:
+            _attrs.append(f'href="{href}"')
+        if title:
+            _attrs.append(f'title="{title}"')
+
+        return self.addcontent(f'<a {" ".join(_attrs)}>{text}</a>')
 
     def addtext(
             self,

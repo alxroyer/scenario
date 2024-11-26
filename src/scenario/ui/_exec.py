@@ -61,14 +61,14 @@ class Exec(_HttpRequestHandlerImpl):
             action,  # type: Exec.Action
             *,
             req_baseline=None,  # type: typing.Optional[scenario.ReqBaseline]
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds an action execution URL.
 
         :param action: Action to create an URL for.
         :param req_baseline: Baseline to execute the action for. Main requirement baseline by default.
-        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :param html_escape: ``True`` to get HTML escaped text.
         :return: Action execution URL.
         """
         from ._reqbl import UI_REQ_BASELINES
@@ -119,7 +119,7 @@ class Exec(_HttpRequestHandlerImpl):
         else:
             raise ValueError(f"Unknown action {action!r}")
 
-        html.addcontent(f'<a href="{_url}" class="{" ".join(_classes)}">{_text}</a>')
+        html.addlink(classes=_classes, href=_url, text=_text)
 
     def __init__(self):  # type: (...) -> None
         """

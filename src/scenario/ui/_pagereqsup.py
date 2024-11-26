@@ -42,7 +42,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
     def mkurl(
             obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ScenarioDefinition]
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds an upstream traceability page URL.
@@ -54,7 +54,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
             Main requirement baseline used by default.
         :param html_escape:
-            ``True`` (default) to get HTML escaped text.
+            ``True`` to get HTML escaped text.
         :return:
             Upstream traceability page URL.
         """
@@ -84,13 +84,15 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param text:
             Link text (not HTML escaped).
 
-            Sets the `.default-text` class if not provided.
+            Sets the ``.default-text`` class and ``@title`` attribute if not provided.
         """
         _classes = ["upstream", "traceability"]  # type: typing.List[str]
+        _title = ""  # type: str
         if not text:
             _classes.append("default-text")
+            _title = "Upstream traceability"
             text = "(<<)"
-        with html.addcontent(f'<a class="{" ".join(_classes)}" href="{UpstreamTraceabilityPage.mkurl(scenario_definition)}"></a>'):
+        with html.addlink(classes=_classes, href=UpstreamTraceabilityPage.mkurl(scenario_definition), title=_title):
             html.addcontent(f'<span>{html.escape(text)}</span>')
 
     def __init__(
@@ -189,8 +191,12 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 html.addcontent(f'<a name="{html.escape(upstream_scenario.scenario.name)}" />')
 
                 # Scenario name, with link to scenario details page.
-                with html.addcontent(f'<a href="{ScenarioPage.mkurl(upstream_scenario.scenario)}" class="scenario name"></a>'):
-                    html.addtext(upstream_scenario.scenario.name)
+                html.addlink(
+                    classes=["scenario", "name"],
+                    href=ScenarioPage.mkurl(upstream_scenario.scenario),
+                    title="Scenario details",
+                    text=upstream_scenario.scenario.name,
+                )
 
                 # Title.
                 html.addcontent('<span class="scenario sep">:</span>')
@@ -214,8 +220,11 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             # Requirement id.
             with html.addcontent('<span class="req id"></span>'):
                 # With link to requirements page.
-                with html.addcontent(f'<a href="{RequirementsPage.mkurl(upstream_req.req.main_ref)}"></a>'):
-                    html.addtext(upstream_req.req.id)
+                html.addlink(
+                    href=RequirementsPage.mkurl(upstream_req.req.main_ref),
+                    title="Requirement details",
+                    text=upstream_req.req.id,
+                )
 
             # Downstream traceability link.
             DownstreamTraceabilityPage.reqref2htmllink(html, upstream_req.req.main_ref)
@@ -248,9 +257,12 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         with html.addcontent('<li class="req-subref"></li>'):
             # Requirement subreference id.
             with html.addcontent('<span class="req-subref id"></span>'):
-                # With link to requirements page.
-                with html.addcontent(f'<a href="{RequirementsPage.mkurl(upstream_req_subref.req_subref)}"></a>'):
-                    html.addtext(upstream_req_subref.req_subref.id)
+                # With link to requirement details.
+                html.addlink(
+                    href=RequirementsPage.mkurl(upstream_req_subref.req_subref),
+                    title="Requirement details",
+                    text=upstream_req_subref.req_subref.id,
+                )
 
             # Downstream traceability link.
             DownstreamTraceabilityPage.reqref2htmllink(html, upstream_req_subref.req_subref)

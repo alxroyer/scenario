@@ -41,13 +41,13 @@ class ScenarioPage(_HttpRequestHandlerImpl):
     def mkurl(
             req_verifier,  # type: typing.Union[scenario.ScenarioDefinition, scenario.StepDefinition]
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a scenario details URL for the given scenario.
 
         :param req_verifier: Scenario or step to build the URL for.
-        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :param html_escape: ``True`` to get HTML escaped text.
         :return: Scenario details URL for the given scenario.
         """
         from ._httprequest import HttpRequest
@@ -264,8 +264,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
                     with html.addcontent(f'<li class="{_obj_class} req-ref"></li>'):
                         # Requirement reference id.
                         with html.addcontent(f'<span class="{_obj_class} req-ref id"></span>'):
-                            with html.addcontent(f'<a href="{RequirementsPage.mkurl(_req_ref)}"></a>'):
-                                html.addtext(_req_ref.id)
+                            html.addlink(href=RequirementsPage.mkurl(_req_ref), title="Requirement details", text=_req_ref.id)
 
                         # Downstream traceability link.
                         with html.addcontent(f'<span class="{_obj_class} req-ref coverage"></span>'):

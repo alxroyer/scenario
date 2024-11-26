@@ -42,7 +42,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
     def mkurl(
             obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ReqRef]
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a downstream traceability page URL.
@@ -54,7 +54,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
             Main requirement baseline by default.
         :param html_escape:
-            ``True`` (default) to get HTML escaped text.
+            ``True`` to get HTML escaped text.
         :return:
             Downstream traceability page URL.
         """
@@ -84,13 +84,15 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param text:
             Link text (not HTML escaped).
 
-            Sets the `.default-text` class if not provided.
+            Sets the ``.default-text`` class and ``@title`` attribute if not provided.
         """
         _classes = ["downstream", "traceability"]  # type: typing.List[str]
+        _title = ""  # type: str
         if not text:
             _classes.append("default-text")
+            _title = "Downstream traceability"
             text = "(>>)"
-        with html.addcontent(f'<a class="{" ".join(_classes)}" href="{DownstreamTraceabilityPage.mkurl(req_ref)}"></a>'):
+        with html.addlink(classes=_classes, href=DownstreamTraceabilityPage.mkurl(req_ref), title=_title):
             html.addcontent(f'<span>{html.escape(text)}</span>')
 
     def __init__(
@@ -182,9 +184,13 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 # Anchor.
                 html.addcontent(f'<a name="{html.escape(downstream_req_ref.req_ref.id)}" />')
 
-                # Requirement id, with link to requirements page.
-                with html.addcontent(f'<a href="{RequirementsPage.mkurl(downstream_req_ref.req_ref)}" class="req-ref id"></a>'):
-                    html.addtext(downstream_req_ref.req_ref.id)
+                # Requirement id, with link to requirement details.
+                html.addlink(
+                    classes=["req-ref", "id"],
+                    href=RequirementsPage.mkurl(downstream_req_ref.req_ref),
+                    title="Requirement details",
+                    text=downstream_req_ref.req_ref.id,
+                )
 
                 # Title.
                 if downstream_req_ref.req_ref.ismain() and downstream_req_ref.req_ref.req.title:
@@ -218,8 +224,11 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
             # Scenario name.
             with html.addcontent('<span class="req-verifier scenario name"></span>'):
                 # With link to scenario details page.
-                with html.addcontent(f'<a href="{ScenarioPage.mkurl(downstream_scenario.scenario)}"></a>'):
-                    html.addtext(downstream_scenario.scenario.name)
+                html.addlink(
+                    href=ScenarioPage.mkurl(downstream_scenario.scenario),
+                    title="Scenario details",
+                    text=downstream_scenario.scenario.name,
+                )
 
             # Traceability comments.
             if downstream_scenario.comments:
@@ -249,8 +258,11 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
             # Step number and name.
             with html.addcontent(f'<span class="req-verifier step name"></span>'):
                 # With link to scenario details.
-                with html.addcontent(f'<a href="{ScenarioPage.mkurl(downstream_step.step)}"></a>'):
-                    html.addtext(f"step#{downstream_step.step.number} ({downstream_step.step.name})")
+                html.addlink(
+                    href=ScenarioPage.mkurl(downstream_step.step),
+                    title="Scenario details",
+                    text=f"step#{downstream_step.step.number} ({downstream_step.step.name})",
+                )
 
             # Traceability comments.
             if downstream_step.comments:

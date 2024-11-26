@@ -42,7 +42,7 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
     def mkurl(
             req_baseline=None,  # type: scenario.ReqBaseline
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a scenario list page URL.
@@ -52,7 +52,7 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
 
             Main requirement baseline by default.
         :param html_escape:
-            ``True`` (default) to get HTML escaped text.
+            ``True`` to get HTML escaped text.
         :return:
             Scenario list page URL.
         """
@@ -132,8 +132,7 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
 
                         # Scenario name.
                         with html.addcontent(f'<span class="scenario name"></span>'):
-                            with html.addcontent(f'<a href="{ScenarioPage.mkurl(_scenario_definition)}"></a>'):
-                                html.addtext(_scenario_definition.name)
+                            html.addlink(href=ScenarioPage.mkurl(_scenario_definition), title="Scenario details", text=_scenario_definition.name)
 
                         # Title.
                         if _scenario_definition.title:

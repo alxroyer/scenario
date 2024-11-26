@@ -37,12 +37,12 @@ class Homepage(_HttpRequestHandlerImpl):
     @staticmethod
     def mkurl(
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a homepage URL.
 
-        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :param html_escape: ``True`` to get HTML escaped text.
         :return: Homepage URL.
         """
         from ._httprequest import HttpRequest
@@ -83,20 +83,21 @@ class Homepage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)  # type: HtmlDocument
         _html.settitle("Scenario User Interface", campaign_subtitle=False)
 
-        _html.addcontent(
-            f'<p>'
-            f'Browse <a href="{ScenarioListPage.mkurl()}">scenarios</a> described in test scripts, '
-            f'and <a href="{CampaignListPage.mkurl()}">campaign results</a>.'
-            f'</p>'
-        )
+        with _html.addcontent('<p></p>'):
+            _html.addcontent('<span>Browse </span>')
+            _html.addlink(text="scenarios", href=ScenarioListPage.mkurl(), title="Scenario list")
+            _html.addcontent('<span> described in test scripts, and </span>')
+            _html.addlink(text="campaign results", href=CampaignListPage.mkurl(), title="Campaign results")
+            _html.addcontent('<span>.</span>')
 
-        _html.addcontent(
-            f'<p>'
-            f'Working with <a href="{RequirementsPage.mkurl()}">requirements</a>? '
-            f'Browse <a href="{DownstreamTraceabilityPage.mkurl()}">downstream</a> '
-            f'and <a href="{UpstreamTraceabilityPage.mkurl()}">upstream</a> traceability tables.'
-            f'</p>'
-        )
+        with _html.addcontent('<p></p>'):
+            _html.addcontent('<span>Working with </span>')
+            _html.addlink(text="requirements", href=RequirementsPage.mkurl(), title="Requirement list")
+            _html.addcontent('<span>? Browse </span>')
+            _html.addlink(text="downstream", href=DownstreamTraceabilityPage.mkurl(), title="Downstream traceability")
+            _html.addcontent('<span> and </span>')
+            _html.addlink(text="upstream", href=UpstreamTraceabilityPage.mkurl(), title="Upstream traceability")
+            _html.addcontent('<span> traceability tables.</span>')
 
         request.sendhtml(_html)
         return True

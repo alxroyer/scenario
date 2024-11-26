@@ -66,12 +66,12 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
     @staticmethod
     def mkurl(
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a configuration page URL.
 
-        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :param html_escape: ``True`` to get HTML escaped text.
         :return: Configuration page URL.
         """
         from ._httprequest import HttpRequest
@@ -131,7 +131,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         from .._xmlutils import Xml  # Access `scenario` inner symbols.
 
         with html.addcontent(f'<div id="{ConfigurationPage.Action.FORM1}"></div>'):
-            with html.addcontent(f'<form action="{ConfigurationPage.mkurl()}" method="post"></form>'):
+            with html.addcontent(f'<form action="{ConfigurationPage.mkurl(html_escape=True)}" method="post"></form>'):
                 # Form id.
                 html.addcontent(f'<input type="hidden" name="{ConfigurationPage.Arg.ACTION}" value="{ConfigurationPage.Action.FORM1}" />')
 
@@ -176,7 +176,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         :param html: Output HTML document.
         """
         with html.addcontent(f'<div id="{ConfigurationPage.Action.FORM2}"></div>'):
-            with html.addcontent(f'<form action="{ConfigurationPage.mkurl()}" method="post"></form>'):
+            with html.addcontent(f'<form action="{ConfigurationPage.mkurl(html_escape=True)}" method="post"></form>'):
                 # Form id.
                 html.addcontent(f'<input type="hidden" name="{ConfigurationPage.Arg.ACTION}" value="{ConfigurationPage.Action.FORM2}" />')
 

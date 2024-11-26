@@ -40,12 +40,12 @@ class CampaignListPage(_HttpRequestHandlerImpl):
     @staticmethod
     def mkurl(
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a campaign list URL.
 
-        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :param html_escape: ``True`` to get HTML escaped text.
         :return: Campaign list URL.
         """
         from ._httprequest import HttpRequest
@@ -192,7 +192,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             # One column per campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
                 with html.addcontent('<th></th>'):
-                    html.addcontent(f'<a href="{CampaignPage.mkurl(_campaign_execution)}">{html.escape(_campaign_execution.name)}</a>')
+                    html.addlink(href=CampaignPage.mkurl(_campaign_execution), title="Campaign details", text=_campaign_execution.name)
 
     def _testsuiteexecution2tablerow(
             self,
@@ -260,10 +260,11 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                 if _main_scenario_definition.name == test_case_execution_ref.name:
                     _scenario_url = ScenarioPage.mkurl(_main_scenario_definition)
                     break
-            if _scenario_url:
-                html.addcontent(f'<th><a href="{_scenario_url}">{html.escape(test_case_execution_ref.name)}</a></th>')
-            else:
-                html.addcontent(f'<th>{html.escape(test_case_execution_ref.name)}</th>')
+            with html.addcontent('<th></th>'):
+                if _scenario_url:
+                    html.addlink(href=_scenario_url, title="Scenario details", text=test_case_execution_ref.name)
+                else:
+                    html.addtext(test_case_execution_ref.name)
 
             # Test case result for each campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
@@ -281,7 +282,8 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                             _scenario_url = ScenarioPage.mkurl(_test_case_execution.scenario_definition)
 
                 # Display execution status, or empty cell.
-                if _scenario_url:
-                    html.addcontent(f'<td><a href="{_scenario_url}">{_execution_status or ""}</a></td>')
-                else:
-                    html.addcontent(f'<td>{_execution_status or ""}</td>')
+                with html.addcontent('<td></td>'):
+                    if _scenario_url:
+                        html.addlink(href=_scenario_url, title="Scenario results", text=_execution_status or "")
+                    else:
+                        html.addtext(_execution_status or "")

@@ -40,13 +40,13 @@ class CampaignPage(_HttpRequestHandlerImpl):
     def mkurl(
             campaign_execution,  # type: scenario.CampaignExecution
             *,
-            html_escape=True,  # type: bool
+            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a campaign details URL for the given campaign.
 
         :param campaign_execution: Campaign execution.
-        :param html_escape: ``True`` (default) to get HTML escaped text.
+        :param html_escape: ``True`` to get HTML escaped text.
         :return: Campaign details URL for the given path.
         """
         from ._httprequest import HttpRequest
@@ -105,20 +105,40 @@ class CampaignPage(_HttpRequestHandlerImpl):
         _html.settitle(f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
 
         _html.addcontent('<a name="scenarios" />')
-        _html.addcontent(f'<h2 class="scenarios"><a href="{self._page_scenarios.mkurl(request.req_baseline)}">Scenarios</a></h2>')
+        with _html.addcontent(f'<h2 class="scenarios"></h2>'):
+            _html.addlink(
+                href=self._page_scenarios.mkurl(request.req_baseline),
+                title="Campaign scenario list",
+                text="Scenarios",
+            )
         self._page_scenarios.scenarios2html(_html, request.req_baseline)
 
         if request.req_baseline.req_db.getallreqs():
             _html.addcontent('<a name="reqs" />')
-            _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs.mkurl(request.req_baseline)}">Requirements</a></h2>')
+            with _html.addcontent('<h2 class="reqs"></h2>'):
+                _html.addlink(
+                    href=self._page_reqs.mkurl(request.req_baseline),
+                    title="Campaign requirement list",
+                    text="Requirements",
+                )
             self._page_reqs.reqs2html(_html, request.req_baseline)
 
             _html.addcontent('<a name="downstream-traceability" />')
-            _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs_down.mkurl(request.req_baseline)}">Downstream traceability</a></h2>')
+            with _html.addcontent('<h2 class="reqs"></h2>'):
+                _html.addlink(
+                    href=self._page_reqs_down.mkurl(request.req_baseline),
+                    title="Campaign downstream traceability",
+                    text="Downstream traceability",
+                )
             self._page_reqs_down.downstreamtraceability2html(_html, request.req_baseline)
 
             _html.addcontent('<a name="upstream-traceability" />')
-            _html.addcontent(f'<h2 class="reqs"><a href="{self._page_reqs_up.mkurl(request.req_baseline)}">Upstream traceability</a></h2>')
+            with _html.addcontent('<h2 class="reqs"></h2>'):
+                _html.addlink(
+                    href=self._page_reqs_up.mkurl(request.req_baseline),
+                    title="Campaign upstream traceability",
+                    text="Upstream traceability",
+                )
             self._page_reqs_up.upstreamtraceability2html(_html, request.req_baseline)
 
         request.sendhtml(_html)
