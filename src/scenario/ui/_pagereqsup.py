@@ -158,8 +158,8 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             with html.addcontent('<table></table>'):
                 # Heading row.
                 with html.addcontent('<tr></tr>'):
-                    html.addcontent('<th class="req-ref">Requirement coverage</th>')
                     html.addcontent('<th class="req-verifier">Scenario</th>')
+                    html.addcontent('<th class="req-ref">Requirement coverage</th>')
 
                 # Scenario rows.
                 for _upstream_scenario in _upstream_traceability:  # type: scenario.ReqTraceability.Upstream.Scenario
@@ -179,12 +179,6 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         from ._pagescenario import ScenarioPage
 
         with html.addcontent(f'<tr class="scenario"></tr>'):
-            # Requirement coverage.
-            with html.addcontent(f'<td class="req-ref"></td>'):
-                with html.addcontent('<ul></ul>'):
-                    for _upstream_req in upstream_scenario.reqs:  # type: scenario.ReqTraceability.Upstream.Req
-                        self._req2html(html, _upstream_req)
-
             # Scenario.
             with html.addcontent('<td class="req-verifier"></td>'):
                 # Anchor.
@@ -201,6 +195,12 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 # Title.
                 html.addcontent('<span class="scenario sep">:</span>')
                 html.addcontent(f'<span class="scenario title">{html.escape(upstream_scenario.scenario.title)}</span>')
+
+            # Requirement coverage.
+            with html.addcontent(f'<td class="req-ref"></td>'):
+                with html.addcontent('<ul></ul>'):
+                    for _upstream_req in upstream_scenario.reqs:  # type: scenario.ReqTraceability.Upstream.Req
+                        self._req2html(html, _upstream_req)
 
     def _req2html(
             self,
