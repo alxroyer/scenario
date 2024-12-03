@@ -396,12 +396,12 @@ class Xml(abc.ABC):
             """
             Retrieves direct children with the given tag name.
 
-            :param tag_name: Children tag name.
+            :param tag_name: Children tag name, or ``"*"``.
             :return: List of children nodes.
             """
             _children = []  # type: typing.List[Xml.Node]
             for _xml_child in self._xml_node.childNodes:  # type: xml.dom.minidom.Node
-                if isinstance(_xml_child, xml.dom.minidom.Element) and (_xml_child.tagName == tag_name):
+                if isinstance(_xml_child, xml.dom.minidom.Element) and ((_xml_child.tagName == tag_name) or (tag_name == "*")):
                     _children.append(Xml.Node(_xml_child))
             return _children
 

@@ -219,7 +219,6 @@ class HtmlDocument(scenario.Logger):
         if campaign_subtitle and self.request.campaign_execution:
             self._head_title.gettextnodes()[0].data += f" ({self.escape(_req_baseline_desc)})"
 
-        self._h1.gettextnodes()[0].data = ""
         with HtmlDocument.NodeContext(self, self._h1):
             self.addcontent(f'<span class="title main">{self.escape(title)}</span>')
             if campaign_subtitle and self.request.campaign_execution:
@@ -254,7 +253,7 @@ class HtmlDocument(scenario.Logger):
             raise ValueError(f"Unexpected XML content {content!r}, parsed as {_child!r} (not a node)")
 
         # Avoid auto-closing.
-        if not auto_closing:
+        if (not auto_closing) and (not _child.getchildren("*")) and (not _child.gettextnodes()):
             _child.appendchild(self.xml_doc.createtextnode(""))
 
         # Append it as a child to the current node.
