@@ -157,7 +157,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
             with html.addcontent('<table></table>'):
                 # Heading row.
-                with html.addcontent('<tr></tr>'):
+                with html.addcontent('<tr class="head"></tr>'):
                     html.addcontent('<th class="req-ref">Requirement</th>')
                     html.addcontent('<th class="req-verifier">Test coverage</th>')
 

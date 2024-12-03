@@ -15,16 +15,25 @@
  */
 
 
+/**
+ * @file
+ * @brief Action executions.
+ */
+
+
+/** @var {object} `scenario.exec` package. */
+scenario.exec = {};
+
+
 // Execution.
 
 // Install event listeners for execution buttons.
-// See https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
-document.addEventListener("DOMContentLoaded", () => {
+scenario.onLoad(() => {
     for (/** @var {HTMLElement} */ const _button of document.getElementsByClassName("exec button")) {
         _button.addEventListener("click", (e) => {
             e.preventDefault();
 
-            _scenarioExec(_button.getAttribute("href"));
+            scenario.exec._execute(_button.getAttribute("href"));
         });
     }
 });
@@ -34,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * @param {string} url Action URL.
  * @returns {void}
  */
-function _scenarioExec(url) {
+scenario.exec._execute = (url) => {
     // Process the given URL asynchronously.
     // Inspired from https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Synchronous_and_Asynchronous_Requests.
     console.debug(`Executing '${url}'...`);
@@ -69,27 +78,19 @@ function _scenarioExec(url) {
         }
 
         // Show execution result.
-        scenarioShowExecResultPopup(_title, _message);
+        scenario.exec.showResult(_title, _message);
     };
     _req.onerror = (e) => {
-        scenarioShowExecResultPopup(_title, _req.statusText);
+        scenario.exec.showResult(_title, _req.statusText);
     };
     _req.send();
-}
+};
 
 
 // Execution result.
 
-/** @var {boolean} Tells whether the `.exec-result` popup div shall be used. `alert()` called otherwise. */
-let scenarioUseExecResultDivPopup = false;
-
-/**
- * @brief Retrieves the `<div id="exec-result"></div>` element.
- * @returns {HTMLElement?} HTML element.
- */
-function _scenarioExecResultDivPopup() {
-    return document.getElementById("exec-result");
-}
+/** @var {boolean} Tells whether the `.exec-result` popup div shall be used. `alert()` called by default. */
+scenario.exec.useExecResultPopupDiv = false;
 
 /**
  * @brief Displays execution results.
@@ -100,8 +101,8 @@ function _scenarioExecResultDivPopup() {
 function scenarioShowExecResultPopup(title, text) {
     console.debug(`Displaying execution result popup with title='${title}' and text='${text}'`);
 
-    /** @var {HTMLElement?} */ const _resultDiv = _scenarioExecResultDivPopup();
-    if (scenarioUseExecResultDivPopup && _resultDiv) {
+    /** @var {HTMLElement?} */ const _resultDiv = document.getElementById("exec-result");
+    if (scenario.exec.useExecResultPopupDiv && _resultDiv) {
         // Set popup title.
         for (/** @var {HTMLElement} */ const _titleDiv of _resultDiv.getElementsByClassName("title")) {
             _titleDiv.textContent = title;
@@ -118,14 +119,13 @@ function scenarioShowExecResultPopup(title, text) {
         alert(`[${title}]\n\n${text}`);
 
         // Refresh the page.
-        _scenarioRefreshCurrentPage();
+        scenario.exec._refreshCurrentPage();
     }
 }
 
 // Install the event listener for the OK button in the `.exec-result` popup div.
-// See https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
-document.addEventListener("DOMContentLoaded", () => {
-    /** @var {HTMLElement?} */ const _resultDiv = _scenarioExecResultDivPopup();
+scenario.onLoad(() => {
+    /** @var {HTMLElement?} */ const _resultDiv = document.getElementById("exec-result");
     if (_resultDiv) {
         for (/** @var {HTMLElement} */ const _button of _resultDiv.getElementsByClassName("exec-result button validate")) {
             _button.addEventListener("click", (e) => {
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 _resultDiv.style.display = "none";
 
                 // Refresh the page.
-                _scenarioRefreshCurrentPage();
+                scenario.exec._refreshCurrentPage();
             });
         }
     }
@@ -149,11 +149,11 @@ document.addEventListener("DOMContentLoaded", () => {
  * @brief Refreshes the current page after execution result has been displayed.
  * @returns {void}
  */
-function _scenarioRefreshCurrentPage() {
+scenario.exec._refreshCurrentPage = () => {
     console.debug(`Refreshing page '${window.location.href}'`);
 
     // Avoid reloading POST pages with parameters.
     // Inspired from https://stackoverflow.com/questions/1226714/how-to-get-the-browser-to-navigate-to-url-in-javascript#1226718
     //window.location.reload();
     window.location.href = window.location.href;
-}
+};

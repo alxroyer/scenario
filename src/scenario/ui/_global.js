@@ -17,16 +17,25 @@
 
 /**
  * @file
- * @brief Menu configurations.
+ * @brief Global `scenario` variables and functions.
  */
 
 
-// Add `.button` class to menu links.
-scenario.onLoad(() => {
-    /** @var {HTMLElement?} */ const _menuDiv = document.getElementById("menu");
-    if (_menuDiv) {
-        for (/** @var {HTMLElement} */ const _a of _menuDiv.getElementsByClassName("menu")) {
-            _a.classList.add("button");
-        }
+/** @var {object} `scenario` package. */
+let scenario = {};
+
+/**
+ * @brief Ensures `f` be called *on-load*.
+ * @param {() => void} f Function to be called *on-load*.
+ * @returns {void}
+ */
+scenario.onLoad = (f) => {
+    // See https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
+    if (document.readyState === "loading") {
+        // Document not loaded yet => register `f` with an event listener.
+        document.addEventListener("DOMContentLoaded", f);
+    } else {
+        // Document already loaded => call `f()` straight away.
+        f();
     }
-});
+};

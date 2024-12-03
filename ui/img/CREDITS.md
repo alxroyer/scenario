@@ -18,5 +18,7 @@
 From https://www.svgrepo.com/:
 - double-left-chevron-svgrepo-com.svg: https://www.svgrepo.com/svg/509895/double-left-chevron
 - double-right-chevron-svgrepo-com.svg: https://www.svgrepo.com/svg/509896/double-right-chevron
+- down-arrow-5-svgrepo-com.svg: https://www.svgrepo.com/svg/520696/down-arrow-5
 - down-arrow-svgrepo-com.svg: https://www.svgrepo.com/svg/257630/down-arrow
+- right-arrow-svgrepo-com.svg: https://www.svgrepo.com/svg/520912/right-arrow
 - up-arrow-svgrepo-com.svg: https://www.svgrepo.com/svg/257732/up-arrow

@@ -19,10 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Implement first .js and .css files:
-        - Improve campaign list page:
-            - Show table borders.
-            - Highlight test suite lines.
-            - Expand/fold test suites.
         - Improve requirement list page:
             - Add space between requirements.
         - Improve downstream traceability page:
@@ -36,6 +32,7 @@
             - Align cells top.
         - Improve configuration page:
             - Size text areas.
+    - Bug! Opera prevents Firefox from connecting to the server.
     - Display scenario results in campaign details page.
     - Highlight items for anchor URLs.
     - Display requirement texts with downstream traceability.

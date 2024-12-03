@@ -117,7 +117,6 @@ class HtmlDocument(scenario.Logger):
 
         self._head2html()
         self._body2html()
-        self._finaljs2html()
 
         # Set main <div/> as the current node in the end.
         self.current_node = self.main_div
@@ -135,6 +134,8 @@ class HtmlDocument(scenario.Logger):
             self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
             self._head_title = self.addcontent('<title></title>', auto_closing=False).new_child
             self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')
+            self._jscontent2html("_global.js")
+            self._jscontent2html("_exec.js")
             self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>', auto_closing=False)
 
     def _body2html(self):  # type: (...) -> None
@@ -183,12 +184,17 @@ class HtmlDocument(scenario.Logger):
             self.addcontent('<div class="exec-result text"></div>', auto_closing=False)
             self.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
 
-    def _finaljs2html(self):  # type: (...) -> None
+    def _jscontent2html(
+            self,
+            filename,  # type: str
+    ):  # type: (...) -> None
         """
-        Embeds '_exec.js' in an inner ``<script></script>`` element.
+        Embeds ``filename`` in an inner ``<script></script>`` element.
+
+        :param filename: Javascript file name in the 'src/scenario/ui/' directory.
         """
         with self.addcontent('<script></script>'):
-            _js_path = scenario.Path(__file__).parent / "_exec.js"  # type: scenario.Path
+            _js_path = scenario.Path(__file__).parent / filename  # type: scenario.Path
             for _line in _js_path.read_text(encoding="utf-8").splitlines():  # type: str
                 self.addtext(_line, html_escape=False)
 

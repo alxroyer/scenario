@@ -21,5 +21,14 @@
  */
 
 
-body { font-family: helvetica, arial; font-size: medium; font-weight: normal; font-style: normal; color: #000000; text-align: left; }
-code { font-size: medium; }
+/* Text. */
+body { font-family: helvetica, arial; }  /* Font. */
+body { font-size: medium; }  /* Size. */
+body { font-weight: normal; font-style: normal; }  /* Style. */
+body { color: black; }  /* Color. */
+body { text-align: left; }  /* Alignment. */
+
+/* Tables. */
+table { border-collapse: collapse; }  /* Avoid spacing between cells. */
+table th, table td { border: 1px solid; border-color: #e7e7e7; }  /* Borders 1px in light grey. */
+table th { background-color: #aaa; }  /* `<th></th>` background in dark grey. */
