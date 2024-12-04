@@ -99,6 +99,8 @@ class HtmlDocument(scenario.Logger):
         #: XML document of the HTML page.
         self.xml_doc = Xml.Document()  # type: Xml.Document
         self.xml_doc.root = self.xml_doc.createnode("html")
+        #: Auto-closing condidate nodes.
+        self._auto_closing = []  # type: typing.List[_XmlType.Node]
         #: Root ``<html/>`` node.
         self.html = self.xml_doc.root  # type: Xml.Node
         #: Current node, which content can be added to with :meth:`addcontent()`.
@@ -132,11 +134,11 @@ class HtmlDocument(scenario.Logger):
         with self.addcontent('<head></head>') as self.head:
             self.addcontent(f'<link rel="shortcut icon" href="{self.escape(UI_CONFIG.faviconurl())}" />')
             self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
-            self._head_title = self.addcontent('<title></title>', auto_closing=False).new_child
+            self._head_title = self.addcontent('<title>...</title>').new_child
             self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')
             self._jscontent2html("_global.js")
             self._jscontent2html("_exec.js")
-            self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>', auto_closing=False)
+            self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>')
 
     def _body2html(self):  # type: (...) -> None
         """
@@ -148,7 +150,7 @@ class HtmlDocument(scenario.Logger):
             # Menu and reload button.
             self._menu2html()
             self._execresultdiv2html()
-            self._h1 = self.addcontent('<h1></h1>', auto_closing=False).new_child
+            self._h1 = self.addcontent('<h1></h1>').new_child
             self.main_div = self.addcontent('<div id="main"></div>').new_child
 
     def _menu2html(self):  # type: (...) -> None
@@ -180,8 +182,8 @@ class HtmlDocument(scenario.Logger):
         Used by '_exec.js' to display execution results.
         """
         with self.addcontent('<div id="exec-result" style="display: none;"></div>'):
-            self.addcontent('<div class="exec-result title"></div>', auto_closing=False)
-            self.addcontent('<div class="exec-result text"></div>', auto_closing=False)
+            self.addcontent('<div class="exec-result title"></div>')
+            self.addcontent('<div class="exec-result text"></div>')
             self.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
 
     def _jscontent2html(
@@ -231,7 +233,7 @@ class HtmlDocument(scenario.Logger):
             self,
             content,  # type: str
             *,
-            auto_closing=True,  # type: bool
+            auto_closing=False,  # type: bool
     ):  # type: (...) -> HtmlDocument.NodeContext
         """
         Adds HTML content to the current node.
@@ -241,7 +243,8 @@ class HtmlDocument(scenario.Logger):
 
             .. note:: The :meth:`escape()` method shall be used to ensure HTML encoding for uncontrolled text data.
         :param auto_closing:
-            Set to ``False`` to avoid auto-closing node.
+            Set to ``True`` to allow auto-closing node.
+            ``False`` by default.
         :return:
             Context manager that controls the current node further content will be added to.
         """
@@ -252,13 +255,13 @@ class HtmlDocument(scenario.Logger):
         if not isinstance(_child, Xml.Node):
             raise ValueError(f"Unexpected XML content {content!r}, parsed as {_child!r} (not a node)")
 
-        # Avoid auto-closing.
-        if (not auto_closing) and (not _child.getchildren("*")) and (not _child.gettextnodes()):
-            _child.appendchild(self.xml_doc.createtextnode(""))
-
         # Append it as a child to the current node.
         self.current_node.appendchild(_child)
         self.debug("current_node=%r: addcontent(%r) -> %r", self.current_node, content, _child)
+
+        # Register as auto-closing node if required.
+        if auto_closing:
+            self._auto_closing.append(_child)
 
         # Return a context that positions the new child as the current node.
         return HtmlDocument.NodeContext(self, _child)
@@ -351,6 +354,30 @@ class HtmlDocument(scenario.Logger):
 
         :return: HTML document as bytes.
         """
+        def _avoidautoclosing(node):  # type: (_XmlType.Node) -> None
+            """
+            Recursively avoids auto-closing nodes in the output XML tree,
+            unless for candidate nodes registered in the :attr:`_auto_closing` list.
+
+            .. seealso:: :meth:`addcontent()`
+            """
+            # Inspect node content.
+            _children = node.getchildren("*")  # type: typing.Sequence[_XmlType.Node]
+            _text_nodes = node.gettextnodes()  # type: typing.Sequence[_XmlType.TextNode]
+
+            # Avoid auto-closing by default.
+            if (not _children) and (not _text_nodes):
+                if node in self._auto_closing:
+                    self.debug("Auto-closing node %r", node)
+                else:
+                    # Add empty text node to avoid auto-closing.
+                    node.appendchild(self.xml_doc.createtextnode(""))
+
+            # Recursive calls.
+            for _child in _children:  # type: _XmlType.Node
+                _avoidautoclosing(_child)
+        _avoidautoclosing(self.xml_doc.root)
+
         return b'\n'.join([
             b'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
             self.xml_doc.dumpstream(encoding="utf-8"),

@@ -71,6 +71,14 @@ class Xml(abc.ABC):
             #: Underlying library document reference.
             self._xml_doc = xml.dom.minidom.Document()  # type: xml.dom.minidom.Document
 
+        def __repr__(self):  # type: () -> str
+            """
+            Canonical string representation.
+
+            Relies on :attr:`_xml_doc`.
+            """
+            return repr(self._xml_doc)
+
         @property
         def root(self):  # type: () -> Xml.Node
             """
@@ -267,6 +275,25 @@ class Xml(abc.ABC):
             #:
             #: Type should be refined in subclasses.
             self._xml_node = xml_node  # type: xml.dom.minidom.Node
+
+        def __repr__(self):  # type: () -> str
+            """
+            Canonical string representation.
+
+            Relies on :attr:`_xml_node`.
+            """
+            return repr(self._xml_node)
+
+        def __eq__(self, other):  # type: (object) -> bool
+            """
+            Equality operator.
+
+            Relies on :attr:`_xml_node` members,
+            in as much as :meth:`Xml.Node.getchildren()` may return new :class:`Xml.Node` instances for same :attr:`_xml_node` references.
+            """
+            if isinstance(other, Xml.INode):
+                return self._xml_node == other._xml_node
+            return False
 
         @property
         def doc(self):  # type: () -> Xml.Document

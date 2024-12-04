@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Simplify `auto_closing` management.
     - Implement first .js and .css files:
         - Improve downstream traceability page:
             - Show table borders.

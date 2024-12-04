@@ -223,7 +223,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             # Test suite icon + name.
             with html.addcontent('<th></th>'):
                 # Icon.
-                html.addcontent('<div class="suite icon"></div>', auto_closing=False)
+                html.addcontent('<div class="suite icon"></div>')
 
                 # Test suite name.
                 with html.addcontent('<span class="suite name"></span>'):
@@ -242,7 +242,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                 if _execution_status is not None:
                     html.addcontent(f'<td class="{_execution_status}">{_execution_status}</td>')
                 else:
-                    html.addcontent('<td></td>', auto_closing=False)
+                    html.addcontent('<td></td>')
 
         # Test case lines.
         for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: scenario.TestCaseExecution
@@ -277,7 +277,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                     break
             with html.addcontent('<th></th>'):
                 # Icon.
-                html.addcontent('<div class="case icon"></div>', auto_closing=False)
+                html.addcontent('<div class="case icon"></div>')
 
                 # Test case name.
                 with html.addcontent('<span class="case name"></span>'):
@@ -309,4 +309,4 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                         else:
                             html.addtext(_execution_status)
                 else:
-                    html.addcontent('<td></td>', auto_closing=False)
+                    html.addcontent('<td></td>')

@@ -143,15 +143,15 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
         with html.addcontent('<li class="req"></li>'):
             # Anchor.
-            html.addcontent(f'<a name="{html.escape(req.id)}" />', auto_closing=False)
+            html.addcontent(f'<a name="{html.escape(req.id)}"></a>')
 
             # Requirement id.
-            html.addcontent(f'<span class="req id">{html.escape(req.id)}</span>', auto_closing=False)
+            html.addcontent(f'<span class="req id">{html.escape(req.id)}</span>')
 
             # Title.
             if req.title:
                 html.addcontent('<span class="req sep">:</span>')
-                html.addcontent(f'<span class="req title">{html.escape(req.title)}</span>', auto_closing=False)
+                html.addcontent(f'<span class="req title">{html.escape(req.title)}</span>')
 
             # Downstream traceability link.
             DownstreamTraceabilityPage.reqref2htmllink(html, req.main_ref)
@@ -166,7 +166,7 @@ class RequirementsPage(_HttpRequestHandlerImpl):
                         # Add double `<br/>`s to seperate paragraphs.
                         .replace("\n\n", "<br/>\n<br/>\n")
                     )  # type: str
-                    html.addcontent(f'<p>{_html_escaped_text}</p>', auto_closing=False)
+                    html.addcontent(f'<p>{_html_escaped_text}</p>')
 
             # Subreferences.
             if req.subrefs:
@@ -191,10 +191,10 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
         with html.addcontent('<li class="subref"></li>'):
             # Anchor.
-            html.addcontent(f'<a name="{html.escape(subref.id)}" />', auto_closing=False)
+            html.addcontent(f'<a name="{html.escape(subref.id)}"></a>')
 
             # Requirement subreference id.
-            html.addcontent(f'<span class="subref id">{html.escape(subref.id)}</span>', auto_closing=False)
+            html.addcontent(f'<span class="subref id">{html.escape(subref.id)}</span>')
 
             # Downstream traceability link.
             DownstreamTraceabilityPage.reqref2htmllink(html, subref)
