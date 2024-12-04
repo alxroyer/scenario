@@ -18,9 +18,8 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Simplify `auto_closing` management.
     - Implement first .js and .css files:
-        - Improve requirement list page:
-            - Add space between requirements.
         - Improve downstream traceability page:
             - Show table borders.
             - Align cells top.
@@ -59,6 +58,7 @@
     - Implement JSON schemas.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
+    - Add title and text with requirement subref.
     - Fix test regressions.
     - Implement tests:
         - Add req expectations. Check in scenario log & report.

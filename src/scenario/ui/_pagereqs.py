@@ -143,15 +143,18 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
         with html.addcontent('<li class="req"></li>'):
             # Anchor.
-            html.addcontent(f'<a name="{html.escape(req.id)}" />')
+            html.addcontent(f'<a name="{html.escape(req.id)}" />', auto_closing=False)
 
-            # Requirement id, with anchor.
-            html.addcontent(f'<span class="req id">{html.escape(req.id)}</span>')
+            # Requirement id.
+            html.addcontent(f'<span class="req id">{html.escape(req.id)}</span>', auto_closing=False)
 
             # Title.
             if req.title:
                 html.addcontent('<span class="req sep">:</span>')
-                html.addcontent(f'<span class="req title">{html.escape(req.title)}</span>')
+                html.addcontent(f'<span class="req title">{html.escape(req.title)}</span>', auto_closing=False)
+
+            # Downstream traceability link.
+            DownstreamTraceabilityPage.reqref2htmllink(html, req.main_ref)
 
             # Text.
             if req.text:
@@ -163,40 +166,35 @@ class RequirementsPage(_HttpRequestHandlerImpl):
                         # Add double `<br/>`s to seperate paragraphs.
                         .replace("\n\n", "<br/>\n<br/>\n")
                     )  # type: str
-                    html.addcontent(f'<p>{_html_escaped_text}</p>')
-
-            # Downstream traceability link.
-            with html.addcontent('<div class="req downstream-traceability"></div>'):
-                DownstreamTraceabilityPage.reqref2htmllink(html, req.main_ref, text="Downstream traceability")
+                    html.addcontent(f'<p>{_html_escaped_text}</p>', auto_closing=False)
 
             # Subreferences.
             if req.subrefs:
                 with html.addcontent('<div class="subrefs"></div>'):
-                    html.addcontent('<p>Subreferences:</p>')
+                    html.addcontent('<p class="subrefs title">Subreferences:</p>')
                     with html.addcontent('<ul></ul>'):
-                        for _req_ref in req.subrefs:  # type: scenario.ReqRef
-                            self._reqsubref2html(html, _req_ref)
+                        for _subref in req.subrefs:  # type: scenario.ReqRef
+                            self._subref2html(html, _subref)
 
-    def _reqsubref2html(
+    def _subref2html(
             self,
             html,  # type: _HtmlDocumentType
-            req_subref,  # type: scenario.ReqRef
+            subref,  # type: scenario.ReqRef
     ):  # type: (...) -> None
         """
         Buils the HTML content for a requirement subreference.
 
         :param html: HTML output page to feed.
-        :param req_subref: Requirement subreference to build HTML content for.
+        :param subref: Requirement subreference to build HTML content for.
         """
         from ._pagereqsdown import DownstreamTraceabilityPage
 
-        with html.addcontent('<li class="req-subref"></li>'):
+        with html.addcontent('<li class="subref"></li>'):
             # Anchor.
-            html.addcontent(f'<a name="{html.escape(req_subref.id)}" />')
+            html.addcontent(f'<a name="{html.escape(subref.id)}" />', auto_closing=False)
 
-            # Requirement reference id.
-            html.addcontent(f'<span class="req-subref id">{html.escape(req_subref.id)}</span>')
+            # Requirement subreference id.
+            html.addcontent(f'<span class="subref id">{html.escape(subref.id)}</span>', auto_closing=False)
 
             # Downstream traceability link.
-            with html.addcontent('<span class="req-subref downstream-traceabiliy"></span>'):
-                DownstreamTraceabilityPage.reqref2htmllink(html, req_subref)
+            DownstreamTraceabilityPage.reqref2htmllink(html, subref)

@@ -254,9 +254,9 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         from ._pagereqs import RequirementsPage
         from ._pagereqsdown import DownstreamTraceabilityPage
 
-        with html.addcontent('<li class="req-subref"></li>'):
+        with html.addcontent('<li class="subref"></li>'):
             # Requirement subreference id.
-            with html.addcontent('<span class="req-subref id"></span>'):
+            with html.addcontent('<span class="subref id"></span>'):
                 # With link to requirement details.
                 html.addlink(
                     href=RequirementsPage.mkurl(upstream_req_subref.req_subref),
@@ -269,5 +269,5 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
             # Traceability comments.
             if upstream_req_subref.comments:
-                html.addcontent('<span class="req-subref sep">:</span>')
-                html.addcontent(f'<span class="req-subref comments">{html.escape(upstream_req_subref.comments)}</span>')
+                html.addcontent('<span class="subref sep">:</span>')
+                html.addcontent(f'<span class="subref comments">{html.escape(upstream_req_subref.comments)}</span>')
