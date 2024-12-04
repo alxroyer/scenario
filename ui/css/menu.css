@@ -28,3 +28,5 @@
 div#menu { margin-top: 15px; }
 /* Avoid the menu buttons overlap with execution buttons. */
 div#menu { width: 90%; }
+/* Ensure spacing between lines of buttons when the window is not wide enough for a single line. */
+div#menu a.menu { margin-bottom: 5px; }
