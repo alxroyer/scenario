@@ -16,6 +16,7 @@
 # Credits
 
 From https://www.svgrepo.com/:
+- anchor-link-svgrepo-com.svg: https://www.svgrepo.com/svg/521452/anchor-link
 - double-left-chevron-svgrepo-com.svg: https://www.svgrepo.com/svg/509895/double-left-chevron
 - double-right-chevron-svgrepo-com.svg: https://www.svgrepo.com/svg/509896/double-right-chevron
 - down-arrow-5-svgrepo-com.svg: https://www.svgrepo.com/svg/520696/down-arrow-5

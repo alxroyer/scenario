@@ -22,8 +22,8 @@
 
 
 /* Replace traceability default texts with icons. */
-a.traceability.default-text span { display: none; }  /* Hide the <span></span> default text. */
-a.traceability.default-text { display: inline-block; }  /* Avoid width to be shrinked, and keep *inline* displayed. */
+a.traceability.default-text span { display: none; }  /* Hide the default text inner <span></span>. */
+a.traceability.default-text { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
 a.traceability.default-text { width: 1em; height: 1em; }  /* Size. */
 a.traceability.default-text { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */
 a.downstream.traceability.default-text { background-image: url('/img/double-right-chevron-svgrepo-com.svg'); }  /* Downstream traceability icon. */

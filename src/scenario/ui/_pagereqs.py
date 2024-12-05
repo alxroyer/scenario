@@ -139,22 +139,22 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req: Requirement to build HTML content for.
         """
+        from ._anchors import Anchor
         from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addcontent('<li class="req"></li>'):
             # Anchor.
-            html.addcontent(f'<a name="{html.escape(req.id)}"></a>')
+            with Anchor.add(html, name=req.id):
+                # Requirement id.
+                html.addcontent(f'<span class="req id">{html.escape(req.id)}</span>')
 
-            # Requirement id.
-            html.addcontent(f'<span class="req id">{html.escape(req.id)}</span>')
+                # Title.
+                if req.title:
+                    html.addcontent('<span class="req sep">:</span>')
+                    html.addcontent(f'<span class="req title">{html.escape(req.title)}</span>')
 
-            # Title.
-            if req.title:
-                html.addcontent('<span class="req sep">:</span>')
-                html.addcontent(f'<span class="req title">{html.escape(req.title)}</span>')
-
-            # Downstream traceability link.
-            DownstreamTraceabilityPage.reqref2htmllink(html, req.main_ref)
+                # Downstream traceability link.
+                DownstreamTraceabilityPage.reqref2htmllink(html, req.main_ref)
 
             # Text.
             if req.text:
@@ -187,14 +187,14 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param subref: Requirement subreference to build HTML content for.
         """
+        from ._anchors import Anchor
         from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addcontent('<li class="subref"></li>'):
             # Anchor.
-            html.addcontent(f'<a name="{html.escape(subref.id)}"></a>')
+            with Anchor.add(html, name=subref.id):
+                # Requirement subreference id.
+                html.addcontent(f'<span class="subref id">{html.escape(subref.id)}</span>')
 
-            # Requirement subreference id.
-            html.addcontent(f'<span class="subref id">{html.escape(subref.id)}</span>')
-
-            # Downstream traceability link.
-            DownstreamTraceabilityPage.reqref2htmllink(html, subref)
+                # Downstream traceability link.
+                DownstreamTraceabilityPage.reqref2htmllink(html, subref)

@@ -191,19 +191,20 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param step: Step to build HTML content for.
         """
+        from ._anchors import Anchor
+
         with html.addcontent('<li class="step"></li>'):
             if isinstance(step, scenario.StepSectionDescription) and step.description:
                 html.addcontent(f'<h2 class="step">{html.escape(step.description)}</h2>')
             else:
                 # Step anchor.
-                html.addcontent(f'<a name="step{step.number}" />')
-
-                # Step number, description and name.
-                html.addcontent(f'<span class="step number">step#{step.number}</span>')
-                if step.description:
-                    html.addcontent('<span class="step sep">:</span>')
-                    html.addcontent(f'<span class="step description">{html.escape(step.description)}</span>')
-                html.addcontent(f'<span class="step name">({html.escape(step.name)})</span>')
+                with Anchor.add(html, name=f"step{step.number}"):
+                    # Step number, description and name.
+                    html.addcontent(f'<span class="step number">step#{step.number}</span>')
+                    if step.description:
+                        html.addcontent('<span class="step sep">:</span>')
+                        html.addcontent(f'<span class="step description">{html.escape(step.description)}</span>')
+                    html.addcontent(f'<span class="step name">({html.escape(step.name)})</span>')
 
                 # Step requirements coverage.
                 _req_refs = step.getreqrefs()  # type: scenario.SetWithReqLinksType[scenario.ReqRef]

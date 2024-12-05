@@ -82,6 +82,7 @@ class CampaignPage(_HttpRequestHandlerImpl):
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
+        from ._anchors import Anchor
         from ._htmldoc import HtmlDocument
 
         # Filter `request`.
@@ -104,41 +105,41 @@ class CampaignPage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)
         _html.settitle(f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
 
-        _html.addcontent('<a name="scenarios" />')
-        with _html.addcontent(f'<h2 class="scenarios"></h2>'):
-            _html.addlink(
-                href=self._page_scenarios.mkurl(request.req_baseline),
-                title="Campaign scenario list",
-                text="Scenarios",
-            )
+        with Anchor.add(_html, name="scenarios", link_title="Campaign scenario list"):
+            with _html.addcontent(f'<h2 class="scenarios"></h2>'):
+                _html.addlink(
+                    href=self._page_scenarios.mkurl(request.req_baseline),
+                    title="Campaign scenario list",
+                    text="Scenarios",
+                )
         self._page_scenarios.scenarios2html(_html, request.req_baseline)
 
         if request.req_baseline.req_db.getallreqs():
-            _html.addcontent('<a name="reqs" />')
-            with _html.addcontent('<h2 class="reqs"></h2>'):
-                _html.addlink(
-                    href=self._page_reqs.mkurl(request.req_baseline),
-                    title="Campaign requirement list",
-                    text="Requirements",
-                )
+            with Anchor.add(_html, name="reqs", link_title="Campaign requirement list"):
+                with _html.addcontent('<h2 class="reqs"></h2>'):
+                    _html.addlink(
+                        href=self._page_reqs.mkurl(request.req_baseline),
+                        title="Campaign requirement list",
+                        text="Requirements",
+                    )
             self._page_reqs.reqs2html(_html, request.req_baseline)
 
-            _html.addcontent('<a name="downstream-traceability" />')
-            with _html.addcontent('<h2 class="reqs"></h2>'):
-                _html.addlink(
-                    href=self._page_reqs_down.mkurl(request.req_baseline),
-                    title="Campaign downstream traceability",
-                    text="Downstream traceability",
-                )
+            with Anchor.add(_html, name="downstream-traceability", link_title="Campaign downstream traceability"):
+                with _html.addcontent('<h2 class="reqs"></h2>'):
+                    _html.addlink(
+                        href=self._page_reqs_down.mkurl(request.req_baseline),
+                        title="Campaign downstream traceability",
+                        text="Downstream traceability",
+                    )
             self._page_reqs_down.downstreamtraceability2html(_html, request.req_baseline)
 
-            _html.addcontent('<a name="upstream-traceability" />')
-            with _html.addcontent('<h2 class="reqs"></h2>'):
-                _html.addlink(
-                    href=self._page_reqs_up.mkurl(request.req_baseline),
-                    title="Campaign upstream traceability",
-                    text="Upstream traceability",
-                )
+            with Anchor.add(_html, name="upstream-traceability", link_title="Campaign upstream traceability"):
+                with _html.addcontent('<h2 class="reqs"></h2>'):
+                    _html.addlink(
+                        href=self._page_reqs_up.mkurl(request.req_baseline),
+                        title="Campaign upstream traceability",
+                        text="Upstream traceability",
+                    )
             self._page_reqs_up.upstreamtraceability2html(_html, request.req_baseline)
 
         request.sendhtml(_html)

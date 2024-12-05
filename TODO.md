@@ -19,6 +19,8 @@
 
 - Issue #83: Add the ability to track requirements.
     - Implement first .js and .css files:
+        - Improve campaign list page:
+            - Move campaign toggling as inner script and CSS.
         - Improve downstream traceability page:
             - Show table borders.
             - Align cells top.
@@ -32,7 +34,6 @@
             - Size text areas.
     - Bug! Opera prevents Firefox from connecting to the server.
     - Display scenario results in campaign details page.
-    - Highlight items for anchor URLs.
     - Display requirement texts with downstream traceability.
     - Upstream traceability:
         - Restore column order: req-verifiers on the left, req-ref on the right.

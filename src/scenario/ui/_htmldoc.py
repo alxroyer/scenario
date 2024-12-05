@@ -120,6 +120,10 @@ class HtmlDocument(scenario.Logger):
         self._head2html()
         self._body2html()
 
+        # Add inner scripts at the end of the document (for readability of the HTML output).
+        self.jscontent2html("_anchors.js")
+        self.jscontent2html("_exec.js")
+
         # Set main <div/> as the current node in the end.
         self.current_node = self.main_div
 
@@ -136,8 +140,7 @@ class HtmlDocument(scenario.Logger):
             self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
             self._head_title = self.addcontent('<title>...</title>').new_child
             self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')
-            self._jscontent2html("_global.js")
-            self._jscontent2html("_exec.js")
+            self.jscontent2html("_global.js")
             self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>')
 
     def _body2html(self):  # type: (...) -> None
@@ -186,7 +189,7 @@ class HtmlDocument(scenario.Logger):
             self.addcontent('<div class="exec-result text"></div>')
             self.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
 
-    def _jscontent2html(
+    def jscontent2html(
             self,
             filename,  # type: str
     ):  # type: (...) -> None

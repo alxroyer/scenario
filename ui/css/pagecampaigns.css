@@ -50,7 +50,7 @@
 /* Expand / collapse test suites. */
 
     /* Expand / collapse icons for test suites. */
-    div#campaigns tr.suite div.icon { display: inline-block; }  /* Avoid width to be shrinked, and keep *inline* displayed. */
+    div#campaigns tr.suite div.icon { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
     div#campaigns tr.suite div.icon { width: 1em; height: 1em; }  /* Icon size. */
     div#campaigns tr.suite div.icon { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */
     div#campaigns tr.suite div.icon { background-image: url("/img/down-arrow-5-svgrepo-com.svg"); }  /* Default icon: expanded. */
@@ -62,5 +62,5 @@
     div#campaigns tr.case.collapsed { visibility: collapse; }  /* Hide. */
 
     /* Adjust test case icon size with test suites as displayed above. */
-    div#campaigns tr.case div.icon { display: inline-block; }  /* Avoid width to be shrinked, and keep *inline* displayed. */
+    div#campaigns tr.case div.icon { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
     div#campaigns tr.case div.icon { width: 1em; height: 1em; }  /* Size. */

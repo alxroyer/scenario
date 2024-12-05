@@ -176,25 +176,25 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param upstream_scenario: Scenario to build HTML content for.
         """
+        from ._anchors import Anchor
         from ._pagescenario import ScenarioPage
 
         with html.addcontent(f'<tr class="scenario"></tr>'):
             # Scenario.
             with html.addcontent('<td class="req-verifier"></td>'):
                 # Anchor.
-                html.addcontent(f'<a name="{html.escape(upstream_scenario.scenario.name)}" />')
+                with Anchor.add(html, name=upstream_scenario.scenario.name):
+                    # Scenario name, with link to scenario details page.
+                    html.addlink(
+                        classes=["scenario", "name"],
+                        href=ScenarioPage.mkurl(upstream_scenario.scenario),
+                        title="Scenario details",
+                        text=upstream_scenario.scenario.name,
+                    )
 
-                # Scenario name, with link to scenario details page.
-                html.addlink(
-                    classes=["scenario", "name"],
-                    href=ScenarioPage.mkurl(upstream_scenario.scenario),
-                    title="Scenario details",
-                    text=upstream_scenario.scenario.name,
-                )
-
-                # Title.
-                html.addcontent('<span class="scenario sep">:</span>')
-                html.addcontent(f'<span class="scenario title">{html.escape(upstream_scenario.scenario.title)}</span>')
+                    # Title.
+                    html.addcontent('<span class="scenario sep">:</span>')
+                    html.addcontent(f'<span class="scenario title">{html.escape(upstream_scenario.scenario.title)}</span>')
 
             # Requirement coverage.
             with html.addcontent(f'<td class="req-ref"></td>'):

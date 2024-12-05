@@ -176,26 +176,26 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param downstream_req_ref: Requirement reference to build HTML content for.
         """
+        from ._anchors import Anchor
         from ._pagereqs import RequirementsPage
 
         with html.addcontent(f'<tr class="{"main" if downstream_req_ref.req_ref.ismain() else "sub"}"></tr>'):
             # Requirement.
             with html.addcontent('<td class="req-ref"></td>'):
                 # Anchor.
-                html.addcontent(f'<a name="{html.escape(downstream_req_ref.req_ref.id)}" />')
+                with Anchor.add(html, name=downstream_req_ref.req_ref.id):
+                    # Requirement id, with link to requirement details.
+                    html.addlink(
+                        classes=["req-ref", "id"],
+                        href=RequirementsPage.mkurl(downstream_req_ref.req_ref),
+                        title="Requirement details",
+                        text=downstream_req_ref.req_ref.id,
+                    )
 
-                # Requirement id, with link to requirement details.
-                html.addlink(
-                    classes=["req-ref", "id"],
-                    href=RequirementsPage.mkurl(downstream_req_ref.req_ref),
-                    title="Requirement details",
-                    text=downstream_req_ref.req_ref.id,
-                )
-
-                # Title.
-                if downstream_req_ref.req_ref.ismain() and downstream_req_ref.req_ref.req.title:
-                    html.addcontent('<span class="req-ref sep">:</span>')
-                    html.addcontent(f'<span class="req-ref title">{html.escape(downstream_req_ref.req_ref.req.title)}</span>')
+                    # Title.
+                    if downstream_req_ref.req_ref.ismain() and downstream_req_ref.req_ref.req.title:
+                        html.addcontent('<span class="req-ref sep">:</span>')
+                        html.addcontent(f'<span class="req-ref title">{html.escape(downstream_req_ref.req_ref.req.title)}</span>')
 
             # Test coverage.
             with html.addcontent(f'<td class="req-verifier"></td>'):
