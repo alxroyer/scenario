@@ -73,18 +73,15 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             scenario_definition,  # type: scenario.ScenarioDefinition
             *,
             text="",  # type: str
+            html_escape_text=True,  # type: bool
     ):  # type: (...) -> None
         """
         Builds a HTML link to the given scenario in the upstream tracebility page.
 
-        :param html:
-            HTML output page to feed.
-        :param scenario_definition:
-            Scenario to build an upstream traceability link for.
-        :param text:
-            Link text (not HTML escaped).
-
-            Sets the ``.default-text`` class and ``@title`` attribute if not provided.
+        :param html: HTML output page to feed.
+        :param scenario_definition: Scenario to build an upstream traceability link for.
+        :param text: Link text. Sets the ``.default-text`` class and ``@title`` attribute if not provided.
+        :param html_escape_text: ``True`` (default) to HTML escape the text content.
         """
         _classes = ["upstream", "traceability"]  # type: typing.List[str]
         _title = ""  # type: str
@@ -92,8 +89,13 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             _classes.append("default-text")
             _title = "Upstream traceability"
             text = "(<<)"
+            html_escape_text = True
+
+        if html_escape_text:
+            text = html.escape(text)
+
         with html.addlink(classes=_classes, href=UpstreamTraceabilityPage.mkurl(scenario_definition), title=_title):
-            html.addcontent(f'<span>{html.escape(text)}</span>')
+            html.addcontent(f'<span>{text}</span>')
 
     def __init__(
             self,

@@ -18,6 +18,7 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Improve HTML escaped/unescaped text.
     - Implement first .js and .css files:
         - Improve campaign list page:
             - Move campaign toggling as inner script and CSS.
