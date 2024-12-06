@@ -40,14 +40,11 @@ class ScenarioPage(_HttpRequestHandlerImpl):
     @staticmethod
     def mkurl(
             req_verifier,  # type: typing.Union[scenario.ScenarioDefinition, scenario.StepDefinition]
-            *,
-            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a scenario details URL for the given scenario.
 
         :param req_verifier: Scenario or step to build the URL for.
-        :param html_escape: ``True`` to get HTML escaped text.
         :return: Scenario details URL for the given scenario.
         """
         from ._httprequest import HttpRequest
@@ -65,7 +62,6 @@ class ScenarioPage(_HttpRequestHandlerImpl):
                 "name": _scenario.name,
             },
             anchor=_step_anchor,
-            html_escape=html_escape,
         )
 
     def __init__(self):  # type: (...) -> None
@@ -130,7 +126,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
 
         Exec.actionbutton2html(_html, request, Exec.Action.RELOAD_MAIN_REQ_BASELINE)
 
-        with _html.addcontent('<div id="scenario"></div>'):
+        with _html.addnode("div", id="scenario"):
             if _scenario.getattributenames():
                 self._scenarioattributes2html(_html, _scenario)
 
@@ -154,14 +150,14 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param scenario_definition: Scenario which attributes to build HTML content for.
         """
-        with html.addcontent('<div class="scenario attributes"></div>'):
-            html.addcontent('<p>Attributes:</p>')
-            with html.addcontent('<ul></ul>'):
+        with html.addnode("div", classes=["scenario", "attributes"]):
+            html.addnode("p", text="Attributes:")
+            with html.addnode("ul"):
                 for _attr_name in scenario_definition.getattributenames():  # type: str
-                    with html.addcontent('<li class="scenario attribute"></li>'):
-                        html.addcontent(f'<span class="scenario attribute name">{html.escape(_attr_name)}</span>')
-                        html.addcontent('<span class="scenario attribute sep">:</span>')
-                        html.addcontent(f'<span class="scenario attribute value">{html.escape(scenario_definition.getattribute(_attr_name))}</span>')
+                    with html.addnode("li", classes=["scenario", "attribute"]):
+                        html.addnode("span", classes=["scenario", "attribute", "name"], text=_attr_name)
+                        html.addnode("span", classes=["scenario", "attribute", "sep"], text=":")
+                        html.addnode("span", classes=["scenario", "attribute", "value"], text=scenario_definition.getattribute(_attr_name))
 
     def _steps2html(
             self,
@@ -174,9 +170,9 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param scenario_definition: Scenario which steps to build HTML content for.
         """
-        with html.addcontent('<div id="steps"></div>'):
-            html.addcontent('<p>Steps:</p>')
-            with html.addcontent('<ul></ul>'):
+        with html.addnode("div", id="steps"):
+            html.addnode("p", text="Steps:")
+            with html.addnode("ul"):
                 for _step in scenario_definition.steps:  # type: scenario.StepDefinition
                     self._step2html(html, _step)
 
@@ -193,18 +189,18 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         """
         from ._anchors import Anchor
 
-        with html.addcontent('<li class="step"></li>'):
+        with html.addnode("li", classes=["step"]):
             if isinstance(step, scenario.StepSectionDescription) and step.description:
-                html.addcontent(f'<h2 class="step">{html.escape(step.description)}</h2>')
+                html.addnode("h2", classes=["step"], text=step.description)
             else:
                 # Step anchor.
                 with Anchor.add(html, name=f"step{step.number}"):
                     # Step number, description and name.
-                    html.addcontent(f'<span class="step number">step#{step.number}</span>')
+                    html.addnode("span", classes=["step", "number"], text=f"step#{step.number}")
                     if step.description:
-                        html.addcontent('<span class="step sep">:</span>')
-                        html.addcontent(f'<span class="step description">{html.escape(step.description)}</span>')
-                    html.addcontent(f'<span class="step name">({html.escape(step.name)})</span>')
+                        html.addnode("span", classes=["step", "sep"], text=":")
+                        html.addnode("span", classes=["step", "description"], text=step.description)
+                    html.addnode("span", classes=["step", "name"], text=step.name)
 
                 # Step requirements coverage.
                 _req_refs = step.getreqrefs()  # type: scenario.SetWithReqLinksType[scenario.ReqRef]
@@ -212,8 +208,8 @@ class ScenarioPage(_HttpRequestHandlerImpl):
                     self._reqrefs2html(html, step, _req_refs)
 
                 # Actions & expected results.
-                with html.addcontent(f'<div class="actions-results"></div>'):
-                    with html.addcontent('<ul></ul>'):
+                with html.addnode("div", classes=["actions-results"]):
+                    with html.addnode("ul"):
                         for _action_result in step.actions_results:  # type: scenario.ActionResultDefinition
                             self._actionresult2html(html, _action_result)
 
@@ -228,10 +224,10 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param action_result: Action / expected result to build HTML content for.
         """
-        with html.addcontent(f'<li class="{action_result.type.lower()}"></li>'):
-            html.addcontent(f'<span class="{action_result.type.lower()} type">{action_result.type.upper()}</span>')
-            html.addcontent(f'<span class="{action_result.type.lower()} sep">:</span>')
-            html.addcontent(f'<span class="{action_result.type.lower()} text">{html.escape(action_result.description)}</span>')
+        with html.addnode("li", classes=[action_result.type.lower()]):
+            html.addnode("span", classes=[action_result.type.lower(), "type"], text=action_result.type.upper())
+            html.addnode("span", classes=[action_result.type.lower(), "sep"], text=":")
+            html.addnode("span", classes=[action_result.type.lower(), "text"], text=action_result.description)
 
     def _reqrefs2html(
             self,
@@ -257,18 +253,18 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         if isinstance(req_verifier, scenario.StepDefinition):
             _obj_class = "step"
 
-        with html.addcontent(f'<div class="{_obj_class} requirements"></div>'):
-            html.addcontent('<p>Requirements:</p>')
+        with html.addnode("div", classes=[_obj_class, "requirements"]):
+            html.addnode("p", text="Requirements:")
 
-            with html.addcontent('<ul></ul>'):
+            with html.addnode("ul"):
                 for _req_ref in req_refs:  # type: scenario.ReqRef
-                    with html.addcontent(f'<li class="{_obj_class} req-ref"></li>'):
+                    with html.addnode("li", classes=[_obj_class, "req-ref"]):
                         # Requirement reference id.
-                        with html.addcontent(f'<span class="{_obj_class} req-ref id"></span>'):
+                        with html.addnode("span", classes=[_obj_class, "req-ref", "id"]):
                             html.addlink(href=RequirementsPage.mkurl(_req_ref), title="Requirement details", text=_req_ref.id)
 
                         # Downstream traceability link.
-                        with html.addcontent(f'<span class="{_obj_class} req-ref coverage"></span>'):
+                        with html.addnode("span", classes=[_obj_class, "req-ref", "coverage"]):
                             DownstreamTraceabilityPage.reqref2htmllink(html, _req_ref)
 
                         # Find out the req-links which comments to display.
@@ -282,8 +278,8 @@ class ScenarioPage(_HttpRequestHandlerImpl):
                         if not _comments:
                             _comments = "(see steps)"
 
-                        html.addcontent(f'<span class="{_obj_class} req-ref sep">:</span>')
-                        html.addcontent(f'<span class="{_obj_class} req-ref comments">{html.escape(_comments)}</span>')
+                        html.addnode("span", classes=[_obj_class, "req-ref", "sep"], text=":")
+                        html.addnode("span", classes=[_obj_class, "req-ref", "comments"], text=_comments)
 
             # Upstream traceability link.
             if isinstance(req_verifier, scenario.ScenarioDefinition):

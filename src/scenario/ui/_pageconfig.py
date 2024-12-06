@@ -64,14 +64,10 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         FORM2 = "form2"
 
     @staticmethod
-    def mkurl(
-            *,
-            html_escape=False,  # type: bool
-    ):  # type: (...) -> str
+    def mkurl():  # type: (...) -> str
         """
         Builds a configuration page URL.
 
-        :param html_escape: ``True`` to get HTML escaped text.
         :return: Configuration page URL.
         """
         from ._httprequest import HttpRequest
@@ -79,7 +75,6 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         return HttpRequest.encodeurl(
             ConfigurationPage._URL,
             args=HttpRequest.mkurlargs(obj=None),
-            html_escape=html_escape,
         )
 
     def __init__(self):  # type: (...) -> None
@@ -130,17 +125,14 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         from .._scenarioconfig import SCENARIO_CONFIG  # Access `scenario` inner symbols.
         from .._xmlutils import Xml  # Access `scenario` inner symbols.
 
-        with html.addcontent(f'<div id="{ConfigurationPage.Action.FORM1}"></div>'):
-            with html.addcontent(f'<form action="{ConfigurationPage.mkurl(html_escape=True)}" method="post"></form>'):
+        with html.addnode("div", id=ConfigurationPage.Action.FORM1):
+            with html.addnode("form", action=ConfigurationPage.mkurl(), method="post"):
                 # Form id.
-                html.addcontent(f'<input type="hidden" name="{ConfigurationPage.Arg.ACTION}" value="{ConfigurationPage.Action.FORM1}" />')
+                html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM1, auto_closing=True)
 
                 # Requirements file.
-                html.addcontent('<p>Requirements:</p>')
-                with html.addcontent(
-                    f'<textarea name="{ConfigurationPage.Arg.REQ_DB_PATHS}" rows="10" '
-                    'placeholder="List of requirement files (absolute paths)"></textarea>',
-                ):
+                html.addnode("p", text="Requirements:")
+                with html.addnode("textarea", name=ConfigurationPage.Arg.REQ_DB_PATHS, rows="10", placeholder="List of requirement files (absolute paths)"):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                     _text_node = html.addtext("")  # type: Xml.TextNode
                     # Then add a line for each requirement file.
@@ -150,11 +142,8 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
                         _text_node.data += _req_db_path.abspath
 
                 # Test suite files.
-                html.addcontent('<p>Test suites:</p>')
-                with html.addcontent(
-                    f'<textarea name="{ConfigurationPage.Arg.TEST_SUITE_PATHS}" rows="10" '
-                    'placeholder="List of test suite file (absolute paths)"></textarea>',
-                ):
+                html.addnode("p", text="Test suites:")
+                with html.addnode("textarea", name=ConfigurationPage.Arg.TEST_SUITE_PATHS, rows="10", placeholder="List of test suite file (absolute paths)"):
                     # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                     _text_node = html.addtext("")  # Type already defined above.
                     # Then add a line for each test suite.
@@ -164,7 +153,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
                         _text_node.data += _test_suite_path.abspath
 
                 # Submit.
-                html.addcontent('<input type="submit" value="Apply" />')
+                html.addnode("input", type="submit", value="Apply", auto_closing=True)
 
     def _form2html(
             self,
@@ -175,17 +164,17 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
 
         :param html: Output HTML document.
         """
-        with html.addcontent(f'<div id="{ConfigurationPage.Action.FORM2}"></div>'):
-            with html.addcontent(f'<form action="{ConfigurationPage.mkurl(html_escape=True)}" method="post"></form>'):
+        with html.addnode("div", id=ConfigurationPage.Action.FORM2):
+            with html.addnode("form", action=ConfigurationPage.mkurl(), method="post"):
                 # Form id.
-                html.addcontent(f'<input type="hidden" name="{ConfigurationPage.Arg.ACTION}" value="{ConfigurationPage.Action.FORM2}" />')
+                html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM2, auto_closing=True)
 
                 # Campaign path (directory or campaign report).
-                html.addcontent('<p>Campaign:</p>')
-                html.addcontent(f'<input type="text" name="{ConfigurationPage.Arg.CAMPAIGN_PATH}" />')
+                html.addnode("p", text="Campaign:")
+                html.addnode("input", type="text", name=ConfigurationPage.Arg.CAMPAIGN_PATH, auto_closing=True)
 
                 # Submit.
-                html.addcontent('<input type="submit" value="Apply" />')
+                html.addnode("input", type="submit", value="Apply", auto_closing=True)
 
     def _processaction(
             self,
@@ -241,9 +230,9 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
             raise KeyError(f"Unexpected action {_action!r}")
 
         # Execution results.
-        with html.addcontent(f'<div class="{ConfigurationPage.Arg.ACTION} result"></div>'):
-            html.addcontent('<h2>Execution result</h2>')
+        with html.addnode("div", classes=[ConfigurationPage.Arg.ACTION, "result"]):
+            html.addnode("h2", text="Execution result")
             if _req_db_paths or _campaign_path:
-                html.addcontent(f'<p>{len(UI_REQ_BASELINES.main.req_db.getallreqs())} requirements loaded</p>')
+                html.addnode("p", text=f"{len(UI_REQ_BASELINES.main.req_db.getallreqs())} requirements loaded")
             if _test_suite_paths or _campaign_path:
-                html.addcontent(f'<p>{len(UI_REQ_BASELINES.main.scenarios)} scenarios loaded</p>')
+                html.addnode("p", text=f"{len(UI_REQ_BASELINES.main.scenarios)} scenarios loaded")

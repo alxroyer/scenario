@@ -41,8 +41,6 @@ class RequirementsPage(_HttpRequestHandlerImpl):
     @staticmethod
     def mkurl(
             obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ReqRef]
-            *,
-            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a requirement page URL.
@@ -53,8 +51,6 @@ class RequirementsPage(_HttpRequestHandlerImpl):
             If a :class:`scenario._reqref.ReqRef` is given, determines the requirement baseline by the way.
 
             Main requirement baseline by default.
-        :param html_escape:
-            ``True`` to get HTML escaped text.
         :return:
             Requirement page URL.
         """
@@ -64,7 +60,6 @@ class RequirementsPage(_HttpRequestHandlerImpl):
             RequirementsPage._URL,
             args=HttpRequest.mkurlargs(obj=obj),
             anchor=obj.id if isinstance(obj, scenario.ReqRef) else None,
-            html_escape=html_escape,
         )
 
     def __init__(
@@ -123,8 +118,8 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req_baseline: Requirement baseline holding the requirement database to process.
         """
-        with html.addcontent('<div id="requirements"></div>'):
-            with html.addcontent('<ul></ul>'):
+        with html.addnode("div", id="requirements"):
+            with html.addnode("ul"):
                 for _req in req_baseline.req_db.getallreqs():  # type: scenario.Req
                     self._req2html(html, _req)
 
@@ -142,37 +137,35 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         from ._anchors import Anchor
         from ._pagereqsdown import DownstreamTraceabilityPage
 
-        with html.addcontent('<li class="req"></li>'):
+        with html.addnode("li", classes=["req"]):
             # Anchor.
             with Anchor.add(html, name=req.id):
                 # Requirement id.
-                html.addcontent(f'<span class="req id">{html.escape(req.id)}</span>')
+                html.addnode("span", classes=["req", "id"], text=req.id)
 
                 # Title.
                 if req.title:
-                    html.addcontent('<span class="req sep">:</span>')
-                    html.addcontent(f'<span class="req title">{html.escape(req.title)}</span>')
+                    html.addnode("span", classes=["req", "sep"], text=":")
+                    html.addnode("span", classes=["req", "title"], text=req.title)
 
                 # Downstream traceability link.
                 DownstreamTraceabilityPage.reqref2htmllink(html, req.main_ref)
 
             # Text.
             if req.text:
-                with html.addcontent('<div class="req text"></div>'):
-                    _html_escaped_text = (
-                        html.escape(req.text)
-                        # Add `<br/>` before each leading dash character.
-                        .replace("\n-", "<br/>\n-")
-                        # Add double `<br/>`s to seperate paragraphs.
-                        .replace("\n\n", "<br/>\n<br/>\n")
-                    )  # type: str
-                    html.addcontent(f'<p>{_html_escaped_text}</p>')
+                with html.addnode("div", classes=["req", "text"]):
+                    with html.addnode("p"):
+                        for _index, _line in enumerate(req.text.splitlines()):  # type: int, str
+                            if _index > 0:
+                                html.addnode("br", auto_closing=True)
+                            if _line:
+                                html.addtext(_line)
 
             # Subreferences.
             if req.subrefs:
-                with html.addcontent('<div class="subrefs"></div>'):
-                    html.addcontent('<p class="subrefs title">Subreferences:</p>')
-                    with html.addcontent('<ul></ul>'):
+                with html.addnode("div", classes=["subrefs"]):
+                    html.addnode("p", classes=["subrefs", "title"], text="Subreferences:")
+                    with html.addnode("ul"):
                         for _subref in req.subrefs:  # type: scenario.ReqRef
                             self._subref2html(html, _subref)
 
@@ -190,11 +183,11 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         from ._anchors import Anchor
         from ._pagereqsdown import DownstreamTraceabilityPage
 
-        with html.addcontent('<li class="subref"></li>'):
+        with html.addnode("li", classes=["subref"]):
             # Anchor.
             with Anchor.add(html, name=subref.id):
                 # Requirement subreference id.
-                html.addcontent(f'<span class="subref id">{html.escape(subref.id)}</span>')
+                html.addnode("span", classes=["subref", "id"], text=subref.id)
 
                 # Downstream traceability link.
                 DownstreamTraceabilityPage.reqref2htmllink(html, subref)

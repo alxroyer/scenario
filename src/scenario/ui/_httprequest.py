@@ -409,7 +409,6 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
             *,
             args=None,  # type: typing.Optional[typing.Dict[str, str]]
             anchor=None,  # type: typing.Optional[str]
-            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Encodes an URL with GET arguments.
@@ -417,7 +416,6 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         :param base_path: Base path of the URL.
         :param args: GET arguments to encode.
         :param anchor: Optional anchor name.
-        :param html_escape: ``True`` to get HTML escaped URL. ``False`` by default.
         :return: URL string.
         """
         from ._htmldoc import HtmlDocument
@@ -427,6 +425,4 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
             _url += f"?{urllib.parse.urlencode(args)}"
         if anchor:
             _url += f"#{urllib.parse.quote(anchor)}"
-        if html_escape:
-            _url = HtmlDocument.escape(_url)
         return _url

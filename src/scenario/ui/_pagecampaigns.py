@@ -38,14 +38,10 @@ class CampaignListPage(_HttpRequestHandlerImpl):
     _URL = "/campaigns"  # type: str
 
     @staticmethod
-    def mkurl(
-            *,
-            html_escape=False,  # type: bool
-    ):  # type: (...) -> str
+    def mkurl():  # type: (...) -> str
         """
         Builds a campaign list URL.
 
-        :param html_escape: ``True`` to get HTML escaped text.
         :return: Campaign list URL.
         """
         from ._httprequest import HttpRequest
@@ -53,7 +49,6 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         return HttpRequest.encodeurl(
             CampaignListPage._URL,
             args=HttpRequest.mkurlargs(obj=None),
-            html_escape=html_escape,
         )
 
     def __init__(self):  # type: (...) -> None
@@ -106,12 +101,12 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         # Identify common list of test suites & test cases reference.
         _campaign_execution_ref = self._mergecampaignexecutionref(_campaign_executions)  # type: scenario.CampaignExecution
 
-        with html.addcontent('<div id="campaigns"></div>'):
+        with html.addnode("div", id="campaigns"):
             # Expand/collapse all buttons.
-            html.addcontent('<a id="expand-all" class="button" href="#">Expand all</a>')
-            html.addcontent('<a id="collapse-all" class="button" href="#">Collapse all</a>')
+            html.addnode("a", id="expand-all", classes=["button"], href="#", text="Expand all")
+            html.addnode("a", id="collapse-all", classes=["button"], href="#", text="Collapse all")
 
-            with html.addcontent('<table></table>'):
+            with html.addnode("table"):
                 # Table head: list of campaign names (recent first order, as given by `_sortedcampaignlist()` before).
                 self._campaignlist2tablehead(html, _campaign_executions)
 
@@ -194,13 +189,13 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         """
         from ._pagecampaign import CampaignPage
 
-        with html.addcontent('<tr class="head"></tr>'):
+        with html.addnode("tr", classes=["head"]):
             # First column.
-            html.addcontent('<th>Name</th>')
+            html.addnode("th", text="Name")
 
             # One column per campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
-                with html.addcontent('<th></th>'):
+                with html.addnode("th"):
                     html.addlink(href=CampaignPage.mkurl(_campaign_execution), title="Campaign details", text=_campaign_execution.name)
 
     def _testsuiteexecution2tablerow(
@@ -219,14 +214,14 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
         """
         # One first line for the test suite name, with execution status for each campaign.
-        with html.addcontent(f'<tr class="suite suite={html.escape(test_suite_execution_ref.name)}"></tr>'):
+        with html.addnode("tr", classes=["suite", f"suite={test_suite_execution_ref.name}"]):
             # Test suite icon + name.
-            with html.addcontent('<th></th>'):
+            with html.addnode("th"):
                 # Icon.
-                html.addcontent('<div class="suite icon"></div>')
+                html.addnode("div", classes=["suite", "icon"])
 
                 # Test suite name.
-                with html.addcontent('<span class="suite name"></span>'):
+                with html.addnode("span", classes=["suite", "name"]):
                     html.addtext(test_suite_execution_ref.name)
 
             # Test suite result for each campaign.
@@ -240,9 +235,9 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    html.addcontent(f'<td class="{_execution_status}">{_execution_status}</td>')
+                    html.addnode("td", classes=[_execution_status], text=_execution_status)
                 else:
-                    html.addcontent('<td></td>')
+                    html.addnode("td")
 
         # Test case lines.
         for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: scenario.TestCaseExecution
@@ -268,19 +263,19 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         from ._pagescenario import ScenarioPage
         from ._reqbl import UI_REQ_BASELINES
 
-        with html.addcontent(f'<tr class="case suite={html.escape(test_suite_execution_ref.name)}"></tr>'):
+        with html.addnode("tr", classes=["case", f"suite={test_suite_execution_ref.name}"]):
             # Test case icon + name, with scenario URL from `UI_REQ_BASELINES.main.scenarios` if available.
             _scenario_url = ""  # type: str
             for _main_scenario_definition in UI_REQ_BASELINES.main.scenarios:  # type: scenario.ScenarioDefinition
                 if _main_scenario_definition.name == test_case_execution_ref.name:
                     _scenario_url = ScenarioPage.mkurl(_main_scenario_definition)
                     break
-            with html.addcontent('<th></th>'):
+            with html.addnode("th"):
                 # Icon.
-                html.addcontent('<div class="case icon"></div>')
+                html.addnode("div", classes=["case", "icon"])
 
                 # Test case name.
-                with html.addcontent('<span class="case name"></span>'):
+                with html.addnode("span", classes=["case", "name"]):
                     if _scenario_url:
                         html.addlink(href=_scenario_url, title="Scenario details", text=test_case_execution_ref.name)
                     else:
@@ -303,10 +298,10 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    with html.addcontent(f'<td class="{_execution_status}"></td>'):
+                    with html.addnode("td", classes=[_execution_status]):
                         if _scenario_url:
                             html.addlink(href=_scenario_url, title="Scenario results", text=_execution_status)
                         else:
                             html.addtext(_execution_status)
                 else:
-                    html.addcontent('<td></td>')
+                    html.addnode("td")

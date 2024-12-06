@@ -35,14 +35,10 @@ class Homepage(_HttpRequestHandlerImpl):
     _URL = "/"  # type: str
 
     @staticmethod
-    def mkurl(
-            *,
-            html_escape=False,  # type: bool
-    ):  # type: (...) -> str
+    def mkurl():  # type: (...) -> str
         """
         Builds a homepage URL.
 
-        :param html_escape: ``True`` to get HTML escaped text.
         :return: Homepage URL.
         """
         from ._httprequest import HttpRequest
@@ -50,7 +46,6 @@ class Homepage(_HttpRequestHandlerImpl):
         return HttpRequest.encodeurl(
             Homepage._URL,
             args=HttpRequest.mkurlargs(obj=None),
-            html_escape=html_escape,
         )
 
     def __init__(self):  # type: (...) -> None
@@ -83,21 +78,21 @@ class Homepage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)  # type: HtmlDocument
         _html.settitle("Scenario User Interface", campaign_subtitle=False)
 
-        with _html.addcontent('<p></p>'):
-            _html.addcontent('<span>Browse </span>')
+        with _html.addnode("p"):
+            _html.addnode("span", text="Browse ")
             _html.addlink(text="scenarios", href=ScenarioListPage.mkurl(), title="Scenario list")
-            _html.addcontent('<span> described in test scripts, and </span>')
+            _html.addnode("span", text=" described in test scripts, and ")
             _html.addlink(text="campaign results", href=CampaignListPage.mkurl(), title="Campaign results")
-            _html.addcontent('<span>.</span>')
+            _html.addnode("span", text=".")
 
-        with _html.addcontent('<p></p>'):
-            _html.addcontent('<span>Working with </span>')
+        with _html.addnode("p"):
+            _html.addnode("span", text="Working with ")
             _html.addlink(text="requirements", href=RequirementsPage.mkurl(), title="Requirement list")
-            _html.addcontent('<span>? Browse </span>')
+            _html.addnode("span", text="? Browse ")
             _html.addlink(text="downstream", href=DownstreamTraceabilityPage.mkurl(), title="Downstream traceability")
-            _html.addcontent('<span> and </span>')
+            _html.addnode("span", text=" and ")
             _html.addlink(text="upstream", href=UpstreamTraceabilityPage.mkurl(), title="Upstream traceability")
-            _html.addcontent('<span> traceability tables.</span>')
+            _html.addnode("span", text=" traceability tables.")
 
         request.sendhtml(_html)
         return True

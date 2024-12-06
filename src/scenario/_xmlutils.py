@@ -201,10 +201,10 @@ class Xml(abc.ABC):
                     """
                     _data = "%s%s%s" % (indent, self.data, newl)  # type: str
                     if xml_escape:
-                        # Inpired from ``xml.dom.minidom._write_data()`.
+                        # Inspired from `xml.dom.minidom._write_data()` and `html.escape()`.
                         _data = (
                             _data
-                            .replace("&", "&amp;")
+                            .replace("&", "&amp;")  # Must be done first!
                             .replace("<", "&lt;")
                             .replace('"', "&quot;")
                             .replace(">", "&gt;")

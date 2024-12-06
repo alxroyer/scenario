@@ -35,56 +35,37 @@ class Anchor(abc.ABC):
             html,  # type: _HtmlDocumentType
             *,
             classes=(),  # type: typing.Sequence[str]
-            html_escape_classes=True,  # type: bool
             name,  # type: str
-            html_escape_name=True,  # type: bool
             link_title="",  # type: str
-            html_escape_link_title=True,  # type: bool
             link_text="",  # type: str
-            html_escape_link_text=True,  # type: bool
     ):  # type: (...) -> _HtmlDocumentType.NodeContext
         """
         Adds an anchor.
 
         :param html: HTML output page to feed.
         :param classes: Extra classes to set for ``@class`` attribute.
-        :param html_escape_classes: ``True`` (default) to HTML escape class names.
         :param name: Anchor name.
-        :param html_escape_name: ``True`` (default) to HTML escape the anchor name.
         :param link_title: ``@title`` attribute value, used for popup info on anchor link hover. Anchor name by default.
-        :param html_escape_link_title: ``True`` (default) to HTML escape the anchor link title.
         :param link_text: Text content for the ancho link. "(<>)" by default.
-        :param html_escape_link_text: ``True`` (default) to HTML escape the anchor link text.
         :return: Context manager focused on the highlightable div created.
         """
         if not link_text:
             link_text = "(<>)"
-            html_escape_link_text = True
-
-        if html_escape_classes:
-            classes = [html.escape(_class) for _class in classes]
-        if html_escape_name:
-            name = html.escape(name)
-        if html_escape_link_title:
-            link_title = html.escape(link_title)
-        if html_escape_link_text:
-            link_text = html.escape(link_text)
 
         # Container div.
-        with html.addcontent(f'<div class="{" ".join(["anchor", "container", f"name={name}", *classes])}"></div>'):
+        with html.addnode("div", classes=["anchor", "container", f"name={name}", *classes]):
             # Anchor link.
             with html.addlink(
-                classes=[*classes, "anchor-link", name], html_escape_classes=False,
-                href=f"#{name}", html_escape_href=False,
-                title=link_title or name, html_escape_title=False,
+                classes=[*classes, "anchor-link", name],
+                href=f"#{name}",
+                title=link_title or name,
             ):
-                html.addcontent(f'<span>{link_text}</span>')
+                html.addnode("span", text=link_text)
 
             # Focusable div.
-            _anchor_div_ctx = html.addcontent(f'<div class="{" ".join(["anchor", "focusable", f"name={name}", *classes])}"></div>') \
-                # type: _HtmlDocumentType.NodeContext
+            _anchor_div_ctx = html.addnode("div", classes=["anchor", "focusable", f"name={name}", *classes])  # type: _HtmlDocumentType.NodeContext
             with _anchor_div_ctx:
                 # Anchor.
-                html.addcontent(f'<a class="{" ".join(["anchor", f"name={name}", *classes])}" name="{name}"></a>')
+                html.addnode("a", classes=["anchor", f"name={name}", *classes], name=name)
 
         return _anchor_div_ctx

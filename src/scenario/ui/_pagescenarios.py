@@ -41,8 +41,6 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
     @staticmethod
     def mkurl(
             req_baseline=None,  # type: scenario.ReqBaseline
-            *,
-            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds a scenario list page URL.
@@ -51,8 +49,6 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
             Applicable requirement baseline
 
             Main requirement baseline by default.
-        :param html_escape:
-            ``True`` to get HTML escaped text.
         :return:
             Scenario list page URL.
         """
@@ -61,7 +57,6 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
         return HttpRequest.encodeurl(
             ScenarioListPage._URL,
             args=HttpRequest.mkurlargs(obj=req_baseline),
-            html_escape=html_escape,
         )
 
     def __init__(
@@ -123,18 +118,18 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
 
-        with html.addcontent('<div id="scenarios"></div>'):
-            with html.addcontent('<ul></ul>'):
+        with html.addnode("div", id="scenarios"):
+            with html.addnode("ul"):
                 for _scenario_definition in req_baseline.scenarios:  # type: scenario.ScenarioDefinition
-                    with html.addcontent('<li class="scenario"></li>'):
+                    with html.addnode("li", classes=["scenario"]):
                         # Upstream traceability link.
                         UpstreamTraceabilityPage.scenario2htmllink(html, _scenario_definition)
 
                         # Scenario name.
-                        with html.addcontent(f'<span class="scenario name"></span>'):
+                        with html.addnode("span", classes=["scenario", "name"]):
                             html.addlink(href=ScenarioPage.mkurl(_scenario_definition), title="Scenario details", text=_scenario_definition.name)
 
                         # Title.
                         if _scenario_definition.title:
-                            html.addcontent('<span class="scenario sep">:</span>')
-                            html.addcontent(f'<span class="scenario title">{html.escape(_scenario_definition.title)}</span>')
+                            html.addnode("span", classes=["scenario", "sep"], text=":")
+                            html.addnode("span", classes=["scenario", "title"], text=_scenario_definition.title)

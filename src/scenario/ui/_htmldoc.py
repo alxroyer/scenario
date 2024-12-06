@@ -38,7 +38,7 @@ class HtmlDocument(scenario.Logger):
         """
         Context that installs a new child node as the :attr:`HtmlDocument.current_node`.
 
-        Returned by :meth:`HtmlDocument.addcontent()`.
+        Context basically returned by :meth:`HtmlDocument.addnode()` (and related).
         """
 
         def __init__(
@@ -103,7 +103,7 @@ class HtmlDocument(scenario.Logger):
         self._auto_closing = []  # type: typing.List[_XmlType.Node]
         #: Root ``<html/>`` node.
         self.html = self.xml_doc.root  # type: Xml.Node
-        #: Current node, which content can be added to with :meth:`addcontent()`.
+        #: Current node, which content can be added to with :meth:`addnode()` and :meth:`addtext()`.
         self.current_node = self.html  # type: Xml.Node
 
         #: HTML ``<head/>`` section node.
@@ -135,13 +135,13 @@ class HtmlDocument(scenario.Logger):
         """
         from ._configdb import UI_CONFIG
 
-        with self.addcontent('<head></head>') as self.head:
-            self.addcontent(f'<link rel="shortcut icon" href="{self.escape(UI_CONFIG.faviconurl())}" />')
-            self.addcontent('<meta http-equiv="Content-type" content="text/html; charset=utf-8" />')
-            self._head_title = self.addcontent('<title>...</title>').new_child
-            self.addcontent(f'<link rel="stylesheet" href="{self.escape(UI_CONFIG.cssurl())}" type="text/css" />')
+        with self.addnode("head") as self.head:
+            self.addnode("link", rel="shortcut icon", href=UI_CONFIG.faviconurl(), auto_closing=True)
+            self.addnode("meta", {"http-equiv": "Content-type", "content": "text/html; charset=utf-8"}, auto_closing=True)
+            self._head_title = self.addnode("title", text="...").new_child
+            self.addnode("link", rel="stylesheet", href=UI_CONFIG.cssurl(), type="text/css", auto_closing=True)
             self.jscontent2html("_global.js")
-            self.addcontent(f'<script src="{self.escape(UI_CONFIG.jsurl())}"></script>')
+            self.addnode("script", src=UI_CONFIG.jsurl())
 
     def _body2html(self):  # type: (...) -> None
         """
@@ -149,12 +149,12 @@ class HtmlDocument(scenario.Logger):
 
         Instantiates :attr:`body`, :attr:`_h1` and :attr:`main_div`.
         """
-        with self.addcontent('<body></body>') as self.body:
+        with self.addnode("body") as self.body:
             # Menu and reload button.
             self._menu2html()
             self._execresultdiv2html()
-            self._h1 = self.addcontent('<h1></h1>').new_child
-            self.main_div = self.addcontent('<div id="main"></div>').new_child
+            self._h1 = self.addnode("h1").new_child
+            self.main_div = self.addnode("div", id="main").new_child
 
     def _menu2html(self):  # type: (...) -> None
         """
@@ -168,7 +168,7 @@ class HtmlDocument(scenario.Logger):
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenarios import ScenarioListPage
 
-        with self.addcontent('<div id="menu"></div>'):
+        with self.addnode("div", id="menu"):
             self.addlink(classes=["menu"], href=Homepage.mkurl(), text="Home")
             self.addlink(classes=["menu"], href=ScenarioListPage.mkurl(), text="Scenarios")
             self.addlink(classes=["menu"], href=CampaignListPage.mkurl(), text="Campaigns")
@@ -184,9 +184,9 @@ class HtmlDocument(scenario.Logger):
         Hidden by default.
         Used by '_exec.js' to display execution results.
         """
-        with self.addcontent('<div id="exec-result" style="display: none;"></div>'):
-            self.addcontent('<div class="exec-result title"></div>')
-            self.addcontent('<div class="exec-result text"></div>')
+        with self.addnode("div", id="exec-result", style="display: none;"):
+            self.addnode("div", classes=["exec-result", "title"])
+            self.addnode("div", classes=["exec-result", "text"])
             self.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
 
     def jscontent2html(
@@ -198,10 +198,11 @@ class HtmlDocument(scenario.Logger):
 
         :param filename: Javascript file name in the 'src/scenario/ui/' directory.
         """
-        with self.addcontent('<script></script>'):
+        with self.addnode("script"):
             _js_path = scenario.Path(__file__).parent / filename  # type: scenario.Path
             for _line in _js_path.read_text(encoding="utf-8").splitlines():  # type: str
-                self.addtext(_line, html_escape=False)
+                # Don't use `addtext()` in order to avoid HTML/XML escaping.
+                self.current_node.appendchild(self.xml_doc.createtextnode(_line, xml_escape=False))
 
     def settitle(
             self,
@@ -220,136 +221,124 @@ class HtmlDocument(scenario.Logger):
 
         _req_baseline_desc = UI_REQ_BASELINES.getdesc(self.request.req_baseline)  # type: str
 
-        self._head_title.gettextnodes()[0].data = self.escape(title)
+        self._head_title.gettextnodes()[0].data = html.escape(title, quote=False)
         if campaign_subtitle and self.request.campaign_execution:
-            self._head_title.gettextnodes()[0].data += f" ({self.escape(_req_baseline_desc)})"
+            self._head_title.gettextnodes()[0].data += f" ({html.escape(_req_baseline_desc, quote=False)})"
 
         with HtmlDocument.NodeContext(self, self._h1):
-            self.addcontent(f'<span class="title main">{self.escape(title)}</span>')
+            self.addnode("span", classes=["title", "main"], text=title)
             if campaign_subtitle and self.request.campaign_execution:
-                self.addcontent('<span class="title sep"></span>')
+                self.addnode("span", classes=["title", "sep"])
 
-                with self.addcontent('<span class="title req-baseline"></span>'):
+                with self.addnode("span", classes=["title", "req-baseline"]):
                     self.addlink(href=CampaignPage.mkurl(self.request.campaign_execution), title="Campaign details", text=_req_baseline_desc)
 
-    def addcontent(
+    def addnode(
             self,
-            content,  # type: str
+            tag_name,  # type: str
+            attrs=None,  # type: typing.Dict[str, typing.Optional[str]]
             *,
+            classes=None,  # type: typing.Sequence[str]
+            text=None,  # type: str
             auto_closing=False,  # type: bool
+            **kwargs,  # type: typing.Optional[str]
     ):  # type: (...) -> HtmlDocument.NodeContext
         """
-        Adds HTML content to the current node.
+        Adds a child node to the current node.
 
-        :param content:
-            HTML content.
+        :param tag_name: Name of tag for the new node.
+        :param attrs: Attributes passed as a dictionary. Optional. Useful when ``kwargs`` can't be used (attribute names with a dash, ...).
+        :param classes: List of classes. May complete other classes already defined with ``attrs``.
+        :param text: Optional content text.
+        :param auto_closing: Set to ``True`` to allow auto-closing node. ``False`` by default.
+        :param kwargs: In general, use named parameters to define attributes. Use ``attrs`` when named parameters don't work.
+        :return: Context manager that controls the current node, so that further content can be added to it.
 
-            .. note:: The :meth:`escape()` method shall be used to ensure HTML encoding for uncontrolled text data.
-        :param auto_closing:
-            Set to ``True`` to allow auto-closing node.
-            ``False`` by default.
-        :return:
-            Context manager that controls the current node further content will be added to.
+        When an attribute value is ``None`` (either in ``attrs`` or ``kwargs``), the related HTML attribute won't be created.
         """
         from .._xmlutils import Xml  # Access `scenario` inner symbols.
 
-        # Parse the XML content as a new node.
-        _child = self.xml_doc.parsestream(content)  # type: Xml.INode
-        if not isinstance(_child, Xml.Node):
-            raise ValueError(f"Unexpected XML content {content!r}, parsed as {_child!r} (not a node)")
+        # Create the node.
+        _child = self.xml_doc.createnode(tag_name)  # type: Xml.Node
 
-        # Append it as a child to the current node.
+        # Add attributes:
+        if attrs is None:
+            # - ensure `attrs` is defined,
+            attrs = {}
+        if True:
+            # - merge `kwargs` in `attrs`,
+            attrs.update(kwargs)
+        if classes:
+            # - merge `classes` in `attrs`,
+            if "class" in attrs:
+                classes = [*(attrs["class"] or "").split(), *classes]
+            attrs["class"] = " ".join(classes)
+        if attrs:
+            # - eventually create the attributes when the value is not `None`.
+            for _attr_name, _attr_value in attrs.items():  # type: str, typing.Optional[str]
+                if _attr_value is not None:
+                    _child.setattr(_attr_name, html.escape(_attr_value, quote=True))
+
+        # Append the new node as a child to the current node.
         self.current_node.appendchild(_child)
-        self.debug("current_node=%r: addcontent(%r) -> %r", self.current_node, content, _child)
+        self.debug("current_node=%r: addnode(%r, %r, text=%r) -> %r", self.current_node, tag_name, attrs, text, _child)
 
-        # Register as auto-closing node if required.
-        if auto_closing:
+        # Build a node context focused on the new node.
+        _child_node_ctx = HtmlDocument.NodeContext(self, _child)  # type: HtmlDocument.NodeContext
+
+        if text:
+            # Add content text when provided.
+            with _child_node_ctx:
+                self.addtext(text)
+        elif auto_closing:
+            # Register as auto-closing node if required.
             self._auto_closing.append(_child)
 
-        # Return a context that positions the new child as the current node.
-        return HtmlDocument.NodeContext(self, _child)
+        # Return the node context built previously.
+        return _child_node_ctx
 
     def addlink(
             self,
             *,
             classes=(),  # type: typing.Sequence[str]
-            html_escape_classes=True,  # type: bool
             href,  # type: str
-            html_escape_href=True,  # type: bool
-            title="",  # type: str
-            html_escape_title=True,  # type: bool
-            text="",  # type: str
-            html_escape_text=True,  # type: bool
+            title=None,  # type: str
+            text=None,  # type: str
     ):  # type: (...) -> HtmlDocument.NodeContext
         """
         Adds a ``<a ...>...</a>`` link in the document,
         with ``@class``, ``@href``, ``@title`` attributes and text content.
 
         :param classes: Classes to set for ``@class`` attribute. No ``@class`` attribute if no class provided.
-        :param html_escape_classes: ``True`` (default) to HTML escape class names.
         :param href: URL to set for ``@href`` attribute.
-        :param html_escape_href: ``True`` (default) to HTML escape the ``@href`` URL.
         :param title: ``@title`` attribute value, used for popup info on link hover. None by default for no ``@title`` attribute.
-        :param html_escape_title: ``True`` (default) to HTML escape the ``@title`` value.
         :param text: Text content for the link. Empty by default.
-        :param html_escape_text: ``True`` (default) to HTML escape the text content.
         :return: Context manager focused on the new ``<a ...></a>`` node created.
         """
-        if html_escape_classes:
-            classes = [self.escape(_class) for _class in classes]
-        if html_escape_href:
-            href = self.escape(href)
-        if html_escape_title:
-            title = self.escape(title)
-        if html_escape_text:
-            text = self.escape(text)
-
-        _attrs = []  # type: typing.List[str]
-        if classes:
-            _attrs.append(f'class="{" ".join(classes)}"')
-        if href:
-            _attrs.append(f'href="{href}"')
-        if title:
-            _attrs.append(f'title="{title}"')
-
-        return self.addcontent(f'<a {" ".join(_attrs)}>{text}</a>')
+        return self.addnode(
+            "a",
+            classes=classes,
+            href=href,
+            title=title,
+            text=text,
+        )
 
     def addtext(
             self,
             text,  # type: str
-            *,
-            html_escape=True,  # type: bool
     ):  # type: (...) -> _XmlType.TextNode
         """
         Adds text to the current node.
 
         :param text:
             Text to add.
-        :param html_escape:
-            If ``True`` (default), :meth:`escape()` will be automatically called on ``text``.
-
-            Set to ``False`` to avoid :meth:`escape()` being called.
         :return:
             Text node created.
         """
-        if html_escape:
-            # HTML encoding.
-            text = self.escape(text)
-        return self.current_node.appendchild(self.xml_doc.createtextnode(text, xml_escape=html_escape))
-
-    @staticmethod
-    def escape(
-            text,  # type: str
-    ):  # type: (...) -> str
-        """
-        Encodes text for HTML.
-
-        :param text: Text to encode.
-        :return: HTML-encoded text.
-
-        .. tip:: Use only in case of risk of uncontrolled data.
-        """
-        return html.escape(text)
+        return self.current_node.appendchild(self.xml_doc.createtextnode(
+            html.escape(text, quote=False),
+            xml_escape=False,  # Already escaped.
+        ))
 
     def dump(self) -> bytes:
         """
@@ -362,7 +351,7 @@ class HtmlDocument(scenario.Logger):
             Recursively avoids auto-closing nodes in the output XML tree,
             unless for candidate nodes registered in the :attr:`_auto_closing` list.
 
-            .. seealso:: :meth:`addcontent()`
+            .. seealso:: :meth:`addnode()`
             """
             # Inspect node content.
             _children = node.getchildren("*")  # type: typing.Sequence[_XmlType.Node]

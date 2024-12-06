@@ -61,14 +61,12 @@ class Exec(_HttpRequestHandlerImpl):
             action,  # type: Exec.Action
             *,
             req_baseline=None,  # type: typing.Optional[scenario.ReqBaseline]
-            html_escape=False,  # type: bool
     ):  # type: (...) -> str
         """
         Builds an action execution URL.
 
         :param action: Action to create an URL for.
         :param req_baseline: Baseline to execute the action for. Main requirement baseline by default.
-        :param html_escape: ``True`` to get HTML escaped text.
         :return: Action execution URL.
         """
         from ._reqbl import UI_REQ_BASELINES
@@ -80,7 +78,6 @@ class Exec(_HttpRequestHandlerImpl):
                 **HttpRequest.mkurlargs(obj=req_baseline or UI_REQ_BASELINES.main),
                 Exec.Arg.ACTION: action,
             },
-            html_escape=html_escape,
         )
 
     @staticmethod
