@@ -19,9 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Implement first .js and .css files:
-        - Improve campaign list page:
-            - Move campaign toggling as inner script and CSS.
-            - Ensure lower case for execution status HTML classes.
         - Improve downstream traceability page:
             - Show table borders.
             - Align cells top.

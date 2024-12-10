@@ -48,13 +48,13 @@ scenario.onLoad(() => {
     }
 });
 
-// Add 'click' event listeners on `div#campaigns tr.suite div.icon` images.
+// Add 'click' event listeners on `div#campaigns tr.suite` buttons.
 scenario.onLoad(() => {
     /** @var {HTMLElement?} */ const _campaignsDiv = document.getElementById("campaigns");
     if (_campaignsDiv) {
         for (/** @var {HTMLElement} */ const _tr of _campaignsDiv.getElementsByTagName("tr")) {
-            for (/** @var {HTMLElement} */ const _iconDiv of _tr.getElementsByClassName("icon")) {
-                _iconDiv.addEventListener("click", (e) => {
+            for (/** @var {HTMLElement} */ const _button of _tr.getElementsByClassName("button")) {
+                _button.addEventListener("click", (e) => {
                     e.preventDefault();
 
                     scenario.campaigns._toggleSuite(_tr, undefined);
@@ -137,6 +137,26 @@ scenario.campaigns._toggleSuite = (tr, newState) => {
 
             // Set new state.
             _tr.classList.add(newState);
+
+            // Adjust `tr.suite a.button span` button text.
+            if (_tr.classList.contains("suite")) {
+                for (/** @var {HTMLElement} */ const _button of _tr.getElementsByClassName("button")) {
+                    for (/** @var {HTMLElement} */ const _buttonSpan of _button.getElementsByTagName("span")) {
+                        switch (newState) {
+                            case "expanded": _buttonSpan.innerText = "-"; break;
+                            case "collapsed": _buttonSpan.innerText = "+"; break;
+                        }
+                    }
+                }
+            }
+
+            // Hide / show `tr.case` rows.
+            if (_tr.classList.contains("case")) {
+                switch (newState) {
+                    case "expanded": _tr.style.visibility = "visible"; break;
+                    case "collapsed": _tr.style.visibility = "collapse"; break;
+                }
+            }
         }
     }
 };

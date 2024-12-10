@@ -22,4 +22,3 @@
 
 
 import("/js/menu.js").then((mod) => { console.debug("'menu.js' successfully loaded"); });
-import("/js/campaigns.js").then((mod) => { console.debug("'campaigns.js' successfully loaded"); });

@@ -106,6 +106,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             html.addnode("a", id="expand-all", classes=["button"], href="#", text="Expand all")
             html.addnode("a", id="collapse-all", classes=["button"], href="#", text="Collapse all")
 
+            # Test suites and test cases with campaign results.
             with html.addnode("table"):
                 # Table head: list of campaign names (recent first order, as given by `_sortedcampaignlist()` before).
                 self._campaignlist2tablehead(html, _campaign_executions)
@@ -113,6 +114,9 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                 # Test suites and cases with execution status.
                 for _test_suite_execution_ref in _campaign_execution_ref.test_suite_executions:  # type: scenario.TestSuiteExecution
                     self._testsuiteexecution2tablerow(html, request, _campaign_executions, _test_suite_execution_ref)
+
+            # JS to handle expandable/collapsable test suites.
+            html.jscontent2html(scenario.Path(__file__).with_suffix(".js").name)
 
     def _sortedcampaignlist(self):  # type: (...) -> typing.Sequence[scenario.CampaignExecution]
         """
@@ -217,8 +221,9 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         with html.addnode("tr", classes=["suite", f"suite={test_suite_execution_ref.name}"]):
             # Test suite icon + name.
             with html.addnode("th"):
-                # Icon.
-                html.addnode("div", classes=["suite", "icon"])
+                # Expand/collapse button.
+                with html.addnode("a", classes=["suite", "button"], href="#"):
+                    html.addnode("span", text="-")
 
                 # Test suite name.
                 with html.addnode("span", classes=["suite", "name"]):
@@ -235,7 +240,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    html.addnode("td", classes=[_execution_status], text=_execution_status)
+                    html.addnode("td", classes=[_execution_status.lower()], text=_execution_status)
                 else:
                     html.addnode("td")
 
@@ -271,9 +276,6 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                     _scenario_url = ScenarioPage.mkurl(_main_scenario_definition)
                     break
             with html.addnode("th"):
-                # Icon.
-                html.addnode("div", classes=["case", "icon"])
-
                 # Test case name.
                 with html.addnode("span", classes=["case", "name"]):
                     if _scenario_url:
@@ -298,7 +300,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    with html.addnode("td", classes=[_execution_status]):
+                    with html.addnode("td", classes=[_execution_status.lower()]):
                         if _scenario_url:
                             html.addlink(href=_scenario_url, title="Scenario results", text=_execution_status)
                         else:
