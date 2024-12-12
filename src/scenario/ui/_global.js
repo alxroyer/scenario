@@ -24,6 +24,7 @@
 /** @var {object} `scenario` package. */
 let scenario = {};
 
+
 /**
  * @brief Ensures `f` be called *on-load*.
  * @param {() => void} f Function to be called *on-load*.
@@ -39,3 +40,102 @@ scenario.onLoad = (f) => {
         f();
     }
 };
+
+
+/**
+ * @brief Finds nodes matching `selector`.
+ * @param {HTMLElement} node Current node.
+ * @param {string} selector CSS selector.
+ * @returns {HTMLElement[]} Nodes matching `selector`.
+ */
+scenario.findNodes = (node, selector, {debug=false, indentation=""}={}) => {
+    function _debug(text) {
+        if (debug) {
+            console.debug(`${indentation}${text}`);
+        }
+    }
+
+    _debug(`scenario.findNodes(node=${node}, selector='${selector}')`);
+
+    // Parse `selector`.
+    // If no selector, return empty node list (defensive code).
+    if (! selector) {
+        return [];
+    }
+    /** @var {string[]} */ const _selectors = selector.split(" ");
+    if ((! _selectors) || (! _selectors[0])) {
+        return [];
+    }
+
+    // Search next nodes from `_selectors[0]`:
+    // - Parse `_selectors[0]`.
+    /** @var {(HTMLElement | null)[]} */ let _selected = [];
+    /** @var {RegExpExecArray | null} */ const _match = /([^.#]*)(#(.*)|(\..*)|)/.exec(_selectors[0]);
+    if ((! _match) && (_match.length < 4)) {
+        throw SyntaxError(`Invalid selector '${_selectors[0]}'`);
+    }
+    /** @var {string | null} */ const _tagName = _match[1];
+    /** @var {string | null} */ const _id = _match[3];
+    /** @var {string | null} */ const _classes = _match[4];
+    _debug(`scenario.findNodes(): '${_selectors[0]}' => _tagName: ${_tagName}, _id: ${_id}, _classes: ${_classes}`);
+    // - Find node(s) from the most representative criteria:
+    if (_id) {
+        _selected.push(document.getElementById(_id));
+    } else if (_classes) {
+        _selected.push(...node.getElementsByClassName(_classes.substring(1).replace(".", " ")));
+    } else if (_tagName) {
+        _selected.push(...node.getElementsByTagName(_tagName));
+    } else {
+        throw SyntaxError(`Invalid selector '${_selectors[0]}'`);
+    }
+    // - Then check the nodes selected above pass all criteria:
+    _selected = _selected.filter((e) => {
+        if (! e) {
+            return false;
+        }
+        if (_tagName && (e.tagName.toLowerCase() !== _tagName.toLowerCase())) {
+            return false;
+        }
+        if (_classes) {
+            for (/** @var {string} */ const _class of _classes.substring(1).split(".")) {
+                if (! e.classList.contains(_class)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    });
+    _debug(`scenario.findNodes(): '${_selectors[0]}' => ${_selected}`);
+
+    // If that was the end of the selector, then this is a final recursion call.
+    // Return selected nodes right now.
+    if (_selectors.length === 1) {
+        _debug(`scenario.findNodes() => ${_selected}`);
+        return _selected;
+    }
+
+    // Otherwise, make recursive calls, and return the nodes selected from final recursive calls.
+    /** @var {HTMLElement[]} */ const _final = [];
+    for (const _node of _selected) {
+        _final.push(...scenario.findNodes(_node, _selectors.slice(1).join(" "), {debug: debug, indentation: `${indentation}  `}));
+    }
+    _debug(`scenario.findNodes() => ${_final}`);
+    return _final;
+}
+
+
+/**
+ * @brief Search for a named object identifier (i.e. "<name>=<value>") in `node`'s classes.
+ * @param {HTMLElement} node Node to read classes from.
+ * @param {string} name Name of the class to search.
+ * @returns {string | null} Named class value if found, `null` otherwise.
+ */
+scenario.getNamedObjectIdFromClasses = (node, name) => {
+    /** @var {string} */ const _starter = `${name}=`;
+    for (/** @var {string} */ const _class of node.classList) {
+        if (_class.startsWith(_starter)) {
+            return _class.substring(_starter.length);
+        }
+    }
+    return null;
+}

@@ -252,7 +252,7 @@ class HtmlDocument(scenario.Logger):
         :param text: Optional content text.
         :param auto_closing: Set to ``True`` to allow auto-closing node. ``False`` by default.
         :param kwargs: In general, use named parameters to define attributes. Use ``attrs`` when named parameters don't work.
-        :return: Context manager that controls the current node, so that further content can be added to it.
+        :return: HTML node context that controls the current node, so that further content can be added to it.
 
         When an attribute value is ``None`` (either in ``attrs`` or ``kwargs``), the related HTML attribute won't be created.
         """
@@ -313,7 +313,7 @@ class HtmlDocument(scenario.Logger):
         :param href: URL to set for ``@href`` attribute.
         :param title: ``@title`` attribute value, used for popup info on link hover. None by default for no ``@title`` attribute.
         :param text: Text content for the link. Empty by default.
-        :return: Context manager focused on the new ``<a ...></a>`` node created.
+        :return: HTML node context focused on the ``<a ...></a>`` element created.
         """
         return self.addnode(
             "a",
@@ -339,6 +339,32 @@ class HtmlDocument(scenario.Logger):
             html.escape(text, quote=False),
             xml_escape=False,  # Already escaped.
         ))
+
+    @staticmethod
+    def mknamedobjectidclass(
+            name,  # type: str
+            id,  # type: str  # noqa  ## Shadwos built-in name 'id'.
+    ):  # type: (...) -> str
+        """
+        Computes an HTML class identifying a named object.
+
+        :param name: Name of the object being identified.
+        :param id: Identifier of the object.
+        :return: HTML class.
+        """
+        return HtmlDocument.mkcsscompatibleclass(f"{name}={id}")
+
+    @staticmethod
+    def mkcsscompatibleclass(
+            text,  # type: str
+    ):  # type: (...) -> str
+        """
+        Ensures ``text`` is compatible for CSS in class names.
+
+        :param text: Class name or part of class name to ensure CSS compatibility for.
+        :return: CSS compatible HTML class text.
+        """
+        return text.replace('.', '-dot-')
 
     def dump(self) -> bytes:
         """

@@ -23,10 +23,7 @@
 
 // Add `.button` class to menu links.
 scenario.onLoad(() => {
-    /** @var {HTMLElement?} */ const _menuDiv = document.getElementById("menu");
-    if (_menuDiv) {
-        for (/** @var {HTMLElement} */ const _a of _menuDiv.getElementsByClassName("menu")) {
-            _a.classList.add("button");
-        }
+    for (/** @var {HTMLElement} */ const _menuLink of scenario.findNodes(document.body, "div#menu a.menu")) {
+        _menuLink.classList.add("button");
     }
 });

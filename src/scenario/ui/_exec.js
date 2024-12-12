@@ -29,7 +29,7 @@ scenario.exec = {};
 
 // Install event listeners for execution buttons.
 scenario.onLoad(() => {
-    for (/** @var {HTMLElement} */ const _button of document.getElementsByClassName("exec button")) {
+    for (/** @var {HTMLElement} */ const _button of scenario.findNodes(document.body, "a.exec.button")) {
         _button.addEventListener("click", (e) => {
             e.preventDefault();
 
@@ -37,6 +37,7 @@ scenario.onLoad(() => {
         });
     }
 });
+
 
 /**
  * @brief Executes a scenario action.
@@ -92,6 +93,7 @@ scenario.exec._execute = (url) => {
 /** @var {boolean} Tells whether the `.exec-result` popup div shall be used. `alert()` called by default. */
 scenario.exec.useExecResultPopupDiv = false;
 
+
 /**
  * @brief Displays execution results.
  * @param {string} title Action title.
@@ -101,33 +103,41 @@ scenario.exec.useExecResultPopupDiv = false;
 function scenarioShowExecResultPopup(title, text) {
     console.debug(`Displaying execution result popup with title='${title}' and text='${text}'`);
 
-    /** @var {HTMLElement?} */ const _resultDiv = document.getElementById("exec-result");
-    if (scenario.exec.useExecResultPopupDiv && _resultDiv) {
-        // Set popup title.
-        for (/** @var {HTMLElement} */ const _titleDiv of _resultDiv.getElementsByClassName("title")) {
-            _titleDiv.textContent = title;
-        }
-        // Set popup content.
-        for (/** @var {HTMLElement} */ const _textDiv of _resultDiv.getElementsByClassName("text")) {
-            _textDiv.textContent = text;
-        }
+    // Popup div.
 
-        // Display the popup.
-        _resultDiv.style.display = "block";
-    } else {
-        // Display the message with `alert()`.
-        alert(`[${title}]\n\n${text}`);
+    if (scenario.exec.useExecResultPopupDiv) {
+        for (/** @var {HTMLElement} */ const _resultDiv of scenario.findNodes(document.body, "div#exec-result")) {
+            // Set popup title.
+            for (/** @var {HTMLElement} */ const _titleDiv of scenario.findNodes(_resultDiv, "div.title")) {
+                _titleDiv.textContent = title;
+            }
+            // Set popup content.
+            for (/** @var {HTMLElement} */ const _textDiv of scenario.findNodes(_resultDiv, "div.text")) {
+                _textDiv.textContent = text;
+            }
 
-        // Refresh the page.
-        scenario.exec._refreshCurrentPage();
+            // Display the popup.
+            _resultDiv.style.display = "block";
+
+            return;
+        }
     }
+
+
+    // Fallback => `alert()`.
+
+    // Display the message with `alert()`.
+    alert(`[${title}]\n\n${text}`);
+
+    // Refresh the page.
+    scenario.exec._refreshCurrentPage();
 }
+
 
 // Install the event listener for the OK button in the `.exec-result` popup div.
 scenario.onLoad(() => {
-    /** @var {HTMLElement?} */ const _resultDiv = document.getElementById("exec-result");
-    if (_resultDiv) {
-        for (/** @var {HTMLElement} */ const _button of _resultDiv.getElementsByClassName("exec-result button validate")) {
+    for (/** @var {HTMLElement} */ const _resultDiv of scenario.findNodes(document.body, "div#exec-result")) {
+        for (/** @var {HTMLElement} */ const _button of scenario.findNodes(_resultDiv, "a.exec-result.button.validate")) {
             _button.addEventListener("click", (e) => {
                 e.preventDefault();
 

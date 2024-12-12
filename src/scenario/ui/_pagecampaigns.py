@@ -27,6 +27,7 @@ if True:
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
+    from ._tables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
 
 
 class CampaignListPage(_HttpRequestHandlerImpl):
@@ -95,6 +96,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param request: Input request being processed.
         """
+        from ._tables import CollapsibleTableGenerator
         # Sort campaign executions.
         _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]
 
@@ -102,21 +104,20 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         _campaign_execution_ref = self._mergecampaignexecutionref(_campaign_executions)  # type: scenario.CampaignExecution
 
         with html.addnode("div", id="campaigns"):
+            _table_generator = CollapsibleTableGenerator(html, table_id="campaigns")  # type: CollapsibleTableGenerator
+
             # Expand/collapse all buttons.
-            html.addnode("a", id="expand-all", classes=["button"], href="#", text="Expand all")
-            html.addnode("a", id="collapse-all", classes=["button"], href="#", text="Collapse all")
+            _table_generator.addexpandallbutton()
+            _table_generator.addcollapseallbutton()
 
             # Test suites and test cases with campaign results.
-            with html.addnode("table"):
+            with _table_generator.addtable():
                 # Table head: list of campaign names (recent first order, as given by `_sortedcampaignlist()` before).
                 self._campaignlist2tablehead(html, _campaign_executions)
 
                 # Test suites and cases with execution status.
                 for _test_suite_execution_ref in _campaign_execution_ref.test_suite_executions:  # type: scenario.TestSuiteExecution
-                    self._testsuiteexecution2tablerow(html, request, _campaign_executions, _test_suite_execution_ref)
-
-            # JS to handle expandable/collapsable test suites.
-            html.jscontent2html(scenario.Path(__file__).with_suffix(".js").name)
+                    self._testsuiteexecution2tablerow(_table_generator, request, _campaign_executions, _test_suite_execution_ref)
 
     def _sortedcampaignlist(self):  # type: (...) -> typing.Sequence[scenario.CampaignExecution]
         """
@@ -204,7 +205,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
     def _testsuiteexecution2tablerow(
             self,
-            html,  # type: _HtmlDocumentType
+            table_generator,  # type: _CollapsibleTableGeneratorType
             request,  # type: _HttpRequestType
             campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             test_suite_execution_ref,  # type: scenario.TestSuiteExecution
@@ -212,22 +213,21 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         """
         Generates HTML for a given reference test suite across every campaign.
 
-        :param html: HTML output page to feed.
+        :param table_generator: Table generator. Provides the HTML output page to feed.
         :param request: Input request being processed.
         :param campaign_executions: Ordered list of campaigns to displays execution status for.
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
         """
         # One first line for the test suite name, with execution status for each campaign.
-        with html.addnode("tr", classes=["suite", f"suite={test_suite_execution_ref.name}"]):
-            # Test suite icon + name.
-            with html.addnode("th"):
+        with table_generator.addmainrow(main_row_id=test_suite_execution_ref.name, classes=["suite"]):
+            # Test suite expand/collapse button + name.
+            with table_generator.html.addnode("th"):
                 # Expand/collapse button.
-                with html.addnode("a", classes=["suite", "button"], href="#"):
-                    html.addnode("span", text="-")
+                table_generator.addtogglebutton(main_row_id=test_suite_execution_ref.name)
 
                 # Test suite name.
-                with html.addnode("span", classes=["suite", "name"]):
-                    html.addtext(test_suite_execution_ref.name)
+                with table_generator.html.addnode("span", classes=["suite", "name"]):
+                    table_generator.html.addtext(test_suite_execution_ref.name)
 
             # Test suite result for each campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
@@ -240,17 +240,17 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    html.addnode("td", classes=[_execution_status.lower()], text=_execution_status)
+                    table_generator.html.addnode("td", classes=[_execution_status.lower()], text=_execution_status)
                 else:
-                    html.addnode("td")
+                    table_generator.html.addnode("td")
 
         # Test case lines.
         for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: scenario.TestCaseExecution
-            self._testcaseexecution2tablecell(html, request, campaign_executions, test_suite_execution_ref, _test_case_execution_ref)
+            self._testcaseexecution2tablerow(table_generator, request, campaign_executions, test_suite_execution_ref, _test_case_execution_ref)
 
-    def _testcaseexecution2tablecell(
+    def _testcaseexecution2tablerow(
             self,
-            html,  # type: _HtmlDocumentType
+            table_generator,  # type: _CollapsibleTableGeneratorType
             request,  # type: _HttpRequestType  # noqa  ## Unused parameter
             campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             test_suite_execution_ref,  # type: scenario.TestSuiteExecution
@@ -259,7 +259,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         """
         Generates HTML for a given reference test case across every campaign.
 
-        :param html: HTML output page to feed.
+        :param table_generator: Table generator. Provides the HTML output page to feed.
         :param request: Input request being processed.
         :param campaign_executions: Ordered list of campaigns to displays execution status for.
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
@@ -268,20 +268,20 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         from ._pagescenario import ScenarioPage
         from ._reqbl import UI_REQ_BASELINES
 
-        with html.addnode("tr", classes=["case", f"suite={test_suite_execution_ref.name}"]):
-            # Test case icon + name, with scenario URL from `UI_REQ_BASELINES.main.scenarios` if available.
+        with table_generator.addcollapsiblerow(main_row_id=test_suite_execution_ref.name, classes=["case"]):
+            # Test case name, with scenario URL from `UI_REQ_BASELINES.main.scenarios` if available.
             _scenario_url = ""  # type: str
             for _main_scenario_definition in UI_REQ_BASELINES.main.scenarios:  # type: scenario.ScenarioDefinition
                 if _main_scenario_definition.name == test_case_execution_ref.name:
                     _scenario_url = ScenarioPage.mkurl(_main_scenario_definition)
                     break
-            with html.addnode("th"):
+            with table_generator.html.addnode("th"):
                 # Test case name.
-                with html.addnode("span", classes=["case", "name"]):
+                with table_generator.html.addnode("span", classes=["case", "name"]):
                     if _scenario_url:
-                        html.addlink(href=_scenario_url, title="Scenario details", text=test_case_execution_ref.name)
+                        table_generator.html.addlink(href=_scenario_url, title="Scenario details", text=test_case_execution_ref.name)
                     else:
-                        html.addtext(test_case_execution_ref.name)
+                        table_generator.html.addtext(test_case_execution_ref.name)
 
             # Test case result for each campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
@@ -300,10 +300,10 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    with html.addnode("td", classes=[_execution_status.lower()]):
+                    with table_generator.html.addnode("td", classes=[_execution_status.lower()]):
                         if _scenario_url:
-                            html.addlink(href=_scenario_url, title="Scenario results", text=_execution_status)
+                            table_generator.html.addlink(href=_scenario_url, title="Scenario results", text=_execution_status)
                         else:
-                            html.addtext(_execution_status)
+                            table_generator.html.addtext(_execution_status)
                 else:
-                    html.addnode("td")
+                    table_generator.html.addnode("td")

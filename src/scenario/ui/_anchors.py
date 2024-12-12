@@ -47,25 +47,54 @@ class Anchor(abc.ABC):
         :param name: Anchor name.
         :param link_title: ``@title`` attribute value, used for popup info on anchor link hover. Anchor name by default.
         :param link_text: Text content for the ancho link. "(<>)" by default.
-        :return: Context manager focused on the highlightable div created.
+        :return: HTML node context focused on the highlightable ``<div></div>`` created.
         """
         if not link_text:
             link_text = "(<>)"
 
+        # Ensure `name` is CSS compatible.
+        name = html.mkcsscompatibleclass(name)
+
         # Container div.
-        with html.addnode("div", classes=["anchor", "container", f"name={name}", *classes]):
+        with html.addnode(
+            "div",
+            classes=[
+                *classes,
+                "anchor", "container",
+                html.mknamedobjectidclass("anchor", name),
+            ],
+        ):
             # Anchor link.
             with html.addlink(
-                classes=[*classes, "anchor-link", name],
+                classes=[
+                    *classes,
+                    "anchor-link",
+                    html.mknamedobjectidclass("anchor", name),
+                ],
                 href=f"#{name}",
                 title=link_title or name,
             ):
                 html.addnode("span", text=link_text)
 
             # Focusable div.
-            _anchor_div_ctx = html.addnode("div", classes=["anchor", "focusable", f"name={name}", *classes])  # type: _HtmlDocumentType.NodeContext
+            _anchor_div_ctx = html.addnode(
+                "div",
+                classes=[
+                    *classes,
+                    "anchor", "focusable",
+                    html.mknamedobjectidclass("anchor", name),
+                ],
+            )  # type: _HtmlDocumentType.NodeContext
             with _anchor_div_ctx:
                 # Anchor.
-                html.addnode("a", classes=["anchor", f"name={name}", *classes], name=name)
+                html.addnode(
+                    "a",
+                    classes=[
+                        *classes,
+                        "anchor",
+                        html.mknamedobjectidclass("anchor", name),
+                    ],
+                    name=name,
+                )
 
         return _anchor_div_ctx

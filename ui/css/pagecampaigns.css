@@ -17,17 +17,11 @@
 
 /**
  * @file
- * @brief Campaign list page rules.
+ * @brief Campaign list page CSS rules.
  */
 
 
-/* General page rules. */
-
-    /* Space between expand/collapse all buttons and the table below. */
-    div#campaigns table { margin-top: 5px; }
-
-
-/* General table styles. */
+/* Header cells. */
 
     /* Light grey background for test suite rows, and test case names. */
     div#campaigns tr.suite th { background-color: #e7e7e7; }
@@ -38,39 +32,16 @@
     div#campaigns td { text-align: center; }
 
 
-/* Test status colors. */
+/* Execution status colors. */
 
-    /* Display test suite status in bold color. */
+    /* Display test suite execution status in bold color. */
     div#campaigns tr.suite td.success { color: green; font-weight: bold; }
     div#campaigns tr.suite td.warnings { color: orange; font-weight: bold; }
     div#campaigns tr.suite td.fail { color: red; font-weight: bold; }
 
-    /* Display test case status with bold white in background color. */
+    /* Display test case execution status with bold white in background color. */
     /* Note: Bold white set only when a link exists, which is fine. */
     div#campaigns tr.case td.success { background-color: green; }
     div#campaigns tr.case td.warnings { background-color: orange; }
     div#campaigns tr.case td.fail { background-color: red; }
     div#campaigns tr.case td a { color: white; font-weight: bold; text-decoration: none; }
-
-
-/* Expand / collapse buttons. */
-
-    /* Rollback general button styles. */
-    div#campaigns tr.suite a.button { padding: unset; }
-    div#campaigns tr.suite a.button { border: unset; border-radius: unset; }
-    div#campaigns tr.suite a.button:hover { background-color: unset; }
-
-    /* Expand / collapse icons for test suite buttons. */
-    div#campaigns tr.suite a.button span { display: none; }  /* Hide button texts. */
-    div#campaigns tr.suite a.button { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
-    div#campaigns tr.suite a.button { width: 1em; height: 1em; }  /* Button size. */
-    div#campaigns tr.suite a.button { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */
-    div#campaigns tr.suite a.button { background-image: url("/img/down-arrow-5-svgrepo-com.svg"); }  /* Default icon: expanded. */
-    div#campaigns tr.suite.expanded a.button { background-image: url("/img/down-arrow-5-svgrepo-com.svg"); }  /* Expanded icon. */
-    div#campaigns tr.suite.collapsed a.button { background-image: url("/img/right-arrow-svgrepo-com.svg"); }  /* Collapsed icon. */
-
-
-/* Test case alignment. */
-
-    /* Add test case indentation for alignment under test suite buttons. */
-    div#campaigns tr.case th { padding-left: 2em; }

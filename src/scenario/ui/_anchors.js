@@ -28,7 +28,7 @@ scenario.anchors = {};
 /**
  * @brief Extracts an anchor name from a URL.
  * @param {string} url URL to extract anchor name from.
- * @returns {string|null} Anchor name if found, `null` otherwise.
+ * @returns {string | null} Anchor name if found, `null` otherwise.
  */
 scenario.anchors._extractAnchorNameFromUrl = (url) => {
     if (url.includes("#")) {
@@ -45,8 +45,8 @@ scenario.anchors._extractAnchorNameFromUrl = (url) => {
  * @returns {void}
  */
 scenario.anchors._setFocus = (anchorName) => {
-    for (/** @var {HTMLElement} */ const _focusableDiv of document.getElementsByClassName("anchor focusable")) {
-        if (_focusableDiv.classList.contains(`name=${anchorName}`)) {
+    for (/** @var {HTMLElement} */ const _focusableDiv of scenario.findNodes(document.body, "div.anchor.focusable")) {
+        if (scenario.getNamedObjectIdFromClasses(_focusableDiv, "anchor") === anchorName) {
             console.debug(`Adding .focus class to anchor '${anchorName}'`);
             _focusableDiv.classList.add("focus");
         } else {
@@ -58,7 +58,7 @@ scenario.anchors._setFocus = (anchorName) => {
 
 // Add `.focus` class on anchor targetted by the current URL.
 scenario.onLoad(() => {
-    /** @var {string|null} */ const _anchorName = scenario.anchors._extractAnchorNameFromUrl(window.location.href);
+    /** @var {string | null} */ const _anchorName = scenario.anchors._extractAnchorNameFromUrl(window.location.href);
     if (_anchorName) {
         console.debug(`Focusing anchor '${_anchorName}' on load`);
         scenario.anchors._setFocus(_anchorName);
@@ -66,16 +66,16 @@ scenario.onLoad(() => {
 });
 
 
-// Ensure `.anchor-link`s do modify the `.focus` class when clicked.
+// Ensure `a.anchor-link`s do modify the `.focus` class when clicked.
 scenario.onLoad(() => {
-    for (/** @var {HTMLElement} */ const _anchorLink of document.getElementsByClassName("anchor-link")) {
+    for (/** @var {HTMLElement} */ const _anchorLink of scenario.findNodes(document.body, "a.anchor-link")) {
         _anchorLink.addEventListener("click", (e) => {
             // Don't prevent default.
             //e.preventDefault();
 
-            /** @var {string|null} */ const _href = _anchorLink.getAttribute("href");
+            /** @var {string | null} */ const _href = _anchorLink.getAttribute("href");
             if (_href) {
-                /** @var {string|null} */ const _anchorName = scenario.anchors._extractAnchorNameFromUrl(_href);
+                /** @var {string | null} */ const _anchorName = scenario.anchors._extractAnchorNameFromUrl(_href);
                 if (_anchorName) {
                     console.debug(`Anchor link '${_anchorName}' clicked`);
                     scenario.anchors._setFocus(_anchorName);

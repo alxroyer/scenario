@@ -424,5 +424,5 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         if args:
             _url += f"?{urllib.parse.urlencode(args)}"
         if anchor:
-            _url += f"#{urllib.parse.quote(anchor)}"
+            _url += f"#{urllib.parse.quote(HtmlDocument.mkcsscompatibleclass(anchor))}"
         return _url
