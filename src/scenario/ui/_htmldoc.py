@@ -149,10 +149,12 @@ class HtmlDocument(scenario.Logger):
 
         Instantiates :attr:`body`, :attr:`_h1` and :attr:`main_div`.
         """
+        from ._exec import Exec
+
         with self.addnode("body") as self.body:
             # Menu and reload button.
             self._menu2html()
-            self._execresultdiv2html()
+            Exec.execresultdiv2html(self)
             self._h1 = self.addnode("h1").new_child
             self.main_div = self.addnode("div", id="main").new_child
 
@@ -176,18 +178,6 @@ class HtmlDocument(scenario.Logger):
             self.addlink(classes=["menu"], href=DownstreamTraceabilityPage.mkurl(), text="Downstream traceability")
             self.addlink(classes=["menu"], href=UpstreamTraceabilityPage.mkurl(), text="Upstream traceability")
             self.addlink(classes=["menu"], href=ConfigurationPage.mkurl(), text="Configuration")
-
-    def _execresultdiv2html(self):  # type: (...) -> None
-        """
-        Generates the hidden ``.exec-result`` popup div.
-
-        Hidden by default.
-        Used by '_exec.js' to display execution results.
-        """
-        with self.addnode("div", id="exec-result", style="display: none;"):
-            self.addnode("div", classes=["exec-result", "title"])
-            self.addnode("div", classes=["exec-result", "text"])
-            self.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
 
     def jscontent2html(
             self,

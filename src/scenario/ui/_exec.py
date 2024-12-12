@@ -81,6 +81,23 @@ class Exec(_HttpRequestHandlerImpl):
         )
 
     @staticmethod
+    def execresultdiv2html(
+            html,  # type: _HtmlDocumentType
+    ):  # type: (...) -> None
+        """
+        Generates the hidden ``.exec-result`` popup div.
+
+        Hidden by default.
+        Used by '_exec.js' to display execution results.
+
+        :param html: HTML output page to feed.
+        """
+        with html.addnode("div", id="exec-result", style="display: none;"):
+            html.addnode("div", classes=["exec-result", "title"])
+            html.addnode("div", classes=["exec-result", "text"])
+            html.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
+
+    @staticmethod
     def actionbutton2html(
             html,  # type: _HtmlDocumentType
             request,  # type: _HttpRequestType
