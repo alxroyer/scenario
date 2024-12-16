@@ -97,6 +97,12 @@
     - Display warnings when reading a while with a higher version than the current `scenario` version.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
+    - And/or refactor steps as contexts => `with` statement would make it possible de define substeps under a main one, for:
+        - Pre/post conditions,
+        - Section / sub-test case,
+        - No-verification actions => known issue filtering...
+        - API to be defined.
+        - Step indentation shall be refined meanwhile.
 - Issue #70: CTRL+C does not stop a list of tests executed in a single command.
 - Issue #63: Add the ability to give explanation texts.
     - Add a `explain()` method.
