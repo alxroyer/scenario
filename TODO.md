@@ -21,7 +21,8 @@
     - Implement first .js and .css files:
         - Improve downstream traceability page:
             - Align cells top.
-            - Expand/fold subrefs, folded by default.
+            - Avoid displaying expand buttons for main rows without related collapsible rows.
+            - Collapse subref rows by default.
             - Expand/fold steps under scenarios.
                 - Sum-up step comments when the scenario does not have its own comments.
             - Add upstream traceability link for steps.

@@ -112,12 +112,12 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
             # Test suites and test cases with campaign results.
             with _table_generator.addtable():
-                # Table head: list of campaign names (recent first order, as given by `_sortedcampaignlist()` before).
+                # Heading row: list of campaign names (recent first order, as given by `_sortedcampaignlist()` before).
                 self._campaignlist2tablehead(html, _campaign_executions)
 
                 # Test suites and cases with execution status.
                 for _test_suite_execution_ref in _campaign_execution_ref.test_suite_executions:  # type: scenario.TestSuiteExecution
-                    self._testsuiteexecution2tablerow(_table_generator, request, _campaign_executions, _test_suite_execution_ref)
+                    self._testsuite2tablerow(_table_generator, request, _campaign_executions, _test_suite_execution_ref)
 
     def _sortedcampaignlist(self):  # type: (...) -> typing.Sequence[scenario.CampaignExecution]
         """
@@ -203,7 +203,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                 with html.addnode("th"):
                     html.addlink(href=CampaignPage.mkurl(_campaign_execution), title="Campaign details", text=_campaign_execution.name)
 
-    def _testsuiteexecution2tablerow(
+    def _testsuite2tablerow(
             self,
             table_generator,  # type: _CollapsibleTableGeneratorType
             request,  # type: _HttpRequestType
@@ -246,9 +246,9 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
         # Test case lines.
         for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: scenario.TestCaseExecution
-            self._testcaseexecution2tablerow(table_generator, request, campaign_executions, test_suite_execution_ref, _test_case_execution_ref)
+            self._testcase2tablerow(table_generator, request, campaign_executions, test_suite_execution_ref, _test_case_execution_ref)
 
-    def _testcaseexecution2tablerow(
+    def _testcase2tablerow(
             self,
             table_generator,  # type: _CollapsibleTableGeneratorType
             request,  # type: _HttpRequestType  # noqa  ## Unused parameter

@@ -28,6 +28,7 @@ if typing.TYPE_CHECKING:
     from ._debugclasses import UIDebugClass as _UIDebugClassType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
+    from ._tables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
 
 
 class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
@@ -142,10 +143,19 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         """
+        from ._tables import CollapsibleTableGenerator
+
         with html.addnode("div", id="upstream-traceability"):
+            # Compute upstream traceability.
             _upstream_traceability = scenario.ReqTraceability(req_baseline).getupstream()  # type: scenario.ReqUpstreamTraceabilityType
 
-            with html.addnode("table"):
+            _table_generator = CollapsibleTableGenerator(html, table_id="upstream-traceability")  # type: CollapsibleTableGenerator
+
+            # Expand/collapse all buttons.
+            _table_generator.addexpandallbutton()
+            _table_generator.addcollapseallbutton()
+
+            with _table_generator.addtable():
                 # Heading row.
                 with html.addnode("tr", classes=["head"]):
                     html.addnode("th", classes=["req-verifier"], text="Scenario")
@@ -153,49 +163,56 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
                 # Scenario rows.
                 for _upstream_req_verifier in _upstream_traceability:  # type: scenario.ReqTraceability.Upstream.ReqVerifier
-                    if isinstance(_upstream_req_verifier.req_verifier, scenario.ScenarioDefinition):
-                        self._scenario2html(html, _upstream_req_verifier)
+                    self._reqverifier2html(_table_generator, _upstream_req_verifier)
 
-    def _scenario2html(
+    def _reqverifier2html(
             self,
-            html,  # type: _HtmlDocumentType
-            upstream_scenario,  # type: scenario.ReqTraceability.Upstream.ReqVerifier
+            table_generator,  # type: _CollapsibleTableGeneratorType
+            upstream_req_verifier,  # type: scenario.ReqTraceability.Upstream.ReqVerifier
     ):  # type: (...) -> None
         """
         Builds the HTML content for a scenario.
 
-        :param html: HTML output page to feed.
-        :param upstream_scenario: Scenario to build HTML content for.
+        :param table_generator: Table generator. Provides the HTML output page to feed.
+        :param upstream_req_verifier: Scenario or step to build HTML content for.
         """
         from ._anchors import Anchor
         from ._pagescenario import ScenarioPage
 
-        # TODO: Remove when `UpstreamTraceabilityPage` displays step entries.
-        if not isinstance(upstream_scenario.req_verifier, scenario.ScenarioDefinition):
-            return
-
-        with html.addnode("tr", classes=["scenario"]):
+        with (
+            table_generator.addmainrow(main_row_id=upstream_req_verifier.req_verifier.name, classes=["scenario"])
+            if isinstance(upstream_req_verifier.req_verifier, scenario.ScenarioDefinition) else
+            table_generator.addcollapsiblerow(main_row_id=upstream_req_verifier.req_verifier.scenario.name, classes=["step"])
+        ):
             # Scenario.
-            with html.addnode("td", classes=["req-verifier"]):
+            with table_generator.html.addnode("td", classes=["req-verifier"]):
+                if isinstance(upstream_req_verifier.req_verifier, scenario.ScenarioDefinition):
+                    # Expand/collapse button.
+                    table_generator.addtogglebutton(main_row_id=upstream_req_verifier.req_verifier.name)
+
                 # Anchor.
-                with Anchor.add(html, name=upstream_scenario.req_verifier.name):
-                    # Scenario name, with link to scenario details page.
-                    html.addlink(
-                        classes=["scenario", "name"],
-                        href=ScenarioPage.mkurl(upstream_scenario.req_verifier),
+                with Anchor.add(table_generator.html, name=upstream_req_verifier.full_name):
+                    # Scenario / step name, with link to scenario details page.
+                    table_generator.html.addlink(
+                        classes=["req-verifier", "name"],
+                        href=ScenarioPage.mkurl(upstream_req_verifier.req_verifier),
                         title="Scenario details",
-                        text=upstream_scenario.req_verifier.name,
+                        text=upstream_req_verifier.name,
                     )
 
-                    # Title.
-                    html.addnode("span", classes=["scenario", "sep"], text=":")
-                    html.addnode("span", classes=["scenario", "title"], text=upstream_scenario.req_verifier.title)
+                    # Scenario title / step description.
+                    if isinstance(upstream_req_verifier.req_verifier, scenario.ScenarioDefinition) and upstream_req_verifier.req_verifier.title:
+                        table_generator.html.addnode("span", classes=["scenario", "sep"], text=":")
+                        table_generator.html.addnode("span", classes=["scenario", "title"], text=upstream_req_verifier.req_verifier.title)
+                    if isinstance(upstream_req_verifier.req_verifier, scenario.StepDefinition) and upstream_req_verifier.req_verifier.description:
+                        table_generator.html.addnode("span", classes=["step", "sep"], text=":")
+                        table_generator.html.addnode("span", classes=["step", "description"], text=upstream_req_verifier.req_verifier.description)
 
             # Requirement coverage.
-            with html.addnode("td", classes=["req-ref"]):
-                with html.addnode("ul"):
-                    for _upstream_req in upstream_scenario.reqs:  # type: scenario.ReqTraceability.Upstream.Req
-                        self._req2html(html, _upstream_req)
+            with table_generator.html.addnode("td", classes=["req-ref"]):
+                with table_generator.html.addnode("ul"):
+                    for _upstream_req in upstream_req_verifier.reqs:  # type: scenario.ReqTraceability.Upstream.Req
+                        self._req2html(table_generator.html, _upstream_req)
 
     def _req2html(
             self,

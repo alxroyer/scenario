@@ -28,6 +28,7 @@ if typing.TYPE_CHECKING:
     from ._debugclasses import UIDebugClass as _UIDebugClassType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
+    from ._tables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
 
 
 class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
@@ -142,10 +143,19 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         """
+        from ._tables import CollapsibleTableGenerator
+
         with html.addnode("div", id="downstream-traceability"):
+            # Compute downstream traceability.
             _downstream_traceability = scenario.ReqTraceability(req_baseline).getdownstream()  # type: scenario.ReqDownstreamTraceabilityType
 
-            with html.addnode("table"):
+            _table_generator = CollapsibleTableGenerator(html, table_id="downstream-traceability")  # type: CollapsibleTableGenerator
+
+            # Expand/collapse all buttons.
+            _table_generator.addexpandallbutton()
+            _table_generator.addcollapseallbutton()
+
+            with _table_generator.addtable():
                 # Heading row.
                 with html.addnode("tr", classes=["head"]):
                     html.addnode("th", classes=["req-ref"], text="Requirement")
@@ -153,29 +163,37 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
                 # Requirement reference rows.
                 for _downstream_req_ref in _downstream_traceability:  # type: scenario.ReqTraceability.Downstream.ReqRef
-                    self._reqref2html(html, _downstream_req_ref)
+                    self._reqref2html(_table_generator, _downstream_req_ref)
 
     def _reqref2html(
             self,
-            html,  # type: _HtmlDocumentType
+            table_generator,  # type: _CollapsibleTableGeneratorType
             downstream_req_ref,  # type: scenario.ReqTraceability.Downstream.ReqRef
     ):  # type: (...) -> None
         """
         Builds the HTML content for a requirement reference.
 
-        :param html: HTML output page to feed.
+        :param table_generator: Table generator. Provides the HTML output page to feed.
         :param downstream_req_ref: Requirement reference to build HTML content for.
         """
         from ._anchors import Anchor
         from ._pagereqs import RequirementsPage
 
-        with html.addnode("tr", classes=["main" if downstream_req_ref.req_ref.ismain() else "sub"]):
+        with (
+            table_generator.addmainrow(main_row_id=downstream_req_ref.req_ref.id, classes=["main"])
+            if downstream_req_ref.req_ref.ismain() else
+            table_generator.addcollapsiblerow(main_row_id=downstream_req_ref.req_ref.req.id, classes=["sub"])
+        ):
             # Requirement.
-            with html.addnode("td", classes=["req-ref"]):
+            with table_generator.html.addnode("td", classes=["req-ref"]):
+                if downstream_req_ref.req_ref.ismain():
+                    # Expand/collapse button.
+                    table_generator.addtogglebutton(main_row_id=downstream_req_ref.req_ref.id)
+
                 # Anchor.
-                with Anchor.add(html, name=downstream_req_ref.req_ref.id):
+                with Anchor.add(table_generator.html, name=downstream_req_ref.req_ref.id):
                     # Requirement id, with link to requirement details.
-                    html.addlink(
+                    table_generator.html.addlink(
                         classes=["req-ref", "id"],
                         href=RequirementsPage.mkurl(downstream_req_ref.req_ref),
                         title="Requirement details",
@@ -184,14 +202,14 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
                     # Title.
                     if downstream_req_ref.req_ref.ismain() and downstream_req_ref.req_ref.req.title:
-                        html.addnode("span", classes=["req-ref", "sep"], text=":")
-                        html.addnode("span", classes=["req-ref", "title"], text=downstream_req_ref.req_ref.req.title)
+                        table_generator.html.addnode("span", classes=["req-ref", "sep"], text=":")
+                        table_generator.html.addnode("span", classes=["req-ref", "title"], text=downstream_req_ref.req_ref.req.title)
 
             # Test coverage.
-            with html.addnode("td", classes=["req-verifier"]):
-                with html.addnode("ul"):
+            with table_generator.html.addnode("td", classes=["req-verifier"]):
+                with table_generator.html.addnode("ul"):
                     for _downstream_scenario in downstream_req_ref.scenarios:  # type: scenario.ReqTraceability.Downstream.Scenario
-                        self._scenario2html(html, _downstream_scenario)
+                        self._scenario2html(table_generator.html, _downstream_scenario)
 
     def _scenario2html(
             self,
@@ -251,7 +269,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 html.addlink(
                     href=ScenarioPage.mkurl(downstream_step.step),
                     title="Scenario details",
-                    text=f"step#{downstream_step.step.number} ({downstream_step.step.name})",
+                    text=downstream_step.name,
                 )
 
             # Traceability comments.
