@@ -25,6 +25,7 @@
     table { border-collapse: collapse; }  /* Avoid spacing between cells. */
     table th, table td { border: 1px solid; border-color: #e7e7e7; }  /* Borders 1px in light grey. */
     table th { background-color: #aaa; }  /* `<th></th>` background in dark grey. */
+    table th, table td { vertical-align: top; }
 
 
 /* Collapsible tables. */
@@ -34,7 +35,7 @@
 
     /* Rollback general button styles. */
     table.collapsible tr.main-row a.button.toggle-row { padding: unset; }
-    table.collapsible tr.main-row a.button.toggle-row { border: unset; border-radius: unset; }
+    table.collapsible tr.main-row a.button.toggle-row { border: unset; background-color: unset; border-radius: unset; }
     table.collapsible tr.main-row a.button.toggle-row:hover { background-color: unset; }
 
     /* `a.toggle-row` buttons. */

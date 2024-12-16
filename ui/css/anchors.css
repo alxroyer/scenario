@@ -21,6 +21,9 @@
  */
 
 
+/* Container display. */
+    div.anchor.container { display: inline-block; }  /* Keep *inline* display. */
+
 /* Anchor links. */
     a.anchor-link span { display: none; }  /* Hide the default text inner <span></span>. */
     a.anchor-link { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */

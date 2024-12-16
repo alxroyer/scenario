@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-
 /**
  * @file
- * @brief Main CSS file.
+ * @brief Downstream traceability page CSS rules.
  */
 
 
-@import url("/css/general.css");
-@import url("/css/buttons.css");
-@import url("/css/menu.css");
-@import url("/css/anchors.css");
-@import url("/css/traceability.css");
-@import url("/css/tables.css");
-@import url("/css/pagecampaigns.css");
-@import url("/css/pagereqs.css");
-@import url("/css/pagereqsdown.css");
-@import url("/css/pagereqsup.css");
-@import url("/css/exec.css");
+/* Avoid useless space for between `<td></td>` and inner `<ul></ul>`. */
+div#upstream-traceability td.req-ref ul { margin: 0px; }
