@@ -920,6 +920,28 @@ if True:
     from ._reqtraceability import ReqTraceability as ReqTraceability
     __all__.append("ReqTraceability")
 
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: ReqDownstreamTraceabilityType
+
+        Downstream requirement traceability type.
+
+        .. seealso:: :obj:`._reqtraceability.ReqDownstreamTraceabilityType` implementation.
+    """
+    from ._reqtraceability import ReqDownstreamTraceabilityType as ReqDownstreamTraceabilityType
+    __all__.append("ReqDownstreamTraceabilityType")
+
+if typing.TYPE_CHECKING:
+    __doc__ += """
+    .. py:attribute:: ReqUpstreamTraceabilityType
+
+        Upstream requirement traceability type.
+
+        .. seealso:: :obj:`._reqtraceability.ReqUpstreamTraceabilityType` implementation.
+    """
+    from ._reqtraceability import ReqUpstreamTraceabilityType as ReqUpstreamTraceabilityType
+    __all__.append("ReqUpstreamTraceabilityType")
+
 if True:
     __doc__ += """
     .. py:attribute:: req_mgt

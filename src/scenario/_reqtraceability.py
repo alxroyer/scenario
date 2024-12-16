@@ -258,6 +258,20 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 self.downstream_scenario.steps.append(self)
 
+            @property
+            def name(self):  # type: () -> str
+                """
+                Step name.
+                """
+                return ReqTraceabilityHelper.mkstepname(self.step)
+
+            @property
+            def full_name(self):  # type: () -> str
+                """
+                Scenario / step name.
+                """
+                return ReqTraceabilityHelper.mkstepfullname(self.step)
+
             def tojson(
                     self,
                     *,
@@ -293,7 +307,10 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         """
         Computes downstream traceability from the related baseline.
 
-        :return: Downstream traceability.
+        :return:
+            Downstream traceability.
+
+            Main and subreference requirement entries given whatever they are verified or not.
         """
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
@@ -303,7 +320,6 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         _downstream_req_refs = []  # type: typing.List[ReqTraceability.Downstream.ReqRef]
         for _req_ref in _all_req_refs:  # type: _ReqRefType
             _downstream_req_ref = ReqTraceability.Downstream.ReqRef(req_ref=_req_ref)  # type: ReqTraceability.Downstream.ReqRef
-            _downstream_req_refs.append(_downstream_req_ref)
 
             _downstream_scenario = None  # type: typing.Optional[ReqTraceability.Downstream.Scenario]
 
@@ -334,6 +350,9 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                         )  # type: ReqTraceability.Downstream.Step
                     else:
                         raise ValueError(f"Unexpected verifier {_req_verifier!r}")
+
+            # Save requirement reference entry in any case, even though no downstream traceability information.
+            _downstream_req_refs.append(_downstream_req_ref)
 
         self.debug("ReqTraceability.downstream() -> %d %s objects",
                    len(_downstream_req_refs), _FAST_PATH.reflection.qualname(ReqTraceability.Downstream.ReqRef))
@@ -382,7 +401,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         """
         Classes that describe an upstream traceability.
 
-        Upstream traceability is a matrix starting with scenarios, verifying requirements and/or subreferences.
+        Upstream traceability is a matrix starting with scenarios and steps, verifying requirements and/or subreferences.
         """
 
         #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for upstream traceability reports.
@@ -399,53 +418,82 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             :return: Upstream traceability JSON content.
             """
             _json = {}  # type: _JsonDictType
-            for _upstream_scenario in upstream_traceability:  # type: ReqTraceability.Upstream.Scenario
-                _json[_upstream_scenario.scenario.name] = _upstream_scenario.tojson()
+            for _upstream_req_verifier in upstream_traceability:  # type: ReqTraceability.Upstream.ReqVerifier
+                _json[_upstream_req_verifier.full_name] = _upstream_req_verifier.tojson()
             return _json
 
-        class Scenario:
+        class ReqVerifier:
             """
             Main entry for upstream traceability.
             """
 
             def __init__(
                     self,
-                    scenario,  # type: _ScenarioDefinitionType
+                    req_verifier,  # type: typing.Union[_ScenarioDefinitionType, _StepDefinitionType]
             ):  # type: (...) -> None
                 """
-                Builds a :class:`ReqTraceability.Upstream.Scenario` instance with related information.
+                Builds a :class:`ReqTraceability.Upstream.ReqVerifier` instance with related information.
 
-                :param scenario: Starting scenario.
+                :param req_verifier: Starting scenario or step.
                 """
-                #: Starting scenario, verifying requirements or not.
-                self.scenario = scenario  # type: _ScenarioDefinitionType
+                #: Starting scenario or step, verifying requirements or not.
+                self.req_verifier = req_verifier  # type: typing.Union[_ScenarioDefinitionType, _StepDefinitionType]
                 #: Requirements verified by the scenario.
                 self.reqs = []  # type: typing.List[ReqTraceability.Upstream.Req]
 
+            @property
+            def name(self):  # type: () -> str
+                """
+                Scenario name for scenarios, or "step#N (class)" for steps.
+                """
+                if isinstance(self.req_verifier, _ScenarioDefinitionImpl):
+                    return self.req_verifier.name
+                else:
+                    return ReqTraceabilityHelper.mkstepname(self.req_verifier)
+
+            @property
+            def full_name(self):  # type: () -> str
+                """
+                Scenario name for scenarios, or "scenario name/step name" for steps.
+                """
+                if isinstance(self.req_verifier, _ScenarioDefinitionImpl):
+                    return self.req_verifier.name
+                else:
+                    return ReqTraceabilityHelper.mkstepfullname(self.req_verifier)
+
             def tojson(self):  # type: (...) -> _JsonDictType
                 """
-                Upstream traceability JSON content generation for this scenario.
+                Upstream traceability JSON content generation for this scenario or step.
 
                 :return: Upstream traceability JSON content.
                 """
-                _json_scenario = {
-                    "name": self.scenario.name,
+                _json_req_verifier = {
+                    "name": self.full_name,
                     "reqs": {},
                 }  # type: _JsonDictType
 
-                if self.scenario.title:
-                    _json_scenario["title"] = self.scenario.title
+                if isinstance(self.req_verifier, _ScenarioDefinitionImpl):
+                    _json_req_verifier["type"] = "scenario"
+
+                    if self.req_verifier.title:
+                        _json_req_verifier["title"] = self.req_verifier.title
+
+                if isinstance(self.req_verifier, _StepDefinitionImpl):
+                    _json_req_verifier["type"] = "step"
+
+                    if self.req_verifier.description:
+                        _json_req_verifier["description"] = self.req_verifier.description
 
                 for _upstream_req in self.reqs:  # type: ReqTraceability.Upstream.Req
-                    _json_scenario["reqs"][_upstream_req.req.id] = _upstream_req.tojson()
+                    _json_req_verifier["reqs"][_upstream_req.req.id] = _upstream_req.tojson()
                     # Remove `ReqTraceability.Upstream.Req` id field, already given as the key entry.
-                    del _json_scenario["reqs"][_upstream_req.req.id]["id"]
+                    del _json_req_verifier["reqs"][_upstream_req.req.id]["id"]
 
-                return _json_scenario
+                return _json_req_verifier
 
         class Req:
             """
-            Requirement verified by a :class:`ReqTraceability.Upstream.Scenario`.
+            Main requirement verified by a :class:`ReqTraceability.Upstream.ReqVerifier`.
 
             Either directly, or through the scenario steps.
 
@@ -456,15 +504,15 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
             def __init__(
                     self,
-                    upstream_scenario,  # type: ReqTraceability.Upstream.Scenario
+                    upstream_req_verifier,  # type: ReqTraceability.Upstream.ReqVerifier
                     req,  # type: _ReqType
                     req_link,  # type: typing.Optional[_ReqLinkType]
             ):  # type: (...) -> None
                 """
                 Builds a :class:`ReqTraceability.Upstream.Req` instance with related information.
 
-                :param upstream_scenario:
-                    Scenario verifynig this requirement.
+                :param upstream_req_verifier:
+                    Scenario or step verifying this requirement.
                 :param req:
                     Requirement.
                 :param req_link:
@@ -472,8 +520,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                     May be ``None`` when the verifies subreferences of the requirement only, but not the main part.
                 """
-                #: Scenario verifying the requirement.
-                self.upstream_scenario = upstream_scenario  # type: ReqTraceability.Upstream.Scenario
+                #: Scenario or step verifying the requirement.
+                self.upstream_req_verifier = upstream_req_verifier  # type: ReqTraceability.Upstream.ReqVerifier
                 #: Requirement (main part) verified by the scenario.
                 self.req = req  # type: _ReqType
                 #: Optional direct link between the scenario (or one of its steps) and the requirement.
@@ -490,9 +538,14 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 self.req_subrefs = []  # type: typing.List[ReqTraceability.Upstream.ReqSubref]
 
                 if req_link:
-                    self.comments = req_link.comments or self.upstream_scenario.scenario.title
+                    self.comments = req_link.comments
+                if not self.comments:
+                    if isinstance(self.upstream_req_verifier.req_verifier, _ScenarioDefinitionImpl):
+                        self.comments = self.upstream_req_verifier.req_verifier.title
+                    if isinstance(self.upstream_req_verifier.req_verifier, _StepDefinitionImpl):
+                        self.comments = self.upstream_req_verifier.req_verifier.description or ""
 
-                self.upstream_scenario.reqs.append(self)
+                self.upstream_req_verifier.reqs.append(self)
 
             def tojson(self):  # type: (...) -> _JsonDictType
                 """
@@ -521,7 +574,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
         class ReqSubref:
             """
-            Requirement subreference verified by an initial :class:`ReqTraceability.Upstream.Scenario`.
+            Requirement subreference verified by an initial :class:`ReqTraceability.Upstream.ReqVerifier`.
 
             .. note::
                 Several instances of :class:`ReqTraceability.Upstream.ReqSubref` may exist for a single :class:`._reqref.ReqRef`.
@@ -552,7 +605,12 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 #: Comments attached with this link.
                 #:
                 #: When the link does not define an explicit comment, the scenario title is taken into account by default.
-                self.comments = req_link.comments or self.upstream_req.upstream_scenario.scenario.title  # type: str
+                self.comments = req_link.comments  # type: str
+                if not self.comments:
+                    if isinstance(self.upstream_req.upstream_req_verifier.req_verifier, _ScenarioDefinitionImpl):
+                        self.comments = self.upstream_req.upstream_req_verifier.req_verifier.title
+                    if isinstance(self.upstream_req.upstream_req_verifier.req_verifier, _StepDefinitionImpl):
+                        self.comments = self.upstream_req.upstream_req_verifier.req_verifier.description or ""
 
                 self.upstream_req.req_subrefs.append(self)
 
@@ -571,38 +629,50 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         """
         Computes upstream traceability for the related baseline.
 
-        :return: Upstream traceability.
+        :return:
+            Upstream traceability.
+
+            Scenario entries given even when verifying no requirement.
+            Step entries given only when verifying requirements.
         """
         if typing.TYPE_CHECKING:
             from ._reqtypes import SetWithReqLinksType
 
         self.debug("ReqTraceability.upstream(): Computing upstream traceability from %d scenarios", len(self.req_baseline.scenarios))
-        _upstream_scenarios = []  # type: typing.List[ReqTraceability.Upstream.Scenario]
+
+        _all_req_verifiers = []  # type: typing.List[typing.Union[_ScenarioDefinitionType, _StepDefinitionType]]
         for _scenario in self.req_baseline.scenarios:  # type: _ScenarioDefinitionType
-            _upstream_scenario = ReqTraceability.Upstream.Scenario(scenario=_scenario)  # type: ReqTraceability.Upstream.Scenario
-            _upstream_scenarios.append(_upstream_scenario)
+            _all_req_verifiers.append(_scenario)
+            _all_req_verifiers.extend(_scenario.steps)
+
+        _upstream_req_verifiers = []  # type: typing.List[ReqTraceability.Upstream.ReqVerifier]
+        for _req_verifier in _all_req_verifiers:  # type: typing.Union[_ScenarioDefinitionType, _StepDefinitionType]
+            _upstream_req_verifier = ReqTraceability.Upstream.ReqVerifier(req_verifier=_req_verifier)  # type: ReqTraceability.Upstream.ReqVerifier
 
             _upstream_req = None  # type: typing.Optional[ReqTraceability.Upstream.Req]
 
-            _req_ref_set = _scenario.getreqrefs(walk_steps=True)  # type: SetWithReqLinksType[_ReqRefType]
+            _req_ref_set = (
+                _req_verifier.getreqrefs(walk_steps=True) if isinstance(_req_verifier, _ScenarioDefinitionImpl)
+                else _req_verifier.getreqrefs()
+            )  # type: SetWithReqLinksType[_ReqRefType]
             for _req_ref in _ReqRefImpl.orderedset(_req_ref_set):  # type: _ReqRefType
                 for _req_link in _req_ref_set[_req_ref]:  # type: _ReqLinkType
                     if _req_ref.ismain():
                         if (not _upstream_req) or (_upstream_req.req is not _req_ref.req):
                             _upstream_req = ReqTraceability.Upstream.Req(
-                                _upstream_scenario,  # Memo: `_upstream_req` automatically added to `_upstream_scenario`.
+                                _upstream_req_verifier,  # Memo: `_upstream_req` automatically added to `_upstream_req_verifier`.
                                 req=_req_ref.req, req_link=_req_link,
                             )
                         else:
                             self.debug(
                                 "%s -> %s already known through [%s], [%s] ignored",
-                                _scenario, _req_ref.req, _upstream_req.req_link, _req_link,
+                                _req_verifier, _req_ref.req, _upstream_req.req_link, _req_link,
                             )
                     else:
                         # Ensure the main requirement is set.
                         if (not _upstream_req) or (_upstream_req.req is not _req_ref.req):
                             _upstream_req = ReqTraceability.Upstream.Req(
-                                _upstream_scenario,  # Memo: `_upstream_req` automatically added to `_upstream_scenario`.
+                                _upstream_req_verifier,  # Memo: `_upstream_req` automatically added to `_upstream_req_verifier`.
                                 req=_req_ref.req, req_link=None,
                             )
                         _upstream_req_subref = ReqTraceability.Upstream.ReqSubref(
@@ -610,9 +680,13 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                             req_subref=_req_ref, req_link=_req_link,
                         )  # type: ReqTraceability.Upstream.ReqSubref
 
+            # Avoid step entries without upstream traceability information.
+            if isinstance(_req_verifier, _ScenarioDefinitionImpl) or _upstream_req_verifier.reqs:
+                _upstream_req_verifiers.append(_upstream_req_verifier)
+
         self.debug("ReqTraceability.upstream() -> %d %s objects",
-                   len(_upstream_scenarios), _FAST_PATH.reflection.qualname(ReqTraceability.Upstream.Scenario))
-        return _upstream_scenarios
+                   len(_upstream_req_verifiers), _FAST_PATH.reflection.qualname(ReqTraceability.Upstream.ReqVerifier))
+        return _upstream_req_verifiers
 
     def writeupstream(
             self,
@@ -661,7 +735,43 @@ if typing.TYPE_CHECKING:
 
     #: Upstream traceability type.
     #:
-    #: Sequence of :class:`ReqTraceability.Upstream.Scenario` instances,
+    #: Sequence of :class:`ReqTraceability.Upstream.ReqVerifier` instances,
     #: each owning a sequence of :class:`ReqTraceability.Upstream.Req` instances,
     #: each possibly owning :class:`ReqTraceability.Upstream.ReqSubref` instances.
-    ReqUpstreamTraceabilityType = typing.Sequence[ReqTraceability.Upstream.Scenario]
+    ReqUpstreamTraceabilityType = typing.Sequence[ReqTraceability.Upstream.ReqVerifier]
+
+
+class ReqTraceabilityHelper(abc.ABC):
+    """
+    Requirement traceability helper methods.
+
+    Avoids the public exposition of methods for internal implementation only.
+    """
+
+    @staticmethod
+    def mkstepname(
+            step,  # type: _StepDefinitionType
+    ):  # type: (...) -> str
+        """
+        Common implementation for :attr:`ReqTraceability.Downstream.Step.name` and :attr:`ReqTraceability.Upstream.ReqVerifier.name` properties.
+
+        "step#<number> (<class>)" pattern.
+
+        :param step: Step definition to compute a name for.
+        :return: Name for the step in tracebility results.
+        """
+        return f"step#{step.number} ({step.name})"
+
+    @staticmethod
+    def mkstepfullname(
+            step,  # type: _StepDefinitionType
+    ):  # type: (...) -> str
+        """
+        Common implementation for :attr:`ReqTraceability.Downstream.Step.full_name` and :attr:`ReqTraceability.Upstream.ReqVerifier.full_name` properties.
+
+        "<scenario name>step#<number> (<class>)" pattern.
+
+        :param step: Step definition to compute a full name for.
+        :return: Full name for the step in tracebility results.
+        """
+        return f"{step.scenario.name}/{ReqTraceabilityHelper.mkstepname(step)}"

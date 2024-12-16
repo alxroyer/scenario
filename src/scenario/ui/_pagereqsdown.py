@@ -143,8 +143,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         """
         with html.addnode("div", id="downstream-traceability"):
-            _downstream_traceability = scenario.ReqTraceability(req_baseline).getdownstream() \
-                # type: typing.Sequence[scenario.ReqTraceability.Downstream.ReqRef]
+            _downstream_traceability = scenario.ReqTraceability(req_baseline).getdownstream()  # type: scenario.ReqDownstreamTraceabilityType
 
             with html.addnode("table"):
                 # Heading row.

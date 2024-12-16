@@ -143,8 +143,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         """
         with html.addnode("div", id="upstream-traceability"):
-            _upstream_traceability = scenario.ReqTraceability(req_baseline).getupstream() \
-                # type: typing.Sequence[scenario.ReqTraceability.Upstream.Scenario]
+            _upstream_traceability = scenario.ReqTraceability(req_baseline).getupstream()  # type: scenario.ReqUpstreamTraceabilityType
 
             with html.addnode("table"):
                 # Heading row.
@@ -153,13 +152,14 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     html.addnode("th", classes=["req-ref"], text="Requirement coverage")
 
                 # Scenario rows.
-                for _upstream_scenario in _upstream_traceability:  # type: scenario.ReqTraceability.Upstream.Scenario
-                    self._scenario2html(html, _upstream_scenario)
+                for _upstream_req_verifier in _upstream_traceability:  # type: scenario.ReqTraceability.Upstream.ReqVerifier
+                    if isinstance(_upstream_req_verifier.req_verifier, scenario.ScenarioDefinition):
+                        self._scenario2html(html, _upstream_req_verifier)
 
     def _scenario2html(
             self,
             html,  # type: _HtmlDocumentType
-            upstream_scenario,  # type: scenario.ReqTraceability.Upstream.Scenario
+            upstream_scenario,  # type: scenario.ReqTraceability.Upstream.ReqVerifier
     ):  # type: (...) -> None
         """
         Builds the HTML content for a scenario.
@@ -170,22 +170,26 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         from ._anchors import Anchor
         from ._pagescenario import ScenarioPage
 
+        # TODO: Remove when `UpstreamTraceabilityPage` displays step entries.
+        if not isinstance(upstream_scenario.req_verifier, scenario.ScenarioDefinition):
+            return
+
         with html.addnode("tr", classes=["scenario"]):
             # Scenario.
             with html.addnode("td", classes=["req-verifier"]):
                 # Anchor.
-                with Anchor.add(html, name=upstream_scenario.scenario.name):
+                with Anchor.add(html, name=upstream_scenario.req_verifier.name):
                     # Scenario name, with link to scenario details page.
                     html.addlink(
                         classes=["scenario", "name"],
-                        href=ScenarioPage.mkurl(upstream_scenario.scenario),
+                        href=ScenarioPage.mkurl(upstream_scenario.req_verifier),
                         title="Scenario details",
-                        text=upstream_scenario.scenario.name,
+                        text=upstream_scenario.req_verifier.name,
                     )
 
                     # Title.
                     html.addnode("span", classes=["scenario", "sep"], text=":")
-                    html.addnode("span", classes=["scenario", "title"], text=upstream_scenario.scenario.title)
+                    html.addnode("span", classes=["scenario", "title"], text=upstream_scenario.req_verifier.title)
 
             # Requirement coverage.
             with html.addnode("td", classes=["req-ref"]):
