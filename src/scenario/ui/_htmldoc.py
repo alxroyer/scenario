@@ -287,6 +287,62 @@ class HtmlDocument(scenario.Logger):
         # Return the node context built previously.
         return _child_node_ctx
 
+    def addclass(
+            self,
+            new_class,  # type: str
+    ):  # type: (...) -> None
+        """
+        Adds ``new_class`` to HTML classes of the current node.
+
+        :param new_class: New HTML class.
+
+        Does not add ``new_class`` twice if already set.
+        """
+        try:
+            _classes = self.current_node.getattr("class").split()  # type: typing.List[str]
+        except KeyError:
+            _classes = []
+        if new_class not in _classes:
+            _classes.append(new_class)
+        self.current_node.setattr("class", " ".join(_classes))
+
+    def removeclass(
+            self,
+            rm_class,  # type: str
+    ):  # type: (...) -> None
+        """
+        Removes ``rm_class`` from HTML classes of the current node.
+
+        :param rm_class: HTML class to remove.
+
+        Removes all occurrences of ``rm_class``.
+        Does not raise an error if ``rm_class`` was not set.
+        """
+        try:
+            _classes = self.current_node.getattr("class").split()  # type: typing.List[str]
+        except KeyError:
+            _classes = []
+        _classes = [_class for _class in _classes if _class != rm_class]
+        self.current_node.setattr("class", " ".join(_classes))
+
+    def addstyle(
+            self,
+            new_rules,  # type: str
+    ):  # type: (...) -> None
+        """
+        Adds ``new_rules`` to the ``@style`` attribute of the current node.
+
+        :param new_rules: CSS rule(s) to add. May contain ';' characters to separate rules.
+
+        .. warning:: Systematic style extension. No filtering regarding the previous value of the ``@style`` attribute.
+        """
+        try:
+            _rules = [_rule.strip() for _rule in self.current_node.getattr("style").split(";")]  # type: typing.List[str]
+        except KeyError:
+            _rules = []
+        _rules.extend([_rule.strip() for _rule in new_rules.split(";")])
+        self.current_node.setattr("style", "; ".join(_rules))
+
     def addlink(
             self,
             *,

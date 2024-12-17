@@ -104,7 +104,12 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         _campaign_execution_ref = self._mergecampaignexecutionref(_campaign_executions)  # type: scenario.CampaignExecution
 
         with html.addnode("div", id="campaigns"):
-            _table_generator = CollapsibleTableGenerator(html, table_id="campaigns")  # type: CollapsibleTableGenerator
+            # Instantiate the table generator.
+            _table_generator = CollapsibleTableGenerator(
+                html,
+                table_id="campaigns",
+                default_state=CollapsibleTableGenerator.State.EXPANDED,
+            )  # type: CollapsibleTableGenerator
 
             # Expand/collapse all buttons.
             _table_generator.addexpandallbutton()
@@ -223,7 +228,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             # Test suite expand/collapse button + name.
             with table_generator.html.addnode("th"):
                 # Expand/collapse button.
-                table_generator.addtogglebutton(main_row_id=test_suite_execution_ref.name)
+                table_generator.addtogglebutton()
 
                 # Test suite name.
                 with table_generator.html.addnode("span", classes=["suite", "name"]):
@@ -268,7 +273,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         from ._pagescenario import ScenarioPage
         from ._reqbl import UI_REQ_BASELINES
 
-        with table_generator.addcollapsiblerow(main_row_id=test_suite_execution_ref.name, classes=["case"]):
+        with table_generator.addcollapsiblerow(classes=["case"]):
             # Test case name, with scenario URL from `UI_REQ_BASELINES.main.scenarios` if available.
             _scenario_url = ""  # type: str
             for _main_scenario_definition in UI_REQ_BASELINES.main.scenarios:  # type: scenario.ScenarioDefinition

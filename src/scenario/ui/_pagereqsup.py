@@ -149,7 +149,12 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             # Compute upstream traceability.
             _upstream_traceability = scenario.ReqTraceability(req_baseline).getupstream()  # type: scenario.ReqUpstreamTraceabilityType
 
-            _table_generator = CollapsibleTableGenerator(html, table_id="upstream-traceability")  # type: CollapsibleTableGenerator
+            # Instantiate the table generator.
+            _table_generator = CollapsibleTableGenerator(
+                html,
+                table_id="upstream-traceability",
+                default_state=CollapsibleTableGenerator.State.COLLAPSED,
+            )  # type: CollapsibleTableGenerator
 
             # Expand/collapse all buttons.
             _table_generator.addexpandallbutton()
@@ -182,13 +187,13 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         with (
             table_generator.addmainrow(main_row_id=upstream_req_verifier.req_verifier.name, classes=["scenario"])
             if isinstance(upstream_req_verifier.req_verifier, scenario.ScenarioDefinition) else
-            table_generator.addcollapsiblerow(main_row_id=upstream_req_verifier.req_verifier.scenario.name, classes=["step"])
+            table_generator.addcollapsiblerow(classes=["step"])
         ):
             # Scenario.
             with table_generator.html.addnode("td", classes=["req-verifier"]):
                 if isinstance(upstream_req_verifier.req_verifier, scenario.ScenarioDefinition):
                     # Expand/collapse button.
-                    table_generator.addtogglebutton(main_row_id=upstream_req_verifier.req_verifier.name)
+                    table_generator.addtogglebutton()
 
                 # Anchor.
                 with Anchor.add(table_generator.html, name=upstream_req_verifier.full_name):

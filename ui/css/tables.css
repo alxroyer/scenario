@@ -43,7 +43,7 @@
     table.collapsible tr.main-row a.button.toggle-row { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
     table.collapsible tr.main-row a.button.toggle-row { width: 1em; height: 1em; }  /* Button size. */
     table.collapsible tr.main-row a.button.toggle-row { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */
-    table.collapsible tr.main-row a.button.toggle-row { background-image: url("/img/down-arrow-5-svgrepo-com.svg"); }  /* Default icon: expanded. */
+    table.collapsible tr.main-row a.button.toggle-row { background-image: unset; }  /* Default icon: none. */
     table.collapsible tr.main-row.expanded a.button.toggle-row { background-image: url("/img/down-arrow-5-svgrepo-com.svg"); }  /* Expanded icon. */
     table.collapsible tr.main-row.collapsed a.button.toggle-row { background-image: url("/img/right-arrow-svgrepo-com.svg"); }  /* Collapsed icon. */
 

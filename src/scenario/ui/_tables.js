@@ -94,9 +94,10 @@ scenario.tables._toggle = (mainRow, newState) => {
         console.error(`No main row identifier found from ${mainRow} classes`);
         return;
     }
-    /** @var {string} */ const _oldState = (
-        mainRow.classList.contains("collapsed") ? "collapsed"
-        : "expanded"  // Consider 'expanded' by default.
+    /** @var {string | null} */ const _oldState = (
+        mainRow.classList.contains("expanded") ? "expanded" :
+        mainRow.classList.contains("collapsed") ? "collapsed" :
+        null  // Neither 'expanded' nor 'collapsed'.
     );
 
     // Compute `newState` if not provided.
@@ -108,9 +109,9 @@ scenario.tables._toggle = (mainRow, newState) => {
         }
     }
 
-    console.debug(`Toggling ${_mainRowId}: ${_oldState} => ${newState}`);
     /** @var {HTMLElement | null} */ const _table = mainRow.parentElement;
-    if (_table && _mainRowId && newState) {
+    if (_table && _mainRowId && _oldState && newState) {
+        console.debug(`Toggling ${_mainRowId}: ${_oldState} => ${newState}`);
         for (/** @var {HTMLElement} */ const _tr of scenario.findNodes(_table, `tr.main-row=${_mainRowId}`)) {
             // Remove old state, if any.
             _tr.classList.remove("expanded");

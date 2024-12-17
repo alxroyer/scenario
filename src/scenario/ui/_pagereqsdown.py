@@ -149,7 +149,12 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
             # Compute downstream traceability.
             _downstream_traceability = scenario.ReqTraceability(req_baseline).getdownstream()  # type: scenario.ReqDownstreamTraceabilityType
 
-            _table_generator = CollapsibleTableGenerator(html, table_id="downstream-traceability")  # type: CollapsibleTableGenerator
+            # Instantiate the table generator.
+            _table_generator = CollapsibleTableGenerator(
+                html,
+                table_id="downstream-traceability",
+                default_state=CollapsibleTableGenerator.State.COLLAPSED,
+            )  # type: CollapsibleTableGenerator
 
             # Expand/collapse all buttons.
             _table_generator.addexpandallbutton()
@@ -182,13 +187,13 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         with (
             table_generator.addmainrow(main_row_id=downstream_req_ref.req_ref.id, classes=["main"])
             if downstream_req_ref.req_ref.ismain() else
-            table_generator.addcollapsiblerow(main_row_id=downstream_req_ref.req_ref.req.id, classes=["sub"])
+            table_generator.addcollapsiblerow(classes=["sub"])
         ):
             # Requirement.
             with table_generator.html.addnode("td", classes=["req-ref"]):
                 if downstream_req_ref.req_ref.ismain():
                     # Expand/collapse button.
-                    table_generator.addtogglebutton(main_row_id=downstream_req_ref.req_ref.id)
+                    table_generator.addtogglebutton()
 
                 # Anchor.
                 with Anchor.add(table_generator.html, name=downstream_req_ref.req_ref.id):
