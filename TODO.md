@@ -19,8 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Implement first .js and .css files:
-        - Improve downstream/upstream traceability page:
-            - Add upstream traceability links for steps.
         - Improve configuration page:
             - Size text areas.
     - Bug! Opera prevents Firefox from connecting to the server.

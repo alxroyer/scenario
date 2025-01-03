@@ -42,7 +42,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
     @staticmethod
     def mkurl(
-            obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ScenarioDefinition]
+            obj=None,  # type: typing.Union[scenario.ReqBaseline, scenario.ScenarioDefinition, scenario.StepDefinition]
     ):  # type: (...) -> str
         """
         Builds an upstream traceability page URL.
@@ -61,13 +61,16 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         return HttpRequest.encodeurl(
             UpstreamTraceabilityPage._URL,
             args=HttpRequest.mkurlargs(obj=obj),
-            anchor=obj.name if isinstance(obj, scenario.ScenarioDefinition) else None,
+            anchor=(
+                scenario.ReqTraceability.Upstream.ReqVerifier(obj).full_name if isinstance(obj, (scenario.ScenarioDefinition, scenario.StepDefinition))
+                else None
+            ),
         )
 
     @staticmethod
-    def scenario2htmllink(
+    def reqverifier2htmllink(
             html,  # type: _HtmlDocumentType
-            scenario_definition,  # type: scenario.ScenarioDefinition
+            req_verifier,  # type: typing.Union[scenario.ScenarioDefinition, scenario.StepDefinition]
             *,
             text="",  # type: str
     ):  # type: (...) -> None
@@ -75,7 +78,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         Builds a HTML link to the given scenario in the upstream tracebility page.
 
         :param html: HTML output page to feed.
-        :param scenario_definition: Scenario to build an upstream traceability link for.
+        :param req_verifier: Scenario or step to build an upstream traceability link for.
         :param text: Link text. Sets the ``.default-text`` class and ``@title`` attribute if not provided.
         """
         _classes = ["upstream", "traceability"]  # type: typing.List[str]
@@ -85,7 +88,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             _title = "Upstream traceability"
             text = "(<<)"
 
-        with html.addlink(classes=_classes, href=UpstreamTraceabilityPage.mkurl(scenario_definition), title=_title):
+        with html.addlink(classes=_classes, href=UpstreamTraceabilityPage.mkurl(req_verifier), title=_title):
             html.addnode("span", text=text)
 
     def __init__(

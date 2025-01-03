@@ -243,7 +243,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
         with _list_item_generator.addmainlistitem(classes=["req-verifier", "scenario"]):
             # Upstream traceability link.
-            UpstreamTraceabilityPage.scenario2htmllink(html, downstream_scenario.scenario)
+            UpstreamTraceabilityPage.reqverifier2htmllink(html, downstream_scenario.scenario)
 
             # Scenario name.
             with html.addnode("span", classes=["req-verifier", "scenario", "name"]):
@@ -274,6 +274,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param list_item_generator: List item generator. Provides the HTML output page to feed.
         :param downstream_step: Step to build HTML content for.
         """
+        from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
 
         with list_item_generator.addcollapsiblelistitem(classes=["req-verifier", "step"]):
@@ -285,6 +286,9 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     title="Scenario details",
                     text=downstream_step.name,
                 )
+
+            # Upstream traceability link.
+            UpstreamTraceabilityPage.reqverifier2htmllink(list_item_generator.html, downstream_step.step)
 
             # Traceability comments.
             list_item_generator.addcomments(downstream_step.comments, classes=["req-verifier", "step"])

@@ -123,7 +123,7 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
                 for _scenario_definition in req_baseline.scenarios:  # type: scenario.ScenarioDefinition
                     with html.addnode("li", classes=["scenario"]):
                         # Upstream traceability link.
-                        UpstreamTraceabilityPage.scenario2htmllink(html, _scenario_definition)
+                        UpstreamTraceabilityPage.reqverifier2htmllink(html, _scenario_definition)
 
                         # Scenario name.
                         with html.addnode("span", classes=["scenario", "name"]):

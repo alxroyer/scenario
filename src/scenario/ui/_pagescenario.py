@@ -283,4 +283,4 @@ class ScenarioPage(_HttpRequestHandlerImpl):
 
             # Upstream traceability link.
             if isinstance(req_verifier, scenario.ScenarioDefinition):
-                UpstreamTraceabilityPage.scenario2htmllink(html, req_verifier, text="Upstream traceability")
+                UpstreamTraceabilityPage.reqverifier2htmllink(html, req_verifier, text="Upstream traceability")
