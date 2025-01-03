@@ -48,6 +48,7 @@ class CheckImports:
         METACLASS = "@metaclass"
         MODULE_LEVEL_INSTANTIATION = "@module-level-instantiation"
         CLASS_MEMBER_INSTANTIATION = "@class-member-instantiation"
+        DEFAULT_PARAMETER_VALUE = "@default-parameter-value"
         MODULE_LEVEL_EXECUTION = "@module-level-execution"
         PERF = "@perf"
 

@@ -20,8 +20,6 @@
 - Issue #83: Add the ability to track requirements.
     - Implement first .js and .css files:
         - Improve downstream/upstream traceability page:
-            - Expand/fold steps under scenarios.
-                - Sum-up step comments when the scenario does not have its own comments.
             - Add upstream traceability links for steps.
         - Improve configuration page:
             - Size text areas.

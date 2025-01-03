@@ -1,4 +1,6 @@
 INFO     <13>             ui/__init__.py => [ui/_args.py, ui/_configdb.py, ui/_main.py]
+INFO     <13>     ui/_collapsiblelist.py => [__init__.py, ui/_collapsiblestate.py]
+INFO     <13>    ui/_collapsibletable.py => [__init__.py, ui/_collapsiblestate.py]
 INFO     <13>                ui/_exec.py => [__init__.py, ui/_httprequesthandler.py]
 INFO     <13>        ui/_filedelivery.py => [__init__.py, ui/_httprequesthandler.py]
 INFO     <13>        ui/_pagecampaign.py => [__init__.py, ui/_httprequesthandler.py]
@@ -11,6 +13,7 @@ INFO     <13>          ui/_pagereqsup.py => [__init__.py, ui/_httprequesthandler
 INFO     <13>        ui/_pagescenario.py => [__init__.py, ui/_httprequesthandler.py]
 INFO     <13>       ui/_pagescenarios.py => [__init__.py, ui/_httprequesthandler.py]
 INFO     <12>                ui/_args.py => [__init__.py]
+INFO     <12>    ui/_collapsiblestate.py => [__init__.py]
 INFO     <12>            ui/_configdb.py => [__init__.py]
 INFO     <12>        ui/_debugclasses.py => [__init__.py]
 INFO     <12>             ui/_htmldoc.py => [__init__.py]
@@ -19,7 +22,6 @@ INFO     <12>  ui/_httprequesthandler.py => [__init__.py]
 INFO     <12>          ui/_httpserver.py => [__init__.py]
 INFO     <12>                ui/_main.py => [__init__.py]
 INFO     <12>               ui/_reqbl.py => [__init__.py]
-INFO     <12>              ui/_tables.py => [__init__.py]
 INFO     <11>                __init__.py => [_actionresultdefinition.py, _actionresultexecution.py, _args.py,
 INFO                                         _assertionhelpers.py, _assertions.py, _campaignargs.py, _campaigndb.py,
 INFO                                         _campaignexecution.py, _campaignreport.py, _campaignrunner.py, _configdb.py,

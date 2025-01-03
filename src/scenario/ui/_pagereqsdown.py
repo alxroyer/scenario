@@ -25,10 +25,11 @@ import scenario
 if True:
     from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from ._collapsiblelist import CollapsibleListItemGenerator as _CollapsibleListItemGeneratorType
+    from ._collapsibletable import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
     from ._debugclasses import UIDebugClass as _UIDebugClassType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
-    from ._tables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
 
 
 class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
@@ -143,7 +144,8 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         """
-        from ._tables import CollapsibleTableGenerator
+        from ._collapsiblestate import CollapsibleState
+        from ._collapsibletable import CollapsibleTableGenerator
 
         with html.addnode("div", id="downstream-traceability"):
             # Compute downstream traceability.
@@ -153,7 +155,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
             _table_generator = CollapsibleTableGenerator(
                 html,
                 table_id="downstream-traceability",
-                default_state=CollapsibleTableGenerator.State.COLLAPSED,
+                default_state=CollapsibleState.COLLAPSED,
             )  # type: CollapsibleTableGenerator
 
             # Expand/collapse all buttons.
@@ -227,10 +229,19 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param downstream_scenario: Scenario to build HTML content for.
         """
+        from ._collapsiblelist import CollapsibleListItemGenerator
+        from ._collapsiblestate import CollapsibleState
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
 
-        with html.addnode("li", classes=["req-verifier", "scenario"]):
+        # Instantiate the list item generator.
+        _list_item_generator = CollapsibleListItemGenerator(
+            html,
+            main_list_item_id=downstream_scenario.scenario.name,
+            default_state=CollapsibleState.COLLAPSED,
+        )
+
+        with _list_item_generator.addmainlistitem(classes=["req-verifier", "scenario"]):
             # Upstream traceability link.
             UpstreamTraceabilityPage.scenario2htmllink(html, downstream_scenario.scenario)
 
@@ -244,40 +255,36 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 )
 
             # Traceability comments.
-            if downstream_scenario.comments:
-                html.addnode("span", classes=["req-verifier", "scenario", "sep"], text=":")
-                html.addnode("span", classes=["req-verifier", "scenario", "comments"], text=downstream_scenario.comments)
+            _list_item_generator.addcomments(downstream_scenario.comments, classes=["req-verifier", "scenario"])
 
             # Optional steps.
             if downstream_scenario.steps:
                 with html.addnode("ul"):
                     for _downstream_step in downstream_scenario.steps:  # type: scenario.ReqTraceability.Downstream.Step
-                        self._step2html(html, _downstream_step)
+                        self._step2html(_list_item_generator, _downstream_step)
 
     def _step2html(
             self,
-            html,  # type: _HtmlDocumentType
+            list_item_generator,  # type: _CollapsibleListItemGeneratorType
             downstream_step,  # type: scenario.ReqTraceability.Downstream.Step
     ):  # type: (...) -> None
         """
         Builds the HTML content for a step.
 
-        :param html: HTML output page to feed.
+        :param list_item_generator: List item generator. Provides the HTML output page to feed.
         :param downstream_step: Step to build HTML content for.
         """
         from ._pagescenario import ScenarioPage
 
-        with html.addnode("li", classes=["req-verifier", "step"]):
+        with list_item_generator.addcollapsiblelistitem(classes=["req-verifier", "step"]):
             # Step number and name.
-            with html.addnode("span", classes=["req-verifier", "step", "name"]):
+            with list_item_generator.html.addnode("span", classes=["req-verifier", "step", "name"]):
                 # With link to scenario details.
-                html.addlink(
+                list_item_generator.html.addlink(
                     href=ScenarioPage.mkurl(downstream_step.step),
                     title="Scenario details",
                     text=downstream_step.name,
                 )
 
             # Traceability comments.
-            if downstream_step.comments:
-                html.addnode("span", classes=["req-verifier", "step", "sep"], text=":")
-                html.addnode("span", classes=["req-verifier", "step", "comments"], text=downstream_step.comments)
+            list_item_generator.addcomments(downstream_step.comments, classes=["req-verifier", "step"])

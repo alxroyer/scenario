@@ -17,7 +17,7 @@
 
 /**
  * @file
- * @brief Collapsible tables.
+ * @brief Expandable/collapsible tables.
  */
 
 
@@ -57,7 +57,7 @@ scenario.onLoad(() => {
             _button.addEventListener("click", (e) => {
                 e.preventDefault();
 
-                scenario.tables._toggle(_mainRow, undefined);
+                scenario.tables._toggle(_mainRow);
             });
         }
     }
@@ -74,7 +74,7 @@ scenario.tables._toggleAll = (tableId, newState) => {
     console.debug(`scenario.tables._toggleAll('${tableId}', '${newState}')`);
     /** @var {number} */ let _count = 0;
     for (/** @var {HTMLElement} */ const _mainRow of scenario.findNodes(document.body, `table.collapsible.table=${tableId} tr.main-row`)) {
-        scenario.tables._toggle(_mainRow, newState);
+        scenario.tables._toggle(_mainRow, {newState: newState, collapsibleListItems: true});
         _count ++;
     }
     console.debug(`scenario.tables._toggleAll('${tableId}', '${newState}'): ${_count} main row(s) ${newState}`);
@@ -85,9 +85,10 @@ scenario.tables._toggleAll = (tableId, newState) => {
  * @brief Expands or collapses `.collapsible-row` rows attached to a given `.main-row` row.
  * @param {HTMLElement} mainRow Main row to expand or collapse.
  * @param {"expanded" | "collapsed" | undefined} newState Final state wanted. Switch state if not provided.
+ * @param {boolean | undefined} collapsibleListItems `true` to apply `newState` to related collapsible list items. Lists unchanged by default.
  * @returns {void}
  */
-scenario.tables._toggle = (mainRow, newState) => {
+scenario.tables._toggle = (mainRow, {newState, collapsibleListItems} = {}) => {
     // Find 'main-row=...' id and 'expanded'/'collapsed' state from classes.
     /** @var {string | null} */ const _mainRowId = scenario.getNamedObjectIdFromClasses(mainRow, "main-row");
     if (! _mainRowId) {
@@ -109,11 +110,13 @@ scenario.tables._toggle = (mainRow, newState) => {
         }
     }
 
+    // Toggle from `_oldState` to `newState`.
     /** @var {HTMLElement | null} */ const _table = mainRow.parentElement;
     if (_table && _mainRowId && _oldState && newState) {
         console.debug(`Toggling ${_mainRowId}: ${_oldState} => ${newState}`);
+
         for (/** @var {HTMLElement} */ const _tr of scenario.findNodes(_table, `tr.main-row=${_mainRowId}`)) {
-            // Remove old state, if any.
+            // Remove old state.
             _tr.classList.remove("expanded");
             _tr.classList.remove("collapsed");
 
@@ -122,7 +125,7 @@ scenario.tables._toggle = (mainRow, newState) => {
 
             // Adjust `tr.main-row a.button.toggle-row span` button text.
             if (_tr.classList.contains("main-row")) {
-                for (/** @var {HTMLElement} */ const _buttonSpan of scenario.findNodes(_tr, `a.button.toggle-row span`)) {
+                for (/** @var {HTMLElement} */ const _buttonSpan of scenario.findNodes(_tr, "a.button.toggle-row span")) {
                     switch (newState) {
                         case "expanded": _buttonSpan.innerText = "-"; break;
                         case "collapsed": _buttonSpan.innerText = "+"; break;
@@ -136,6 +139,15 @@ scenario.tables._toggle = (mainRow, newState) => {
                     case "expanded": _tr.style.visibility = "visible"; break;
                     case "collapsed": _tr.style.visibility = "collapse"; break;
                 }
+            }
+        }
+    }
+
+    // Expand/collapse collapsible list items when required.
+    if (collapsibleListItems && _table && _mainRowId) {
+        for (/** @var {HTMLElement} */ const _tr of scenario.findNodes(_table, `tr.main-row=${_mainRowId}`)) {
+            for (/** @var {HTMLElement} */ const _mainLi of scenario.findNodes(_tr, "li.collapsible.main-list-item")) {
+                scenario.lists.toggle(_mainLi, {newState: newState});
             }
         }
     }

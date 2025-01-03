@@ -25,9 +25,9 @@ import scenario
 if True:
     from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from ._collapsibletable import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._httprequest import HttpRequest as _HttpRequestType
-    from ._tables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
 
 
 class CampaignListPage(_HttpRequestHandlerImpl):
@@ -96,7 +96,9 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param request: Input request being processed.
         """
-        from ._tables import CollapsibleTableGenerator
+        from ._collapsiblestate import CollapsibleState
+        from ._collapsibletable import CollapsibleTableGenerator
+
         # Sort campaign executions.
         _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]
 
@@ -108,7 +110,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             _table_generator = CollapsibleTableGenerator(
                 html,
                 table_id="campaigns",
-                default_state=CollapsibleTableGenerator.State.EXPANDED,
+                default_state=CollapsibleState.EXPANDED,
             )  # type: CollapsibleTableGenerator
 
             # Expand/collapse all buttons.

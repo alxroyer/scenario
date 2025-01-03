@@ -97,7 +97,7 @@ System imports (or "standard library imports" as named by `PEP8 import recommend
 shall come at the module level.
 
 Exceptions for system imports as a :ref:`local imports <coding-rules.py.imports.local>`
-should be justified, and probably better located right before there usage in the function or method body.
+should be justified, and probably better located right before their usage in the function or method body.
 
 Use one system import per ``import`` line.
 
@@ -415,7 +415,8 @@ the fewer project imports shall be placed at the module level:
 
       - Classes used for inheritance (``@inheritance``) or metaclass (``@metaclass``),
       - Classes used for global variable instantiations (``@module-level-instantiation``),
-        same with class member instantiations (``@class-member-instantiation``, refinement of the latter),
+        same with class member instantiations (``@class-member-instantiation``)
+        and default parameter values (``@default-parameter-value``, refinements of the latter),
       - Functions executed, or symbols used, in the module level context (``@module-level-execution``),
       - Imports made once at the module level for performance concerns (``@perf``),
       - Eventually, a couple of :mod:`scenario` package and subpackages imported after path management is done,

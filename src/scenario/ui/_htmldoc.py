@@ -52,8 +52,9 @@ class HtmlDocument(scenario.Logger):
             """
             #: HTML document to set the current node for.
             self.html = html_doc  # type: HtmlDocument
-            #: Parent node of the :attr:`new_child`.
-            self.parent_node = html_doc.current_node  # type: _XmlType.Node
+            #: Previous current node installed before :attr:`new_child`.
+            #: Saved in :meth:`__enter__()`.
+            self.previous_node = self.html.body  # type: _XmlType.Node
             #: New child node to set as the current node.
             self.new_child = new_child  # type: _XmlType.Node
 
@@ -63,7 +64,11 @@ class HtmlDocument(scenario.Logger):
 
             :return: The new child just installed as the current node.
             """
+            self.previous_node = self.html.current_node
             self.html.current_node = self.new_child
+
+            self.html.debug(">> %r", self.html.current_node)
+            self.html.pushindentation("  ")
 
             return self.new_child
 
@@ -74,9 +79,12 @@ class HtmlDocument(scenario.Logger):
                 exc_tb,  # type: typing.Any
         ):  # type: (...) -> None
             """
-            Restores the current node with :attr:`parent_node`.
+            Restores the current node with :attr:`previous_node`.
             """
-            self.html.current_node = self.parent_node
+            self.html.popindentation("  ")
+            self.html.debug("<< %r", self.html.current_node)
+
+            self.html.current_node = self.previous_node
 
     def __init__(
             self,
@@ -120,9 +128,13 @@ class HtmlDocument(scenario.Logger):
         self._head2html()
         self._body2html()
 
-        # Add inner scripts at the end of the document (for readability of the HTML output).
-        self.jscontent2html("_anchors.js")
-        self.jscontent2html("_exec.js")
+        #: Inner JS script files which content to embed at the end of the document.
+        #:
+        #: .. note:: Embedding JS content at the end of the document improves readability of the HTML output.
+        self._final_js_paths = [
+            scenario.Path(__file__).parent / "_anchors.js",
+            scenario.Path(__file__).parent / "_exec.js",
+        ]  # type: typing.List[scenario.Path]
 
         # Set main <div/> as the current node in the end.
         self.current_node = self.main_div
@@ -140,7 +152,7 @@ class HtmlDocument(scenario.Logger):
             self.addnode("meta", {"http-equiv": "Content-type", "content": "text/html; charset=utf-8"}, auto_closing=True)
             self._head_title = self.addnode("title", text="...").new_child
             self.addnode("link", rel="stylesheet", href=UI_CONFIG.cssurl(), type="text/css", auto_closing=True)
-            self.jscontent2html("_global.js")
+            self._jscontent2html(scenario.Path(__file__).parent / "_global.js")
             self.addnode("script", src=UI_CONFIG.jsurl())
 
     def _body2html(self):  # type: (...) -> None
@@ -179,20 +191,33 @@ class HtmlDocument(scenario.Logger):
             self.addlink(classes=["menu"], href=UpstreamTraceabilityPage.mkurl(), text="Upstream traceability")
             self.addlink(classes=["menu"], href=ConfigurationPage.mkurl(), text="Configuration")
 
-    def jscontent2html(
+    def _jscontent2html(
             self,
-            filename,  # type: str
+            js_path,  # type: scenario.Path
     ):  # type: (...) -> None
         """
         Embeds ``filename`` in an inner ``<script></script>`` element.
 
-        :param filename: Javascript file name in the 'src/scenario/ui/' directory.
+        :param js_path: Path of Javascript file to embed.
         """
         with self.addnode("script"):
-            _js_path = scenario.Path(__file__).parent / filename  # type: scenario.Path
-            for _line in _js_path.read_text(encoding="utf-8").splitlines():  # type: str
+            for _line in js_path.read_text(encoding="utf-8").splitlines():  # type: str
                 # Don't use `addtext()` in order to avoid HTML/XML escaping.
                 self.current_node.appendchild(self.xml_doc.createtextnode(_line, xml_escape=False))
+
+    def addfinaljs(
+            self,
+            js_path,  # type: scenario.Path
+    ):  # type: (...) -> None
+        """
+        Saves ``js_path`` for embedding at the end of the page.
+
+        Stores ``js_path`` uniquely in the :attr:`_final_js_paths` path list.
+
+        :param js_path: Javascript path which content to embed.
+        """
+        if js_path not in self._final_js_paths:
+            self._final_js_paths.append(js_path)
 
     def settitle(
             self,
@@ -271,7 +296,7 @@ class HtmlDocument(scenario.Logger):
 
         # Append the new node as a child to the current node.
         self.current_node.appendchild(_child)
-        self.debug("current_node=%r: addnode(%r, %r, text=%r) -> %r", self.current_node, tag_name, attrs, text, _child)
+        self.debug("addnode(%r, %r, text=%r) -> %r", tag_name, attrs, text, _child)
 
         # Build a node context focused on the new node.
         _child_node_ctx = HtmlDocument.NodeContext(self, _child)  # type: HtmlDocument.NodeContext
@@ -298,6 +323,7 @@ class HtmlDocument(scenario.Logger):
 
         Does not add ``new_class`` twice if already set.
         """
+        self.debug("addclass(%r)", new_class)
         try:
             _classes = self.current_node.getattr("class").split()  # type: typing.List[str]
         except KeyError:
@@ -318,6 +344,7 @@ class HtmlDocument(scenario.Logger):
         Removes all occurrences of ``rm_class``.
         Does not raise an error if ``rm_class`` was not set.
         """
+        self.debug("removeclass(%r)", rm_class)
         try:
             _classes = self.current_node.getattr("class").split()  # type: typing.List[str]
         except KeyError:
@@ -336,6 +363,7 @@ class HtmlDocument(scenario.Logger):
 
         .. warning:: Systematic style extension. No filtering regarding the previous value of the ``@style`` attribute.
         """
+        self.debug("addstyle(%r)", new_rules)
         try:
             _rules = [_rule.strip() for _rule in self.current_node.getattr("style").split(";")]  # type: typing.List[str]
         except KeyError:
@@ -381,6 +409,7 @@ class HtmlDocument(scenario.Logger):
         :return:
             Text node created.
         """
+        self.debug("addtext(%r)", text)
         return self.current_node.appendchild(self.xml_doc.createtextnode(
             html.escape(text, quote=False),
             xml_escape=False,  # Already escaped.
@@ -441,6 +470,10 @@ class HtmlDocument(scenario.Logger):
             for _child in _children:  # type: _XmlType.Node
                 _avoidautoclosing(_child)
         _avoidautoclosing(self.xml_doc.root)
+
+        # Embed final JS scripts.
+        for _js_path in self._final_js_paths:  # type: scenario.Path
+            self._jscontent2html(_js_path)
 
         return b'\n'.join([
             b'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
