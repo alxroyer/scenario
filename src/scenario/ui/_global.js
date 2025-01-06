@@ -121,7 +121,7 @@ scenario.findNodes = (node, selector, {debug=false, indentation=""}={}) => {
     }
     _debug(`scenario.findNodes() => ${_final}`);
     return _final;
-}
+};
 
 
 /**
@@ -138,4 +138,44 @@ scenario.getNamedObjectIdFromClasses = (node, name) => {
         }
     }
     return null;
-}
+};
+
+
+/**
+ * @brief Select file(s).
+ * @param {string?} contentType The content type of files you wish to select. For instance, use "image/*" to select all types of images.
+ * @param {boolean?} multiple Indicates if the user can select multiple files.
+ * @returns {Promise<File|File[]>} A promise of a file or array of files in case the multiple parameter is true.
+ *
+ * Inspired from:
+ * - https://stackoverflow.com/questions/16215771/how-to-open-select-file-dialog-via-js#40971885
+ * - https://stackoverflow.com/questions/16215771/how-to-open-select-file-dialog-via-js#52757538
+ *
+ * @warning Can't be used to determine local absolute paths.
+ *     For security reasons, Javascript can't do such a thing.
+ *     Gives access to base file name and file content, but not the full path.
+ */
+scenario.selectFile$ = ({contentType, multiple} = {contentType: undefined, multiple: false}) => {
+    // Check input arguments.
+    if (multiple === undefined) {
+        multiple = false;
+    }
+
+    return new Promise((resolve, reject) => {
+        /** @var {HTMLElement} */ let _input = document.createElement("input");
+        _input.type = "file";
+        _input.multiple = multiple;
+        _input.accept = contentType;
+
+        _input.onchange = () => {
+            /** @var {File[]} */ let files = Array.from(_input.files);
+            if (multiple) {
+                resolve(files);
+            } else {
+                resolve(files[0]);
+            }
+        };
+
+        _input.click();
+    });
+};

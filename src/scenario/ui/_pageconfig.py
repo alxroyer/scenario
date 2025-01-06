@@ -107,8 +107,9 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
             self._processaction(_html, request)
 
         # General page content.
-        self._form1html(_html)
-        self._form2html(_html)
+        with _html.addnode("div", id="config"):
+            self._form1html(_html)
+            self._form2html(_html)
 
         request.sendhtml(_html)
         return True
@@ -125,35 +126,38 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
         from .._scenarioconfig import SCENARIO_CONFIG  # Access `scenario` inner symbols.
         from .._xmlutils import Xml  # Access `scenario` inner symbols.
 
-        with html.addnode("div", id=ConfigurationPage.Action.FORM1):
+        with html.addnode("div", id=ConfigurationPage.Action.FORM1, classes=["form", "container"]):
             with html.addnode("form", action=ConfigurationPage.mkurl(), method="post"):
-                # Form id.
-                html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM1, auto_closing=True)
+                # Data.
+                with html.addnode("div", classes=["form", "data"]):
+                    # Form id.
+                    html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM1, auto_closing=True)
 
-                # Requirements file.
-                html.addnode("p", text="Requirements:")
-                with html.addnode("textarea", name=ConfigurationPage.Arg.REQ_DB_PATHS, rows="10", placeholder="List of requirement files (absolute paths)"):
-                    # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
-                    _text_node = html.addtext("")  # type: Xml.TextNode
-                    # Then add a line for each requirement file.
-                    for _req_db_path in SCENARIO_CONFIG.reqdbpaths():  # type: scenario.Path
-                        if _text_node.data:
-                            _text_node.data += "\n"
-                        _text_node.data += _req_db_path.abspath
+                    # Requirements file.
+                    html.addnode("label", text="Requirements:")
+                    with html.addnode("textarea", name=ConfigurationPage.Arg.REQ_DB_PATHS, rows="10", placeholder="List of requirement files (absolute paths)"):
+                        # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
+                        _text_node = html.addtext("")  # type: Xml.TextNode
+                        # Then add a line for each requirement file.
+                        for _req_db_path in SCENARIO_CONFIG.reqdbpaths():  # type: scenario.Path
+                            if _text_node.data:
+                                _text_node.data += "\n"
+                            _text_node.data += _req_db_path.abspath
 
-                # Test suite files.
-                html.addnode("p", text="Test suites:")
-                with html.addnode("textarea", name=ConfigurationPage.Arg.TEST_SUITE_PATHS, rows="10", placeholder="List of test suite file (absolute paths)"):
-                    # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
-                    _text_node = html.addtext("")  # Type already defined above.
-                    # Then add a line for each test suite.
-                    for _test_suite_path in SCENARIO_CONFIG.testsuitepaths():  # type: scenario.Path
-                        if _text_node.data:
-                            _text_node.data += "\n"
-                        _text_node.data += _test_suite_path.abspath
+                    # Test suite files.
+                    html.addnode("label", text="Test suites:")
+                    with html.addnode("textarea", name=ConfigurationPage.Arg.TEST_SUITE_PATHS, rows="10", placeholder="List of test suite file (absolute paths)"):
+                        # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
+                        _text_node = html.addtext("")  # Type already defined above.
+                        # Then add a line for each test suite.
+                        for _test_suite_path in SCENARIO_CONFIG.testsuitepaths():  # type: scenario.Path
+                            if _text_node.data:
+                                _text_node.data += "\n"
+                            _text_node.data += _test_suite_path.abspath
 
                 # Submit.
-                html.addnode("input", type="submit", value="Apply", auto_closing=True)
+                with html.addnode("div", classes=["form", "submit"]):
+                    html.addnode("input", type="submit", value="Load requirements and test suite files", auto_closing=True)
 
     def _form2html(
             self,
@@ -164,17 +168,20 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
 
         :param html: Output HTML document.
         """
-        with html.addnode("div", id=ConfigurationPage.Action.FORM2):
+        with html.addnode("div", id=ConfigurationPage.Action.FORM2, classes=["form", "container"]):
             with html.addnode("form", action=ConfigurationPage.mkurl(), method="post"):
-                # Form id.
-                html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM2, auto_closing=True)
+                # Data.
+                with html.addnode("div", classes=["form", "data"]):
+                    # Form id.
+                    html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM2, auto_closing=True)
 
-                # Campaign path (directory or campaign report).
-                html.addnode("p", text="Campaign:")
-                html.addnode("input", type="text", name=ConfigurationPage.Arg.CAMPAIGN_PATH, auto_closing=True)
+                    # Campaign path (directory or campaign report).
+                    html.addnode("label", text="Campaign path:")
+                    html.addnode("input", type="text", name=ConfigurationPage.Arg.CAMPAIGN_PATH, auto_closing=True)
 
                 # Submit.
-                html.addnode("input", type="submit", value="Apply", auto_closing=True)
+                with html.addnode("div", classes=["form", "submit"]):
+                    html.addnode("input", type="submit", value="Load campaign data", auto_closing=True)
 
     def _processaction(
             self,

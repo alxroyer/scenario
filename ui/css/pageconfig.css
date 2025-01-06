@@ -1,0 +1,32 @@
+/*
+ * Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Form divs. */
+div#config div.form.container { border: 1px solid grey; border-radius: 8px; }  /* Border line. */
+div#config div.form.container { padding: 10px; }  /* Inner space inside the div. */
+div#config div.form.container { margin-bottom: 20px; }  /* Ensure vertical spacing between forms. */
+
+/* Labels. */
+div#config form label { margin-top: 10px; margin-bottom: 10px; }  /* Vertical spacing above and below. */
+/* Text areas. */
+div#config form textarea { margin-top: 10px; margin-bottom: 10px; }  /* Vertical spacing above and below. */
+div#config form textarea { width: 100%; box-sizing: border-box; }  /* Width 100%, taking into account the container padding. */
+/* Text inputs. */
+div#config form input[type="text"] { margin-top: 10px; margin-bottom: 10px; }  /* Vertical spacing above and below. */
+div#config form input[type="text"] { width: 100%; box-sizing: border-box; }  /* Width 100%, taking into account the container padding. */
+/* Submit buttons. */
+div#config div.form.submit { margin-top: 10px; }  /* Vertical spacing above. */
+div#config div.form.submit { text-align: center; }  /* Center the button horizontally. */

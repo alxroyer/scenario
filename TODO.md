@@ -18,9 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Implement first .js and .css files:
-        - Improve configuration page:
-            - Size text areas.
     - Bug! Opera prevents Firefox from connecting to the server.
     - Display scenario results in campaign details page.
     - Display requirement texts with downstream traceability.
