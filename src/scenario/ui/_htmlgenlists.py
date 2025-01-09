@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Expandable/collapsible lists.
+HTML list generators.
 """
 
 import typing
@@ -23,9 +23,195 @@ import typing
 import scenario
 
 if True:
-    from ._collapsiblestate import CollapsibleState as _CollapsibleStateImpl  # @default-parameter-value
+    from ._collapsible import CollapsibleState as _CollapsibleStateImpl  # @default-parameter-value
 if typing.TYPE_CHECKING:
+    from ._collapsible import CollapsibleState as _CollapsibleStateType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
+
+
+class NamedListGenerator:
+    """
+    HTML generator for an unordered list (``<ul></ul>``) with a leading name.
+    """
+
+    def __init__(
+            self,
+            arg,  # type: typing.Union[_HtmlDocumentType, CollapsibleListGenerator]
+    ):  # type: (...) -> None
+        """
+        Instantiates a :class:`NamedListGenerator` with
+        either a :class:`._htmldoc.HtmlDocument` directly,
+        or a :class:`CollapsibleListGenerator`.
+
+        :param arg:
+            :class:`._htmldoc.HtmlDocument` or :class:`CollapsibleListGenerator` giving the HTML output page to feed at least.
+
+            If a :class:`CollapsibleListGenerator` is given, a named collapsible list will be generated,
+            with expand/collapse all buttons.
+        """
+        #: HTML output page to feed.
+        self.html = arg.html if isinstance(arg, CollapsibleListGenerator) else arg  # type: _HtmlDocumentType
+        #: Optional list generator.
+        self.list_generator = arg if isinstance(arg, CollapsibleListGenerator) else None  # type: typing.Optional[CollapsibleListGenerator]
+
+    def addlist(
+            self,
+            *,
+            div_classes=(),  # type: typing.Sequence[str]
+            name,  # type: str
+            ul_classes=(),  # type: typing.Sequence[str]
+    ):  # type: (...) -> _HtmlDocumentType.NodeContext
+        """
+        Adds a unordered list with a leading name.
+
+        In the form of a ``<div class="named ul"><span class="name">...</span><ul></ul><div>`` structure.
+
+        :param div_classes: Additional classes to add to the ``.named.ul`` div.
+        :param name: Name to set in the ``span.name`` element.
+        :param ul_classes: Additional classes to add to the ``<ul></ul>`` element.
+        :return: HTML node context focused on the ``<ul></ul>`` element created.
+
+        If a :class:`CollapsibleListGenerator` had been given,
+        expand/collapse all buttons may be generated between the ``span`` and ``ul`` elements,
+        and the ``ul`` element becomes the collapsible list.
+        """
+        with self.html.addnode("div", classes=["named", "ul", *div_classes]):
+            self.html.addnode("span", classes=["name"], text=name)
+
+            if self.list_generator:
+                self.list_generator.addexpandallbutton()
+                self.list_generator.addcollapseallbutton()
+                return self.list_generator.addlist(classes=ul_classes)
+            else:
+                return self.html.addnode("ul", classes=ul_classes)
+
+
+class CollapsibleListGenerator:
+    """
+    HTML generator for a list of collapsible list items.
+    """
+
+    def __init__(
+            self,
+            html,  # type: _HtmlDocumentType
+            *,
+            list_id,  # type: str
+            default_state=_CollapsibleStateImpl.EXPANDED,  # type: _CollapsibleStateType
+    ):  # type: (...) -> None
+        """
+        Instantiates a :class:`CollapsibleListGenerator` with configurations.
+
+        :param html: HTML output page to feed.
+        :param list_id: List identifier used in HTML classes.
+        :param default_state: Default state for collapsible list items. Default is `expanded`.
+        """
+        #: HTML output page to feed.
+        self.html = html  # type: _HtmlDocumentType
+        #: List identifier to set in HTML classes.
+        self.list_id = list_id  # type: str
+        #: Default state for collapsible rows.
+        self.default_state = default_state  # type: _CollapsibleStateType
+
+        #: Main list items.
+        self._main_list_items = []  # type: typing.List[CollapsibleListItemGenerator]
+
+    def addexpandallbutton(self):  # type: (...) -> None
+        """
+        Adds a ``.expand-all`` button for the list being generated.
+        """
+        self.html.addnode(
+            "a",
+            classes=[
+                "button", "expand-all", "list",
+                self.html.mkcsscompatibleclass(f"list={self.list_id}"),
+            ],
+            href="#",
+            text="Expand all",
+        )
+
+    def addcollapseallbutton(self):  # type: (...) -> None
+        """
+        Adds a ``.collapse-all`` button for the list being generated.
+        """
+        self.html.addnode(
+            "a",
+            classes=[
+                "button", "collapse-all", "list",
+                self.html.mkcsscompatibleclass(f"list={self.list_id}"),
+            ],
+            href="#",
+            text="Collapse all",
+        )
+
+    def addlist(
+            self,
+            *,
+            classes=(),  # type: typing.Sequence[str]
+    ):  # type: (...) -> _HtmlDocumentType.NodeContext
+        """
+        Starts generating the list.
+
+        :param classes: Additional HTML classes to add to the ``<ul></ul>`` element.
+        :return: HTML node context focused on the ``<ul></ul>`` created.
+        """
+        # Have the related .js content be embedded at the end of the HTML page.
+        self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
+
+        return self.html.addnode(
+            "ul",
+            classes=[
+                *classes,
+                "collapsible",
+                self.html.mkcsscompatibleclass(f"list={self.list_id}"),
+            ],
+        )
+
+    def addmainlistitem(
+            self,
+            *,
+            main_list_item_id,  # type: str
+            classes=(),  # type: typing.Sequence[str]
+    ):  # type: (...) -> _HtmlDocumentType.NodeContext
+        """
+        Adds a main collapsible list item.
+
+        :param main_list_item_id: Main list item identifier used in HTML classes.
+        :param classes: Optional additional HTML classes.
+        :return: HTML node context focused on the ``<li></li>`` created.
+        """
+        # Feed `_main_list_items` with a new `CollapsibleListItemGenerator` instance.
+        self._main_list_items.append(CollapsibleListItemGenerator(
+            self.html,
+            main_list_item_id=main_list_item_id,
+            default_state=self.default_state,
+        ))
+
+        # Call `CollapsibleListItemGenerator.addmainlistitem()`.
+        return self._main_list_items[-1].addmainlistitem(classes=[
+            *classes,
+            self.html.mkcsscompatibleclass(f"list={self.list_id}"),
+            # Memo: `CollapsibleListItemGenerator.addmainlistitem()` adds the `f"main-list-item={self.main_list_item_id}"` class.
+        ])
+
+    def addcollapsiblelistitem(
+            self,
+            *,
+            classes=(),  # type: typing.Sequence[str]
+    ):  # type: (...) -> _HtmlDocumentType.NodeContext
+        """
+        Adds a ``.collapsible-list-item`` list item under the current main list item.
+
+        Basically inside a ``<ul></ul>`` node.
+
+        :param classes: Optional additional HTML classes.
+        :return: HTML node context focused on the ``<li></li>`` created.
+        """
+        # Call `CollapsibleListItemGenerator.addcollapsiblelistitem()`.
+        return self._main_list_items[-1].addcollapsiblelistitem(classes=[
+            *classes,
+            self.html.mkcsscompatibleclass(f"list={self.list_id}"),
+            # Memo: `CollapsibleListItemGenerator.addcollapsiblelistitem()` adds the `f"main-list-item={self.main_list_item_id}"` class.
+        ])
 
 
 class CollapsibleListItemGenerator:
@@ -93,7 +279,7 @@ class CollapsibleListItemGenerator:
             classes=[
                 *classes,
                 "collapsible", "main-list-item",
-                self.html.mknamedobjectidclass("main-list-item", self.main_list_item_id),
+                self.html.mkcsscompatibleclass(f"main-list-item={self.main_list_item_id}"),
             ],
         )
 
@@ -164,7 +350,7 @@ class CollapsibleListItemGenerator:
                 classes=[
                     *classes,
                     "collapsible-list-item",
-                    self.html.mknamedobjectidclass("main-list-item", self.main_list_item_id),
+                    self.html.mkcsscompatibleclass(f"main-list-item={self.main_list_item_id}"),
                 ],
             )
         )
@@ -178,7 +364,7 @@ class CollapsibleListItemGenerator:
             "a",
             classes=[
                 "button", "toggle-list-item",
-                self.html.mknamedobjectidclass("main-list-item", self.main_list_item_id),
+                self.html.mkcsscompatibleclass(f"main-list-item={self.main_list_item_id}"),
             ],
         )
         with self._toggle_button_a_ctx:

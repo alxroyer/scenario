@@ -31,8 +31,8 @@
 /* Collapsible tables. */
 
     /* Position expand/collapse all buttons at the right top right corner of the window (fixed v/s scrolling). */
-    a.button.expand-all { position: fixed; top: 50px; right: 15px; }
-    a.button.collapse-all { position: fixed; top: 85px; right: 15px; }
+    a.button.expand-all.table { position: fixed; top: 50px; right: 15px; }
+    a.button.collapse-all.table { position: fixed; top: 85px; right: 15px; }
 
     /* Rollback general button styles. */
     table.collapsible tr.main-row a.button.toggle-row { padding: unset; }

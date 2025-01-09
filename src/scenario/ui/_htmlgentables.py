@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Expandable/collapsible tables.
+HTML table generators.
 """
 
 import typing
@@ -23,8 +23,9 @@ import typing
 import scenario
 
 if True:
-    from ._collapsiblestate import CollapsibleState as _CollapsibleStateImpl  # @default-parameter-value
+    from ._collapsible import CollapsibleState as _CollapsibleStateImpl  # @default-parameter-value
 if typing.TYPE_CHECKING:
+    from ._collapsible import CollapsibleState as _CollapsibleStateType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
 
 
@@ -38,7 +39,7 @@ class CollapsibleTableGenerator:
             html,  # type: _HtmlDocumentType
             *,
             table_id,  # type: str
-            default_state=_CollapsibleStateImpl.EXPANDED,  # type: _CollapsibleStateImpl
+            default_state=_CollapsibleStateImpl.EXPANDED,  # type: _CollapsibleStateType
     ):  # type: (...) -> None
         """
         Instantiates a :class:`CollapsibleTableGenerator` with configurations.
@@ -52,7 +53,7 @@ class CollapsibleTableGenerator:
         #: Table identifier to set in HTML classes.
         self.table_id = table_id  # type: str
         #: Default state for collapsible rows.
-        self.default_state = default_state
+        self.default_state = default_state  # type: _CollapsibleStateType
 
         #: Main row data, fed in :meth:`addmainrow()`.
         self._main_rows = []  # type: typing.List[CollapsibleTableGenerator._MainRow]
@@ -64,8 +65,8 @@ class CollapsibleTableGenerator:
         self.html.addnode(
             "a",
             classes=[
-                "button", "expand-all",
-                self.html.mknamedobjectidclass("table", self.table_id),
+                "button", "expand-all", "table",
+                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
             ],
             href="#",
             text="Expand all",
@@ -80,8 +81,8 @@ class CollapsibleTableGenerator:
         self.html.addnode(
             "a",
             classes=[
-                "button", "collapse-all",
-                self.html.mknamedobjectidclass("table", self.table_id),
+                "button", "collapse-all", "table",
+                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
             ],
             href="#",
             text="Collapse all",
@@ -100,7 +101,7 @@ class CollapsibleTableGenerator:
         """
         from ._htmldoc import HtmlDocument
 
-        # Have '_collapsibletable.js' be embedded at the end of the HTML page.
+        # Have the related .js content be embedded at the end of the HTML page.
         self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
 
         # Create the table node.
@@ -109,7 +110,7 @@ class CollapsibleTableGenerator:
             classes=[
                 *classes,
                 "collapsible",
-                self.html.mknamedobjectidclass("table", self.table_id),
+                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
             ],
         )  # type: _HtmlDocumentType.NodeContext
 
@@ -179,8 +180,8 @@ class CollapsibleTableGenerator:
                 classes=[
                     *classes,
                     "main-row",
-                    self.html.mknamedobjectidclass("table", self.table_id),
-                    self.html.mknamedobjectidclass("main-row", main_row_id),
+                    self.html.mkcsscompatibleclass(f"table={self.table_id}"),
+                    self.html.mkcsscompatibleclass(f"main-row={main_row_id}"),
                 ],
             ),
         ))
@@ -194,8 +195,8 @@ class CollapsibleTableGenerator:
             "a",
             classes=[
                 "button", "toggle-row",
-                self.html.mknamedobjectidclass("table", self.table_id),
-                self.html.mknamedobjectidclass("main-row", self._main_rows[-1].id),
+                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
+                self.html.mkcsscompatibleclass(f"main-row={self._main_rows[-1].id}"),
             ],
         )
         with self._main_rows[-1].toggle_button_a_ctx:
@@ -220,8 +221,8 @@ class CollapsibleTableGenerator:
                 classes=[
                     *classes,
                     "collapsible-row",
-                    self.html.mknamedobjectidclass("table", self.table_id),
-                    self.html.mknamedobjectidclass("main-row", self._main_rows[-1].id),
+                    self.html.mkcsscompatibleclass(f"table={self.table_id}"),
+                    self.html.mkcsscompatibleclass(f"main-row={self._main_rows[-1].id}"),
                 ],
             )
         )

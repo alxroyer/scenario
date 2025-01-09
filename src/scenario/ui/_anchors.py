@@ -52,16 +52,13 @@ class Anchor(abc.ABC):
         if not link_text:
             link_text = "(<>)"
 
-        # Ensure `name` is CSS compatible.
-        name = html.mkcsscompatibleclass(name)
-
         # Container div.
         with html.addnode(
             "div",
             classes=[
                 *classes,
                 "anchor", "container",
-                html.mknamedobjectidclass("anchor", name),
+                html.mkcsscompatibleclass(f"anchor={name}"),
             ],
         ):
             # Anchor link.
@@ -69,7 +66,7 @@ class Anchor(abc.ABC):
                 classes=[
                     *classes,
                     "anchor-link",
-                    html.mknamedobjectidclass("anchor", name),
+                    html.mkcsscompatibleclass(f"anchor={name}"),
                 ],
                 href=f"#{name}",
                 title=link_title or name,
@@ -82,7 +79,7 @@ class Anchor(abc.ABC):
                 classes=[
                     *classes,
                     "anchor", "focusable",
-                    html.mknamedobjectidclass("anchor", name),
+                    html.mkcsscompatibleclass(f"anchor={name}"),
                 ],
             )  # type: _HtmlDocumentType.NodeContext
             with _anchor_div_ctx:
@@ -92,7 +89,7 @@ class Anchor(abc.ABC):
                     classes=[
                         *classes,
                         "anchor",
-                        html.mknamedobjectidclass("anchor", name),
+                        html.mkcsscompatibleclass(f"anchor={name}"),
                     ],
                     name=name,
                 )

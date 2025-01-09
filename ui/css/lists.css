@@ -20,6 +20,11 @@
  */
 
 
+/* Named lists. */
+
+    div.named.ul span.name::after { content: ":"; }  /* Add ":" at the end of list names. */
+
+
 /* Collapsible list items. */
 
     /* Rollback general button styles. */

@@ -135,6 +135,7 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         :param req: Requirement to build HTML content for.
         """
         from ._anchors import Anchor
+        from ._htmlgenlists import NamedListGenerator
         from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addnode("li", classes=["req"]):
@@ -164,8 +165,7 @@ class RequirementsPage(_HttpRequestHandlerImpl):
             # Subreferences.
             if req.subrefs:
                 with html.addnode("div", classes=["subrefs"]):
-                    html.addnode("p", classes=["subrefs", "title"], text="Subreferences:")
-                    with html.addnode("ul"):
+                    with NamedListGenerator(html).addlist(name="Subreferences"):
                         for _subref in req.subrefs:  # type: scenario.ReqRef
                             self._subref2html(html, _subref)
 

@@ -21,6 +21,7 @@ div#config div.form.container { margin-bottom: 20px; }  /* Ensure vertical spaci
 
 /* Labels. */
 div#config form label { margin-top: 10px; margin-bottom: 10px; }  /* Vertical spacing above and below. */
+div#config form label::after { content: ":";}  /* Add ":" at the end of labels. */
 /* Text areas. */
 div#config form textarea { margin-top: 10px; margin-bottom: 10px; }  /* Vertical spacing above and below. */
 div#config form textarea { width: 100%; box-sizing: border-box; }  /* Width 100%, taking into account the container padding. */

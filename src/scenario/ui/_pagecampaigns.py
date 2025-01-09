@@ -25,8 +25,8 @@ import scenario
 if True:
     from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from ._collapsibletable import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
+    from ._htmlgentables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -96,8 +96,8 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param request: Input request being processed.
         """
-        from ._collapsiblestate import CollapsibleState
-        from ._collapsibletable import CollapsibleTableGenerator
+        from ._collapsible import CollapsibleState
+        from ._htmlgentables import CollapsibleTableGenerator
 
         # Sort campaign executions.
         _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]

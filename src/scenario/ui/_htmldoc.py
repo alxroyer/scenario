@@ -253,6 +253,7 @@ class HtmlDocument(scenario.Logger):
             tag_name,  # type: str
             attrs=None,  # type: typing.Dict[str, typing.Optional[str]]
             *,
+            id="",  # type: str  # noqa  ## Shadwos built-in name 'id'.
             classes=None,  # type: typing.Sequence[str]
             text=None,  # type: str
             auto_closing=False,  # type: bool
@@ -263,6 +264,7 @@ class HtmlDocument(scenario.Logger):
 
         :param tag_name: Name of tag for the new node.
         :param attrs: Attributes passed as a dictionary. Optional. Useful when ``kwargs`` can't be used (attribute names with a dash, ...).
+        :param id: Optional HTML identifier.
         :param classes: List of classes. May complete other classes already defined with ``attrs``.
         :param text: Optional content text.
         :param auto_closing: Set to ``True`` to allow auto-closing node. ``False`` by default.
@@ -283,6 +285,8 @@ class HtmlDocument(scenario.Logger):
         if True:
             # - merge `kwargs` in `attrs`,
             attrs.update(kwargs)
+        if id:
+            attrs["id"] = id
         if classes:
             # - merge `classes` in `attrs`,
             if "class" in attrs:
@@ -365,10 +369,10 @@ class HtmlDocument(scenario.Logger):
         """
         self.debug("addstyle(%r)", new_rules)
         try:
-            _rules = [_rule.strip() for _rule in self.current_node.getattr("style").split(";")]  # type: typing.List[str]
+            _rules = [_rule.strip() for _rule in self.current_node.getattr("style").split(";") if _rule.strip()]  # type: typing.List[str]
         except KeyError:
             _rules = []
-        _rules.extend([_rule.strip() for _rule in new_rules.split(";")])
+        _rules.extend([_rule.strip() for _rule in new_rules.split(";") if _rule.strip()])
         self.current_node.setattr("style", "; ".join(_rules))
 
     def addlink(
@@ -404,10 +408,8 @@ class HtmlDocument(scenario.Logger):
         """
         Adds text to the current node.
 
-        :param text:
-            Text to add.
-        :return:
-            Text node created.
+        :param text: Text to add.
+        :return: Text node created.
         """
         self.debug("addtext(%r)", text)
         return self.current_node.appendchild(self.xml_doc.createtextnode(
@@ -416,30 +418,21 @@ class HtmlDocument(scenario.Logger):
         ))
 
     @staticmethod
-    def mknamedobjectidclass(
-            name,  # type: str
-            id,  # type: str  # noqa  ## Shadwos built-in name 'id'.
-    ):  # type: (...) -> str
-        """
-        Computes an HTML class identifying a named object.
-
-        :param name: Name of the object being identified.
-        :param id: Identifier of the object.
-        :return: HTML class.
-        """
-        return HtmlDocument.mkcsscompatibleclass(f"{name}={id}")
-
-    @staticmethod
     def mkcsscompatibleclass(
-            text,  # type: str
+            raw,  # type: str
     ):  # type: (...) -> str
         """
-        Ensures ``text`` is compatible for CSS in class names.
+        Ensures ``raw`` HTML class is compatible for CSS in class names.
 
-        :param text: Class name or part of class name to ensure CSS compatibility for.
-        :return: CSS compatible HTML class text.
+        :param raw: Raw HTML class to ensure CSS compatibility for.
+        :return: CSS compatible HTML class.
         """
-        return text.replace('.', '-dot-')
+        return (
+            raw
+            .replace(".", "-dot-")
+            .replace("=", "-eq-")
+            .replace("#", "-hash-")
+        )
 
     def dump(self) -> bytes:
         """

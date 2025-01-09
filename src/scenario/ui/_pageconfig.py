@@ -134,7 +134,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
                     html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM1, auto_closing=True)
 
                     # Requirements file.
-                    html.addnode("label", text="Requirements:")
+                    html.addnode("label", text="Requirements")
                     with html.addnode("textarea", name=ConfigurationPage.Arg.REQ_DB_PATHS, rows="10", placeholder="List of requirement files (absolute paths)"):
                         # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                         _text_node = html.addtext("")  # type: Xml.TextNode
@@ -145,7 +145,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
                             _text_node.data += _req_db_path.abspath
 
                     # Test suite files.
-                    html.addnode("label", text="Test suites:")
+                    html.addnode("label", text="Test suites")
                     with html.addnode("textarea", name=ConfigurationPage.Arg.TEST_SUITE_PATHS, rows="10", placeholder="List of test suite file (absolute paths)"):
                         # Ensure a empty text node at least for `<textarea/>` (otherwise HTML fails with empty `<textarea/>`).
                         _text_node = html.addtext("")  # Type already defined above.
@@ -176,7 +176,7 @@ class ConfigurationPage(_HttpRequestHandlerImpl):
                     html.addnode("input", type="hidden", name=ConfigurationPage.Arg.ACTION, value=ConfigurationPage.Action.FORM2, auto_closing=True)
 
                     # Campaign path (directory or campaign report).
-                    html.addnode("label", text="Campaign path:")
+                    html.addnode("label", text="Campaign path")
                     html.addnode("input", type="text", name=ConfigurationPage.Arg.CAMPAIGN_PATH, auto_closing=True)
 
                 # Submit.

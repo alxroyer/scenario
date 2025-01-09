@@ -25,6 +25,31 @@
 scenario.lists = {};
 
 
+// Add 'click' event listeners to `a.expand-all.list` and `a.collapse-all.list` buttons.
+scenario.onLoad(() => {
+    /**
+     * @brief Configures `.expand-all` and `.collapse-all` buttons.
+     * @param {"expand-all" | "collapse-all"} buttonClass Button class.
+     * @param {"expanded" | "collapsed"} newState Final state wanted.
+     * @returns {void}
+     */
+    function _configButton(buttonClass, newState) {
+        for (/** @var {HTMLElement} */ const _button of scenario.findNodes(document.body, `a.button.${buttonClass}.list`)) {
+            _button.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                /** @var {string | null} */ const _listId = scenario.getNamedObjectIdFromClasses(_button, "list");
+                if (_listId) {
+                    scenario.lists._toggleAll(_listId, newState);
+                }
+            });
+        }
+    }
+    _configButton("expand-all", "expanded");
+    _configButton("collapse-all", "collapsed");
+});
+
+
 // Add 'click' event listeners on `a.toggle-list-item` buttons.
 scenario.onLoad(() => {
     for (/** @var {HTMLElement} */ const _mainLi of scenario.findNodes(document.body, "li.collapsible.main-list-item")) {
@@ -37,6 +62,23 @@ scenario.onLoad(() => {
         }
     }
 });
+
+
+/**
+ * @brief Expands or collapses all list items.
+ * @param {string} listId List identifier.
+ * @param {"expanded" | "collapsed"} newState Final state wanted.
+ * @returns {void}
+ */
+scenario.lists._toggleAll = (listId, newState) => {
+    console.debug(`scenario.lists._toggleAll('${listId}', '${newState}')`);
+    /** @var {number} */ let _count = 0;
+    for (/** @var {HTMLElement} */ const _mainLi of scenario.findNodes(document.body, `ul.collapsible.list=${listId} li.main-list-item`)) {
+        scenario.lists.toggle(_mainLi, {newState: newState});
+        _count ++;
+    }
+    console.debug(`scenario.lists._toggleAll('${listId}', '${newState}'): ${_count} main list item(s) ${newState}`);
+};
 
 
 /**

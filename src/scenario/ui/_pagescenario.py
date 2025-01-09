@@ -26,6 +26,7 @@ if True:
     from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
+    from ._htmlgenlists import CollapsibleListGenerator as _CollapsibleListGeneratorType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -53,7 +54,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
 
         _step_anchor = None  # type: typing.Optional[str]
         if isinstance(req_verifier, scenario.StepDefinition):
-            _step_anchor = f"step{req_verifier.number}"
+            _step_anchor = f"step-{req_verifier.number}"
 
         return HttpRequest.encodeurl(
             ScenarioPage._URL,
@@ -150,9 +151,10 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param scenario_definition: Scenario which attributes to build HTML content for.
         """
+        from ._htmlgenlists import NamedListGenerator
+
         with html.addnode("div", classes=["scenario", "attributes"]):
-            html.addnode("p", text="Attributes:")
-            with html.addnode("ul"):
+            with NamedListGenerator(html).addlist(name="Attributes"):
                 for _attr_name in scenario_definition.getattributenames():  # type: str
                     with html.addnode("li", classes=["scenario", "attribute"]):
                         html.addnode("span", classes=["scenario", "attribute", "name"], text=_attr_name)
@@ -170,48 +172,62 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param scenario_definition: Scenario which steps to build HTML content for.
         """
-        with html.addnode("div", id="steps"):
-            html.addnode("p", text="Steps:")
-            with html.addnode("ul"):
+        from ._collapsible import CollapsibleState
+        from ._htmlgenlists import CollapsibleListGenerator, NamedListGenerator
+
+        with html.addnode("div", classes=["scenario", "steps"]):
+            _list_generator = CollapsibleListGenerator(
+                html,
+                list_id="steps",
+                default_state=CollapsibleState.COLLAPSED,
+            )  # type: CollapsibleListGenerator
+            with NamedListGenerator(_list_generator).addlist(name="Steps"):
                 for _step in scenario_definition.steps:  # type: scenario.StepDefinition
-                    self._step2html(html, _step)
+                    self._step2html(_list_generator, _step)
 
     def _step2html(
             self,
-            html,  # type: _HtmlDocumentType
+            list_generator,  # type: _CollapsibleListGeneratorType
             step,  # type: scenario.StepDefinition
     ):  # type: (...) -> None
         """
         Builds the HTML content for the given step.
 
-        :param html: HTML output page to feed.
+        :param list_generator: List generator. Provides the HTML output page to feed.
         :param step: Step to build HTML content for.
         """
         from ._anchors import Anchor
+        from ._htmlgenlists import NamedListGenerator
 
-        with html.addnode("li", classes=["step"]):
+        with list_generator.addmainlistitem(
+            main_list_item_id=f"step#{step.number}",
+            classes=["step"],
+        ):
             if isinstance(step, scenario.StepSectionDescription) and step.description:
-                html.addnode("h2", classes=["step"], text=step.description)
+                list_generator.html.addnode("h2", classes=["step"], text=step.description)
             else:
                 # Step anchor.
-                with Anchor.add(html, name=f"step{step.number}"):
+                with Anchor.add(list_generator.html, name=f"step-{step.number}"):
                     # Step number, description and name.
-                    html.addnode("span", classes=["step", "number"], text=f"step#{step.number}")
+                    list_generator.html.addnode("span", classes=["step", "number"], text=f"step#{step.number}")
                     if step.description:
-                        html.addnode("span", classes=["step", "sep"], text=":")
-                        html.addnode("span", classes=["step", "description"], text=step.description)
-                    html.addnode("span", classes=["step", "name"], text=step.name)
+                        list_generator.html.addnode("span", classes=["step", "sep"], text=":")
+                        list_generator.html.addnode("span", classes=["step", "description"], text=step.description)
+                    list_generator.html.addnode("span", classes=["step", "name"], text=step.name)
 
-                # Step requirements coverage.
-                _req_refs = step.getreqrefs()  # type: scenario.SetWithReqLinksType[scenario.ReqRef]
-                if _req_refs:
-                    self._reqrefs2html(html, step, _req_refs)
+                # Collapsible step content.
+                with list_generator.html.addnode("ul"):
+                    with list_generator.addcollapsiblelistitem():
+                        # Step requirements coverage.
+                        _req_refs = step.getreqrefs()  # type: scenario.SetWithReqLinksType[scenario.ReqRef]
+                        if _req_refs:
+                            self._reqrefs2html(list_generator.html, step, _req_refs)
 
-                # Actions & expected results.
-                with html.addnode("div", classes=["actions-results"]):
-                    with html.addnode("ul"):
-                        for _action_result in step.actions_results:  # type: scenario.ActionResultDefinition
-                            self._actionresult2html(html, _action_result)
+                        # Actions & expected results.
+                        with list_generator.html.addnode("div", classes=["actions-results"]):
+                            with NamedListGenerator(list_generator.html).addlist(name="Actions / results"):
+                                for _action_result in step.actions_results:  # type: scenario.ActionResultDefinition
+                                    self._actionresult2html(list_generator.html, _action_result)
 
     def _actionresult2html(
             self,
@@ -242,6 +258,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
         :param req_verifier: Scenario or step to process requirement coverage for.
         :param req_refs: Scenario or step requirement coverage.
         """
+        from ._htmlgenlists import NamedListGenerator
         from ._pagereqs import RequirementsPage
         from ._pagereqsdown import DownstreamTraceabilityPage
         from ._pagereqsup import UpstreamTraceabilityPage
@@ -254,9 +271,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
             _obj_class = "step"
 
         with html.addnode("div", classes=[_obj_class, "requirements"]):
-            html.addnode("p", text="Requirements:")
-
-            with html.addnode("ul"):
+            with NamedListGenerator(html).addlist(name="Requirements"):
                 for _req_ref in req_refs:  # type: scenario.ReqRef
                     with html.addnode("li", classes=[_obj_class, "req-ref"]):
                         # Requirement reference id.

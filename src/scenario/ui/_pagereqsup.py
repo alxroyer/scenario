@@ -25,10 +25,10 @@ import scenario
 if True:
     from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
-    from ._collapsiblelist import CollapsibleListItemGenerator as _CollapsibleListItemGeneratorType
-    from ._collapsibletable import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
     from ._debugclasses import UIDebugClass as _UIDebugClassType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
+    from ._htmlgenlists import CollapsibleListItemGenerator as _CollapsibleListItemGeneratorType
+    from ._htmlgentables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -147,8 +147,8 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req_baseline: Requirement baseline holding the requirement database and scenarios to process.
         """
-        from ._collapsiblestate import CollapsibleState
-        from ._collapsibletable import CollapsibleTableGenerator
+        from ._collapsible import CollapsibleState
+        from ._htmlgentables import CollapsibleTableGenerator
 
         with html.addnode("div", id="upstream-traceability"):
             # Compute upstream traceability.
@@ -235,8 +235,8 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param upstream_req: Requirement to build HTML content for.
         """
-        from ._collapsiblelist import CollapsibleListItemGenerator
-        from ._collapsiblestate import CollapsibleState
+        from ._collapsible import CollapsibleState
+        from ._htmlgenlists import CollapsibleListItemGenerator
         from ._pagereqs import RequirementsPage
         from ._pagereqsdown import DownstreamTraceabilityPage
 

@@ -43,6 +43,21 @@ scenario.onLoad = (f) => {
 
 
 /**
+ * @brief Ensures `raw` HTML class is CSS compatible, as the Python side does.
+ * @param {string} raw Raw HTML class to ensure CSS compatibility for.
+ * @returns {string} CSS compatible HTML class.
+ */
+scenario.mkCssCompatibleClass = (raw) => {
+    return (
+        raw
+        .replaceAll(".", "-dot-")
+        .replaceAll("=", "-eq-")
+        .replaceAll("#", "-hash-")
+    );
+};
+
+
+/**
  * @brief Finds nodes matching `selector`.
  * @param {HTMLElement} node Current node.
  * @param {string} selector CSS selector.
@@ -76,29 +91,41 @@ scenario.findNodes = (node, selector, {debug=false, indentation=""}={}) => {
     }
     /** @var {string | null} */ const _tagName = _match[1];
     /** @var {string | null} */ const _id = _match[3];
-    /** @var {string | null} */ const _classes = _match[4];
+    /** @var {string | null} */ let _classes = _match[4];
+    if (_classes) {
+        // Ensure `_classes` is space-separated, as `getElementsByClassName()` takes it.
+        _classes = _classes.substring(1).replaceAll(".", " ");
+        // Ensure `_classes` is "CSS compatible", as the Python side ensured it.
+        _classes = scenario.mkCssCompatibleClass(_classes);
+    }
     _debug(`scenario.findNodes(): '${_selectors[0]}' => _tagName: ${_tagName}, _id: ${_id}, _classes: ${_classes}`);
     // - Find node(s) from the most representative criteria:
     if (_id) {
         _selected.push(document.getElementById(_id));
+        _debug(`scenario.findNodes(): _id='${_id}' => ${_selected}`);
     } else if (_classes) {
-        _selected.push(...node.getElementsByClassName(_classes.substring(1).replace(".", " ")));
+        _selected.push(...node.getElementsByClassName(_classes));
+        _debug(`scenario.findNodes(): _classes='${_classes}' => ${_selected}`);
     } else if (_tagName) {
         _selected.push(...node.getElementsByTagName(_tagName));
+        _debug(`scenario.findNodes(): _tagName='${_tagName}' => ${_selected}`);
     } else {
         throw SyntaxError(`Invalid selector '${_selectors[0]}'`);
     }
     // - Then check the nodes selected above pass all criteria:
     _selected = _selected.filter((e) => {
         if (! e) {
+            _debug(`scenario.findNodes(): Filtered-out ${e}`);
             return false;
         }
         if (_tagName && (e.tagName.toLowerCase() !== _tagName.toLowerCase())) {
+            _debug(`scenario.findNodes(): Filtered-out tag name ${e.tagName} !== ${_tagName}`);
             return false;
         }
         if (_classes) {
-            for (/** @var {string} */ const _class of _classes.substring(1).split(".")) {
+            for (/** @var {string} */ const _class of _classes.split(" ")) {
                 if (! e.classList.contains(_class)) {
+                    _debug(`scenario.findNodes(): Filtered-out missing class '${_class}' in [${e.classList}]`);
                     return false;
                 }
             }
@@ -131,7 +158,7 @@ scenario.findNodes = (node, selector, {debug=false, indentation=""}={}) => {
  * @returns {string | null} Named class value if found, `null` otherwise.
  */
 scenario.getNamedObjectIdFromClasses = (node, name) => {
-    /** @var {string} */ const _starter = `${name}=`;
+    /** @var {string} */ const _starter = scenario.mkCssCompatibleClass(`${name}=`);
     for (/** @var {string} */ const _class of node.classList) {
         if (_class.startsWith(_starter)) {
             return _class.substring(_starter.length);

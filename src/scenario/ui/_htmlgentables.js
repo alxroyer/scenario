@@ -25,7 +25,7 @@
 scenario.tables = {};
 
 
-// Add 'click' event listeners to `a.expand-all` and `a.collapse-all` buttons.
+// Add 'click' event listeners to `a.expand-all.table` and `a.collapse-all.table` buttons.
 scenario.onLoad(() => {
     /**
      * @brief Configures `.expand-all` and `.collapse-all` buttons.
@@ -34,7 +34,7 @@ scenario.onLoad(() => {
      * @returns {void}
      */
     function _configButton(buttonClass, newState) {
-        for (/** @var {HTMLElement} */ const _button of scenario.findNodes(document.body, `a.button.${buttonClass}`)) {
+        for (/** @var {HTMLElement} */ const _button of scenario.findNodes(document.body, `a.button.${buttonClass}.table`)) {
             _button.addEventListener("click", (e) => {
                 e.preventDefault();
 
