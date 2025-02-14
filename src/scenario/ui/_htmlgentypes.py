@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Collapsible state.
+HTML generator types.
 """
 
 import scenario
@@ -23,7 +23,7 @@ import scenario
 
 class CollapsibleState(scenario.enum.StrEnum):
     """
-    State for collapsible rows.
+    State for collapsible stuff.
 
     String values define HTML classes.
     """

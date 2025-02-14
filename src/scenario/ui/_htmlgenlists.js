@@ -38,9 +38,9 @@ scenario.onLoad(() => {
             _button.addEventListener("click", (e) => {
                 e.preventDefault();
 
-                /** @var {string | null} */ const _listId = scenario.getNamedObjectIdFromClasses(_button, "list");
-                if (_listId) {
-                    scenario.lists._toggleAll(_listId, newState);
+                /** @var {string | null} */ const _listCid = scenario.getCid(_button, "list");
+                if (_listCid) {
+                    scenario.lists._toggleAll(_listCid, newState);
                 }
             });
         }
@@ -50,104 +50,119 @@ scenario.onLoad(() => {
 });
 
 
-// Add 'click' event listeners on `a.toggle-list-item` buttons.
-scenario.onLoad(() => {
-    for (/** @var {HTMLElement} */ const _mainLi of scenario.findNodes(document.body, "li.collapsible.main-list-item")) {
-        for (/** @var {HTMLElement} */ const _button of scenario.findNodes(_mainLi, "a.button.toggle-list-item")) {
-            _button.addEventListener("click", (e) => {
-                e.preventDefault();
-
-                scenario.lists.toggle(_mainLi);
-            });
-        }
-    }
-});
-
-
 /**
  * @brief Expands or collapses all list items.
- * @param {string} listId List identifier.
+ * @param {string} listCid List CID.
  * @param {"expanded" | "collapsed"} newState Final state wanted.
  * @returns {void}
  */
-scenario.lists._toggleAll = (listId, newState) => {
-    console.debug(`scenario.lists._toggleAll('${listId}', '${newState}')`);
+scenario.lists._toggleAll = (listCid, newState) => {
+    console.debug(`scenario.lists._toggleAll('${listCid}', '${newState}')`);
+
     /** @var {number} */ let _count = 0;
-    for (/** @var {HTMLElement} */ const _mainLi of scenario.findNodes(document.body, `ul.collapsible.list=${listId} li.main-list-item`)) {
-        scenario.lists.toggle(_mainLi, {newState: newState});
-        _count ++;
+
+    // Find the list corresponding to the given CID.
+    for (/** @var {HTMLElement} */ const _list of scenario.findNodes(document.body, `ul.list=${listCid}`)) {
+        // Don't call `scenario.lists._toggle()` directly,
+        // but `scenario.divs.toggle()` that will call `scenario.lists.checkToggleLi1()` to have `scenario.lists._toggle()` possibly called in the end.
+
+        // Use `scenario.divs.findAndToggleAll()` to process all list items,
+        // and make it recursive on items' contents by the way.
+        scenario.divs.findAndToggleAll(_list, newState, {
+            // Use the `buttonProcessed()` callback to count `.li1` main items processed.
+            /**
+             * @param {HTMLElement} button `.toggle-div` button processed.
+             * @returns {void}
+             */
+            buttonProcessed: (button) => {
+                if (scenario.nodeMatches(button, `a.toggle-li1.list=${listCid}`)) {
+                    _count ++;
+                }
+            },
+        });
     }
-    console.debug(`scenario.lists._toggleAll('${listId}', '${newState}'): ${_count} main list item(s) ${newState}`);
+
+    console.debug(`scenario.lists._toggleAll('${listCid}', '${newState}'): ${_count} \`.li1\` main item(s) ${newState}`);
 };
 
 
 /**
- * @brief Expands or collapses `li.collapsible-list-item`s attached to a given `li.main-list-item`.
- * @param {HTMLElement} mainLi Main list item to expand or collapse.
- * @param {"expanded" | "collapsed" | undefined} newState Final state wanted. Switch state if not provided.
+ * @brief Check whether the given `button`, just toggled, corresponds to a `.li1` main item, and should call `scenario.lists._toggle()` complementary actions.
+ * @param {HTMLElement} button Button just toggled by `scenario.divs.toggle()`.
+ * @param {"expanded" | "collapsed"} newState Final state wanted.
  * @returns {void}
+ *
+ * Called by `scenario.divs.toggle()`.
  */
-scenario.lists.toggle = (mainLi, {newState} = {}) => {
-    // Find 'main-list-item=...' id and 'expanded'/'collapsed' state from classes.
-    /** @var {string | null} */ const _mainListItemId = scenario.getNamedObjectIdFromClasses(mainLi, "main-list-item");
-    if (! _mainListItemId) {
-        console.error(`No main list item identifier found from ${mainLi} classes`);
-        return;
+scenario.lists.checkToggleLi1 = (button, newState) => {
+    // Check whether the given button owns a `.li1` main item CID.
+    /** @var {string | null} */ const _li1Cid = scenario.getCid(button, "li1");
+    if (_li1Cid) {
+        // If so, find the ancestor `.li1` main item.
+        for (/** @var {HTMLElement | undefined} */ let _parent = button.parentNode; _parent; _parent = _parent.parentNode) {
+            if (scenario.nodeMatches(_parent, `li.li1=${_li1Cid}`)) {
+                // Call `scenario.lists._toggle()` complementary actions.
+                scenario.lists._toggle(_parent, {
+                    li1Cid: _li1Cid,
+                    //oldState: ...,  // Let `scenario.lists._toggle()` read actual li1's current state.
+                    newState: newState,
+                });
+
+                // `.li1` main item found and processed. Stop iterating.
+                break;
+            }
+        }
     }
-    /** @var {string | null} */ const _oldState = (
-        mainLi.classList.contains("expanded") ? "expanded" :
-        mainLi.classList.contains("collapsed") ? "collapsed" :
-        null  // Neither 'expanded' nor 'collapsed'.
-    );
+};
+
+
+/**
+ * @brief Finishes expanding or collapsing a `.li1` main item (`scenario.divs.toggle()` complement).
+ * @param {HTMLElement} li1 Main item to expand or collapse.
+ * @param {string | null | undefined} li1Cid CID of main item, if already known (performance concerns).
+ * @param {"expanded" | "collapsed" | null | undefined} oldState Current state, if already known (performance concerns).
+ * @param {"expanded" | "collapsed" | null | undefined} newState Final state wanted. Switch state if not provided.
+ * @returns {void}
+ *
+ * Called by `scenario.lists.checkToggleLi1()`.
+ */
+scenario.lists._toggle = (li1, {li1Cid, oldState, newState} = {}) => {
+    // Read CID from classes.
+    if (li1Cid === undefined) {
+        li1Cid = scenario.getCid(li1, "li1");
+    }
+
+    // Determine old state from classes if not provided.
+    if (oldState === undefined) {
+        oldState = scenario.findOneClassOf(li1, ["expanded", "collapsed"]);
+    }
 
     // Compute `newState` if not provided.
     if (! newState) {
         // Reverse status.
-        switch (_oldState) {
+        switch (oldState) {
             case "expanded": newState = "collapsed"; break;
             case "collapsed": newState = "expanded"; break;
         }
     }
 
-    if (_mainListItemId && _oldState && newState) {
-        console.debug(`Toggling ${_mainListItemId}: ${_oldState} => ${newState}`);
+    if (li1Cid && oldState && newState) {
+        console.debug(`Toggling li1 ${li1Cid}: ${oldState} => ${newState}`);
 
-        // Remove old state and set new state on main list item.
-        mainLi.classList.remove("expanded");
-        mainLi.classList.remove("collapsed");
-        mainLi.classList.add(newState);
+        // Remove old state and set new state on `.li1` main item.
+        li1.classList.remove("expanded");
+        li1.classList.remove("collapsed");
+        li1.classList.add(newState);
 
-        // Adjust `a.button.toggle-list-item span` button text.
-        for (/** @var {HTMLElement} */ const _buttonSpan of scenario.findNodes(mainLi, "a.button.toggle-list-item span")) {
-            switch (newState) {
-                case "expanded": _buttonSpan.innerText = "-"; break;
-                case "collapsed": _buttonSpan.innerText = "+"; break;
-            }
-        }
-
-        // Hide/show main list item comments sum-ups.
-        if (mainLi.classList.contains("comments-sum-up")) {
-            for (/** @var {HTMLElement} */ const _span of scenario.findNodes(mainLi, "span.main-list-item")) {
-                if (_span.classList.contains("sep") || _span.classList.contains("comments")) {
+        // Hide/show `.li1` comments sum-up.
+        if (scenario.nodeMatches(li1, "li.li1.li1=${li1Cid}.comments-sum-up")) {
+            for (/** @var {HTMLElement} */ const _span of scenario.findNodes(li1, `span.li1.li1=${li1Cid}`)) {
+                if (scenario.nodeMatches(_span, ".sep") || scenario.nodeMatches(_span, ".comment")) {
                     switch (newState) {
                         case "expanded": _span.style.display = "none"; break;
                         case "collapsed": _span.style.display = "inline-block"; break;
                     }
                 }
-            }
-        }
-
-        // Walk `li.collapsible-list-item`s.
-        for (/** @var {HTMLElement} */ const _collapsibleLi of scenario.findNodes(mainLi, `li.collapsible-list-item.main-list-item=${_mainListItemId}`)) {
-            // Remove old state, and set new state.
-            _collapsibleLi.classList.remove("expanded");
-            _collapsibleLi.classList.remove("collapsed");
-            _collapsibleLi.classList.add(newState);
-
-            // Hide / show `tr.collapsible-row` rows.
-            switch (newState) {
-                case "expanded": _collapsibleLi.style.display = "block"; break;
-                case "collapsed": _collapsibleLi.style.display = "none"; break;
             }
         }
     }

@@ -21,21 +21,158 @@
 
 
 /* Zoning. */
-    /* Ensure inner space in `.attributes`, `.requirements` and `.steps` sections. */
-    div#scenario div.scenario.attributes { padding: 10px; }
-    div#scenario div.scenario.requirements { padding: 10px; }
-    div#scenario div.scenario.steps { padding: 10px; }
 
-/* Requirements section. */
-    /* Left spacing for final `.upstream.traceability` link in `.requirements` right. */
-    div#scenario div.scenario.requirements a.upstream.traceability { margin-left: 20px; }
+    /* Ensure inner space in `.attributes`, `.requirements` and `.steps` sections. */
+    div#scenario div.scenario-executions.named { padding: 10px; }
+    div#scenario div.scenario.attributes.named { padding: 10px; }
+    div#scenario div.scenario.requirements.named { padding: 10px; }
+    div#scenario div.scenario.steps.named { padding: 10px; }
+
+/* Main execution results section. */
+
+    /* Reduce left spacing for main execution results so that they are aligned with requireents list below. */
+    div#scenario div.scenario-executions.named ul.execution-results { padding-left: 20px; }
+
+/* Attributes section. */
+
+    /* Display the same as requirement coverage. */
+    div#scenario div.scenario.attributes.named li.attribute { list-style: none; }
+    div#scenario div.scenario.attributes.named ul.attributes { padding-left: 20px; }
+
+/* Requirement coverage section. */
+
+    /* See generalities. */
 
 /* Steps section. */
-    /* No bullets for step list items. A collapsible icon is already displayed. */
-    div#scenario div.scenario.steps li.step { list-style: none; }
-    /* Reduce left spacing for `ul.list=steps` so that it is aligned with requirements list above. */
-    div#scenario div.scenario.steps ul.collapsible.list-eq-steps { padding-left: 20px; }
-    /* Step names. Usually a class name. Display them in italic between parentheses. */
-    div#scenario div.scenario.steps span.step.name::before { content: "("; }
-    div#scenario div.scenario.steps span.step.name::after { content: ")"; }
-    div#scenario div.scenario.steps span.step.name { font-style: italic; }
+
+    /* Steps. */
+
+        /* General. */
+
+            /* No bullets for `.li1` step items. A collapsible icon is already displayed. */
+            div#scenario li.step.li1 { list-style: none; }
+            /* Reduce left spacing for main `ul.list=steps` so that it is aligned with requirements list above. */
+            div#scenario ul.list-eq-steps.li1 { padding-left: 20px; }
+
+        /* Step section titles. */
+
+            div#scenario li.step.section h2 { font-size: medium; }
+
+        /* Regular steps. */
+
+            /* Step names. Usually a class name. Display in italic between parentheses. */
+            div#scenario span.step.name::before { content: "("; }
+            div#scenario span.step.name::after { content: ")"; }
+            div#scenario span.step.name { font-style: italic; }
+
+            /* No bullet for collapsible content (actions/results). */
+            div#scenario li.li2.list-eq-steps { list-style: none; }
+            /* Avoid extra indentation for collapsible content, already indented before. */
+            div#scenario ul.list-eq-steps.li2 { padding-left: 0px; }
+            div#scenario li.list-eq-steps.li2 { padding-left: 0px; }
+
+            /* Indent collapsible content below the step description. */
+            div#scenario div.list-eq-steps.collapsible { padding-left: 50px; }
+
+            /* Space before and after step content, to detach it from the current step description (with optional execution result), and the content after. */
+            div#scenario div.list-eq-steps.collapsible { margin-top: 10px; margin-bottom: 10px; }
+
+            /* Hide "Execution results" label. */
+            div#scenario span.step-executions.name { display: none; }
+
+            /* Actions/results. */
+
+                /* Hide "Actions / Results" label. */
+                div#scenario span.actions-results.name { display: none; }
+
+                /* No bullets for actions/results. */
+                div#scenario li.action-result { list-style: none; }
+                /* Avoid extra indentation for actions/results, already indented before. */
+                div#scenario ul.actions-results { padding-left: 0px; }
+
+                /* Action/result executions. */
+
+                    /* Indent execution results below the action/result main line. */
+                    div#scenario div.action-result-executions.execution-results { padding-left: 20px; }
+
+                    /* Hide "Execution results" label. */
+                    div#scenario div.action-result-executions.execution-results span.name { display: none; }
+
+                    /* Avoid extra indentation for action/result executions, already indented before. */
+                    div#scenario div.action-result-executions.execution-results ul.execution-results { padding-left: 0px; }
+
+                /* Action/result evidence. */
+
+                    /* Indent evidence below the action/result main line. */
+                    div#scenario div.action-result-executions.evidence { padding-left: 30px; }
+
+                    /* Space before and after evidence, to detach it from the current action/result execution results above, and the content after. */
+                    div#scenario div.action-result-executions.evidence { margin-top: 10px; margin-bottom: 10px; }
+
+                    /* Hide "Evidence" label. */
+                    div#scenario div.action-result-executions.evidence span.name { display: none; }
+
+                    /* Avoid extra indentation for action/result evidence, already indented before. */
+                    div#scenario div.action-result-executions.evidence ul.action-result-executions { padding-left: 0px; }
+
+                    /* Draw a bar on the left side for each execution. */
+                    div#scenario div.action-result-executions.evidence li.action-result-execution { border-left: dotted 3px grey; padding-left: 10px; }
+
+                    /* Avoid extra indentation for evidence, already indented before. */
+                    div#scenario div.action-result-executions.evidence ul.execution-results { padding-left: 0px; }
+
+/* Requirement coverage generalitites. */
+
+    /* No bullets for requirement items. */
+    div#scenario div.requirements.named li.req-ref { list-style: none; }
+
+    /* Set left spacing for requirements items. */
+    div#scenario div.requirements.named ul.req-refs { padding-left: 20px;}
+
+    /* Ensure spacing before and after requirement items. */
+    div#scenario div.requirements.named ul.req-refs { margin-top: 16px; margin-bottom: 16px; }
+
+    /* Left spacing for final `.upstream.traceability` link, aligned with requirement items. */
+    div#scenario div.requirements.named a.upstream.traceability { margin-left: 20px; }
+
+    /* Ensure space with content after for a `.requirements` section (either expanded or collapsed). */
+    div#scenario div.requirements.named { margin-bottom: 16px; }
+
+/* Execution results generalities. */
+
+    /* No bullets for execution results. */
+    div#scenario li.execution-result { list-style: none; }
+
+    /* One line for each execution result item by default. */
+    div#scenario li.execution-result > * { display: block; }
+
+    /* Display time information on the same line, in small grey. */
+    div#scenario span.execution-result.time-start, div#scenario span.execution-result.time-end, div#scenario span.execution-result.time-elapsed { display: inline-block; }
+    div#scenario span.execution-result.time-start::after { content: " - "; }
+    div#scenario span.execution-result.time-elapsed::before { content: "("; }
+    div#scenario span.execution-result.time-elapsed::after { content: ")"; }
+    div#scenario span.execution-result.time-start, div#scenario span.execution-result.time-end, div#scenario span.execution-result.time-elapsed { font-size: x-small; }
+    div#scenario span.execution-result.time-start, div#scenario span.execution-result.time-end, div#scenario span.execution-result.time-elapsed { color: grey; }
+
+    /* Display errors with a leading label in bold red. */
+    div#scenario div.execution-result.error::before { content: "ERROR: "; }
+    div#scenario div.execution-result.error { color: red; font-weight: bold; }
+
+    /* Display warnings with a leading label in bold orange. */
+    div#scenario div.execution-result.warning::before { content: "WARNING: "; }
+    div#scenario div.execution-result.warning { color: orange; font-weight: bold; }
+
+    /* Display success with in bold green. */
+    div#scenario div.execution-result.success { color: green; font-weight: bold; }
+
+    /* Error and warning locations in italic, between parentheses. */
+    div#scenario div.execution-result span.location::before { content: "("; }
+    div#scenario div.execution-result span.location::after { content: ")"; }
+    div#scenario div.execution-result span.location { font-style: italic; }
+
+    /* Display evidence with a leading label. */
+    div#scenario span.execution-result.evidence::before { content: "EVIDENCE: "; }
+
+    /* Ensure space after execution results. */
+    /*div#scenario div.execution-results { margin-top: 5px; }*/  /* Space already exists, due to undesired side effects? tbc... */
+    div#scenario div.execution-results { margin-bottom: 5px; }

@@ -15,131 +15,132 @@
 # limitations under the License.
 
 """
-HTML list generators.
+HTML list generator.
 """
 
 import typing
 
 import scenario
 
-if True:
-    from ._collapsible import CollapsibleState as _CollapsibleStateImpl  # @default-parameter-value
 if typing.TYPE_CHECKING:
-    from ._collapsible import CollapsibleState as _CollapsibleStateType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
+    from ._htmlgentypes import CollapsibleState as _CollapsibleStateType
 
 
-class NamedListGenerator:
+class ListGenerator:
     """
-    HTML generator for an unordered list (``<ul></ul>``) with a leading name.
-    """
+    HTML generator for an unordered list (``<ul></ul>``).
 
-    def __init__(
-            self,
-            arg,  # type: typing.Union[_HtmlDocumentType, CollapsibleListGenerator]
-    ):  # type: (...) -> None
-        """
-        Instantiates a :class:`NamedListGenerator` with
-        either a :class:`._htmldoc.HtmlDocument` directly,
-        or a :class:`CollapsibleListGenerator`.
+    Optional features:
 
-        :param arg:
-            :class:`._htmldoc.HtmlDocument` or :class:`CollapsibleListGenerator` giving the HTML output page to feed at least.
+    - ``.li1`` main items and optional ``.li2`` subitems.
+    - ``.li2`` subitems may collapse below ``.li1`` main items.
+    - ``.li1`` and ``.li2`` items may both hold a comment:
 
-            If a :class:`CollapsibleListGenerator` is given, a named collapsible list will be generated,
-            with expand/collapse all buttons.
-        """
-        #: HTML output page to feed.
-        self.html = arg.html if isinstance(arg, CollapsibleListGenerator) else arg  # type: _HtmlDocumentType
-        #: Optional list generator.
-        self.list_generator = arg if isinstance(arg, CollapsibleListGenerator) else None  # type: typing.Optional[CollapsibleListGenerator]
-
-    def addlist(
-            self,
-            *,
-            div_classes=(),  # type: typing.Sequence[str]
-            name,  # type: str
-            ul_classes=(),  # type: typing.Sequence[str]
-    ):  # type: (...) -> _HtmlDocumentType.NodeContext
-        """
-        Adds a unordered list with a leading name.
-
-        In the form of a ``<div class="named ul"><span class="name">...</span><ul></ul><div>`` structure.
-
-        :param div_classes: Additional classes to add to the ``.named.ul`` div.
-        :param name: Name to set in the ``span.name`` element.
-        :param ul_classes: Additional classes to add to the ``<ul></ul>`` element.
-        :return: HTML node context focused on the ``<ul></ul>`` element created.
-
-        If a :class:`CollapsibleListGenerator` had been given,
-        expand/collapse all buttons may be generated between the ``span`` and ``ul`` elements,
-        and the ``ul`` element becomes the collapsible list.
-        """
-        with self.html.addnode("div", classes=["named", "ul", *div_classes]):
-            self.html.addnode("span", classes=["name"], text=name)
-
-            if self.list_generator:
-                self.list_generator.addexpandallbutton()
-                self.list_generator.addcollapseallbutton()
-                return self.list_generator.addlist(classes=ul_classes)
-            else:
-                return self.html.addnode("ul", classes=ul_classes)
-
-
-class CollapsibleListGenerator:
-    """
-    HTML generator for a list of collapsible list items.
+        - When the ``.li1`` main item does not have one defined, default main comment summed up from ``.li2`` subitem comments.
+        - ``.li1`` summed up comment hidden when main item is expanded, displayed when collapsed.
     """
 
     def __init__(
             self,
             html,  # type: _HtmlDocumentType
             *,
-            list_id,  # type: str
-            default_state=_CollapsibleStateImpl.EXPANDED,  # type: _CollapsibleStateType
+            list_cid="",  # type: str
     ):  # type: (...) -> None
         """
-        Instantiates a :class:`CollapsibleListGenerator` with configurations.
+        Instantiates a :class:`ListGenerator` with configurations.
 
-        :param html: HTML output page to feed.
-        :param list_id: List identifier used in HTML classes.
-        :param default_state: Default state for collapsible list items. Default is `expanded`.
+        :param html:
+            HTML output page to feed.
+        :param list_cid:
+            Optional list CID.
+
+            Must be set for collapsible items.
         """
         #: HTML output page to feed.
         self.html = html  # type: _HtmlDocumentType
-        #: List identifier to set in HTML classes.
-        self.list_id = list_id  # type: str
-        #: Default state for collapsible rows.
-        self.default_state = default_state  # type: _CollapsibleStateType
 
-        #: Main list items.
-        self._main_list_items = []  # type: typing.List[CollapsibleListItemGenerator]
+        #: List CID. Optional.
+        self.list_cid = list_cid  # type: str
+
+        #: ``.li1`` main items.
+        self._li1s = []  # type: typing.List[ListGenerator._Li1]
+
+        # Have the related .js content be embedded at the end of the HTML page.
+        self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
+
+    def __repr__(self):  # type: () -> str
+        """
+        Canonical string representation.
+
+        For debugging purpose.
+        """
+        return "ListGenerator(%s)" % (", ".join([
+            f"list_cid={self.list_cid!r}",
+        ]))
+
+    @property
+    def _li1(self):  # type: () -> ListGenerator._Li1
+        """
+        Current ``.li1`` main item.
+        """
+        return self._li1s[-1]
+
+    def _listidclasses(self):  # type: (...) -> typing.Sequence[str]
+        """
+        Computes identifier classes for the list.
+
+        :return: Identifier classes for the list.
+        """
+        _classes = []  # type: typing.List[str]
+        if self.list_cid:
+            _classes.append(self.html.mkcsscompatibleclass(f"list={self.list_cid}"))
+        return _classes
+
+    def _li1idclasses(self):  # type: (...) -> typing.Sequence[str]
+        """
+        Computes identifier classes for the current ``.li1`` main item.
+
+        Includes the identifier classes for the list.
+
+        :return: Identifier classes for the current ``.li1`` main item.
+        """
+        _classes = [*self._listidclasses()]  # type: typing.List[str]
+        if self._li1.li1_cid:
+            _classes.append(self.html.mkcsscompatibleclass(f"li1={self._li1.li1_cid}"))
+        return _classes
 
     def addexpandallbutton(self):  # type: (...) -> None
         """
-        Adds a ``.expand-all`` button for the list being generated.
+        Adds a ``.expand-all`` button for the list with collapsible items being generated.
         """
-        self.html.addnode(
-            "a",
+        from ._htmlgenbuttons import ButtonGenerator
+
+        assert self.list_cid, "Please provide a list CID for a list with collapsible items"
+
+        ButtonGenerator(self.html).addbutton(
             classes=[
-                "button", "expand-all", "list",
-                self.html.mkcsscompatibleclass(f"list={self.list_id}"),
+                "expand-all", "list",
+                *self._listidclasses(),
             ],
-            href="#",
+            title="Expand all list items",
             text="Expand all",
         )
 
     def addcollapseallbutton(self):  # type: (...) -> None
         """
-        Adds a ``.collapse-all`` button for the list being generated.
+        Adds a ``.collapse-all`` button for the list with collapsible items being generated.
         """
-        self.html.addnode(
-            "a",
+        from ._htmlgenbuttons import ButtonGenerator
+
+        assert self.list_cid, "Please provide a list identifier for a list with collapsible items"
+
+        ButtonGenerator(self.html).addbutton(
             classes=[
-                "button", "collapse-all", "list",
-                self.html.mkcsscompatibleclass(f"list={self.list_id}"),
+                "collapse-all", "list",
+                *self._listidclasses(),
             ],
-            href="#",
+            title="Collapse all list items",
             text="Collapse all",
         )
 
@@ -151,168 +152,47 @@ class CollapsibleListGenerator:
         """
         Starts generating the list.
 
-        :param classes: Additional HTML classes to add to the ``<ul></ul>`` element.
-        :return: HTML node context focused on the ``<ul></ul>`` created.
-        """
-        # Have the related .js content be embedded at the end of the HTML page.
-        self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
-
-        return self.html.addnode(
-            "ul",
-            classes=[
-                *classes,
-                "collapsible",
-                self.html.mkcsscompatibleclass(f"list={self.list_id}"),
-            ],
-        )
-
-    def addmainlistitem(
-            self,
-            *,
-            main_list_item_id,  # type: str
-            classes=(),  # type: typing.Sequence[str]
-    ):  # type: (...) -> _HtmlDocumentType.NodeContext
-        """
-        Adds a main collapsible list item.
-
-        :param main_list_item_id: Main list item identifier used in HTML classes.
         :param classes: Optional additional HTML classes.
-        :return: HTML node context focused on the ``<li></li>`` created.
-        """
-        # Feed `_main_list_items` with a new `CollapsibleListItemGenerator` instance.
-        self._main_list_items.append(CollapsibleListItemGenerator(
-            self.html,
-            main_list_item_id=main_list_item_id,
-            default_state=self.default_state,
-        ))
-
-        # Call `CollapsibleListItemGenerator.addmainlistitem()`.
-        return self._main_list_items[-1].addmainlistitem(classes=[
-            *classes,
-            self.html.mkcsscompatibleclass(f"list={self.list_id}"),
-            # Memo: `CollapsibleListItemGenerator.addmainlistitem()` adds the `f"main-list-item={self.main_list_item_id}"` class.
-        ])
-
-    def addcollapsiblelistitem(
-            self,
-            *,
-            classes=(),  # type: typing.Sequence[str]
-    ):  # type: (...) -> _HtmlDocumentType.NodeContext
-        """
-        Adds a ``.collapsible-list-item`` list item under the current main list item.
-
-        Basically inside a ``<ul></ul>`` node.
-
-        :param classes: Optional additional HTML classes.
-        :return: HTML node context focused on the ``<li></li>`` created.
-        """
-        # Call `CollapsibleListItemGenerator.addcollapsiblelistitem()`.
-        return self._main_list_items[-1].addcollapsiblelistitem(classes=[
-            *classes,
-            self.html.mkcsscompatibleclass(f"list={self.list_id}"),
-            # Memo: `CollapsibleListItemGenerator.addcollapsiblelistitem()` adds the `f"main-list-item={self.main_list_item_id}"` class.
-        ])
-
-
-class CollapsibleListItemGenerator:
-    """
-    HTML generator for lists with collapsible commented items.
-    """
-
-    def __init__(
-            self,
-            html,  # type: _HtmlDocumentType
-            *,
-            main_list_item_id,  # type: str
-            default_state=_CollapsibleStateImpl.EXPANDED,  # type: _CollapsibleStateImpl
-    ):  # type: (...) -> None
-        """
-        Instantiates a :class:`CollapsibleListItemGenerator` with configurations.
-
-        :param html: HTML output page to feed.
-        :param main_list_item_id: Main list item identifier used in HTML classes.
-        :param default_state: Default state for collapsible items. Default is `expanded`.
-        """
-        #: HTML output page to feed.
-        self.html = html  # type: _HtmlDocumentType
-        #: Main list item identifier to set in HTML classes.
-        self.main_list_item_id = main_list_item_id  # type: str
-        #: Default state for collapsible rows.
-        self.default_state = default_state
-
-        #: Main ``<li></li>`` node context, saved in :meth:`addmainlistitem()`.
-        self._main_li_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
-        #: ``.toggle-list-item`` button ``<a></a>`` node context, saved in :meth:`_addtogglebutton()`.
-        self._toggle_button_a_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
-        #: ``.toggle-list-item`` button ``<span></span>`` node context, saved in :meth:`_addtogglebutton()`.
-        self._toggle_button_span_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
-        #: Main comments text, as given initially by :meth:`addcomments()`, or eventually computed in :meth:`_finalize()`.
-        self._main_comments_text = ""  # type: str
-        #: Main list item comments separator ``<span></span>`` node context, saved in :meth:`addcomments()` when called for the main list item.
-        self._main_sep_span_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
-        #: Main list item comments text ``<span></span>`` node context, saved in :meth:`addcomments()` when called for the main list item.
-        self._main_comments_span_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
-        #: ``<li></li>`` node contexts of related collapsible list items, fed in :meth:`addcollapsiblelistitem()`.
-        self._collapsible_li_ctxs = []  # type: typing.List[_HtmlDocumentType.NodeContext]
-        #: Collabsible list items comments, saved in :meth:`addcomments()` when called for a collapsible list item.
-        self._collapsible_comments = []  # type: typing.List[str]
-
-    def addmainlistitem(
-            self,
-            *,
-            classes=(),  # type: typing.Sequence[str]
-    ):  # type: (...) -> _HtmlDocumentType.NodeContext
-        """
-        Defines the main collapsible list item.
-
-        :param classes: Optional additional HTML classes.
-        :return: HTML node context focused on the ``<li></li>`` created.
+        :return: HTML node context focused on the ``<ul></ul>`` node created.
         """
         from ._htmldoc import HtmlDocument
 
-        # Have '_collapsiblelist.js' be embedded at the end of the HTML page.
-        self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
-
-        # Save `_main_li`.
-        self._main_li_ctx = self.html.addnode(
-            "li",
+        # Create the `ul` node.
+        _ul_ctx = self.html.addnode(
+            "ul",
             classes=[
                 *classes,
-                "collapsible", "main-list-item",
-                self.html.mkcsscompatibleclass(f"main-list-item={self.main_list_item_id}"),
+                *self._listidclasses(),
+                "li1",
             ],
-        )
-
-        # Automatically add the toggle button at the beginning of the main item.
-        with self._main_li_ctx:
-            self._addtogglebutton()
+        )  # type: _HtmlDocumentType.NodeContext
 
         # Return a `HtmlDocument.NodeContext` wrapper
-        # to ensure `_finalize()` be called at the end of the list item definition.
-        class _MainListItemNodeContext(HtmlDocument.NodeContext):
+        # to ensure `_finalize()` be called at the end of the list definition.
+        class _ListNodeContext(HtmlDocument.NodeContext):
             """
             :class:`._htmldoc.HtmlDocument.NodeContext` override
-            in order to call :meth:`CollapsibleListItemGenerator._finalize()`
-            at the end of the main list item definition.
+            in order to call :meth:`ListGenerator._Li1.finalize()` for each ``.li1`` main item
+            at the end of the list definition.
             """
 
             def __init__(
                     self,
-                    list_item_generator,  # type: CollapsibleListItemGenerator
-                    li_ctx,  # type: _HtmlDocumentType.NodeContext
+                    list_generator,  # type: ListGenerator
+                    ul_ctx,  # type: _HtmlDocumentType.NodeContext
             ):  # type: (...) -> None
                 """
-                :param list_item_generator: Current list item generator with HTML output page to feed.
-                :param li_ctx: Main list item node context.
+                :param list_generator: Current list generator with HTML output page to feed.
+                :param ul_ctx: ``ul`` node context.
                 """
                 HtmlDocument.NodeContext.__init__(
                     self,
-                    html_doc=list_item_generator.html,
-                    new_child=li_ctx.new_child,
+                    html_doc=list_generator.html,
+                    new_child=ul_ctx.new_child,
                 )
 
-                #: List item generator being processed.
-                self.list_item_generator = list_item_generator  # type: CollapsibleListItemGenerator
+                #: List generator being processed.
+                self.list_generator = list_generator  # type: ListGenerator
 
             def __exit__(
                     self,
@@ -323,149 +203,278 @@ class CollapsibleListItemGenerator:
                 super().__exit__(exc_type, exc_val, exc_tb)
 
                 if not exc_type:
-                    # Finalize the main list item.
-                    self.list_item_generator._finalize()  # noqa  ## Access to protected method
+                    # Finalize `.li1` main items.
+                    for _li1 in self.list_generator._li1s:  # type: ListGenerator._Li1  # noqa  ## Access to protected member
+                        _li1.finalize()
 
-        return _MainListItemNodeContext(
-            list_item_generator=self,
-            li_ctx=self._main_li_ctx,
+        return _ListNodeContext(
+            list_generator=self,
+            ul_ctx=_ul_ctx,
         )
 
-    def addcollapsiblelistitem(
+    def additem(
+            self,
+            *,
+            li1_cid="",  # type: str
+            default_state=None,  # type: _CollapsibleStateType
+            classes=(),  # type: typing.Sequence[str]
+    ):  # type: (...) -> _HtmlDocumentType.NodeContext
+        """
+        Adds a main ``.li1`` item.
+
+        :param li1_cid:
+            Optional main item CID.
+
+            Must be set for a collapsible item (i.e. ``default_state`` is not ``None``).
+        :param default_state:
+            Default state for a collapsible item.
+
+            ``None`` (default) for a non-collapsible item.
+        :param classes:
+            Optional additional HTML classes.
+        :return:
+            HTML node context focused on the ``<li></li>`` node created.
+        """
+        # Check input parameters.
+        if default_state is not None:
+            assert li1_cid, "Please provide an item CID for a collapsible item"
+
+        # Feed `_li1s` with a new `_Li1` instance.
+        self._li1s.append(ListGenerator._Li1(
+            list_generator=self,
+            li1_cid=li1_cid,
+            default_state=default_state,
+        ))
+
+        # Create the HTML node.
+        self._li1.li1_ctx = self.html.addnode(
+            "li",
+            classes=[
+                *classes,
+                "li1",
+                *self._li1idclasses(),
+                "collapsible" if (default_state is not None) else "",
+            ],
+        )
+
+        # Automatically add the toggle button at the beginning of the list item.
+        if self._li1.collapsible_div_generator is not None:
+            with self._li1.li1_ctx:
+                self._li1.collapsible_div_generator.addtogglebutton(
+                    classes=[
+                        # Memo: `ButtonGenerator` already sets `.li1` CID HTML classes, use `_li1idclasses()` only here.
+                        *self._li1idclasses(),
+                        # Set additional `.toggle-li1` HTML class with `.toggle-div`.
+                        "toggle-li1",
+                    ],
+                )
+
+        return self._li1.li1_ctx
+
+    def addsubitem(
             self,
             *,
             classes=(),  # type: typing.Sequence[str]
     ):  # type: (...) -> _HtmlDocumentType.NodeContext
         """
-        Adds a ``.collapsible-list-item`` list item under the main list item.
+        Adds a ``.li2`` subitem under the current ``.li1`` main item.
 
-        Basically inside a ``<ul></ul>`` node.
+        ``<ul></ul>`` node automatically created for the first subitem.
 
         :param classes: Optional additional HTML classes.
-        :return: HTML node context focused on the ``<li></li>`` created.
+        :return: HTML node context focused on the ``<li></li>`` node created.
         """
-        self._collapsible_li_ctxs.append(
-            self.html.addnode(
-                "li",
-                classes=[
-                    *classes,
-                    "collapsible-list-item",
-                    self.html.mkcsscompatibleclass(f"main-list-item={self.main_list_item_id}"),
-                ],
+        from ._htmldoc import HtmlDocument
+
+        # Automatically create the `ul` node with the first `.li2` subitem.
+        if self._li1.ul_ctx is None:
+            with (
+                self._li1.collapsible_div_generator.addcollapsiblediv(classes=[*self._li1idclasses()])
+                if (self._li1.collapsible_div_generator is not None) else
+                HtmlDocument.NodeContext(self.html, self.html.current_node)
+            ):
+                self._li1.ul_ctx = self.html.addnode(
+                    "ul",
+                    classes=[
+                        *classes,
+                        *self._li1idclasses(),
+                        "li2",
+                    ],
+                )
+
+        with self._li1.ul_ctx:
+            self._li1.li2_ctxs.append(
+                self.html.addnode(
+                    "li",
+                    classes=[
+                        *classes,
+                        *self._li1idclasses(),
+                        "li2",
+                    ],
+                )
             )
-        )
-        return self._collapsible_li_ctxs[-1]
 
-    def _addtogglebutton(self):  # type: (...) -> None
-        """
-        Adds a ``.toggle-list-item`` button.
-        """
-        self._toggle_button_a_ctx = self.html.addnode(
-            "a",
-            classes=[
-                "button", "toggle-list-item",
-                self.html.mkcsscompatibleclass(f"main-list-item={self.main_list_item_id}"),
-            ],
-        )
-        with self._toggle_button_a_ctx:
-            # Create a span node without text.
-            # The text will be set when the main list item is terminated.
-            self._toggle_button_span_ctx = self.html.addnode("span")
+        return self._li1.li2_ctxs[-1]
 
-    def addcomments(
+    def addcomment(
             self,
-            comments,  # type: str
+            comment,  # type: str
             *,
             classes=(),  # type: typing.Sequence[str]
     ):  # type: (...) -> None
         """
-        Adds comments to the current main or collapsible list item.
+        Adds a comment to the current ``.li1`` or ``.li2`` item.
 
-        :param comments: Comments.
+        :param comment: Comment.
         :param classes: Optional additional HTML classes.
         """
-        _li_item_class = "main-list-item" if (not self._collapsible_li_ctxs) else "collapsible-list-item"  # type: str
+        _starter_classes = [
+            *classes,
+            "li1" if (not self._li1.li2_ctxs) else "li2",
+            *self._li1idclasses(),
+        ]  # type: typing.List[str]
 
-        _sep_ctx = self.html.addnode("span", classes=[*classes, _li_item_class, "sep"], text=":")  # type: _HtmlDocumentType.NodeContext
-        if not self._collapsible_li_ctxs:
-            self._main_sep_span_ctx = _sep_ctx
+        # Separator span.
+        _sep_ctx = self.html.addnode("span", classes=[*_starter_classes, "sep"], text=":")  # type: _HtmlDocumentType.NodeContext
+        if not self._li1.li2_ctxs:
+            self._li1.li1_sep_span_ctx = _sep_ctx
 
-        _comments_ctx = self.html.addnode("span", classes=[*classes, _li_item_class, "comments"], text=comments)  # type: _HtmlDocumentType.NodeContext
-        if not self._collapsible_li_ctxs:
-            self._main_comments_text = comments
-            self._main_comments_span_ctx = _comments_ctx
+        # Comment span.
+        _comment_ctx = self.html.addnode("span", classes=[*_starter_classes, "comment"], text=comment)  # type: _HtmlDocumentType.NodeContext
+        if not self._li1.li2_ctxs:
+            self._li1.li1_comment_text = comment
+            self._li1.li1_comment_span_ctx = _comment_ctx
         else:
-            self._collapsible_comments.append(comments)
+            self._li1.li2_comments.append(comment)
 
-    def _finalize(self):  # type: (...) -> None
+    class _Li1:
         """
-        Finalizes the collapsible list item.
-
-        Depending on whether on the main list item has related collapsible list itesms attached to it or not:
-
-        - sets `.expanded`/`.collapsed` state classes,
-        - sets `.toggle-list-item` button text,
-        - computes main sum-up comments, if none already set, with visibility,
-        - sets related collapsible list items visibility.
+        ``.li1`` main item building context.
         """
-        if not self._collapsible_li_ctxs:
-            # No `.collapsible-list-item`s attached.
 
-            # Toggle button text.
-            if self._toggle_button_span_ctx is not None:
-                with self._toggle_button_span_ctx:
-                    self.html.addtext("o")
+        def __init__(
+                self,
+                *,
+                list_generator,  # type: ListGenerator
+                li1_cid,  # type: str
+                default_state,  # type: typing.Optional[_CollapsibleStateType]
+        ):  # type: (...) -> None
+            """
+            Creates a ``.li1`` main item building context.
 
-        else:
-            # `.collapsible-list-item`s attached.
+            Stacked in :attr:`ListGenerator._li1s`.
 
-            # Main list item `.expanded`/`.collapsed` class.
-            if self._main_li_ctx:
-                with self._main_li_ctx:
-                    self.html.addclass(self.default_state)
+            :param list_generator: Owner list generator.
+            :param li1_cid: Main item CID. May be empty.
+            :param default_state: Default state for a collapsible ``.li1`` main item. ``None`` for a non collapsible item.
+            """
+            from ._htmlgendivs import DivGenerator
 
-            # Toggle button `.expanded`/`.collapsed` class.
-            if self._toggle_button_a_ctx is not None:
-                with self._toggle_button_a_ctx:
-                    self.html.addclass(self.default_state)
-            # Toggle button text.
-            if self._toggle_button_span_ctx is not None:
-                with self._toggle_button_span_ctx:
-                    if self.default_state == _CollapsibleStateImpl.EXPANDED:
-                        self.html.addtext("-")
-                    else:
-                        self.html.addtext("+")
+            #: Owner list generator.
+            self.list_generator = list_generator  # type: ListGenerator
+            #: ``.li1`` main item CID. May be empty.
+            self.li1_cid = li1_cid  # type: str
+            #: Default state for a collapsible ``.li1`` main item. ``None`` for a non collapsible item.
+            self.default_state = default_state  # type: typing.Optional[_CollapsibleStateType]
 
-            # Main list item comments.
-            # Hide if auto sum-up comments and expanded.
-            if (not self._main_comments_text) and (self.default_state == _CollapsibleStateImpl.EXPANDED):
-                if self._main_sep_span_ctx is not None:
-                    with self._main_sep_span_ctx:
-                        self.html.addstyle(f"display: none")
-                if self._main_comments_span_ctx is not None:
-                    with self._main_comments_span_ctx:
-                        self.html.addstyle(f"display: none")
+            #: ``.li1`` main item node context.
+            self.li1_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
+            #: ``.li1`` main item comment text,
+            #: as given initially by :meth:`ListGenerator.addcomment()`, or eventually computed in :meth:`finalize()`.
+            self.li1_comment_text = ""  # type: str
+            #: ``.li1`` main item comment separator ``<span></span>`` node context.
+            self.li1_sep_span_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
+            #: ``.li1`` main item comment text ``<span></span>`` node context.
+            self.li1_comment_span_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
+
+            #: Collapsible div generator, when applicable.
+            self.collapsible_div_generator = None  # type: typing.Optional[DivGenerator]
+            #: ``.li2`` subitems' ``<ul></ul>`` node context.
+            self.ul_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
+            #: ``.li2`` subitems ``<li></li>`` node contexts.
+            self.li2_ctxs = []  # type: typing.List[_HtmlDocumentType.NodeContext]
+            #: ``.li2`` subitems comments.
+            self.li2_comments = []  # type: typing.List[str]
+
+            if self.default_state is not None:
+                self.collapsible_div_generator = DivGenerator(
+                    self.html,
+                    collapsible_cid=self.li1_cid,
+                    # Set `None` for now. Will be set in the end in `finalize()`.
+                    default_state=None,
+                )
+
+        def __repr__(self):  # type: () -> str
+            """
+            Canonical string representation.
+
+            For debugging purpose.
+            """
+            return "ListGenerator._Li1(%s)" % (", ".join([
+                f"li1_cid={self.li1_cid!r}",
+                f"default_state={self.default_state!r}",
+            ]))
+
+        @property
+        def html(self):  # type: () -> _HtmlDocumentType
+            """
+            Shortcut to HTML output page to feed.
+            """
+            return self.list_generator.html
+
+        def finalize(self):  # type: (...) -> None
+            """
+            Finalizes the ``.li1`` main item with ``.li2`` subitems.
+
+            Depending on the configuration:
+
+            - sets ``.expanded``/``.collapsed`` state classes,
+            - sets toggle button state and ``.li2`` subitems visibility,
+            - computes ``.li1`` main item sum-up comment, if none already set, with visibility if applicable.
+            """
+            from ._htmlgentypes import CollapsibleState
+
+            # Finalize collapsible state.
+            if (self.default_state is not None) and (self.collapsible_div_generator is not None):
+                if not self.li2_ctxs:
+                    # No `.li2` subitems attached.
+
+                    # Toggle button + collapsible section.
+                    self.collapsible_div_generator.setstate(None)
+
+                else:
+                    # `.li2` subitems attached.
+
+                    # `.li1` main item `.expanded`/`.collapsed` class.
+                    if self.li1_ctx is not None:
+                        with self.li1_ctx:
+                            self.html.addclass(self.default_state)
+
+                    # Toggle button + collapsible section.
+                    self.collapsible_div_generator.setstate(self.default_state)
+
+                    # `.li1` main item comment.
+                    # Hide if auto sum-up comment and expanded.
+                    if (not self.li1_comment_text) and (self.default_state == CollapsibleState.EXPANDED):
+                        if self.li1_sep_span_ctx is not None:
+                            with self.li1_sep_span_ctx:
+                                self.html.addstyle(f"display: none")
+                        if self.li1_comment_span_ctx is not None:
+                            with self.li1_comment_span_ctx:
+                                self.html.addstyle(f"display: none")
+
             # Auto sum-up comments.
-            if not self._main_comments_text:
-                # Add `.comments-sum-up` class to the main list item.
-                if self._main_li_ctx:
-                    with self._main_li_ctx:
+            if not self.li1_comment_text:
+                # Add `.comments-sum-up` class to the `.li1` main item.
+                if self.li1_ctx is not None:
+                    with self.li1_ctx:
                         self.html.addclass("comments-sum-up")
-                # Compute comments from collapsible list item comments.
-                if self._collapsible_comments:
-                    self._main_comments_text = f"{', '.join(self._collapsible_comments)}"
-                # Install the text computed in the dedicated span.
-                if self._main_comments_span_ctx is not None:
-                    with self._main_comments_span_ctx:
-                        self.html.addtext(self._main_comments_text)
 
-            # Collapsible list items.
-            for _collapsible_li_ctx in self._collapsible_li_ctxs:  # type: _HtmlDocumentType.NodeContext
-                with _collapsible_li_ctx:
-                    # `.expanded`/`.collapsed` class.
-                    self.html.addclass(self.default_state)
-                    # Visbility.
-                    if self.default_state == _CollapsibleStateImpl.EXPANDED:
-                        self.html.addstyle("display: block")
-                    else:
-                        self.html.addstyle("display: none")
+                # Sum up comments from `.li2` subitem comments.
+                if self.li2_comments:
+                    self.li1_comment_text = f"{', '.join(self.li2_comments)}"
+
+                # Install the text computed in the dedicated span.
+                if self.li1_comment_span_ctx is not None:
+                    with self.li1_comment_span_ctx:
+                        self.html.addtext(self.li1_comment_text)

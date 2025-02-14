@@ -134,13 +134,13 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req: Requirement to build HTML content for.
         """
-        from ._anchors import Anchor
-        from ._htmlgenlists import NamedListGenerator
+        from ._htmlgenanchors import AnchorGenerator
+        from ._htmlgendivs import DivGenerator
         from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addnode("li", classes=["req"]):
             # Anchor.
-            with Anchor.add(html, name=req.id):
+            with AnchorGenerator(html, name=req.id).addanchor():
                 # Requirement id.
                 html.addnode("span", classes=["req", "id"], text=req.id)
 
@@ -164,8 +164,8 @@ class RequirementsPage(_HttpRequestHandlerImpl):
 
             # Subreferences.
             if req.subrefs:
-                with html.addnode("div", classes=["subrefs"]):
-                    with NamedListGenerator(html).addlist(name="Subreferences"):
+                with DivGenerator(html, name="Subreferences").adddiv(classes=["subrefs"]):
+                    with html.addnode("ul"):
                         for _subref in req.subrefs:  # type: scenario.ReqRef
                             self._subref2html(html, _subref)
 
@@ -180,12 +180,12 @@ class RequirementsPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param subref: Requirement subreference to build HTML content for.
         """
-        from ._anchors import Anchor
+        from ._htmlgenanchors import AnchorGenerator
         from ._pagereqsdown import DownstreamTraceabilityPage
 
         with html.addnode("li", classes=["subref"]):
             # Anchor.
-            with Anchor.add(html, name=subref.id):
+            with AnchorGenerator(html, name=subref.id).addanchor():
                 # Requirement subreference id.
                 html.addnode("span", classes=["subref", "id"], text=subref.id)
 

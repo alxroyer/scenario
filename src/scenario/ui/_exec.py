@@ -92,10 +92,15 @@ class Exec(_HttpRequestHandlerImpl):
 
         :param html: HTML output page to feed.
         """
+        from ._htmlgenbuttons import ButtonGenerator
+
         with html.addnode("div", id="exec-result", style="display: none;"):
             html.addnode("div", classes=["exec-result", "title"])
             html.addnode("div", classes=["exec-result", "text"])
-            html.addlink(href="#", classes=["exec-result", "button", "validate"], text="OK")
+            ButtonGenerator(html).addbutton(
+                classes=["exec-result", "validate"],
+                text="OK",
+            )
 
     @staticmethod
     def actionbutton2html(
@@ -110,11 +115,13 @@ class Exec(_HttpRequestHandlerImpl):
         :param request: Current request being processed.
         :param action: Action to create a button for.
         """
+        from ._htmlgenbuttons import ButtonGenerator
         from ._reqbl import UI_REQ_BASELINES
 
         _url = ""  # type: str
-        _classes = ["exec", "button"]  # type: typing.List[str]
+        _classes = ["exec"]  # type: typing.List[str]
         _text = "..."  # type: str
+        _title = None  # type: typing.Optional[str]
 
         if action == Exec.Action.RELOAD_MAIN_REQ_BASELINE:
             # Don't display the `.reload-main-req-baseline` button if the page is not for it.
@@ -124,16 +131,23 @@ class Exec(_HttpRequestHandlerImpl):
             _url = Exec.mkurl(Exec.Action.RELOAD_MAIN_REQ_BASELINE)
             _classes.append(Exec.Action.RELOAD_MAIN_REQ_BASELINE)
             _text = "Reload"
+            _title = "Reload the main baseline (tests and requirements)"
 
         elif action == Exec.Action.RELOAD_CAMPAIGN_DB:
             _url = Exec.mkurl(Exec.Action.RELOAD_CAMPAIGN_DB)
             _classes.append(Exec.Action.RELOAD_CAMPAIGN_DB)
             _text = "Reload campaigns"
+            _title = "Relaod the campaign database"
 
         else:
             raise ValueError(f"Unknown action {action!r}")
 
-        html.addlink(classes=_classes, href=_url, text=_text)
+        ButtonGenerator(html).addbutton(
+            href=_url,
+            classes=_classes,
+            title=_title,
+            text=_text,
+        )
 
     def __init__(self):  # type: (...) -> None
         """

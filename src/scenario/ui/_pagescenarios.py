@@ -115,6 +115,7 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param req_baseline: Requirement baseline holding the scenario list to process.
         """
+        from ._htmlgenlinks import LinkGenerator
         from ._pagereqsup import UpstreamTraceabilityPage
         from ._pagescenario import ScenarioPage
 
@@ -127,7 +128,11 @@ class ScenarioListPage(_HttpRequestHandlerImpl):
 
                         # Scenario name.
                         with html.addnode("span", classes=["scenario", "name"]):
-                            html.addlink(href=ScenarioPage.mkurl(_scenario_definition), title="Scenario details", text=_scenario_definition.name)
+                            LinkGenerator(html).addlink(
+                                href=ScenarioPage.mkurl(_scenario_definition),
+                                title="Scenario details",
+                                text=_scenario_definition.name,
+                            )
 
                         # Title.
                         if _scenario_definition.title:

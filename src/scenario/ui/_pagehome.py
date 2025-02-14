@@ -61,6 +61,7 @@ class Homepage(_HttpRequestHandlerImpl):
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
         from ._htmldoc import HtmlDocument
+        from ._htmlgenlinks import LinkGenerator
         from ._pagecampaigns import CampaignListPage
         from ._pagereqs import RequirementsPage
         from ._pagereqsdown import DownstreamTraceabilityPage
@@ -80,18 +81,18 @@ class Homepage(_HttpRequestHandlerImpl):
 
         with _html.addnode("p"):
             _html.addnode("span", text="Browse ")
-            _html.addlink(text="scenarios", href=ScenarioListPage.mkurl(), title="Scenario list")
+            LinkGenerator(_html).addlink(text="scenarios", href=ScenarioListPage.mkurl(), title="Scenario list")
             _html.addnode("span", text=" described in test scripts, and ")
-            _html.addlink(text="campaign results", href=CampaignListPage.mkurl(), title="Campaign results")
+            LinkGenerator(_html).addlink(text="campaign results", href=CampaignListPage.mkurl(), title="Campaign results")
             _html.addnode("span", text=".")
 
         with _html.addnode("p"):
             _html.addnode("span", text="Working with ")
-            _html.addlink(text="requirements", href=RequirementsPage.mkurl(), title="Requirement list")
+            LinkGenerator(_html).addlink(text="requirements", href=RequirementsPage.mkurl(), title="Requirement list")
             _html.addnode("span", text="? Browse ")
-            _html.addlink(text="downstream", href=DownstreamTraceabilityPage.mkurl(), title="Downstream traceability")
+            LinkGenerator(_html).addlink(text="downstream", href=DownstreamTraceabilityPage.mkurl(), title="Downstream traceability")
             _html.addnode("span", text=" and ")
-            _html.addlink(text="upstream", href=UpstreamTraceabilityPage.mkurl(), title="Upstream traceability")
+            LinkGenerator(_html).addlink(text="upstream", href=UpstreamTraceabilityPage.mkurl(), title="Upstream traceability")
             _html.addnode("span", text=" traceability tables.")
 
         request.sendhtml(_html)

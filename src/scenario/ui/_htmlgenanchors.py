@@ -15,83 +15,112 @@
 # limitations under the License.
 
 """
-Anchors management.
+HTML anchor generator.
 """
 
-import abc
 import typing
+
+import scenario
 
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
 
 
-class Anchor(abc.ABC):
+class AnchorGenerator:
     """
-    Anchors management.
+    HTML generator for anchors.
     """
 
-    @staticmethod
-    def add(
+    def __init__(
+            self,
             html,  # type: _HtmlDocumentType
             *,
-            classes=(),  # type: typing.Sequence[str]
             name,  # type: str
+    ):  # type: (...) -> None
+        """
+        Instantiates a :class:`AnchorGenerator` with configurations.
+
+        :param html: HTML output page to feed.
+        :param name: Anchor name.
+        """
+        #: HTML output page to feed.
+        self.html = html  # type: _HtmlDocumentType
+        #: Anchor name.
+        self.name = name  # type: str
+
+        # Have the related .js content be embedded at the end of the HTML page.
+        self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
+
+    def __repr__(self):  # type: () -> str
+        """
+        Canonical string representation.
+
+        For debugging purpose.
+        """
+        return "AnchorGenerator(%s)" % (", ".join([
+            f"name={self.name!r}",
+        ]))
+
+    def addanchor(
+            self,
+            *,
+            classes=(),  # type: typing.Sequence[str]
             link_title="",  # type: str
             link_text="",  # type: str
     ):  # type: (...) -> _HtmlDocumentType.NodeContext
         """
         Adds an anchor.
 
-        :param html: HTML output page to feed.
         :param classes: Extra classes to set for ``@class`` attribute.
-        :param name: Anchor name.
         :param link_title: ``@title`` attribute value, used for popup info on anchor link hover. Anchor name by default.
         :param link_text: Text content for the ancho link. "(<>)" by default.
-        :return: HTML node context focused on the highlightable ``<div></div>`` created.
+        :return: HTML node context focused on the highlightable ``<div></div>`` node created.
         """
+        from ._htmlgenlinks import LinkGenerator
+
         if not link_text:
             link_text = "(<>)"
 
         # Container div.
-        with html.addnode(
+        with self.html.addnode(
             "div",
             classes=[
                 *classes,
                 "anchor", "container",
-                html.mkcsscompatibleclass(f"anchor={name}"),
+                self.html.mkcsscompatibleclass(f"anchor={self.name}"),
             ],
         ):
             # Anchor link.
-            with html.addlink(
+            with LinkGenerator(self.html).addlink(
                 classes=[
                     *classes,
                     "anchor-link",
-                    html.mkcsscompatibleclass(f"anchor={name}"),
+                    self.html.mkcsscompatibleclass(f"anchor={self.name}"),
                 ],
-                href=f"#{name}",
-                title=link_title or name,
+                href=f"#{self.name}",
+                title=link_title or self.name,
             ):
-                html.addnode("span", text=link_text)
+                self.html.addnode("span", text=link_text)
 
             # Focusable div.
-            _anchor_div_ctx = html.addnode(
+            _anchor_div_ctx = self.html.addnode(
                 "div",
                 classes=[
                     *classes,
                     "anchor", "focusable",
-                    html.mkcsscompatibleclass(f"anchor={name}"),
+                    self.html.mkcsscompatibleclass(f"anchor={self.name}"),
                 ],
             )  # type: _HtmlDocumentType.NodeContext
             with _anchor_div_ctx:
                 # Anchor.
-                html.addnode(
+                self.html.addnode(
                     "a",
                     classes=[
                         *classes,
                         "anchor",
-                        html.mkcsscompatibleclass(f"anchor={name}"),
+                        self.html.mkcsscompatibleclass(f"anchor={self.name}"),
                     ],
-                    name=name,
+                    name=self.name,
                 )
 
         return _anchor_div_ctx

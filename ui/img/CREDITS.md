@@ -16,10 +16,13 @@
 # Credits
 
 From https://www.svgrepo.com/:
+- alt-circle-svgrepo-com.svg: https://www.svgrepo.com/svg/513969/alt-circle
 - anchor-link-svgrepo-com.svg: https://www.svgrepo.com/svg/521452/anchor-link
+- bullet-svgrepo-com.svg: https://www.svgrepo.com/svg/514063/bullet
 - double-left-chevron-svgrepo-com.svg: https://www.svgrepo.com/svg/509895/double-left-chevron
 - double-right-chevron-svgrepo-com.svg: https://www.svgrepo.com/svg/509896/double-right-chevron
 - down-arrow-5-svgrepo-com.svg: https://www.svgrepo.com/svg/520696/down-arrow-5
 - down-arrow-svgrepo-com.svg: https://www.svgrepo.com/svg/257630/down-arrow
+- empty-circle-svgrepo-com.svg: https://www.svgrepo.com/svg/174809/empty-circle
 - right-arrow-svgrepo-com.svg: https://www.svgrepo.com/svg/520912/right-arrow
 - up-arrow-svgrepo-com.svg: https://www.svgrepo.com/svg/257732/up-arrow

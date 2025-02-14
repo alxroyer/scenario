@@ -125,16 +125,16 @@ class HtmlDocument(scenario.Logger):
         #: Main ``<div/>`` node, which page content will be added to by :class:`._httprequesthandler.HttpRequestHandler` subclasses.
         self.main_div = self.xml_doc.createnode("div")  # type: Xml.Node
 
-        self._head2html()
-        self._body2html()
-
         #: Inner JS script files which content to embed at the end of the document.
         #:
         #: .. note:: Embedding JS content at the end of the document improves readability of the HTML output.
         self._final_js_paths = [
-            scenario.Path(__file__).parent / "_anchors.js",
             scenario.Path(__file__).parent / "_exec.js",
         ]  # type: typing.List[scenario.Path]
+
+        # Build minimal content.
+        self._head2html()
+        self._body2html()
 
         # Set main <div/> as the current node in the end.
         self.current_node = self.main_div
@@ -151,9 +151,9 @@ class HtmlDocument(scenario.Logger):
             self.addnode("link", rel="shortcut icon", href=UI_CONFIG.faviconurl(), auto_closing=True)
             self.addnode("meta", {"http-equiv": "Content-type", "content": "text/html; charset=utf-8"}, auto_closing=True)
             self._head_title = self.addnode("title", text="...").new_child
-            self.addnode("link", rel="stylesheet", href=UI_CONFIG.cssurl(), type="text/css", auto_closing=True)
             self._jscontent2html(scenario.Path(__file__).parent / "_global.js")
             self.addnode("script", src=UI_CONFIG.jsurl())
+            self.addnode("link", rel="stylesheet", href=UI_CONFIG.cssurl(), type="text/css", auto_closing=True)
 
     def _body2html(self):  # type: (...) -> None
         """
@@ -162,34 +162,18 @@ class HtmlDocument(scenario.Logger):
         Instantiates :attr:`body`, :attr:`_h1` and :attr:`main_div`.
         """
         from ._exec import Exec
+        from ._htmlgenmenu import MenuGenerator
 
         with self.addnode("body") as self.body:
-            # Menu and reload button.
-            self._menu2html()
+            # Menu.
+            MenuGenerator(self).addmenu()
+
+            # Execution results.
             Exec.execresultdiv2html(self)
+
+            # Main title and div.
             self._h1 = self.addnode("h1").new_child
             self.main_div = self.addnode("div", id="main").new_child
-
-    def _menu2html(self):  # type: (...) -> None
-        """
-        Builds the navigation menu HTML.
-        """
-        from ._pagecampaigns import CampaignListPage
-        from ._pageconfig import ConfigurationPage
-        from ._pagehome import Homepage
-        from ._pagereqs import RequirementsPage
-        from ._pagereqsdown import DownstreamTraceabilityPage
-        from ._pagereqsup import UpstreamTraceabilityPage
-        from ._pagescenarios import ScenarioListPage
-
-        with self.addnode("div", id="menu"):
-            self.addlink(classes=["menu"], href=Homepage.mkurl(), text="Home")
-            self.addlink(classes=["menu"], href=ScenarioListPage.mkurl(), text="Scenarios")
-            self.addlink(classes=["menu"], href=CampaignListPage.mkurl(), text="Campaigns")
-            self.addlink(classes=["menu"], href=RequirementsPage.mkurl(), text="Requirements")
-            self.addlink(classes=["menu"], href=DownstreamTraceabilityPage.mkurl(), text="Downstream traceability")
-            self.addlink(classes=["menu"], href=UpstreamTraceabilityPage.mkurl(), text="Upstream traceability")
-            self.addlink(classes=["menu"], href=ConfigurationPage.mkurl(), text="Configuration")
 
     def _jscontent2html(
             self,
@@ -201,6 +185,7 @@ class HtmlDocument(scenario.Logger):
         :param js_path: Path of Javascript file to embed.
         """
         with self.addnode("script"):
+            self.current_node.appendchild(self.xml_doc.createtextnode(f"// {js_path}:"))
             for _line in js_path.read_text(encoding="utf-8").splitlines():  # type: str
                 # Don't use `addtext()` in order to avoid HTML/XML escaping.
                 self.current_node.appendchild(self.xml_doc.createtextnode(_line, xml_escape=False))
@@ -231,6 +216,7 @@ class HtmlDocument(scenario.Logger):
         :param title: New title. Not HTML-encoded.
         :param campaign_subtitle: Set to ``True`` to add campaign subtitle.
         """
+        from ._htmlgenlinks import LinkGenerator
         from ._pagecampaign import CampaignPage
         from ._reqbl import UI_REQ_BASELINES
 
@@ -246,7 +232,11 @@ class HtmlDocument(scenario.Logger):
                 self.addnode("span", classes=["title", "sep"])
 
                 with self.addnode("span", classes=["title", "req-baseline"]):
-                    self.addlink(href=CampaignPage.mkurl(self.request.campaign_execution), title="Campaign details", text=_req_baseline_desc)
+                    LinkGenerator(self).addlink(
+                        href=CampaignPage.mkurl(self.request.campaign_execution),
+                        title="Campaign details",
+                        text=_req_baseline_desc,
+                    )
 
     def addnode(
             self,
@@ -262,14 +252,32 @@ class HtmlDocument(scenario.Logger):
         """
         Adds a child node to the current node.
 
-        :param tag_name: Name of tag for the new node.
-        :param attrs: Attributes passed as a dictionary. Optional. Useful when ``kwargs`` can't be used (attribute names with a dash, ...).
-        :param id: Optional HTML identifier.
-        :param classes: List of classes. May complete other classes already defined with ``attrs``.
-        :param text: Optional content text.
-        :param auto_closing: Set to ``True`` to allow auto-closing node. ``False`` by default.
-        :param kwargs: In general, use named parameters to define attributes. Use ``attrs`` when named parameters don't work.
-        :return: HTML node context that controls the current node, so that further content can be added to it.
+        :param tag_name:
+            Name of tag for the new node.
+        :param attrs:
+            Attributes passed as a dictionary.
+
+            Optional.
+            Useful when ``kwargs`` can't be used (attribute names with a dash, ...).
+        :param id:
+            Optional HTML identifier.
+        :param classes:
+            List of classes.
+
+            May complete other classes already defined with ``attrs``.
+
+            May contain empty classes, they will be filtered-out.
+        :param text:
+            Optional content text.
+        :param auto_closing:
+            Set to ``True`` to allow auto-closing node. ``False`` by default.
+        :param kwargs:
+            In general, use named parameters to define HTML attributes.
+
+            Use ``attrs`` when named parameters don't work.
+        :return:
+            HTML node context that controls the node created,
+            so that further content can be added to it.
 
         When an attribute value is ``None`` (either in ``attrs`` or ``kwargs``), the related HTML attribute won't be created.
         """
@@ -287,6 +295,9 @@ class HtmlDocument(scenario.Logger):
             attrs.update(kwargs)
         if id:
             attrs["id"] = id
+        if classes:
+            # Filter-out empty classes.
+            classes = [_class for _class in classes if _class]
         if classes:
             # - merge `classes` in `attrs`,
             if "class" in attrs:
@@ -375,32 +386,6 @@ class HtmlDocument(scenario.Logger):
         _rules.extend([_rule.strip() for _rule in new_rules.split(";") if _rule.strip()])
         self.current_node.setattr("style", "; ".join(_rules))
 
-    def addlink(
-            self,
-            *,
-            classes=(),  # type: typing.Sequence[str]
-            href,  # type: str
-            title=None,  # type: str
-            text=None,  # type: str
-    ):  # type: (...) -> HtmlDocument.NodeContext
-        """
-        Adds a ``<a ...>...</a>`` link in the document,
-        with ``@class``, ``@href``, ``@title`` attributes and text content.
-
-        :param classes: Classes to set for ``@class`` attribute. No ``@class`` attribute if no class provided.
-        :param href: URL to set for ``@href`` attribute.
-        :param title: ``@title`` attribute value, used for popup info on link hover. None by default for no ``@title`` attribute.
-        :param text: Text content for the link. Empty by default.
-        :return: HTML node context focused on the ``<a ...></a>`` element created.
-        """
-        return self.addnode(
-            "a",
-            classes=classes,
-            href=href,
-            title=title,
-            text=text,
-        )
-
     def addtext(
             self,
             text,  # type: str
@@ -465,6 +450,7 @@ class HtmlDocument(scenario.Logger):
         _avoidautoclosing(self.xml_doc.root)
 
         # Embed final JS scripts.
+        self._final_js_paths.sort(key=lambda path: path.abspath)
         for _js_path in self._final_js_paths:  # type: scenario.Path
             self._jscontent2html(_js_path)
 

@@ -23,16 +23,48 @@
  */
 
 
-/* Padding to make the buttons larger. */
-a.button { padding: 4px 8px; }
-a.button { display: inline-block; }  /* Ensure buttons with padding remain clipped in their owner div. */
-/* Round borders. */
-a.button { border: 2px solid; border-radius: 8px; }
+/* General buttons. */
 
-/* Color: grey. */
-a.button { background-color: #e7e7e7; border-color: #e7e7e7; color: black; }
-/* Text styles. */
-a.button { text-align: center; text-decoration: none; font-size: 16px; }
+    /* Padding to make the buttons larger. */
+    a.button { padding: 4px 8px; }
+    a.button { display: inline-block; }  /* Ensure buttons with padding remain clipped in their owner div. */
+    /* Round borders. */
+    a.button { border: 2px solid; border-radius: 8px; }
 
-/* Hover effect. */
-a.button:hover { background-color: white; }
+    /* Color: grey. */
+    a.button { background-color: #e7e7e7; border-color: #e7e7e7; color: black; }
+    /* Text styles. */
+    a.button { text-align: center; text-decoration: none; font-size: 16px; }
+
+    /* Hover effect. */
+    a.button:hover { background-color: white; }
+
+/* Toggle buttons. */
+
+    /* Rollback general button styles. */
+    a.button.toggle { padding: unset; }
+    a.button.toggle { border: unset; background-color: unset; border-radius: unset; }
+    a.button.toggle:hover { background-color: unset; }
+
+    /* `a.toggle-div` buttons. */
+    a.button.toggle span { display: none; }  /* Hide button texts. */
+    a.button.toggle { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
+    a.button.toggle { width: 1em; height: 1em; }  /* Button size. */
+    /* Default icon: small empty circle. */
+    a.button.toggle {
+        background-image: url("/img/empty-circle-svgrepo-com.svg");
+        /* Reduce image size (still clipped in width and height defined above). */
+        background-size: 0.5em 0.5em; background-position: 0.25em 0.4em; background-repeat: no-repeat;
+    }
+    /* Expanded icon. */
+    a.button.toggle.expanded {
+        background-image: url("/img/down-arrow-5-svgrepo-com.svg");
+        /* Fit image size with button size. */
+        background-size: 1em 1em; background-position: 0em 0em;
+    }
+    /* Collapsed icon. */
+    a.button.toggle.collapsed {
+        background-image: url("/img/right-arrow-svgrepo-com.svg");
+        /* Fit image size with button size. */
+        background-size: 1em 1em; background-position: 0em 0em;
+    }

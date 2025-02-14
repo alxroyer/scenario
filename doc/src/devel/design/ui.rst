@@ -13,16 +13,9 @@
 .. limitations under the License.
 
 
-.. _design:
+`scenario.ui` design
+====================
 
-Design
-======
+.. todo:: Documentation needed for `scenario.ui` design:
 
-This page describes the design of the `scenario` library.
-
-.. toctree::
-    :maxdepth: 2
-
-    arch
-    ui
-    pydoc
+    - Concept of CID = Class Identifier, "<type>=<cid>" HTML class.

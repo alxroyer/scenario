@@ -18,9 +18,14 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Improve scenario page display:
+        - When an action/result description is long, make the line wrapped indented after the "ACTION:" or "RESULT:" label
+          (ex: 'campaign001.py'/step#4).
+        - Display step coverage with main scenario coverage, but collapsed
+          (ex: 'campaign001.py').
+            - Possibly add a link that expands / and navigates the given section?
+        - Add links on errors with scenario and step results => navigate to related final action/result error?
     - Bug! Opera prevents Firefox from connecting to the server.
-    - Display scenario results in campaign details page.
-    - Display requirement texts with downstream traceability.
     - Upstream traceability:
         - Restore column order: req-verifiers on the left, req-ref on the right.
         - Display req comments.

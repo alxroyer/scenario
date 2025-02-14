@@ -78,8 +78,9 @@ class CampaignPage(_HttpRequestHandlerImpl):
             self,
             request,  # type: _HttpRequestType
     ):  # type: (...) -> bool
-        from ._anchors import Anchor
         from ._htmldoc import HtmlDocument
+        from ._htmlgenanchors import AnchorGenerator
+        from ._htmlgenlinks import LinkGenerator
 
         # Filter `request`.
         if request.base_path != CampaignPage._URL:
@@ -101,9 +102,9 @@ class CampaignPage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)
         _html.settitle(f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
 
-        with Anchor.add(_html, name="scenarios", link_title="Campaign scenario list"):
+        with AnchorGenerator(_html, name="scenarios").addanchor(link_title="Campaign scenario list"):
             with _html.addnode("h2", classes=["scenarios"]):
-                _html.addlink(
+                LinkGenerator(_html).addlink(
                     href=self._page_scenarios.mkurl(request.req_baseline),
                     title="Campaign scenario list",
                     text="Scenarios",
@@ -111,27 +112,27 @@ class CampaignPage(_HttpRequestHandlerImpl):
         self._page_scenarios.scenarios2html(_html, request.req_baseline)
 
         if request.req_baseline.req_db.getallreqs():
-            with Anchor.add(_html, name="reqs", link_title="Campaign requirement list"):
+            with AnchorGenerator(_html, name="reqs").addanchor(link_title="Campaign requirement list"):
                 with _html.addnode("h2", classes=["reqs"]):
-                    _html.addlink(
+                    LinkGenerator(_html).addlink(
                         href=self._page_reqs.mkurl(request.req_baseline),
                         title="Campaign requirement list",
                         text="Requirements",
                     )
             self._page_reqs.reqs2html(_html, request.req_baseline)
 
-            with Anchor.add(_html, name="downstream-traceability", link_title="Campaign downstream traceability"):
+            with AnchorGenerator(_html, name="downstream-traceability").addanchor(link_title="Campaign downstream traceability"):
                 with _html.addnode("h2", classes=["reqs"]):
-                    _html.addlink(
+                    LinkGenerator(_html).addlink(
                         href=self._page_reqs_down.mkurl(request.req_baseline),
                         title="Campaign downstream traceability",
                         text="Downstream traceability",
                     )
             self._page_reqs_down.downstreamtraceability2html(_html, request.req_baseline)
 
-            with Anchor.add(_html, name="upstream-traceability", link_title="Campaign upstream traceability"):
+            with AnchorGenerator(_html, name="upstream-traceability").addanchor(link_title="Campaign upstream traceability"):
                 with _html.addnode("h2", classes=["reqs"]):
-                    _html.addlink(
+                    LinkGenerator(_html).addlink(
                         href=self._page_reqs_up.mkurl(request.req_baseline),
                         title="Campaign upstream traceability",
                         text="Upstream traceability",

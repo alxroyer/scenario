@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-HTML table generators.
+HTML table generator.
 """
 
 import typing
@@ -23,13 +23,13 @@ import typing
 import scenario
 
 if True:
-    from ._collapsible import CollapsibleState as _CollapsibleStateImpl  # @default-parameter-value
+    from ._htmlgentypes import CollapsibleState as _CollapsibleStateImpl  # @default-parameter-value
 if typing.TYPE_CHECKING:
-    from ._collapsible import CollapsibleState as _CollapsibleStateType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
+    from ._htmlgentypes import CollapsibleState as _CollapsibleStateType
 
 
-class CollapsibleTableGenerator:
+class TableGenerator:
     """
     HTML generator for tables with collapsible rows.
     """
@@ -38,37 +38,80 @@ class CollapsibleTableGenerator:
             self,
             html,  # type: _HtmlDocumentType
             *,
-            table_id,  # type: str
-            default_state=_CollapsibleStateImpl.EXPANDED,  # type: _CollapsibleStateType
+            table_cid,  # type: str
     ):  # type: (...) -> None
         """
-        Instantiates a :class:`CollapsibleTableGenerator` with configurations.
+        Instantiates a :class:`TableGenerator` with configurations.
 
         :param html: HTML output page to feed.
-        :param table_id: Table identifier used in HTML classes.
-        :param default_state: Default state for collapsible rows. Default is `expanded`.
+        :param table_cid: Table CID.
         """
         #: HTML output page to feed.
         self.html = html  # type: _HtmlDocumentType
-        #: Table identifier to set in HTML classes.
-        self.table_id = table_id  # type: str
-        #: Default state for collapsible rows.
-        self.default_state = default_state  # type: _CollapsibleStateType
+        #: Table CID.
+        self.table_cid = table_cid  # type: str
 
-        #: Main row data, fed in :meth:`addmainrow()`.
-        self._main_rows = []  # type: typing.List[CollapsibleTableGenerator._MainRow]
+        #: ``.tr1`` main rows.
+        self._tr1s = []  # type: typing.List[TableGenerator._Tr1]
+
+        # Have the related .js content be embedded at the end of the HTML page.
+        self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
+
+    def __repr__(self):  # type: () -> str
+        """
+        Canonical string representation.
+
+        For debugging purpose.
+        """
+        return "TableGenerator(%s)" % (", ".join([
+            f"table_cid={self.table_cid!r}",
+        ]))
+
+    @property
+    def _tr1(self):  # type: () -> TableGenerator._Tr1
+        """
+        Current ``.tr1`` main row.
+        """
+        return self._tr1s[-1]
+
+    def _tableidclasses(self):  # type: (...) -> typing.Sequence[str]
+        """
+        Computes identifier classes for the table.
+
+        :return: Identifier classes for the table.
+        """
+        _classes = []  # type: typing.List[str]
+        if self.table_cid:
+            _classes.append(self.html.mkcsscompatibleclass(f"table={self.table_cid}"))
+        return _classes
+
+    def _tr1idclasses(self):  # type: (...) -> typing.Sequence[str]
+        """
+        Computes identifier classes for the current ``.tr1`` main row.
+
+        Includes the identifier classes for the table.
+
+        :return: Identifier classes for the current ``.tr1`` main row.
+        """
+        _classes = [*self._tableidclasses()]  # type: typing.List[str]
+        if self._tr1.tr1_cid:
+            _classes.append(self.html.mkcsscompatibleclass(f"tr1={self._tr1.tr1_cid}"))
+        return _classes
 
     def addexpandallbutton(self):  # type: (...) -> None
         """
         Adds a ``.expand-all`` button for the table being generated.
         """
-        self.html.addnode(
-            "a",
+        from ._htmlgenbuttons import ButtonGenerator
+
+        assert self.table_cid, "Please provide a table CID for a table with collapsible rows"
+
+        ButtonGenerator(self.html).addbutton(
             classes=[
-                "button", "expand-all", "table",
-                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
+                "expand-all", "table",
+                *self._tableidclasses(),
             ],
-            href="#",
+            title="Expand all rows",
             text="Expand all",
         )
 
@@ -78,13 +121,16 @@ class CollapsibleTableGenerator:
         """
         Adds a ``.collapse-all`` button for the table being generated.
         """
-        self.html.addnode(
-            "a",
+        from ._htmlgenbuttons import ButtonGenerator
+
+        assert self.table_cid, "Please provide a table CID for a table with collapsible rows"
+
+        ButtonGenerator(self.html).addbutton(
             classes=[
-                "button", "collapse-all", "table",
-                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
+                "collapse-all", "table",
+                *self._tableidclasses(),
             ],
-            href="#",
+            title="Collapse all rows",
             text="Collapse all",
         )
 
@@ -97,20 +143,16 @@ class CollapsibleTableGenerator:
         Starts generating the table.
 
         :param classes: Optional additional HTML classes.
-        :return: HTML node context focused on the ``<table></table>`` created.
+        :return: HTML node context focused on the ``<table></table>`` node created.
         """
         from ._htmldoc import HtmlDocument
 
-        # Have the related .js content be embedded at the end of the HTML page.
-        self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
-
-        # Create the table node.
+        # Create the `table` node.
         _table_ctx = self.html.addnode(
             "table",
             classes=[
                 *classes,
-                "collapsible",
-                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
+                *self._tableidclasses(),
             ],
         )  # type: _HtmlDocumentType.NodeContext
 
@@ -119,13 +161,13 @@ class CollapsibleTableGenerator:
         class _TableNodeContext(HtmlDocument.NodeContext):
             """
             :class:`._htmldoc.HtmlDocument.NodeContext` override
-            in order to call :meth:`CollapsibleTableGenerator._MainRow.finalize()` for each main row
+            in order to call :meth:`TableGenerator._Tr1.finalize()` for each main row
             at the end of the table definition.
             """
 
             def __init__(
                     self,
-                    table_generator,  # type: CollapsibleTableGenerator
+                    table_generator,  # type: TableGenerator
                     table_ctx,  # type: _HtmlDocumentType.NodeContext
             ):  # type: (...) -> None
                 """
@@ -139,7 +181,7 @@ class CollapsibleTableGenerator:
                 )
 
                 #: Table generator being processed.
-                self.table_generator = table_generator  # type: CollapsibleTableGenerator
+                self.table_generator = table_generator  # type: TableGenerator
 
             def __exit__(
                     self,
@@ -151,111 +193,150 @@ class CollapsibleTableGenerator:
 
                 if not exc_type:
                     # Finalize table rows.
-                    for _main_row in self.table_generator._main_rows:  # type: CollapsibleTableGenerator._MainRow  # noqa  ## Access to protected member
-                        _main_row.finalize()
+                    for _tr1 in self.table_generator._tr1s:  # type: TableGenerator._Tr1  # noqa  ## Access to protected member
+                        _tr1.finalize()
 
         return _TableNodeContext(
             table_generator=self,
             table_ctx=_table_ctx,
         )
 
-    def addmainrow(
+    def addrow(
             self,
             *,
-            main_row_id,  # type: str
+            tr1_cid,  # type: str
+            default_state=None,  # type: _CollapsibleStateType
             classes=(),  # type: typing.Sequence[str]
     ):  # type: (...) -> _HtmlDocumentType.NodeContext
         """
-        Adds a ``.main-row`` row in the table.
+        Adds a ``.tr1`` main row in the table.
 
-        :param main_row_id: Main row identifier used in HTML classes.
-        :param classes: Optional additional HTML classes.
-        :return: HTML node context focused on the ``<tr></tr>`` created.
+        :param tr1_cid:
+            Optional main row CID.
+
+            Must be set for a collapsible item (i.e. ``default_state`` is not ``None``).
+        :param default_state:
+            Default state for a collapsible ``.tr1`` main row.
+
+            ``None`` (default) for a non-collapsible row.
+        :param classes:
+            Optional additional HTML classes.
+        :return:
+            HTML node context focused on the ``<tr></tr>`` node created.
         """
-        self._main_rows.append(CollapsibleTableGenerator._MainRow(
+        # Check input parameters.
+        if default_state is not None:
+            assert tr1_cid, "Please provide a main row CID for collapsible rows"
+
+        # Feed `_tr1s` with a new `_Tr1` instance.
+        self._tr1s.append(TableGenerator._Tr1(
             table_generator=self,
-            id=main_row_id,
-            tr_ctx=self.html.addnode(
-                "tr",
-                classes=[
-                    *classes,
-                    "main-row",
-                    self.html.mkcsscompatibleclass(f"table={self.table_id}"),
-                    self.html.mkcsscompatibleclass(f"main-row={main_row_id}"),
-                ],
-            ),
+            tr1_cid=tr1_cid,
+            default_state=default_state,
         ))
-        return self._main_rows[-1].main_tr_ctx
+
+        # Create the HTML node.
+        self._tr1.tr1_ctx = self.html.addnode(
+            "tr",
+            classes=[
+                *classes,
+                "tr1",
+                *self._tr1idclasses(),
+                "collapsible" if (default_state is not None) else "",
+            ],
+        )
+
+        return self._tr1.tr1_ctx
 
     def addtogglebutton(self):  # type: (...) -> None
         """
-        Adds a ``.toggle-row`` button (normally in a ``.main-row`` row).
+        Adds a ``.toggle-tr1`` button.
+
+        .. note:: Not automatically added by :meth:`addrow()` since it must be done in the appropriate ``<td></td>`` node.
         """
-        self._main_rows[-1].toggle_button_a_ctx = self.html.addnode(
-            "a",
+        assert self._tr1.toggle_button_generator is not None, "Can't add a toggle button for a non-collapsible row"
+
+        self._tr1.toggle_button_generator.addbutton(
             classes=[
-                "button", "toggle-row",
-                self.html.mkcsscompatibleclass(f"table={self.table_id}"),
-                self.html.mkcsscompatibleclass(f"main-row={self._main_rows[-1].id}"),
+                # Memo: `ButtonGenerator` already sets `.tr1` CID HTML classes, use `_tableidclasses()` only here.
+                *self._tableidclasses(),
             ],
         )
-        with self._main_rows[-1].toggle_button_a_ctx:
-            # Create a span node without text.
-            # The text will be set when the table is terminated.
-            self._main_rows[-1].toggle_button_span_ctx = self.html.addnode("span")
 
-    def addcollapsiblerow(
+    def addsubrow(
             self,
             *,
             classes=(),  # type: typing.Sequence[str]
     ):  # type: (...) -> _HtmlDocumentType.NodeContext
         """
-        Adds a ``.collapsible-row`` row in the table.
+        Adds a ``.tr2`` row in the table.
 
         :param classes: Optional additional HTML classes.
-        :return: HTML node context focused on the ``<tr></tr>`` created.
+        :return: HTML node context focused on the ``<tr></tr>`` node created.
         """
-        self._main_rows[-1].collapsible_tr_ctxs.append(
+        assert self._tr1.toggle_button_generator is not None, "Can't add a subrow for a non-collapsible row"
+
+        self._tr1.tr2_ctxs.append(
             self.html.addnode(
                 "tr",
                 classes=[
                     *classes,
-                    "collapsible-row",
-                    self.html.mkcsscompatibleclass(f"table={self.table_id}"),
-                    self.html.mkcsscompatibleclass(f"main-row={self._main_rows[-1].id}"),
+                    "tr2",
+                    *self._tr1idclasses(),
                 ],
             )
         )
-        return self._main_rows[-1].collapsible_tr_ctxs[-1]
+        return self._tr1.tr2_ctxs[-1]
 
-    class _MainRow:
+    class _Tr1:
         """
-        Main row information.
+        ``.tr1`` main row building context.
         """
 
         def __init__(
                 self,
-                table_generator,  # type: CollapsibleTableGenerator
-                id,  # type: str  # noqa  ## Shadows built-in name 'id'
-                tr_ctx,  # type: _HtmlDocumentType.NodeContext
+                *,
+                table_generator,  # type: TableGenerator
+                tr1_cid,  # type: str
+                default_state,  # type: typing.Optional[_CollapsibleStateType]
         ):  # type: (...) -> None
             """
+            Creates a ``.tr1`` main row building context.
+
+            Stacked in :attr:`TableGenerator._tr1s`.
+
             :param table_generator: Owner table generator.
-            :param id: Main row identifier.
-            :param tr_ctx: `tr.main-row` node context.
+            :param tr1_cid: Main row CID.
+            :param default_state: Default state for a collapsible ``.tr1`` main row. ``None`` for a non collapsible row.
             """
+            from ._htmlgenbuttons import ButtonGenerator
+
             #: Owner table generator.
-            self.table_generator = table_generator
-            #: Main row identifier.
-            self.id = id  # type: str
-            #: Main row ``<tr></tr>`` node context.
-            self.main_tr_ctx = tr_ctx  # type: _HtmlDocumentType.NodeContext
-            #: ``.toggle-row`` button ``<a></a>`` node context, saved in :meth:`CollapsibleTableGenerator.addtogglebutton()`.
-            self.toggle_button_a_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
-            #: ``.toggle-row`` button ``<span></span>`` node context, saved in :meth:`CollapsibleTableGenerator.addtogglebutton()`.
-            self.toggle_button_span_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
-            #: ``<tr></tr>`` node contexts of related collapsible rows, fed in :meth:`CollapsibleTableGenerator.addcollapsiblerow()`.
-            self.collapsible_tr_ctxs = []  # type: typing.List[_HtmlDocumentType.NodeContext]
+            self.table_generator = table_generator  # type: TableGenerator
+            #: Main row CID.
+            self.tr1_cid = tr1_cid  # type: str
+            #: Default state for a collapsible ``.tr1`` main row. ``None`` for a non collapsible row.
+            self.default_state = default_state  # type: typing.Optional[_CollapsibleStateType]
+
+            #: ``.tr1`` main row ``<tr></tr>`` node context.
+            self.tr1_ctx = None  # type: typing.Optional[_HtmlDocumentType.NodeContext]
+            #: ``.toggle-tr1`` button generator.
+            self.toggle_button_generator = None  # type: typing.Optional[ButtonGenerator]
+            if self.tr1_cid and self.default_state:
+                self.toggle_button_generator = ButtonGenerator(self.html, toggle_type="tr1", toggle_cid=self.tr1_cid)
+            #: ``.tr2`` subrow node contexts.
+            self.tr2_ctxs = []  # type: typing.List[_HtmlDocumentType.NodeContext]
+
+        def __repr__(self):  # type: () -> str
+            """
+            Canonical string representation.
+
+            For debugging purpose.
+            """
+            return "TableGenerator._Tr1(%s)" % (", ".join([
+                f"tr1_cid={self.tr1_cid!r}",
+                f"default_state={self.default_state!r}",
+            ]))
 
         @property
         def html(self):  # type: () -> _HtmlDocumentType
@@ -266,49 +347,40 @@ class CollapsibleTableGenerator:
 
         def finalize(self):  # type: (...) -> None
             """
-            Finalizes the main collapsible row.
+            Finalizes the ``.tr1`` main row with ``.tr2`` subrows.
 
-            Depending on whether on the main row has related collapsible rows attached to it or not:
+            Depending on the configuration:
 
-            - sets `.expanded`/`.collapsed` state classes,
-            - sets `.toggle-row` button text,
-            - sets related collapsible rows visibility.
+            - sets ``.expanded``/``.collapsed`` state classes,
+            - sets ``.toggle-tr1`` button text,
+            - sets related ``.tr2`` rows visibility.
             """
-            if not self.collapsible_tr_ctxs:
-                # No `.collapsible-row`s attached.
+            if (self.default_state is not None) and (self.toggle_button_generator is not None):
+                if not self.tr2_ctxs:
+                    # No `.tr2` rows attached.
 
-                # Toggle button text.
-                if self.toggle_button_span_ctx is not None:
-                    with self.toggle_button_span_ctx:
-                        self.html.addtext("o")
+                    # Toggle button text.
+                    self.toggle_button_generator.setstate(None)
 
-            else:
-                # `.collapsible-row`s attached.
+                else:
+                    # `.tr2` rows attached.
 
-                # Main row `.expanded`/`.collapsed` class.
-                with self.main_tr_ctx:
-                    self.html.addclass(self.table_generator.default_state)
+                    # Main row `.expanded`/`.collapsed` class.
+                    if self.tr1_ctx is not None:
+                        with self.tr1_ctx:
+                            self.html.addclass(self.default_state)
 
-                # Toggle button `.expanded`/`.collapsed` class.
-                if self.toggle_button_a_ctx is not None:
-                    with self.toggle_button_a_ctx:
-                        self.html.addclass(self.table_generator.default_state)
-                # Toggle button text.
-                if self.toggle_button_span_ctx is not None:
-                    with self.toggle_button_span_ctx:
-                        if self.table_generator.default_state == _CollapsibleStateImpl.EXPANDED:
-                            self.html.addtext("-")
-                        else:
-                            self.html.addtext("+")
+                    # Toggle button `.expanded`/`.collapsed` class and text.
+                    self.toggle_button_generator.setstate(self.default_state)
 
-                # Collapsible rows.
-                for _collapsible_tr_ctx in self.collapsible_tr_ctxs:  # type: _HtmlDocumentType.NodeContext
-                    with _collapsible_tr_ctx:
-                        # `.expanded`/`.collapsed` class.
-                        self.html.addclass(self.table_generator.default_state)
+                    # Collapsible rows.
+                    for _tr2_ctx in self.tr2_ctxs:  # type: _HtmlDocumentType.NodeContext
+                        with _tr2_ctx:
+                            # `.expanded`/`.collapsed` class.
+                            self.html.addclass(self.default_state)
 
-                        # Visbility.
-                        if self.table_generator.default_state == _CollapsibleStateImpl.EXPANDED:
-                            self.html.addstyle("visibility: visible")
-                        else:
-                            self.html.addstyle("visibility: collapse")
+                            # Visbility.
+                            if self.default_state == _CollapsibleStateImpl.EXPANDED:
+                                self.html.addstyle("visibility: visible")
+                            else:
+                                self.html.addstyle("visibility: collapse")

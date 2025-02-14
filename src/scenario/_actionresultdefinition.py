@@ -95,3 +95,18 @@ class ActionResultDefinition:
         if self._step is not None:
             raise RuntimeError(f"Owner step already set for {self!r} with {self._step!r}, can't set {step!r}")
         self._step = step
+
+    @property
+    def number(self):  # type: () -> int
+        """
+        Action/result definition number.
+
+        Number of this action/result definition within the actions/results defining the related step.
+        Starting from 1, as displayed to the user.
+        """
+        _action_result_number = 0  # type: int
+        for _action_result_definition in self.step.actions_results:  # type: ActionResultDefinition
+            _action_result_number += 1
+            if _action_result_definition is self:
+                break
+        return _action_result_number

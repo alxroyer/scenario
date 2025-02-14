@@ -26,7 +26,7 @@ if True:
     from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
-    from ._htmlgentables import CollapsibleTableGenerator as _CollapsibleTableGeneratorType
+    from ._htmlgentables import TableGenerator as _TableGeneratorType
     from ._httprequest import HttpRequest as _HttpRequestType
 
 
@@ -96,8 +96,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param request: Input request being processed.
         """
-        from ._collapsible import CollapsibleState
-        from ._htmlgentables import CollapsibleTableGenerator
+        from ._htmlgentables import TableGenerator
 
         # Sort campaign executions.
         _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]
@@ -107,11 +106,10 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
         with html.addnode("div", id="campaigns"):
             # Instantiate the table generator.
-            _table_generator = CollapsibleTableGenerator(
+            _table_generator = TableGenerator(
                 html,
-                table_id="campaigns",
-                default_state=CollapsibleState.EXPANDED,
-            )  # type: CollapsibleTableGenerator
+                table_cid="campaigns",
+            )  # type: TableGenerator
 
             # Expand/collapse all buttons.
             _table_generator.addexpandallbutton()
@@ -199,6 +197,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param html: HTML output page to feed.
         :param campaign_executions: Ordered list of campaigns.
         """
+        from ._htmlgenlinks import LinkGenerator
         from ._pagecampaign import CampaignPage
 
         with html.addnode("tr", classes=["head"]):
@@ -208,11 +207,11 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             # One column per campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
                 with html.addnode("th"):
-                    html.addlink(href=CampaignPage.mkurl(_campaign_execution), title="Campaign details", text=_campaign_execution.name)
+                    LinkGenerator(html).addlink(href=CampaignPage.mkurl(_campaign_execution), title="Campaign details", text=_campaign_execution.name)
 
     def _testsuite2tablerow(
             self,
-            table_generator,  # type: _CollapsibleTableGeneratorType
+            table_generator,  # type: _TableGeneratorType
             request,  # type: _HttpRequestType
             campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             test_suite_execution_ref,  # type: scenario.TestSuiteExecution
@@ -225,8 +224,14 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param campaign_executions: Ordered list of campaigns to displays execution status for.
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
         """
+        from ._htmlgentypes import CollapsibleState
+
         # One first line for the test suite name, with execution status for each campaign.
-        with table_generator.addmainrow(main_row_id=test_suite_execution_ref.name, classes=["suite"]):
+        with table_generator.addrow(
+            tr1_cid=test_suite_execution_ref.name,
+            default_state=CollapsibleState.EXPANDED,
+            classes=["suite"],
+        ):
             # Test suite expand/collapse button + name.
             with table_generator.html.addnode("th"):
                 # Expand/collapse button.
@@ -257,7 +262,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
     def _testcase2tablerow(
             self,
-            table_generator,  # type: _CollapsibleTableGeneratorType
+            table_generator,  # type: _TableGeneratorType
             request,  # type: _HttpRequestType  # noqa  ## Unused parameter
             campaign_executions,  # type: typing.Sequence[scenario.CampaignExecution]
             test_suite_execution_ref,  # type: scenario.TestSuiteExecution
@@ -272,10 +277,11 @@ class CampaignListPage(_HttpRequestHandlerImpl):
         :param test_suite_execution_ref: Reference test suite to search in each campaign of ``campaign_executions``.
         :param test_case_execution_ref: Reference test case to search in each campaign test suite found from ``test_suite_execution_ref``.
         """
+        from ._htmlgenlinks import LinkGenerator
         from ._pagescenario import ScenarioPage
         from ._reqbl import UI_REQ_BASELINES
 
-        with table_generator.addcollapsiblerow(classes=["case"]):
+        with table_generator.addsubrow(classes=["case"]):
             # Test case name, with scenario URL from `UI_REQ_BASELINES.main.scenarios` if available.
             _scenario_url = ""  # type: str
             for _main_scenario_definition in UI_REQ_BASELINES.main.scenarios:  # type: scenario.ScenarioDefinition
@@ -286,7 +292,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                 # Test case name.
                 with table_generator.html.addnode("span", classes=["case", "name"]):
                     if _scenario_url:
-                        table_generator.html.addlink(href=_scenario_url, title="Scenario details", text=test_case_execution_ref.name)
+                        LinkGenerator(table_generator.html).addlink(href=_scenario_url, title="Scenario details", text=test_case_execution_ref.name)
                     else:
                         table_generator.html.addtext(test_case_execution_ref.name)
 
@@ -309,7 +315,7 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                 if _execution_status is not None:
                     with table_generator.html.addnode("td", classes=[_execution_status.lower()]):
                         if _scenario_url:
-                            table_generator.html.addlink(href=_scenario_url, title="Scenario results", text=_execution_status)
+                            LinkGenerator(table_generator.html).addlink(href=_scenario_url, title="Scenario results", text=_execution_status)
                         else:
                             table_generator.html.addtext(_execution_status)
                 else:

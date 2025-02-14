@@ -26,11 +26,11 @@ scenario.anchors = {};
 
 
 /**
- * @brief Extracts an anchor name from a URL.
- * @param {string} url URL to extract anchor name from.
- * @returns {string | null} Anchor name if found, `null` otherwise.
+ * @brief Extracts an anchor CID from a URL.
+ * @param {string} url URL to extract anchor CID from.
+ * @returns {string | null} Anchor CID if found, `null` otherwise.
  */
-scenario.anchors._extractAnchorNameFromUrl = (url) => {
+scenario.anchors._extractAnchorCidFromUrl = (url) => {
     if (url.includes("#")) {
         return url.substring(url.indexOf("#") + 1);
     } else {
@@ -41,13 +41,13 @@ scenario.anchors._extractAnchorNameFromUrl = (url) => {
 
 /**
  * @brief Ensures the appropriate anchor gets the `.focus` class.
- * @param {string} anchorName Name of anchor to set the focus on.
+ * @param {string} anchorCid CID of anchor to set the focus on.
  * @returns {void}
  */
-scenario.anchors._setFocus = (anchorName) => {
+scenario.anchors._setFocus = (anchorCid) => {
     for (/** @var {HTMLElement} */ const _focusableDiv of scenario.findNodes(document.body, "div.anchor.focusable")) {
-        if (scenario.getNamedObjectIdFromClasses(_focusableDiv, "anchor") === anchorName) {
-            console.debug(`Adding .focus class to anchor '${anchorName}'`);
+        if (scenario.getCid(_focusableDiv, "anchor") === anchorCid) {
+            console.debug(`Adding .focus class to anchor '${anchorCid}'`);
             _focusableDiv.classList.add("focus");
         } else {
             _focusableDiv.classList.remove("focus");
@@ -58,10 +58,10 @@ scenario.anchors._setFocus = (anchorName) => {
 
 // Add `.focus` class on anchor targetted by the current URL.
 scenario.onLoad(() => {
-    /** @var {string | null} */ const _anchorName = scenario.anchors._extractAnchorNameFromUrl(window.location.href);
-    if (_anchorName) {
-        console.debug(`Focusing anchor '${_anchorName}' on load`);
-        scenario.anchors._setFocus(_anchorName);
+    /** @var {string | null} */ const _anchorCid = scenario.anchors._extractAnchorCidFromUrl(window.location.href);
+    if (_anchorCid) {
+        console.debug(`Focusing anchor '${_anchorCid}' on load`);
+        scenario.anchors._setFocus(_anchorCid);
     }
 });
 
@@ -75,10 +75,10 @@ scenario.onLoad(() => {
 
             /** @var {string | null} */ const _href = _anchorLink.getAttribute("href");
             if (_href) {
-                /** @var {string | null} */ const _anchorName = scenario.anchors._extractAnchorNameFromUrl(_href);
-                if (_anchorName) {
-                    console.debug(`Anchor link '${_anchorName}' clicked`);
-                    scenario.anchors._setFocus(_anchorName);
+                /** @var {string | null} */ const _anchorCid = scenario.anchors._extractAnchorCidFromUrl(_href);
+                if (_anchorCid) {
+                    console.debug(`Anchor link '${_anchorCid}' clicked`);
+                    scenario.anchors._setFocus(_anchorCid);
                 }
             }
         });

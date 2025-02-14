@@ -26,8 +26,10 @@ let scenario = {};
 
 
 /**
- * @brief Ensures `f` be called *on-load*.
- * @param {() => void} f Function to be called *on-load*.
+ * @brief
+ *     Ensures `f` be called *on-load*.
+ * @param {() => void} f
+ *     Function to be called *on-load*.
  * @returns {void}
  */
 scenario.onLoad = (f) => {
@@ -43,9 +45,12 @@ scenario.onLoad = (f) => {
 
 
 /**
- * @brief Ensures `raw` HTML class is CSS compatible, as the Python side does.
- * @param {string} raw Raw HTML class to ensure CSS compatibility for.
- * @returns {string} CSS compatible HTML class.
+ * @brief
+ *     Ensures `raw` HTML class is CSS compatible, as the Python side does.
+ * @param {string} raw
+ *     Raw HTML class to ensure CSS compatibility for.
+ * @returns {string}
+ *     CSS compatible HTML class.
  */
 scenario.mkCssCompatibleClass = (raw) => {
     return (
@@ -58,15 +63,130 @@ scenario.mkCssCompatibleClass = (raw) => {
 
 
 /**
- * @brief Finds nodes matching `selector`.
- * @param {HTMLElement} node Current node.
- * @param {string} selector CSS selector.
- * @returns {HTMLElement[]} Nodes matching `selector`.
+ * @brief
+ *     Parses a CSS node selector.
+ * @param {string} selector
+ *     CSS node selector to parse.
+ *     Programmatical format, `scenario.mkCssCompatibleClass()` will be called.
+ * @returns {{tagName: string | null, id: string | null, classes: string[]}}
+ *     Tag name, HTML identifier and/or classes,
+ *     classes being CSS-ready, i.e. `scenario.mkCssCompatibleClass()` has been called.
  */
-scenario.findNodes = (node, selector, {debug=false, indentation=""}={}) => {
+scenario._parseNodeSelector = (selector) => {
+    /** @var {RegExpExecArray | null} */ const _match = /([^.#]*)(#(.*)|(\..*)|)/.exec(selector);
+    if ((! _match) || (_match.length < 4)) {
+        throw SyntaxError(`Invalid node selector '${selector}'`);
+    }
+    /** @var {string | null} */ const _tagName = _match[1];
+    /** @var {string | null} */ const _id = _match[3];
+    /** @var {string | null} */ let _classes = _match[4];
+    if (_classes) {
+        // Ensure `_classes` is space-separated, as `getElementsByClassName()` takes it.
+        _classes = _classes.substring(1).replaceAll(".", " ");
+        // Ensure `_classes` is "CSS compatible", as the Python side ensured it.
+        _classes = scenario.mkCssCompatibleClass(_classes);
+    }
+
+    return {
+        tagName: _tagName,
+        id: _id,
+        classes: (_classes ? _classes.split(" ") : []),
+    };
+};
+
+
+/**
+ * @brief
+ *     Checks whether `node` matches with the given `selector`.
+ * @param {HTMLElement} node
+ *     Node to check match with `selector`.
+ * @param {string | {tagName: string | null, id: string | null, classes: string[]}} selector
+ *     Single node CSS selector.
+ *     Programmatical format in case of a string, `scenario.mkCssCompatibleClass()` will be called.
+ *     As returned by `scenario._parseNodeSelector()` otherwise.
+ * @param {boolean | undefined} debug
+ *     `true` to activate debugging.
+ * @param {string | undefined} indentation
+ *     Debugging indentation.
+ * @returns {boolean}
+ *     `true` for a match, `false` otherwise.
+ */
+scenario.nodeMatches = (node, selector, {debug, indentation} = {}) => {
+    // Default parameter values.
+    debug = debug || false;
+
+    /**
+     * @brief Prints out a debug line depending on `debug`.
+     * @param {string} text Debug line.
+     * @returns {void}
+     */
     function _debug(text) {
         if (debug) {
-            console.debug(`${indentation}${text}`);
+            console.debug(`${indentation}scenario.nodeMatches(): ${text}`);
+        }
+    }
+
+    _debug(`scenario.nodeMatches(${node}, ${selector})`);
+
+    // Parse `selector` if needed.
+    if (typeof(selector) === "string") {
+        selector = scenario._parseNodeSelector(selector);
+        _debug(`'${selector}' => tag name: ${selector.tagName}, id: ${selector.id}, classes: [${selector.classes}]`);
+    }
+
+    // Check tag name.
+    if (selector.tagName && (node.tagName.toLowerCase() !== selector.tagName.toLowerCase())) {
+        _debug(`Tag name ${node.tagName} !== ${selector.tagName} => discarded`);
+        return false;
+    }
+    // Check HTML identifier.
+    if (selector.id && (node.id !== selector.id)) {
+        _debug(`Id ${node.id} !== ${selector.id} => discarded`);
+        return false;
+    }
+    // Check classes.
+    if (selector.classes.length) {
+        for (/** @var {string} */ const _class of selector.classes) {
+            if (! node.classList.contains(_class)) {
+                _debug(`Missing class '${_class}' in [${node.classList}] => discarded`);
+                return false;
+            }
+        }
+    }
+
+    _debug("=> match");
+    return true;
+};
+
+
+/**
+ * @brief
+ *     Finds nodes matching with `selector`.
+ * @param {HTMLElement} node
+ *     Current node.
+ * @param {string} selector
+ *     CSS selector.
+ *     Programmatical format, `scenario.mkCssCompatibleClass()` will be called.
+ * @param {boolean | undefined} debug
+ *     `true` to activate debugging.
+ * @param {string | undefined} indentation
+ *     Debugging indentation.
+ * @returns {HTMLElement[]}
+ *     Nodes matching `selector`.
+ */
+scenario.findNodes = (node, selector, {debug, indentation}={}) => {
+    // Default parameter values.
+    debug = debug || false;
+    indentation = indentation || "";
+
+    /**
+     * @brief Prints out a debug line depending on `debug`.
+     * @param {string} text Debug line.
+     * @returns {void}
+     */
+    function _debug(text) {
+        if (debug) {
+            console.debug(`${indentation}scenario.findNodes(): ${text}`);
         }
     }
 
@@ -83,61 +203,45 @@ scenario.findNodes = (node, selector, {debug=false, indentation=""}={}) => {
     }
 
     // Search next nodes from `_selectors[0]`:
+
     // - Parse `_selectors[0]`.
-    /** @var {(HTMLElement | null)[]} */ let _selected = [];
-    /** @var {RegExpExecArray | null} */ const _match = /([^.#]*)(#(.*)|(\..*)|)/.exec(_selectors[0]);
-    if ((! _match) && (_match.length < 4)) {
-        throw SyntaxError(`Invalid selector '${_selectors[0]}'`);
-    }
-    /** @var {string | null} */ const _tagName = _match[1];
-    /** @var {string | null} */ const _id = _match[3];
-    /** @var {string | null} */ let _classes = _match[4];
-    if (_classes) {
-        // Ensure `_classes` is space-separated, as `getElementsByClassName()` takes it.
-        _classes = _classes.substring(1).replaceAll(".", " ");
-        // Ensure `_classes` is "CSS compatible", as the Python side ensured it.
-        _classes = scenario.mkCssCompatibleClass(_classes);
-    }
-    _debug(`scenario.findNodes(): '${_selectors[0]}' => _tagName: ${_tagName}, _id: ${_id}, _classes: ${_classes}`);
+    /** @var {{id: string | null, tagName: string | null, classes: string[]}} */ const _selector = scenario._parseNodeSelector(_selectors[0]);
+    _debug(`'${_selectors[0]}' => tag name: ${_selector.tagName}, id: ${_selector.id}, classes: [${_selector.classes}]`);
+
     // - Find node(s) from the most representative criteria:
-    if (_id) {
-        _selected.push(document.getElementById(_id));
-        _debug(`scenario.findNodes(): _id='${_id}' => ${_selected}`);
-    } else if (_classes) {
-        _selected.push(...node.getElementsByClassName(_classes));
-        _debug(`scenario.findNodes(): _classes='${_classes}' => ${_selected}`);
-    } else if (_tagName) {
-        _selected.push(...node.getElementsByTagName(_tagName));
-        _debug(`scenario.findNodes(): _tagName='${_tagName}' => ${_selected}`);
+    /** @var {HTMLElement[]} */ let _selected = [];
+    if (_selector.id) {
+        /** @var {HTMLElement | null} */ const _identified = document.getElementById(_selector.id);
+        if (_identified) {
+            _selected.push(_identified);
+        }
+        _debug(`id='${_selector.id}' => ${_selected}`);
+    } else if (_selector.classes.length) {
+        // Memo:
+        //   Use `getElementsByClassName()` before `getElementsByTagName()`.
+        //   If classes are given, this criteria should normally be more restrictive, thus faster.
+        _selected.push(...node.getElementsByClassName(_selector.classes.join(" ")));
+        _debug(`classes='${_selector.classes.join(" ")}' => ${_selected}`);
+    } else if (_selector.tagName) {
+        _selected.push(...node.getElementsByTagName(_selector.tagName));
+        _debug(`tagName='${_selector.tagName}' => ${_selected}`);
     } else {
         throw SyntaxError(`Invalid selector '${_selectors[0]}'`);
     }
+
     // - Then check the nodes selected above pass all criteria:
     _selected = _selected.filter((e) => {
-        if (! e) {
-            _debug(`scenario.findNodes(): Filtered-out ${e}`);
+        if (! scenario.nodeMatches(e, _selector, {debug: debug, indentation: `${indentation}  `})) {
             return false;
-        }
-        if (_tagName && (e.tagName.toLowerCase() !== _tagName.toLowerCase())) {
-            _debug(`scenario.findNodes(): Filtered-out tag name ${e.tagName} !== ${_tagName}`);
-            return false;
-        }
-        if (_classes) {
-            for (/** @var {string} */ const _class of _classes.split(" ")) {
-                if (! e.classList.contains(_class)) {
-                    _debug(`scenario.findNodes(): Filtered-out missing class '${_class}' in [${e.classList}]`);
-                    return false;
-                }
-            }
         }
         return true;
     });
-    _debug(`scenario.findNodes(): '${_selectors[0]}' => ${_selected}`);
+    _debug(`'${_selectors[0]}' => ${_selected}`);
 
     // If that was the end of the selector, then this is a final recursion call.
     // Return selected nodes right now.
     if (_selectors.length === 1) {
-        _debug(`scenario.findNodes() => ${_selected}`);
+        _debug(`=> ${_selected}`);
         return _selected;
     }
 
@@ -146,19 +250,23 @@ scenario.findNodes = (node, selector, {debug=false, indentation=""}={}) => {
     for (const _node of _selected) {
         _final.push(...scenario.findNodes(_node, _selectors.slice(1).join(" "), {debug: debug, indentation: `${indentation}  `}));
     }
-    _debug(`scenario.findNodes() => ${_final}`);
+    _debug(`=> ${_final}`);
     return _final;
 };
 
 
 /**
- * @brief Search for a named object identifier (i.e. "<name>=<value>") in `node`'s classes.
- * @param {HTMLElement} node Node to read classes from.
- * @param {string} name Name of the class to search.
- * @returns {string | null} Named class value if found, `null` otherwise.
+ * @brief
+ *     Search for a CID (class identifier, i.e. "<type>=<cid>" class) in `node`'s HTML classes.
+ * @param {HTMLElement} node
+ *     Node to read classes from.
+ * @param {string} type
+ *     Type of CID to search.
+ * @returns {string | null}
+ *     CID value if found, `null` otherwise.
  */
-scenario.getNamedObjectIdFromClasses = (node, name) => {
-    /** @var {string} */ const _starter = scenario.mkCssCompatibleClass(`${name}=`);
+scenario.getCid = (node, type) => {
+    /** @var {string} */ const _starter = scenario.mkCssCompatibleClass(`${type}=`);
     for (/** @var {string} */ const _class of node.classList) {
         if (_class.startsWith(_starter)) {
             return _class.substring(_starter.length);
@@ -169,40 +277,22 @@ scenario.getNamedObjectIdFromClasses = (node, name) => {
 
 
 /**
- * @brief Select file(s).
- * @param {string?} contentType The content type of files you wish to select. For instance, use "image/*" to select all types of images.
- * @param {boolean?} multiple Indicates if the user can select multiple files.
- * @returns {Promise<File|File[]>} A promise of a file or array of files in case the multiple parameter is true.
- *
- * Inspired from:
- * - https://stackoverflow.com/questions/16215771/how-to-open-select-file-dialog-via-js#40971885
- * - https://stackoverflow.com/questions/16215771/how-to-open-select-file-dialog-via-js#52757538
- *
- * @warning Can't be used to determine local absolute paths.
- *     For security reasons, Javascript can't do such a thing.
- *     Gives access to base file name and file content, but not the full path.
+ * @brief
+ *     Finds one class of `classes` in HTML classes of `node`.
+ * @param {HTMLElement} node
+ *     Node to read HTML classes from.
+ * @param {string[]} classes
+ *     Candidate HTML classes to search.
+ *     Programmatical format, `scenario.mkCssCompatibleClass()` will be called.
+ * @returns {string | null}
+ *     First class of `classes` found in HTML classes of `node`, or `null` if none found.
+ *     Programmatical format, `scenario.mkCssCompatibleClass()` not called on it.
  */
-scenario.selectFile$ = ({contentType, multiple} = {contentType: undefined, multiple: false}) => {
-    // Check input arguments.
-    if (multiple === undefined) {
-        multiple = false;
+scenario.findOneClassOf = (node, classes) => {
+    for (/** @var {string} */ const _class of classes) {
+        if (node.classList.contains(scenario.mkCssCompatibleClass(_class))) {
+            return _class;
+        }
     }
-
-    return new Promise((resolve, reject) => {
-        /** @var {HTMLElement} */ let _input = document.createElement("input");
-        _input.type = "file";
-        _input.multiple = multiple;
-        _input.accept = contentType;
-
-        _input.onchange = () => {
-            /** @var {File[]} */ let files = Array.from(_input.files);
-            if (multiple) {
-                resolve(files);
-            } else {
-                resolve(files[0]);
-            }
-        };
-
-        _input.click();
-    });
+    return null;
 };

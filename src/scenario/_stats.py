@@ -44,6 +44,16 @@ class TimeStats:
         #: End time, if specified.
         self._end = None  # type: typing.Optional[float]
 
+    def __repr__(self):  # type: () -> str
+        """
+        Canonical string representation.
+        """
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} %s>" % ", ".join([
+            f"start={_datetimeutils.f2strtime(self.start)}",
+            f"end={_datetimeutils.f2strtime(self.end)}",
+            f"elapsed={_datetimeutils.f2strduration(self.elapsed)}",
+        ])
+
     def __str__(self):  # type: () -> str
         """
         Computes a string representation of the time interval in the '[%s - %s]' form.
@@ -199,6 +209,15 @@ class ExecTotalStats:
         self.total = 0  # type: int
         #: Count of items executed.
         self.executed = 0  # type: int
+
+    def __repr__(self):  # type: () -> str
+        """
+        Canonical string representation.
+        """
+        return f"<{_FAST_PATH.reflection.qualname(type(self))} %s>" % ", ".join([
+            f"total={self.total}",
+            f"executed={self.executed}",
+        ])
 
     def __str__(self):  # type: () -> str
         """

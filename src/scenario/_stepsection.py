@@ -54,7 +54,9 @@ class StepSectionDescription(_StepDefinitionImpl):
         )
 
         #: Step section description.
-        self.description = description
+        #:
+        #: .. note:: Type refined from ``Optional[str]`` in :class:`._stepdefinition.StepDefinition` to ``str`` in this subclass.
+        self.description = description  # type: str
 
     def step(self):  # type: (...) -> None
         """
