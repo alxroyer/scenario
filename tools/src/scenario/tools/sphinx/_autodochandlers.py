@@ -228,7 +228,7 @@ class AutodocHandlers:
             _index = 0  # type: int
             while _index < len(_args):
                 # Check whether the argument line actually starts with a typed argument name.
-                if re.search(r"^\w+: ", _args[_index]):
+                if (_args[_index] == "*") or re.search(r"^\w+: ", _args[_index]):
                     _logger.debug("  => arg#%d %r", _index + 1, _args[_index])
                     _index += 1
                 else:
