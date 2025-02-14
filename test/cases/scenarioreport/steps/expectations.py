@@ -157,7 +157,11 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
         ):  # type: scenario.test.StatExpectations
             if _stat_expectations.total is not None:
                 if _stat_expectations.executed is not None:
-                    _stat_types_txt = scenario.text.Countable(_stat_expectations.item_type, _stat_expectations.executed)  # type: scenario.text.Countable
+                    _stat_types_txt = scenario.text.Countable(
+                        # Remove final 's' from "steps", "actions" and "results" text resources.
+                        _stat_expectations.item_type.rstrip("s"),
+                        _stat_expectations.executed,
+                    )  # type: scenario.text.Countable
                     if self.RESULT(f"Statistics report {len(_stat_types_txt)} executed {_stat_types_txt} out of {_stat_expectations.total}."):
                         self.assertjson(
                             json_scenario, f"stats.{_stat_expectations.item_type}.executed", type=int, value=_stat_expectations.executed,
@@ -168,8 +172,11 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
                             evidence="Total",
                         )
                 else:
-                    _stat_type_definitions_txt = scenario.text.Countable(f"{_stat_expectations.item_type} definition", _stat_expectations.total) \
-                        # type: scenario.text.Countable
+                    _stat_type_definitions_txt = scenario.text.Countable(
+                        # Remove final 's' from "steps", "actions" and "results" text resources.
+                        f"{_stat_expectations.item_type.rstrip('s')} definition",
+                        _stat_expectations.total,
+                    )  # type: scenario.text.Countable
                     if self.RESULT(f"Statistics report {len(_stat_type_definitions_txt)} {_stat_type_definitions_txt}."):
                         self.assertjson(
                             json_scenario, f"stats.{_stat_expectations.item_type}.total", type=int, value=_stat_expectations.total,
