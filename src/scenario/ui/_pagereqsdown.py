@@ -221,12 +221,20 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                         table_generator.html.addnode("span", classes=["req-ref", "sep"], text=":")
                         table_generator.html.addnode("span", classes=["req-ref", "title"], text=downstream_req_ref.req_ref.req.title)
 
+                # Text.
+                if downstream_req_ref.req_ref.ismain() and downstream_req_ref.req_ref.req.text:
+                    with table_generator.html.addnode("p", classes=["req-ref", "text"]):
+                        for _index, _line in enumerate(downstream_req_ref.req_ref.req.text.splitlines()):  # type: int, str
+                            if _index > 0:
+                                table_generator.html.addnode("br", auto_closing=True)
+                            table_generator.html.addtext(_line)
+
             # Test coverage.
             with table_generator.html.addnode("td", classes=["req-verifier"]):
                 # Instantiate a list generator so that `_scenario2html()` can generate collapsible list items.
                 _list_generator = ListGenerator(table_generator.html)  # type: ListGenerator
 
-                with _list_generator.addlist():
+                with _list_generator.addlist(classes=["req-verifier", "scenario"]):
                     for _downstream_scenario in downstream_req_ref.scenarios:  # type: scenario.ReqTraceability.Downstream.Scenario
                         self._scenario2html(_list_generator, _downstream_scenario)
 
@@ -288,6 +296,9 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         from ._pagescenario import ScenarioPage
 
         with list_generator.addsubitem(classes=["req-verifier", "step"]):
+            # Upstream traceability link.
+            UpstreamTraceabilityPage.reqverifier2htmllink(list_generator.html, downstream_step.step)
+
             # Step number and name.
             with list_generator.html.addnode("span", classes=["req-verifier", "step", "name"]):
                 # With link to scenario details.
@@ -296,9 +307,6 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     title="Scenario details",
                     text=downstream_step.name,
                 )
-
-            # Upstream traceability link.
-            UpstreamTraceabilityPage.reqverifier2htmllink(list_generator.html, downstream_step.step)
 
             # Traceability comments.
             list_generator.addcomment(downstream_step.comments, classes=["req-verifier", "step"])

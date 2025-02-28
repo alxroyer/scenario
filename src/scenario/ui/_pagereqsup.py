@@ -232,7 +232,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 # Instantiate a list generator so that `_req2html()` can generate collapsible list items.
                 _list_generator = ListGenerator(table_generator.html)  # type: ListGenerator
 
-                with _list_generator.addlist():
+                with _list_generator.addlist(classes=["req-ref", "main"]):
                     for _upstream_req in upstream_req_verifier.reqs:  # type: scenario.ReqTraceability.Upstream.Req
                         self._req2html(_list_generator, _upstream_req)
 
@@ -293,9 +293,9 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         from ._pagereqs import RequirementsPage
         from ._pagereqsdown import DownstreamTraceabilityPage
 
-        with list_generator.addsubitem(classes=["subref"]):
+        with list_generator.addsubitem(classes=["req-ref", "subref"]):
             # Requirement subreference id.
-            with list_generator.html.addnode("span", classes=["subref", "id"]):
+            with list_generator.html.addnode("span", classes=["req-ref", "subref", "id"]):
                 # With link to requirement details.
                 LinkGenerator(list_generator.html).addlink(
                     href=RequirementsPage.mkurl(upstream_req_subref.req_subref),
@@ -307,4 +307,4 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             DownstreamTraceabilityPage.reqref2htmllink(list_generator.html, upstream_req_subref.req_subref)
 
             # Traceability comments.
-            list_generator.addcomment(upstream_req_subref.comments, classes=["subref"])
+            list_generator.addcomment(upstream_req_subref.comments, classes=["req-ref", "subref"])

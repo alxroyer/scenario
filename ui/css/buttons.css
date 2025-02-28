@@ -54,7 +54,7 @@
     a.button.toggle {
         background-image: url("/img/empty-circle-svgrepo-com.svg");
         /* Reduce image size (still clipped in width and height defined above). */
-        background-size: 0.5em 0.5em; background-position: 0.25em 0.4em; background-repeat: no-repeat;
+        background-size: 0.3em 0.3em; background-position: 0.3em 0.4em; background-repeat: no-repeat;
     }
     /* Expanded icon. */
     a.button.toggle.expanded {

@@ -155,7 +155,7 @@ scenario.lists._toggle = (li1, {li1Cid, oldState, newState} = {}) => {
         li1.classList.add(newState);
 
         // Hide/show `.li1` comments sum-up.
-        if (scenario.nodeMatches(li1, "li.li1.li1=${li1Cid}.comments-sum-up")) {
+        if (scenario.nodeMatches(li1, `li.li1.li1=${li1Cid}.comments-sum-up`)) {
             for (/** @var {HTMLElement} */ const _span of scenario.findNodes(li1, `span.li1.li1=${li1Cid}`)) {
                 if (scenario.nodeMatches(_span, ".sep") || scenario.nodeMatches(_span, ".comment")) {
                     switch (newState) {

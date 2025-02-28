@@ -20,7 +20,32 @@
  */
 
 
-/* Avoid useless space for between `<td></td>` and inner `<ul></ul>`. */
-div#downstream-traceability td.req-verifier ul { margin: 0px; }
-/* List style: none. */
-div#downstream-traceability td.req-verifier ul { list-style: none; }
+/* Constant table size. */
+
+    div#downstream-traceability table.table-eq-downstream-traceability { width: 100%; }
+    div#downstream-traceability td.req-ref { width: 40%; }
+    div#downstream-traceability td.req-verifier { width: 60%; }
+
+/* Requirement column. */
+
+    /* Requirement text. */
+
+        /* Indentation. */
+        div#downstream-traceability td.req-ref p.req-ref.text { padding-left: 40px; }
+
+/* Test coverage column. */
+
+    /* Scenario coverage. */
+
+        /* Avoid useless space between `<td></td>` and inner `<ul></ul>`. */
+        div#downstream-traceability td.req-verifier ul.req-verifier.scenario { margin: 0px; }
+        /* Avoid useless indentation. */
+        div#downstream-traceability td.req-verifier ul.req-verifier.scenario { padding-left: 0px; }
+        /* List style: none. */
+        div#downstream-traceability td.req-verifier ul.req-verifier.scenario { list-style: none; }
+
+    /* Step coverage. */
+
+        /* List style: none. */
+        div#downstream-traceability td.req-verifier ul.req-verifier.step { list-style: none; }
+        div#downstream-traceability td.req-verifier li.req-verifier.step { padding-left: 0px; }

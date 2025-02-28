@@ -114,6 +114,7 @@ scenario._parseNodeSelector = (selector) => {
 scenario.nodeMatches = (node, selector, {debug, indentation} = {}) => {
     // Default parameter values.
     debug = debug || false;
+    indentation = indentation || "";
 
     /**
      * @brief Prints out a debug line depending on `debug`.

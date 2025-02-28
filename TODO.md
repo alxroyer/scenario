@@ -18,28 +18,10 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Improve scenario page display:
-        - When an action/result description is long, make the line wrapped indented after the "ACTION:" or "RESULT:" label
-          (ex: 'campaign001.py'/step#4).
-        - Display step coverage with main scenario coverage, but collapsed
-          (ex: 'campaign001.py').
-            - Possibly add a link that expands / and navigates the given section?
-        - Add links on errors with scenario and step results => navigate to related final action/result error?
+    - Bug! Upstream traceability links for steps (from downstream traceability page at least) don't focus on the given step in the upstream traceability page.
+        - Example of resulting link: "http://localhost:8000/upstream-traceability#test/cases/campaigns/campaign001-dot-py/step-hash-2%20%28CheckCampaignLogExpectations%29"
+        - The final "%20%28CheckCampaignLogExpectations%29" pattern seems to be undesirable.
     - Bug! Opera prevents Firefox from connecting to the server.
-    - Upstream traceability:
-        - Restore column order: req-verifiers on the left, req-ref on the right.
-        - Display req comments.
-        - Display step upstream traceability, folded by default.
-    - Display scenario results (when applicable) in scenario pages.
-    - Error "Erreur dans les liens source : request failed with status 404
-      URL de la ressource : null
-      URL du lien source : installHook.js.map"
-      See https://firefox-source-docs.mozilla.org/devtools-user/debugger/source_map_errors/?utm_source=mozilla&utm_medium=firefox-console-errors&utm_campaign=default
-    - Downstream traceability: Indent subrefs under related main requirements.
-    - Use `.exec-result` popup for configuration page.
-        - Possibly don't use POST? not sure.
-    - Compare campaign result details?
-    - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.
             - As displayed in logging.
@@ -49,6 +31,22 @@
     - Implement JSON schemas.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
+    - Optional `scenario.ui` improvements:
+        - Improve scenario page display:
+            - When an action/result description is long, make the line wrapped indented after the "ACTION:" or "RESULT:" label
+              (ex: 'campaign001.py'/step#4).
+            - Display step coverage with main scenario coverage, but collapsed
+              (ex: 'campaign001.py').
+                - Possibly add a link that expands / and navigates the given section?
+            - Add links on errors with scenario and step results => navigate to related final action/result error?
+        - Error "Erreur dans les liens source : request failed with status 404
+          URL de la ressource : null
+          URL du lien source : installHook.js.map"
+          See https://firefox-source-docs.mozilla.org/devtools-user/debugger/source_map_errors/?utm_source=mozilla&utm_medium=firefox-console-errors&utm_campaign=default
+        - Use `.exec-result` popup for configuration page.
+            - Possibly don't use POST? not sure.
+        - Compare campaign result details?
+        - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Add title and text with requirement subref.
     - Fix test regressions.
     - Implement tests:
