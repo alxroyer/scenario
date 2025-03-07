@@ -68,14 +68,6 @@ class ButtonGenerator:
 
         # Have the related .js content be embedded at the end of the HTML page.
         self.html.addfinaljs(scenario.Path(__file__).with_suffix(".js"))
-        if self.toggle:
-            # .js dependencies:
-            # Ensure `scenario.divs` is loaded
-            # (`scenario.divs.findAndToggleAll()` called from `scenario.tables._toggle()`, for `.toggle-tr1` buttons).
-            self.html.addfinaljs(scenario.Path(__file__).parent / "_htmlgendivs.js")
-            # Ensure `scenario.lists` is loaded
-            # (`scenario.lists.checkToggleLi1()` called (or may be called for `.toggle-tr1` buttons) from `scenario.divs.toggle()`, for any toggle button).
-            self.html.addfinaljs(scenario.Path(__file__).parent / "_htmlgenlists.js")
 
     def __repr__(self):  # type: () -> str
         """

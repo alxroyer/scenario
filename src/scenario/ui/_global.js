@@ -22,7 +22,7 @@
 
 
 /** @var {object} `scenario` package. */
-let scenario = {};
+const scenario = {};
 
 
 /**

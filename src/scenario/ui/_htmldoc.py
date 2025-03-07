@@ -19,6 +19,7 @@ HTML page generation.
 """
 
 import html
+import re
 import typing
 
 import scenario
@@ -199,10 +200,30 @@ class HtmlDocument(scenario.Logger):
 
         Stores ``js_path`` uniquely in the :attr:`_final_js_paths` path list.
 
+        Automatically resolves ``scenario.xxx`` package dependencies.
+
         :param js_path: Javascript path which content to embed.
         """
         if js_path not in self._final_js_paths:
+            self.debug(f"addfinaljs(): Registering {js_path}")
             self._final_js_paths.append(js_path)
+
+            # `scenario.xxx` package dependency resolution:
+            # 1. Identify `scenario.xxx` package definitions in .js neighbour files.
+            _packages = {}  # type: typing.Dict[bytes, scenario.Path]  # Package name => js path dictionary.
+            for _js_path in scenario.Path(__file__).parent.glob("*.js"):  # type: scenario.Path
+                for _line in _js_path.read_bytes().splitlines():  # type: bytes
+                    _match = re.match(rb"^(scenario\.\w+) *= *{.*$", _line)  # type: typing.Optional[typing.Match[bytes]]
+                    if _match:
+                        _packages[_match.group(1)] = _js_path
+            # 2. Search for "scenario.xxx.xxx()" calls in `js_path`.
+            for _package, _symbol in re.findall(rb"(scenario\.\w+)\.(\w+)", js_path.read_bytes()):  # type: bytes, bytes
+                if _package in _packages:
+                    _target_js_path = _packages[_package]  # type: scenario.Path
+                    if _target_js_path != js_path:
+                        self.debug(f"addfinaljs(): Dependency detected {js_path} -> {_target_js_path} ({_package.decode('utf-8')}.{_symbol.decode('utf-8')})")
+                        # 3. Recursive call.
+                        self.addfinaljs(_target_js_path)
 
     def settitle(
             self,
