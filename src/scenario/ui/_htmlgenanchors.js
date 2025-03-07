@@ -32,7 +32,9 @@ scenario.anchors = {};
  */
 scenario.anchors._extractAnchorCidFromUrl = (url) => {
     if (url.includes("#")) {
-        return url.substring(url.indexOf("#") + 1);
+        /** @var {string} */ const _cid = url.substring(url.indexOf("#") + 1);
+        console.debug(`scenario.anchors._extractAnchorCidFromUrl('${url}') => '${_cid}'`);
+        return _cid;
     } else {
         return null;
     }
@@ -49,6 +51,11 @@ scenario.anchors._setFocus = (anchorCid) => {
         if (scenario.getCid(_focusableDiv, "anchor") === anchorCid) {
             console.debug(`Adding .focus class to anchor '${anchorCid}'`);
             _focusableDiv.classList.add("focus");
+
+            // Ensure the anchor is visible.
+            _focusableDiv.scrollIntoView();
+            // Scroll a couple of pixels backward to avoid the anchor being stuck with the top of the window.
+            window.scrollBy(0, -20);
         } else {
             _focusableDiv.classList.remove("focus");
         }
