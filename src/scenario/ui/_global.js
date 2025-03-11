@@ -48,7 +48,8 @@ scenario.onLoad = (f) => {
  * @brief
  *     Ensures `raw` HTML class is CSS compatible, as the Python side does.
  * @param {string} raw
- *     Raw HTML class to ensure CSS compatibility for.
+ *     Single raw HTML class to ensure CSS compatibility for.
+ *     Caution: space characters will be translated.
  * @returns {string}
  *     CSS compatible HTML class.
  */
@@ -58,6 +59,7 @@ scenario.mkCssCompatibleClass = (raw) => {
         .replaceAll(".", "-dot-")
         .replaceAll("=", "-eq-")
         .replaceAll("#", "-hash-")
+        .replaceAll(" ", "-space-")
     );
 };
 
@@ -81,10 +83,14 @@ scenario._parseNodeSelector = (selector) => {
     /** @var {string | null} */ const _id = _match[3];
     /** @var {string | null} */ let _classes = _match[4];
     if (_classes) {
-        // Ensure `_classes` is space-separated, as `getElementsByClassName()` takes it.
-        _classes = _classes.substring(1).replaceAll(".", " ");
-        // Ensure `_classes` is "CSS compatible", as the Python side ensured it.
-        _classes = scenario.mkCssCompatibleClass(_classes);
+        _classes = (
+            // Split dot-separated input classes.
+            _classes.substring(1).split(".")
+            // Ensure each class is "CSS compatible", as the Python side ensured it.
+            .map((cls) => scenario.mkCssCompatibleClass(cls))
+            // Ensure `_classes` is eventually space-separated, as `getElementsByClassName()` takes it.
+            .join(" ")
+        );
     }
 
     return {

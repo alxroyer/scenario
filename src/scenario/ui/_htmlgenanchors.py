@@ -97,7 +97,8 @@ class AnchorGenerator:
                     "anchor-link",
                     self.html.mkcsscompatibleclass(f"anchor={self.name}"),
                 ],
-                href=f"#{self.name}",
+                # Memo: Use `mkcsscompatibleclass()` to escape anchor names.
+                href=f"#{self.html.mkcsscompatibleclass(self.name)}",
                 title=link_title or self.name,
             ):
                 self.html.addnode("span", text=link_text)
@@ -120,7 +121,8 @@ class AnchorGenerator:
                         "anchor",
                         self.html.mkcsscompatibleclass(f"anchor={self.name}"),
                     ],
-                    name=self.name,
+                    # Memo: Use `mkcsscompatibleclass()` to escape anchor names.
+                    name=self.html.mkcsscompatibleclass(self.name),
                 )
 
         return _anchor_div_ctx

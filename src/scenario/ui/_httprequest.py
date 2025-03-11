@@ -424,5 +424,6 @@ class HttpRequest(http.server.BaseHTTPRequestHandler):
         if args:
             _url += f"?{urllib.parse.urlencode(args)}"
         if anchor:
+            # Memo: Use `mkcsscompatibleclass()` to escape anchor names.
             _url += f"#{urllib.parse.quote(HtmlDocument.mkcsscompatibleclass(anchor))}"
         return _url

@@ -134,9 +134,9 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                         _json_req_ref["text"] = self.req_ref.req.text
 
                 for _downstream_scenario in self.scenarios:  # type: ReqTraceability.Downstream.Scenario
-                    _json_req_ref["scenarios"][_downstream_scenario.scenario.name] = _downstream_scenario.tojson(allow_results=allow_results)
+                    _json_req_ref["scenarios"][_downstream_scenario.id] = _downstream_scenario.tojson(allow_results=allow_results)
                     # Remove `ReqTraceability.Downstream.Scenario` name field, already given as the key entry.
-                    del _json_req_ref["scenarios"][_downstream_scenario.scenario.name]["name"]
+                    del _json_req_ref["scenarios"][_downstream_scenario.id]["name"]
 
                 return _json_req_ref
 
@@ -189,6 +189,24 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 self.downstream_req_ref.scenarios.append(self)
 
+            @property
+            def id(self):  # type: () -> str
+                """
+                Scenario identifier in traceability results.
+
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkscenarioid()`
+                """
+                return ReqTraceabilityHelper.mkscenarioid(self.scenario)
+
+            @property
+            def name(self):  # type: () -> str
+                """
+                Scenario display name in traceability results.
+
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkscenarioid()`
+                """
+                return ReqTraceabilityHelper.mkscenarioname(self.scenario)
+
             def tojson(
                     self,
                     *,
@@ -201,7 +219,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 :return: Downstream traceability JSON content.
                 """
                 _json_scenario = {
-                    "name": self.scenario.name,
+                    "id": self.id,
+                    "name": self.name,
                     "comments": self.comments,
                     "steps": {},
                 }  # type: _JsonDictType
@@ -259,18 +278,22 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 self.downstream_scenario.steps.append(self)
 
             @property
-            def name(self):  # type: () -> str
+            def id(self):  # type: () -> str
                 """
-                Step name.
+                Step identifier in traceability results.
+
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkstepid()`
                 """
-                return ReqTraceabilityHelper.mkstepname(self.step)
+                return ReqTraceabilityHelper.mkstepid(self.step)
 
             @property
-            def full_name(self):  # type: () -> str
+            def name(self):  # type: () -> str
                 """
-                Scenario / step name.
+                Step display name in traceability results.
+
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkstepname()`
                 """
-                return ReqTraceabilityHelper.mkstepfullname(self.step)
+                return ReqTraceabilityHelper.mkstepname(self.step)
 
             def tojson(
                     self,
@@ -284,8 +307,9 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 :return: Downstream traceability JSON content.
                 """
                 _json_step = {
+                    "id": self.id,
                     "number": self.step.number,
-                    "name": self.step.name,
+                    "name": self.name,
                     "comments": self.comments,
                 }  # type: _JsonDictType
 
@@ -419,7 +443,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             """
             _json = {}  # type: _JsonDictType
             for _upstream_req_verifier in upstream_traceability:  # type: ReqTraceability.Upstream.ReqVerifier
-                _json[_upstream_req_verifier.full_name] = _upstream_req_verifier.tojson()
+                _json[_upstream_req_verifier.id] = _upstream_req_verifier.tojson()
             return _json
 
         class ReqVerifier:
@@ -442,24 +466,30 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 self.reqs = []  # type: typing.List[ReqTraceability.Upstream.Req]
 
             @property
-            def name(self):  # type: () -> str
+            def id(self):  # type: () -> str
                 """
-                Scenario name for scenarios, or "step#N (class)" for steps.
+                Identifier in traceability results.
+
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkscenarioid()`
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkstepid()`
                 """
                 if isinstance(self.req_verifier, _ScenarioDefinitionImpl):
-                    return self.req_verifier.name
+                    return ReqTraceabilityHelper.mkscenarioid(self.req_verifier)
                 else:
-                    return ReqTraceabilityHelper.mkstepname(self.req_verifier)
+                    return ReqTraceabilityHelper.mkstepid(self.req_verifier)
 
             @property
-            def full_name(self):  # type: () -> str
+            def name(self):  # type: () -> str
                 """
-                Scenario name for scenarios, or "scenario name/step name" for steps.
+                Display name in traceability results.
+
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkscenarioname()`
+                .. seealso:: :meth:`ReqTraceabilityHelper.mkstepname()`
                 """
                 if isinstance(self.req_verifier, _ScenarioDefinitionImpl):
-                    return self.req_verifier.name
+                    return ReqTraceabilityHelper.mkscenarioname(self.req_verifier)
                 else:
-                    return ReqTraceabilityHelper.mkstepfullname(self.req_verifier)
+                    return ReqTraceabilityHelper.mkstepname(self.req_verifier)
 
             def tojson(self):  # type: (...) -> _JsonDictType
                 """
@@ -468,7 +498,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 :return: Upstream traceability JSON content.
                 """
                 _json_req_verifier = {
-                    "name": self.full_name,
+                    "id": self.id,
+                    "name": self.name,
                     "reqs": {},
                 }  # type: _JsonDictType
 
@@ -749,6 +780,48 @@ class ReqTraceabilityHelper(abc.ABC):
     """
 
     @staticmethod
+    def mkscenarioid(
+            scenario,  # type: _ScenarioDefinitionType
+    ):  # type: (...) -> str
+        """
+        Common implementation for :attr:`ReqTraceability.Downstream.Scenario.id` and :attr:`ReqTraceability.Upstream.ReqVerifier.id` properties.
+
+        Scenario name.
+
+        :param scenario: Scenario definition to compute an identifier for.
+        :return: Identifier for the scenario in tracebility results.
+        """
+        return scenario.name
+
+    @staticmethod
+    def mkscenarioname(
+            scenario,  # type: _ScenarioDefinitionType
+    ):  # type: (...) -> str
+        """
+        Common implementation for :attr:`ReqTraceability.Downstream.Scenario.name` and :attr:`ReqTraceability.Upstream.ReqVerifier.name` properties.
+
+        Scenario name.
+
+        :param scenario: Scenario definition to compute a name for.
+        :return: Name for the scenario in tracebility results.
+        """
+        return scenario.name
+
+    @staticmethod
+    def mkstepid(
+            step,  # type: _StepDefinitionType
+    ):  # type: (...) -> str
+        """
+        Common implementation for :attr:`ReqTraceability.Downstream.Step.id` and :attr:`ReqTraceability.Upstream.ReqVerifier.id` properties.
+
+        "<scenario name>step#<number>" pattern.
+
+        :param step: Step definition to compute an identifier for.
+        :return: Identifier for the step in tracebility results.
+        """
+        return f"{ReqTraceabilityHelper.mkscenarioid(step.scenario)}/step#{step.number}"
+
+    @staticmethod
     def mkstepname(
             step,  # type: _StepDefinitionType
     ):  # type: (...) -> str
@@ -761,17 +834,3 @@ class ReqTraceabilityHelper(abc.ABC):
         :return: Name for the step in tracebility results.
         """
         return f"step#{step.number} ({step.name})"
-
-    @staticmethod
-    def mkstepfullname(
-            step,  # type: _StepDefinitionType
-    ):  # type: (...) -> str
-        """
-        Common implementation for :attr:`ReqTraceability.Downstream.Step.full_name` and :attr:`ReqTraceability.Upstream.ReqVerifier.full_name` properties.
-
-        "<scenario name>step#<number> (<class>)" pattern.
-
-        :param step: Step definition to compute a full name for.
-        :return: Full name for the step in tracebility results.
-        """
-        return f"{step.scenario.name}/{ReqTraceabilityHelper.mkstepname(step)}"

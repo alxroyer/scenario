@@ -438,6 +438,7 @@ class HtmlDocument(scenario.Logger):
             .replace(".", "-dot-")
             .replace("=", "-eq-")
             .replace("#", "-hash-")
+            .replace(" ", "-space-")
         )
 
     def dump(self) -> bytes:

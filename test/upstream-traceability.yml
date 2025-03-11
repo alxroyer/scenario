@@ -17,6 +17,7 @@
 $schema: https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/upstream-traceability.schema.json
 $version: 0.2.2
 test/cases/campaigns/campaign001.py:
+  id: test/cases/campaigns/campaign001.py
   name: test/cases/campaigns/campaign001.py
   reqs:
     ATTRIBUTES:
@@ -67,8 +68,9 @@ test/cases/campaigns/campaign001.py:
       title: Scenario execution statistics
   title: Campaign execution & reports
   type: scenario
-test/cases/campaigns/campaign001.py/step#2 (CheckCampaignLogExpectations):
-  name: test/cases/campaigns/campaign001.py/step#2 (CheckCampaignLogExpectations)
+test/cases/campaigns/campaign001.py/step#2:
+  id: test/cases/campaigns/campaign001.py/step#2
+  name: step#2 (CheckCampaignLogExpectations)
   reqs:
     CAMPAIGNS:
       comments: ''
@@ -85,8 +87,9 @@ test/cases/campaigns/campaign001.py/step#2 (CheckCampaignLogExpectations):
       subrefs: {}
       title: Known issues
   type: step
-test/cases/campaigns/campaign001.py/step#4 (CheckFinalResultsLogExpectations):
-  name: test/cases/campaigns/campaign001.py/step#4 (CheckFinalResultsLogExpectations)
+test/cases/campaigns/campaign001.py/step#4:
+  id: test/cases/campaigns/campaign001.py/step#4
+  name: step#4 (CheckFinalResultsLogExpectations)
   reqs:
     CAMPAIGNS:
       comments: ''
@@ -107,8 +110,9 @@ test/cases/campaigns/campaign001.py/step#4 (CheckFinalResultsLogExpectations):
       subrefs: {}
       title: Scenario execution statistics
   type: step
-test/cases/campaigns/campaign001.py/step#5 (CheckCampaignOutdirFiles):
-  name: test/cases/campaigns/campaign001.py/step#5 (CheckCampaignOutdirFiles)
+test/cases/campaigns/campaign001.py/step#5:
+  id: test/cases/campaigns/campaign001.py/step#5
+  name: step#5 (CheckCampaignOutdirFiles)
   reqs:
     CAMPAIGNS:
       comments: ''
@@ -131,8 +135,9 @@ test/cases/campaigns/campaign001.py/step#5 (CheckCampaignOutdirFiles):
       subrefs: {}
       title: Scenario reports
   type: step
-test/cases/campaigns/campaign001.py/step#6 (CheckCampaignReport):
-  name: test/cases/campaigns/campaign001.py/step#6 (CheckCampaignReport)
+test/cases/campaigns/campaign001.py/step#6:
+  id: test/cases/campaigns/campaign001.py/step#6
+  name: step#6 (CheckCampaignReport)
   reqs:
     CAMPAIGNS:
       comments: ''
@@ -153,8 +158,9 @@ test/cases/campaigns/campaign001.py/step#6 (CheckCampaignReport):
       subrefs: {}
       title: Scenario execution statistics
   type: step
-test/cases/campaigns/campaign001.py/step#7 (CheckCampaignScenarioReports):
-  name: test/cases/campaigns/campaign001.py/step#7 (CheckCampaignScenarioReports)
+test/cases/campaigns/campaign001.py/step#7:
+  id: test/cases/campaigns/campaign001.py/step#7
+  name: step#7 (CheckCampaignScenarioReports)
   reqs:
     ATTRIBUTES:
       comments: Attributes saved in scenario reports in campaign output files
@@ -183,8 +189,9 @@ test/cases/campaigns/campaign001.py/step#7 (CheckCampaignScenarioReports):
       subrefs: {}
       title: Scenario execution statistics
   type: step
-test/cases/campaigns/campaign001.py/step#8 (CheckCampaignReqDbFile):
-  name: test/cases/campaigns/campaign001.py/step#8 (CheckCampaignReqDbFile)
+test/cases/campaigns/campaign001.py/step#8:
+  id: test/cases/campaigns/campaign001.py/step#8
+  name: step#8 (CheckCampaignReqDbFile)
   reqs:
     CAMPAIGNS:
       comments: ''
@@ -198,6 +205,7 @@ test/cases/campaigns/campaign001.py/step#8 (CheckCampaignReqDbFile):
       title: Requirement management
   type: step
 test/cases/campaigns/campaign002.py:
+  id: test/cases/campaigns/campaign002.py
   name: test/cases/campaigns/campaign002.py
   reqs:
     CAMPAIGNS:
@@ -212,6 +220,7 @@ test/cases/campaigns/campaign002.py:
   title: Campaign execution with several test suites
   type: scenario
 test/cases/campaigns/campaign003.py:
+  id: test/cases/campaigns/campaign003.py
   name: test/cases/campaigns/campaign003.py
   reqs:
     CAMPAIGNS:
@@ -221,6 +230,7 @@ test/cases/campaigns/campaign003.py:
   title: Campaign --subdir option
   type: scenario
 test/cases/campaigns/campaign004.py:
+  id: test/cases/campaigns/campaign004.py
   name: test/cases/campaigns/campaign004.py
   reqs:
     CAMPAIGNS:
@@ -230,6 +240,7 @@ test/cases/campaigns/campaign004.py:
   title: Campaign --doc-only option
   type: scenario
 test/cases/campaigns/campaign005.py:
+  id: test/cases/campaigns/campaign005.py
   name: test/cases/campaigns/campaign005.py
   reqs:
     ATTRIBUTES:
@@ -245,6 +256,7 @@ test/cases/campaigns/campaign005.py:
   title: Campaign & extra info
   type: scenario
 test/cases/campaigns/campaign006.py:
+  id: test/cases/campaigns/campaign006.py
   name: test/cases/campaigns/campaign006.py
   reqs:
     CAMPAIGNS:
@@ -260,6 +272,7 @@ test/cases/campaigns/campaign006.py:
   title: Campaign & requirement file
   type: scenario
 test/cases/configdb/configdb010.py:
+  id: test/cases/configdb/configdb010.py
   name: test/cases/configdb/configdb010.py
   reqs:
     CONFIG_DB:
@@ -269,6 +282,7 @@ test/cases/configdb/configdb010.py:
   title: Configuration value from command line
   type: scenario
 test/cases/configdb/configdb020.py:
+  id: test/cases/configdb/configdb020.py
   name: test/cases/configdb/configdb020.py
   reqs:
     CONFIG_DB:
@@ -278,6 +292,7 @@ test/cases/configdb/configdb020.py:
   title: Configuration value from code
   type: scenario
 test/cases/configdb/configdb030.py:
+  id: test/cases/configdb/configdb030.py
   name: test/cases/configdb/configdb030.py
   reqs:
     CONFIG_DB:
@@ -287,6 +302,7 @@ test/cases/configdb/configdb030.py:
   title: Configuration value types and conversions
   type: scenario
 test/cases/configdb/configdb040.py:
+  id: test/cases/configdb/configdb040.py
   name: test/cases/configdb/configdb040.py
   reqs:
     CONFIG_DB:
@@ -296,6 +312,7 @@ test/cases/configdb/configdb040.py:
   title: Configuration value unset
   type: scenario
 test/cases/configdb/configdb100.py:
+  id: test/cases/configdb/configdb100.py
   name: test/cases/configdb/configdb100.py
   reqs:
     CONFIG_DB:
@@ -305,6 +322,7 @@ test/cases/configdb/configdb100.py:
   title: Load INI configuration file
   type: scenario
 test/cases/configdb/configdb110.py:
+  id: test/cases/configdb/configdb110.py
   name: test/cases/configdb/configdb110.py
   reqs:
     CONFIG_DB:
@@ -314,6 +332,7 @@ test/cases/configdb/configdb110.py:
   title: Save INI configuration file
   type: scenario
 test/cases/configdb/configdb120.py:
+  id: test/cases/configdb/configdb120.py
   name: test/cases/configdb/configdb120.py
   reqs:
     CONFIG_DB:
@@ -323,6 +342,7 @@ test/cases/configdb/configdb120.py:
   title: INI default values & sub-sections
   type: scenario
 test/cases/configdb/configdb200.py:
+  id: test/cases/configdb/configdb200.py
   name: test/cases/configdb/configdb200.py
   reqs:
     CONFIG_DB:
@@ -332,6 +352,7 @@ test/cases/configdb/configdb200.py:
   title: Load JSON configuration file
   type: scenario
 test/cases/configdb/configdb210.py:
+  id: test/cases/configdb/configdb210.py
   name: test/cases/configdb/configdb210.py
   reqs:
     CONFIG_DB:
@@ -341,6 +362,7 @@ test/cases/configdb/configdb210.py:
   title: Save JSON configuration file
   type: scenario
 test/cases/configdb/configdb300.py:
+  id: test/cases/configdb/configdb300.py
   name: test/cases/configdb/configdb300.py
   reqs:
     CONFIG_DB:
@@ -350,6 +372,7 @@ test/cases/configdb/configdb300.py:
   title: Load YAML configuration file
   type: scenario
 test/cases/configdb/configdb310.py:
+  id: test/cases/configdb/configdb310.py
   name: test/cases/configdb/configdb310.py
   reqs:
     CONFIG_DB:
@@ -359,6 +382,7 @@ test/cases/configdb/configdb310.py:
   title: Save YAML configuration file
   type: scenario
 test/cases/configdb/configdb320.py:
+  id: test/cases/configdb/configdb320.py
   name: test/cases/configdb/configdb320.py
   reqs:
     CONFIG_DB:
@@ -368,6 +392,7 @@ test/cases/configdb/configdb320.py:
   title: '''pyyaml'' environment error'
   type: scenario
 test/cases/configdb/configdb500.py:
+  id: test/cases/configdb/configdb500.py
   name: test/cases/configdb/configdb500.py
   reqs:
     CONFIG_DB:
@@ -377,6 +402,7 @@ test/cases/configdb/configdb500.py:
   title: Configuration files overloading
   type: scenario
 test/cases/doconly/doconly001.py:
+  id: test/cases/doconly/doconly001.py
   name: test/cases/doconly/doconly001.py
   reqs:
     DOC_ONLY:
@@ -390,6 +416,7 @@ test/cases/doconly/doconly001.py:
   title: --doc-only execution
   type: scenario
 test/cases/doconly/doconly002.py:
+  id: test/cases/doconly/doconly002.py
   name: test/cases/doconly/doconly002.py
   reqs:
     DOC_ONLY:
@@ -403,6 +430,7 @@ test/cases/doconly/doconly002.py:
   title: --doc-only scenario report
   type: scenario
 test/cases/errors/failingscenario001.py:
+  id: test/cases/errors/failingscenario001.py
   name: test/cases/errors/failingscenario001.py
   reqs:
     ERROR_HANDLING:
@@ -419,17 +447,19 @@ test/cases/errors/failingscenario001.py:
       title: Scenario reports
   title: Failing scenario execution
   type: scenario
-test/cases/errors/failingscenario001.py/step#1 (ExecScenario):
+test/cases/errors/failingscenario001.py/step#1:
   description: '''test/data/failingscenario.py'' execution'
-  name: test/cases/errors/failingscenario001.py/step#1 (ExecScenario)
+  id: test/cases/errors/failingscenario001.py/step#1
+  name: step#1 (ExecScenario)
   reqs:
     ERROR_HANDLING:
       comments: '''test/data/failingscenario.py'' execution'
       subrefs: {}
       title: Error handling
   type: step
-test/cases/errors/failingscenario001.py/step#3 (CheckScenarioLogExpectations):
-  name: test/cases/errors/failingscenario001.py/step#3 (CheckScenarioLogExpectations)
+test/cases/errors/failingscenario001.py/step#3:
+  id: test/cases/errors/failingscenario001.py/step#3
+  name: step#3 (CheckScenarioLogExpectations)
   reqs:
     ERROR_HANDLING:
       comments: ''
@@ -440,8 +470,9 @@ test/cases/errors/failingscenario001.py/step#3 (CheckScenarioLogExpectations):
       subrefs: {}
       title: '`scenario` logging'
   type: step
-test/cases/errors/failingscenario001.py/step#4 (CheckLogOutputExceptionDisplay):
-  name: test/cases/errors/failingscenario001.py/step#4 (CheckLogOutputExceptionDisplay)
+test/cases/errors/failingscenario001.py/step#4:
+  id: test/cases/errors/failingscenario001.py/step#4
+  name: step#4 (CheckLogOutputExceptionDisplay)
   reqs:
     ERROR_HANDLING:
       comments: ''
@@ -452,8 +483,9 @@ test/cases/errors/failingscenario001.py/step#4 (CheckLogOutputExceptionDisplay):
       subrefs: {}
       title: '`scenario` logging'
   type: step
-test/cases/errors/failingscenario001.py/step#5 (CheckScenarioReportExpectations):
-  name: test/cases/errors/failingscenario001.py/step#5 (CheckScenarioReportExpectations)
+test/cases/errors/failingscenario001.py/step#5:
+  id: test/cases/errors/failingscenario001.py/step#5
+  name: step#5 (CheckScenarioReportExpectations)
   reqs:
     ERROR_HANDLING:
       comments: ''
@@ -465,8 +497,9 @@ test/cases/errors/failingscenario001.py/step#5 (CheckScenarioReportExpectations)
       subrefs: {}
       title: Scenario reports
   type: step
-test/cases/errors/failingscenario001.py/step#6 (CheckScenarioReportExceptionStorage):
-  name: test/cases/errors/failingscenario001.py/step#6 (CheckScenarioReportExceptionStorage)
+test/cases/errors/failingscenario001.py/step#6:
+  id: test/cases/errors/failingscenario001.py/step#6
+  name: step#6 (CheckScenarioReportExceptionStorage)
   reqs:
     ERROR_HANDLING:
       comments: ''
@@ -478,6 +511,7 @@ test/cases/errors/failingscenario001.py/step#6 (CheckScenarioReportExceptionStor
       title: Scenario reports
   type: step
 test/cases/errors/failingscenario002.py:
+  id: test/cases/errors/failingscenario002.py
   name: test/cases/errors/failingscenario002.py
   reqs:
     ERROR_HANDLING:
@@ -487,6 +521,7 @@ test/cases/errors/failingscenario002.py:
   title: Continue on error
   type: scenario
 test/cases/goto/goto001.py:
+  id: test/cases/goto/goto001.py
   name: test/cases/goto/goto001.py
   reqs:
     GOTO:
@@ -496,6 +531,7 @@ test/cases/goto/goto001.py:
   title: Goto jumps
   type: scenario
 test/cases/goto/goto002.py:
+  id: test/cases/goto/goto002.py
   name: test/cases/goto/goto002.py
   reqs:
     GOTO:
@@ -509,6 +545,7 @@ test/cases/goto/goto002.py:
   title: Goto scenario reports
   type: scenario
 test/cases/issues/issue003.py:
+  id: test/cases/issues/issue003.py
   name: test/cases/issues/issue003.py
   reqs:
     SCENARIO_EXECUTION:
@@ -526,6 +563,7 @@ test/cases/issues/issue003.py:
   title: 'Issue #3! Actions / Results differenciation even at the same location'
   type: scenario
 test/cases/issues/issue033.py:
+  id: test/cases/issues/issue033.py
   name: test/cases/issues/issue033.py
   reqs:
     ERROR_HANDLING:
@@ -539,6 +577,7 @@ test/cases/issues/issue033.py:
   title: 'Issue #33! Fully qualified name for code locations'
   type: scenario
 test/cases/issues/issue042.py:
+  id: test/cases/issues/issue042.py
   name: test/cases/issues/issue042.py
   reqs:
     KNOWN_ISSUES:
@@ -552,11 +591,13 @@ test/cases/issues/issue042.py:
   title: 'Issue #42! Bad known issue display on multiple test execution'
   type: scenario
 test/cases/issues/issue045.py:
+  id: test/cases/issues/issue045.py
   name: test/cases/issues/issue045.py
   reqs: {}
   title: 'Issue #45! Test scripts in packages'
   type: scenario
 test/cases/issues/issue046.py:
+  id: test/cases/issues/issue046.py
   name: test/cases/issues/issue046.py
   reqs:
     CAMPAIGNS:
@@ -570,6 +611,7 @@ test/cases/issues/issue046.py:
   title: 'Issue #46! Campaign halts on errors'
   type: scenario
 test/cases/issues/issue065a.py:
+  id: test/cases/issues/issue065a.py
   name: test/cases/issues/issue065a.py
   reqs:
     STATISTICS:
@@ -579,6 +621,7 @@ test/cases/issues/issue065a.py:
   title: 'Issue #65! Scenario execution lost time'
   type: scenario
 test/cases/issues/issue065b.py:
+  id: test/cases/issues/issue065b.py
   name: test/cases/issues/issue065b.py
   reqs:
     CAMPAIGNS:
@@ -596,6 +639,7 @@ test/cases/issues/issue065b.py:
   title: 'Issue #65! Campaign execution lost time'
   type: scenario
 test/cases/knownissues/knownissues010.py:
+  id: test/cases/knownissues/knownissues010.py
   name: test/cases/knownissues/knownissues010.py
   reqs:
     KNOWN_ISSUES:
@@ -605,6 +649,7 @@ test/cases/knownissues/knownissues010.py:
   title: Known issues
   type: scenario
 test/cases/knownissues/knownissues011.py:
+  id: test/cases/knownissues/knownissues011.py
   name: test/cases/knownissues/knownissues011.py
   reqs:
     DOC_ONLY:
@@ -618,6 +663,7 @@ test/cases/knownissues/knownissues011.py:
   title: Known issues --doc-only
   type: scenario
 test/cases/knownissues/knownissues020.py:
+  id: test/cases/knownissues/knownissues020.py
   name: test/cases/knownissues/knownissues020.py
   reqs:
     ERROR_HANDLING:
@@ -639,6 +685,7 @@ test/cases/knownissues/knownissues020.py:
   title: Known issue persistence v/s test errors
   type: scenario
 test/cases/knownissues/knownissues080.py:
+  id: test/cases/knownissues/knownissues080.py
   name: test/cases/knownissues/knownissues080.py
   reqs:
     KNOWN_ISSUES:
@@ -652,6 +699,7 @@ test/cases/knownissues/knownissues080.py:
   title: Known issues & multiple scenarios
   type: scenario
 test/cases/knownissues/knownissues090.py:
+  id: test/cases/knownissues/knownissues090.py
   name: test/cases/knownissues/knownissues090.py
   reqs:
     CAMPAIGNS:
@@ -665,6 +713,7 @@ test/cases/knownissues/knownissues090.py:
   title: Known issues & campaigns
   type: scenario
 test/cases/knownissues/knownissues110.py:
+  id: test/cases/knownissues/knownissues110.py
   name: test/cases/knownissues/knownissues110.py
   reqs:
     ERROR_HANDLING:
@@ -686,6 +735,7 @@ test/cases/knownissues/knownissues110.py:
   title: Known issue levels & ignored and error issue levels
   type: scenario
 test/cases/knownissues/knownissues120.py:
+  id: test/cases/knownissues/knownissues120.py
   name: test/cases/knownissues/knownissues120.py
   reqs:
     ERROR_HANDLING:
@@ -699,6 +749,7 @@ test/cases/knownissues/knownissues120.py:
   title: Known errors & test continuation
   type: scenario
 test/cases/knownissues/knownissues180.py:
+  id: test/cases/knownissues/knownissues180.py
   name: test/cases/knownissues/knownissues180.py
   reqs:
     KNOWN_ISSUES:
@@ -712,6 +763,7 @@ test/cases/knownissues/knownissues180.py:
   title: Known issue levels & multiple scenarios
   type: scenario
 test/cases/knownissues/knownissues190.py:
+  id: test/cases/knownissues/knownissues190.py
   name: test/cases/knownissues/knownissues190.py
   reqs:
     CAMPAIGNS:
@@ -725,6 +777,7 @@ test/cases/knownissues/knownissues190.py:
   title: Known issue levels & campaigns
   type: scenario
 test/cases/knownissues/knownissues210.py:
+  id: test/cases/knownissues/knownissues210.py
   name: test/cases/knownissues/knownissues210.py
   reqs:
     KNOWN_ISSUES:
@@ -738,6 +791,7 @@ test/cases/knownissues/knownissues210.py:
   title: Issue level names
   type: scenario
 test/cases/knownissues/knownissues280.py:
+  id: test/cases/knownissues/knownissues280.py
   name: test/cases/knownissues/knownissues280.py
   reqs:
     KNOWN_ISSUES:
@@ -751,6 +805,7 @@ test/cases/knownissues/knownissues280.py:
   title: Issue level names & multiple scenarios
   type: scenario
 test/cases/knownissues/knownissues290.py:
+  id: test/cases/knownissues/knownissues290.py
   name: test/cases/knownissues/knownissues290.py
   reqs:
     CAMPAIGNS:
@@ -764,6 +819,7 @@ test/cases/knownissues/knownissues290.py:
   title: Issue level names & campaigns
   type: scenario
 test/cases/knownissues/knownissues310.py:
+  id: test/cases/knownissues/knownissues310.py
   name: test/cases/knownissues/knownissues310.py
   reqs:
     KNOWN_ISSUES:
@@ -781,6 +837,7 @@ test/cases/knownissues/knownissues310.py:
   title: Known issue ids
   type: scenario
 test/cases/knownissues/knownissues380.py:
+  id: test/cases/knownissues/knownissues380.py
   name: test/cases/knownissues/knownissues380.py
   reqs:
     KNOWN_ISSUES:
@@ -794,6 +851,7 @@ test/cases/knownissues/knownissues380.py:
   title: Known issue ids & multiple scenarios
   type: scenario
 test/cases/knownissues/knownissues390.py:
+  id: test/cases/knownissues/knownissues390.py
   name: test/cases/knownissues/knownissues390.py
   reqs:
     CAMPAIGNS:
@@ -807,6 +865,7 @@ test/cases/knownissues/knownissues390.py:
   title: Known issue ids & campaigns
   type: scenario
 test/cases/knownissues/knownissues410.py:
+  id: test/cases/knownissues/knownissues410.py
   name: test/cases/knownissues/knownissues410.py
   reqs:
     KNOWN_ISSUES:
@@ -824,6 +883,7 @@ test/cases/knownissues/knownissues410.py:
   title: Known issue URLs
   type: scenario
 test/cases/knownissues/knownissues480.py:
+  id: test/cases/knownissues/knownissues480.py
   name: test/cases/knownissues/knownissues480.py
   reqs:
     KNOWN_ISSUES:
@@ -837,6 +897,7 @@ test/cases/knownissues/knownissues480.py:
   title: Known issue URLs & multiple scenarios
   type: scenario
 test/cases/knownissues/knownissues490.py:
+  id: test/cases/knownissues/knownissues490.py
   name: test/cases/knownissues/knownissues490.py
   reqs:
     CAMPAIGNS:
@@ -850,6 +911,7 @@ test/cases/knownissues/knownissues490.py:
   title: Known issue URLs & campaigns
   type: scenario
 test/cases/logutils/logging100.py:
+  id: test/cases/logutils/logging100.py
   name: test/cases/logutils/logging100.py
   reqs:
     LOGGING:
@@ -859,6 +921,7 @@ test/cases/logutils/logging100.py:
   title: Logging timestamps
   type: scenario
 test/cases/logutils/logging200.py:
+  id: test/cases/logutils/logging200.py
   name: test/cases/logutils/logging200.py
   reqs:
     LOGGING:
@@ -868,6 +931,7 @@ test/cases/logutils/logging200.py:
   title: Log levels and classes
   type: scenario
 test/cases/logutils/logging210.py:
+  id: test/cases/logutils/logging210.py
   name: test/cases/logutils/logging210.py
   reqs:
     DEBUG_LOGGING:
@@ -877,6 +941,7 @@ test/cases/logutils/logging210.py:
   title: Class logger debugging enabling
   type: scenario
 test/cases/logutils/logging300.py:
+  id: test/cases/logutils/logging300.py
   name: test/cases/logutils/logging300.py
   reqs:
     LOGGING:
@@ -886,6 +951,7 @@ test/cases/logutils/logging300.py:
   title: Log colors
   type: scenario
 test/cases/logutils/logging400.py:
+  id: test/cases/logutils/logging400.py
   name: test/cases/logutils/logging400.py
   reqs:
     SCENARIO_LOGGING:
@@ -895,6 +961,7 @@ test/cases/logutils/logging400.py:
   title: Scenario logging indentation
   type: scenario
 test/cases/logutils/logging410.py:
+  id: test/cases/logutils/logging410.py
   name: test/cases/logutils/logging410.py
   reqs:
     LOGGING:
@@ -904,6 +971,7 @@ test/cases/logutils/logging410.py:
   title: Scenario stack indentation
   type: scenario
 test/cases/logutils/logging420.py:
+  id: test/cases/logutils/logging420.py
   name: test/cases/logutils/logging420.py
   reqs:
     LOGGING:
@@ -913,6 +981,7 @@ test/cases/logutils/logging420.py:
   title: Additional user indentation
   type: scenario
 test/cases/logutils/logging421.py:
+  id: test/cases/logutils/logging421.py
   name: test/cases/logutils/logging421.py
   reqs:
     LOGGING:
@@ -926,6 +995,7 @@ test/cases/logutils/logging421.py:
   title: Additional user indentation in subscenario
   type: scenario
 test/cases/logutils/logging500.py:
+  id: test/cases/logutils/logging500.py
   name: test/cases/logutils/logging500.py
   reqs:
     LOGGING:
@@ -935,6 +1005,7 @@ test/cases/logutils/logging500.py:
   title: Console logging
   type: scenario
 test/cases/logutils/logging510.py:
+  id: test/cases/logutils/logging510.py
   name: test/cases/logutils/logging510.py
   reqs:
     LOGGING:
@@ -946,11 +1017,13 @@ test/cases/logutils/logging510.py:
   title: File logging
   type: scenario
 test/cases/misc/datetime001.py:
+  id: test/cases/misc/datetime001.py
   name: test/cases/misc/datetime001.py
   reqs: {}
   title: Date/time ISO8601 formatting & parsing
   type: scenario
 test/cases/misc/textutils001.py:
+  id: test/cases/misc/textutils001.py
   name: test/cases/misc/textutils001.py
   reqs:
     ATTRIBUTES:
@@ -972,16 +1045,19 @@ test/cases/misc/textutils001.py:
   title: Long texts
   type: scenario
 test/cases/misc/timezone001.py:
+  id: test/cases/misc/timezone001.py
   name: test/cases/misc/timezone001.py
   reqs: {}
   title: Timezones with ISO8601 datetimes and DST
   type: scenario
 test/cases/misc/timezone002.py:
+  id: test/cases/misc/timezone002.py
   name: test/cases/misc/timezone002.py
   reqs: {}
   title: Timezone configuration
   type: scenario
 test/cases/multiplescenarios/multiplescenarios000.py:
+  id: test/cases/multiplescenarios/multiplescenarios000.py
   name: test/cases/multiplescenarios/multiplescenarios000.py
   reqs:
     MULTIPLE_SCENARIO_EXECUTION:
@@ -991,6 +1067,7 @@ test/cases/multiplescenarios/multiplescenarios000.py:
   title: Multiple scenarios & incompatible options
   type: scenario
 test/cases/multiplescenarios/multiplescenarios001.py:
+  id: test/cases/multiplescenarios/multiplescenarios001.py
   name: test/cases/multiplescenarios/multiplescenarios001.py
   reqs:
     ERROR_HANDLING:
@@ -1004,6 +1081,7 @@ test/cases/multiplescenarios/multiplescenarios001.py:
   title: Multiple scenarios execution
   type: scenario
 test/cases/multiplescenarios/multiplescenarios002.py:
+  id: test/cases/multiplescenarios/multiplescenarios002.py
   name: test/cases/multiplescenarios/multiplescenarios002.py
   reqs:
     DOC_ONLY:
@@ -1017,6 +1095,7 @@ test/cases/multiplescenarios/multiplescenarios002.py:
   title: Multiple scenarios --doc-only
   type: scenario
 test/cases/multiplescenarios/multiplescenarios003.py:
+  id: test/cases/multiplescenarios/multiplescenarios003.py
   name: test/cases/multiplescenarios/multiplescenarios003.py
   reqs:
     KNOWN_ISSUES:
@@ -1030,6 +1109,7 @@ test/cases/multiplescenarios/multiplescenarios003.py:
   title: Multiple scenarios & known issues
   type: scenario
 test/cases/multiplescenarios/multiplescenarios004.py:
+  id: test/cases/multiplescenarios/multiplescenarios004.py
   name: test/cases/multiplescenarios/multiplescenarios004.py
   reqs:
     ATTRIBUTES:
@@ -1043,6 +1123,7 @@ test/cases/multiplescenarios/multiplescenarios004.py:
   title: Multiple scenarios & extra info
   type: scenario
 test/cases/reqmgt/reqmgt010.py:
+  id: test/cases/reqmgt/reqmgt010.py
   name: test/cases/reqmgt/reqmgt010.py
   reqs:
     REQUIREMENT_MANAGEMENT:
@@ -1052,6 +1133,7 @@ test/cases/reqmgt/reqmgt010.py:
   title: Requirement database and queries
   type: scenario
 test/cases/scenarioexecution/inheritance001.py:
+  id: test/cases/scenarioexecution/inheritance001.py
   name: test/cases/scenarioexecution/inheritance001.py
   reqs:
     ALTERNATIVE_SCENARIOS:
@@ -1065,6 +1147,7 @@ test/cases/scenarioexecution/inheritance001.py:
   title: Inheritance & step order
   type: scenario
 test/cases/scenarioexecution/scenarioexecution001.py:
+  id: test/cases/scenarioexecution/scenarioexecution001.py
   name: test/cases/scenarioexecution/scenarioexecution001.py
   reqs:
     SCENARIO_EXECUTION:
@@ -1074,6 +1157,7 @@ test/cases/scenarioexecution/scenarioexecution001.py:
   title: Scenario execution
   type: scenario
 test/cases/scenariologging/scenariologging010.py:
+  id: test/cases/scenariologging/scenariologging010.py
   name: test/cases/scenariologging/scenariologging010.py
   reqs:
     ATTRIBUTES:
@@ -1087,6 +1171,7 @@ test/cases/scenariologging/scenariologging010.py:
   title: Scenario logging simple scenario
   type: scenario
 test/cases/scenariologging/scenariologging011.py:
+  id: test/cases/scenariologging/scenariologging011.py
   name: test/cases/scenariologging/scenariologging011.py
   reqs:
     ATTRIBUTES:
@@ -1104,6 +1189,7 @@ test/cases/scenariologging/scenariologging011.py:
   title: Scenario logging simple scenario --doc-only
   type: scenario
 test/cases/scenariologging/scenariologging060.py:
+  id: test/cases/scenariologging/scenariologging060.py
   name: test/cases/scenariologging/scenariologging060.py
   reqs:
     ATTRIBUTES:
@@ -1125,6 +1211,7 @@ test/cases/scenariologging/scenariologging060.py:
   title: Scenario logging long texts
   type: scenario
 test/cases/scenariologging/scenariologging061.py:
+  id: test/cases/scenariologging/scenariologging061.py
   name: test/cases/scenariologging/scenariologging061.py
   reqs:
     ATTRIBUTES:
@@ -1146,6 +1233,7 @@ test/cases/scenariologging/scenariologging061.py:
   title: Scenario logging long texts --doc-only
   type: scenario
 test/cases/scenarioreport/scenarioreport010.py:
+  id: test/cases/scenarioreport/scenarioreport010.py
   name: test/cases/scenarioreport/scenarioreport010.py
   reqs:
     SCENARIO_REPORT:
@@ -1155,6 +1243,7 @@ test/cases/scenarioreport/scenarioreport010.py:
   title: Scenario report simple scenario
   type: scenario
 test/cases/scenarioreport/scenarioreport011.py:
+  id: test/cases/scenarioreport/scenarioreport011.py
   name: test/cases/scenarioreport/scenarioreport011.py
   reqs:
     DOC_ONLY:
@@ -1168,6 +1257,7 @@ test/cases/scenarioreport/scenarioreport011.py:
   title: Scenario report simple scenario --doc-only
   type: scenario
 test/cases/scenarioreport/scenarioreport020.py:
+  id: test/cases/scenarioreport/scenarioreport020.py
   name: test/cases/scenarioreport/scenarioreport020.py
   reqs:
     ERROR_HANDLING:
@@ -1181,6 +1271,7 @@ test/cases/scenarioreport/scenarioreport020.py:
   title: Scenario report failing scenario
   type: scenario
 test/cases/scenarioreport/scenarioreport021.py:
+  id: test/cases/scenarioreport/scenarioreport021.py
   name: test/cases/scenarioreport/scenarioreport021.py
   reqs:
     DOC_ONLY:
@@ -1198,6 +1289,7 @@ test/cases/scenarioreport/scenarioreport021.py:
   title: Scenario report failing scenario --doc-only
   type: scenario
 test/cases/scenarioreport/scenarioreport030.py:
+  id: test/cases/scenarioreport/scenarioreport030.py
   name: test/cases/scenarioreport/scenarioreport030.py
   reqs:
     GOTO:
@@ -1211,6 +1303,7 @@ test/cases/scenarioreport/scenarioreport030.py:
   title: Scenario report goto scenario
   type: scenario
 test/cases/scenarioreport/scenarioreport031.py:
+  id: test/cases/scenarioreport/scenarioreport031.py
   name: test/cases/scenarioreport/scenarioreport031.py
   reqs:
     DOC_ONLY:
@@ -1228,6 +1321,7 @@ test/cases/scenarioreport/scenarioreport031.py:
   title: Scenario report goto scenario --doc-only
   type: scenario
 test/cases/scenarioreport/scenarioreport040.py:
+  id: test/cases/scenarioreport/scenarioreport040.py
   name: test/cases/scenarioreport/scenarioreport040.py
   reqs:
     SCENARIO_REPORT:
@@ -1241,6 +1335,7 @@ test/cases/scenarioreport/scenarioreport040.py:
   title: Scenario report subscenario
   type: scenario
 test/cases/scenarioreport/scenarioreport041.py:
+  id: test/cases/scenarioreport/scenarioreport041.py
   name: test/cases/scenarioreport/scenarioreport041.py
   reqs:
     DOC_ONLY:
@@ -1258,6 +1353,7 @@ test/cases/scenarioreport/scenarioreport041.py:
   title: Scenario report subscenario --doc-only
   type: scenario
 test/cases/scenarioreport/scenarioreport050.py:
+  id: test/cases/scenarioreport/scenarioreport050.py
   name: test/cases/scenarioreport/scenarioreport050.py
   reqs:
     KNOWN_ISSUES:
@@ -1271,6 +1367,7 @@ test/cases/scenarioreport/scenarioreport050.py:
   title: Scenario report known issues
   type: scenario
 test/cases/scenarioreport/scenarioreport051.py:
+  id: test/cases/scenarioreport/scenarioreport051.py
   name: test/cases/scenarioreport/scenarioreport051.py
   reqs:
     DOC_ONLY:
@@ -1288,6 +1385,7 @@ test/cases/scenarioreport/scenarioreport051.py:
   title: Scenario report known issues --doc-only
   type: scenario
 test/cases/scenarioreport/scenarioreport060.py:
+  id: test/cases/scenarioreport/scenarioreport060.py
   name: test/cases/scenarioreport/scenarioreport060.py
   reqs:
     ATTRIBUTES:
@@ -1313,6 +1411,7 @@ test/cases/scenarioreport/scenarioreport060.py:
   title: Scenario report long texts
   type: scenario
 test/cases/scenarioreport/scenarioreport061.py:
+  id: test/cases/scenarioreport/scenarioreport061.py
   name: test/cases/scenarioreport/scenarioreport061.py
   reqs:
     ATTRIBUTES:
@@ -1338,6 +1437,7 @@ test/cases/scenarioreport/scenarioreport061.py:
   title: Scenario report long texts --doc-only
   type: scenario
 test/cases/stats/stats010.py:
+  id: test/cases/stats/stats010.py
   name: test/cases/stats/stats010.py
   reqs:
     STATISTICS:
@@ -1347,6 +1447,7 @@ test/cases/stats/stats010.py:
   title: Statistics simple scenario
   type: scenario
 test/cases/stats/stats011.py:
+  id: test/cases/stats/stats011.py
   name: test/cases/stats/stats011.py
   reqs:
     DOC_ONLY:
@@ -1360,6 +1461,7 @@ test/cases/stats/stats011.py:
   title: Statistics simple scenario --doc-only
   type: scenario
 test/cases/stats/stats020.py:
+  id: test/cases/stats/stats020.py
   name: test/cases/stats/stats020.py
   reqs:
     ERROR_HANDLING:
@@ -1373,6 +1475,7 @@ test/cases/stats/stats020.py:
   title: Statistics failing scenario
   type: scenario
 test/cases/stats/stats021.py:
+  id: test/cases/stats/stats021.py
   name: test/cases/stats/stats021.py
   reqs:
     DOC_ONLY:
@@ -1390,6 +1493,7 @@ test/cases/stats/stats021.py:
   title: Statistics failing scenario --doc-only
   type: scenario
 test/cases/stats/stats030.py:
+  id: test/cases/stats/stats030.py
   name: test/cases/stats/stats030.py
   reqs:
     GOTO:
@@ -1403,6 +1507,7 @@ test/cases/stats/stats030.py:
   title: Statistics goto scenario
   type: scenario
 test/cases/stats/stats031.py:
+  id: test/cases/stats/stats031.py
   name: test/cases/stats/stats031.py
   reqs:
     GOTO:
@@ -1416,6 +1521,7 @@ test/cases/stats/stats031.py:
   title: Statistics goto scenario --doc-only
   type: scenario
 test/cases/stats/stats040.py:
+  id: test/cases/stats/stats040.py
   name: test/cases/stats/stats040.py
   reqs:
     STATISTICS:
@@ -1429,6 +1535,7 @@ test/cases/stats/stats040.py:
   title: Statistics subscenario
   type: scenario
 test/cases/stats/stats041.py:
+  id: test/cases/stats/stats041.py
   name: test/cases/stats/stats041.py
   reqs:
     DOC_ONLY:
@@ -1446,6 +1553,7 @@ test/cases/stats/stats041.py:
   title: Statistics subscenario --doc-only
   type: scenario
 test/cases/subscenario/subscenario001.py:
+  id: test/cases/subscenario/subscenario001.py
   name: test/cases/subscenario/subscenario001.py
   reqs:
     SUBSCENARIOS:
@@ -1455,6 +1563,7 @@ test/cases/subscenario/subscenario001.py:
   title: Subscenario execution
   type: scenario
 test/cases/subscenario/subscenario002.py:
+  id: test/cases/subscenario/subscenario002.py
   name: test/cases/subscenario/subscenario002.py
   reqs:
     DOC_ONLY:
@@ -1468,6 +1577,7 @@ test/cases/subscenario/subscenario002.py:
   title: Subscenario --doc-only
   type: scenario
 test/cases/subscenario/subscenario003.py:
+  id: test/cases/subscenario/subscenario003.py
   name: test/cases/subscenario/subscenario003.py
   reqs:
     ERROR_HANDLING:

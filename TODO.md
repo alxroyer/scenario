@@ -18,9 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Bug! Upstream traceability links for steps (from downstream traceability page at least) don't focus on the given step in the upstream traceability page.
-        - Example of resulting link: "http://localhost:8000/upstream-traceability#test/cases/campaigns/campaign001-dot-py/step-hash-2%20%28CheckCampaignLogExpectations%29"
-        - The final "%20%28CheckCampaignLogExpectations%29" pattern seems to be undesirable.
     - Bug! Opera prevents Firefox from connecting to the server.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Issue #xxx: Main logging indentation should be saved in scenario reports.

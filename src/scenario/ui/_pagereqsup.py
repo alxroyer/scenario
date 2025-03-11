@@ -62,7 +62,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             UpstreamTraceabilityPage._URL,
             args=HttpRequest.mkurlargs(obj=obj),
             anchor=(
-                scenario.ReqTraceability.Upstream.ReqVerifier(obj).full_name if isinstance(obj, (scenario.ScenarioDefinition, scenario.StepDefinition))
+                scenario.ReqTraceability.Upstream.ReqVerifier(obj).id if isinstance(obj, (scenario.ScenarioDefinition, scenario.StepDefinition))
                 else None
             ),
         )
@@ -210,7 +210,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     table_generator.addtogglebutton()
 
                 # Anchor.
-                with AnchorGenerator(table_generator.html, name=upstream_req_verifier.full_name).addanchor():
+                with AnchorGenerator(table_generator.html, name=upstream_req_verifier.id).addanchor():
                     # Scenario / step name, with link to scenario details page.
                     LinkGenerator(table_generator.html).addlink(
                         classes=["req-verifier", "name"],
