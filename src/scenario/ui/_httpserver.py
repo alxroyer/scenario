@@ -20,6 +20,7 @@ Requirement management HTTP interface.
 
 import http.server
 import os
+import threading
 import typing
 
 import scenario
@@ -71,6 +72,9 @@ class HttpServer(scenario.Logger):
             UpstreamTraceabilityPage(),
         ]  # type: typing.Sequence[HttpRequestHandler]
 
+        #: Execution mutex.
+        self._mutex = threading.Lock()  # type: threading.Lock
+
     @property
     def main_path(self):  # type: () -> scenario.Path
         """
@@ -91,7 +95,7 @@ class HttpServer(scenario.Logger):
 
         self.info("Serving on http://localhost:8000/")
         self.debug("Current working directory: '%s'", self.main_path.abspath)
-        _server = http.server.HTTPServer(
+        _server = http.server.ThreadingHTTPServer(
             ("localhost", 8000),
             # The `HttpRequest` class will be instantiated for each request.
             # The `do_GET()` and `do_POST()` methods will be called automatically.
@@ -113,25 +117,27 @@ class HttpServer(scenario.Logger):
         """
         from ._httprequesthandler import HttpRequestHandler
 
-        self.debug("Processing %r", request)
-
-        try:
-            for _request_handler in self._request_handlers:  # type: HttpRequestHandler
-                if _request_handler.process(request):
-                    break
-            else:
-                try:
-                    request.send_error(http.HTTPStatus.NOT_FOUND, message=f"{request.requestline!r} not found")
-                except ConnectionAbortedError as _err:
-                    self.warning(repr(_err))
-
-        except Exception as _err:
-            self.logexceptiontraceback(_err)
+        # Process one single request at once.
+        with self._mutex:
+            self.debug("Processing %r", request)
 
             try:
-                request.send_error(http.HTTPStatus.INTERNAL_SERVER_ERROR, message=repr(_err))
-            except ConnectionAbortedError as _err:
-                self.warning(repr(_err))
+                for _request_handler in self._request_handlers:  # type: HttpRequestHandler
+                    if _request_handler.process(request):
+                        break
+                else:
+                    try:
+                        request.send_error(http.HTTPStatus.NOT_FOUND, message=f"{request.requestline!r} not found")
+                    except ConnectionAbortedError as _err:
+                        self.warning(repr(_err))
+
+            except Exception as _err:
+                self.logexceptiontraceback(_err)
+
+                try:
+                    request.send_error(http.HTTPStatus.INTERNAL_SERVER_ERROR, message=repr(_err))
+                except ConnectionAbortedError as _err:
+                    self.warning(repr(_err))
 
 
 #: Main instance of :class:`HttpServer`.
