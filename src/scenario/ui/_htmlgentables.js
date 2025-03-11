@@ -145,3 +145,27 @@ scenario.tables._toggle = (tr1, {newState, recursive} = {}) => {
         }
     }
 };
+
+
+/**
+ * @brief Ensures the given `.tr1` main row is expanded if `node` is in a related `.tr2` subrow.
+ * @param {HTMLElement} node Node to check whether in a related `.tr2` subrow.
+ * @returns {void}
+ */
+scenario.tables.ensureExpanded = (node) => {
+    // Get back to the nearest `.tr2` ancestor node.
+    for (/** @var {HTMLElement} */ const _tr2 of scenario.findNodes(node, "tr.tr2", {axis: "ancestors", limit: 1})) {
+        // Read the `tr1` CID.
+        /** @var {string | null} */ const _tr1Cid = scenario.getCid(_tr2, "tr1");
+        if (_tr1Cid) {
+            // Get back to the `table` ancestor node.
+            for (/** @var {HTMLElement} */ const _table of scenario.findNodes(_tr2, "table", {axis: "ancestors", limit: 1})) {
+                // Find the related `.tr1` main row.
+                for (/** @var {HTMLElement} */ const _tr1 of scenario.findNodes(_table, `tr.tr1.tr1=${_tr1Cid}`)) {
+                    // Ensure the `.tr1` main row is expanded.
+                    scenario.tables._toggle(_tr1, {newState: "expanded"});
+                }
+            }
+        }
+    }
+};

@@ -49,6 +49,9 @@ scenario.anchors._extractAnchorCidFromUrl = (url) => {
 scenario.anchors._setFocus = (anchorCid) => {
     for (/** @var {HTMLElement} */ const _focusableDiv of scenario.findNodes(document.body, "div.anchor.focusable")) {
         if (scenario.getCid(_focusableDiv, "anchor") === anchorCid) {
+            // In case the anchor is hidden in a collapsed row.
+            scenario.tables.ensureExpanded(_focusableDiv);
+
             console.debug(`Adding .focus class to anchor '${anchorCid}'`);
             _focusableDiv.classList.add("focus");
 

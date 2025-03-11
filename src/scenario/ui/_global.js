@@ -170,10 +170,16 @@ scenario.nodeMatches = (node, selector, {debug, indentation} = {}) => {
  * @brief
  *     Finds nodes matching with `selector`.
  * @param {HTMLElement} node
- *     Current node.
+ *     Current node to search from.
  * @param {string} selector
  *     CSS selector.
  *     Programmatical format, `scenario.mkCssCompatibleClass()` will be called.
+ * @param {"children" | "ancestors" | undefined} axis
+ *     "children" (default) to search in child nodes.
+ *     "ancestors" to search in ancestor nodes.
+ * @param {number | undefined}
+ *     Maximum count of nodes returned.
+ *     All nodes if not specified.
  * @param {boolean | undefined} debug
  *     `true` to activate debugging.
  * @param {string | undefined} indentation
@@ -181,8 +187,9 @@ scenario.nodeMatches = (node, selector, {debug, indentation} = {}) => {
  * @returns {HTMLElement[]}
  *     Nodes matching `selector`.
  */
-scenario.findNodes = (node, selector, {debug, indentation}={}) => {
+scenario.findNodes = (node, selector, {axis, limit, debug, indentation}={}) => {
     // Default parameter values.
+    axis = axis || "children";
     debug = debug || false;
     indentation = indentation || "";
 
@@ -208,6 +215,10 @@ scenario.findNodes = (node, selector, {debug, indentation}={}) => {
     if ((! _selectors) || (! _selectors[0])) {
         return [];
     }
+    // Check selector compatibility with axis.
+    if ((axis === "ancestors") && (_selectors.length > 1)) {
+        throw new Error(`Invalid selector '${selector}' for '${axis}' axis`);
+    }
 
     // Search next nodes from `_selectors[0]`:
 
@@ -217,23 +228,32 @@ scenario.findNodes = (node, selector, {debug, indentation}={}) => {
 
     // - Find node(s) from the most representative criteria:
     /** @var {HTMLElement[]} */ let _selected = [];
-    if (_selector.id) {
-        /** @var {HTMLElement | null} */ const _identified = document.getElementById(_selector.id);
-        if (_identified) {
-            _selected.push(_identified);
+    if (axis === "children") {
+        if (_selector.id) {
+            /** @var {HTMLElement | null} */ const _identified = document.getElementById(_selector.id);
+            if (_identified) {
+                _selected.push(_identified);
+            }
+            _debug(`id='${_selector.id}' => ${_selected}`);
+        } else if (_selector.classes.length) {
+            // Memo:
+            //   Use `getElementsByClassName()` before `getElementsByTagName()`.
+            //   If classes are given, this criteria should normally be more restrictive, thus faster.
+            _selected.push(...node.getElementsByClassName(_selector.classes.join(" ")));
+            _debug(`classes='${_selector.classes.join(" ")}' => ${_selected}`);
+        } else if (_selector.tagName) {
+            _selected.push(...node.getElementsByTagName(_selector.tagName));
+            _debug(`tagName='${_selector.tagName}' => ${_selected}`);
+        } else {
+            throw new SyntaxError(`Invalid selector '${_selectors[0]}'`);
         }
-        _debug(`id='${_selector.id}' => ${_selected}`);
-    } else if (_selector.classes.length) {
-        // Memo:
-        //   Use `getElementsByClassName()` before `getElementsByTagName()`.
-        //   If classes are given, this criteria should normally be more restrictive, thus faster.
-        _selected.push(...node.getElementsByClassName(_selector.classes.join(" ")));
-        _debug(`classes='${_selector.classes.join(" ")}' => ${_selected}`);
-    } else if (_selector.tagName) {
-        _selected.push(...node.getElementsByTagName(_selector.tagName));
-        _debug(`tagName='${_selector.tagName}' => ${_selected}`);
+    } else if (axis === "ancestors") {
+        for (/** @var {HTMLElement | null} */ let _ancestor = node.parentElement; _ancestor; _ancestor = _ancestor.parentElement) {
+            _selected.push(_ancestor);
+        }
+        _debug(`axis='${axis}' => ${_selected}`);
     } else {
-        throw SyntaxError(`Invalid selector '${_selectors[0]}'`);
+        throw new Error(`Invalid axis '${axis}'`);
     }
 
     // - Then check the nodes selected above pass all criteria:
@@ -253,11 +273,18 @@ scenario.findNodes = (node, selector, {debug, indentation}={}) => {
     }
 
     // Otherwise, make recursive calls, and return the nodes selected from final recursive calls.
-    /** @var {HTMLElement[]} */ const _final = [];
+    /** @var {HTMLElement[]} */ let _final = [];
     for (const _node of _selected) {
         _final.push(...scenario.findNodes(_node, _selectors.slice(1).join(" "), {debug: debug, indentation: `${indentation}  `}));
     }
     _debug(`=> ${_final}`);
+
+    // Apply the `limit` filter if specified.
+    if (limit !== undefined) {
+        _final = _final.slice(0, limit);
+        _debug(`limit=${limit} => ${_final}`);
+    }
+
     return _final;
 };
 
