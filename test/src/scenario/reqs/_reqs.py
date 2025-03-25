@@ -109,7 +109,7 @@ with SCENARIO_REQ_BASELINE:
             - Console logging (by default) and/or file logging.
         """,
     )  # type: scenario.Req
-    LOGGING_FILE = LOGGING / "File"  # type: scenario.ReqRef
+    LOGGING_FILE = LOGGING / "file"  # type: scenario.ReqRef
 
     DEBUG_LOGGING = scenario.Req(
         id="DEBUG_LOGGING",
@@ -132,8 +132,12 @@ with SCENARIO_REQ_BASELINE:
             - The evidence collected (see EVIDENCE),
             - The known issues registered (see KNOWN_ISSUES),
             - The final status of the test execution.
+
+            The main logger indentation (see LOGGING) may be used to set ACTION/RESULT indentation.
+            The ACTION/RESULT indentation is save at definition time.
         """,
     )  # type: scenario.Req
+    SCENARIO_LOGGING_ACTION_RESULT_INDENTATION = SCENARIO_LOGGING / "action-result-indentation"  # type: scenario.ReqRef
 
     SCENARIO_REPORT = scenario.Req(
         id="SCENARIO_REPORT",

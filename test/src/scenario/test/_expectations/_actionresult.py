@@ -32,6 +32,7 @@ class ActionResultExpectations:
 
         self.type = scenario.ActionResult.Type.ACTION  # type: scenario.ActionResult.Type
         self.description = None  # type: typing.Optional[str]
+        self.indentation = None  # type: typing.Optional[str]
         self.subscenario_expectations = None  # type: typing.Optional[typing.List[_ScenarioExpectationsType]]
 
     def addsubscenario(

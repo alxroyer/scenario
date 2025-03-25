@@ -46,6 +46,7 @@ class UpdateTestData:
         self._updatefailingscenario()
         self._updategotoscenario()
         self._updateknownissuesscenario()
+        self._updateloggingindentationscenario()
         self._updatesimplescenario()
         self._updatesuperscenario()
         self._updatesyntaxerrorscenario()
@@ -163,6 +164,29 @@ class UpdateTestData:
             "#001", "#002", "#003", "#004",  # step()
             # - KnownIssuesScenario.step010():
             "#011", "#012", "#013", "#014",
+        ])
+
+    def _updateloggingindentationscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatejson, updatelog
+
+        _test_data = TestData(scenario.test.paths.LOGGING_INDENTATION_SCENARIO, {
+            "step200": "LoggingIndentationScenario.step200",
+        })  # type: TestData
+        updatelog(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".doc-only.log"), _test_data, [
+            # Steps:
+            "step200",
+        ])
+        updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".doc-only.json"), _test_data, [
+            # Steps:
+            "step200",
+        ])
+        updatelog(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.log"), _test_data, [
+            # Steps:
+            "step200",
+        ])
+        updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.json"), _test_data, [
+            # Steps:
+            "step200",
         ])
 
     def _updatesimplescenario(self):  # type: (...) -> None

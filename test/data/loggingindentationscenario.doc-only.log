@@ -1,0 +1,50 @@
+SCENARIO 'test/data/loggingindentationscenario.py'
+------------------------------------------------
+  TITLE: Logging indentation scenario sample
+
+
+STEP#1: Logging indentation (test/data/loggingindentationscenario.py:28:LoggingIndentationScenario.step200)
+------------------------------------------------
+    ACTION: #0: Log something with the main logger.
+    ACTION: #0: Log something with this scenario logger.
+    ACTION: #0: Display an evidence line.
+    ACTION: #1: Add indentation with this scenario class logger.
+    ACTION: #1: Log something with the main logger.
+    ACTION: #1: Log something with this scenario logger.
+    ACTION: #1: Display an evidence line.
+    ACTION: #2 actions being set in an indentation context with this scenario class logger again.
+    ACTION: #2: Log something with the main logger.
+    ACTION: #2: Log something with this scenario logger.
+    ACTION: #2: Display an evidence line.
+    ACTION: #3: Add indentation with the main logger.
+    ACTION: #3: Log something with the main logger.
+    ACTION: #3: Log something with this scenario logger.
+    ACTION: #3: Display an evidence line.
+    ACTION:     #4 actions being set in an indentation context with the main logger again.
+    ACTION:     #4: Log something with the main logger.
+    ACTION:     #4: Log something with this scenario logger.
+    ACTION:     #4: Display an evidence line.
+    ACTION: #5: Add indentation with both loggers.
+    ACTION: #5: Log something with the main logger.
+    ACTION: #5: Log something with this scenario logger.
+    ACTION: #5: Display an evidence line.
+    ACTION: #6: Remove indentation with this scenario class logger.
+    ACTION: #6: Log something with the main logger.
+    ACTION: #6: Log something with this scenario logger.
+    ACTION: #6: Display an evidence line.
+    ACTION: #7: Reset indentation with the main logger.
+    ACTION: #7: Log something with the main logger.
+    ACTION: #7: Log something with this scenario logger.
+    ACTION: #7: Display an evidence line.
+    ACTION: #8: Reset indentation with this scenario class logger.
+    ACTION: #8: Log something with the main logger.
+    ACTION: #8: Log something with this scenario logger.
+    ACTION: #8: Display an evidence line.
+
+END OF 'test/data/loggingindentationscenario.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 1
+  Number of ACTIONs: 35
+  Number of RESULTs: 0
+               Time: 00:00:00.000000

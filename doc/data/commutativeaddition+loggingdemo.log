@@ -68,7 +68,7 @@ STEP#3: Logging with a class logger (demo/loggingdemo.py:42:LoggingScenario.step
 
 STEP#4: Class logger indentation (demo/loggingdemo.py:57:LoggingScenario.step110)
 ------------------------------------------------
-    ACTION: Log something with the class logger (with CLASS_LOGGER_INDENTATION enabled, for all actions in this step).
+    ACTION: Enable debugging with the class logger, and log something with it.
               INFO     [My logger] Hello
     ACTION: Push indentation to the class logger.
     ACTION: Log something with the class logger.
@@ -86,37 +86,37 @@ STEP#4: Class logger indentation (demo/loggingdemo.py:57:LoggingScenario.step110
     ACTION: Log something with the class logger.
               INFO     [My logger] Hello
 
-STEP#5: Main logger indentation (demo/loggingdemo.py:78:LoggingScenario.step120)
+STEP#5: Main logger indentation (demo/loggingdemo.py:79:LoggingScenario.step120)
 ------------------------------------------------
-    ACTION: Log something with the main logger.
-              INFO     Hello
-    ACTION: Push indentation to the main logger.
-    ACTION:     Log something with the main logger.
-              INFO         Hello
-    ACTION:     Push indentation to the main logger.
-    ACTION:         Log something with the main logger.
-              INFO             Hello
-    ACTION:         Push indentation to the main logger.
-    ACTION:             Log something with the main logger.
-              INFO                 Hello
-    ACTION:             Pop indentation from the main logger.
-    ACTION:         Log something with the main logger.
-              INFO             Hello
-    ACTION:         Reset the main logger indentation.
-    ACTION: Log something with the main logger.
-              INFO     Hello
+    ACTION: Retrieve results.
+    RESULT: Results contain 2 keys:
+  EVIDENCE:   -> Length of {'a': [0], 'b': [1, 2, 3, 4]} is 2
+    RESULT: - Key 'a', with 1 values:
+  EVIDENCE:   -> Length of [0] is 1
+    RESULT:   - Value #1 is 0
+  EVIDENCE:     -> 0 == 0
+    RESULT: - Key 'b', with 4 values:
+  EVIDENCE:   -> Length of [1, 2, 3, 4] is 4
+    RESULT:   - Value #1 is 1
+  EVIDENCE:     -> 1 == 1
+    RESULT:   - Value #2 is 2
+  EVIDENCE:     -> 2 == 2
+    RESULT:   - Value #3 is 3
+  EVIDENCE:     -> 3 == 3
+    RESULT:   - Value #4 is 4
+  EVIDENCE:     -> 4 == 4
 
 END OF 'demo/loggingdemo.py'
 ------------------------------------------------
              Status: SUCCESS
     Number of STEPs: 5/5
-  Number of ACTIONs: 27/27
-  Number of RESULTs: 0/0
+  Number of ACTIONs: 17/17
+  Number of RESULTs: 8/8
                Time: HH:MM:SS.mmmmmm
 
 ------------------------------------------------
 INFO     TOTAL                                  Status      Steps    Actions    Results    Time               Title
-INFO     2 tests, 0 failed, 0 with warnings                   9/9      31/31        1/1    HH:MM:SS.mmmmmm
+INFO     2 tests, 0 failed, 0 with warnings                   9/9      21/21        9/9    HH:MM:SS.mmmmmm
 ------------------------------------------------
 INFO     demo/commutativeaddition.py           SUCCESS        4/4        4/4        1/1    HH:MM:SS.mmmmmm    Commutative addition
-INFO     demo/loggingdemo.py                   SUCCESS        5/5      27/27        0/0    HH:MM:SS.mmmmmm    Logging demo
+INFO     demo/loggingdemo.py                   SUCCESS        5/5      17/17        8/8    HH:MM:SS.mmmmmm    Logging demo

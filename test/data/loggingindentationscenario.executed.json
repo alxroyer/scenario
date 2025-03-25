@@ -1,0 +1,526 @@
+{
+  "$license": [
+    "Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+  "$schema": "https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/scenario-report.schema.json",
+  "$version": "0.2.2",
+
+  "name": "test/data/loggingindentationscenario.py",
+  "attributes": {
+    "TITLE": "Logging indentation scenario sample"
+  },
+  "steps": [
+    {
+      "location": "test/data/loggingindentationscenario.py:28:LoggingIndentationScenario.step200",
+      "description": "Logging indentation",
+      "executions": [
+        {
+          "number": 1,
+          "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+          "errors": [],
+          "warnings": []
+        }
+      ],
+      "actions-results": [
+        {
+          "type": "ACTION",
+          "description": "#0: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#0: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#0: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#0: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#1: Add indentation with this scenario class logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#1: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#1: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#1: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#1: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#2 actions being set in an indentation context with this scenario class logger again.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#2: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#2: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#2: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#2: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#3: Add indentation with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#3: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#3: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#3: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#3: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "indentation": "    ",
+          "description": "#4 actions being set in an indentation context with the main logger again.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "indentation": "    ",
+          "description": "#4: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "indentation": "    ",
+          "description": "#4: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "indentation": "    ",
+          "description": "#4: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#4: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#5: Add indentation with both loggers.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#5: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#5: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#5: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#5: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#6: Remove indentation with this scenario class logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#6: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#6: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#6: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#6: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#7: Reset indentation with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#7: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#7: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#7: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#7: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#8: Reset indentation with this scenario class logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#8: Log something with the main logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#8: Log something with this scenario logger.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        },
+        {
+          "type": "ACTION",
+          "description": "#8: Display an evidence line.",
+          "executions": [
+            {
+              "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+              "evidence": [
+                "#8: Evidence."
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "SUCCESS",
+  "errors": [],
+  "warnings": [],
+  "time": {"start": "0000-00-00T00:00:00.000Z", "end": "0000-00-00T00:00:00.000Z", "elapsed": 0.0},
+  "stats": {
+    "steps": {"executed": 1, "total": 1},
+    "actions": {"executed": 35, "total": 35},
+    "results": {"executed": 0, "total": 0}
+  }
+}

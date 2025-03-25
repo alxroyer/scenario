@@ -27,7 +27,10 @@ class ScenarioLogging061(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario logging long texts --doc-only",
-            description="Check the scenario logging output is generated as expected for a scenario with long texts, executed with the --doc-only option set.",
+            description=(
+                "Check the scenario logging output is generated as expected for a scenario with long texts, "
+                "when executed with the --doc-only option."
+            ),
         )
         self.verifies(
             scenario.reqs.SCENARIO_LOGGING,

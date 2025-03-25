@@ -26,7 +26,10 @@ class Stats021(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Statistics failing scenario --doc-only",
-            description="Check scenario execution statistics for a failing scenario executed with the --doc-only option set.",
+            description=(
+                "Check scenario execution statistics for a failing scenario, "
+                "when executed with the --doc-only option."
+            ),
         )
         self.verifies(
             scenario.reqs.STATISTICS,

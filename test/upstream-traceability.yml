@@ -43,7 +43,7 @@ test/cases/campaigns/campaign001.py:
     LOGGING:
       comments: Campaign execution & reports
       subrefs:
-        LOGGING/File:
+        LOGGING/file:
           comments: Scenario logging saved with campaign output files
       title: Logging facilities
     MULTIPLE_SCENARIO_EXECUTION:
@@ -123,7 +123,7 @@ test/cases/campaigns/campaign001.py/step#5:
     LOGGING:
       comments: ''
       subrefs:
-        LOGGING/File:
+        LOGGING/file:
           comments: Scenario logging saved with campaign output files
       title: Logging facilities
     REQUIREMENT_MANAGEMENT:
@@ -988,6 +988,12 @@ test/cases/logutils/logging421.py:
       comments: Additional user indentation in subscenario
       subrefs: {}
       title: Logging facilities
+    SCENARIO_LOGGING:
+      comments: Additional user indentation in subscenario
+      subrefs:
+        SCENARIO_LOGGING/action-result-indentation:
+          comments: Action/result indentation in subscenario execution.
+      title: '`scenario` logging'
     SUBSCENARIOS:
       comments: Additional user indentation in subscenario
       subrefs: {}
@@ -1011,7 +1017,7 @@ test/cases/logutils/logging510.py:
     LOGGING:
       comments: File logging
       subrefs:
-        LOGGING/File:
+        LOGGING/file:
           comments: File logging
       title: Logging facilities
   title: File logging
@@ -1232,6 +1238,34 @@ test/cases/scenariologging/scenariologging061.py:
       title: '`scenario` logging'
   title: Scenario logging long texts --doc-only
   type: scenario
+test/cases/scenariologging/scenariologging070.py:
+  id: test/cases/scenariologging/scenariologging070.py
+  name: test/cases/scenariologging/scenariologging070.py
+  reqs:
+    SCENARIO_LOGGING:
+      comments: Scenario logging action/result indentation
+      subrefs:
+        SCENARIO_LOGGING/action-result-indentation:
+          comments: Scenario logging action/result indentation
+      title: '`scenario` logging'
+  title: Scenario logging action/result indentation
+  type: scenario
+test/cases/scenariologging/scenariologging071.py:
+  id: test/cases/scenariologging/scenariologging071.py
+  name: test/cases/scenariologging/scenariologging071.py
+  reqs:
+    DOC_ONLY:
+      comments: Scenario logging action/result indentation --doc-only
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_LOGGING:
+      comments: Scenario logging action/result indentation --doc-only
+      subrefs:
+        SCENARIO_LOGGING/action-result-indentation:
+          comments: Scenario logging action/result indentation --doc-only
+      title: '`scenario` logging'
+  title: Scenario logging action/result indentation --doc-only
+  type: scenario
 test/cases/scenarioreport/scenarioreport010.py:
   id: test/cases/scenarioreport/scenarioreport010.py
   name: test/cases/scenarioreport/scenarioreport010.py
@@ -1435,6 +1469,44 @@ test/cases/scenarioreport/scenarioreport061.py:
       subrefs: {}
       title: Scenario reports
   title: Scenario report long texts --doc-only
+  type: scenario
+test/cases/scenarioreport/scenarioreport070.py:
+  id: test/cases/scenarioreport/scenarioreport070.py
+  name: test/cases/scenarioreport/scenarioreport070.py
+  reqs:
+    SCENARIO_LOGGING:
+      comments: Scenario report action/result indentation
+      subrefs:
+        SCENARIO_LOGGING/action-result-indentation:
+          comments: Main logger indentation saved in scenario reports for actions
+            and results.
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Scenario report action/result indentation
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report action/result indentation
+  type: scenario
+test/cases/scenarioreport/scenarioreport071.py:
+  id: test/cases/scenarioreport/scenarioreport071.py
+  name: test/cases/scenarioreport/scenarioreport071.py
+  reqs:
+    DOC_ONLY:
+      comments: Scenario report action/result indentation --doc-only
+      subrefs: {}
+      title: Documentation generation
+    SCENARIO_LOGGING:
+      comments: Scenario report action/result indentation --doc-only
+      subrefs:
+        SCENARIO_LOGGING/action-result-indentation:
+          comments: Main logger indentation saved in scenario reports for actions
+            and results.
+      title: '`scenario` logging'
+    SCENARIO_REPORT:
+      comments: Scenario report action/result indentation --doc-only
+      subrefs: {}
+      title: Scenario reports
+  title: Scenario report action/result indentation --doc-only
   type: scenario
 test/cases/stats/stats010.py:
   id: test/cases/stats/stats010.py

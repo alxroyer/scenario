@@ -28,7 +28,7 @@ class Campaign004(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Campaign --doc-only option",
-            description="Check campaign results when the --doc-only option is used.",
+            description="Check campaign results when executed with the --doc-only option.",
         )
         self.verifies(
             scenario.reqs.CAMPAIGNS,

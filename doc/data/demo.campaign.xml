@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites actions-executed="39" actions-total="39" disabled="0" errors="0" failures="0" results-executed="2" results-total="2" steps-executed="15" steps-total="15" tests="5" time="SSS.mmmmmm">
-	<testsuite actions-executed="39" actions-total="39" disabled="0" errors="0" failures="0" id="0" name="../../demo/demo.suite" results-executed="2" results-total="2" skipped="0" steps-executed="15" steps-total="15" tests="5" time="SSS.mmmmmm" timestamp="YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM">
+<testsuites actions-executed="29" actions-total="29" disabled="0" errors="0" failures="0" results-executed="10" results-total="10" steps-executed="15" steps-total="15" tests="5" time="SSS.mmmmmm">
+	<testsuite actions-executed="29" actions-total="29" disabled="0" errors="0" failures="0" id="0" name="../../demo/demo.suite" results-executed="10" results-total="10" skipped="0" steps-executed="15" steps-total="15" tests="5" time="SSS.mmmmmm" timestamp="YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM">
 		<testcase actions-executed="4" actions-total="4" classname="../../demo/commutativeaddition.py" name="demo/commutativeaddition.py" results-executed="1" results-total="1" status="SUCCESS" steps-executed="4" steps-total="4" time="SSS.mmmmmm">
 			<link href="commutativeaddition.log" rel="log" type="text/plain"/>
 			<link href="commutativeaddition.json" rel="report" type="application/json"/>
@@ -17,7 +17,7 @@
 			<link href="htmllogin.log" rel="log" type="text/plain"/>
 			<link href="htmllogin.json" rel="report" type="application/json"/>
 		</testcase>
-		<testcase actions-executed="27" actions-total="27" classname="../../demo/loggingdemo.py" name="demo/loggingdemo.py" results-executed="0" results-total="0" status="SUCCESS" steps-executed="5" steps-total="5" time="SSS.mmmmmm">
+		<testcase actions-executed="17" actions-total="17" classname="../../demo/loggingdemo.py" name="demo/loggingdemo.py" results-executed="8" results-total="8" status="SUCCESS" steps-executed="5" steps-total="5" time="SSS.mmmmmm">
 			<link href="loggingdemo.log" rel="log" type="text/plain"/>
 			<link href="loggingdemo.json" rel="report" type="application/json"/>
 		</testcase>

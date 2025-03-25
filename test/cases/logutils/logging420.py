@@ -35,6 +35,8 @@ class Logging420(scenario.test.TestCase):
         )
         self.verifies(
             scenario.reqs.LOGGING,
+            # Memo: The following would be a duplicate of 'scenariologging070.py'.
+            # scenario.reqs.SCENARIO_LOGGING_ACTION_RESULT_INDENTATION,
         )
 
         self.addstep(ExecUserIndentation(scenario.test.paths.LOGGING_INDENTATION_SCENARIO))
@@ -85,25 +87,29 @@ class CheckUserIndentation(_LogVerificationStepImpl):
     def step(self):  # type: (...) -> None
         self.STEP("Additional user indentation")
 
-        self._checkindentation("#0", main_indentation=0, class_logger_indentation=0)
+        self._checkindentation("#0", action_result_indentation=0, main_indentation=0, class_logger_indentation=0)
         # #1: Add indentation with this scenario class logger.
-        self._checkindentation("#1", main_indentation=0, class_logger_indentation=4)
-        # #2: Add indentation with this scenario class logger again.
-        self._checkindentation("#2", main_indentation=0, class_logger_indentation=8)
+        self._checkindentation("#1", action_result_indentation=0, main_indentation=0, class_logger_indentation=4)
+        # #2 actions being set in an indentation context with this scenario class logger again.
+        self._checkindentation("#2", action_result_indentation=0, main_indentation=0, class_logger_indentation=8)
         # #3: Add indentation with the main logger.
-        self._checkindentation("#3", main_indentation=4, class_logger_indentation=8)
-        # #4: Add indentation with the main logger again.
-        self._checkindentation("#4", main_indentation=8, class_logger_indentation=8)
-        # #5: Remove indentation with this scenario class logger.
-        self._checkindentation("#5", main_indentation=8, class_logger_indentation=4)
-        # #6: Reset indentation with the main logger.
-        self._checkindentation("#6", main_indentation=0, class_logger_indentation=4)
-        # #7: Reset indentation with this scenario class logger.
-        self._checkindentation("#7", main_indentation=0, class_logger_indentation=0)
+        self._checkindentation("#3", action_result_indentation=0, main_indentation=4, class_logger_indentation=4)
+        # #4 actions being set in an indentation context with the main logger again.
+        self._checkindentation("#4", action_result_indentation=4, main_indentation=8, class_logger_indentation=4)
+        # #5: Add indentation with both loggers.
+        self._checkindentation("#5", action_result_indentation=0, main_indentation=8, class_logger_indentation=8)
+        # #6: Remove indentation with this scenario class logger.
+        self._checkindentation("#6", action_result_indentation=0, main_indentation=8, class_logger_indentation=4)
+        # #7: Reset indentation with the main logger.
+        self._checkindentation("#7", action_result_indentation=0, main_indentation=0, class_logger_indentation=4)
+        # #8: Reset indentation with this scenario class logger.
+        self._checkindentation("#8", action_result_indentation=0, main_indentation=0, class_logger_indentation=0)
 
     def _checkindentation(
             self,
             search_pattern,  # type: str
+            *,
+            action_result_indentation,  # type: int
             main_indentation,  # type: int
             class_logger_indentation,  # type: int
     ):  # type: (...) -> None
@@ -111,12 +117,14 @@ class CheckUserIndentation(_LogVerificationStepImpl):
 
         # Pre-build useful regex strings.
         _scenario_stack_indentation_rgx = self.exec_step.scenario_stack_indentation.replace("|", r"\|")  # type: str
+        _action_result_indentation_rgx = r" {%d}" % action_result_indentation  # type: str
         _main_indentation_rgx = r" {%d}" % main_indentation  # type: str
         _class_logger_indentation_rgx = r" {%d}" % class_logger_indentation  # type: str
 
         _result = f"{search_pattern!r} lines are displayed with "  # type: str
         if self.exec_step.scenario_stack_indentation:
             _result += f"{self.exec_step.scenario_stack_indentation!r} for scenario stack indentation, "
+        _result += f"r{_action_result_indentation_rgx!r} for action/result indentation, "
         _result += f"r{_main_indentation_rgx!r} for main indentation, "
         _result += f"and r{_class_logger_indentation_rgx!r} for class logger indentation."
         if self.RESULT(_result):
@@ -144,7 +152,7 @@ class CheckUserIndentation(_LogVerificationStepImpl):
                                 _scenario_stack_indentation_rgx,
                                 r" {%d}" % self._action_result_margin,
                                 r"ACTION: ",
-                                _main_indentation_rgx,
+                                _action_result_indentation_rgx,
                                 r"%s: [A-Z]" % search_pattern,
                             ]),
                             _line,
@@ -161,7 +169,7 @@ class CheckUserIndentation(_LogVerificationStepImpl):
                                 _scenario_stack_indentation_rgx,
                                 r" {%d}" % self._evidence_margin,
                                 r"EVIDENCE: ",
-                                _main_indentation_rgx,
+                                _action_result_indentation_rgx,
                                 r"  -> %s: [A-Z]" % search_pattern,
                             ]),
                             _line,

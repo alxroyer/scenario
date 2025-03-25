@@ -34,6 +34,8 @@ class MainLogger(_LoggerImpl):
     """
     Main logger augmentation of :class:`._logger.Logger`.
 
+    Shall be used for actions/results indentation (see :ref:`logging.indentation.action-result`).
+
     Instantiated once with the :data:`MAIN_LOGGER` singleton.
     """
 

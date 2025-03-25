@@ -159,7 +159,7 @@
       "actions-results": [
         {
           "type": "ACTION",
-          "description": "Log something with the class logger (with CLASS_LOGGER_INDENTATION enabled, for all actions in this step).",
+          "description": "Enable debugging with the class logger, and log something with it.",
           "executions": [
             {
               "time": {
@@ -359,13 +359,13 @@
       ]
     },
     {
-      "location": "demo/loggingdemo.py:78:LoggingScenario.step120",
+      "location": "demo/loggingdemo.py:79:LoggingScenario.step120",
       "description": "Main logger indentation",
       "reqs": [],
       "actions-results": [
         {
           "type": "ACTION",
-          "description": "Log something with the main logger.",
+          "description": "Retrieve results.",
           "executions": [
             {
               "time": {
@@ -381,8 +381,8 @@
           ]
         },
         {
-          "type": "ACTION",
-          "description": "Push indentation to the main logger.",
+          "type": "RESULT",
+          "description": "Results contain 2 keys:",
           "executions": [
             {
               "time": {
@@ -390,7 +390,9 @@
                 "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                 "elapsed": SSS.mmmmmm
               },
-              "evidence": [],
+              "evidence": [
+                "Length of {'a': [0], 'b': [1, 2, 3, 4]} is 2"
+              ],
               "errors": [],
               "warnings": [],
               "subscenarios": []
@@ -398,8 +400,8 @@
           ]
         },
         {
-          "type": "ACTION",
-          "description": "Log something with the main logger.",
+          "type": "RESULT",
+          "description": "- Key 'a', with 1 values:",
           "executions": [
             {
               "time": {
@@ -407,7 +409,9 @@
                 "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                 "elapsed": SSS.mmmmmm
               },
-              "evidence": [],
+              "evidence": [
+                "Length of [0] is 1"
+              ],
               "errors": [],
               "warnings": [],
               "subscenarios": []
@@ -415,8 +419,8 @@
           ]
         },
         {
-          "type": "ACTION",
-          "description": "Push indentation to the main logger.",
+          "type": "RESULT",
+          "description": "- Value #1 is 0",
           "executions": [
             {
               "time": {
@@ -424,7 +428,29 @@
                 "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                 "elapsed": SSS.mmmmmm
               },
-              "evidence": [],
+              "evidence": [
+                "0 == 0"
+              ],
+              "errors": [],
+              "warnings": [],
+              "subscenarios": []
+            }
+          ],
+          "indentation": "  "
+        },
+        {
+          "type": "RESULT",
+          "description": "- Key 'b', with 4 values:",
+          "executions": [
+            {
+              "time": {
+                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
+                "elapsed": SSS.mmmmmm
+              },
+              "evidence": [
+                "Length of [1, 2, 3, 4] is 4"
+              ],
               "errors": [],
               "warnings": [],
               "subscenarios": []
@@ -432,8 +458,8 @@
           ]
         },
         {
-          "type": "ACTION",
-          "description": "Log something with the main logger.",
+          "type": "RESULT",
+          "description": "- Value #1 is 1",
           "executions": [
             {
               "time": {
@@ -441,16 +467,19 @@
                 "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                 "elapsed": SSS.mmmmmm
               },
-              "evidence": [],
+              "evidence": [
+                "1 == 1"
+              ],
               "errors": [],
               "warnings": [],
               "subscenarios": []
             }
-          ]
+          ],
+          "indentation": "  "
         },
         {
-          "type": "ACTION",
-          "description": "Push indentation to the main logger.",
+          "type": "RESULT",
+          "description": "- Value #2 is 2",
           "executions": [
             {
               "time": {
@@ -458,16 +487,19 @@
                 "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                 "elapsed": SSS.mmmmmm
               },
-              "evidence": [],
+              "evidence": [
+                "2 == 2"
+              ],
               "errors": [],
               "warnings": [],
               "subscenarios": []
             }
-          ]
+          ],
+          "indentation": "  "
         },
         {
-          "type": "ACTION",
-          "description": "Log something with the main logger.",
+          "type": "RESULT",
+          "description": "- Value #3 is 3",
           "executions": [
             {
               "time": {
@@ -475,16 +507,19 @@
                 "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                 "elapsed": SSS.mmmmmm
               },
-              "evidence": [],
+              "evidence": [
+                "3 == 3"
+              ],
               "errors": [],
               "warnings": [],
               "subscenarios": []
             }
-          ]
+          ],
+          "indentation": "  "
         },
         {
-          "type": "ACTION",
-          "description": "Pop indentation from the main logger.",
+          "type": "RESULT",
+          "description": "- Value #4 is 4",
           "executions": [
             {
               "time": {
@@ -492,63 +527,15 @@
                 "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
                 "elapsed": SSS.mmmmmm
               },
-              "evidence": [],
+              "evidence": [
+                "4 == 4"
+              ],
               "errors": [],
               "warnings": [],
               "subscenarios": []
             }
-          ]
-        },
-        {
-          "type": "ACTION",
-          "description": "Log something with the main logger.",
-          "executions": [
-            {
-              "time": {
-                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "elapsed": SSS.mmmmmm
-              },
-              "evidence": [],
-              "errors": [],
-              "warnings": [],
-              "subscenarios": []
-            }
-          ]
-        },
-        {
-          "type": "ACTION",
-          "description": "Reset the main logger indentation.",
-          "executions": [
-            {
-              "time": {
-                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "elapsed": SSS.mmmmmm
-              },
-              "evidence": [],
-              "errors": [],
-              "warnings": [],
-              "subscenarios": []
-            }
-          ]
-        },
-        {
-          "type": "ACTION",
-          "description": "Log something with the main logger.",
-          "executions": [
-            {
-              "time": {
-                "start": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "end": "YYYY-MM-DDTHH:MM:SS.mmmmmm+HH:MM",
-                "elapsed": SSS.mmmmmm
-              },
-              "evidence": [],
-              "errors": [],
-              "warnings": [],
-              "subscenarios": []
-            }
-          ]
+          ],
+          "indentation": "  "
         }
       ],
       "executions": [
@@ -579,12 +566,12 @@
       "total": 5
     },
     "actions": {
-      "executed": 27,
-      "total": 27
+      "executed": 17,
+      "total": 17
     },
     "results": {
-      "executed": 0,
-      "total": 0
+      "executed": 8,
+      "total": 8
     }
   }
 }

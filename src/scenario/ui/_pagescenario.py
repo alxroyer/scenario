@@ -285,7 +285,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
             # Make action/result content collapsible.
             _div_generator = DivGenerator(
                 html,
-                collapsible_cid=f"step#{action_result.step.number}-{action_result.type.name.lower()}#{action_result.number}",
+                collapsible_cid=f"step#{action_result.step.number}-{action_result.type.lower()}#{action_result.number}",
                 # Don't set default state right now.
                 # Set it in the end depending on whether the action/result has collapsible content or not.
                 # See `_default_state` local variable defined right after.
@@ -298,6 +298,9 @@ class ScenarioPage(_HttpRequestHandlerImpl):
             with _div_generator.adddiv(classes=_action_result_id_classes):
                 html.addnode("span", classes=[*_action_result_id_classes, "type"], text=action_result.type.upper())
                 html.addnode("span", classes=[*_action_result_id_classes, "sep"], text=":")
+                if action_result.indentation:
+                    with html.addnode("span", classes=[*_action_result_id_classes, "indentation"]):
+                        html.addnode("pre", text=action_result.indentation)
                 html.addnode("span", classes=[*_action_result_id_classes, "text"], text=action_result.description)
 
                 if action_result.executions:

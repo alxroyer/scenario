@@ -19,9 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Issue #xxx: Main logging indentation should be saved in scenario reports.
-            - As displayed in logging.
-            - Make main logging indentation not shift the logging level?
         - Display known issues.
         - Check campaign results display.
     - Implement JSON schemas.

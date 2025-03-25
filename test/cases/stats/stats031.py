@@ -26,7 +26,10 @@ class Stats010(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Statistics goto scenario --doc-only",
-            description="Check scenario execution statistics for a scenario with goto jumps executed with the --doc-only option set.",
+            description=(
+                "Check scenario execution statistics for a scenario with goto jumps,"
+                "when executed with the --doc-only option."
+            ),
         )
         self.verifies(
             scenario.reqs.STATISTICS,

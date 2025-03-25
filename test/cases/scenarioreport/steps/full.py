@@ -297,6 +297,18 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
                 json_action_result_definition, "description", ref=json_action_result_definition_ref,
                 evidence="Action/result description",
             )
+        if "indentation" in json_action_result_definition_ref:
+            if self.RESULT(f"The action/result indentation is {self._assertjsonref(json_action_result_definition_ref, 'indentation', type=str)!r}."):
+                self.assertjson(
+                    json_action_result_definition, "indentation", ref=json_action_result_definition_ref,
+                    evidence="Action/result indentation",
+                )
+        else:
+            if self.RESULT("The action/result has no indentation."):
+                self.assertnotin(
+                    "indentation", json_action_result_definition,
+                    evidence="Action/result indentation",
+                )
 
         _executions_ref = self._assertjsonref(json_action_result_definition_ref, "executions")  # type: typing.List[scenario.types.JsonDict]
         _executions_txt = scenario.text.Countable("execution", _executions_ref)  # type: scenario.text.Countable

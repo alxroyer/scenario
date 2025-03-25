@@ -32,6 +32,7 @@ class Logging421(scenario.test.TestCase):
         )
         self.verifies(
             scenario.reqs.LOGGING,
+            (scenario.reqs.SCENARIO_LOGGING_ACTION_RESULT_INDENTATION, "Action/result indentation in subscenario execution."),
             scenario.reqs.SUBSCENARIOS,
         )
 

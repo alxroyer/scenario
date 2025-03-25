@@ -27,7 +27,10 @@ class ScenarioReport041(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario report subscenario --doc-only",
-            description="Check the scenario report is generated as expected for a super scenario executing a subscenario, with the --doc-only option set.",
+            description=(
+                "Check the scenario report is generated as expected for a super scenario executing a subscenario, "
+                "when executed with the --doc-only option."
+            ),
         )
         self.verifies(
             scenario.reqs.SCENARIO_REPORT,

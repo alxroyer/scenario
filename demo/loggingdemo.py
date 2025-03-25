@@ -57,41 +57,40 @@ class LoggingScenario(scenario.Scenario):
     def step110(self):
         self.STEP("Class logger indentation")
 
-        if self.ACTION("Log something with the class logger (with CLASS_LOGGER_INDENTATION enabled, for all actions in this step)."):
-            self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
+        if self.ACTION("Enable debugging with the class logger, and log something with it."):
+            self.class_logger.enabledebug(True)
+            self.class_logger.info("Hello")
         try:
             for _ in range(3):
                 if self.ACTION("Push indentation to the class logger."):
                     self.class_logger.pushindentation()
                 if self.ACTION("Log something with the class logger."):
-                    self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
+                    self.class_logger.info("Hello")
             if self.ACTION("Pop indentation from the class logger."):
                 self.class_logger.popindentation()
             if self.ACTION("Log something with the class logger."):
-                self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
+                self.class_logger.info("Hello")
         finally:
             if self.ACTION("Reset the class logger indentation."):
                 self.class_logger.resetindentation()
             if self.ACTION("Log something with the class logger."):
-                self.class_logger.info("Hello", extra={self.class_logger.Extra.CLASS_LOGGER_INDENTATION: True})
+                self.class_logger.info("Hello")
 
     def step120(self):
         self.STEP("Main logger indentation")
 
-        if self.ACTION("Log something with the main logger."):
-            scenario.logging.info("Hello")
-        try:
-            for _ in range(3):
-                if self.ACTION("Push indentation to the main logger."):
-                    scenario.logging.pushindentation()
-                if self.ACTION("Log something with the main logger."):
-                    scenario.logging.info("Hello")
-            if self.ACTION("Pop indentation from the main logger."):
-                scenario.logging.popindentation()
-            if self.ACTION("Log something with the main logger."):
-                scenario.logging.info("Hello")
-        finally:
-            if self.ACTION("Reset the main logger indentation."):
-                scenario.logging.resetindentation()
-            if self.ACTION("Log something with the main logger."):
-                scenario.logging.info("Hello")
+        _expected = {"a": [0], "b": [1, 2, 3, 4]}
+
+        _results = {}
+        if self.ACTION("Retrieve results."):
+            _results = _expected.copy()
+        if self.RESULT(f"Results contain {len(_expected)} keys:"):
+            self.assertlen(_results, len(_expected), evidence=True)
+        for _key in _expected:
+            if self.RESULT(f"- Key {_key!r}, with {len(_expected[_key])} values:"):
+                self.assertlen(_results[_key], len(_expected[_key]), evidence=True)
+            # Indent each value below the related key.
+            with scenario.logging.pushindentation("  "):
+                for _index, _value in enumerate(_expected[_key]):
+                    if self.RESULT(f"- Value #{_index+1} is {_value!r}"):
+                        self.assertequal(_results[_key][_index], _expected[_key][_index], evidence=True)

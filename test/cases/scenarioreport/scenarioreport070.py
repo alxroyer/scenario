@@ -18,7 +18,7 @@ import scenario.reqs
 import scenario.test
 
 
-class ScenarioReport031(scenario.test.TestCase):
+class ScenarioReport070(scenario.test.TestCase):
 
     def __init__(self):  # type: (...) -> None
         from scenarioreport.steps.full import CheckFullScenarioReport
@@ -26,17 +26,13 @@ class ScenarioReport031(scenario.test.TestCase):
 
         scenario.test.TestCase.__init__(
             self,
-            title="Scenario report goto scenario --doc-only",
-            description=(
-                "Check the scenario report is generated as expected for a scenario with goto jumps, "
-                "when executed with the --doc-only option."
-            ),
+            title="Scenario report action/result indentation",
+            description="Check the scenario report saves main logger indentation at the beginning of ACTION/RESULT texts.",
         )
         self.verifies(
             scenario.reqs.SCENARIO_REPORT,
-            scenario.reqs.GOTO,
-            scenario.reqs.DOC_ONLY,
+            (scenario.reqs.SCENARIO_LOGGING_ACTION_RESULT_INDENTATION, "Main logger indentation saved in scenario reports for actions and results."),
         )
 
-        self.addstep(ExecScenario(scenario.test.paths.GOTO_SCENARIO, generate_report=True, doc_only=True))
+        self.addstep(ExecScenario(scenario.test.paths.LOGGING_INDENTATION_SCENARIO, generate_report=True))
         self.addstep(CheckFullScenarioReport(ExecScenario.getinstance()))

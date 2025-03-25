@@ -27,7 +27,10 @@ class ScenarioReport011(scenario.test.TestCase):
         scenario.test.TestCase.__init__(
             self,
             title="Scenario report simple scenario --doc-only",
-            description="Check the scenario report is generated as expected for a simple scenario, executed with the --doc-only option set.",
+            description=(
+                "Check the scenario report is generated as expected for a simple scenario, "
+                "when executed with the --doc-only option."
+            ),
         )
         self.verifies(
             scenario.reqs.SCENARIO_REPORT,

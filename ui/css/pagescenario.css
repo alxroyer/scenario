@@ -90,6 +90,10 @@
                 /* Avoid extra indentation for actions/results, already indented before. */
                 div#scenario ul.actions-results { padding-left: 0px; }
 
+                /* Action/result indentation. */
+                div#scenario span.action-result.indentation pre { display: inline-block; }  /* Keep inline. */
+                div#scenario span.action-result.indentation pre { font-size: 0.5em; }  /* Adjust size. */
+
                 /* Action/result executions. */
 
                     /* Indent execution results below the action/result main line. */

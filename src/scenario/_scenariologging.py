@@ -115,7 +115,10 @@ class ScenarioLogging:
         else:
             # Multiline display.
             _FAST_PATH.main_logger.rawoutput(f"  {name}:")
-            self._displaylongtext(left="    ", long_text=value)
+            self._displaylongtext(
+                left="    ",
+                long_text=value,
+            )
 
         self._calls.append(ScenarioLogging._Call.ATTRIBUTE)
 
@@ -198,24 +201,44 @@ class ScenarioLogging:
 
     def actionresult(
             self,
-            actionresult,  # type: _ActionResultDefinitionType
+            action_result,  # type: _ActionResultDefinitionType
     ):  # type: (...) -> None
         """
         Displays an action or an expected result being executed.
 
-        :param actionresult: Action or expected result being executed.
+        :param action_result: Action or expected result being executed.
         """
-        if (actionresult.type == _FAST_PATH.action_result_definition_cls.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
+        if (action_result.type == _FAST_PATH.action_result_definition_cls.Type.ACTION) and self._calls and (self._calls[-1] == "result"):
             # Add space before an action only after results.
             _FAST_PATH.main_logger.rawoutput("")
 
         self._displaylongtext(
-            left=f"  {str(actionresult.type).upper():>{self.ACTION_RESULT_MARGIN - 4}}: {_FAST_PATH.main_logger.getindentation()}",
-            long_text=actionresult.description,
+            left=f"  {action_result.type.upper():>{self.ACTION_RESULT_MARGIN - 4}}: {action_result.indentation}",
+            long_text=action_result.description,
         )
 
-        # Note: `str(actionresult.type)` is either 'ACTION' or 'RESULT'.
-        self._calls.append(ScenarioLogging._Call(str(actionresult.type).lower()))
+        # Push either 'action' or 'result' to `self._calls`.
+        self._calls.append(ScenarioLogging._Call(action_result.type.lower()))
+
+    def evidence(
+            self,
+            action_result,  # type: _ActionResultDefinitionType
+            evidence,  # type: str
+    ):  # type: (...) -> None
+        """
+        Displays an evidence.
+
+        Evidence being saved with the test results shall also be printed out in the console.
+
+        :param action_result: Action or expected result being executed.
+        :param evidence: Evidence text.
+        """
+        self._displaylongtext(
+            left=f"  {'EVIDENCE':>{self.ACTION_RESULT_MARGIN - 4}}: {action_result.indentation}  -> ",
+            long_text=evidence,
+        )
+
+        # Do not append 'evidence' to `self._calls` in order not to break the 'action'/'result' sequences.
 
     def error(
             self,
@@ -243,24 +266,6 @@ class ScenarioLogging:
         if isinstance(error, _ExceptionErrorImpl):
             _FAST_PATH.main_logger.log(_log_level, "!!! EXCEPTION !!!")
             _FAST_PATH.main_logger.log(_log_level, "")
-
-    def evidence(
-            self,
-            evidence,  # type: str
-    ):  # type: (...) -> None
-        """
-        Displays an evidence.
-
-        Evidence being saved with the test results shall also be printed out in the console.
-
-        :param evidence: Evidence text.
-        """
-        self._displaylongtext(
-            left=f"  {'EVIDENCE':>{self.ACTION_RESULT_MARGIN - 4}}: {_FAST_PATH.main_logger.getindentation()}  -> ",
-            long_text=evidence,
-        )
-
-        # Do not append 'evidence' to :attr:`_calls` in order not to break the 'action'/'result' sequences.
 
     def endscenario(
             self,
@@ -309,6 +314,7 @@ class ScenarioLogging:
 
     def _displaylongtext(
             self,
+            *,
             left,  # type: str
             long_text,  # type: str
     ):  # type: (...) -> None

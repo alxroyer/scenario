@@ -455,6 +455,10 @@ class ScenarioReport(_LoggerImpl):
                 "executions": [],
             }  # type: _JsonDictType
 
+            # Optionally save action/result indentation, if any.
+            if action_result_definition.indentation:
+                _json_action_result_definition["indentation"] = action_result_definition.indentation
+
             for _action_result_execution in action_result_definition.executions:  # type: _ActionResultExecutionType
                 _json_action_result_execution = {
                     "time": _action_result_execution.time.tojson(),
@@ -500,8 +504,11 @@ class ScenarioReport(_LoggerImpl):
             _action_result_definition = _ActionResultDefinitionImpl(
                 type=_action_result_type,
                 description=json_action_result_definition["description"],
+                indentation=(json_action_result_definition["indentation"] if ("indentation" in json_action_result_definition) else ""),
             )  # type: _ActionResultDefinitionType
             self.debug("Description: %r", _action_result_definition.description)
+            if _action_result_definition.indentation:
+                self.debug("Indentation: %r", _action_result_definition.indentation)
 
             for _json_action_result_execution in json_action_result_definition["executions"]:  # type: _JsonDictType
                 self.debug("Reading action/result execution instance from JSON: %s", _debugutils.jsondump(_json_action_result_execution, indent=2),

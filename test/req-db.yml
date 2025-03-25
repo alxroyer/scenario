@@ -200,7 +200,7 @@ KNOWN_ISSUES:
 LOGGING:
   id: LOGGING
   subrefs:
-  - LOGGING/File
+  - LOGGING/file
   text: 'The scenario framework provides logging facilities
 
     with the following characteristics in order to ease test execution analyses:
@@ -300,7 +300,8 @@ SCENARIO_EXECUTION:
   title: Scenario steps execution
 SCENARIO_LOGGING:
   id: SCENARIO_LOGGING
-  subrefs: []
+  subrefs:
+  - SCENARIO_LOGGING/action-result-indentation
   text: 'The scenario execution provides log information that lets the tester know
     the useful information about it:
 
@@ -317,7 +318,12 @@ SCENARIO_LOGGING:
 
     - The known issues registered (see KNOWN_ISSUES),
 
-    - The final status of the test execution.'
+    - The final status of the test execution.
+
+
+    The main logger indentation (see LOGGING) may be used to set ACTION/RESULT indentation.
+
+    The ACTION/RESULT indentation is save at definition time.'
   title: '`scenario` logging'
 SCENARIO_REPORT:
   id: SCENARIO_REPORT

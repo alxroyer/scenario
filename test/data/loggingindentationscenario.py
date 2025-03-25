@@ -25,7 +25,7 @@ class LoggingIndentationScenario(scenario.Scenario):
             title="Logging indentation scenario sample",
         )
 
-    def step200(self):  # type: (...) -> None
+    def step200(self):  # type: (...) -> None  # location: step200
         self.STEP("Logging indentation")
 
         if self.ACTION("#0: Log something with the main logger."):
@@ -44,56 +44,66 @@ class LoggingIndentationScenario(scenario.Scenario):
         if self.ACTION("#1: Display an evidence line."):
             self.evidence("#1: Evidence.")
 
-        if self.ACTION("#2: Add indentation with this scenario class logger again."):
-            self.pushindentation()
-        if self.ACTION("#2: Log something with the main logger."):
-            scenario.logging.info("#2: Main logger info line")
-        if self.ACTION("#2: Log something with this scenario logger."):
-            self.info("#2: Class logger info line")
-        if self.ACTION("#2: Display an evidence line."):
-            self.evidence("#2: Evidence.")
+        with self.pushindentation():
+            self.ACTION("#2 actions being set in an indentation context with this scenario class logger again.")
+            if self.ACTION("#2: Log something with the main logger."):
+                scenario.logging.info("#2: Main logger info line")
+            if self.ACTION("#2: Log something with this scenario logger."):
+                self.info("#2: Class logger info line")
+            if self.ACTION("#2: Display an evidence line."):
+                self.evidence("#2: Evidence.")
 
         if self.ACTION("#3: Add indentation with the main logger."):
             scenario.logging.pushindentation()
         if self.ACTION("#3: Log something with the main logger."):
             scenario.logging.info("#3: Main logger info line")
         if self.ACTION("#3: Log something with this scenario logger."):
-            self.info("#3: Class-logger info line")
+            self.info("#3: Class logger info line")
         if self.ACTION("#3: Display an evidence line."):
             self.evidence("#3: Evidence.")
 
-        if self.ACTION("#4: Add indentation with the main logger again."):
-            scenario.logging.pushindentation()
-        if self.ACTION("#4: Log something with the main logger."):
-            scenario.logging.info("#4: Main logger info line")
-        if self.ACTION("#4: Log something with this scenario logger."):
-            self.info("#4: Class-logger info line")
-        if self.ACTION("#4: Display an evidence line."):
-            self.evidence("#4: Evidence.")
+        with scenario.logging.pushindentation():
+            self.ACTION("#4 actions being set in an indentation context with the main logger again.")
+            if self.ACTION("#4: Log something with the main logger."):
+                scenario.logging.info("#4: Main logger info line")
+            if self.ACTION("#4: Log something with this scenario logger."):
+                self.info("#4: Class logger info line")
+            if self.ACTION("#4: Display an evidence line."):
+                self.evidence("#4: Evidence.")
 
-        if self.ACTION("#5: Remove indentation with this scenario class logger."):
-            self.popindentation()
+        if self.ACTION("#5: Add indentation with both loggers."):
+            self.pushindentation()
+            scenario.logging.pushindentation()
         if self.ACTION("#5: Log something with the main logger."):
             scenario.logging.info("#5: Main logger info line")
         if self.ACTION("#5: Log something with this scenario logger."):
-            self.info("#5: Class-logger info line")
+            self.info("#5: Class logger info line")
         if self.ACTION("#5: Display an evidence line."):
-            self.evidence("#5: Evidence")
+            self.evidence("#5: Evidence.")
 
-        if self.ACTION("#6: Reset indentation with the main logger."):
-            scenario.logging.resetindentation()
+        if self.ACTION("#6: Remove indentation with this scenario class logger."):
+            self.popindentation()
         if self.ACTION("#6: Log something with the main logger."):
             scenario.logging.info("#6: Main logger info line")
         if self.ACTION("#6: Log something with this scenario logger."):
-            self.info("#6: Class-logger info line")
+            self.info("#6: Class logger info line")
         if self.ACTION("#6: Display an evidence line."):
-            self.evidence("#6: Evidence")
+            self.evidence("#6: Evidence.")
 
-        if self.ACTION("#7: Reset indentation with this scenario class logger."):
-            self.resetindentation()
+        if self.ACTION("#7: Reset indentation with the main logger."):
+            scenario.logging.resetindentation()
         if self.ACTION("#7: Log something with the main logger."):
             scenario.logging.info("#7: Main logger info line")
         if self.ACTION("#7: Log something with this scenario logger."):
-            self.info("#7: Class-logger info line")
+            self.info("#7: Class logger info line")
         if self.ACTION("#7: Display an evidence line."):
-            self.evidence("#7: Evidence")
+            self.evidence("#7: Evidence.")
+
+        if self.ACTION("#8: Reset indentation with this scenario class logger."):
+            self.resetindentation()
+        if self.ACTION("#8: Log something with the main logger."):
+            scenario.logging.info("#8: Main logger info line")
+        if self.ACTION("#8: Log something with this scenario logger."):
+            self.info("#8: Class logger info line")
+        if self.ACTION("#8: Display an evidence line."):
+            self.evidence("#8: Evidence.")

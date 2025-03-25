@@ -46,10 +46,13 @@ class ActionResultDefinition:
             self,
             type,  # type: ActionResultDefinition.Type  # noqa  ## Shadows built-in name 'type'
             description,  # type: _textutils.AnyLongTextType
+            *,
+            indentation,  # type: str
     ):  # type: (...) -> None
         """
         :param type: Action/result type.
         :param description: User description for this action/result.
+        :param indentation: Action/result indentation (i.e. main logging indentation, see :class:`._loggermain.MainLogger`).
 
         .. note:: As it makes the API convenient, we deliberately shadow the built-in with the ``type`` parameter.
         """
@@ -57,6 +60,8 @@ class ActionResultDefinition:
         self.type = type  # type: ActionResultDefinition.Type
         #: Action/result textual description.
         self.description = _textutils.anylongtext2str(description)  # type: str
+        #: Action/result indentation.
+        self.indentation = indentation  # type: str
         #: Owner step.
         #:
         #: Set when :meth:`._stepdefinition.StepDefinition.addactionresult()` is called.

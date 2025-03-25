@@ -1,0 +1,77 @@
+SCENARIO 'test/data/loggingindentationscenario.py'
+------------------------------------------------
+  TITLE: Logging indentation scenario sample
+
+
+STEP#1: Logging indentation (test/data/loggingindentationscenario.py:28:LoggingIndentationScenario.step200)
+------------------------------------------------
+    ACTION: #0: Log something with the main logger.
+              INFO     #0: Main logger info line
+    ACTION: #0: Log something with this scenario logger.
+              INFO     [test/data/loggingindentationscenario.py] #0: Class logger info line
+    ACTION: #0: Display an evidence line.
+  EVIDENCE:   -> #0: Evidence.
+    ACTION: #1: Add indentation with this scenario class logger.
+    ACTION: #1: Log something with the main logger.
+              INFO     #1: Main logger info line
+    ACTION: #1: Log something with this scenario logger.
+              INFO     [test/data/loggingindentationscenario.py]     #1: Class logger info line
+    ACTION: #1: Display an evidence line.
+  EVIDENCE:   -> #1: Evidence.
+    ACTION: #2 actions being set in an indentation context with this scenario class logger again.
+    ACTION: #2: Log something with the main logger.
+              INFO     #2: Main logger info line
+    ACTION: #2: Log something with this scenario logger.
+              INFO     [test/data/loggingindentationscenario.py]         #2: Class logger info line
+    ACTION: #2: Display an evidence line.
+  EVIDENCE:   -> #2: Evidence.
+    ACTION: #3: Add indentation with the main logger.
+    ACTION: #3: Log something with the main logger.
+              INFO         #3: Main logger info line
+    ACTION: #3: Log something with this scenario logger.
+              INFO         [test/data/loggingindentationscenario.py]     #3: Class logger info line
+    ACTION: #3: Display an evidence line.
+  EVIDENCE:   -> #3: Evidence.
+    ACTION:     #4 actions being set in an indentation context with the main logger again.
+    ACTION:     #4: Log something with the main logger.
+              INFO             #4: Main logger info line
+    ACTION:     #4: Log something with this scenario logger.
+              INFO             [test/data/loggingindentationscenario.py]     #4: Class logger info line
+    ACTION:     #4: Display an evidence line.
+  EVIDENCE:       -> #4: Evidence.
+    ACTION: #5: Add indentation with both loggers.
+    ACTION: #5: Log something with the main logger.
+              INFO             #5: Main logger info line
+    ACTION: #5: Log something with this scenario logger.
+              INFO             [test/data/loggingindentationscenario.py]         #5: Class logger info line
+    ACTION: #5: Display an evidence line.
+  EVIDENCE:   -> #5: Evidence.
+    ACTION: #6: Remove indentation with this scenario class logger.
+    ACTION: #6: Log something with the main logger.
+              INFO             #6: Main logger info line
+    ACTION: #6: Log something with this scenario logger.
+              INFO             [test/data/loggingindentationscenario.py]     #6: Class logger info line
+    ACTION: #6: Display an evidence line.
+  EVIDENCE:   -> #6: Evidence.
+    ACTION: #7: Reset indentation with the main logger.
+    ACTION: #7: Log something with the main logger.
+              INFO     #7: Main logger info line
+    ACTION: #7: Log something with this scenario logger.
+              INFO     [test/data/loggingindentationscenario.py]     #7: Class logger info line
+    ACTION: #7: Display an evidence line.
+  EVIDENCE:   -> #7: Evidence.
+    ACTION: #8: Reset indentation with this scenario class logger.
+    ACTION: #8: Log something with the main logger.
+              INFO     #8: Main logger info line
+    ACTION: #8: Log something with this scenario logger.
+              INFO     [test/data/loggingindentationscenario.py] #8: Class logger info line
+    ACTION: #8: Display an evidence line.
+  EVIDENCE:   -> #8: Evidence.
+
+END OF 'test/data/loggingindentationscenario.py'
+------------------------------------------------
+             Status: SUCCESS
+    Number of STEPs: 1/1
+  Number of ACTIONs: 35/35
+  Number of RESULTs: 0/0
+               Time: 00:00:00.000000

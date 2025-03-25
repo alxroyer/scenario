@@ -622,6 +622,8 @@ class ScenarioRunner(_LoggerImpl, _ReqBaselineObjectImpl):
                 _ActionResultDefinitionImpl(
                     type=action_result_type,
                     description=description,
+                    # Save ACTION/RESULT indentation.
+                    indentation=_FAST_PATH.main_logger.getindentation(),
                 ),
             )
 
@@ -676,11 +678,11 @@ class ScenarioRunner(_LoggerImpl, _ReqBaselineObjectImpl):
         """
         self.debug("onevidence(evidence=%r)", evidence)
 
-        if _FAST_PATH.scenario_stack.current_action_result_execution:
+        if _FAST_PATH.scenario_stack.current_action_result_definition and _FAST_PATH.scenario_stack.current_action_result_execution:
             # Save the execution data.
             _FAST_PATH.scenario_stack.current_action_result_execution.evidence.append(evidence)
             # Console display.
-            _FAST_PATH.scenario_logging.evidence(evidence)
+            _FAST_PATH.scenario_logging.evidence(_FAST_PATH.scenario_stack.current_action_result_definition, evidence)
         else:
             _FAST_PATH.scenario_stack.raisecontexterror("No current action / expected result execution")
 

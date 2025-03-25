@@ -265,40 +265,30 @@ Example of output from the `commutativeadditions.py <https://github.com/alxroyer
 If a subscenario executes another subscenario, the '|' indentation is doubled, and so on.
 
 
-.. _logging.indentation.class-logger:
+.. _logging.indentation.user:
 
-Class logger indentation
-^^^^^^^^^^^^^^^^^^^^^^^^
+User indentation
+^^^^^^^^^^^^^^^^
 
-Additional indentation may be useful when the test makes verifications in a recursive way.
-
-It may be set using the following methods:
+The :class:`scenario._logger.Logger` class provides a set of methods
+that enable the user to add indentation:
 
 - :py:meth:`scenario._logger.Logger.pushindentation()`,
 - :py:meth:`scenario._logger.Logger.popindentation()`,
 - :py:meth:`scenario._logger.Logger.resetindentation()`.
 
-When these calls are made on a class logger,
-the logging lines of this class logger are indented the way below.
+or better, use :py:meth:`scenario._logger.Logger.pushindentation()` as a context
+to ensure :py:meth:`scenario._logger.Logger.popindentation()` is called whatever happens
+(code escapes due ``return``, ``break`` and ``continue`` statements, or exceptions).
 
-.. Step `LoggingScenario.step110()` python implementation.
-.. literalinclude:: ../../../demo/loggingdemo.py
-    :language: python
-    :start-at: def step110
-    :end-before: def step120
-    :dedent:
-
-.. Step `LoggingScenario.step110()` console output.
-.. literalinclude:: ../../data/loggingdemo.log
-    :language: none
-    :start-at: STEP#4:
-    :end-before: STEP#5:
+These methods apply to the :ref:`main logger <logging.indentation.main-logger>`
+and :ref:`class loggers <logging.indentation.class-logger>`.
 
 .. admonition:: Additional indentation pattern
     :class: tip
 
     The :py:meth:`scenario._logger.Logger.pushindentation()` and :py:meth:`scenario._logger.Logger.popindentation()` methods
-    have a ``indentation`` parameter that lets you change the 4-space default pattern by what you need.
+    have an ``indentation`` parameter that lets you change the 4-space default pattern by what you need.
 
     When removing indentation, the indentation pattern passed on must be the same as the one added in regards.
 
@@ -307,22 +297,44 @@ the logging lines of this class logger are indented the way below.
         self.class_logger.pushindentation("1> ")
         self.class_logger.pushindentation("2> ")
         self.class_logger.pushindentation("3> ")
+        ...
         self.class_logger.popindentation("3> ")
         self.class_logger.popindentation("2> ")
         self.class_logger.popindentation("1> ")
 
+    Or better, use :py:meth:`scenario._logger.Logger.pushindentation()` as a context:
+
+    .. code-block:: python
+
+        with self.class_logger.pushindentation("1> "):
+            with self.class_logger.pushindentation("2> "):
+                with self.class_logger.pushindentation("3> "):
+                    ...
+
+.. admonition:: Scenario stack v/s user indentation
+    :class: note
+
+    User indentation does not break the :ref:`scenario stack indentation <logging.indentation.scenario-stack>` presentation:
+    the '|' characters remain aligned,
+    user indentation applies after.
+
 
 .. _logging.indentation.main-logger:
+.. _logging.indentation.action-result:
 
-Main logger indentation
-^^^^^^^^^^^^^^^^^^^^^^^
+Main logger or action / result indentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When :py:meth:`scenario._logger.Logger.pushindentation()`, :py:meth:`scenario._logger.Logger.popindentation()`
-and :py:meth:`scenario._logger.Logger.resetindentation()` calls are made on the main logger,
-it takes effect on every log lines:
+Main logger indentation may be used for action / result indentation
+to improve the readability of the test.
+
+Main logger indentation applies to:
 
 - main logger and class logger loggings (from *DEBUG* to *ERROR* log levels),
 - but also actions, expected results and evidence texts.
+
+This is handful in case of steps with numerous actions / results,
+either repeated in loops or related to different topics.
 
 .. Step `LoggingScenario.step120()` python implementation.
 .. literalinclude:: ../../../demo/loggingdemo.py
@@ -336,13 +348,53 @@ it takes effect on every log lines:
     :start-at: STEP#5:
     :end-before: END OF 'demo/loggingdemo.py'
 
-.. admonition:: Scenario stack v/s user indentation
+Action / result indentation is saved with :ref:`scenario reports <reports>`.
+
+.. admonition:: Main logger indentation applicability for action / result indentation
     :class: note
 
-    Even though main logger indentation applies to every log lines,
-    it does not break the :ref:`scenario stack indentation <logging.indentation.scenario-stack>` presentation:
-    the '|' characters remain aligned,
-    the main logger indentation applies after.
+    Main logger indentation is saved as the action / result indentation
+    only at the definition level.
+
+    If additional user indentation is added at the execution level
+    (i.e. under action / result blocks),
+    it is not taken into account.
+
+    This ensures stable action / result indentation outputs
+    whether in `doc-only` mode or not.
+
+
+.. _logging.indentation.class-logger:
+
+Class logger indentation
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Class logger indentation may particularly be useful when debugging recursive implementations.
+That's the reason why the indentation applies
+only if debugging is enabled for the given class logger (default behaviour).
+
+.. admonition:: Force class logger indentation
+    :class: tip
+
+    If you want to force class logger indentation
+    whatever the debugging configuration for it,
+    set the :attr:`scenario._logextradata.LogExtraData.CLASS_LOGGER_INDENTATION` :ref:`extra flag <logging.extra-flags>` to ``True``.
+
+When indentation is used on a class logger,
+indentation applies only to log lines from this class logger.
+
+.. Step `LoggingScenario.step110()` python implementation.
+.. literalinclude:: ../../../demo/loggingdemo.py
+    :language: python
+    :start-at: def step110
+    :end-before: def step120
+    :dedent:
+
+.. Step `LoggingScenario.step110()` console output.
+.. literalinclude:: ../../data/loggingdemo.log
+    :language: none
+    :start-at: STEP#4:
+    :end-before: STEP#5:
 
 
 .. _logging.debug:

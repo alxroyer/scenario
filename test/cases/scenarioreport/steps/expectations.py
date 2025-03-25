@@ -477,6 +477,20 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
                 evidence=f"{_type_desc.capitalize()} description",
             )
 
+        if action_result_expectations.indentation is not None:
+            if action_result_expectations.indentation:
+                if self.RESULT(f"The {_type_desc} indentation is {action_result_expectations.indentation!r}."):
+                    self.assertjson(
+                        json_action_result_definition, "indentation", type=str, value=action_result_expectations.indentation,
+                        evidence=f"{_type_desc.capitalize()} indentation",
+                    )
+            else:
+                if self.RESULT(f"The {_type_desc} has no indentation."):
+                    self.assertnotin(
+                        "indentation", json_action_result_definition,
+                        evidence=f"{_type_desc.capitalize()} indentation",
+                    )
+
         if not self.getexecstep(ExecScenario).doc_only:
             _json_searched_action_result_execution = {}  # type: scenario.types.JsonDict
             if self.doexecute():

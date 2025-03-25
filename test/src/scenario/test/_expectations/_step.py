@@ -46,13 +46,16 @@ class StepExpectations:
 
     def addaction(
             self,
-            action,  # type: str
+            description,  # type: str
+            *,
+            indentation=None,  # type: str
     ):  # type: (...) -> _ActionResultExpectationsType
         from ._actionresult import ActionResultExpectations
 
         _action = ActionResultExpectations(self)  # type: ActionResultExpectations
         _action.type = scenario.ActionResult.Type.ACTION
-        _action.description = action
+        _action.description = description
+        _action.indentation = indentation
         if self.action_result_expectations is None:
             self.action_result_expectations = []
         self.action_result_expectations.append(_action)
@@ -60,13 +63,16 @@ class StepExpectations:
 
     def addresult(
             self,
-            result,  # type: str
+            description,  # type: str
+            *,
+            indentation=None,  # type: str
     ):  # type: (...) -> _ActionResultExpectationsType
         from ._actionresult import ActionResultExpectations
 
         _result = ActionResultExpectations(self)  # type: ActionResultExpectations
         _result.type = scenario.ActionResult.Type.RESULT
-        _result.description = result
+        _result.description = description
+        _result.indentation = indentation
         if self.action_result_expectations is None:
             self.action_result_expectations = []
         self.action_result_expectations.append(_result)
