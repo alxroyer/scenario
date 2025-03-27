@@ -234,7 +234,7 @@ class KeyListFileUpdater(FileUpdater):
             self,
             path,  # type: scenario.Path
             test_data,  # type: TestData
-            ordered_location_keys,  # type: typing.List[str]
+            ordered_location_keys,  # type: typing.Sequence[str]
             regex,  # type: bytes
             pretty_path,  # type: typing.Callable[[typing.Match[bytes]], str]
             new_line,  # type: typing.Callable[[typing.Match[bytes], scenario.CodeLocation], bytes]
@@ -263,7 +263,7 @@ class KeyListFileUpdater(FileUpdater):
         )
 
         # Will be dequeued, make a copy.
-        self._ordered_location_keys = ordered_location_keys.copy()  # type: typing.List[str]
+        self._ordered_location_keys = list(ordered_location_keys)  # type: typing.List[str]
 
     def _nextlocationkey(self):  # type: (...) -> str
         assert self._ordered_location_keys, f"{self.path}: Not enough location keys"
@@ -279,8 +279,17 @@ class KeyListFileUpdater(FileUpdater):
 def updatelog(
         path,  # type: scenario.Path
         test_data,  # type: TestData
-        ordered_location_keys,  # type: typing.List[str]
+        *,
+        ordered_location_keys=None,  # type: typing.Sequence[str]
 ):  # type: (...) -> None
+    """
+    Updates locations in a log file.
+
+    See :class:`KeyListFileUpdater` for a description of parameters.
+    ``ordered_location_keys`` defaults to ``test_data.locations`` keys.
+    """
+    if ordered_location_keys is None:
+        ordered_location_keys = list(test_data.locations)
     KeyListFileUpdater(
         path, test_data, ordered_location_keys,
         rb'^(.*\((.*):)\d+(:.*\))$',
@@ -292,9 +301,17 @@ def updatelog(
 def updatejson(
         path,  # type: scenario.Path
         test_data,  # type: TestData
-        ordered_location_keys,  # type: typing.List[str]
+        *,
+        ordered_location_keys=None,  # type: typing.Sequence[str]
 ):  # type: (...) -> None
-    # JsonFileUpdater(path, test_data, ordered_location_keys).launch()
+    """
+    Updates locations in a JSON file.
+
+    See :class:`KeyListFileUpdater` for a description of parameters.
+    ``ordered_location_keys`` defaults to ``test_data.locations`` keys.
+    """
+    if ordered_location_keys is None:
+        ordered_location_keys = list(test_data.locations)
     KeyListFileUpdater(
         path, test_data, ordered_location_keys,
         rb'^( *"location": "(.*):)\d+(:.*(",|"))$',

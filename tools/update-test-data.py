@@ -75,11 +75,11 @@ class UpdateTestData:
             "step020": "FailingScenario.step020",
         })  # type: TestData
         updatedataexpectations(_test_data)
-        updatejson(scenario.test.paths.FAILING_SCENARIO.with_suffix(".doc-only.json"), _test_data, [
+        updatejson(scenario.test.paths.FAILING_SCENARIO.with_suffix(".doc-only.json"), _test_data, ordered_location_keys=[
             # Steps:
             "step010", "step020",
         ])
-        updatejson(scenario.test.paths.FAILING_SCENARIO.with_suffix(".executed.json"), _test_data, [
+        updatejson(scenario.test.paths.FAILING_SCENARIO.with_suffix(".executed.json"), _test_data, ordered_location_keys=[
             "step010",
             "step010-exception",  # Step errors.
             "step010-exception",  # Action errors.
@@ -97,14 +97,8 @@ class UpdateTestData:
             "step030": "GotoScenario.step030",
             "step040": "GotoScenario.step040",
         })  # type: TestData
-        updatejson(scenario.test.paths.GOTO_SCENARIO.with_suffix(".doc-only.json"), _test_data, [
-            # Steps:
-            "step000", "step010", "step020", "step030", "step040",
-        ])
-        updatejson(scenario.test.paths.GOTO_SCENARIO.with_suffix(".executed.json"), _test_data, [
-            # Steps:
-            "step000", "step010", "step020", "step030", "step040",
-        ])
+        updatejson(scenario.test.paths.GOTO_SCENARIO.with_suffix(".doc-only.json"), _test_data)
+        updatejson(scenario.test.paths.GOTO_SCENARIO.with_suffix(".executed.json"), _test_data)
 
     def _updateknownissuesscenario(self):  # type: (...) -> None
         from scenario.tools.updatetestdata import TestData, updatedataexpectations, updatejson
@@ -127,7 +121,7 @@ class UpdateTestData:
             "step020": "KnownIssuesScenario.step020",
         })  # type: TestData
         updatedataexpectations(_test_data)
-        updatejson(scenario.test.paths.KNOWN_ISSUES_SCENARIO.with_suffix(".doc-only.json"), _test_data, [
+        updatejson(scenario.test.paths.KNOWN_ISSUES_SCENARIO.with_suffix(".doc-only.json"), _test_data, ordered_location_keys=[
             # Steps:
             "KnownIssuesStep", "step010", "step020",
             # Scenario warnings:
@@ -136,7 +130,7 @@ class UpdateTestData:
             "#001", "#004",  # KnownIssuesScenario.KnownIssuesStep.step()
             "#011", "#014",  # KnownIssuesScenario.step010()
         ])
-        updatejson(scenario.test.paths.KNOWN_ISSUES_SCENARIO.with_suffix(".executed.json"), _test_data, [
+        updatejson(scenario.test.paths.KNOWN_ISSUES_SCENARIO.with_suffix(".executed.json"), _test_data, ordered_location_keys=[
             # Steps:
 
             # - KnownIssuesScenario.KnownIssuesStep:
@@ -172,22 +166,10 @@ class UpdateTestData:
         _test_data = TestData(scenario.test.paths.LOGGING_INDENTATION_SCENARIO, {
             "step200": "LoggingIndentationScenario.step200",
         })  # type: TestData
-        updatelog(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".doc-only.log"), _test_data, [
-            # Steps:
-            "step200",
-        ])
-        updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".doc-only.json"), _test_data, [
-            # Steps:
-            "step200",
-        ])
-        updatelog(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.log"), _test_data, [
-            # Steps:
-            "step200",
-        ])
-        updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.json"), _test_data, [
-            # Steps:
-            "step200",
-        ])
+        updatelog(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".doc-only.log"), _test_data)
+        updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".doc-only.json"), _test_data)
+        updatelog(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.log"), _test_data)
+        updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.json"), _test_data)
 
     def _updatesimplescenario(self):  # type: (...) -> None
         from scenario.tools.updatetestdata import TestData, updatejson, updatelog
@@ -197,26 +179,11 @@ class UpdateTestData:
             "step020": "SimpleScenario.step020",
             "step030": "SimpleScenario.step030",
         })  # type: TestData
-        updatelog(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".doc-only.log"), _test_data, [
-            # Steps:
-            "step010", "step020", "step030",
-        ])
-        updatejson(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".doc-only.json"), _test_data, [
-            # Steps:
-            "step010", "step020", "step030",
-        ])
-        updatelog(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".executed.log"), _test_data, [
-            # Steps:
-            "step010", "step020", "step030",
-        ])
-        updatejson(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".executed.json"), _test_data, [
-            # Steps:
-            "step010", "step020", "step030",
-        ])
-        updatejson(scenario.test.paths.SUPERSCENARIO_SCENARIO.with_suffix(".executed.json"), _test_data, [
-            # Steps:
-            "step010", "step020", "step030",
-        ])
+        updatelog(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".doc-only.log"), _test_data)
+        updatejson(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".doc-only.json"), _test_data)
+        updatelog(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".executed.log"), _test_data)
+        updatejson(scenario.test.paths.SIMPLE_SCENARIO.with_suffix(".executed.json"), _test_data)
+        updatejson(scenario.test.paths.SUPERSCENARIO_SCENARIO.with_suffix(".executed.json"), _test_data)
 
     def _updatesuperscenario(self):  # type: (...) -> None
         from scenario.tools.updatetestdata import TestData, updatejson
@@ -224,14 +191,8 @@ class UpdateTestData:
         _test_data = TestData(scenario.test.paths.SUPERSCENARIO_SCENARIO, {
             "step001": "SuperScenario.step001",
         })  # type: TestData
-        updatejson(scenario.test.paths.SUPERSCENARIO_SCENARIO.with_suffix(".doc-only.json"), _test_data, [
-            # Steps:
-            "step001",
-        ])
-        updatejson(scenario.test.paths.SUPERSCENARIO_SCENARIO.with_suffix(".executed.json"), _test_data, [
-            # Steps:
-            "step001",
-        ])
+        updatejson(scenario.test.paths.SUPERSCENARIO_SCENARIO.with_suffix(".doc-only.json"), _test_data)
+        updatejson(scenario.test.paths.SUPERSCENARIO_SCENARIO.with_suffix(".executed.json"), _test_data)
 
     def _updatesyntaxerrorscenario(self):  # type: (...) -> None
         from scenario.tools.updatetestdata import TestData, updatefile
