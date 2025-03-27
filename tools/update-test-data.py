@@ -47,6 +47,7 @@ class UpdateTestData:
         self._updategotoscenario()
         self._updateknownissuesscenario()
         self._updateloggingindentationscenario()
+        self._updatelongtextsscenario()
         self._updatesimplescenario()
         self._updatesuperscenario()
         self._updatesyntaxerrorscenario()
@@ -170,6 +171,18 @@ class UpdateTestData:
         updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".doc-only.json"), _test_data)
         updatelog(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.log"), _test_data)
         updatejson(scenario.test.paths.LOGGING_INDENTATION_SCENARIO.with_suffix(".executed.json"), _test_data)
+
+    def _updatelongtextsscenario(self):  # type: (...) -> None
+        from scenario.tools.updatetestdata import TestData, updatejson, updatelog
+
+        _test_data = TestData(scenario.test.paths.LONG_TEXTS_SCENARIO, {
+            "step010": "LongTextsScenario.step010",
+            "step020": "LongTextsScenario.step020",
+        })  # type: TestData
+        updatelog(scenario.test.paths.LONG_TEXTS_SCENARIO.with_suffix(".doc-only.log"), _test_data)
+        updatejson(scenario.test.paths.LONG_TEXTS_SCENARIO.with_suffix(".doc-only.json"), _test_data)
+        updatelog(scenario.test.paths.LONG_TEXTS_SCENARIO.with_suffix(".executed.log"), _test_data)
+        updatejson(scenario.test.paths.LONG_TEXTS_SCENARIO.with_suffix(".executed.json"), _test_data)
 
     def _updatesimplescenario(self):  # type: (...) -> None
         from scenario.tools.updatetestdata import TestData, updatejson, updatelog

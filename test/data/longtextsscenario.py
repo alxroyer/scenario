@@ -45,7 +45,7 @@ class LongTextsScenario(scenario.Scenario):
             """),
         )
 
-    def step010(self):  # type: (...) -> None
+    def step010(self):  # type: (...) -> None  # location: step010
         self.STEP("Multiline strings")
 
         if self.ACTION("""
@@ -70,7 +70,7 @@ class LongTextsScenario(scenario.Scenario):
                 Expected result evidence line#2.
             """)
 
-    def step020(self):  # type: (...) -> None
+    def step020(self):  # type: (...) -> None  # location: step020
         self.STEP("List of strings")
 
         if self.ACTION([

@@ -24,7 +24,7 @@
   },
   "steps": [
     {
-      "location": "test/data/longtextsscenario.py:47:LongTextsScenario.step010",
+      "location": "test/data/longtextsscenario.py:48:LongTextsScenario.step010",
       "description": "Multiline strings",
       "executions": [
         {
@@ -68,7 +68,7 @@
       ]
     },
     {
-      "location": "test/data/longtextsscenario.py:72:LongTextsScenario.step020",
+      "location": "test/data/longtextsscenario.py:73:LongTextsScenario.step020",
       "description": "List of strings",
       "executions": [
         {
