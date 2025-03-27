@@ -18,7 +18,12 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Bug! A main requirement downstream traceability does not list tests which only track sub-refs of the given req
+      (eg. logging421.py and SCENARIO_LOGGING? tbc).
+    - Bug! "Reload campaigns" button does not refresh the current page.
+    - Upstream traceability: prefer requirement title rather than test title for default comment.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
+        - Don't output "subrefs" in req-db files if list is empty.
         - Display known issues.
         - Check campaign results display.
     - Implement JSON schemas.
