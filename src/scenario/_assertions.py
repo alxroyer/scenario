@@ -675,7 +675,7 @@ class Assertions(abc.ABC):
         _match = re.search(regex, string)  # type: typing.Optional[typing.Match[typing.AnyStr]]
         assert _match, _assertionhelpers.errmsg(
             err,
-            "Regex did not match: %s not found in %s", _debugutils.saferepr(regex), _debugutils.saferepr(string),
+            "Regex does not match: %s not found in %s", _debugutils.saferepr(regex), _debugutils.saferepr(string),
         )
         _matched = string[_match.start():_match.end()]  # type: typing.AnyStr
         if _matched != string:
@@ -717,7 +717,7 @@ class Assertions(abc.ABC):
             _matched = string[_match.start():_match.end()]  # type: typing.AnyStr
             assert False, _assertionhelpers.errmsg(
                 err,
-                "Regex did match: %s matches %s in %s",
+                "Regex does match: %s matches %s in %s",
                 _debugutils.saferepr(_matched), _debugutils.saferepr(regex), _debugutils.saferepr(string, focus=_matched),
             )
         _assertionhelpers.evidence(
