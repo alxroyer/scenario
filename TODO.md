@@ -66,6 +66,13 @@
         - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
         - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
         - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
+- Issue #xxx: Problems when a configuration key accepts a comma-separated string or a list (eg. 'scenario.test_suite_files'):
+    - If a list has already been set, then a comma-separated string raises an error:
+      "Bad final data ... for a list node".
+    - TBC: If the configuration key has already been set with a comma-separated string, then a list may raise an error as well.
+    - If the list has already been set with a comma-separated string, then `scenario.conf.get(..., default=[])` raises an error:
+      "ValueError: <args>:'...': '...' not a valid list"
+    - TBC: If the configuration key has already been set with a list, then `scenario.conf.get(..., default="")"` may raise an error as well.
 - Issue #xxx: Remove `scenario` specific statistics in JUnit reports by default.
 - Issue #xxx: Improve `Path`:
     - Memo: '//void/path' may lead to long network path resolutions...
