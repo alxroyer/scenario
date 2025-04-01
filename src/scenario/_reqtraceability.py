@@ -221,12 +221,10 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 _json_scenario = {
                     "id": self.id,
                     "name": self.name,
+                    "title": self.scenario.title,
                     "comments": self.comments,
                     "steps": {},
                 }  # type: _JsonDictType
-
-                if self.scenario.title:
-                    _json_scenario["title"] = self.scenario.title
 
                 if allow_results and (self.scenario.execution is not None):
                     _json_scenario["results"] = {
@@ -239,6 +237,12 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                     _json_scenario["steps"][f"step#{_downstream_step.step.number}"] = _downstream_step.tojson(allow_results=allow_results)
                     # Remove `ReqTraceability.Downstream.Step` number field, already given with the key entry.
                     del _json_scenario["steps"][f"step#{_downstream_step.step.number}"]["number"]
+
+                # Remove optional information when empty.
+                ReqTraceabilityHelper.removeemptyjsonfields(
+                    _json_scenario,
+                    ["title", "comments", "steps"],
+                )
 
                 return _json_scenario
 
@@ -325,6 +329,12 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                             "warnings": [str(_warning) for _warning in _step_execution.warnings],
                         })
 
+                # Remove optional information when empty.
+                ReqTraceabilityHelper.removeemptyjsonfields(
+                    _json_step,
+                    ["comments"],
+                )
+
                 return _json_step
 
     def getdownstream(self):  # type: (...) -> ReqDownstreamTraceabilityType
@@ -347,7 +357,10 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
             _downstream_scenario = None  # type: typing.Optional[ReqTraceability.Downstream.Scenario]
 
-            _req_verifiers_set = _req_ref.getverifiers()  # type: SetWithReqLinksType[_ReqVerifierType]
+            _req_verifiers_set = (
+                _req_ref.req.getverifiers(walk_subrefs=True) if _req_ref.ismain()
+                else _req_ref.getverifiers()
+            )  # type: SetWithReqLinksType[_ReqVerifierType]
             for _req_verifier in _ReqVerifierImpl.orderedset(_req_verifiers_set):  # type: _ReqVerifierType
                 for _req_link in _req_verifiers_set[_req_verifier]:  # type: _ReqLinkType
                     if isinstance(_req_verifier, _ScenarioDefinitionImpl):
@@ -563,18 +576,13 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 #:
                 #: Empty when :attr:`req_link` is ``None``.
                 #:
-                #: When the link does not define an explicit comment, the scenario title is taken into account by default.
+                #: When the link does not define an explicit comment, the requirement title is taken into account by default.
                 self.comments = ""  # type: str
                 #: Subreferences of the requirement, verified by the given scenario.
                 self.req_subrefs = []  # type: typing.List[ReqTraceability.Upstream.ReqSubref]
 
                 if req_link:
-                    self.comments = req_link.comments
-                if not self.comments:
-                    if isinstance(self.upstream_req_verifier.req_verifier, _ScenarioDefinitionImpl):
-                        self.comments = self.upstream_req_verifier.req_verifier.title
-                    if isinstance(self.upstream_req_verifier.req_verifier, _StepDefinitionImpl):
-                        self.comments = self.upstream_req_verifier.req_verifier.description or ""
+                    self.comments = req_link.comments or req.title
 
                 self.upstream_req_verifier.reqs.append(self)
 
@@ -586,20 +594,23 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 """
                 _json_req = {
                     "id": self.req.id,
+                    "title": self.req.title,
+                    # Don't repeat text with requirements in upstream traceability reports.
+                    # "text": self.req.text,
                     "comments": self.comments,
                     "subrefs": {},
                 }  # type: _JsonDictType
-
-                if self.req.title:
-                    _json_req["title"] = self.req.title
-                # Don't repeat text with requirements in upstream traceability reports.
-                # if self.req.text:
-                #     _json_req["text"] = self.req.text
 
                 for _upstream_req_subref in self.req_subrefs:  # type: ReqTraceability.Upstream.ReqSubref
                     _json_req["subrefs"][_upstream_req_subref.req_subref.id] = _upstream_req_subref.tojson()
                     # Remove `ReqTraceability.Upstream.ReqSubref` id field, already given as the key entry.
                     del _json_req["subrefs"][_upstream_req_subref.req_subref.id]["id"]
+
+                # Remove optional information when empty.
+                ReqTraceabilityHelper.removeemptyjsonfields(
+                    _json_req,
+                    ["title", "text", "comments", "subrefs"],
+                )
 
                 return _json_req
 
@@ -635,13 +646,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 self.req_link = req_link  # type: _ReqLinkType
                 #: Comments attached with this link.
                 #:
-                #: When the link does not define an explicit comment, the scenario title is taken into account by default.
-                self.comments = req_link.comments  # type: str
-                if not self.comments:
-                    if isinstance(self.upstream_req.upstream_req_verifier.req_verifier, _ScenarioDefinitionImpl):
-                        self.comments = self.upstream_req.upstream_req_verifier.req_verifier.title
-                    if isinstance(self.upstream_req.upstream_req_verifier.req_verifier, _StepDefinitionImpl):
-                        self.comments = self.upstream_req.upstream_req_verifier.req_verifier.description or ""
+                #: When the link does not define an explicit comment, the requirement subref title is taken into account by default.
+                self.comments = req_link.comments or req_subref.title  # type: str
 
                 self.upstream_req.req_subrefs.append(self)
 
@@ -651,10 +657,21 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 :return: Upstream traceability JSON content.
                 """
-                return {
+                _json_req_subref = {
                     "id": self.req_subref.id,
+                    # In the future, requirement subrefs may hold their own title and text.
+                    # "title": ...,
+                    # "text": ...,
                     "comments": self.comments,
-                }
+                }  # type: _JsonDictType
+
+                # Remove optional information when empty.
+                ReqTraceabilityHelper.removeemptyjsonfields(
+                    _json_req_subref,
+                    ["title", "text", "comments"],
+                )
+
+                return _json_req_subref
 
     def getupstream(self):  # type: (...) -> ReqUpstreamTraceabilityType
         """
@@ -834,3 +851,18 @@ class ReqTraceabilityHelper(abc.ABC):
         :return: Name for the step in tracebility results.
         """
         return f"step#{step.number} ({step.name})"
+
+    @staticmethod
+    def removeemptyjsonfields(
+            json,  # type: _JsonDictType
+            fields,  # type: typing.Sequence[str]
+    ):  # type: (...) -> None
+        """
+        Removes empty fields from a JSON dictionary.
+
+        :param json: JSON dictionary to remove fields from.
+        :param fields: Field names to remove if empty. Field names may be not existing in ``json``.
+        """
+        for _key in fields:  # type: str
+            if (_key in json) and (not json[_key]):
+                del json[_key]

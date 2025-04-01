@@ -33,7 +33,6 @@ class ScenarioLogging071(scenario.test.TestCase):
             ),
         )
         self.verifies(
-            scenario.reqs.SCENARIO_LOGGING,
             scenario.reqs.SCENARIO_LOGGING_ACTION_RESULT_INDENTATION,
             scenario.reqs.DOC_ONLY,
         )

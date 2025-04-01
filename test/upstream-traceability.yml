@@ -22,7 +22,6 @@ test/cases/campaigns/campaign001.py:
   reqs:
     ATTRIBUTES:
       comments: Scenario attributes in campaign reports
-      subrefs: {}
       title: Scenario attributes
     CAMPAIGNS:
       comments: Single test suite
@@ -34,37 +33,29 @@ test/cases/campaigns/campaign001.py:
       title: Campaign executions
     ERROR_HANDLING:
       comments: A scenario error is tracked and does not break the campaign
-      subrefs: {}
       title: Error handling
     KNOWN_ISSUES:
       comments: Known issues reported from scenario to campaign reports
-      subrefs: {}
       title: Known issues
     LOGGING:
-      comments: Campaign execution & reports
       subrefs:
         LOGGING/file:
-          comments: Scenario logging saved with campaign output files
+          comments: Scenario log files saved with campaign output files
       title: Logging facilities
     MULTIPLE_SCENARIO_EXECUTION:
       comments: Campaign final results
-      subrefs: {}
       title: Multiple scenario execution
     REQUIREMENT_MANAGEMENT:
       comments: Requirements in campaign reports
-      subrefs: {}
       title: Requirement management
     SCENARIO_LOGGING:
       comments: Scenario log files gathered with campaign reports
-      subrefs: {}
       title: '`scenario` logging'
     SCENARIO_REPORT:
       comments: Scenario reports gathered with campaign reports
-      subrefs: {}
       title: Scenario reports
     STATISTICS:
       comments: Statistics by scenario, integrated for the campaign
-      subrefs: {}
       title: Scenario execution statistics
   title: Campaign execution & reports
   type: scenario
@@ -73,18 +64,15 @@ test/cases/campaigns/campaign001.py/step#2:
   name: step#2 (CheckCampaignLogExpectations)
   reqs:
     CAMPAIGNS:
-      comments: ''
       subrefs:
         CAMPAIGNS/logging:
           comments: Main campaign logging
       title: Campaign executions
     ERROR_HANDLING:
       comments: Scenario errors logged with main campaign logging
-      subrefs: {}
       title: Error handling
     KNOWN_ISSUES:
       comments: Known issues logged with main campaign logging
-      subrefs: {}
       title: Known issues
   type: step
 test/cases/campaigns/campaign001.py/step#4:
@@ -92,22 +80,18 @@ test/cases/campaigns/campaign001.py/step#4:
   name: step#4 (CheckFinalResultsLogExpectations)
   reqs:
     CAMPAIGNS:
-      comments: ''
       subrefs:
         CAMPAIGNS/logging:
           comments: Campaign final results
       title: Campaign executions
     ERROR_HANDLING:
       comments: Scenario errors logged with campaign final results
-      subrefs: {}
       title: Error handling
     KNOWN_ISSUES:
       comments: Known issues logged with campaign final results
-      subrefs: {}
       title: Known issues
     STATISTICS:
       comments: Statistics logged with campaign final results
-      subrefs: {}
       title: Scenario execution statistics
   type: step
 test/cases/campaigns/campaign001.py/step#5:
@@ -115,24 +99,20 @@ test/cases/campaigns/campaign001.py/step#5:
   name: step#5 (CheckCampaignOutdirFiles)
   reqs:
     CAMPAIGNS:
-      comments: ''
       subrefs:
         CAMPAIGNS/logging:
           comments: Campaign output files
       title: Campaign executions
     LOGGING:
-      comments: ''
       subrefs:
         LOGGING/file:
-          comments: Scenario logging saved with campaign output files
+          comments: Scenario log files saved with campaign output files
       title: Logging facilities
     REQUIREMENT_MANAGEMENT:
       comments: Requirements saved with campaign output files
-      subrefs: {}
       title: Requirement management
     SCENARIO_REPORT:
       comments: Scenario reports saved with campaign output files
-      subrefs: {}
       title: Scenario reports
   type: step
 test/cases/campaigns/campaign001.py/step#6:
@@ -140,22 +120,18 @@ test/cases/campaigns/campaign001.py/step#6:
   name: step#6 (CheckCampaignReport)
   reqs:
     CAMPAIGNS:
-      comments: ''
       subrefs:
         CAMPAIGNS/reports:
           comments: Campaign report content
       title: Campaign executions
     ERROR_HANDLING:
       comments: Scenario errors saved in campaign report content
-      subrefs: {}
       title: Error handling
     KNOWN_ISSUES:
       comments: Known issues saved in campaign report content
-      subrefs: {}
       title: Known issues
     STATISTICS:
       comments: Statistics saved in campaign report content
-      subrefs: {}
       title: Scenario execution statistics
   type: step
 test/cases/campaigns/campaign001.py/step#7:
@@ -164,29 +140,23 @@ test/cases/campaigns/campaign001.py/step#7:
   reqs:
     ATTRIBUTES:
       comments: Attributes saved in scenario reports in campaign output files
-      subrefs: {}
       title: Scenario attributes
     CAMPAIGNS:
-      comments: ''
       subrefs:
         CAMPAIGNS/reports:
           comments: Scenario report content in campaign output files
       title: Campaign executions
     ERROR_HANDLING:
       comments: Scenario errors saved in scenario reports in campaign output files
-      subrefs: {}
       title: Error handling
     KNOWN_ISSUES:
       comments: Known issues saved in scenario reports in campaign output files
-      subrefs: {}
       title: Known issues
     SCENARIO_REPORT:
       comments: Scenario report content in campaign output files
-      subrefs: {}
       title: Scenario reports
     STATISTICS:
       comments: Statistics saved in scenario reports in campaign output files
-      subrefs: {}
       title: Scenario execution statistics
   type: step
 test/cases/campaigns/campaign001.py/step#8:
@@ -194,14 +164,12 @@ test/cases/campaigns/campaign001.py/step#8:
   name: step#8 (CheckCampaignReqDbFile)
   reqs:
     CAMPAIGNS:
-      comments: ''
       subrefs:
         CAMPAIGNS/reports:
           comments: Requirement file content in campaign output files
       title: Campaign executions
     REQUIREMENT_MANAGEMENT:
       comments: Requirement file content in campaign output files
-      subrefs: {}
       title: Requirement management
   type: step
 test/cases/campaigns/campaign002.py:
@@ -209,13 +177,11 @@ test/cases/campaigns/campaign002.py:
   name: test/cases/campaigns/campaign002.py
   reqs:
     CAMPAIGNS:
-      comments: Campaign execution with several test suites
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     STATISTICS:
       comments: Statistics by scenario, integrated by test suite, and globally for
         the campaign
-      subrefs: {}
       title: Scenario execution statistics
   title: Campaign execution with several test suites
   type: scenario
@@ -224,8 +190,7 @@ test/cases/campaigns/campaign003.py:
   name: test/cases/campaigns/campaign003.py
   reqs:
     CAMPAIGNS:
-      comments: Campaign --subdir option
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
   title: Campaign --subdir option
   type: scenario
@@ -234,8 +199,7 @@ test/cases/campaigns/campaign004.py:
   name: test/cases/campaigns/campaign004.py
   reqs:
     CAMPAIGNS:
-      comments: Campaign --doc-only option
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
   title: Campaign --doc-only option
   type: scenario
@@ -245,13 +209,11 @@ test/cases/campaigns/campaign005.py:
   reqs:
     ATTRIBUTES:
       comments: Display with campaign final results
-      subrefs: {}
       title: Scenario attributes
     CAMPAIGNS:
-      comments: Campaign & extra info
       subrefs:
         CAMPAIGNS/logging:
-          comments: Campaign & extra info
+          comments: Campaign executions (CAMPAIGNS/logging)
       title: Campaign executions
   title: Campaign & extra info
   type: scenario
@@ -260,14 +222,12 @@ test/cases/campaigns/campaign006.py:
   name: test/cases/campaigns/campaign006.py
   reqs:
     CAMPAIGNS:
-      comments: Campaign & requirement file
       subrefs:
         CAMPAIGNS/reports:
-          comments: Campaign & requirement file
+          comments: Campaign executions (CAMPAIGNS/reports)
       title: Campaign executions
     REQUIREMENT_MANAGEMENT:
       comments: Requirement output file management with campaigns
-      subrefs: {}
       title: Requirement management
   title: Campaign & requirement file
   type: scenario
@@ -276,8 +236,7 @@ test/cases/configdb/configdb010.py:
   name: test/cases/configdb/configdb010.py
   reqs:
     CONFIG_DB:
-      comments: Configuration value from command line
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Configuration value from command line
   type: scenario
@@ -286,8 +245,7 @@ test/cases/configdb/configdb020.py:
   name: test/cases/configdb/configdb020.py
   reqs:
     CONFIG_DB:
-      comments: Configuration value from code
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Configuration value from code
   type: scenario
@@ -296,8 +254,7 @@ test/cases/configdb/configdb030.py:
   name: test/cases/configdb/configdb030.py
   reqs:
     CONFIG_DB:
-      comments: Configuration value types and conversions
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Configuration value types and conversions
   type: scenario
@@ -306,8 +263,7 @@ test/cases/configdb/configdb040.py:
   name: test/cases/configdb/configdb040.py
   reqs:
     CONFIG_DB:
-      comments: Configuration value unset
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Configuration value unset
   type: scenario
@@ -316,8 +272,7 @@ test/cases/configdb/configdb100.py:
   name: test/cases/configdb/configdb100.py
   reqs:
     CONFIG_DB:
-      comments: Load INI configuration file
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Load INI configuration file
   type: scenario
@@ -326,8 +281,7 @@ test/cases/configdb/configdb110.py:
   name: test/cases/configdb/configdb110.py
   reqs:
     CONFIG_DB:
-      comments: Save INI configuration file
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Save INI configuration file
   type: scenario
@@ -336,8 +290,7 @@ test/cases/configdb/configdb120.py:
   name: test/cases/configdb/configdb120.py
   reqs:
     CONFIG_DB:
-      comments: INI default values & sub-sections
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: INI default values & sub-sections
   type: scenario
@@ -346,8 +299,7 @@ test/cases/configdb/configdb200.py:
   name: test/cases/configdb/configdb200.py
   reqs:
     CONFIG_DB:
-      comments: Load JSON configuration file
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Load JSON configuration file
   type: scenario
@@ -356,8 +308,7 @@ test/cases/configdb/configdb210.py:
   name: test/cases/configdb/configdb210.py
   reqs:
     CONFIG_DB:
-      comments: Save JSON configuration file
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Save JSON configuration file
   type: scenario
@@ -366,8 +317,7 @@ test/cases/configdb/configdb300.py:
   name: test/cases/configdb/configdb300.py
   reqs:
     CONFIG_DB:
-      comments: Load YAML configuration file
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Load YAML configuration file
   type: scenario
@@ -376,8 +326,7 @@ test/cases/configdb/configdb310.py:
   name: test/cases/configdb/configdb310.py
   reqs:
     CONFIG_DB:
-      comments: Save YAML configuration file
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Save YAML configuration file
   type: scenario
@@ -386,8 +335,7 @@ test/cases/configdb/configdb320.py:
   name: test/cases/configdb/configdb320.py
   reqs:
     CONFIG_DB:
-      comments: '''pyyaml'' environment error'
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: '''pyyaml'' environment error'
   type: scenario
@@ -396,8 +344,7 @@ test/cases/configdb/configdb500.py:
   name: test/cases/configdb/configdb500.py
   reqs:
     CONFIG_DB:
-      comments: Configuration files overloading
-      subrefs: {}
+      comments: General configuration database
       title: General configuration database
   title: Configuration files overloading
   type: scenario
@@ -406,12 +353,10 @@ test/cases/doconly/doconly001.py:
   name: test/cases/doconly/doconly001.py
   reqs:
     DOC_ONLY:
-      comments: --doc-only execution
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_LOGGING:
       comments: Scenario logging with --doc-only
-      subrefs: {}
       title: '`scenario` logging'
   title: --doc-only execution
   type: scenario
@@ -420,12 +365,10 @@ test/cases/doconly/doconly002.py:
   name: test/cases/doconly/doconly002.py
   reqs:
     DOC_ONLY:
-      comments: --doc-only scenario report
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_REPORT:
-      comments: --doc-only scenario report
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: --doc-only scenario report
   type: scenario
@@ -434,16 +377,13 @@ test/cases/errors/failingscenario001.py:
   name: test/cases/errors/failingscenario001.py
   reqs:
     ERROR_HANDLING:
-      comments: Failing scenario execution
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SCENARIO_LOGGING:
       comments: Scenario logging with errors
-      subrefs: {}
       title: '`scenario` logging'
     SCENARIO_REPORT:
       comments: Scenario report with errors
-      subrefs: {}
       title: Scenario reports
   title: Failing scenario execution
   type: scenario
@@ -453,8 +393,7 @@ test/cases/errors/failingscenario001.py/step#1:
   name: step#1 (ExecScenario)
   reqs:
     ERROR_HANDLING:
-      comments: '''test/data/failingscenario.py'' execution'
-      subrefs: {}
+      comments: Error handling
       title: Error handling
   type: step
 test/cases/errors/failingscenario001.py/step#3:
@@ -462,12 +401,10 @@ test/cases/errors/failingscenario001.py/step#3:
   name: step#3 (CheckScenarioLogExpectations)
   reqs:
     ERROR_HANDLING:
-      comments: ''
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SCENARIO_LOGGING:
       comments: Actions & expected results displayed until the error occurs
-      subrefs: {}
       title: '`scenario` logging'
   type: step
 test/cases/errors/failingscenario001.py/step#4:
@@ -475,12 +412,10 @@ test/cases/errors/failingscenario001.py/step#4:
   name: step#4 (CheckLogOutputExceptionDisplay)
   reqs:
     ERROR_HANDLING:
-      comments: ''
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SCENARIO_LOGGING:
       comments: Traceback displayed
-      subrefs: {}
       title: '`scenario` logging'
   type: step
 test/cases/errors/failingscenario001.py/step#5:
@@ -488,13 +423,11 @@ test/cases/errors/failingscenario001.py/step#5:
   name: step#5 (CheckScenarioReportExpectations)
   reqs:
     ERROR_HANDLING:
-      comments: ''
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SCENARIO_REPORT:
       comments: All actions & expected results definitions saved, executed until the
         error occurs
-      subrefs: {}
       title: Scenario reports
   type: step
 test/cases/errors/failingscenario001.py/step#6:
@@ -502,12 +435,10 @@ test/cases/errors/failingscenario001.py/step#6:
   name: step#6 (CheckScenarioReportExceptionStorage)
   reqs:
     ERROR_HANDLING:
-      comments: ''
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SCENARIO_REPORT:
       comments: 'Error storage at each level: scenario, step, action & expected result'
-      subrefs: {}
       title: Scenario reports
   type: step
 test/cases/errors/failingscenario002.py:
@@ -515,8 +446,7 @@ test/cases/errors/failingscenario002.py:
   name: test/cases/errors/failingscenario002.py
   reqs:
     ERROR_HANDLING:
-      comments: Continue on error
-      subrefs: {}
+      comments: Error handling
       title: Error handling
   title: Continue on error
   type: scenario
@@ -525,8 +455,7 @@ test/cases/goto/goto001.py:
   name: test/cases/goto/goto001.py
   reqs:
     GOTO:
-      comments: Goto jumps
-      subrefs: {}
+      comments: Jumping to another step
       title: Jumping to another step
   title: Goto jumps
   type: scenario
@@ -535,12 +464,10 @@ test/cases/goto/goto002.py:
   name: test/cases/goto/goto002.py
   reqs:
     GOTO:
-      comments: Goto scenario reports
-      subrefs: {}
+      comments: Jumping to another step
       title: Jumping to another step
     SCENARIO_REPORT:
-      comments: Goto scenario reports
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Goto scenario reports
   type: scenario
@@ -549,16 +476,13 @@ test/cases/issues/issue003.py:
   name: test/cases/issues/issue003.py
   reqs:
     SCENARIO_EXECUTION:
-      comments: 'Issue #3! Actions / Results differenciation even at the same location'
-      subrefs: {}
+      comments: Scenario steps execution
       title: Scenario steps execution
     SCENARIO_LOGGING:
-      comments: 'Issue #3! Actions / Results differenciation even at the same location'
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
     SCENARIO_REPORT:
-      comments: 'Issue #3! Actions / Results differenciation even at the same location'
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: 'Issue #3! Actions / Results differenciation even at the same location'
   type: scenario
@@ -567,12 +491,10 @@ test/cases/issues/issue033.py:
   name: test/cases/issues/issue033.py
   reqs:
     ERROR_HANDLING:
-      comments: 'Issue #33! Fully qualified name for code locations'
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     KNOWN_ISSUES:
-      comments: 'Issue #33! Fully qualified name for code locations'
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: 'Issue #33! Fully qualified name for code locations'
   type: scenario
@@ -581,12 +503,10 @@ test/cases/issues/issue042.py:
   name: test/cases/issues/issue042.py
   reqs:
     KNOWN_ISSUES:
-      comments: 'Issue #42! Bad known issue display on multiple test execution'
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: 'Issue #42! Bad known issue display on multiple test execution'
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: 'Issue #42! Bad known issue display on multiple test execution'
   type: scenario
@@ -601,12 +521,10 @@ test/cases/issues/issue046.py:
   name: test/cases/issues/issue046.py
   reqs:
     CAMPAIGNS:
-      comments: 'Issue #46! Campaign halts on errors'
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     ERROR_HANDLING:
-      comments: 'Issue #46! Campaign halts on errors'
-      subrefs: {}
+      comments: Error handling
       title: Error handling
   title: 'Issue #46! Campaign halts on errors'
   type: scenario
@@ -615,8 +533,7 @@ test/cases/issues/issue065a.py:
   name: test/cases/issues/issue065a.py
   reqs:
     STATISTICS:
-      comments: 'Issue #65! Scenario execution lost time'
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: 'Issue #65! Scenario execution lost time'
   type: scenario
@@ -625,16 +542,13 @@ test/cases/issues/issue065b.py:
   name: test/cases/issues/issue065b.py
   reqs:
     CAMPAIGNS:
-      comments: 'Issue #65! Campaign execution lost time'
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     SCENARIO_REPORT:
-      comments: 'Issue #65! Campaign execution lost time'
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
     STATISTICS:
-      comments: 'Issue #65! Campaign execution lost time'
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: 'Issue #65! Campaign execution lost time'
   type: scenario
@@ -644,7 +558,6 @@ test/cases/knownissues/knownissues010.py:
   reqs:
     KNOWN_ISSUES:
       comments: Known issues
-      subrefs: {}
       title: Known issues
   title: Known issues
   type: scenario
@@ -653,12 +566,10 @@ test/cases/knownissues/knownissues011.py:
   name: test/cases/knownissues/knownissues011.py
   reqs:
     DOC_ONLY:
-      comments: Known issues --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     KNOWN_ISSUES:
-      comments: Known issues --doc-only
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: Known issues --doc-only
   type: scenario
@@ -667,20 +578,16 @@ test/cases/knownissues/knownissues020.py:
   name: test/cases/knownissues/knownissues020.py
   reqs:
     ERROR_HANDLING:
-      comments: Known issue persistence v/s test errors
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     KNOWN_ISSUES:
-      comments: Known issue persistence v/s test errors
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     SCENARIO_LOGGING:
-      comments: Known issue persistence v/s test errors
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
     SCENARIO_REPORT:
-      comments: Known issue persistence v/s test errors
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Known issue persistence v/s test errors
   type: scenario
@@ -689,12 +596,10 @@ test/cases/knownissues/knownissues080.py:
   name: test/cases/knownissues/knownissues080.py
   reqs:
     KNOWN_ISSUES:
-      comments: Known issues & multiple scenarios
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Known issues & multiple scenarios
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Known issues & multiple scenarios
   type: scenario
@@ -703,12 +608,10 @@ test/cases/knownissues/knownissues090.py:
   name: test/cases/knownissues/knownissues090.py
   reqs:
     CAMPAIGNS:
-      comments: Known issues & campaigns
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     KNOWN_ISSUES:
-      comments: Known issues & campaigns
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: Known issues & campaigns
   type: scenario
@@ -717,20 +620,16 @@ test/cases/knownissues/knownissues110.py:
   name: test/cases/knownissues/knownissues110.py
   reqs:
     ERROR_HANDLING:
-      comments: Known issue levels & ignored and error issue levels
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     KNOWN_ISSUES:
-      comments: Known issue levels & ignored and error issue levels
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     SCENARIO_LOGGING:
-      comments: Known issue levels & ignored and error issue levels
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
     SCENARIO_REPORT:
-      comments: Known issue levels & ignored and error issue levels
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Known issue levels & ignored and error issue levels
   type: scenario
@@ -739,12 +638,10 @@ test/cases/knownissues/knownissues120.py:
   name: test/cases/knownissues/knownissues120.py
   reqs:
     ERROR_HANDLING:
-      comments: Known errors & test continuation
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     KNOWN_ISSUES:
-      comments: Known errors & test continuation
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: Known errors & test continuation
   type: scenario
@@ -753,12 +650,10 @@ test/cases/knownissues/knownissues180.py:
   name: test/cases/knownissues/knownissues180.py
   reqs:
     KNOWN_ISSUES:
-      comments: Known issue levels & multiple scenarios
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Known issue levels & multiple scenarios
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Known issue levels & multiple scenarios
   type: scenario
@@ -767,12 +662,10 @@ test/cases/knownissues/knownissues190.py:
   name: test/cases/knownissues/knownissues190.py
   reqs:
     CAMPAIGNS:
-      comments: Known issue levels & campaigns
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     KNOWN_ISSUES:
-      comments: Known issue levels & campaigns
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: Known issue levels & campaigns
   type: scenario
@@ -781,12 +674,10 @@ test/cases/knownissues/knownissues210.py:
   name: test/cases/knownissues/knownissues210.py
   reqs:
     KNOWN_ISSUES:
-      comments: Issue level names
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     SCENARIO_LOGGING:
-      comments: Issue level names
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
   title: Issue level names
   type: scenario
@@ -795,12 +686,10 @@ test/cases/knownissues/knownissues280.py:
   name: test/cases/knownissues/knownissues280.py
   reqs:
     KNOWN_ISSUES:
-      comments: Issue level names & multiple scenarios
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Issue level names & multiple scenarios
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Issue level names & multiple scenarios
   type: scenario
@@ -809,12 +698,10 @@ test/cases/knownissues/knownissues290.py:
   name: test/cases/knownissues/knownissues290.py
   reqs:
     CAMPAIGNS:
-      comments: Issue level names & campaigns
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     KNOWN_ISSUES:
-      comments: Issue level names & campaigns
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: Issue level names & campaigns
   type: scenario
@@ -823,16 +710,13 @@ test/cases/knownissues/knownissues310.py:
   name: test/cases/knownissues/knownissues310.py
   reqs:
     KNOWN_ISSUES:
-      comments: Known issue ids
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     SCENARIO_LOGGING:
-      comments: Known issue ids
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
     SCENARIO_REPORT:
-      comments: Known issue ids
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Known issue ids
   type: scenario
@@ -841,12 +725,10 @@ test/cases/knownissues/knownissues380.py:
   name: test/cases/knownissues/knownissues380.py
   reqs:
     KNOWN_ISSUES:
-      comments: Known issue ids & multiple scenarios
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Known issue ids & multiple scenarios
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Known issue ids & multiple scenarios
   type: scenario
@@ -855,12 +737,10 @@ test/cases/knownissues/knownissues390.py:
   name: test/cases/knownissues/knownissues390.py
   reqs:
     CAMPAIGNS:
-      comments: Known issue ids & campaigns
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     KNOWN_ISSUES:
-      comments: Known issue ids & campaigns
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: Known issue ids & campaigns
   type: scenario
@@ -869,16 +749,13 @@ test/cases/knownissues/knownissues410.py:
   name: test/cases/knownissues/knownissues410.py
   reqs:
     KNOWN_ISSUES:
-      comments: Known issue URLs
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     SCENARIO_LOGGING:
-      comments: Known issue URLs
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
     SCENARIO_REPORT:
-      comments: Known issue URLs
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Known issue URLs
   type: scenario
@@ -887,12 +764,10 @@ test/cases/knownissues/knownissues480.py:
   name: test/cases/knownissues/knownissues480.py
   reqs:
     KNOWN_ISSUES:
-      comments: Known issue URLs & multiple scenarios
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Known issue URLs & multiple scenarios
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Known issue URLs & multiple scenarios
   type: scenario
@@ -901,12 +776,10 @@ test/cases/knownissues/knownissues490.py:
   name: test/cases/knownissues/knownissues490.py
   reqs:
     CAMPAIGNS:
-      comments: Known issue URLs & campaigns
-      subrefs: {}
+      comments: Campaign executions
       title: Campaign executions
     KNOWN_ISSUES:
-      comments: Known issue URLs & campaigns
-      subrefs: {}
+      comments: Known issues
       title: Known issues
   title: Known issue URLs & campaigns
   type: scenario
@@ -915,8 +788,7 @@ test/cases/logutils/logging100.py:
   name: test/cases/logutils/logging100.py
   reqs:
     LOGGING:
-      comments: Logging timestamps
-      subrefs: {}
+      comments: Logging facilities
       title: Logging facilities
   title: Logging timestamps
   type: scenario
@@ -925,8 +797,7 @@ test/cases/logutils/logging200.py:
   name: test/cases/logutils/logging200.py
   reqs:
     LOGGING:
-      comments: Log levels and classes
-      subrefs: {}
+      comments: Logging facilities
       title: Logging facilities
   title: Log levels and classes
   type: scenario
@@ -935,8 +806,7 @@ test/cases/logutils/logging210.py:
   name: test/cases/logutils/logging210.py
   reqs:
     DEBUG_LOGGING:
-      comments: Class logger debugging enabling
-      subrefs: {}
+      comments: Debug logging facilities
       title: Debug logging facilities
   title: Class logger debugging enabling
   type: scenario
@@ -945,8 +815,7 @@ test/cases/logutils/logging300.py:
   name: test/cases/logutils/logging300.py
   reqs:
     LOGGING:
-      comments: Log colors
-      subrefs: {}
+      comments: Logging facilities
       title: Logging facilities
   title: Log colors
   type: scenario
@@ -955,8 +824,7 @@ test/cases/logutils/logging400.py:
   name: test/cases/logutils/logging400.py
   reqs:
     SCENARIO_LOGGING:
-      comments: Scenario logging indentation
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
   title: Scenario logging indentation
   type: scenario
@@ -965,8 +833,7 @@ test/cases/logutils/logging410.py:
   name: test/cases/logutils/logging410.py
   reqs:
     LOGGING:
-      comments: Scenario stack indentation
-      subrefs: {}
+      comments: Logging facilities
       title: Logging facilities
   title: Scenario stack indentation
   type: scenario
@@ -975,8 +842,7 @@ test/cases/logutils/logging420.py:
   name: test/cases/logutils/logging420.py
   reqs:
     LOGGING:
-      comments: Additional user indentation
-      subrefs: {}
+      comments: Logging facilities
       title: Logging facilities
   title: Additional user indentation
   type: scenario
@@ -985,18 +851,15 @@ test/cases/logutils/logging421.py:
   name: test/cases/logutils/logging421.py
   reqs:
     LOGGING:
-      comments: Additional user indentation in subscenario
-      subrefs: {}
+      comments: Logging facilities
       title: Logging facilities
     SCENARIO_LOGGING:
-      comments: Additional user indentation in subscenario
       subrefs:
         SCENARIO_LOGGING/action-result-indentation:
           comments: Action/result indentation in subscenario execution.
       title: '`scenario` logging'
     SUBSCENARIOS:
-      comments: Additional user indentation in subscenario
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Additional user indentation in subscenario
   type: scenario
@@ -1005,8 +868,7 @@ test/cases/logutils/logging500.py:
   name: test/cases/logutils/logging500.py
   reqs:
     LOGGING:
-      comments: Console logging
-      subrefs: {}
+      comments: Logging facilities
       title: Logging facilities
   title: Console logging
   type: scenario
@@ -1015,10 +877,9 @@ test/cases/logutils/logging510.py:
   name: test/cases/logutils/logging510.py
   reqs:
     LOGGING:
-      comments: File logging
       subrefs:
         LOGGING/file:
-          comments: File logging
+          comments: Logging facilities (LOGGING/file)
       title: Logging facilities
   title: File logging
   type: scenario
@@ -1034,19 +895,15 @@ test/cases/misc/textutils001.py:
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
-      subrefs: {}
       title: Scenario attributes
     EVIDENCE:
       comments: Long texts for evidence
-      subrefs: {}
       title: Evidence collection
     REQUIREMENT_MANAGEMENT:
       comments: Long texts for requirements & requirement link comments
-      subrefs: {}
       title: Requirement management
     SCENARIO_EXECUTION:
       comments: Long texts for actions & expected results
-      subrefs: {}
       title: Scenario steps execution
   title: Long texts
   type: scenario
@@ -1067,8 +924,7 @@ test/cases/multiplescenarios/multiplescenarios000.py:
   name: test/cases/multiplescenarios/multiplescenarios000.py
   reqs:
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Multiple scenarios & incompatible options
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Multiple scenarios & incompatible options
   type: scenario
@@ -1077,12 +933,10 @@ test/cases/multiplescenarios/multiplescenarios001.py:
   name: test/cases/multiplescenarios/multiplescenarios001.py
   reqs:
     ERROR_HANDLING:
-      comments: Multiple scenarios execution
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Multiple scenarios execution
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Multiple scenarios execution
   type: scenario
@@ -1091,12 +945,10 @@ test/cases/multiplescenarios/multiplescenarios002.py:
   name: test/cases/multiplescenarios/multiplescenarios002.py
   reqs:
     DOC_ONLY:
-      comments: Multiple scenarios --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Multiple scenarios --doc-only
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Multiple scenarios --doc-only
   type: scenario
@@ -1105,12 +957,10 @@ test/cases/multiplescenarios/multiplescenarios003.py:
   name: test/cases/multiplescenarios/multiplescenarios003.py
   reqs:
     KNOWN_ISSUES:
-      comments: Multiple scenarios & known issues
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Multiple scenarios & known issues
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Multiple scenarios & known issues
   type: scenario
@@ -1119,12 +969,10 @@ test/cases/multiplescenarios/multiplescenarios004.py:
   name: test/cases/multiplescenarios/multiplescenarios004.py
   reqs:
     ATTRIBUTES:
-      comments: Multiple scenarios & extra info
-      subrefs: {}
+      comments: Scenario attributes
       title: Scenario attributes
     MULTIPLE_SCENARIO_EXECUTION:
-      comments: Multiple scenarios & extra info
-      subrefs: {}
+      comments: Multiple scenario execution
       title: Multiple scenario execution
   title: Multiple scenarios & extra info
   type: scenario
@@ -1133,8 +981,7 @@ test/cases/reqmgt/reqmgt010.py:
   name: test/cases/reqmgt/reqmgt010.py
   reqs:
     REQUIREMENT_MANAGEMENT:
-      comments: Requirement database and queries
-      subrefs: {}
+      comments: Requirement management
       title: Requirement management
   title: Requirement database and queries
   type: scenario
@@ -1143,12 +990,10 @@ test/cases/scenarioexecution/inheritance001.py:
   name: test/cases/scenarioexecution/inheritance001.py
   reqs:
     ALTERNATIVE_SCENARIOS:
-      comments: Inheritance & step order
-      subrefs: {}
+      comments: Alternative scenarios
       title: Alternative scenarios
     SCENARIO_EXECUTION:
-      comments: Inheritance & step order
-      subrefs: {}
+      comments: Scenario steps execution
       title: Scenario steps execution
   title: Inheritance & step order
   type: scenario
@@ -1157,8 +1002,7 @@ test/cases/scenarioexecution/scenarioexecution001.py:
   name: test/cases/scenarioexecution/scenarioexecution001.py
   reqs:
     SCENARIO_EXECUTION:
-      comments: Scenario execution
-      subrefs: {}
+      comments: Scenario steps execution
       title: Scenario steps execution
   title: Scenario execution
   type: scenario
@@ -1168,11 +1012,9 @@ test/cases/scenariologging/scenariologging010.py:
   reqs:
     ATTRIBUTES:
       comments: Attribute display with scenario logging
-      subrefs: {}
       title: Scenario attributes
     SCENARIO_LOGGING:
-      comments: Scenario logging simple scenario
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
   title: Scenario logging simple scenario
   type: scenario
@@ -1182,15 +1024,12 @@ test/cases/scenariologging/scenariologging011.py:
   reqs:
     ATTRIBUTES:
       comments: Attribute display in scenario logging --doc-only
-      subrefs: {}
       title: Scenario attributes
     DOC_ONLY:
-      comments: Scenario logging simple scenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_LOGGING:
-      comments: Scenario logging simple scenario --doc-only
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
   title: Scenario logging simple scenario --doc-only
   type: scenario
@@ -1200,19 +1039,15 @@ test/cases/scenariologging/scenariologging060.py:
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
-      subrefs: {}
       title: Scenario attributes
     EVIDENCE:
       comments: Long texts for evidence
-      subrefs: {}
       title: Evidence collection
     SCENARIO_EXECUTION:
       comments: Long texts for actions & expected results
-      subrefs: {}
       title: Scenario steps execution
     SCENARIO_LOGGING:
-      comments: Scenario logging long texts
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
   title: Scenario logging long texts
   type: scenario
@@ -1222,19 +1057,15 @@ test/cases/scenariologging/scenariologging061.py:
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
-      subrefs: {}
       title: Scenario attributes
     DOC_ONLY:
-      comments: Scenario logging long texts --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_EXECUTION:
       comments: Long texts for actions & expected results
-      subrefs: {}
       title: Scenario steps execution
     SCENARIO_LOGGING:
-      comments: Scenario logging long texts --doc-only
-      subrefs: {}
+      comments: '`scenario` logging'
       title: '`scenario` logging'
   title: Scenario logging long texts --doc-only
   type: scenario
@@ -1243,10 +1074,9 @@ test/cases/scenariologging/scenariologging070.py:
   name: test/cases/scenariologging/scenariologging070.py
   reqs:
     SCENARIO_LOGGING:
-      comments: Scenario logging action/result indentation
       subrefs:
         SCENARIO_LOGGING/action-result-indentation:
-          comments: Scenario logging action/result indentation
+          comments: '`scenario` logging (SCENARIO_LOGGING/action-result-indentation)'
       title: '`scenario` logging'
   title: Scenario logging action/result indentation
   type: scenario
@@ -1255,14 +1085,12 @@ test/cases/scenariologging/scenariologging071.py:
   name: test/cases/scenariologging/scenariologging071.py
   reqs:
     DOC_ONLY:
-      comments: Scenario logging action/result indentation --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_LOGGING:
-      comments: Scenario logging action/result indentation --doc-only
       subrefs:
         SCENARIO_LOGGING/action-result-indentation:
-          comments: Scenario logging action/result indentation --doc-only
+          comments: '`scenario` logging (SCENARIO_LOGGING/action-result-indentation)'
       title: '`scenario` logging'
   title: Scenario logging action/result indentation --doc-only
   type: scenario
@@ -1271,8 +1099,7 @@ test/cases/scenarioreport/scenarioreport010.py:
   name: test/cases/scenarioreport/scenarioreport010.py
   reqs:
     SCENARIO_REPORT:
-      comments: Scenario report simple scenario
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report simple scenario
   type: scenario
@@ -1281,12 +1108,10 @@ test/cases/scenarioreport/scenarioreport011.py:
   name: test/cases/scenarioreport/scenarioreport011.py
   reqs:
     DOC_ONLY:
-      comments: Scenario report simple scenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_REPORT:
-      comments: Scenario report simple scenario --doc-only
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report simple scenario --doc-only
   type: scenario
@@ -1295,12 +1120,10 @@ test/cases/scenarioreport/scenarioreport020.py:
   name: test/cases/scenarioreport/scenarioreport020.py
   reqs:
     ERROR_HANDLING:
-      comments: Scenario report failing scenario
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SCENARIO_REPORT:
-      comments: Scenario report failing scenario
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report failing scenario
   type: scenario
@@ -1309,16 +1132,13 @@ test/cases/scenarioreport/scenarioreport021.py:
   name: test/cases/scenarioreport/scenarioreport021.py
   reqs:
     DOC_ONLY:
-      comments: Scenario report failing scenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     ERROR_HANDLING:
-      comments: Scenario report failing scenario --doc-only
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SCENARIO_REPORT:
-      comments: Scenario report failing scenario --doc-only
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report failing scenario --doc-only
   type: scenario
@@ -1327,12 +1147,10 @@ test/cases/scenarioreport/scenarioreport030.py:
   name: test/cases/scenarioreport/scenarioreport030.py
   reqs:
     GOTO:
-      comments: Scenario report goto scenario
-      subrefs: {}
+      comments: Jumping to another step
       title: Jumping to another step
     SCENARIO_REPORT:
-      comments: Scenario report goto scenario
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report goto scenario
   type: scenario
@@ -1341,16 +1159,13 @@ test/cases/scenarioreport/scenarioreport031.py:
   name: test/cases/scenarioreport/scenarioreport031.py
   reqs:
     DOC_ONLY:
-      comments: Scenario report goto scenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     GOTO:
-      comments: Scenario report goto scenario --doc-only
-      subrefs: {}
+      comments: Jumping to another step
       title: Jumping to another step
     SCENARIO_REPORT:
-      comments: Scenario report goto scenario --doc-only
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report goto scenario --doc-only
   type: scenario
@@ -1359,12 +1174,10 @@ test/cases/scenarioreport/scenarioreport040.py:
   name: test/cases/scenarioreport/scenarioreport040.py
   reqs:
     SCENARIO_REPORT:
-      comments: Scenario report subscenario
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
     SUBSCENARIOS:
-      comments: Scenario report subscenario
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Scenario report subscenario
   type: scenario
@@ -1373,16 +1186,13 @@ test/cases/scenarioreport/scenarioreport041.py:
   name: test/cases/scenarioreport/scenarioreport041.py
   reqs:
     DOC_ONLY:
-      comments: Scenario report subscenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_REPORT:
-      comments: Scenario report subscenario --doc-only
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
     SUBSCENARIOS:
-      comments: Scenario report subscenario --doc-only
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Scenario report subscenario --doc-only
   type: scenario
@@ -1391,12 +1201,10 @@ test/cases/scenarioreport/scenarioreport050.py:
   name: test/cases/scenarioreport/scenarioreport050.py
   reqs:
     KNOWN_ISSUES:
-      comments: Scenario report known issues
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     SCENARIO_REPORT:
-      comments: Scenario report known issues
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report known issues
   type: scenario
@@ -1405,16 +1213,13 @@ test/cases/scenarioreport/scenarioreport051.py:
   name: test/cases/scenarioreport/scenarioreport051.py
   reqs:
     DOC_ONLY:
-      comments: Scenario report known issues --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     KNOWN_ISSUES:
-      comments: Scenario report known issues --doc-only
-      subrefs: {}
+      comments: Known issues
       title: Known issues
     SCENARIO_REPORT:
-      comments: Scenario report known issues --doc-only
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report known issues --doc-only
   type: scenario
@@ -1424,23 +1229,18 @@ test/cases/scenarioreport/scenarioreport060.py:
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
-      subrefs: {}
       title: Scenario attributes
     EVIDENCE:
       comments: Long texts for evidence
-      subrefs: {}
       title: Evidence collection
     REQUIREMENT_MANAGEMENT:
       comments: Long texts for requirements link comments
-      subrefs: {}
       title: Requirement management
     SCENARIO_EXECUTION:
       comments: Long texts for actions & expected results
-      subrefs: {}
       title: Scenario steps execution
     SCENARIO_REPORT:
-      comments: Scenario report long texts
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report long texts
   type: scenario
@@ -1450,23 +1250,18 @@ test/cases/scenarioreport/scenarioreport061.py:
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
-      subrefs: {}
       title: Scenario attributes
     DOC_ONLY:
-      comments: Scenario report long texts --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     REQUIREMENT_MANAGEMENT:
       comments: Long texts for requirements link comments
-      subrefs: {}
       title: Requirement management
     SCENARIO_EXECUTION:
       comments: Long texts for actions & expected results
-      subrefs: {}
       title: Scenario steps execution
     SCENARIO_REPORT:
-      comments: Scenario report long texts --doc-only
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report long texts --doc-only
   type: scenario
@@ -1475,15 +1270,12 @@ test/cases/scenarioreport/scenarioreport070.py:
   name: test/cases/scenarioreport/scenarioreport070.py
   reqs:
     SCENARIO_LOGGING:
-      comments: Scenario report action/result indentation
       subrefs:
         SCENARIO_LOGGING/action-result-indentation:
-          comments: Main logger indentation saved in scenario reports for actions
-            and results.
+          comments: '`scenario` logging (SCENARIO_LOGGING/action-result-indentation)'
       title: '`scenario` logging'
     SCENARIO_REPORT:
-      comments: Scenario report action/result indentation
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report action/result indentation
   type: scenario
@@ -1492,19 +1284,15 @@ test/cases/scenarioreport/scenarioreport071.py:
   name: test/cases/scenarioreport/scenarioreport071.py
   reqs:
     DOC_ONLY:
-      comments: Scenario report action/result indentation --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SCENARIO_LOGGING:
-      comments: Scenario report action/result indentation --doc-only
       subrefs:
         SCENARIO_LOGGING/action-result-indentation:
-          comments: Main logger indentation saved in scenario reports for actions
-            and results.
+          comments: '`scenario` logging (SCENARIO_LOGGING/action-result-indentation)'
       title: '`scenario` logging'
     SCENARIO_REPORT:
-      comments: Scenario report action/result indentation --doc-only
-      subrefs: {}
+      comments: Scenario reports
       title: Scenario reports
   title: Scenario report action/result indentation --doc-only
   type: scenario
@@ -1513,8 +1301,7 @@ test/cases/stats/stats010.py:
   name: test/cases/stats/stats010.py
   reqs:
     STATISTICS:
-      comments: Statistics simple scenario
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: Statistics simple scenario
   type: scenario
@@ -1523,12 +1310,10 @@ test/cases/stats/stats011.py:
   name: test/cases/stats/stats011.py
   reqs:
     DOC_ONLY:
-      comments: Statistics simple scenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     STATISTICS:
-      comments: Statistics simple scenario --doc-only
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: Statistics simple scenario --doc-only
   type: scenario
@@ -1537,12 +1322,10 @@ test/cases/stats/stats020.py:
   name: test/cases/stats/stats020.py
   reqs:
     ERROR_HANDLING:
-      comments: Statistics failing scenario
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     STATISTICS:
-      comments: Statistics failing scenario
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: Statistics failing scenario
   type: scenario
@@ -1551,16 +1334,13 @@ test/cases/stats/stats021.py:
   name: test/cases/stats/stats021.py
   reqs:
     DOC_ONLY:
-      comments: Statistics failing scenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     ERROR_HANDLING:
-      comments: Statistics failing scenario --doc-only
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     STATISTICS:
-      comments: Statistics failing scenario --doc-only
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: Statistics failing scenario --doc-only
   type: scenario
@@ -1569,12 +1349,10 @@ test/cases/stats/stats030.py:
   name: test/cases/stats/stats030.py
   reqs:
     GOTO:
-      comments: Statistics goto scenario
-      subrefs: {}
+      comments: Jumping to another step
       title: Jumping to another step
     STATISTICS:
-      comments: Statistics goto scenario
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: Statistics goto scenario
   type: scenario
@@ -1583,12 +1361,10 @@ test/cases/stats/stats031.py:
   name: test/cases/stats/stats031.py
   reqs:
     GOTO:
-      comments: Statistics goto scenario --doc-only
-      subrefs: {}
+      comments: Jumping to another step
       title: Jumping to another step
     STATISTICS:
-      comments: Statistics goto scenario --doc-only
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
   title: Statistics goto scenario --doc-only
   type: scenario
@@ -1597,12 +1373,10 @@ test/cases/stats/stats040.py:
   name: test/cases/stats/stats040.py
   reqs:
     STATISTICS:
-      comments: Statistics subscenario
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
     SUBSCENARIOS:
-      comments: Statistics subscenario
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Statistics subscenario
   type: scenario
@@ -1611,16 +1385,13 @@ test/cases/stats/stats041.py:
   name: test/cases/stats/stats041.py
   reqs:
     DOC_ONLY:
-      comments: Statistics subscenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     STATISTICS:
-      comments: Statistics subscenario --doc-only
-      subrefs: {}
+      comments: Scenario execution statistics
       title: Scenario execution statistics
     SUBSCENARIOS:
-      comments: Statistics subscenario --doc-only
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Statistics subscenario --doc-only
   type: scenario
@@ -1629,8 +1400,7 @@ test/cases/subscenario/subscenario001.py:
   name: test/cases/subscenario/subscenario001.py
   reqs:
     SUBSCENARIOS:
-      comments: Subscenario execution
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Subscenario execution
   type: scenario
@@ -1639,12 +1409,10 @@ test/cases/subscenario/subscenario002.py:
   name: test/cases/subscenario/subscenario002.py
   reqs:
     DOC_ONLY:
-      comments: Subscenario --doc-only
-      subrefs: {}
+      comments: Documentation generation
       title: Documentation generation
     SUBSCENARIOS:
-      comments: Subscenario --doc-only
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Subscenario --doc-only
   type: scenario
@@ -1653,12 +1421,10 @@ test/cases/subscenario/subscenario003.py:
   name: test/cases/subscenario/subscenario003.py
   reqs:
     ERROR_HANDLING:
-      comments: Subscenario error
-      subrefs: {}
+      comments: Error handling
       title: Error handling
     SUBSCENARIOS:
-      comments: Subscenario error
-      subrefs: {}
+      comments: Subscenarios
       title: Subscenarios
   title: Subscenario error
   type: scenario

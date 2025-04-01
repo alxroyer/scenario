@@ -123,6 +123,26 @@ class ReqRef(_ReqBaselineObjectImpl):
         ])
 
     @property
+    def title(self):  # type: () -> str
+        """
+        Requirement reference title.
+
+        Directly the requirement title for a main reference.
+
+        Computed from the requirement title and subreference id for subreferences.
+
+        .. note:: The latter is temporary behaviour, until subreferences may hold their own title and text.
+        """
+        # Main reference.
+        if self.ismain():
+            return self.req.title
+        # Subreferences.
+        elif self.req.title:
+            return f"{self.req.title} ({self.id})"
+        else:
+            return self.id
+
+    @property
     def req(self):  # type: () -> _ReqType
         """
         Requirement this :class:`ReqRef` refers to.

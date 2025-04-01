@@ -18,10 +18,15 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Bug! A main requirement downstream traceability does not list tests which only track sub-refs of the given req
-      (eg. logging421.py and SCENARIO_LOGGING? tbc).
+    - Bug! `scenario.ui` - upstream traceability page: Why does LOGGING/file appear twice?
+        - But not so, curiously, in traceability report...
+    - Downstream traceability page: Tests and steps actually covering a subrefs only (but not the main req) shall display it.
+        - Same in upstream traceability?
+        - Example: CAMPAIGN >> campaign001.py >> step#2,4,5 actually cover the CAMPAIGN/logging (not the main CAMPAIGN req).
+    - Save only explicit (not computed) comments in traceability reports.
+    - Rework traceability report main entries as two levels.
+        - Rework `scenario.ui` pages consequently.
     - Bug! "Reload campaigns" button does not refresh the current page.
-    - Upstream traceability: prefer requirement title rather than test title for default comment.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Don't output "subrefs" in req-db files if list is empty.
         - Display known issues.
@@ -71,6 +76,8 @@
         - Cherry-pick "Avoid logging before program arguments have been parsed" in the 'int/v0.2.2+' branch.
         - Cherry-pick 'mkdoc.py' & `scenario.tools.sphinx` fixes in the 'int/v0.2.2+' branch.
         - Cherry-pick `checkfuncqualname()` fix in the 'int/v0.2.2+' branch.
+- Issue #xxx: Provide a description for all steps in `scenario.test`.
+    - Visible in traceability reports.
 - Issue #xxx: Problems when a configuration key accepts a comma-separated string or a list (eg. 'scenario.test_suite_files'):
     - If a list has already been set, then a comma-separated string raises an error:
       "Bad final data ... for a list node".

@@ -107,7 +107,7 @@ class Campaign001(scenario.test.TestCase):
         self.addstep(CheckCampaignOutdirFiles(ExecCampaign.getinstance(), _campaign_expectations)).verifies(
             (scenario.reqs.CAMPAIGN_LOGGING, "Campaign output files"),
             (scenario.reqs.REQUIREMENT_MANAGEMENT, "Requirements saved with campaign output files"),
-            (scenario.reqs.LOGGING_FILE, "Scenario logging saved with campaign output files"),
+            (scenario.reqs.LOGGING_FILE, "Scenario log files saved with campaign output files"),
             (scenario.reqs.SCENARIO_REPORT, "Scenario reports saved with campaign output files"),
         )
         #     - Campaign report

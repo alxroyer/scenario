@@ -34,7 +34,7 @@ class ScenarioReport071(scenario.test.TestCase):
         )
         self.verifies(
             scenario.reqs.SCENARIO_REPORT,
-            (scenario.reqs.SCENARIO_LOGGING_ACTION_RESULT_INDENTATION, "Main logger indentation saved in scenario reports for actions and results."),
+            scenario.reqs.SCENARIO_LOGGING_ACTION_RESULT_INDENTATION,
             scenario.reqs.DOC_ONLY,
         )
 

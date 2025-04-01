@@ -30,7 +30,6 @@ class ScenarioLogging070(scenario.test.TestCase):
             description="Check the scenario logging output is generated as expected with ACTION/RESULT indentation.",
         )
         self.verifies(
-            scenario.reqs.SCENARIO_LOGGING,
             scenario.reqs.SCENARIO_LOGGING_ACTION_RESULT_INDENTATION,
         )
 
