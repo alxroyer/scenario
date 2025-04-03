@@ -20,8 +20,6 @@
 - Issue #83: Add the ability to track requirements.
     - Include location in step names.
         - Location should be the instantiation location.
-    - Bug! `scenario.ui` - upstream traceability page: Why does LOGGING/file appear twice?
-        - But not so, curiously, in traceability report...
     - Downstream traceability page: Tests and steps actually covering a subrefs only (but not the main req) shall display it.
         - Same in upstream traceability?
         - Example: CAMPAIGN >> campaign001.py >> step#2,4,5 actually cover the CAMPAIGN/logging (not the main CAMPAIGN req).

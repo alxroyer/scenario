@@ -822,10 +822,13 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                                 _upstream_req_verifier,  # Memo: `_upstream_req` automatically added to `_upstream_req_verifier`.
                                 req=_req_ref.req, req_link=None,
                             )
-                        _upstream_req_subref = ReqTraceability.Upstream.ReqSubref(
-                            _upstream_req,  # Memo: `_upstream_req_subref` automatically added to `_upstream_req`.
-                            req_subref=_req_ref, req_link=_req_link,
-                        )  # type: ReqTraceability.Upstream.ReqSubref
+                        # Check the main requirement does not already have the given subref.
+                        # This may happen when both the scenario and one of its steps cover the same subref.
+                        if _req_ref not in [_upstream_req_subref.req_subref for _upstream_req_subref in _upstream_req.req_subrefs]:
+                            _upstream_req_subref = ReqTraceability.Upstream.ReqSubref(
+                                _upstream_req,  # Memo: `_upstream_req_subref` automatically added to `_upstream_req`.
+                                req_subref=_req_ref, req_link=_req_link,
+                            )  # type: ReqTraceability.Upstream.ReqSubref
 
             # Avoid step entries without upstream traceability information.
             if isinstance(_req_verifier, _ScenarioDefinitionImpl) or _upstream_req_verifier.reqs:
