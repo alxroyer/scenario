@@ -110,31 +110,6 @@ CAMPAIGNS:
     test/cases/campaigns/campaign001.py:
       comments: Single test suite
       id: test/cases/campaigns/campaign001.py
-      steps:
-        step#2:
-          comments: Main campaign logging
-          id: test/cases/campaigns/campaign001.py/step#2
-          name: step#2 (CheckCampaignLogExpectations)
-        step#4:
-          comments: Campaign final results
-          id: test/cases/campaigns/campaign001.py/step#4
-          name: step#4 (CheckFinalResultsLogExpectations)
-        step#5:
-          comments: Campaign output files
-          id: test/cases/campaigns/campaign001.py/step#5
-          name: step#5 (CheckCampaignOutdirFiles)
-        step#6:
-          comments: Campaign report content
-          id: test/cases/campaigns/campaign001.py/step#6
-          name: step#6 (CheckCampaignReport)
-        step#7:
-          comments: Scenario report content in campaign output files
-          id: test/cases/campaigns/campaign001.py/step#7
-          name: step#7 (CheckCampaignScenarioReports)
-        step#8:
-          comments: Requirement file content in campaign output files
-          id: test/cases/campaigns/campaign001.py/step#8
-          name: step#8 (CheckCampaignReqDbFile)
       title: Campaign execution & reports
     test/cases/campaigns/campaign002.py:
       id: test/cases/campaigns/campaign002.py
@@ -145,12 +120,6 @@ CAMPAIGNS:
     test/cases/campaigns/campaign004.py:
       id: test/cases/campaigns/campaign004.py
       title: Campaign --doc-only option
-    test/cases/campaigns/campaign005.py:
-      id: test/cases/campaigns/campaign005.py
-      title: Campaign & extra info
-    test/cases/campaigns/campaign006.py:
-      id: test/cases/campaigns/campaign006.py
-      title: Campaign & requirement file
     test/cases/issues/issue046.py:
       id: test/cases/issues/issue046.py
       title: 'Issue #46! Campaign halts on errors'
@@ -633,15 +602,6 @@ KNOWN_ISSUES:
   title: Known issues
 LOGGING:
   scenarios:
-    test/cases/campaigns/campaign001.py:
-      comments: Scenario log files gathered with campaign reports
-      id: test/cases/campaigns/campaign001.py
-      steps:
-        step#5:
-          comments: Scenario log files saved with campaign output files
-          id: test/cases/campaigns/campaign001.py/step#5
-          name: step#5 (CheckCampaignOutdirFiles)
-      title: Campaign execution & reports
     test/cases/logutils/logging100.py:
       id: test/cases/logutils/logging100.py
       title: Logging timestamps
@@ -663,9 +623,6 @@ LOGGING:
     test/cases/logutils/logging500.py:
       id: test/cases/logutils/logging500.py
       title: Console logging
-    test/cases/logutils/logging510.py:
-      id: test/cases/logutils/logging510.py
-      title: File logging
   text: 'The scenario framework provides logging facilities
 
     with the following characteristics in order to ease test execution analyses:
@@ -918,10 +875,6 @@ SCENARIO_LOGGING:
     test/cases/logutils/logging400.py:
       id: test/cases/logutils/logging400.py
       title: Scenario logging indentation
-    test/cases/logutils/logging421.py:
-      comments: Action/result indentation in subscenario execution.
-      id: test/cases/logutils/logging421.py
-      title: Additional user indentation in subscenario
     test/cases/scenariologging/scenariologging010.py:
       id: test/cases/scenariologging/scenariologging010.py
       title: Scenario logging simple scenario
@@ -934,18 +887,6 @@ SCENARIO_LOGGING:
     test/cases/scenariologging/scenariologging061.py:
       id: test/cases/scenariologging/scenariologging061.py
       title: Scenario logging long texts --doc-only
-    test/cases/scenariologging/scenariologging070.py:
-      id: test/cases/scenariologging/scenariologging070.py
-      title: Scenario logging action/result indentation
-    test/cases/scenariologging/scenariologging071.py:
-      id: test/cases/scenariologging/scenariologging071.py
-      title: Scenario logging action/result indentation --doc-only
-    test/cases/scenarioreport/scenarioreport070.py:
-      id: test/cases/scenarioreport/scenarioreport070.py
-      title: Scenario report action/result indentation
-    test/cases/scenarioreport/scenarioreport071.py:
-      id: test/cases/scenarioreport/scenarioreport071.py
-      title: Scenario report action/result indentation --doc-only
   text: 'The scenario execution provides log information that lets the tester know
     the useful information about it:
 

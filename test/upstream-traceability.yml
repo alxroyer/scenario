@@ -25,13 +25,6 @@ test/cases/campaigns/campaign001.py:
       title: Scenario attributes
     CAMPAIGNS:
       comments: Single test suite
-      subrefs:
-        CAMPAIGNS/logging:
-          comments: Campaign output files
-          title: Campaign executions (CAMPAIGNS/logging)
-        CAMPAIGNS/reports:
-          comments: Requirement file content in campaign output files
-          title: Campaign executions (CAMPAIGNS/reports)
       title: Campaign executions
     ERROR_HANDLING:
       comments: A scenario error is tracked and does not break the campaign
@@ -42,7 +35,7 @@ test/cases/campaigns/campaign001.py:
     LOGGING:
       subrefs:
         LOGGING/file:
-          comments: Scenario log files saved with campaign output files
+          comments: Scenario log files gathered with campaign reports
           title: Logging facilities (LOGGING/file)
       title: Logging facilities
     MULTIPLE_SCENARIO_EXECUTION:

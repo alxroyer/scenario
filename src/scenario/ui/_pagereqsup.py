@@ -153,7 +153,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
 
         with html.addnode("div", id="upstream-traceability"):
             # Compute upstream traceability.
-            _upstream_traceability = scenario.ReqTraceability(req_baseline).getupstream()  # type: scenario.ReqUpstreamTraceabilityType
+            _upstream_traceability = scenario.ReqTraceability(req_baseline).getupstream(walk_steps=True)  # type: scenario.ReqUpstreamTraceabilityType
 
             # Instantiate the table generator.
             _table_generator = TableGenerator(

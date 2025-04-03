@@ -382,10 +382,16 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 return _json_step
 
-    def getdownstream(self):  # type: (...) -> ReqDownstreamTraceabilityType
+    def getdownstream(
+            self,
+            *,
+            walk_subrefs,  # type: bool
+    ):  # type: (...) -> ReqDownstreamTraceabilityType
         """
         Computes downstream traceability from the related baseline.
 
+        :param walk_subrefs:
+            ``True`` to include subreference verifiers for main requirements.
         :return:
             Downstream traceability.
 
@@ -403,7 +409,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             _downstream_scenario = None  # type: typing.Optional[ReqTraceability.Downstream.Scenario]
 
             _req_verifiers_set = (
-                _req_ref.req.getverifiers(walk_subrefs=True) if _req_ref.ismain()
+                _req_ref.req.getverifiers(walk_subrefs=walk_subrefs) if _req_ref.ismain()
                 else _req_ref.getverifiers()
             )  # type: SetWithReqLinksType[_ReqVerifierType]
             for _req_verifier in _ReqVerifierImpl.orderedset(_req_verifiers_set):  # type: _ReqVerifierType
@@ -469,7 +475,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
         # Automatically compute upstream tracebility if needed.
         if downstream_traceability is None:
-            downstream_traceability = self.getdownstream()
+            downstream_traceability = self.getdownstream(walk_subrefs=False)
 
         JsonDict.writefile(
             # Build a JSON content from the computed traceability.
@@ -760,10 +766,16 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 return _json_req_subref
 
-    def getupstream(self):  # type: (...) -> ReqUpstreamTraceabilityType
+    def getupstream(
+            self,
+            *,
+            walk_steps,  # type: bool
+    ):  # type: (...) -> ReqUpstreamTraceabilityType
         """
         Computes upstream traceability for the related baseline.
 
+        :param walk_steps:
+            ``True`` to include step requirement references for scenarios.
         :return:
             Upstream traceability.
 
@@ -787,7 +799,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             _upstream_req = None  # type: typing.Optional[ReqTraceability.Upstream.Req]
 
             _req_ref_set = (
-                _req_verifier.getreqrefs(walk_steps=True) if isinstance(_req_verifier, _ScenarioDefinitionImpl)
+                _req_verifier.getreqrefs(walk_steps=walk_steps) if isinstance(_req_verifier, _ScenarioDefinitionImpl)
                 else _req_verifier.getreqrefs()
             )  # type: SetWithReqLinksType[_ReqRefType]
             for _req_ref in _ReqRefImpl.orderedset(_req_ref_set):  # type: _ReqRefType
@@ -849,7 +861,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
         # Automatically compute upstream tracebility if needed.
         if upstream_traceability is None:
-            upstream_traceability = self.getupstream()
+            upstream_traceability = self.getupstream(walk_steps=False)
 
         JsonDict.writefile(
             # Build a JSON content from the computed traceability.
