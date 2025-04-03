@@ -175,17 +175,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 #:
                 #: May be ``None`` when the scenario verifies the requirement reference through one of its steps only.
                 self.req_link = req_link  # type: typing.Optional[_ReqLinkType]
-                #: Comments attached with this link.
-                #:
-                #: Empty when :attr:`req_link` is ``None``.
-                #:
-                #: When the link does not define an explicit comment, the scenario title is taken into account by default.
-                self.comments = ""  # type: str
                 #: Steps owned by the scenario, and verifying the given requirement reference.
                 self.steps = []  # type: typing.List[ReqTraceability.Downstream.Step]
-
-                if req_link:
-                    self.comments = req_link.comments or scenario.title
 
                 self.downstream_req_ref.scenarios.append(self)
 
@@ -207,6 +198,37 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 """
                 return ReqTraceabilityHelper.mkscenarioname(self.scenario)
 
+            @property
+            def explicit_comments(self):  # type: () -> str
+                """
+                Explicit requirement coverage comments, if defined by the requirement link.
+                """
+                if self.req_link:
+                    return self.req_link.comments
+                return ""
+
+            @property
+            def display_comments(self):  # type: () -> str
+                """
+                Comments explaining the requirement coverage made by this scenario.
+
+                Empty when no requirement link is provided,
+                to let steps explain the requirement coverage.
+
+                When the requirement link provided does not define explicit comments,
+                the scenario title is taken into account by default.
+                """
+                # Let steps explain the coverage when no requirement link is provided.
+                if self.req_link is None:
+                    return ""
+
+                # Explicit comments if provided.
+                if self.req_link.comments:
+                    return self.req_link.comments
+
+                # Default to scenario title.
+                return self.scenario.title
+
             def tojson(
                     self,
                     *,
@@ -222,7 +244,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                     "id": self.id,
                     "name": self.name,
                     "title": self.scenario.title,
-                    "comments": self.comments,
+                    "comments": self.explicit_comments,
                     "steps": {},
                 }  # type: _JsonDictType
 
@@ -274,10 +296,6 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 self.step = step  # type: _StepDefinitionType
                 #: Link between the step and the requirement reference.
                 self.req_link = req_link  # type: _ReqLinkType
-                #: Comments attached with this link.
-                #:
-                #: When the link does not define an explicit comment, the owner scenario title is taken into account by default.
-                self.comments = req_link.comments or self.downstream_scenario.scenario.title  # type: str
 
                 self.downstream_scenario.steps.append(self)
 
@@ -299,6 +317,33 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 """
                 return ReqTraceabilityHelper.mkstepname(self.step)
 
+            @property
+            def explicit_comments(self):  # type: () -> str
+                """
+                Explicit requirement coverage comments, if defined by the requirement link.
+                """
+                return self.req_link.comments
+
+            @property
+            def display_comments(self):  # type: () -> str
+                """
+                Comments explaining the requirement coverage made by this step.
+
+                When the requirement link does not define explicit comments,
+                the owner scenario title and/or step description are taken into account by default.
+                """
+                # Explicit comments if provided.
+                if self.req_link.comments:
+                    return self.req_link.comments
+
+                # Compute default comments from scenario title and/or step description.
+                _comments = []  # type: typing.List[str]
+                if self.downstream_scenario.scenario.title:
+                    _comments.append(self.downstream_scenario.scenario.title)
+                if self.step.description:
+                    _comments.append(self.step.description)
+                return " - ".join(_comments)
+
             def tojson(
                     self,
                     *,
@@ -314,7 +359,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                     "id": self.id,
                     "number": self.step.number,
                     "name": self.name,
-                    "comments": self.comments,
+                    "comments": self.explicit_comments,
                 }  # type: _JsonDictType
 
                 # Note:
@@ -572,19 +617,41 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 #:
                 #: May be ``None`` when the scenario verifies subreferences only, but not the main part of the requirement.
                 self.req_link = req_link  # type: typing.Optional[_ReqLinkType]
-                #: Comments attached with this link.
-                #:
-                #: Empty when :attr:`req_link` is ``None``.
-                #:
-                #: When the link does not define an explicit comment, the requirement title is taken into account by default.
-                self.comments = ""  # type: str
                 #: Subreferences of the requirement, verified by the given scenario.
                 self.req_subrefs = []  # type: typing.List[ReqTraceability.Upstream.ReqSubref]
 
-                if req_link:
-                    self.comments = req_link.comments or req.title
-
                 self.upstream_req_verifier.reqs.append(self)
+
+            @property
+            def explicit_comments(self):  # type: () -> str
+                """
+                Explicit requirement coverage comments, if defined by the requirement link.
+                """
+                if self.req_link:
+                    return self.req_link.comments
+                return ""
+
+            @property
+            def display_comments(self):  # type: () -> str
+                """
+                Comments explaining the coverage of this requirement.
+
+                Empty when no requirement link is provided,
+                to let subrefs explain the requirement coverage.
+
+                When the requirement link provided does not define explicit comments,
+                the requirement title is taken into account by default.
+                """
+                # Let subrefs explain the coverage when no requirement link is provided.
+                if self.req_link is None:
+                    return ""
+
+                # Explicit comments if provided.
+                if self.req_link.comments:
+                    return self.req_link.comments
+
+                # Default to requirement title.
+                return self.req.title
 
             def tojson(self):  # type: (...) -> _JsonDictType
                 """
@@ -597,7 +664,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                     "title": self.req.title,
                     # Don't repeat text with requirements in upstream traceability reports.
                     # "text": self.req.text,
-                    "comments": self.comments,
+                    "comments": self.explicit_comments,
                     "subrefs": {},
                 }  # type: _JsonDictType
 
@@ -644,12 +711,30 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 self.req_subref = req_subref  # type: _ReqRefType
                 #: Link between the scenario (or one of its steps) and the requirement subreference.
                 self.req_link = req_link  # type: _ReqLinkType
-                #: Comments attached with this link.
-                #:
-                #: When the link does not define an explicit comment, the requirement subref title is taken into account by default.
-                self.comments = req_link.comments or req_subref.title  # type: str
 
                 self.upstream_req.req_subrefs.append(self)
+
+            @property
+            def explicit_comments(self):  # type: () -> str
+                """
+                Explicit requirement subref coverage comments, if defined by the requirement link.
+                """
+                return self.req_link.comments
+
+            @property
+            def display_comments(self):  # type: () -> str
+                """
+                Comments explaining the coverage of this requirement subref.
+
+                When the requirement link does not define explicit comments,
+                the requirement subref title is taken into account by default.
+                """
+                # Explicit comments if provided.
+                if self.req_link.comments:
+                    return self.req_link.comments
+
+                # Default to requirement subref title.
+                return self.req_subref.title
 
             def tojson(self):  # type: (...) -> _JsonDictType
                 """
@@ -660,9 +745,11 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 _json_req_subref = {
                     "id": self.req_subref.id,
                     # In the future, requirement subrefs may hold their own title and text.
-                    # "title": ...,
+                    # Currently, title is just computed from the main requirement title.
+                    # Whatever, let's save it in reports as is to avoid subref dictionaries.
+                    "title": self.req_subref.title,
                     # "text": ...,
-                    "comments": self.comments,
+                    "comments": self.explicit_comments,
                 }  # type: _JsonDictType
 
                 # Remove optional information when empty.

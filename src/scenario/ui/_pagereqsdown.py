@@ -273,7 +273,7 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 )
 
             # Traceability comments.
-            list_generator.addcomment(downstream_scenario.comments, classes=["req-verifier", "scenario"])
+            list_generator.addcomment(downstream_scenario.display_comments, classes=["req-verifier", "scenario"])
 
             # Collapsible steps if any.
             if downstream_scenario.steps:
@@ -309,4 +309,4 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 )
 
             # Traceability comments.
-            list_generator.addcomment(downstream_step.comments, classes=["req-verifier", "step"])
+            list_generator.addcomment(downstream_step.display_comments, classes=["req-verifier", "step"])

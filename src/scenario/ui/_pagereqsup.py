@@ -271,7 +271,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             DownstreamTraceabilityPage.reqref2htmllink(list_generator.html, upstream_req.req.main_ref)
 
             # Traceability comments.
-            list_generator.addcomment(upstream_req.comments, classes=["req"])
+            list_generator.addcomment(upstream_req.display_comments, classes=["req"])
 
             # Optional subrefs.
             if upstream_req.req_subrefs:
@@ -307,4 +307,4 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             DownstreamTraceabilityPage.reqref2htmllink(list_generator.html, upstream_req_subref.req_subref)
 
             # Traceability comments.
-            list_generator.addcomment(upstream_req_subref.comments, classes=["req-ref", "subref"])
+            list_generator.addcomment(upstream_req_subref.display_comments, classes=["req-ref", "subref"])
