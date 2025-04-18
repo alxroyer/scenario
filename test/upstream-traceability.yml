@@ -17,8 +17,13 @@
 $schema: https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/upstream-traceability.schema.json
 $version: 0.2.2
 test/cases/campaigns/campaign001.py:
-  id: test/cases/campaigns/campaign001.py
-  name: test/cases/campaigns/campaign001.py
+  description: 'Check that the campaign runner can execute a test suite file (CAMPAIGNS),
+    gather the test case log files (LOGGING), reports (SCENARIO_REPORT) and statistics
+    (STATISTICS), and produce the campaign report (CAMPAIGNS) and requirement file
+    (REQUIREMENT_MANAGEMENT).
+
+    Check furthermore that error display makes it easy to investigate on errors and
+    warnings (MULTIPLE_SCENARIO_EXECUTION, ERROR_HANDLING & KNOWN_ISSUES).'
   reqs:
     ATTRIBUTES:
       comments: Scenario attributes in campaign reports
@@ -53,131 +58,124 @@ test/cases/campaigns/campaign001.py:
     STATISTICS:
       comments: Statistics by scenario, integrated for the campaign
       title: Scenario execution statistics
-  title: Campaign execution & reports
-  type: scenario
-test/cases/campaigns/campaign001.py/step#2:
-  id: test/cases/campaigns/campaign001.py/step#2
-  name: step#2 (CheckCampaignLogExpectations)
-  reqs:
-    CAMPAIGNS:
-      subrefs:
-        CAMPAIGNS/logging:
-          comments: Main campaign logging
-          title: Campaign executions (CAMPAIGNS/logging)
-      title: Campaign executions
-    ERROR_HANDLING:
-      comments: Scenario errors logged with main campaign logging
-      title: Error handling
-    KNOWN_ISSUES:
-      comments: Known issues logged with main campaign logging
-      title: Known issues
-  type: step
-test/cases/campaigns/campaign001.py/step#4:
-  id: test/cases/campaigns/campaign001.py/step#4
-  name: step#4 (CheckFinalResultsLogExpectations)
-  reqs:
-    CAMPAIGNS:
-      subrefs:
-        CAMPAIGNS/logging:
-          comments: Campaign final results
-          title: Campaign executions (CAMPAIGNS/logging)
-      title: Campaign executions
-    ERROR_HANDLING:
-      comments: Scenario errors logged with campaign final results
-      title: Error handling
-    KNOWN_ISSUES:
-      comments: Known issues logged with campaign final results
-      title: Known issues
-    STATISTICS:
-      comments: Statistics logged with campaign final results
-      title: Scenario execution statistics
-  type: step
-test/cases/campaigns/campaign001.py/step#5:
-  id: test/cases/campaigns/campaign001.py/step#5
-  name: step#5 (CheckCampaignOutdirFiles)
-  reqs:
-    CAMPAIGNS:
-      subrefs:
-        CAMPAIGNS/logging:
-          comments: Campaign output files
-          title: Campaign executions (CAMPAIGNS/logging)
-      title: Campaign executions
-    LOGGING:
-      subrefs:
-        LOGGING/file:
-          comments: Scenario log files saved with campaign output files
-          title: Logging facilities (LOGGING/file)
-      title: Logging facilities
-    REQUIREMENT_MANAGEMENT:
-      comments: Requirements saved with campaign output files
-      title: Requirement management
-    SCENARIO_REPORT:
-      comments: Scenario reports saved with campaign output files
-      title: Scenario reports
-  type: step
-test/cases/campaigns/campaign001.py/step#6:
-  id: test/cases/campaigns/campaign001.py/step#6
-  name: step#6 (CheckCampaignReport)
-  reqs:
-    CAMPAIGNS:
-      subrefs:
-        CAMPAIGNS/reports:
-          comments: Campaign report content
-          title: Campaign executions (CAMPAIGNS/reports)
-      title: Campaign executions
-    ERROR_HANDLING:
-      comments: Scenario errors saved in campaign report content
-      title: Error handling
-    KNOWN_ISSUES:
-      comments: Known issues saved in campaign report content
-      title: Known issues
-    STATISTICS:
-      comments: Statistics saved in campaign report content
-      title: Scenario execution statistics
-  type: step
-test/cases/campaigns/campaign001.py/step#7:
-  id: test/cases/campaigns/campaign001.py/step#7
-  name: step#7 (CheckCampaignScenarioReports)
-  reqs:
-    ATTRIBUTES:
-      comments: Attributes saved in scenario reports in campaign output files
-      title: Scenario attributes
-    CAMPAIGNS:
-      subrefs:
-        CAMPAIGNS/reports:
+  steps:
+    step#2:
+      location: test/cases/campaigns/steps/log.py:29:CheckCampaignLogExpectations
+      name: step#2 (CheckCampaignLogExpectations)
+      reqs:
+        CAMPAIGNS:
+          subrefs:
+            CAMPAIGNS/logging:
+              comments: Main campaign logging
+              title: Campaign executions (CAMPAIGNS/logging)
+          title: Campaign executions
+        ERROR_HANDLING:
+          comments: Scenario errors logged with main campaign logging
+          title: Error handling
+        KNOWN_ISSUES:
+          comments: Known issues logged with main campaign logging
+          title: Known issues
+    step#4:
+      location: test/cases/multiplescenarios/steps/expectations.py:28:CheckFinalResultsLogExpectations
+      name: step#4 (CheckFinalResultsLogExpectations)
+      reqs:
+        CAMPAIGNS:
+          subrefs:
+            CAMPAIGNS/logging:
+              comments: Campaign final results
+              title: Campaign executions (CAMPAIGNS/logging)
+          title: Campaign executions
+        ERROR_HANDLING:
+          comments: Scenario errors logged with campaign final results
+          title: Error handling
+        KNOWN_ISSUES:
+          comments: Known issues logged with campaign final results
+          title: Known issues
+        STATISTICS:
+          comments: Statistics logged with campaign final results
+          title: Scenario execution statistics
+    step#5:
+      location: test/cases/campaigns/steps/outdirfiles.py:67:CheckCampaignOutdirFiles
+      name: step#5 (CheckCampaignOutdirFiles)
+      reqs:
+        CAMPAIGNS:
+          subrefs:
+            CAMPAIGNS/logging:
+              comments: Campaign output files
+              title: Campaign executions (CAMPAIGNS/logging)
+          title: Campaign executions
+        LOGGING:
+          subrefs:
+            LOGGING/file:
+              comments: Scenario log files saved with campaign output files
+              title: Logging facilities (LOGGING/file)
+          title: Logging facilities
+        REQUIREMENT_MANAGEMENT:
+          comments: Requirements saved with campaign output files
+          title: Requirement management
+        SCENARIO_REPORT:
+          comments: Scenario reports saved with campaign output files
+          title: Scenario reports
+    step#6:
+      location: test/cases/campaigns/steps/campaignreport.py:28:CheckCampaignReport
+      name: step#6 (CheckCampaignReport)
+      reqs:
+        CAMPAIGNS:
+          subrefs:
+            CAMPAIGNS/reports:
+              comments: Campaign report content
+              title: Campaign executions (CAMPAIGNS/reports)
+          title: Campaign executions
+        ERROR_HANDLING:
+          comments: Scenario errors saved in campaign report content
+          title: Error handling
+        KNOWN_ISSUES:
+          comments: Known issues saved in campaign report content
+          title: Known issues
+        STATISTICS:
+          comments: Statistics saved in campaign report content
+          title: Scenario execution statistics
+    step#7:
+      location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+      name: step#7 (CheckCampaignScenarioReports)
+      reqs:
+        ATTRIBUTES:
+          comments: Attributes saved in scenario reports in campaign output files
+          title: Scenario attributes
+        CAMPAIGNS:
+          subrefs:
+            CAMPAIGNS/reports:
+              comments: Scenario report content in campaign output files
+              title: Campaign executions (CAMPAIGNS/reports)
+          title: Campaign executions
+        ERROR_HANDLING:
+          comments: Scenario errors saved in scenario reports in campaign output files
+          title: Error handling
+        KNOWN_ISSUES:
+          comments: Known issues saved in scenario reports in campaign output files
+          title: Known issues
+        SCENARIO_REPORT:
           comments: Scenario report content in campaign output files
-          title: Campaign executions (CAMPAIGNS/reports)
-      title: Campaign executions
-    ERROR_HANDLING:
-      comments: Scenario errors saved in scenario reports in campaign output files
-      title: Error handling
-    KNOWN_ISSUES:
-      comments: Known issues saved in scenario reports in campaign output files
-      title: Known issues
-    SCENARIO_REPORT:
-      comments: Scenario report content in campaign output files
-      title: Scenario reports
-    STATISTICS:
-      comments: Statistics saved in scenario reports in campaign output files
-      title: Scenario execution statistics
-  type: step
-test/cases/campaigns/campaign001.py/step#8:
-  id: test/cases/campaigns/campaign001.py/step#8
-  name: step#8 (CheckCampaignReqDbFile)
-  reqs:
-    CAMPAIGNS:
-      subrefs:
-        CAMPAIGNS/reports:
+          title: Scenario reports
+        STATISTICS:
+          comments: Statistics saved in scenario reports in campaign output files
+          title: Scenario execution statistics
+    step#8:
+      location: test/cases/campaigns/steps/reqdbfile.py:28:CheckCampaignReqDbFile
+      name: step#8 (CheckCampaignReqDbFile)
+      reqs:
+        CAMPAIGNS:
+          subrefs:
+            CAMPAIGNS/reports:
+              comments: Requirement file content in campaign output files
+              title: Campaign executions (CAMPAIGNS/reports)
+          title: Campaign executions
+        REQUIREMENT_MANAGEMENT:
           comments: Requirement file content in campaign output files
-          title: Campaign executions (CAMPAIGNS/reports)
-      title: Campaign executions
-    REQUIREMENT_MANAGEMENT:
-      comments: Requirement file content in campaign output files
-      title: Requirement management
-  type: step
+          title: Requirement management
+  title: Campaign execution & reports
 test/cases/campaigns/campaign002.py:
-  id: test/cases/campaigns/campaign002.py
-  name: test/cases/campaigns/campaign002.py
+  description: Check that the campaign runner can execute several test suite files.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
@@ -186,26 +184,21 @@ test/cases/campaigns/campaign002.py:
         the campaign
       title: Scenario execution statistics
   title: Campaign execution with several test suites
-  type: scenario
 test/cases/campaigns/campaign003.py:
-  id: test/cases/campaigns/campaign003.py
-  name: test/cases/campaigns/campaign003.py
+  description: Check the creation of output subdirectory for campaign results depending
+    on the --subdir option and/or 'scenario.campaign_subdir_mode' configuration.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
   title: Campaign --subdir option
-  type: scenario
 test/cases/campaigns/campaign004.py:
-  id: test/cases/campaigns/campaign004.py
-  name: test/cases/campaigns/campaign004.py
+  description: Check campaign results when executed with the --doc-only option.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
   title: Campaign --doc-only option
-  type: scenario
 test/cases/campaigns/campaign005.py:
-  id: test/cases/campaigns/campaign005.py
-  name: test/cases/campaigns/campaign005.py
+  description: Check extra info display with campaign results.
   reqs:
     ATTRIBUTES:
       comments: Display with campaign final results
@@ -216,10 +209,8 @@ test/cases/campaigns/campaign005.py:
           title: Campaign executions (CAMPAIGNS/logging)
       title: Campaign executions
   title: Campaign & extra info
-  type: scenario
 test/cases/campaigns/campaign006.py:
-  id: test/cases/campaigns/campaign006.py
-  name: test/cases/campaigns/campaign006.py
+  description: Check requirement file output with campaign results.
   reqs:
     CAMPAIGNS:
       subrefs:
@@ -230,114 +221,92 @@ test/cases/campaigns/campaign006.py:
       comments: Requirement output file management with campaigns
       title: Requirement management
   title: Campaign & requirement file
-  type: scenario
 test/cases/configdb/configdb010.py:
-  id: test/cases/configdb/configdb010.py
-  name: test/cases/configdb/configdb010.py
+  description: Check that a configuration value can be set from the command line.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Configuration value from command line
-  type: scenario
 test/cases/configdb/configdb020.py:
-  id: test/cases/configdb/configdb020.py
-  name: test/cases/configdb/configdb020.py
+  description: Check that a configuration value can be set from the code.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Configuration value from code
-  type: scenario
 test/cases/configdb/configdb030.py:
-  id: test/cases/configdb/configdb030.py
-  name: test/cases/configdb/configdb030.py
+  description: Check the way configuration values are converted at use.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Configuration value types and conversions
-  type: scenario
 test/cases/configdb/configdb040.py:
-  id: test/cases/configdb/configdb040.py
-  name: test/cases/configdb/configdb040.py
+  description: Check that a configuration value can be unset.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Configuration value unset
-  type: scenario
 test/cases/configdb/configdb100.py:
-  id: test/cases/configdb/configdb100.py
-  name: test/cases/configdb/configdb100.py
+  description: Check that a INI configuration file can be loaded.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Load INI configuration file
-  type: scenario
 test/cases/configdb/configdb110.py:
-  id: test/cases/configdb/configdb110.py
-  name: test/cases/configdb/configdb110.py
+  description: Check that a INI configuration file can be loaded with a given root
+    configuration key, then saved as a new INI file.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Save INI configuration file
-  type: scenario
 test/cases/configdb/configdb120.py:
-  id: test/cases/configdb/configdb120.py
-  name: test/cases/configdb/configdb120.py
+  description: Check the way sub-sections are emulated in INI files, and default values
+    are propagated along sections.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: INI default values & sub-sections
-  type: scenario
 test/cases/configdb/configdb200.py:
-  id: test/cases/configdb/configdb200.py
-  name: test/cases/configdb/configdb200.py
+  description: Check that a JSON configuration file can be loaded.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Load JSON configuration file
-  type: scenario
 test/cases/configdb/configdb210.py:
-  id: test/cases/configdb/configdb210.py
-  name: test/cases/configdb/configdb210.py
+  description: Check that a JSON configuration file can be loaded with a given root
+    configuration key, then saved as a new JSON file.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Save JSON configuration file
-  type: scenario
 test/cases/configdb/configdb300.py:
-  id: test/cases/configdb/configdb300.py
-  name: test/cases/configdb/configdb300.py
+  description: Check that a YAML configuration file can be loaded (when 'pyyaml' is
+    installed).
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Load YAML configuration file
-  type: scenario
 test/cases/configdb/configdb310.py:
-  id: test/cases/configdb/configdb310.py
-  name: test/cases/configdb/configdb310.py
+  description: Check that a YAML configuration file can be loaded with a given root
+    configuration key, then saved as a new YAML file.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Save YAML configuration file
-  type: scenario
 test/cases/configdb/configdb320.py:
-  id: test/cases/configdb/configdb320.py
-  name: test/cases/configdb/configdb320.py
+  description: Check that an environment error is raised when 'pyyaml' is not installed.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: '''pyyaml'' environment error'
-  type: scenario
 test/cases/configdb/configdb500.py:
-  id: test/cases/configdb/configdb500.py
-  name: test/cases/configdb/configdb500.py
+  description: Check several configuration files can be loaded from the command line.
+    Check the one loaded in the end overloads the ones loaded before.
   reqs:
     CONFIG_DB:
       title: General configuration database
   title: Configuration files overloading
-  type: scenario
 test/cases/doconly/doconly001.py:
-  id: test/cases/doconly/doconly001.py
-  name: test/cases/doconly/doconly001.py
+  description: Check the --doc-only execution succeeds even for a failing scenario.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -345,20 +314,17 @@ test/cases/doconly/doconly001.py:
       comments: Scenario logging with --doc-only
       title: '`scenario` logging'
   title: --doc-only execution
-  type: scenario
 test/cases/doconly/doconly002.py:
-  id: test/cases/doconly/doconly002.py
-  name: test/cases/doconly/doconly002.py
+  description: Check the scenario report for a --doc-only execution.
   reqs:
     DOC_ONLY:
       title: Documentation generation
     SCENARIO_REPORT:
       title: Scenario reports
   title: --doc-only scenario report
-  type: scenario
 test/cases/errors/failingscenario001.py:
-  id: test/cases/errors/failingscenario001.py
-  name: test/cases/errors/failingscenario001.py
+  description: Check a scenario ends in error as soon as an exception is thrown. Check
+    the error is displayed and stored appropriately.
   reqs:
     ERROR_HANDLING:
       title: Error handling
@@ -368,86 +334,78 @@ test/cases/errors/failingscenario001.py:
     SCENARIO_REPORT:
       comments: Scenario report with errors
       title: Scenario reports
+  steps:
+    step#1:
+      description: '''test/data/failingscenario.py'' execution'
+      location: test/cases/scenarioexecution/steps/execution.py:27:ExecScenario
+      name: step#1 (ExecScenario)
+      reqs:
+        ERROR_HANDLING:
+          title: Error handling
+    step#3:
+      location: test/cases/scenariologging/steps/expectations.py:28:CheckScenarioLogExpectations
+      name: step#3 (CheckScenarioLogExpectations)
+      reqs:
+        ERROR_HANDLING:
+          title: Error handling
+        SCENARIO_LOGGING:
+          comments: Actions & expected results displayed until the error occurs
+          title: '`scenario` logging'
+    step#4:
+      location: test/cases/errors/failingscenario001.py:90:CheckLogOutputExceptionDisplay
+      name: step#4 (CheckLogOutputExceptionDisplay)
+      reqs:
+        ERROR_HANDLING:
+          title: Error handling
+        SCENARIO_LOGGING:
+          comments: Traceback displayed
+          title: '`scenario` logging'
+    step#5:
+      location: test/cases/scenarioreport/steps/expectations.py:82:CheckScenarioReportExpectations
+      name: step#5 (CheckScenarioReportExpectations)
+      reqs:
+        ERROR_HANDLING:
+          title: Error handling
+        SCENARIO_REPORT:
+          comments: All actions & expected results definitions saved, executed until
+            the error occurs
+          title: Scenario reports
+    step#6:
+      location: test/cases/errors/failingscenario001.py:118:CheckScenarioReportExceptionStorage
+      name: step#6 (CheckScenarioReportExceptionStorage)
+      reqs:
+        ERROR_HANDLING:
+          title: Error handling
+        SCENARIO_REPORT:
+          comments: 'Error storage at each level: scenario, step, action & expected
+            result'
+          title: Scenario reports
   title: Failing scenario execution
-  type: scenario
-test/cases/errors/failingscenario001.py/step#1:
-  description: '''test/data/failingscenario.py'' execution'
-  id: test/cases/errors/failingscenario001.py/step#1
-  name: step#1 (ExecScenario)
-  reqs:
-    ERROR_HANDLING:
-      title: Error handling
-  type: step
-test/cases/errors/failingscenario001.py/step#3:
-  id: test/cases/errors/failingscenario001.py/step#3
-  name: step#3 (CheckScenarioLogExpectations)
-  reqs:
-    ERROR_HANDLING:
-      title: Error handling
-    SCENARIO_LOGGING:
-      comments: Actions & expected results displayed until the error occurs
-      title: '`scenario` logging'
-  type: step
-test/cases/errors/failingscenario001.py/step#4:
-  id: test/cases/errors/failingscenario001.py/step#4
-  name: step#4 (CheckLogOutputExceptionDisplay)
-  reqs:
-    ERROR_HANDLING:
-      title: Error handling
-    SCENARIO_LOGGING:
-      comments: Traceback displayed
-      title: '`scenario` logging'
-  type: step
-test/cases/errors/failingscenario001.py/step#5:
-  id: test/cases/errors/failingscenario001.py/step#5
-  name: step#5 (CheckScenarioReportExpectations)
-  reqs:
-    ERROR_HANDLING:
-      title: Error handling
-    SCENARIO_REPORT:
-      comments: All actions & expected results definitions saved, executed until the
-        error occurs
-      title: Scenario reports
-  type: step
-test/cases/errors/failingscenario001.py/step#6:
-  id: test/cases/errors/failingscenario001.py/step#6
-  name: step#6 (CheckScenarioReportExceptionStorage)
-  reqs:
-    ERROR_HANDLING:
-      title: Error handling
-    SCENARIO_REPORT:
-      comments: 'Error storage at each level: scenario, step, action & expected result'
-      title: Scenario reports
-  type: step
 test/cases/errors/failingscenario002.py:
-  id: test/cases/errors/failingscenario002.py
-  name: test/cases/errors/failingscenario002.py
+  description: Check steps following an error step continue being executed when the
+    *continue_on_error* option is enabled.
   reqs:
     ERROR_HANDLING:
       title: Error handling
   title: Continue on error
-  type: scenario
 test/cases/goto/goto001.py:
-  id: test/cases/goto/goto001.py
-  name: test/cases/goto/goto001.py
+  description: Check the capacity the make the scenario execution jump to backward
+    or forward steps.
   reqs:
     GOTO:
       title: Jumping to another step
   title: Goto jumps
-  type: scenario
 test/cases/goto/goto002.py:
-  id: test/cases/goto/goto002.py
-  name: test/cases/goto/goto002.py
+  description: Check scenario report generation for goto scenarios.
   reqs:
     GOTO:
       title: Jumping to another step
     SCENARIO_REPORT:
       title: Scenario reports
   title: Goto scenario reports
-  type: scenario
 test/cases/issues/issue003.py:
-  id: test/cases/issues/issue003.py
-  name: test/cases/issues/issue003.py
+  description: Check that actions and expected resulted are differenciated even if
+    they have the same location, especially in scenario reports.
   reqs:
     SCENARIO_EXECUTION:
       title: Scenario steps execution
@@ -456,54 +414,45 @@ test/cases/issues/issue003.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: 'Issue #3! Actions / Results differenciation even at the same location'
-  type: scenario
 test/cases/issues/issue033.py:
-  id: test/cases/issues/issue033.py
-  name: test/cases/issues/issue033.py
+  description: Check that code locations for errors and known issues give the fully
+    qualified names of the methods they occur in.
   reqs:
     ERROR_HANDLING:
       title: Error handling
     KNOWN_ISSUES:
       title: Known issues
   title: 'Issue #33! Fully qualified name for code locations'
-  type: scenario
 test/cases/issues/issue042.py:
-  id: test/cases/issues/issue042.py
-  name: test/cases/issues/issue042.py
+  description: Check that known issues are correctly displayed when several tests
+    are executed in a single command line.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: 'Issue #42! Bad known issue display on multiple test execution'
-  type: scenario
 test/cases/issues/issue045.py:
-  id: test/cases/issues/issue045.py
-  name: test/cases/issues/issue045.py
+  description: Check that test scripts are loaded respecting their package belonging.
   reqs: {}
   title: 'Issue #45! Test scripts in packages'
-  type: scenario
 test/cases/issues/issue046.py:
-  id: test/cases/issues/issue046.py
-  name: test/cases/issues/issue046.py
+  description: Check that a campaign does not halt on errors due the scenario scripts
+    being tested.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
     ERROR_HANDLING:
       title: Error handling
   title: 'Issue #46! Campaign halts on errors'
-  type: scenario
 test/cases/issues/issue065a.py:
-  id: test/cases/issues/issue065a.py
-  name: test/cases/issues/issue065a.py
+  description: Avoid untracked time when executing a scenario.
   reqs:
     STATISTICS:
       title: Scenario execution statistics
   title: 'Issue #65! Scenario execution lost time'
-  type: scenario
 test/cases/issues/issue065b.py:
-  id: test/cases/issues/issue065b.py
-  name: test/cases/issues/issue065b.py
+  description: Avoid untracked time when executing a campaign.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
@@ -512,28 +461,26 @@ test/cases/issues/issue065b.py:
     STATISTICS:
       title: Scenario execution statistics
   title: 'Issue #65! Campaign execution lost time'
-  type: scenario
 test/cases/knownissues/knownissues010.py:
-  id: test/cases/knownissues/knownissues010.py
-  name: test/cases/knownissues/knownissues010.py
+  description: Check known issues generate warnings by default, and that the status
+    of the test is WARNINGS.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
   title: Known issues
-  type: scenario
 test/cases/knownissues/knownissues011.py:
-  id: test/cases/knownissues/knownissues011.py
-  name: test/cases/knownissues/knownissues011.py
+  description: Check that known issues when declared at the definition level still
+    generate warnings in --doc-only.
   reqs:
     DOC_ONLY:
       title: Documentation generation
     KNOWN_ISSUES:
       title: Known issues
   title: Known issues --doc-only
-  type: scenario
 test/cases/knownissues/knownissues020.py:
-  id: test/cases/knownissues/knownissues020.py
-  name: test/cases/knownissues/knownissues020.py
+  description: Check that known issues declared at the definition level persist when
+    a test error occurs. Check the way things are displayed in the console and saved
+    in the scenario report.
   reqs:
     ERROR_HANDLING:
       title: Error handling
@@ -544,30 +491,28 @@ test/cases/knownissues/knownissues020.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Known issue persistence v/s test errors
-  type: scenario
 test/cases/knownissues/knownissues080.py:
-  id: test/cases/knownissues/knownissues080.py
-  name: test/cases/knownissues/knownissues080.py
+  description: Check that known issues are displayed in multiple scenario results.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Known issues & multiple scenarios
-  type: scenario
 test/cases/knownissues/knownissues090.py:
-  id: test/cases/knownissues/knownissues090.py
-  name: test/cases/knownissues/knownissues090.py
+  description: 'Check that known issues in campaign results are displayed correctly:
+    SUCCESS, then WARNINGS, then FAIL tests.'
   reqs:
     CAMPAIGNS:
       title: Campaign executions
     KNOWN_ISSUES:
       title: Known issues
   title: Known issues & campaigns
-  type: scenario
 test/cases/knownissues/knownissues110.py:
-  id: test/cases/knownissues/knownissues110.py
-  name: test/cases/knownissues/knownissues110.py
+  description: Check that known issues can be declared with an issue level making
+    them behave as errors or be ignored depending on the --issue-level-error and --issue-level-ignored
+    options. Check the way things are logged in the console and saved in scenario
+    reports.
   reqs:
     ERROR_HANDLING:
       title: Error handling
@@ -578,70 +523,65 @@ test/cases/knownissues/knownissues110.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Known issue levels & ignored and error issue levels
-  type: scenario
 test/cases/knownissues/knownissues120.py:
-  id: test/cases/knownissues/knownissues120.py
-  name: test/cases/knownissues/knownissues120.py
+  description: Check that known issues considered as errors don't break the test execution
+    without requiring a *continue-on-error* option.
   reqs:
     ERROR_HANDLING:
       title: Error handling
     KNOWN_ISSUES:
       title: Known issues
   title: Known errors & test continuation
-  type: scenario
 test/cases/knownissues/knownissues180.py:
-  id: test/cases/knownissues/knownissues180.py
-  name: test/cases/knownissues/knownissues180.py
+  description: 'Check that scenario results with known issues of different levels
+    are displayed correctly: SUCCESS, then WARNINGS, then FAIL tests, WARNINGS and
+    FAIL tests being sorted by ascending issue levels each.'
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Known issue levels & multiple scenarios
-  type: scenario
 test/cases/knownissues/knownissues190.py:
-  id: test/cases/knownissues/knownissues190.py
-  name: test/cases/knownissues/knownissues190.py
+  description: 'Check that campaign results with known issues of different levels
+    are displayed correctly: SUCCESS, then WARNINGS, then FAIL tests, WARNINGS and
+    FAIL tests being sorted by ascending issue levels each.'
   reqs:
     CAMPAIGNS:
       title: Campaign executions
     KNOWN_ISSUES:
       title: Known issues
   title: Known issue levels & campaigns
-  type: scenario
 test/cases/knownissues/knownissues210.py:
-  id: test/cases/knownissues/knownissues210.py
-  name: test/cases/knownissues/knownissues210.py
+  description: Check that issue levels can be configured with meaningful names, and
+    that these names are displayed in the console.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     SCENARIO_LOGGING:
       title: '`scenario` logging'
   title: Issue level names
-  type: scenario
 test/cases/knownissues/knownissues280.py:
-  id: test/cases/knownissues/knownissues280.py
-  name: test/cases/knownissues/knownissues280.py
+  description: Check that issue level names are displayed in the console in multiple
+    scenario results.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Issue level names & multiple scenarios
-  type: scenario
 test/cases/knownissues/knownissues290.py:
-  id: test/cases/knownissues/knownissues290.py
-  name: test/cases/knownissues/knownissues290.py
+  description: Check that issue level names are displayed in campaign logs and in
+    final results.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
     KNOWN_ISSUES:
       title: Known issues
   title: Issue level names & campaigns
-  type: scenario
 test/cases/knownissues/knownissues310.py:
-  id: test/cases/knownissues/knownissues310.py
-  name: test/cases/knownissues/knownissues310.py
+  description: Check that known issue identifiers are displayed in the console and
+    saved in scenario reports.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
@@ -650,30 +590,28 @@ test/cases/knownissues/knownissues310.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Known issue ids
-  type: scenario
 test/cases/knownissues/knownissues380.py:
-  id: test/cases/knownissues/knownissues380.py
-  name: test/cases/knownissues/knownissues380.py
+  description: Check that known issue identifiers are displayed in the console in
+    multiple scenario results.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Known issue ids & multiple scenarios
-  type: scenario
 test/cases/knownissues/knownissues390.py:
-  id: test/cases/knownissues/knownissues390.py
-  name: test/cases/knownissues/knownissues390.py
+  description: Check that known issue identifiers are displayed in the campaign log
+    and in final results.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
     KNOWN_ISSUES:
       title: Known issues
   title: Known issue ids & campaigns
-  type: scenario
 test/cases/knownissues/knownissues410.py:
-  id: test/cases/knownissues/knownissues410.py
-  name: test/cases/knownissues/knownissues410.py
+  description: Check that URL builder handlers can be set in order to generate URL
+    for known-issues. Check that these URL are logged in the console and saved in
+    scenario reports.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
@@ -682,86 +620,74 @@ test/cases/knownissues/knownissues410.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Known issue URLs
-  type: scenario
 test/cases/knownissues/knownissues480.py:
-  id: test/cases/knownissues/knownissues480.py
-  name: test/cases/knownissues/knownissues480.py
+  description: Check that known issue URLs are displayed in the console in multiple
+    scenario results.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Known issue URLs & multiple scenarios
-  type: scenario
 test/cases/knownissues/knownissues490.py:
-  id: test/cases/knownissues/knownissues490.py
-  name: test/cases/knownissues/knownissues490.py
+  description: Check that known issue URLs are displayed in the campaign log and in
+    final results.
   reqs:
     CAMPAIGNS:
       title: Campaign executions
     KNOWN_ISSUES:
       title: Known issues
   title: Known issue URLs & campaigns
-  type: scenario
 test/cases/logutils/logging100.py:
-  id: test/cases/logutils/logging100.py
-  name: test/cases/logutils/logging100.py
+  description: Check log lines are displayed with timestamps (by default), and the
+    ability to avoid them.
   reqs:
     LOGGING:
       title: Logging facilities
   title: Logging timestamps
-  type: scenario
 test/cases/logutils/logging200.py:
-  id: test/cases/logutils/logging200.py
-  name: test/cases/logutils/logging200.py
+  description: Check log lines are tagged with a log level between DEBUG, INFO, WARNING
+    and ERROR, and an optional log class.
   reqs:
     LOGGING:
       title: Logging facilities
   title: Log levels and classes
-  type: scenario
 test/cases/logutils/logging210.py:
-  id: test/cases/logutils/logging210.py
-  name: test/cases/logutils/logging210.py
+  description: Check that debugging is disabled by default for class loggers, and
+    that it can be enabled.
   reqs:
     DEBUG_LOGGING:
       title: Debug logging facilities
   title: Class logger debugging enabling
-  type: scenario
 test/cases/logutils/logging300.py:
-  id: test/cases/logutils/logging300.py
-  name: test/cases/logutils/logging300.py
+  description: Check log lines are colored by default regarding their log level in
+    the console, that class logger message colors can be parameterized, and that log
+    colors can be disabled.
   reqs:
     LOGGING:
       title: Logging facilities
   title: Log colors
-  type: scenario
 test/cases/logutils/logging400.py:
-  id: test/cases/logutils/logging400.py
-  name: test/cases/logutils/logging400.py
+  description: Check that action, result and evidence log lines are indented in a
+    manner that helps reading the scenario execution log.
   reqs:
     SCENARIO_LOGGING:
       title: '`scenario` logging'
   title: Scenario logging indentation
-  type: scenario
 test/cases/logutils/logging410.py:
-  id: test/cases/logutils/logging410.py
-  name: test/cases/logutils/logging410.py
+  description: Check that indentation is shifted for each subscenario being executed.
   reqs:
     LOGGING:
       title: Logging facilities
   title: Scenario stack indentation
-  type: scenario
 test/cases/logutils/logging420.py:
-  id: test/cases/logutils/logging420.py
-  name: test/cases/logutils/logging420.py
+  description: Check that the user test can add and remove extra indentation.
   reqs:
     LOGGING:
       title: Logging facilities
   title: Additional user indentation
-  type: scenario
 test/cases/logutils/logging421.py:
-  id: test/cases/logutils/logging421.py
-  name: test/cases/logutils/logging421.py
+  description: Check that additional user indentation still works in subscenarios.
   reqs:
     LOGGING:
       title: Logging facilities
@@ -774,18 +700,16 @@ test/cases/logutils/logging421.py:
     SUBSCENARIOS:
       title: Subscenarios
   title: Additional user indentation in subscenario
-  type: scenario
 test/cases/logutils/logging500.py:
-  id: test/cases/logutils/logging500.py
-  name: test/cases/logutils/logging500.py
+  description: Check that logging is displayed by default in the console, and that
+    it can be disabled.
   reqs:
     LOGGING:
       title: Logging facilities
   title: Console logging
-  type: scenario
 test/cases/logutils/logging510.py:
-  id: test/cases/logutils/logging510.py
-  name: test/cases/logutils/logging510.py
+  description: Check that logging can be saved into a file, even though console logging
+    is turned off.
   reqs:
     LOGGING:
       subrefs:
@@ -793,16 +717,13 @@ test/cases/logutils/logging510.py:
           title: Logging facilities (LOGGING/file)
       title: Logging facilities
   title: File logging
-  type: scenario
 test/cases/misc/datetime001.py:
-  id: test/cases/misc/datetime001.py
-  name: test/cases/misc/datetime001.py
+  description: Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()`
+    functions.
   reqs: {}
   title: Date/time ISO8601 formatting & parsing
-  type: scenario
 test/cases/misc/textutils001.py:
-  id: test/cases/misc/textutils001.py
-  name: test/cases/misc/textutils001.py
+  description: Check the `anylongtext2str()` function.
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
@@ -817,96 +738,83 @@ test/cases/misc/textutils001.py:
       comments: Long texts for actions & expected results
       title: Scenario steps execution
   title: Long texts
-  type: scenario
 test/cases/misc/timezone001.py:
-  id: test/cases/misc/timezone001.py
-  name: test/cases/misc/timezone001.py
+  description: Check the `scenario.datetime.toiso8601()` and `scenario.datetime.fromiso8601()`
+    functions handle timezone specifications, with or without DST (Daylight Saving
+    Time) shifts.
   reqs: {}
   title: Timezones with ISO8601 datetimes and DST
-  type: scenario
 test/cases/misc/timezone002.py:
-  id: test/cases/misc/timezone002.py
-  name: test/cases/misc/timezone002.py
+  description: Check the `scenario.datetime.toiso8601()` takes into account the 'scenario.timezone'
+    configuration.
   reqs: {}
   title: Timezone configuration
-  type: scenario
 test/cases/multiplescenarios/multiplescenarios000.py:
-  id: test/cases/multiplescenarios/multiplescenarios000.py
-  name: test/cases/multiplescenarios/multiplescenarios000.py
+  description: Check that a couple of options are incompatible with multiple scenario
+    executions.
   reqs:
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Multiple scenarios & incompatible options
-  type: scenario
 test/cases/multiplescenarios/multiplescenarios001.py:
-  id: test/cases/multiplescenarios/multiplescenarios001.py
-  name: test/cases/multiplescenarios/multiplescenarios001.py
+  description: Check that several scenarios can be executed with a single scenario
+    launcher invocation, and that error display makes it easy to investigate on errors.
   reqs:
     ERROR_HANDLING:
       title: Error handling
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Multiple scenarios execution
-  type: scenario
 test/cases/multiplescenarios/multiplescenarios002.py:
-  id: test/cases/multiplescenarios/multiplescenarios002.py
-  name: test/cases/multiplescenarios/multiplescenarios002.py
+  description: Check that several scenarios can be executed with a single scenario
+    launcher invocation, when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Multiple scenarios --doc-only
-  type: scenario
 test/cases/multiplescenarios/multiplescenarios003.py:
-  id: test/cases/multiplescenarios/multiplescenarios003.py
-  name: test/cases/multiplescenarios/multiplescenarios003.py
+  description: Check the way known issues are displayed in the final results reporting
+    when executing multiple scenarios.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Multiple scenarios & known issues
-  type: scenario
 test/cases/multiplescenarios/multiplescenarios004.py:
-  id: test/cases/multiplescenarios/multiplescenarios004.py
-  name: test/cases/multiplescenarios/multiplescenarios004.py
+  description: Check extra info display when executing multiple scenarios.
   reqs:
     ATTRIBUTES:
       title: Scenario attributes
     MULTIPLE_SCENARIO_EXECUTION:
       title: Multiple scenario execution
   title: Multiple scenarios & extra info
-  type: scenario
 test/cases/reqmgt/reqmgt010.py:
-  id: test/cases/reqmgt/reqmgt010.py
-  name: test/cases/reqmgt/reqmgt010.py
+  description: Check the requirement database can be fed from tests being loaded,
+    and queried.
   reqs:
     REQUIREMENT_MANAGEMENT:
       title: Requirement management
   title: Requirement database and queries
-  type: scenario
 test/cases/scenarioexecution/inheritance001.py:
-  id: test/cases/scenarioexecution/inheritance001.py
-  name: test/cases/scenarioexecution/inheritance001.py
+  description: Check step order when a scenario inherits from another one.
   reqs:
     ALTERNATIVE_SCENARIOS:
       title: Alternative scenarios
     SCENARIO_EXECUTION:
       title: Scenario steps execution
   title: Inheritance & step order
-  type: scenario
 test/cases/scenarioexecution/scenarioexecution001.py:
-  id: test/cases/scenarioexecution/scenarioexecution001.py
-  name: test/cases/scenarioexecution/scenarioexecution001.py
+  description: Check test steps are executed one after the other.
   reqs:
     SCENARIO_EXECUTION:
       title: Scenario steps execution
   title: Scenario execution
-  type: scenario
 test/cases/scenariologging/scenariologging010.py:
-  id: test/cases/scenariologging/scenariologging010.py
-  name: test/cases/scenariologging/scenariologging010.py
+  description: Check the scenario logging output is generated as expected for a simple
+    scenario.
   reqs:
     ATTRIBUTES:
       comments: Attribute display with scenario logging
@@ -914,10 +822,9 @@ test/cases/scenariologging/scenariologging010.py:
     SCENARIO_LOGGING:
       title: '`scenario` logging'
   title: Scenario logging simple scenario
-  type: scenario
 test/cases/scenariologging/scenariologging011.py:
-  id: test/cases/scenariologging/scenariologging011.py
-  name: test/cases/scenariologging/scenariologging011.py
+  description: Check the scenario logging output is generated as expected for a simple
+    scenario, when executed with the --doc-only option.
   reqs:
     ATTRIBUTES:
       comments: Attribute display in scenario logging --doc-only
@@ -927,10 +834,9 @@ test/cases/scenariologging/scenariologging011.py:
     SCENARIO_LOGGING:
       title: '`scenario` logging'
   title: Scenario logging simple scenario --doc-only
-  type: scenario
 test/cases/scenariologging/scenariologging060.py:
-  id: test/cases/scenariologging/scenariologging060.py
-  name: test/cases/scenariologging/scenariologging060.py
+  description: Check the scenario logging output is generated as expected for a scenario
+    with long texts.
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
@@ -944,10 +850,9 @@ test/cases/scenariologging/scenariologging060.py:
     SCENARIO_LOGGING:
       title: '`scenario` logging'
   title: Scenario logging long texts
-  type: scenario
 test/cases/scenariologging/scenariologging061.py:
-  id: test/cases/scenariologging/scenariologging061.py
-  name: test/cases/scenariologging/scenariologging061.py
+  description: Check the scenario logging output is generated as expected for a scenario
+    with long texts, when executed with the --doc-only option.
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
@@ -960,10 +865,9 @@ test/cases/scenariologging/scenariologging061.py:
     SCENARIO_LOGGING:
       title: '`scenario` logging'
   title: Scenario logging long texts --doc-only
-  type: scenario
 test/cases/scenariologging/scenariologging070.py:
-  id: test/cases/scenariologging/scenariologging070.py
-  name: test/cases/scenariologging/scenariologging070.py
+  description: Check the scenario logging output is generated as expected with ACTION/RESULT
+    indentation.
   reqs:
     SCENARIO_LOGGING:
       subrefs:
@@ -971,10 +875,9 @@ test/cases/scenariologging/scenariologging070.py:
           title: '`scenario` logging (SCENARIO_LOGGING/action-result-indentation)'
       title: '`scenario` logging'
   title: Scenario logging action/result indentation
-  type: scenario
 test/cases/scenariologging/scenariologging071.py:
-  id: test/cases/scenariologging/scenariologging071.py
-  name: test/cases/scenariologging/scenariologging071.py
+  description: Check the scenario logging output is generated as expected with ACTION/RESULT
+    indentation, when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -984,38 +887,32 @@ test/cases/scenariologging/scenariologging071.py:
           title: '`scenario` logging (SCENARIO_LOGGING/action-result-indentation)'
       title: '`scenario` logging'
   title: Scenario logging action/result indentation --doc-only
-  type: scenario
 test/cases/scenarioreport/scenarioreport010.py:
-  id: test/cases/scenarioreport/scenarioreport010.py
-  name: test/cases/scenarioreport/scenarioreport010.py
+  description: Check the scenario report is generated as expected for a simple scenario.
   reqs:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report simple scenario
-  type: scenario
 test/cases/scenarioreport/scenarioreport011.py:
-  id: test/cases/scenarioreport/scenarioreport011.py
-  name: test/cases/scenarioreport/scenarioreport011.py
+  description: Check the scenario report is generated as expected for a simple scenario,
+    when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report simple scenario --doc-only
-  type: scenario
 test/cases/scenarioreport/scenarioreport020.py:
-  id: test/cases/scenarioreport/scenarioreport020.py
-  name: test/cases/scenarioreport/scenarioreport020.py
+  description: Check the scenario report is generated as expected for a failing scenario.
   reqs:
     ERROR_HANDLING:
       title: Error handling
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report failing scenario
-  type: scenario
 test/cases/scenarioreport/scenarioreport021.py:
-  id: test/cases/scenarioreport/scenarioreport021.py
-  name: test/cases/scenarioreport/scenarioreport021.py
+  description: Check the scenario report is generated as expected for a failing scenario,
+    when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -1024,20 +921,18 @@ test/cases/scenarioreport/scenarioreport021.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report failing scenario --doc-only
-  type: scenario
 test/cases/scenarioreport/scenarioreport030.py:
-  id: test/cases/scenarioreport/scenarioreport030.py
-  name: test/cases/scenarioreport/scenarioreport030.py
+  description: Check the scenario report is generated as expected for a scenario with
+    goto jumps.
   reqs:
     GOTO:
       title: Jumping to another step
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report goto scenario
-  type: scenario
 test/cases/scenarioreport/scenarioreport031.py:
-  id: test/cases/scenarioreport/scenarioreport031.py
-  name: test/cases/scenarioreport/scenarioreport031.py
+  description: Check the scenario report is generated as expected for a scenario with
+    goto jumps, when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -1046,20 +941,18 @@ test/cases/scenarioreport/scenarioreport031.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report goto scenario --doc-only
-  type: scenario
 test/cases/scenarioreport/scenarioreport040.py:
-  id: test/cases/scenarioreport/scenarioreport040.py
-  name: test/cases/scenarioreport/scenarioreport040.py
+  description: Check the scenario report is generated as expected for a super scenario
+    executing a subscenario.
   reqs:
     SCENARIO_REPORT:
       title: Scenario reports
     SUBSCENARIOS:
       title: Subscenarios
   title: Scenario report subscenario
-  type: scenario
 test/cases/scenarioreport/scenarioreport041.py:
-  id: test/cases/scenarioreport/scenarioreport041.py
-  name: test/cases/scenarioreport/scenarioreport041.py
+  description: Check the scenario report is generated as expected for a super scenario
+    executing a subscenario, when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -1068,20 +961,18 @@ test/cases/scenarioreport/scenarioreport041.py:
     SUBSCENARIOS:
       title: Subscenarios
   title: Scenario report subscenario --doc-only
-  type: scenario
 test/cases/scenarioreport/scenarioreport050.py:
-  id: test/cases/scenarioreport/scenarioreport050.py
-  name: test/cases/scenarioreport/scenarioreport050.py
+  description: Check the scenario report is generated as expected for a scenario with
+    known issues.
   reqs:
     KNOWN_ISSUES:
       title: Known issues
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report known issues
-  type: scenario
 test/cases/scenarioreport/scenarioreport051.py:
-  id: test/cases/scenarioreport/scenarioreport051.py
-  name: test/cases/scenarioreport/scenarioreport051.py
+  description: Check the scenario report is generated as expected for a scenario with
+    known issues, when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -1090,10 +981,9 @@ test/cases/scenarioreport/scenarioreport051.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report known issues --doc-only
-  type: scenario
 test/cases/scenarioreport/scenarioreport060.py:
-  id: test/cases/scenarioreport/scenarioreport060.py
-  name: test/cases/scenarioreport/scenarioreport060.py
+  description: Check the scenario report is generated as expected for a scenario with
+    long texts.
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
@@ -1110,10 +1000,9 @@ test/cases/scenarioreport/scenarioreport060.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report long texts
-  type: scenario
 test/cases/scenarioreport/scenarioreport061.py:
-  id: test/cases/scenarioreport/scenarioreport061.py
-  name: test/cases/scenarioreport/scenarioreport061.py
+  description: Check the scenario report is generated as expected for a scenario with
+    long texts, when executed with the --doc-only option.
   reqs:
     ATTRIBUTES:
       comments: Long texts for scenario descriptions
@@ -1129,10 +1018,9 @@ test/cases/scenarioreport/scenarioreport061.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report long texts --doc-only
-  type: scenario
 test/cases/scenarioreport/scenarioreport070.py:
-  id: test/cases/scenarioreport/scenarioreport070.py
-  name: test/cases/scenarioreport/scenarioreport070.py
+  description: Check the scenario report saves main logger indentation at the beginning
+    of ACTION/RESULT texts.
   reqs:
     SCENARIO_LOGGING:
       subrefs:
@@ -1142,10 +1030,9 @@ test/cases/scenarioreport/scenarioreport070.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report action/result indentation
-  type: scenario
 test/cases/scenarioreport/scenarioreport071.py:
-  id: test/cases/scenarioreport/scenarioreport071.py
-  name: test/cases/scenarioreport/scenarioreport071.py
+  description: Check the scenario report saves main logger indentation at the beginning
+    of ACTION/RESULT texts, when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -1157,38 +1044,33 @@ test/cases/scenarioreport/scenarioreport071.py:
     SCENARIO_REPORT:
       title: Scenario reports
   title: Scenario report action/result indentation --doc-only
-  type: scenario
 test/cases/stats/stats010.py:
-  id: test/cases/stats/stats010.py
-  name: test/cases/stats/stats010.py
+  description: Check scenario execution statistics for a simple scenario.
   reqs:
     STATISTICS:
       title: Scenario execution statistics
   title: Statistics simple scenario
-  type: scenario
 test/cases/stats/stats011.py:
-  id: test/cases/stats/stats011.py
-  name: test/cases/stats/stats011.py
+  description: Check scenario execution statistics for a simple scenario,when executed
+    with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
     STATISTICS:
       title: Scenario execution statistics
   title: Statistics simple scenario --doc-only
-  type: scenario
 test/cases/stats/stats020.py:
-  id: test/cases/stats/stats020.py
-  name: test/cases/stats/stats020.py
+  description: Check scenario execution statistics for a failing scenario, with the
+    display of the error information.
   reqs:
     ERROR_HANDLING:
       title: Error handling
     STATISTICS:
       title: Scenario execution statistics
   title: Statistics failing scenario
-  type: scenario
 test/cases/stats/stats021.py:
-  id: test/cases/stats/stats021.py
-  name: test/cases/stats/stats021.py
+  description: Check scenario execution statistics for a failing scenario, when executed
+    with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -1197,40 +1079,35 @@ test/cases/stats/stats021.py:
     STATISTICS:
       title: Scenario execution statistics
   title: Statistics failing scenario --doc-only
-  type: scenario
 test/cases/stats/stats030.py:
-  id: test/cases/stats/stats030.py
-  name: test/cases/stats/stats030.py
+  description: Check scenario execution statistics for a scenario with goto jumps.
   reqs:
     GOTO:
       title: Jumping to another step
     STATISTICS:
       title: Scenario execution statistics
   title: Statistics goto scenario
-  type: scenario
 test/cases/stats/stats031.py:
-  id: test/cases/stats/stats031.py
-  name: test/cases/stats/stats031.py
+  description: Check scenario execution statistics for a scenario with goto jumps,when
+    executed with the --doc-only option.
   reqs:
     GOTO:
       title: Jumping to another step
     STATISTICS:
       title: Scenario execution statistics
   title: Statistics goto scenario --doc-only
-  type: scenario
 test/cases/stats/stats040.py:
-  id: test/cases/stats/stats040.py
-  name: test/cases/stats/stats040.py
+  description: Check scenario execution statistics for a super scenario executing
+    a subscenario.
   reqs:
     STATISTICS:
       title: Scenario execution statistics
     SUBSCENARIOS:
       title: Subscenarios
   title: Statistics subscenario
-  type: scenario
 test/cases/stats/stats041.py:
-  id: test/cases/stats/stats041.py
-  name: test/cases/stats/stats041.py
+  description: Check scenario execution statistics for a super scenario executing
+    a subscenario,when executed with the --doc-only option.
   reqs:
     DOC_ONLY:
       title: Documentation generation
@@ -1239,32 +1116,28 @@ test/cases/stats/stats041.py:
     SUBSCENARIOS:
       title: Subscenarios
   title: Statistics subscenario --doc-only
-  type: scenario
 test/cases/subscenario/subscenario001.py:
-  id: test/cases/subscenario/subscenario001.py
-  name: test/cases/subscenario/subscenario001.py
+  description: Check log output and scenario report of a scenario that executes another
+    scenario as a subscenario.
   reqs:
     SUBSCENARIOS:
       title: Subscenarios
   title: Subscenario execution
-  type: scenario
 test/cases/subscenario/subscenario002.py:
-  id: test/cases/subscenario/subscenario002.py
-  name: test/cases/subscenario/subscenario002.py
+  description: Check that a super scenario does not execute its subscenarios when
+    the --doc-only option is set.
   reqs:
     DOC_ONLY:
       title: Documentation generation
     SUBSCENARIOS:
       title: Subscenarios
   title: Subscenario --doc-only
-  type: scenario
 test/cases/subscenario/subscenario003.py:
-  id: test/cases/subscenario/subscenario003.py
-  name: test/cases/subscenario/subscenario003.py
+  description: Check that a super scenario executing a failing subscenario propagates
+    the subscenario error as is.
   reqs:
     ERROR_HANDLING:
       title: Error handling
     SUBSCENARIOS:
       title: Subscenarios
   title: Subscenario error
-  type: scenario

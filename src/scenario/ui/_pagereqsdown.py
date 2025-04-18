@@ -169,13 +169,13 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     html.addnode("th", classes=["req-verifier"], text="Test coverage")
 
                 # Requirement reference rows.
-                for _downstream_req_ref in _downstream_traceability:  # type: scenario.ReqTraceability.Downstream.ReqRef
-                    self._reqref2html(_table_generator, _downstream_req_ref)
+                for _downstream_req in _downstream_traceability:  # type: scenario.ReqTraceability.Downstream.Req
+                    self._reqref2html(_table_generator, _downstream_req)
 
     def _reqref2html(
             self,
             table_generator,  # type: _TableGeneratorType
-            downstream_req_ref,  # type: scenario.ReqTraceability.Downstream.ReqRef
+            downstream_req_ref,  # type: scenario.ReqTraceability.Downstream.ReqRefType
     ):  # type: (...) -> None
         """
         Builds the HTML content for a requirement reference.
@@ -237,6 +237,11 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 with _list_generator.addlist(classes=["req-verifier", "scenario"]):
                     for _downstream_scenario in downstream_req_ref.scenarios:  # type: scenario.ReqTraceability.Downstream.Scenario
                         self._scenario2html(_list_generator, _downstream_scenario)
+
+        # Recursive calls for subreferences => create rows after.
+        if isinstance(downstream_req_ref, scenario.ReqTraceability.Downstream.Req):
+            for _downstream_subref in downstream_req_ref.subrefs:  # type: scenario.ReqTraceability.Downstream.Subref
+                self._reqref2html(table_generator, _downstream_subref)
 
     def _scenario2html(
             self,

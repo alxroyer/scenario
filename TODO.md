@@ -23,8 +23,6 @@
     - Downstream traceability page: Tests and steps actually covering a subrefs only (but not the main req) shall display it.
         - Same in upstream traceability?
         - Example: CAMPAIGN >> campaign001.py >> step#2,4,5 actually cover the CAMPAIGN/logging (not the main CAMPAIGN req).
-    - Rework traceability report main entries as two levels.
-        - Rework `scenario.ui` pages consequently.
     - Bug! "Reload campaigns" button does not refresh the current page.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Don't output "subrefs" in req-db files if list is empty.

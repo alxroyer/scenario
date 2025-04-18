@@ -56,13 +56,15 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
         :return:
             Upstream traceability page URL.
         """
+        from .._reqtraceability import ReqTraceabilityHelper
         from ._httprequest import HttpRequest
 
         return HttpRequest.encodeurl(
             UpstreamTraceabilityPage._URL,
             args=HttpRequest.mkurlargs(obj=obj),
             anchor=(
-                scenario.ReqTraceability.Upstream.ReqVerifier(obj).id if isinstance(obj, (scenario.ScenarioDefinition, scenario.StepDefinition))
+                ReqTraceabilityHelper.mkscenarioid(obj) if isinstance(obj, scenario.ScenarioDefinition)
+                else ReqTraceabilityHelper.mkstepfullid(obj) if isinstance(obj, scenario.StepDefinition)
                 else None
             ),
         )
@@ -172,13 +174,13 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     html.addnode("th", classes=["req-ref"], text="Requirement coverage")
 
                 # Scenario rows.
-                for _upstream_req_verifier in _upstream_traceability:  # type: scenario.ReqTraceability.Upstream.ReqVerifier
-                    self._reqverifier2html(_table_generator, _upstream_req_verifier)
+                for _upstream_scenario in _upstream_traceability:  # type: scenario.ReqTraceability.Upstream.Scenario
+                    self._reqverifier2html(_table_generator, _upstream_scenario)
 
     def _reqverifier2html(
             self,
             table_generator,  # type: _TableGeneratorType
-            upstream_req_verifier,  # type: scenario.ReqTraceability.Upstream.ReqVerifier
+            upstream_req_verifier,  # type: scenario.ReqTraceability.Upstream.ReqVerifierType
     ):  # type: (...) -> None
         """
         Builds the HTML content for a scenario.
@@ -210,7 +212,11 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     table_generator.addtogglebutton()
 
                 # Anchor.
-                with AnchorGenerator(table_generator.html, name=upstream_req_verifier.id).addanchor():
+                _req_verifier_id = (
+                    upstream_req_verifier.id if isinstance(upstream_req_verifier, scenario.ReqTraceability.Upstream.Scenario)
+                    else upstream_req_verifier.full_id
+                )  # type: str
+                with AnchorGenerator(table_generator.html, name=_req_verifier_id).addanchor():
                     # Scenario / step name, with link to scenario details page.
                     LinkGenerator(table_generator.html).addlink(
                         classes=["req-verifier", "name"],
@@ -235,6 +241,11 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                 with _list_generator.addlist(classes=["req-ref", "main"]):
                     for _upstream_req in upstream_req_verifier.reqs:  # type: scenario.ReqTraceability.Upstream.Req
                         self._req2html(_list_generator, _upstream_req)
+
+        # Recursive calls for steps => create rows after.
+        if isinstance(upstream_req_verifier, scenario.ReqTraceability.Upstream.Scenario):
+            for _upstream_step in upstream_req_verifier.steps:  # type: scenario.ReqTraceability.Upstream.Step
+                self._reqverifier2html(table_generator, _upstream_step)
 
     def _req2html(
             self,
@@ -274,20 +285,20 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             list_generator.addcomment(upstream_req.display_comments, classes=["req"])
 
             # Optional subrefs.
-            if upstream_req.req_subrefs:
-                for _upstream_req_subref in upstream_req.req_subrefs:  # type: scenario.ReqTraceability.Upstream.ReqSubref
-                    self._subref2html(list_generator, _upstream_req_subref)
+            if upstream_req.subrefs:
+                for _upstream_subref in upstream_req.subrefs:  # type: scenario.ReqTraceability.Upstream.Subref
+                    self._subref2html(list_generator, _upstream_subref)
 
     def _subref2html(
             self,
             list_generator,  # type: _ListGeneratorType
-            upstream_req_subref,  # type: scenario.ReqTraceability.Upstream.ReqSubref
+            upstream_subref,  # type: scenario.ReqTraceability.Upstream.Subref
     ):  # type: (...) -> None
         """
         Builds the HTML content for a requirement subreference.
 
         :param list_generator: List generator. Provides the HTML output page to feed.
-        :param upstream_req_subref: Requirement subreference to build HTML content for.
+        :param upstream_subref: Requirement subreference to build HTML content for.
         """
         from ._htmlgenlinks import LinkGenerator
         from ._pagereqs import RequirementsPage
@@ -298,13 +309,13 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             with list_generator.html.addnode("span", classes=["req-ref", "subref", "id"]):
                 # With link to requirement details.
                 LinkGenerator(list_generator.html).addlink(
-                    href=RequirementsPage.mkurl(upstream_req_subref.req_subref),
+                    href=RequirementsPage.mkurl(upstream_subref.subref),
                     title="Requirement details",
-                    text=upstream_req_subref.req_subref.id,
+                    text=upstream_subref.subref.id,
                 )
 
             # Downstream traceability link.
-            DownstreamTraceabilityPage.reqref2htmllink(list_generator.html, upstream_req_subref.req_subref)
+            DownstreamTraceabilityPage.reqref2htmllink(list_generator.html, upstream_subref.subref)
 
             # Traceability comments.
-            list_generator.addcomment(upstream_req_subref.display_comments, classes=["req-ref", "subref"])
+            list_generator.addcomment(upstream_subref.display_comments, classes=["req-ref", "subref"])
