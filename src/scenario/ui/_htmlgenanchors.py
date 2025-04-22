@@ -76,11 +76,6 @@ class AnchorGenerator:
         :param link_text: Text content for the ancho link. "(<>)" by default.
         :return: HTML node context focused on the highlightable ``<div></div>`` node created.
         """
-        from ._htmlgenlinks import LinkGenerator
-
-        if not link_text:
-            link_text = "(<>)"
-
         # Container div.
         with self.html.addnode(
             "div",
@@ -91,17 +86,11 @@ class AnchorGenerator:
             ],
         ):
             # Anchor link.
-            with LinkGenerator(self.html).addlink(
-                classes=[
-                    *classes,
-                    "anchor-link",
-                    self.html.mkcsscompatibleclass(f"anchor={self.name}"),
-                ],
-                # Memo: Use `mkcsscompatibleclass()` to escape anchor names.
-                href=f"#{self.html.mkcsscompatibleclass(self.name)}",
+            self.addlink(
+                classes=classes,
                 title=link_title or self.name,
-            ):
-                self.html.addnode("span", text=link_text)
+                text=link_text or "(<>)",
+            )
 
             # Focusable div.
             _anchor_div_ctx = self.html.addnode(
@@ -126,3 +115,36 @@ class AnchorGenerator:
                 )
 
         return _anchor_div_ctx
+
+    def addlink(
+            self,
+            *,
+            classes=(),  # type: typing.Sequence[str]
+            href=None,  # type: str
+            title=None,  # type: str
+            text,  # type: str
+    ):  # type: (...) -> None
+        """
+        Adds a link to the given anchor.
+
+        :param classes: Extra classes to set for ``@class`` attribute.
+        :param href: Explicit page URL. Optional. Inner "#<anchor name>" URL by default.
+        :param title: Link title. Optional. Anchor name by default.
+        :param text: Text content for the link. Considered as a `default-text` if starts and ends with parentheses.
+        """
+        from ._htmlgenlinks import LinkGenerator
+
+        if text.startswith("(") and text.endswith(")"):
+            classes = [*classes, "default-text"]
+
+        with LinkGenerator(self.html).addlink(
+            classes=[
+                *classes,
+                "anchor-link",
+                self.html.mkcsscompatibleclass(f"anchor={self.name}"),
+            ],
+            # Memo: Use `mkcsscompatibleclass()` to escape anchor names.
+            href=href or f"#{self.html.mkcsscompatibleclass(self.name)}",
+            title=title or self.name,
+        ):
+            self.html.addnode("span", text=text)

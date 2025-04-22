@@ -18,11 +18,11 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
+    - Reverse "<<" to ">>" display for upstream traceability
+        - Text and images.
+        - Place it after the names, as done for downstream traceability.
     - Include location in step names.
         - Location should be the instantiation location.
-    - Downstream traceability page: Tests and steps actually covering a subrefs only (but not the main req) shall display it.
-        - Same in upstream traceability?
-        - Example: CAMPAIGN >> campaign001.py >> step#2,4,5 actually cover the CAMPAIGN/logging (not the main CAMPAIGN req).
     - Bug! "Reload campaigns" button does not refresh the current page.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Don't output "subrefs" in req-db files if list is empty.

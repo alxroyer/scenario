@@ -25,12 +25,13 @@
     div.anchor.container { display: inline-block; }  /* Keep *inline* display. */
 
 /* Anchor links. */
-    a.anchor-link span { display: none; }  /* Hide the default text inner <span></span>. */
-    a.anchor-link { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
-    a.anchor-link { width: 1em; height: 1em; }  /* Size. */
-    a.anchor-link { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */
-    a.anchor-link { background-image: url('/img/anchor-link-svgrepo-com.svg'); }  /* Anchor link icon. */
+    /* Default text => display an icon instead. */
+    a.anchor-link.default-text span { display: none; }  /* Hide the default text inner <span></span>. */
+    a.anchor-link.default-text { display: inline-block; }  /* Avoid width being shrinked, and keep *inline* displayed. */
+    a.anchor-link.default-text { width: 1em; height: 1em; }  /* Size. */
+    a.anchor-link.default-text { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */
+    a.anchor-link.default-text { background-image: url('/img/anchor-link-svgrepo-com.svg'); }  /* Anchor link icon. */
 
-/* Hignlightable anchors. */
+/* Highlightable anchors. */
     div.anchor.focusable { display: inline-block; }  /* Keep *inline* displayed. */
     div.anchor.focus { background-color: yellow; }  /* Background in yellow when focus is set. */

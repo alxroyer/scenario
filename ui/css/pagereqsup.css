@@ -44,3 +44,9 @@
         /* List style: none. */
         div#upstream-traceability td.req-ref ul.req-ref.subref { list-style: none; }
         div#upstream-traceability td.req-ref li.req-ref.subref { padding-left: 0px; }
+
+    /* Traceability indirections. */
+
+        div#upstream-traceability td.req-ref span.req-ref.via::before { content: "(via"; }
+        div#upstream-traceability td.req-ref span.req-ref.via::after { content: ")"; }
+        div#upstream-traceability td.req-ref span.req-ref.via { font-style: italic; }

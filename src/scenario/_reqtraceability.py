@@ -378,8 +378,9 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             Step verifying a :obj:`ReqTraceability.Downstream.ReqRefType`.
 
             .. note::
-                Several instances of :class:`ReqTraceability.Downstream.Step` may exist for a single :class:`._stepdefinition.StepDefinition`.
-                One for each requirement reference verified by the step.
+                Several instances of :class:`ReqTraceability.Downstream.Step` for the same step
+                may exist for a single main :class:`ReqTraceability.Downstream.Req` entry.
+                One for each requirement reference of the same requirement (main and/or subreferences) verified by the step.
             """
 
             def __init__(
@@ -435,6 +436,13 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 .. seealso:: :meth:`ReqTraceabilityHelper.mkstepname()`
                 """
                 return ReqTraceabilityHelper.mkstepname(self.step)
+
+            @property
+            def downstream_req_ref(self):  # type: () -> ReqTraceability.Downstream.ReqRefType
+                """
+                Requirement reference verified by the step.
+                """
+                return self.downstream_scenario.downstream_req_ref
 
             @property
             def explicit_comments(self):  # type: () -> str
@@ -941,8 +949,9 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             Requirement subreference verified by a :obj:`ReqTraceability.Upstream.ReqVerifierType`.
 
             .. note::
-                Several instances of :class:`ReqTraceability.Upstream.Subref` may exist for a single :class:`._reqref.ReqRef`.
-                One for each scenario verifying the requirement subreference.
+                Several instances of :class:`ReqTraceability.Upstream.Subref` for the same requirement subreference
+                may exist for a single main :class:`ReqTraceability.Upstream.Scenario` entry.
+                One for the scenario and each of its steps verifying the requirement subreference.
             """
 
             def __init__(
@@ -971,6 +980,13 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 # Automatically add this new subreference to the related requirement.
                 self.upstream_req.subrefs.append(self)
+
+            @property
+            def upstream_req_verifier(self):  # type: () -> ReqTraceability.Upstream.ReqVerifierType
+                """
+                Scenario or step verifying the requirement subreference.
+                """
+                return self.upstream_req.upstream_req_verifier
 
             @property
             def explicit_comments(self):  # type: () -> str
@@ -1070,13 +1086,10 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                                 upstream_req_verifier,  # Memo: `_upstream_req` automatically added to `_upstream_req_verifier`.
                                 req=_req_ref.req, req_link=None,
                             )
-                        # Check the main requirement does not already have the given subref.
-                        # This may happen when both the scenario and one of its steps cover the same subref.
-                        if _req_ref not in [_upstream_subref.subref for _upstream_subref in _upstream_req.subrefs]:
-                            _upstream_subref = ReqTraceability.Upstream.Subref(
-                                _upstream_req,  # Memo: `_upstream_subref` automatically added to `_upstream_req`.
-                                subref=_req_ref, req_link=_req_link,
-                            )  # type: ReqTraceability.Upstream.Subref
+                        _upstream_subref = ReqTraceability.Upstream.Subref(
+                            _upstream_req,  # Memo: `_upstream_subref` automatically added to `_upstream_req`.
+                            subref=_req_ref, req_link=_req_link,
+                        )  # type: ReqTraceability.Upstream.Subref
 
         _upstream_scenarios = []  # type: typing.List[ReqTraceability.Upstream.Scenario]
         for _scenario in self.req_baseline.scenarios:  # type: _ScenarioDefinitionType

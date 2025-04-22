@@ -49,3 +49,9 @@
         /* List style: none. */
         div#downstream-traceability td.req-verifier ul.req-verifier.step { list-style: none; }
         div#downstream-traceability td.req-verifier li.req-verifier.step { padding-left: 0px; }
+
+    /* Traceability indirections. */
+
+        div#downstream-traceability td.req-verifier span.req-verifier.via::before { content: "(via"; }
+        div#downstream-traceability td.req-verifier span.req-verifier.via::after { content: ")"; }
+        div#downstream-traceability td.req-verifier span.req-verifier.via { font-style: italic; }
