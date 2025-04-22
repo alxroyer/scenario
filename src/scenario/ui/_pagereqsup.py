@@ -104,7 +104,7 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
             classes=["upstream", "traceability"],
             href=UpstreamTraceabilityPage.mkurl(req_verifier),
             title="Upstream traceability",
-            text=text or "(<<)",
+            text=text or "(>>)",
         )
 
     def __init__(
@@ -286,11 +286,11 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     text=upstream_req.req.id,
                 )
 
-            # Traceability indirections.
-            self._via2html(list_generator.html, upstream_req, classes=["req-ref", "req"])
-
             # Downstream traceability link.
             DownstreamTraceabilityPage.reqref2htmllink(list_generator.html, upstream_req.req.main_ref)
+
+            # Traceability indirections.
+            self._via2html(list_generator.html, upstream_req, classes=["req-ref", "req"])
 
             # Traceability comments.
             list_generator.addcomment(upstream_req.display_comments, classes=["req-ref", "req"])
@@ -324,11 +324,11 @@ class UpstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     text=upstream_subref.subref.id,
                 )
 
-            # Traceability indirections.
-            self._via2html(list_generator.html, upstream_subref, classes=["req-ref", "subref"])
-
             # Downstream traceability link.
             DownstreamTraceabilityPage.reqref2htmllink(list_generator.html, upstream_subref.subref)
+
+            # Traceability indirections.
+            self._via2html(list_generator.html, upstream_subref, classes=["req-ref", "subref"])
 
             # Traceability comments.
             list_generator.addcomment(upstream_subref.display_comments, classes=["req-ref", "subref"])

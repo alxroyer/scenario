@@ -27,4 +27,4 @@ a.traceability.default-text { display: inline-block; }  /* Avoid width being shr
 a.traceability.default-text { width: 1em; height: 1em; }  /* Size. */
 a.traceability.default-text { background-size: 1em 1em; }  /* Ensure the background image remains clipped in the size defined above. */
 a.downstream.traceability.default-text { background-image: url('/img/double-right-chevron-svgrepo-com.svg'); }  /* Downstream traceability icon. */
-a.upstream.traceability.default-text { background-image: url('/img/double-left-chevron-svgrepo-com.svg'); }  /* Upstream traceability icon. */
+a.upstream.traceability.default-text { background-image: url('/img/double-right-chevron-svgrepo-com.svg'); }  /* Upstream traceability icon. */

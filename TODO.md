@@ -18,9 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Reverse "<<" to ">>" display for upstream traceability
-        - Text and images.
-        - Place it after the names, as done for downstream traceability.
     - Include location in step names.
         - Location should be the instantiation location.
     - Bug! "Reload campaigns" button does not refresh the current page.

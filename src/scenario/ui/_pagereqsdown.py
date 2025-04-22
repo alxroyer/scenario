@@ -277,9 +277,6 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
             default_state=CollapsibleState.COLLAPSED,
             classes=["req-verifier", "scenario"],
         ):
-            # Upstream traceability link.
-            UpstreamTraceabilityPage.reqverifier2htmllink(list_generator.html, downstream_scenario.scenario)
-
             # Scenario name.
             with list_generator.html.addnode("span", classes=["req-verifier", "scenario", "name"]):
                 # With link to scenario details page.
@@ -288,6 +285,9 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     title="Scenario details",
                     text=downstream_scenario.scenario.name,
                 )
+
+            # Upstream traceability link.
+            UpstreamTraceabilityPage.reqverifier2htmllink(list_generator.html, downstream_scenario.scenario)
 
             # Traceability indirections.
             self._via2html(list_generator.html, downstream_scenario, classes=["req-verifier", "scenario"])
@@ -315,9 +315,6 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
         from ._pagescenario import ScenarioPage
 
         with list_generator.addsubitem(classes=["req-verifier", "step"]):
-            # Upstream traceability link.
-            UpstreamTraceabilityPage.reqverifier2htmllink(list_generator.html, downstream_step.step)
-
             # Step number and name.
             with list_generator.html.addnode("span", classes=["req-verifier", "step", "name"]):
                 # With link to scenario details.
@@ -326,6 +323,9 @@ class DownstreamTraceabilityPage(_HttpRequestHandlerImpl):
                     title="Scenario details",
                     text=downstream_step.name,
                 )
+
+            # Upstream traceability link.
+            UpstreamTraceabilityPage.reqverifier2htmllink(list_generator.html, downstream_step.step)
 
             # Traceability indirections.
             self._via2html(list_generator.html, downstream_step, classes=["req-verifier", "step"])
