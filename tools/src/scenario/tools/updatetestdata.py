@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
 import re
 import typing
 
@@ -26,7 +27,7 @@ class TestData:
     def __init__(
             self,
             path,  # type: scenario.Path
-            expected_locations,  # type: typing.Dict[str, str]
+            expected_location_keys,  # type: typing.Sequence[str]
     ):  # type: (...) -> None
         self.path = path  # type: scenario.Path
         #: Dictionary of {location key: code location}
@@ -37,7 +38,7 @@ class TestData:
         scenario.logging.info("")
         scenario.logging.info(f"Processing '{path}':")
 
-        self._findlocations(expected_locations)
+        self._findlocations(expected_location_keys)
 
     @property
     def const_name(self):  # type: () -> str
@@ -67,15 +68,15 @@ class TestData:
 
     def _findlocations(
             self,
-            expected_locations,  # type: typing.Dict[str, str]
+            expected_location_keys,  # type: typing.Sequence[str]
     ):  # type: (...) -> None
         """
         Find and save code locations
 
-        :param expected_locations: Dictionary of {location key: function name} to find out.
+        :param expected_location_keys: Sequence of location keys to find out.
         """
         # Will be dequeued, make a copy.
-        expected_locations = expected_locations.copy()
+        expected_location_keys = list(expected_location_keys)
 
         # Read the source file line by line and find out test data locations.
         _line_number = 0  # type: int
@@ -84,12 +85,32 @@ class TestData:
             _match = re.match(rb'^.* {2}# location: (.*)$', _line)  # type: typing.Optional[typing.Match[bytes]]
             if _match:
                 _key = _match.group(1).decode("utf-8")  # type: str
-                assert _key in expected_locations, f"{self.path}: Unknown key '{_key}' in line {_line_number}"
-                _function = expected_locations.pop(_key)  # type: str
-                self.locations[_key] = scenario.CodeLocation(self.path, _line_number, _function)
+                assert _key in expected_location_keys, f"{self.path}: Unknown key '{_key}' in line {_line_number}"
+                expected_location_keys.remove(_key)
+
+                # Use `scenario.inners.reflection` to find out the actual function/method/class for the given line.
+                _code_owners = scenario.inners.reflection.codeowners(
+                    file=self.path,
+                    line=_line_number,
+                    name=None,
+                )
+                for _code_owner in reversed(_code_owners or []):  # type: scenario.inners.CodeOwnerType
+                    if any([
+                        inspect.isfunction(_code_owner),
+                        inspect.ismethod(_code_owner),
+                        inspect.isclass(_code_owner),
+                    ]):
+                        self.locations[_key] = scenario.CodeLocation(
+                            file=self.path,
+                            line=_line_number,
+                            qualname=scenario.inners.reflection.qualname(_code_owner),
+                        )
+                        break
+                else:
+                    assert False, f"Can't find location for {_key!r} in '{self.path}:{_line_number}' with scenario.inners.reflection.codeowners()"
 
         # Check all expected locations have been found.
-        assert not expected_locations, f"{self.path}: Location keys not found: {', '.join(expected_locations.keys())}"
+        assert not expected_location_keys, f"{self.path}: Location keys not found: {', '.join(expected_location_keys)}"
 
 
 class FileUpdater:
@@ -200,10 +221,10 @@ class DataExpectationsUpdater(FileUpdater):
             self,
             _paths.TEST_SRC_DATA_PATH, test_data,
             lambda _, line: self.matchmodifyline(
-                rb'^(.*location=.*:)\d+(:.*, {2}# location: (.*)/(.*))$', line,
+                rb'^(.*location=f".*):\d+:.*(", {2}# location: (.*)/(.*))$', line,
                 filter_match=lambda match: self._filtermatch(match, 3),
                 location_key=lambda match: match.group(4).decode("utf-8"),
-                new_line=lambda match, location: b'%s%d%s' % (match.group(1), location.line, match.group(2)),
+                new_line=lambda match, location: b'%s:%d:%s%s' % (match.group(1), location.line, location.qualname.encode("utf-8"), match.group(2)),
             )
         )
 
@@ -314,7 +335,7 @@ def updatejson(
         ordered_location_keys = list(test_data.locations)
     KeyListFileUpdater(
         path, test_data, ordered_location_keys,
-        rb'^( *"location": "(.*):)\d+(:.*(",|"))$',
+        rb'^( *"location": "(.*)):\d+:.*((",|"))$',
         pretty_path=lambda match: match.group(2).decode("utf-8"),
-        new_line=lambda match, location: b'%s%d%s' % (match.group(1), location.line, match.group(3)),
+        new_line=lambda match, location: b'%s:%d:%s%s' % (match.group(1), location.line, location.qualname.encode("utf-8"), match.group(3)),
     ).launch()

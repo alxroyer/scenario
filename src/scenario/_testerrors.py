@@ -180,9 +180,9 @@ class ExceptionError(TestError):
         # Call the `TestError` initializer.
         if exception:
             # Caution: in case of internal error, `fromexception()` may return an empty list.
-            _location = _CodeLocationImpl(_PathImpl(), 0, "")
+            _location = _CodeLocationImpl(file=_PathImpl(), line=0, qualname="")
             if _FAST_PATH.execution_locations.fromexception(exception, limit=1):
-                _location = _FAST_PATH.execution_locations.fromexception(exception, limit=1, fqn=True)[-1]
+                _location = _FAST_PATH.execution_locations.fromexception(exception, limit=1)[-1]
             TestError.__init__(
                 self,
                 message=str(exception),

@@ -60,7 +60,7 @@ test/cases/campaigns/campaign001.py:
       title: Scenario execution statistics
   steps:
     step#2:
-      location: test/cases/campaigns/steps/log.py:29:CheckCampaignLogExpectations
+      location: test/cases/campaigns/campaign001.py:92:Campaign001.__init__
       name: step#2 (CheckCampaignLogExpectations)
       reqs:
         CAMPAIGNS:
@@ -76,7 +76,7 @@ test/cases/campaigns/campaign001.py:
           comments: Known issues logged with main campaign logging
           title: Known issues
     step#4:
-      location: test/cases/multiplescenarios/steps/expectations.py:28:CheckFinalResultsLogExpectations
+      location: test/cases/campaigns/campaign001.py:99:Campaign001.__init__
       name: step#4 (CheckFinalResultsLogExpectations)
       reqs:
         CAMPAIGNS:
@@ -95,7 +95,7 @@ test/cases/campaigns/campaign001.py:
           comments: Statistics logged with campaign final results
           title: Scenario execution statistics
     step#5:
-      location: test/cases/campaigns/steps/outdirfiles.py:67:CheckCampaignOutdirFiles
+      location: test/cases/campaigns/campaign001.py:107:Campaign001.__init__
       name: step#5 (CheckCampaignOutdirFiles)
       reqs:
         CAMPAIGNS:
@@ -117,7 +117,7 @@ test/cases/campaigns/campaign001.py:
           comments: Scenario reports saved with campaign output files
           title: Scenario reports
     step#6:
-      location: test/cases/campaigns/steps/campaignreport.py:28:CheckCampaignReport
+      location: test/cases/campaigns/campaign001.py:114:Campaign001.__init__
       name: step#6 (CheckCampaignReport)
       reqs:
         CAMPAIGNS:
@@ -136,7 +136,7 @@ test/cases/campaigns/campaign001.py:
           comments: Statistics saved in campaign report content
           title: Scenario execution statistics
     step#7:
-      location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+      location: test/cases/campaigns/campaign001.py:136:Campaign001.__init__
       name: step#7 (CheckCampaignScenarioReports)
       reqs:
         ATTRIBUTES:
@@ -161,7 +161,7 @@ test/cases/campaigns/campaign001.py:
           comments: Statistics saved in scenario reports in campaign output files
           title: Scenario execution statistics
     step#8:
-      location: test/cases/campaigns/steps/reqdbfile.py:28:CheckCampaignReqDbFile
+      location: test/cases/campaigns/campaign001.py:145:Campaign001.__init__
       name: step#8 (CheckCampaignReqDbFile)
       reqs:
         CAMPAIGNS:
@@ -337,13 +337,13 @@ test/cases/errors/failingscenario001.py:
   steps:
     step#1:
       description: '''test/data/failingscenario.py'' execution'
-      location: test/cases/scenarioexecution/steps/execution.py:27:ExecScenario
+      location: test/cases/errors/failingscenario001.py:56:FailingScenario001.__init__
       name: step#1 (ExecScenario)
       reqs:
         ERROR_HANDLING:
           title: Error handling
     step#3:
-      location: test/cases/scenariologging/steps/expectations.py:28:CheckScenarioLogExpectations
+      location: test/cases/errors/failingscenario001.py:61:FailingScenario001.__init__
       name: step#3 (CheckScenarioLogExpectations)
       reqs:
         ERROR_HANDLING:
@@ -352,7 +352,7 @@ test/cases/errors/failingscenario001.py:
           comments: Actions & expected results displayed until the error occurs
           title: '`scenario` logging'
     step#4:
-      location: test/cases/errors/failingscenario001.py:90:CheckLogOutputExceptionDisplay
+      location: test/cases/errors/failingscenario001.py:65:FailingScenario001.__init__
       name: step#4 (CheckLogOutputExceptionDisplay)
       reqs:
         ERROR_HANDLING:
@@ -361,7 +361,7 @@ test/cases/errors/failingscenario001.py:
           comments: Traceback displayed
           title: '`scenario` logging'
     step#5:
-      location: test/cases/scenarioreport/steps/expectations.py:82:CheckScenarioReportExpectations
+      location: test/cases/errors/failingscenario001.py:74:FailingScenario001.__init__
       name: step#5 (CheckScenarioReportExpectations)
       reqs:
         ERROR_HANDLING:
@@ -371,7 +371,7 @@ test/cases/errors/failingscenario001.py:
             the error occurs
           title: Scenario reports
     step#6:
-      location: test/cases/errors/failingscenario001.py:118:CheckScenarioReportExceptionStorage
+      location: test/cases/errors/failingscenario001.py:78:FailingScenario001.__init__
       name: step#6 (CheckScenarioReportExceptionStorage)
       reqs:
         ERROR_HANDLING:

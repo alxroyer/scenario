@@ -18,8 +18,8 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Include location in step names.
-        - Location should be the instantiation location.
+    - Bug! Downstream traceability page, "Expand all" does not expand steps for "test/cases/campaigns/campaign001.py" in "ATTRIBUTES" line.
+    - Bug! Upstream traceability page (downtream also forceworth): Clicking "Expand all" several times toggls hidden sumup comments.
     - Bug! "Reload campaigns" button does not refresh the current page.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Don't output "subrefs" in req-db files if list is empty.

@@ -23,7 +23,7 @@
   },
   "steps": [
     {
-      "location": "test/data/knownissuesscenario.py:36:KnownIssuesScenario.KnownIssuesStep",
+      "location": "test/data/knownissuesscenario.py:34:KnownIssuesScenario.__init__",
       "description": "Object step with known issues",
       "executions": [
         {

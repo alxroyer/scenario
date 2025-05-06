@@ -254,6 +254,7 @@ class Reflection(_LoggerImpl):
     def importmodulefrompath(
             self,
             script_path,  # type: _AnyPathType
+            *,
             sys_modules_cache=True,  # type: bool
     ):  # type: (...) -> types.ModuleType
         """
@@ -331,7 +332,7 @@ class Reflection(_LoggerImpl):
         self.debug("importmodulefrompath('%s') => %r", script_path, _module)
         return _module
 
-    def getloadedmodulefrompath(
+    def loadedmodulefrompath(
             self,
             script_path,  # type: _AnyPathType
     ):  # type: (...) -> typing.Optional[types.ModuleType]
@@ -444,131 +445,134 @@ class Reflection(_LoggerImpl):
             return self.qualname(obj)
         return f"{self.qualname(inspect.getmodule(obj))}.{self.qualname(obj)}"
 
-    def checkfuncqualname(
+    if typing.TYPE_CHECKING:
+        #: Any kind of code owner.
+        #:
+        #: May be either:
+        #:
+        #: - a module,
+        #: - a class,
+        #: - a function or method (including properties).
+        CodeOwnerType = typing.Union[
+            types.ModuleType,
+            type,
+            types.FunctionType,
+            types.MethodType,
+            property,
+        ]
+
+    def codeowners(
             self,
+            *,
             file,  # type: _AnyPathType
             line,  # type: int
-            func_name,  # type: str
-    ):  # type: (...) -> str
+            name,  # type: typing.Optional[str]
+    ):  # type: (...) -> typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
         """
-        Tries to retrieve the fully qualified name of a function or method,
-        from a file location and a short name.
+        Tries to retrieve the code owners (module, class, method, property or function)
+        from a code location.
 
-        :param file: Path of the file the function is defined int.
-        :param line: Line number inside the function.
-        :param func_name: Short name of the function.
-        :return: Fully qualified name of the function, or ``func_name`` as is by default.
+        :param file: Path of the file the code location spots into.
+        :param line: Line number in ``file``.
+        :param name: Non qualified name attached with the code location (as given by ``traceback``). May be ``None`` if unknown.
+        :return: Top-down list of code owners corresponding to the code location. ``None`` if not found.
         """
         # === Inner functions ===
 
         def _walkmodule(
                 module,  # type: types.ModuleType
-        ):  # type: (...) -> typing.Optional[str]
-            _res = None  # type: typing.Optional[str]
+        ):  # type: (...) -> typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
+            _owners = None  # type: typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
             self.debug("Walking %r", module)
             with self.pushindentation():
-                for _class_name, _cls in inspect.getmembers(module, inspect.isclass):  # type: str, type
-                    _res = _walkclass(_cls)
-                    if _res is not None:
-                        return _res
-                for _func_name, _func in inspect.getmembers(module, inspect.isfunction):  # type: str, types.FunctionType
-                    _res = _walkfunction(_func)
-                    if _res is not None:
-                        return _res
-                if func_name == "<module>":
-                    self.debug("_walkmodule(): %r matches '%s'! => returning '%s'", module, func_name, self.qualname(module))
-                    return self.qualname(module)
+                for _member_name, _member in inspect.getmembers(module):  # type: str, typing.Any
+                    if inspect.isclass(_member):
+                        _owners = _walkclass(_member)
+                    elif inspect.isfunction(_member):
+                        _owners = _walkfunction(_member)
+                    if _owners is not None:
+                        return [module, *_owners]
+                if name == "<module>":
+                    self.debug("_walkmodule(): %r matches '%s'", module, name)
+                    return [module]
             return None
 
         def _walkclass(
                 cls,  # type: type
-        ):  # type: (...) -> typing.Optional[str]
+        ):  # type: (...) -> typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
             # Filter-out non-matching modules.
             if cls.__module__ != self.qualname(_module):
                 # Many non-matching classes... do not log them all.
                 # self.debug("_walkclass(%r): '%s' != '%s'", cls, cls.__module__, qualname(_module))
                 return None
 
-            _res = None  # type: typing.Optional[str]
+            _owners = None  # type: typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
             self.debug("Walking class %r", cls)
             with self.pushindentation():
-                # Inner classes.
-                for _class_name, _cls in inspect.getmembers(cls, inspect.isclass):  # type: str, type
-                    _res = _walkclass(_cls)
-                    if _res is not None:
-                        return _res
-                # Static methods.
-                for _func_name, _func in inspect.getmembers(cls, inspect.isfunction):  # type: str, types.FunctionType
-                    _res = _walkfunction(_func)
-                    if _res is not None:
-                        return _res
-                # Member methods.
-                for _method_name, _meth in inspect.getmembers(cls, inspect.ismethod):  # type: str, types.MethodType
-                    _res = _walkfunction(_meth.__func__)
-                    if _res is not None:
-                        return _res
-                # Properties.
-                for _prop_name, _prop in inspect.getmembers(cls, lambda obj: isinstance(obj, property)):  # type: str, property
-                    _res = _walkproperty(_prop)
-                    if _res is not None:
-                        return _res
-                # Method / function wrappers.
-                for _wrapper_name, _wrapper in inspect.getmembers(cls, lambda obj: all([
-                    # Not already processed above.
-                    not inspect.isclass(obj),
-                    not inspect.isfunction(obj),
-                    not inspect.ismethod(obj),
-                    not isinstance(obj, property),
-                    # But still a callable object.
-                    hasattr(obj, "__call__"),
-                ])):  # type: str, typing.Any
-                    for _wrapper_func_name, _wrapper_func in inspect.getmembers(_wrapper, inspect.isfunction):  # type: str, types.FunctionType
-                        _res = _walkfunction(_wrapper_func)
-                        if _res is not None:
-                            return _res
-                    for _wrapper_method_name, _wrapper_method in inspect.getmembers(_wrapper, inspect.ismethod):  # type: str, types.MethodType
-                        _res = _walkfunction(_wrapper_method.__func__)
-                        if _res is not None:
-                            return _res
-                    for _wrapper_prop_name, _wrapper_prop in inspect.getmembers(_wrapper, lambda obj: isinstance(obj, property)):  # type: str, property
-                        _res = _walkproperty(_wrapper_prop)
-                        if _res is not None:
-                            return _res
+                for _member_name, _member in inspect.getmembers(cls):  # type: str, typing.Any
+                    # Inner classes.
+                    if inspect.isclass(_member):
+                        _owners = _walkclass(_member)
+                    # Static methods.
+                    elif inspect.isfunction(_member):
+                        _owners = _walkfunction(_member)
+                    # Member methods.
+                    elif inspect.ismethod(_member):
+                        _owners = _walkfunction(_member.__func__)
+                        # Fix function with method.
+                        if _owners and (_owners[0] is _member.__func__):
+                            _owners = [_member, *_owners[1:]]
+                    # Properties.
+                    elif isinstance(_member, property):
+                        _owners = _walkproperty(_member)
+                    # Method / function wrappers.
+                    # Not already processed above, but still a callable object.
+                    elif hasattr(_member, "__call__"):
+                        for _wrapper_member_name, _wrapper_member in inspect.getmembers(_member):  # type: str, typing.Any
+                            if inspect.isfunction(_wrapper_member):
+                                _owners = _walkfunction(_wrapper_member)
+                            elif inspect.ismethod(_wrapper_member):
+                                _owners = _walkfunction(_wrapper_member.__func__)
+                                # Fix function with method.
+                                if _owners and (_owners[0] is _wrapper_member.__func__):
+                                    _owners = [_wrapper_member, *_owners[1:]]
+                            elif isinstance(_wrapper_member, property):
+                                _owners = _walkproperty(_wrapper_member)
+                    if _owners is not None:
+                        return [cls, *_owners]
             return None
 
         def _walkfunction(
                 func,  # type: types.FunctionType
-        ):  # type: (...) -> typing.Optional[str]
+        ):  # type: (...) -> typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
             # Filter-out non-matching modules.
             if (not hasattr(func, "__module__")) or (func.__module__ != self.qualname(_module)):
                 # Many non-matching functions... do not log them all.
                 # self.debug("_walkfunction(%r): '%s' != '%s'", func, func.__module__, qualname(_module))
                 return None
 
-            return _walkcode("function", self.qualname(func), func.__code__)
+            _owners = _walkcode("function", self.qualname(func), func.__code__)  # type: typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
+            if _owners is not None:
+                return [func, *_owners]
+
+            return None
 
         def _walkproperty(
                 prop,  # type: property
-        ):  # type: (...) -> typing.Optional[str]
-            if prop.fget:
-                _res = _walkfunction(typing.cast(types.FunctionType, prop.fget))
-                if _res is not None:
-                    return _res
-            if prop.fset:
-                _res = _walkfunction(typing.cast(types.FunctionType, prop.fset))
-                if _res is not None:
-                    return _res
-            if prop.fdel:
-                _res = _walkfunction(typing.cast(types.FunctionType, prop.fdel))
-                if _res is not None:
-                    return _res
+        ):  # type: (...) -> typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
+            _owners = None  # type: typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
+            for _func in (prop.fget, prop.fset, prop.fdel):  # type: typing.Any
+                if _func:
+                    _owners = _walkfunction(typing.cast(types.FunctionType, _func))
+                    if _owners is not None:
+                        return [prop, *_owners]
             return None
 
         def _walkcode(
                 code_type,  # type: str
                 code_name,  # type: str
                 code,  # type: types.CodeType
-        ):  # type: (...) -> typing.Optional[str]
+        ):  # type: (...) -> typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
             self.debug("Walking %s '%s' %r", code_type, code_name, code)
             with self.pushindentation():
                 # Filter-out non-matching lines.
@@ -600,7 +604,7 @@ class Reflection(_LoggerImpl):
                                 self.debug("  => Inner code saved: %r", _inner_codes[-1])
                                 continue
 
-                            # Inline `for` iteration.
+                            # Comprehensions.
                             # Examples:
                             # - `[x for x in ...]` => '<listcomp>'
                             # - `(x for x in ...)` => '<genexpr>'
@@ -628,33 +632,33 @@ class Reflection(_LoggerImpl):
                     # - Direct recursion for functions.
                     # - For classes, this call will list the class methods which are described as code objects as well,
                     #   and then make recursive calls for each.
-                    _res = _walkcode("inner code", _inner_code_name, _inner_code)  # type: typing.Optional[str]
-                    if _res is not None:
-                        return _res
+                    _owners = _walkcode("inner code", _inner_code_name, _inner_code)  # type: typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
+                    if _owners is not None:
+                        return _owners
 
                 # Eventually check that the name of this code instance matches the expected function name.
                 # Memo: `code_name` is always passed on as fully qualified names for functions.
-                if code_name.endswith(func_name):
-                    self.debug("_walkcode(): '%s' matches '%s'!", code_name, func_name)
-                    return code_name
+                if name is not None:
+                    if code_name.endswith(name):
+                        self.debug("_walkcode(): '%s' matches '%s'!", code_name, name)
+                        return []
+                else:
+                    # Always consider a match when `name` is `None`.
+                    self.debug("_walkcode(): '%s' matches (name=None)", code_name)
+                    return []
 
             return None
 
-        # === Main implementation ===
-
-        self.debug("checkfuncqualname(file='%s', line=%d, func_name=%r)", file, line, func_name)
-
-        _fqn = None  # type: typing.Optional[str]
+        _final_owners = None  # type: typing.Optional[typing.Sequence[Reflection.CodeOwnerType]]
         with self.pushindentation():
-            _module = self.getloadedmodulefrompath(file)  # type: typing.Optional[types.ModuleType]
-            if _module:
-                _fqn = _walkmodule(_module)
+            _module = (
+                self.loadedmodulefrompath(file)
+                or self.importmodulefrompath(file, sys_modules_cache=False)
+            )  # type: types.ModuleType
+            _final_owners = _walkmodule(_module)
 
-        if not _fqn:
-            self.debug(f"Could not find fully qualified name for {file}:{line}:{func_name}()")
-        # Return `func_name` as is by default.
-        self.debug("checkfuncqualname(file='%s', line=%d, func_name=%r) -> %r", file, line, func_name, _fqn or func_name)
-        return _fqn or func_name
+        self.debug("codeowners(%r, %d, %r) -> %r", file, line, name, _final_owners)
+        return _final_owners
 
     def _codelinecount(
             self,

@@ -38,5 +38,9 @@ try:
     __all__.append("JsonDict")
     from scenario._reflection import REFLECTION as reflection  # noqa  ## Access to a protected member + Constant variable imported as non-constant
     __all__.append("reflection")
+    if typing.TYPE_CHECKING:
+        from scenario._reflection import Reflection as _Reflection  # noqa  ## Access to a protected member + Constant variable imported as non-constant
+        CodeOwnerType = _Reflection.CodeOwnerType
+        __all__.append("CodeOwnerType")
 finally:
     pass

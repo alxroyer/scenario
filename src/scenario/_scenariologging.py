@@ -193,7 +193,7 @@ class ScenarioLogging:
         _step_description = f"STEP#{step_definition.number}"  # type: str
         if step_definition.description is not None:
             _step_description += f": {step_definition.description}"
-        _step_description += f" ({step_definition.location.tolongstring()})"
+        _step_description += f" ({step_definition.displaynameandlocation()})"
         _FAST_PATH.main_logger.rawoutput(_step_description)
         _FAST_PATH.main_logger.rawoutput("------------------------------------------------")
 

@@ -39,9 +39,9 @@ class ConfigDb020(scenario.test.TestCase):
             ExecScenario.getinstance(),
             key="foo.bar",
             origin=scenario.CodeLocation(
-                scenario.test.paths.CONFIG_DB_SCENARIO,
-                35,  # location: CONFIG_DB_SCENARIO/set
-                "ConfigDbScenario.step000",
+                file=scenario.test.paths.CONFIG_DB_SCENARIO,
+                line=35,  # location: CONFIG_DB_SCENARIO/set
+                qualname="ConfigDbScenario.step000",
             ).tolongstring(),
             value="1",
         ))

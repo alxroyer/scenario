@@ -40,7 +40,7 @@ ATTRIBUTES:
       steps:
         step#7:
           comments: Attributes saved in scenario reports in campaign output files
-          location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+          location: test/cases/campaigns/campaign001.py:136:Campaign001.__init__
           name: step#7 (CheckCampaignScenarioReports)
       title: Campaign execution & reports
     test/cases/campaigns/campaign005.py:
@@ -126,15 +126,15 @@ CAMPAIGNS:
           steps:
             step#2:
               comments: Main campaign logging
-              location: test/cases/campaigns/steps/log.py:29:CheckCampaignLogExpectations
+              location: test/cases/campaigns/campaign001.py:92:Campaign001.__init__
               name: step#2 (CheckCampaignLogExpectations)
             step#4:
               comments: Campaign final results
-              location: test/cases/multiplescenarios/steps/expectations.py:28:CheckFinalResultsLogExpectations
+              location: test/cases/campaigns/campaign001.py:99:Campaign001.__init__
               name: step#4 (CheckFinalResultsLogExpectations)
             step#5:
               comments: Campaign output files
-              location: test/cases/campaigns/steps/outdirfiles.py:67:CheckCampaignOutdirFiles
+              location: test/cases/campaigns/campaign001.py:107:Campaign001.__init__
               name: step#5 (CheckCampaignOutdirFiles)
           title: Campaign execution & reports
         test/cases/campaigns/campaign005.py:
@@ -146,15 +146,15 @@ CAMPAIGNS:
           steps:
             step#6:
               comments: Campaign report content
-              location: test/cases/campaigns/steps/campaignreport.py:28:CheckCampaignReport
+              location: test/cases/campaigns/campaign001.py:114:Campaign001.__init__
               name: step#6 (CheckCampaignReport)
             step#7:
               comments: Scenario report content in campaign output files
-              location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+              location: test/cases/campaigns/campaign001.py:136:Campaign001.__init__
               name: step#7 (CheckCampaignScenarioReports)
             step#8:
               comments: Requirement file content in campaign output files
-              location: test/cases/campaigns/steps/reqdbfile.py:28:CheckCampaignReqDbFile
+              location: test/cases/campaigns/campaign001.py:145:Campaign001.__init__
               name: step#8 (CheckCampaignReqDbFile)
           title: Campaign execution & reports
         test/cases/campaigns/campaign006.py:
@@ -296,38 +296,38 @@ ERROR_HANDLING:
       steps:
         step#2:
           comments: Scenario errors logged with main campaign logging
-          location: test/cases/campaigns/steps/log.py:29:CheckCampaignLogExpectations
+          location: test/cases/campaigns/campaign001.py:92:Campaign001.__init__
           name: step#2 (CheckCampaignLogExpectations)
         step#4:
           comments: Scenario errors logged with campaign final results
-          location: test/cases/multiplescenarios/steps/expectations.py:28:CheckFinalResultsLogExpectations
+          location: test/cases/campaigns/campaign001.py:99:Campaign001.__init__
           name: step#4 (CheckFinalResultsLogExpectations)
         step#6:
           comments: Scenario errors saved in campaign report content
-          location: test/cases/campaigns/steps/campaignreport.py:28:CheckCampaignReport
+          location: test/cases/campaigns/campaign001.py:114:Campaign001.__init__
           name: step#6 (CheckCampaignReport)
         step#7:
           comments: Scenario errors saved in scenario reports in campaign output files
-          location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+          location: test/cases/campaigns/campaign001.py:136:Campaign001.__init__
           name: step#7 (CheckCampaignScenarioReports)
       title: Campaign execution & reports
     test/cases/errors/failingscenario001.py:
       steps:
         step#1:
           description: '''test/data/failingscenario.py'' execution'
-          location: test/cases/scenarioexecution/steps/execution.py:27:ExecScenario
+          location: test/cases/errors/failingscenario001.py:56:FailingScenario001.__init__
           name: step#1 (ExecScenario)
         step#3:
-          location: test/cases/scenariologging/steps/expectations.py:28:CheckScenarioLogExpectations
+          location: test/cases/errors/failingscenario001.py:61:FailingScenario001.__init__
           name: step#3 (CheckScenarioLogExpectations)
         step#4:
-          location: test/cases/errors/failingscenario001.py:90:CheckLogOutputExceptionDisplay
+          location: test/cases/errors/failingscenario001.py:65:FailingScenario001.__init__
           name: step#4 (CheckLogOutputExceptionDisplay)
         step#5:
-          location: test/cases/scenarioreport/steps/expectations.py:82:CheckScenarioReportExpectations
+          location: test/cases/errors/failingscenario001.py:74:FailingScenario001.__init__
           name: step#5 (CheckScenarioReportExpectations)
         step#6:
-          location: test/cases/errors/failingscenario001.py:118:CheckScenarioReportExceptionStorage
+          location: test/cases/errors/failingscenario001.py:78:FailingScenario001.__init__
           name: step#6 (CheckScenarioReportExceptionStorage)
       title: Failing scenario execution
     test/cases/errors/failingscenario002.py:
@@ -406,19 +406,19 @@ KNOWN_ISSUES:
       steps:
         step#2:
           comments: Known issues logged with main campaign logging
-          location: test/cases/campaigns/steps/log.py:29:CheckCampaignLogExpectations
+          location: test/cases/campaigns/campaign001.py:92:Campaign001.__init__
           name: step#2 (CheckCampaignLogExpectations)
         step#4:
           comments: Known issues logged with campaign final results
-          location: test/cases/multiplescenarios/steps/expectations.py:28:CheckFinalResultsLogExpectations
+          location: test/cases/campaigns/campaign001.py:99:Campaign001.__init__
           name: step#4 (CheckFinalResultsLogExpectations)
         step#6:
           comments: Known issues saved in campaign report content
-          location: test/cases/campaigns/steps/campaignreport.py:28:CheckCampaignReport
+          location: test/cases/campaigns/campaign001.py:114:Campaign001.__init__
           name: step#6 (CheckCampaignReport)
         step#7:
           comments: Known issues saved in scenario reports in campaign output files
-          location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+          location: test/cases/campaigns/campaign001.py:136:Campaign001.__init__
           name: step#7 (CheckCampaignScenarioReports)
       title: Campaign execution & reports
     test/cases/issues/issue033.py:
@@ -523,7 +523,7 @@ LOGGING:
           steps:
             step#5:
               comments: Scenario log files saved with campaign output files
-              location: test/cases/campaigns/steps/outdirfiles.py:67:CheckCampaignOutdirFiles
+              location: test/cases/campaigns/campaign001.py:107:Campaign001.__init__
               name: step#5 (CheckCampaignOutdirFiles)
           title: Campaign execution & reports
         test/cases/logutils/logging510.py:
@@ -591,11 +591,11 @@ REQUIREMENT_MANAGEMENT:
       steps:
         step#5:
           comments: Requirements saved with campaign output files
-          location: test/cases/campaigns/steps/outdirfiles.py:67:CheckCampaignOutdirFiles
+          location: test/cases/campaigns/campaign001.py:107:Campaign001.__init__
           name: step#5 (CheckCampaignOutdirFiles)
         step#8:
           comments: Requirement file content in campaign output files
-          location: test/cases/campaigns/steps/reqdbfile.py:28:CheckCampaignReqDbFile
+          location: test/cases/campaigns/campaign001.py:145:Campaign001.__init__
           name: step#8 (CheckCampaignReqDbFile)
       title: Campaign execution & reports
     test/cases/campaigns/campaign006.py:
@@ -713,11 +713,11 @@ SCENARIO_LOGGING:
       steps:
         step#3:
           comments: Actions & expected results displayed until the error occurs
-          location: test/cases/scenariologging/steps/expectations.py:28:CheckScenarioLogExpectations
+          location: test/cases/errors/failingscenario001.py:61:FailingScenario001.__init__
           name: step#3 (CheckScenarioLogExpectations)
         step#4:
           comments: Traceback displayed
-          location: test/cases/errors/failingscenario001.py:90:CheckLogOutputExceptionDisplay
+          location: test/cases/errors/failingscenario001.py:65:FailingScenario001.__init__
           name: step#4 (CheckLogOutputExceptionDisplay)
       title: Failing scenario execution
     test/cases/issues/issue003.py:
@@ -787,11 +787,11 @@ SCENARIO_REPORT:
       steps:
         step#5:
           comments: Scenario reports saved with campaign output files
-          location: test/cases/campaigns/steps/outdirfiles.py:67:CheckCampaignOutdirFiles
+          location: test/cases/campaigns/campaign001.py:107:Campaign001.__init__
           name: step#5 (CheckCampaignOutdirFiles)
         step#7:
           comments: Scenario report content in campaign output files
-          location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+          location: test/cases/campaigns/campaign001.py:136:Campaign001.__init__
           name: step#7 (CheckCampaignScenarioReports)
       title: Campaign execution & reports
     test/cases/doconly/doconly002.py:
@@ -802,12 +802,12 @@ SCENARIO_REPORT:
         step#5:
           comments: All actions & expected results definitions saved, executed until
             the error occurs
-          location: test/cases/scenarioreport/steps/expectations.py:82:CheckScenarioReportExpectations
+          location: test/cases/errors/failingscenario001.py:74:FailingScenario001.__init__
           name: step#5 (CheckScenarioReportExpectations)
         step#6:
           comments: 'Error storage at each level: scenario, step, action & expected
             result'
-          location: test/cases/errors/failingscenario001.py:118:CheckScenarioReportExceptionStorage
+          location: test/cases/errors/failingscenario001.py:78:FailingScenario001.__init__
           name: step#6 (CheckScenarioReportExceptionStorage)
       title: Failing scenario execution
     test/cases/goto/goto002.py:
@@ -868,15 +868,15 @@ STATISTICS:
       steps:
         step#4:
           comments: Statistics logged with campaign final results
-          location: test/cases/multiplescenarios/steps/expectations.py:28:CheckFinalResultsLogExpectations
+          location: test/cases/campaigns/campaign001.py:99:Campaign001.__init__
           name: step#4 (CheckFinalResultsLogExpectations)
         step#6:
           comments: Statistics saved in campaign report content
-          location: test/cases/campaigns/steps/campaignreport.py:28:CheckCampaignReport
+          location: test/cases/campaigns/campaign001.py:114:Campaign001.__init__
           name: step#6 (CheckCampaignReport)
         step#7:
           comments: Statistics saved in scenario reports in campaign output files
-          location: test/cases/campaigns/steps/scenarioreports.py:29:CheckCampaignScenarioReports
+          location: test/cases/campaigns/campaign001.py:136:Campaign001.__init__
           name: step#7 (CheckCampaignScenarioReports)
       title: Campaign execution & reports
     test/cases/campaigns/campaign002.py:

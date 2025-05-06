@@ -95,7 +95,7 @@ class KnownIssue(_TestErrorImpl):
         _TestErrorImpl.__init__(
             self,
             message=message,
-            location=location or _FAST_PATH.execution_locations.fromcurrentstack(limit=1, fqn=True)[-1],
+            location=location or _FAST_PATH.execution_locations.fromcurrentstack(limit=1)[-1],
         )
 
         #: Issue level.

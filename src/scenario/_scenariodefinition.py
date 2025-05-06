@@ -210,7 +210,7 @@ class ScenarioDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVer
         Definition location getter.
         """
         if self.__location_cache is None:
-            self.__location_cache = _CodeLocationImpl.fromclass(type(self))
+            self.__location_cache = _CodeLocationImpl.fromcodeowner(type(self))
         return self.__location_cache
 
     @location.setter

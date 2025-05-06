@@ -121,7 +121,7 @@ class ConfigNode:
 
             # Default ``origin`` to code location.
             if origin is None:
-                origin = _FAST_PATH.execution_locations.fromcurrentstack(limit=1, fqn=True)[0].tolongstring()
+                origin = _FAST_PATH.execution_locations.fromcurrentstack(limit=1)[0].tolongstring()
 
             # When a sub-key is given, set the data on the sub-node described by the sub-key.
             if subkey:

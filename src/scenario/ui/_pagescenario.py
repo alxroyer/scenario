@@ -238,7 +238,7 @@ class ScenarioPage(_HttpRequestHandlerImpl):
                     if step.description:
                         list_generator.html.addnode("span", classes=["step", "sep"], text=":")
                         list_generator.html.addnode("span", classes=["step", "description"], text=step.description)
-                    list_generator.html.addnode("span", classes=["step", "name"], text=step.name)
+                    list_generator.html.addnode("span", classes=["step", "name"], text=step.displaynameandlocation())
 
                 # Execution results.
                 if step.executions:

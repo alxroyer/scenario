@@ -18,6 +18,7 @@
 Step definition.
 """
 
+import traceback
 import types
 import typing
 
@@ -32,6 +33,7 @@ if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._knownissues import KnownIssue as _KnownIssueType
     from ._locations import CodeLocation as _CodeLocationType
+    from ._reflection import Reflection as _ReflectionType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
     from ._stepspecifications import AnyStepDefinitionSpecificationType as _AnyStepDefinitionSpecificationType
@@ -106,6 +108,11 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         #: May be explicitly set by the :meth:`location()` setter.
         self.__location_cache = None  # type: typing.Optional[_CodeLocationType]
 
+        #: Instantiation call stack (when applicable).
+        self.__instantiation_stack = ()  # type: typing.Sequence[traceback.FrameSummary]
+        if StepDefinitionHelper(self).issubclass():
+            self.__instantiation_stack = traceback.extract_stack()
+
         #: ``True`` when the step may be assigned a step :attr:`number`.
         #:
         #: When ``False``, :meth:`number()` consequently returns 0.
@@ -145,7 +152,7 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
     @property
     def name(self):  # type: () -> str
         """
-        Step name, i.e. the fully qualified name of the class or method defining it.
+        Step name, i.e. the qualified name of the class or method defining it.
         """
         if self.__name_cache is None:
             if self.method:
@@ -159,11 +166,49 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         """
         Definition location getter.
         """
+        # First try to resolve the step location as its instantiation location in the owner scenario initializer.
+        if (self.__location_cache is None) and StepDefinitionHelper(self).issubclass():
+            # Walk backward the instantiation stack caught in `__init__()`,
+            # skip `StepDefinition` (or subclass) initializer locations,
+            # and search for a consecutive `ScenarioDefinition` (or subclass) initializer location.
+            for _tb_item in reversed(self.__instantiation_stack):  # type: traceback.FrameSummary
+                # Retrieve code owners for the current traceback item.
+                _code_owners = _FAST_PATH.reflection.codeowners(
+                    file=_tb_item.filename,
+                    line=_tb_item.lineno or -1,
+                    name=_tb_item.name,
+                )  # type: typing.Optional[typing.Sequence[_ReflectionType.CodeOwnerType]]
+
+                # Check the `codeowners()` call succeeded
+                # and returned a sequence ending with [..., class, method] items
+                # (no need to check that the last item is a method).
+                if (
+                    _code_owners
+                    and (len(_code_owners) >= 2) and isinstance(_code_owners[-2], type)
+                ):
+                    _cls = _code_owners[-2]  # type: type
+
+                    # Skip `StepDefinition` (or subclass) initializers.
+                    if issubclass(_cls, _FAST_PATH.step_definition_cls) and (_tb_item.name == "__init__"):
+                        continue
+
+                    # Expect the consecutive location is a `ScenarioDefinition` (or subclass) initializer.
+                    if issubclass(_cls, _FAST_PATH.scenario_definition_cls) and (_tb_item.name == "__init__"):
+                        self.__location_cache = _CodeLocationImpl.fromtbitem(_tb_item)
+                        # If found as expected, stop walking the instantiation stack.
+                        break
+
+                # Unexpected situations => abort with debug info.
+                self.debug("%r => _code_owners=%r => break instantiation location resolution for %r", _tb_item, _code_owners, self.name)
+                break
+
+        # Default to regular resolution: from the method or class defining the step.
         if self.__location_cache is None:
             if self.method:
-                self.__location_cache = _CodeLocationImpl.frommethod(self.method)
+                self.__location_cache = _CodeLocationImpl.fromcodeowner(self.method)
             else:
-                self.__location_cache = _CodeLocationImpl.fromclass(type(self))
+                self.__location_cache = _CodeLocationImpl.fromcodeowner(type(self))
+
         return self.__location_cache
 
     @location.setter
@@ -172,6 +217,17 @@ class StepDefinition(_StepUserApiImpl, _AssertionsImpl, _LoggerImpl, _ReqVerifie
         Definition location setter.
         """
         self.__location_cache = location
+
+    def displaynameandlocation(self):  # type: (...) -> str
+        """
+        Computes a display string for the step name and location.
+
+        :return: Display string for the step name and location.
+        """
+        if StepDefinitionHelper(self).isinstantiationlocation():
+            return f"{self.location.file}:{self.location.line} - {self.name}"
+        else:
+            return f"{self.location.tolongstring()}"
 
     @property
     def scenario(self):  # type: () -> _ScenarioDefinitionType
@@ -281,6 +337,27 @@ class StepDefinitionHelper:
         """
         #: Step definition instance this helper works for.
         self.definition = definition
+
+    def issubclass(self):  # type: (...) -> bool
+        """
+        Determines whether the related step definition is defined by a subclass of :class:`StepDefinition`.
+        """
+        return (
+            (self.definition.method is None)
+            and (type(self.definition) is not StepDefinition)
+        )
+
+    def isinstantiationlocation(self):  # type: (...) -> bool
+        """
+        Determines whether the location of the related step is an instantiation location.
+        """
+        return (
+            # The step should be an instance of a `StepDefinition` subclass.
+            self.issubclass()
+            # The code owner of the location should match with the scenario definition class of the owner scenario.
+            and isinstance(self.definition.location.code_owner, type)
+            and isinstance(self.definition.scenario, self.definition.location.code_owner)
+        )
 
     def saveinitknownissues(self):  # type: (...) -> None
         """

@@ -31,9 +31,9 @@ class KnownIssuesScenario(scenario.Scenario):
         self.raise_exceptions = scenario.conf.get(KnownIssuesScenario.ConfigKey.RAISE_EXCEPTIONS, type=bool, default=False)  # type: bool
 
         self.knownissue(id="#---", message="Known issue in KnownIssuesScenario.__init__()")  # location: #---
-        self.addstep(KnownIssuesScenario.KnownIssuesStep())
+        self.addstep(KnownIssuesScenario.KnownIssuesStep())  # location: KnownIssuesStep
 
-    class KnownIssuesStep(scenario.Step):  # location: KnownIssuesStep
+    class KnownIssuesStep(scenario.Step):
 
         def __init__(self):  # type: (...) -> None
             scenario.Step.__init__(self)
