@@ -18,7 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Bug! "Reload campaigns" button does not refresh the current page.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
         - Don't output "subrefs" in req-db files if list is empty.
         - Display known issues.

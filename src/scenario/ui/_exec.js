@@ -100,12 +100,13 @@ scenario.exec.useExecResultPopupDiv = false;
  * @param {string} text Execution result as plain text.
  * @returns {void}
  */
-function scenarioShowExecResultPopup(title, text) {
+scenario.exec.showResult = (title, text) => {
     console.debug(`Displaying execution result popup with title='${title}' and text='${text}'`);
 
     // Popup div.
 
     if (scenario.exec.useExecResultPopupDiv) {
+        // Display the popup.
         for (/** @var {HTMLElement} */ const _resultDiv of scenario.findNodes(document.body, "div#exec-result")) {
             // Set popup title.
             for (/** @var {HTMLElement} */ const _titleDiv of scenario.findNodes(_resultDiv, "div.title")) {
@@ -116,21 +117,17 @@ function scenarioShowExecResultPopup(title, text) {
                 _textDiv.textContent = text;
             }
 
-            // Display the popup.
             _resultDiv.style.display = "block";
-
-            return;
         }
+    } else {
+        // Fallback => `alert()`.
+
+        // Display the message with `alert()`.
+        alert(`[${title}]\n\n${text}`);
+
+        // Refresh the page as soon as the alert message is discarded.
+        scenario.exec._refreshCurrentPage();
     }
-
-
-    // Fallback => `alert()`.
-
-    // Display the message with `alert()`.
-    alert(`[${title}]\n\n${text}`);
-
-    // Refresh the page.
-    scenario.exec._refreshCurrentPage();
 }
 
 
