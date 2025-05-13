@@ -126,6 +126,6 @@ scenario.divs.toggle = (button, {divCid, container, newState} = {}) => {
         }
 
         // `.li` complementary actions.
-        scenario.lists.checkToggleLi1(button);
+        scenario.lists.checkToggleLi1(button, newState);
     }
 };

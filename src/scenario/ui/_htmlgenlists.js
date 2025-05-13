@@ -128,12 +128,12 @@ scenario.lists.checkToggleLi1 = (button, newState) => {
  */
 scenario.lists._toggle = (li1, {li1Cid, oldState, newState} = {}) => {
     // Read CID from classes.
-    if (li1Cid === undefined) {
+    if (! li1Cid) {
         li1Cid = scenario.getCid(li1, "li1");
     }
 
     // Determine old state from classes if not provided.
-    if (oldState === undefined) {
+    if (! oldState) {
         oldState = scenario.findOneClassOf(li1, ["expanded", "collapsed"]);
     }
 
