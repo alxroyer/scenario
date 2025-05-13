@@ -30,7 +30,7 @@
 
 /* Collapsible tables. */
 
-    /* Ensure space between expand/collapse all buttons and the content after (usually the table with collapsible `.tr1` rows). */
+    /* Ensure spacing between expand/collapse all buttons and the content after (usually the table with collapsible `.tr1` rows). */
     a.button.expand-all.table { margin-bottom: 15px; }
     a.button.collapse-all.table { margin-bottom: 15px; }
 

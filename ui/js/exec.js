@@ -17,9 +17,11 @@
 
 /**
  * @file
- * @brief Main Javascript file.
+ * @brief `scenario.exec` configurations.
  */
 
 
-import("/js/menu.js").then((mod) => { console.debug("'menu.js' successfully loaded"); });
-import("/js/exec.js").then((mod) => { console.debug("'exec.js' successfully loaded"); });
+// Use the `.exec-result` popup div.
+scenario.onLoad(() => {
+    scenario.exec.useExecResultPopupDiv = true;
+});

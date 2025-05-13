@@ -16,7 +16,7 @@
 
 /* Form divs. */
 div#config div.form.container { border: 1px solid grey; border-radius: 8px; }  /* Border line. */
-div#config div.form.container { padding: 10px; }  /* Inner space inside the div. */
+div#config div.form.container { padding: 10px; }  /* Inner spacing inside the div. */
 div#config div.form.container { margin-bottom: 20px; }  /* Ensure vertical spacing between forms. */
 
 /* Labels. */

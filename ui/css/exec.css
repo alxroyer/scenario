@@ -17,9 +17,47 @@
 
 /**
  * @file
- * @brief Execution result CSS rules.
+ * @brief Execution and execution result CSS rules.
  */
 
 
-/* Position execution buttons at the right top right corner of the window (fixed v/s scrolling). */
-.exec.button { position: fixed; top: 15px; right: 15px; }
+/* Execution buttons. */
+
+    /* Place execution buttons at the right top right corner of the window (fixed v/s scrolling). */
+    .exec.button { position: fixed; top: 15px; right: 15px; }
+
+/* Execution result popup div. */
+
+    /* Background div. */
+
+        /* Ensure the background div is displayed in front of the regular content. */
+        div.exec-result.background { z-index: 1; }
+        /* Make the background cover the full screen. */
+        div.exec-result.background { position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; }
+        /* Background color: grey shadow. */
+        div.exec-result.background { background-color: rgba(100, 100, 100, 0.8); }
+
+    /* Foreground div. */
+
+        /* Place the foreground div in the center of the screen. */
+        div.exec-result.foreground { position: fixed; }
+        div.exec-result.foreground { width: 300px; left: 50%; margin-left: -150px; }  /* Center horizontally. */
+        div.exec-result.foreground { top: 50%; margin-top: -100px; }  /* Center vertically. */
+        /* Restore a white background (not grey shadow anymore). */
+        div.exec-result.foreground { background-color: white; }
+        /* General styles. */
+        div.exec-result.foreground { border-radius: 8px; }  /* Round borders. */
+        div.exec-result.foreground { padding: 10px; }  /* Inner spacing inside the popup div. */
+        div.exec-result.foreground { text-align: center; }  /* Text centered. */
+
+    /* Title. */
+
+        /* Ensure spacing between the title and the content. */
+        div.exec-result.title { margin-bottom: 10px; }
+        /* General styles. */
+        div.exec-result.title { font-weight: bold; }
+
+    /* Validation button. */
+
+        /* Ensure spacing between the content and the button. */
+        .exec-result.button { margin-top: 10px; }

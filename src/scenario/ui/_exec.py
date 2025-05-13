@@ -94,13 +94,14 @@ class Exec(_HttpRequestHandlerImpl):
         """
         from ._htmlgenbuttons import ButtonGenerator
 
-        with html.addnode("div", id="exec-result", style="display: none;"):
-            html.addnode("div", classes=["exec-result", "title"])
-            html.addnode("div", classes=["exec-result", "text"])
-            ButtonGenerator(html).addbutton(
-                classes=["exec-result", "validate"],
-                text="OK",
-            )
+        with html.addnode("div", id="exec-result", classes=["exec-result", "background"], style="display: none;"):
+            with html.addnode("div", classes=["exec-result", "foreground"]):
+                html.addnode("div", classes=["exec-result", "title"])
+                html.addnode("div", classes=["exec-result", "text"])
+                ButtonGenerator(html).addbutton(
+                    classes=["exec-result", "validate"],
+                    text="OK",
+                )
 
     @staticmethod
     def actionbutton2html(
