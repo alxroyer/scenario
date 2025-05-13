@@ -111,30 +111,34 @@ scenario.tables._toggle = (tr1, {newState, recursive} = {}) => {
         }
     }
 
-    // Toggle from `_oldState` to `newState`.
     /** @var {HTMLElement | null} */ const _table = tr1.parentElement;
-    if (_table && _tr1Cid && _oldState && newState) {
-        console.debug(`Toggling tr1 ${_tr1Cid}: ${_oldState} => ${newState}`);
+    if (_table && _tr1Cid && (_oldState || recursive) && newState) {
+        if (_oldState) {
+            console.debug(`Toggling tr1 ${_tr1Cid}: ${_oldState} => ${newState}`);
+        }
 
         // Walk `.tr1` and `.tr2` rows corresponding to the given tr1 CID.
         for (/** @var {HTMLElement} */ const _tr of scenario.findNodes(_table, `tr.tr1=${_tr1Cid}`)) {
-            // Remove old state and set new state on the row.
-            _tr.classList.remove("expanded");
-            _tr.classList.remove("collapsed");
-            _tr.classList.add(newState);
+            // Toggle from `_oldState` to `newState`.
+            if (_oldState) {
+                // Remove old state and set new state on the row.
+                _tr.classList.remove("expanded");
+                _tr.classList.remove("collapsed");
+                _tr.classList.add(newState);
 
-            // Toggle button.
-            if (scenario.nodeMatches(_tr, "tr.tr1")) {
-                for (/** @var {HTMLElement} */ const _button of scenario.findNodes(_tr, "a.button.toggle-tr1")) {
-                    scenario.buttons.setCollapsibleState(_button, newState);
+                // Toggle button.
+                if (scenario.nodeMatches(_tr, "tr.tr1")) {
+                    for (/** @var {HTMLElement} */ const _button of scenario.findNodes(_tr, "a.button.toggle-tr1")) {
+                        scenario.buttons.setCollapsibleState(_button, newState);
+                    }
                 }
-            }
 
-            // Hide / show `tr.tr2` rows.
-            if (scenario.nodeMatches(_tr, "tr.tr2")) {
-                switch (newState) {
-                    case "expanded": _tr.style.visibility = "visible"; break;
-                    case "collapsed": _tr.style.visibility = "collapse"; break;
+                // Hide / show `tr.tr2` rows.
+                if (scenario.nodeMatches(_tr, "tr.tr2")) {
+                    switch (newState) {
+                        case "expanded": _tr.style.visibility = "visible"; break;
+                        case "collapsed": _tr.style.visibility = "collapse"; break;
+                    }
                 }
             }
 
