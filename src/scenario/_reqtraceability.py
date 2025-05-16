@@ -83,13 +83,15 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             :param allow_results: ``False`` to prevent test results in the JSON content.
             :return: Downstream traceability JSON content.
             """
+            from ._jsondictutils import JsonDict
+
             _json = {}  # type: _JsonDictType
             for _downstream_req in downstream_traceability:  # type: ReqTraceability.Downstream.Req
-                ReqTraceabilityHelper.addsubjson(
-                    main_dict=_json,
+                JsonDict.Build.addentry(
+                    _json,
                     id=_downstream_req.req.id,
-                    subjson=_downstream_req.tojson(allow_results=allow_results),
-                    subtype=ReqTraceability.Downstream.Req,
+                    entry=_downstream_req.tojson(allow_results=allow_results),
+                    redundant_fields=ReqTraceabilityHelper.redundant_fields(_downstream_req),
                 )
             return _json
 
@@ -132,6 +134,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_req = {
                     "id": self.req_ref.id,
                     "title": self.req.title,
@@ -141,22 +145,22 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 }  # type: _JsonDictType
 
                 for _downstream_subref in self.subrefs:  # type: ReqTraceability.Downstream.Subref
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_req["subrefs"],
+                    JsonDict.Build.addentry(
+                        _json_req["subrefs"],
                         id=_downstream_subref.subref.id,
-                        subjson=_downstream_subref.tojson(allow_results=allow_results),
-                        subtype=ReqTraceability.Downstream.Subref,
+                        entry=_downstream_subref.tojson(allow_results=allow_results),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_downstream_subref),
                     )
 
                 for _downstream_scenario in self.scenarios:  # type: ReqTraceability.Downstream.Scenario
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_req["scenarios"],
+                    JsonDict.Build.addentry(
+                        _json_req["scenarios"],
                         id=_downstream_scenario.id,
-                        subjson=_downstream_scenario.tojson(allow_results=allow_results),
-                        subtype=ReqTraceability.Downstream.Scenario,
+                        entry=_downstream_scenario.tojson(allow_results=allow_results),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_downstream_scenario),
                     )
 
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_req,
                     ["title", "text", "subrefs"],  # Let empty "scenarios" lists.
                 )
@@ -211,6 +215,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_subref = {
                     "id": self.subref.id,
                     # Save title for consistency with `Upstream.Subref.tojson()`.
@@ -219,15 +225,15 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 }  # type: _JsonDictType
 
                 for _downstream_scenario in self.scenarios:  # type: ReqTraceability.Downstream.Scenario
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_subref["scenarios"],
+                    JsonDict.Build.addentry(
+                        _json_subref["scenarios"],
                         id=_downstream_scenario.id,
-                        subjson=_downstream_scenario.tojson(allow_results=allow_results),
-                        subtype=ReqTraceability.Downstream.Scenario,
+                        entry=_downstream_scenario.tojson(allow_results=allow_results),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_downstream_scenario),
                     )
 
                 # Remove optional information when empty.
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_subref,
                     ["title"],  # Let empty "scenarios" lists.
                 )
@@ -342,6 +348,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_scenario = {
                     "id": self.id,
                     "name": self.name,
@@ -358,15 +366,15 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                     }
 
                 for _downstream_step in self.steps:  # type: ReqTraceability.Downstream.Step
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_scenario["steps"],
+                    JsonDict.Build.addentry(
+                        _json_scenario["steps"],
                         id=_downstream_step.short_id,
-                        subjson=_downstream_step.tojson(allow_results=allow_results),
-                        subtype=ReqTraceability.Downstream.Step,
+                        entry=_downstream_step.tojson(allow_results=allow_results),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_downstream_step),
                     )
 
                 # Remove optional information when empty.
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_scenario,
                     ["title", "comments", "steps"],
                 )
@@ -482,6 +490,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 :param allow_results: ``False`` to prevent test results in the JSON content generated.
                 :return: Downstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_step = {
                     "id": self.full_id,
                     "name": self.name,
@@ -503,7 +513,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                         })
 
                 # Remove optional information when empty.
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_step,
                     ["description", "comments"],
                 )
@@ -617,7 +627,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         if downstream_traceability is None:
             downstream_traceability = self.getdownstream(walk_subrefs=False)
 
-        JsonDict.writefile(
+        JsonDict.File.write(
             # Build a JSON content from the computed traceability.
             schema_subpath=ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH,
             content=ReqTraceability.Downstream.tojson(downstream_traceability, allow_results=allow_results),
@@ -645,13 +655,15 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
             :param upstream_traceability: Upstream traceability to generate JSON content for.
             :return: Upstream traceability JSON content.
             """
+            from ._jsondictutils import JsonDict
+
             _json = {}  # type: _JsonDictType
             for _upstream_scenario in upstream_traceability:  # type: ReqTraceability.Upstream.Scenario
-                ReqTraceabilityHelper.addsubjson(
-                    main_dict=_json,
+                JsonDict.Build.addentry(
+                    _json,
                     id=_upstream_scenario.id,
-                    subjson=_upstream_scenario.tojson(),
-                    subtype=ReqTraceability.Upstream.Scenario,
+                    entry=_upstream_scenario.tojson(),
+                    redundant_fields=ReqTraceabilityHelper.redundant_fields(_upstream_scenario),
                 )
             return _json
 
@@ -707,6 +719,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 :return: Upstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_scenario = {
                     "id": self.id,
                     "name": self.name,
@@ -717,23 +731,23 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 }  # type: _JsonDictType
 
                 for _upstream_step in self.steps:  # type: ReqTraceability.Upstream.Step
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_scenario["steps"],
+                    JsonDict.Build.addentry(
+                        _json_scenario["steps"],
                         id=_upstream_step.short_id,
-                        subjson=_upstream_step.tojson(),
-                        subtype=ReqTraceability.Upstream.Step,
+                        entry=_upstream_step.tojson(),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_upstream_step),
                     )
 
                 for _upstream_req in self.reqs:  # type: ReqTraceability.Upstream.Req
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_scenario["reqs"],
+                    JsonDict.Build.addentry(
+                        _json_scenario["reqs"],
                         id=_upstream_req.req.id,
-                        subjson=_upstream_req.tojson(),
-                        subtype=ReqTraceability.Upstream.Req,
+                        entry=_upstream_req.tojson(),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_upstream_req),
                     )
 
                 # Remove optional information when empty.
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_scenario,
                     ["title", "description", "steps"],  # Let empty "reqs" lists.
                 )
@@ -810,6 +824,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 :return: Upstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_step = {
                     "id": self.full_id,
                     "name": self.name,
@@ -819,14 +835,14 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 }  # type: _JsonDictType
 
                 for _upstream_req in self.reqs:  # type: ReqTraceability.Upstream.Req
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_step["reqs"],
+                    JsonDict.Build.addentry(
+                        _json_step["reqs"],
                         id=_upstream_req.req.id,
-                        subjson=_upstream_req.tojson(),
-                        subtype=ReqTraceability.Upstream.Req,
+                        entry=_upstream_req.tojson(),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_upstream_req),
                     )
 
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_step,
                     ["description"],  # Let empty "reqs" lists.
                 )
@@ -919,6 +935,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 :return: Upstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_req = {
                     "id": self.req.id,
                     "title": self.req.title,
@@ -929,15 +947,15 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 }  # type: _JsonDictType
 
                 for _upstream_subref in self.subrefs:  # type: ReqTraceability.Upstream.Subref
-                    ReqTraceabilityHelper.addsubjson(
-                        main_dict=_json_req["subrefs"],
+                    JsonDict.Build.addentry(
+                        _json_req["subrefs"],
                         id=_upstream_subref.subref.id,
-                        subjson=_upstream_subref.tojson(),
-                        subtype=ReqTraceability.Upstream.Subref,
+                        entry=_upstream_subref.tojson(),
+                        redundant_fields=ReqTraceabilityHelper.redundant_fields(_upstream_subref),
                     )
 
                 # Remove optional information when empty.
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_req,
                     ["title", "comments", "subrefs"],
                 )
@@ -1016,6 +1034,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
 
                 :return: Upstream traceability JSON content.
                 """
+                from ._jsondictutils import JsonDict
+
                 _json_subref = {
                     "id": self.subref.id,
                     # In the future, requirement subrefs may hold their own title.
@@ -1028,7 +1048,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 }  # type: _JsonDictType
 
                 # Remove optional information when empty.
-                ReqTraceabilityHelper.removeemptyjsonfields(
+                JsonDict.Build.removeemptyfields(
                     _json_subref,
                     ["title", "comments"],
                 )
@@ -1139,7 +1159,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         if upstream_traceability is None:
             upstream_traceability = self.getupstream(walk_steps=False)
 
-        JsonDict.writefile(
+        JsonDict.File.write(
             # Build a JSON content from the computed traceability.
             schema_subpath=ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH,
             content=ReqTraceability.Upstream.tojson(upstream_traceability),
@@ -1245,44 +1265,24 @@ class ReqTraceabilityHelper(abc.ABC):
         """
         return f"step#{step.number} ({step.name})"
 
-    @staticmethod
-    def removeemptyjsonfields(
-            json,  # type: _JsonDictType
-            fields,  # type: typing.Sequence[str]
-    ):  # type: (...) -> None
-        """
-        Removes empty fields from a JSON dictionary.
-
-        :param json: JSON dictionary to remove fields from.
-        :param fields: Field names to remove if empty. Field names may be not existing in ``json``.
-        """
-        for _key in fields:  # type: str
-            if (_key in json) and (not json[_key]):
-                del json[_key]
+    if typing.TYPE_CHECKING:
+        #: Any traceability object type.
+        AnyObjType = typing.Union[
+            ReqTraceability.Downstream.ReqRefType, ReqTraceability.Downstream.ReqVerifierType,
+            ReqTraceability.Upstream.ReqVerifierType, ReqTraceability.Upstream.ReqRefType,
+        ]
 
     @staticmethod
-    def addsubjson(
-            *,
-            main_dict,  # type: _JsonDictType
-            id,  # type: str  # noqa  ## Shadows built-in name 'id'
-            subjson,  # type: _JsonDictType
-            subtype,  # type: type
-    ):  # type: (...) -> None
+    def redundant_fields(
+            obj,  # type: ReqTraceabilityHelper.AnyObjType
+    ):  # type: (...) -> typing.Sequence[str]
         """
-        Adds a child to a main JSON dictionary.
+        Sequence of redundant field names with the given ``obj`` identifier.
 
-        Ensures redundant information removal in the child dictionary by the way.
-
-        :param main_dict: Main JSON dictionary.
-        :param id: Identifier for the child JSON dictionary.
-        :param subjson: Child JSON dictionary.
-        :param subtype: Type of the child JSON dictionary. One of :class:`ReqTraceability.Downstream` of :class:`ReqTraceability.Upstream` inner classes.
+        :param obj: Object to return redundant field names for.
+        :return: Redundant field names.
         """
-        main_dict[id] = subjson
-
-        # Given `id`, remove fields with redundant information.
         _redundant_fields = ["id"]  # type: typing.List[str]
-        if subtype in (ReqTraceability.Downstream.Scenario, ReqTraceability.Upstream.Scenario):
+        if isinstance(obj, (ReqTraceability.Downstream.Scenario, ReqTraceability.Upstream.Scenario)):
             _redundant_fields.append("name")
-        for _redundant_field in _redundant_fields:  # type: str
-            del subjson[_redundant_field]
+        return _redundant_fields

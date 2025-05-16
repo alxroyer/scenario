@@ -19,7 +19,6 @@
 
 - Issue #83: Add the ability to track requirements.
     - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Don't output "subrefs" in req-db files if list is empty.
         - Display known issues.
         - Check campaign results display.
     - Implement JSON schemas.

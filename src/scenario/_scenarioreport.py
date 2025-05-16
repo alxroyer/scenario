@@ -94,7 +94,7 @@ class ScenarioReport(_LoggerImpl):
             _json = self._scenario2json(scenario_definition, is_main=True)  # type: _JsonDictType
 
             # Write the report file.
-            JsonDict.writefile(
+            JsonDict.File.write(
                 schema_subpath=ScenarioReport.JSON_SCHEMA_SUBPATH,
                 content=_json,
                 output_path=self._report_path,
@@ -135,7 +135,7 @@ class ScenarioReport(_LoggerImpl):
 
             # Read the report file.
             self._report_path = _PathImpl(report_path)
-            _json = JsonDict.readfile(self._report_path)  # type: _JsonDictType
+            _json = JsonDict.File.read(self._report_path)  # type: _JsonDictType
 
             # Determine the requirement baseline.
             if req_baseline is None:

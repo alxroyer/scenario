@@ -128,7 +128,7 @@ class CampaignExecution(_ReqBaselineObjectImpl):
             self._req_db_path = self._guessfilepath(
                 file_description="requirement database",
                 default_filename=_FAST_PATH.scenario_config.reqdbfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.Path.isknwonsuffix(path) and JsonDict.File.isschema(path, ReqDatabase.JSON_SCHEMA_SUBPATH),
             )
         return self._req_db_path
 
@@ -153,7 +153,7 @@ class CampaignExecution(_ReqBaselineObjectImpl):
             self._downstream_traceability_path = self._guessfilepath(
                 file_description="downstream traceability",
                 default_filename=_FAST_PATH.scenario_config.downstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.Path.isknwonsuffix(path) and JsonDict.File.isschema(path, ReqTraceability.Downstream.JSON_SCHEMA_SUBPATH),
             )
         return self._downstream_traceability_path
 
@@ -178,7 +178,7 @@ class CampaignExecution(_ReqBaselineObjectImpl):
             self._upstream_traceability_path = self._guessfilepath(
                 file_description="upstream traceability",
                 default_filename=_FAST_PATH.scenario_config.upstreamtraceabilityfilename(),
-                match_file=lambda path: JsonDict.isknwonsuffix(path) and JsonDict.isschema(path, ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH),
+                match_file=lambda path: JsonDict.Path.isknwonsuffix(path) and JsonDict.File.isschema(path, ReqTraceability.Upstream.JSON_SCHEMA_SUBPATH),
             )
         return self._upstream_traceability_path
 

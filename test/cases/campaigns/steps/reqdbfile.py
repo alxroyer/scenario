@@ -43,7 +43,7 @@ class CheckCampaignReqDbFile(scenario.test.VerificationStep):
 
         # Expected requirements.
         assert self.campaign_expectations.req_db_file.content_path is not None, "Requirement content file missing in campaign expectations"
-        _expected_req_db = scenario.inners.JsonDict.readfile(self.campaign_expectations.req_db_file.content_path)  # type: scenario.types.JsonDict
+        _expected_req_db = scenario.inners.JsonDict.File.read(self.campaign_expectations.req_db_file.content_path)  # type: scenario.types.JsonDict
 
         # Ensure the `CampaignExpectations` object knows the campaign output directory path.
         if self.doexecute():
@@ -52,7 +52,7 @@ class CheckCampaignReqDbFile(scenario.test.VerificationStep):
         _req_db = {}  # type: scenario.types.JsonDict
         if self.ACTION("Read the requirement file."):
             self.evidence(f"Requirement file: {self.campaign_expectations.req_db_file.path}")
-            _req_db = scenario.inners.JsonDict.readfile(self.campaign_expectations.req_db_file.path)
+            _req_db = scenario.inners.JsonDict.File.read(self.campaign_expectations.req_db_file.path)
 
         def _reqids(req_db_json):  # type: (scenario.types.JsonDict) -> typing.List[str]
             return list(

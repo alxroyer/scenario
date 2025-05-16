@@ -59,7 +59,7 @@ class CheckCampaignScenarioReports(scenario.test.VerificationStep, _CampaignScen
                 if self.ACTION(f"Read the scenario report file for '{_test_case_expectations.script_path}'."):
                     _report_path = self.getscenarioresults(_test_case_expectations.script_path).report.path  # type: typing.Optional[scenario.Path]
                     assert _report_path is not None, f"Report path missing for '{_test_case_expectations.script_path}'"
-                    _json = scenario.inners.JsonDict.readfile(_report_path)
+                    _json = scenario.inners.JsonDict.File.read(_report_path)
                     self.debug("%s", scenario.debug.jsondump(_json, indent=2),
                                extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 

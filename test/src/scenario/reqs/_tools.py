@@ -29,7 +29,7 @@ def ensurelicenseheader(
     :param path: Path of the file to ensure license header into.
     """
     # Ensure `path` is of a compatible format.
-    if not scenario.inners.JsonDict.isyaml(path):
+    if not scenario.inners.JsonDict.Path.isyaml(path):
         raise ValueError(f"Not a YAML file '{path}'")
 
     # Read the file and find the encoding specification line in `path`.

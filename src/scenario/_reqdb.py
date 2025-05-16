@@ -96,7 +96,7 @@ class ReqDatabase(_LoggerImpl):
         with self.req_baseline:
             # Read the JSON file.
             self.debug("Reading '%s'", req_db_file_path)
-            _req_db_json = JsonDict.readfile(req_db_file_path)  # type: _JsonDictType
+            _req_db_json = JsonDict.File.read(req_db_file_path)  # type: _JsonDictType
 
             # Feed the database from the JSON content.
             for _key in _req_db_json:  # type: str
@@ -115,11 +115,11 @@ class ReqDatabase(_LoggerImpl):
 
                 _req = self._push(_ReqImpl(
                     id=_req_json["id"],
-                    title=_req_json["title"],
-                    text=_req_json["text"],
+                    title=_req_json.get("title", ""),
+                    text=_req_json.get("text", ""),
                 ))  # type: _ReqType
 
-                for _reqref_id in _req_json["subrefs"]:  # type: str
+                for _reqref_id in _req_json.get("subrefs", []):  # type: str
                     self._push(_ReqRefImpl(
                         _req,
                         *_reqref_id.split("/")[1:],
@@ -140,16 +140,19 @@ class ReqDatabase(_LoggerImpl):
         _req_db_json = {}  # type: _JsonDictType
 
         for _req in self.getallreqs():  # type: _ReqType
-            _req_db_json[_req.id] = {
-                "id": _req.id,
-                "title": _req.title,
-                "text": _req.text,
-                "subrefs": [_subref.id for _subref in _req.subrefs],
-            }
+            _req_db_json[_req.id] = JsonDict.Build.removeemptyfields(
+                {
+                    "id": _req.id,
+                    "title": _req.title,
+                    "text": _req.text,
+                    "subrefs": [_subref.id for _subref in _req.subrefs],
+                },
+                remove_empty_fields=["title", "text", "subrefs"],
+            )
 
         # Write the requirement file.
         self.debug("Writing '%s'", req_db_file_path)
-        JsonDict.writefile(
+        JsonDict.File.write(
             schema_subpath=ReqDatabase.JSON_SCHEMA_SUBPATH,
             content=_req_db_json,
             output_path=req_db_file_path,

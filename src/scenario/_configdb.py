@@ -92,7 +92,7 @@ class ConfigDatabase(_LoggerImpl):
         if format is None:
             if _PathImpl(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
-            elif JsonDict.isknwonsuffix(path):
+            elif JsonDict.Path.isknwonsuffix(path):
                 format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'
             else:
                 raise ValueError(f"{path}: Unknown configuration file suffix")
@@ -129,7 +129,7 @@ class ConfigDatabase(_LoggerImpl):
         if format is None:
             if _PathImpl(path).suffix.lower() == ".ini":
                 format = ConfigDatabase.FileFormat.INI  # noqa  ## Shadows built-in name 'format'
-            elif JsonDict.isknwonsuffix(path):
+            elif JsonDict.Path.isknwonsuffix(path):
                 format = ConfigDatabase.FileFormat.JSON_DICT  # noqa  ## Shadows built-in name 'format'
             else:
                 raise ValueError("%s: Unknown configuration file suffix" % path)

@@ -79,7 +79,7 @@ class CheckExceptionLocation(_ScenarioReportFileVerificationStepImpl):
         _json_error = {}  # type: scenario.types.JsonDict
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} error info from the scenario report."):
             _json_error = self.assertjson(
-                scenario.inners.JsonDict.readfile(self.report_path), f"errors[{self.index}]", type=dict,
+                scenario.inners.JsonDict.File.read(self.report_path), f"errors[{self.index}]", type=dict,
                 evidence="Error info",
             )
 
@@ -109,7 +109,7 @@ class CheckKnownIssueLocation(_ScenarioReportFileVerificationStepImpl):
         _json_known_issue = {}  # type: scenario.types.JsonDict
         if self.ACTION(f"Get the {scenario.text.ordinal(self.index)} known issue info from the scenario report."):
             _json_known_issue = self.assertjson(
-                scenario.inners.JsonDict.readfile(self.report_path), f"warnings[{self.index}]", type=dict,
+                scenario.inners.JsonDict.File.read(self.report_path), f"warnings[{self.index}]", type=dict,
                 evidence="Known issue info",
             )
 

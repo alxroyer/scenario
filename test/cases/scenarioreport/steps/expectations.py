@@ -100,7 +100,7 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
         scenario.logging.resetindentation()
         # Read the scenario report file.
         if self.ACTION("Read the scenario report file."):
-            self.json = scenario.inners.JsonDict.readfile(self.report_path)
+            self.json = scenario.inners.JsonDict.File.read(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
                        extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 

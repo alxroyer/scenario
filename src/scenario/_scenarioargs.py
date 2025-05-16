@@ -201,7 +201,7 @@ class ScenarioArgs(_ArgsImpl, CommonExecArgs):
 
         # Scenario report.
         if self.scenario_report is not None:
-            if not JsonDict.isknwonsuffix(self.scenario_report):
+            if not JsonDict.Path.isknwonsuffix(self.scenario_report):
                 _FAST_PATH.main_logger.error(f"Unknown suffix for scenario report '{self.scenario_report}'")
                 return False
 

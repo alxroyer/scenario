@@ -783,9 +783,9 @@ class CampaignReport(_LoggerImpl):
         # Set content type depending on file suffix.
         if path.suffix.lower() in [".log"]:
             _xml_link.setattr("type", "text/plain")
-        elif JsonDict.isjson(path):
+        elif JsonDict.Path.isjson(path):
             _xml_link.setattr("type", "application/json")
-        elif JsonDict.isyaml(path):
+        elif JsonDict.Path.isyaml(path):
             _xml_link.setattr("type", "application/yaml")
         else:
             raise ValueError(f"Unknwon content type '{path}'")

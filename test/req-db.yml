@@ -18,7 +18,6 @@ $schema: https://github.com/alxroyer/scenario/blob/v0.2.2/schemas/req-db.schema.
 $version: 0.2.2
 ALTERNATIVE_SCENARIOS:
   id: ALTERNATIVE_SCENARIOS
-  subrefs: []
   text: 'A scenario may be derived from another one
 
     (basically an error scenario derivating from a nominal one),
@@ -34,7 +33,6 @@ ALTERNATIVE_SCENARIOS:
   title: Alternative scenarios
 ATTRIBUTES:
   id: ATTRIBUTES
-  subrefs: []
   text: 'Scenario attributes can be set with scenario definitions.
 
 
@@ -88,7 +86,6 @@ CAMPAIGNS:
   title: Campaign executions
 CONFIG_DB:
   id: CONFIG_DB
-  subrefs: []
   text: 'The scenario framework provides a general configuration database.
 
     This database may be fed with configuration files or single values,
@@ -123,19 +120,16 @@ CONFIG_DB:
   title: General configuration database
 DEBUG_LOGGING:
   id: DEBUG_LOGGING
-  subrefs: []
   text: The logging facilites makes it possible to activate dynamically debug logging
     for each log class.
   title: Debug logging facilities
 DOC_ONLY:
   id: DOC_ONLY
-  subrefs: []
   text: The scenario framework shall generate the test documentation without executing
     the test.
   title: Documentation generation
 ERROR_HANDLING:
   id: ERROR_HANDLING
-  subrefs: []
   text: 'When an exception is thrown, the step ends in error immediately.
 
     The consecutive steps are not executed by default.
@@ -152,19 +146,16 @@ ERROR_HANDLING:
   title: Error handling
 EVIDENCE:
   id: EVIDENCE
-  subrefs: []
   text: 'Evidence may be saved in the test reports
 
     with their related actions and expected results.'
   title: Evidence collection
 GOTO:
   id: GOTO
-  subrefs: []
   text: A scenario execution shall jump to another step within the scenario.
   title: Jumping to another step
 KNOWN_ISSUES:
   id: KNOWN_ISSUES
-  subrefs: []
   text: 'Known issues may be registered at the scenario definition level,
 
     or during test execution.
@@ -224,7 +215,6 @@ LOGGING:
   title: Logging facilities
 MULTIPLE_SCENARIO_EXECUTION:
   id: MULTIPLE_SCENARIO_EXECUTION
-  subrefs: []
   text: 'Several scenarios may be executed with a single command line.
 
     Whether the tests succeed or fail, the command line executes every scenario given.
@@ -282,7 +272,6 @@ REQUIREMENT_MANAGEMENT:
   title: Requirement management
 SCENARIO_EXECUTION:
   id: SCENARIO_EXECUTION
-  subrefs: []
   text: 'A scenario is an assertive context that defines an ordered list of test steps.
 
 
@@ -327,7 +316,6 @@ SCENARIO_LOGGING:
   title: '`scenario` logging'
 SCENARIO_REPORT:
   id: SCENARIO_REPORT
-  subrefs: []
   text: 'A scenario execution shall output a report file
 
     (format: JSON or YAML, schema: schema/scenario-report.schema.json).
@@ -339,17 +327,14 @@ SCENARIO_REPORT:
   title: Scenario reports
 STATISTICS:
   id: STATISTICS
-  subrefs: []
   text: The scenario execution shall give statistics on the number of steps, actions
     and expected results.
   title: Scenario execution statistics
 STEP_PICKING:
   id: STEP_PICKING
-  subrefs: []
   text: A scenario shall be constituted by picking steps already defined.
   title: Step picking
 SUBSCENARIOS:
   id: SUBSCENARIOS
-  subrefs: []
   text: A scenario shall execute all or part of other scenarios as subscenarios.
   title: Subscenarios

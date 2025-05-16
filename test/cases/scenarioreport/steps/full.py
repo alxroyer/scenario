@@ -41,7 +41,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
             exec_step.scenario_paths[0].with_suffix(".doc-only.json" if exec_step.doc_only else ".executed.json").name,
         )  # type: scenario.Path
         self.assertisfile(self._json_path_ref)
-        self._json_ref = scenario.inners.JsonDict.readfile(self._json_path_ref)  # type: scenario.types.JsonDict
+        self._json_ref = scenario.inners.JsonDict.File.read(self._json_path_ref)  # type: scenario.types.JsonDict
 
         #: JSON data read from the report file.
         self.json = {}  # type: scenario.types.JsonDict
@@ -58,7 +58,7 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
 
         # Read the scenario report file.
         if self.ACTION("Read the scenario report file."):
-            self.json = scenario.inners.JsonDict.readfile(self.report_path)
+            self.json = scenario.inners.JsonDict.File.read(self.report_path)
             self.debug("%s", scenario.debug.jsondump(self.json, indent=2),
                        extra={self.Extra.LONG_TEXT_MAX_LINES: 10})
 
