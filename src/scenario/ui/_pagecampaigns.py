@@ -25,6 +25,7 @@ import scenario
 if True:
     from ._httprequesthandler import HttpRequestHandler as _HttpRequestHandlerImpl  # @inheritance
 if typing.TYPE_CHECKING:
+    from ._debugclasses import UIDebugClass as _UIDebugClassType
     from ._htmldoc import HtmlDocument as _HtmlDocumentType
     from ._htmlgentables import TableGenerator as _TableGeneratorType
     from ._httprequest import HttpRequest as _HttpRequestType
@@ -52,13 +53,27 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             args=HttpRequest.mkurlargs(obj=None),
         )
 
-    def __init__(self):  # type: (...) -> None
+    def __init__(
+            self,
+            *,
+            debug_class=None,  # type: _UIDebugClassType
+    ):  # type: (...) -> None
         """
         Configures the logger instance.
+
+        :param debug_class:
+            Optional debug class, in case of instantiation as a member of another page.
+
+            .. seealso:: :class:`._pagecampaign.CampaignPage`
         """
         from ._debugclasses import UIDebugClass
 
-        _HttpRequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGNS)
+        _HttpRequestHandlerImpl.__init__(self, debug_class or UIDebugClass.PAGE_CAMPAIGNS)
+
+        #: States whether the table is generated for a single campaign.
+        #:
+        #: Saved from the ``single_campaign`` parameter of :meth:`campaigndb2html()`.
+        self._single_campaign = None  # type: typing.Optional[scenario.CampaignExecution]
 
     def process(
             self,
@@ -80,26 +95,35 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
         Exec.actionbutton2html(_html, request, Exec.Action.RELOAD_CAMPAIGN_DB)
 
-        self._campaigndb2html(_html, request)
+        self.campaigndb2html(_html, request)
 
         request.sendhtml(_html)
         return True
 
-    def _campaigndb2html(
+    def campaigndb2html(
             self,
             html,  # type: _HtmlDocumentType
             request,  # type: _HttpRequestType
+            *,
+            single_campaign=None,  # type: typing.Optional[scenario.CampaignExecution]
     ):  # type: (...) -> None
         """
         Builds the HTML content for the campaigns loaded in the database.
 
         :param html: HTML output page to feed.
         :param request: Input request being processed.
+        :param single_campaign: Single campaign to display. Used when called from :class:`scenario._campaignexecution.CampaignExecution`.
         """
         from ._htmlgentables import TableGenerator
 
+        # Save `single_campaign` as the `_single_campaign` member.
+        self._single_campaign = single_campaign
+
         # Sort campaign executions.
-        _campaign_executions = self._sortedcampaignlist()  # type: typing.Sequence[scenario.CampaignExecution]
+        _campaign_executions = (
+            [single_campaign] if (single_campaign is not None)
+            else self._sortedcampaignlist()
+        )  # type: typing.Sequence[scenario.CampaignExecution]
 
         # Identify common list of test suites & test cases reference.
         _campaign_execution_ref = self._mergecampaignexecutionref(_campaign_executions)  # type: scenario.CampaignExecution
@@ -176,6 +200,11 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                             _test_case_execution_ref = scenario.TestCaseExecution(_test_suite_execution_ref, _test_case_execution.script_path)
                             _test_suite_execution_ref.test_case_executions.append(_test_case_execution_ref)
 
+                            # In case of a single campaign execution,
+                            # let's the reference test case hold the single `ScenarioDefinition` instance defining it.
+                            if self._single_campaign is not None:
+                                _test_case_execution_ref.scenario_definition = _test_case_execution.scenario_definition
+
                         # Ensure test case report is loaded.
                         UI_REQ_BASELINES.checktestcaseloaded(_test_case_execution)
 
@@ -202,11 +231,15 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
         with html.addnode("tr", classes=["head"]):
             # First column.
-            html.addnode("th", text="Name")
+            html.addnode("th", classes=["head", "name"], text="Name")
+
+            # Optional test title column (single campaign only).
+            if self._single_campaign is not None:
+                html.addnode("th", classes=["head", "title"], text="Title")
 
             # One column per campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
-                with html.addnode("th"):
+                with html.addnode("th", classes=["head", "result"]):
                     LinkGenerator(html).addlink(href=CampaignPage.mkurl(_campaign_execution), title="Campaign details", text=_campaign_execution.name)
 
     def _testsuite2tablerow(
@@ -232,14 +265,18 @@ class CampaignListPage(_HttpRequestHandlerImpl):
             default_state=CollapsibleState.EXPANDED,
             classes=["suite"],
         ):
-            # Test suite expand/collapse button + name.
-            with table_generator.html.addnode("th"):
+            # Test suite: expand/collapse button + name.
+            with table_generator.html.addnode("th", classes=["suite", "name"]):
                 # Expand/collapse button.
                 table_generator.addtogglebutton()
 
                 # Test suite name.
                 with table_generator.html.addnode("span", classes=["suite", "name"]):
                     table_generator.html.addtext(test_suite_execution_ref.name)
+
+            # Test title (single campaign only). Empty for test suites.
+            if self._single_campaign is not None:
+                table_generator.html.addnode("td", classes=["suite", "title"])
 
             # Test suite result for each campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
@@ -252,9 +289,9 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    table_generator.html.addnode("td", classes=[_execution_status.lower()], text=_execution_status)
+                    table_generator.html.addnode("td", classes=["suite", "result", _execution_status.lower()], text=_execution_status)
                 else:
-                    table_generator.html.addnode("td")
+                    table_generator.html.addnode("td", classes=["suite", "result"])
 
         # Test case lines.
         for _test_case_execution_ref in test_suite_execution_ref.test_case_executions:  # type: scenario.TestCaseExecution
@@ -288,13 +325,19 @@ class CampaignListPage(_HttpRequestHandlerImpl):
                 if _main_scenario_definition.name == test_case_execution_ref.name:
                     _scenario_url = ScenarioPage.mkurl(_main_scenario_definition)
                     break
-            with table_generator.html.addnode("th"):
+            with table_generator.html.addnode("th", classes=["case", "name"]):
                 # Test case name.
                 with table_generator.html.addnode("span", classes=["case", "name"]):
                     if _scenario_url:
                         LinkGenerator(table_generator.html).addlink(href=_scenario_url, title="Scenario details", text=test_case_execution_ref.name)
                     else:
                         table_generator.html.addtext(test_case_execution_ref.name)
+
+            # Test title (single campaign only).
+            if self._single_campaign is not None:
+                with table_generator.html.addnode("td", classes=["case", "title"]):
+                    if test_case_execution_ref.scenario_definition and test_case_execution_ref.scenario_definition.title:
+                        table_generator.html.addnode("span", classes=["case", "title"], text=test_case_execution_ref.scenario_definition.title)
 
             # Test case result for each campaign.
             for _campaign_execution in campaign_executions:  # type: scenario.CampaignExecution
@@ -313,10 +356,10 @@ class CampaignListPage(_HttpRequestHandlerImpl):
 
                 # Display execution status, or empty cell.
                 if _execution_status is not None:
-                    with table_generator.html.addnode("td", classes=[_execution_status.lower()]):
+                    with table_generator.html.addnode("td", classes=["case", "result", _execution_status.lower()]):
                         if _scenario_url:
                             LinkGenerator(table_generator.html).addlink(href=_scenario_url, title="Scenario results", text=_execution_status)
                         else:
                             table_generator.html.addtext(_execution_status)
                 else:
-                    table_generator.html.addnode("td")
+                    table_generator.html.addnode("td", classes=["case", "result"])

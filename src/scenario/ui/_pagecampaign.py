@@ -58,15 +58,15 @@ class CampaignPage(_HttpRequestHandlerImpl):
         Configures the logger instance.
         """
         from ._debugclasses import UIDebugClass
+        from ._pagecampaigns import CampaignListPage
         from ._pagereqs import RequirementsPage
         from ._pagereqsdown import DownstreamTraceabilityPage
         from ._pagereqsup import UpstreamTraceabilityPage
-        from ._pagescenarios import ScenarioListPage
 
         _HttpRequestHandlerImpl.__init__(self, UIDebugClass.PAGE_CAMPAIGN)
 
-        #: Scenario list page instantiated as a member for implementation.
-        self._page_scenarios = ScenarioListPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: ScenarioListPage
+        #: Campaign list page instantiated as a member for implementation.
+        self._page_campaigns = CampaignListPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: CampaignListPage
         #: Requirements page instantiated as a member for implementation.
         self._page_reqs = RequirementsPage(debug_class=UIDebugClass.PAGE_CAMPAIGN)  # type: RequirementsPage
         #: Downstream traceability page instantiated as a member for implementation.
@@ -102,14 +102,12 @@ class CampaignPage(_HttpRequestHandlerImpl):
         _html = HtmlDocument(request)
         _html.settitle(f"Campaign {request.campaign_execution.name}", campaign_subtitle=False)
 
-        with AnchorGenerator(_html, name="scenarios").addanchor(link_title="Campaign scenario list"):
-            with _html.addnode("h2", classes=["scenarios"]):
-                LinkGenerator(_html).addlink(
-                    href=self._page_scenarios.mkurl(request.req_baseline),
-                    title="Campaign scenario list",
-                    text="Scenarios",
-                )
-        self._page_scenarios.scenarios2html(_html, request.req_baseline)
+        with AnchorGenerator(_html, name="campaign-results").addanchor(link_title="Campaign results"):
+            _html.addnode("h2", classes=["campaign"], text="Campaign results")
+        self._page_campaigns.campaigndb2html(
+            _html, request,
+            single_campaign=request.campaign_execution,
+        )
 
         if request.req_baseline.req_db.getallreqs():
             with AnchorGenerator(_html, name="reqs").addanchor(link_title="Campaign requirement list"):

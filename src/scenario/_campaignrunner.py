@@ -341,9 +341,9 @@ class CampaignRunner(_LoggerImpl, _ReqBaselineObjectImpl):
                 self.debug("No such file '%s'", test_case_execution.report.path)
 
             # Fix the scenario definition and execution instances, if not successfully read from the scenario report above.
-            if not test_case_execution.scenario_execution:
+            if not test_case_execution.scenario_definition:
                 self.debug("Using fallback scenario instances")
-                test_case_execution.report.content = _fallback_errors
+                test_case_execution.scenario_definition = _fallback_errors
 
                 # Read error lines from log output.
                 self.debug("Reading error lines from log output")

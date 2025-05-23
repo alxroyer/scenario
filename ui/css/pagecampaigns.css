@@ -28,8 +28,8 @@
     div#campaigns tr.suite td { background-color: #e7e7e7; }
     div#campaigns tr.case th { background-color: #e7e7e7; }
 
-    /* Center non `<th></th>` cells. */
-    div#campaigns td { text-align: center; }
+    /* Center non `td.result` cells. */
+    div#campaigns td.result { text-align: center; }
 
 
 /* Execution status colors. */

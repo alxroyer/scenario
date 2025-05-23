@@ -18,9 +18,6 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Add a 'req-mgt.py' tool that displays requirement test coverage.
-        - Display known issues.
-        - Check campaign results display.
     - Implement JSON schemas.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.

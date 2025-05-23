@@ -473,6 +473,19 @@ class TestCaseExecution(_ReqBaselineObjectImpl):
             return self.report.content.execution.definition
         return None
 
+    @scenario_definition.setter
+    def scenario_definition(self, scenario_definition):  # type: (_ScenarioDefinitionType) -> None
+        """
+        Scenario definition setter.
+
+        Raises an error if a scenario definition was already set.
+
+        :param scenario_definition: Scenario definition to set.
+        """
+        if self.report.content:
+            raise ValueError(f"Can't set {scenario_definition!r} for {self!r}, {self.report.content!r} is already set")
+        self.report.content = scenario_definition
+
     @property
     def scenario_execution(self):  # type: () -> typing.Optional[_ScenarioExecutionType]
         """
@@ -481,6 +494,21 @@ class TestCaseExecution(_ReqBaselineObjectImpl):
         if self.report.content:
             return self.report.content.execution
         return None
+
+    @scenario_execution.setter
+    def scenario_execution(self, scenario_execution):  # type: (_ScenarioExecutionType) -> None
+        """
+        Scenario execution setter.
+
+        Raises an error if a scenario execution was already set.
+
+        :param scenario_execution: Scenario execution to set.
+        """
+        # Memo: A scenario execution always has a reference to its definition.
+        if scenario_execution.definition.execution is not scenario_execution:
+            raise ValueError(f"Badly linked {scenario_execution.definition!r} and {scenario_execution!r} instances")
+        # Call the `scenario_definition` setter.
+        self.scenario_definition = scenario_execution.definition
 
     @property
     def name(self):  # type: () -> str
