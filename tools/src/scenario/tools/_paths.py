@@ -23,6 +23,7 @@ DEMO_PATH = ROOT_SCENARIO_PATH / "demo"  # type: scenario.Path
 DOC_DATA_PATH = ROOT_SCENARIO_PATH / "doc" / "data"  # type: scenario.Path
 DOC_OUT_PATH = ROOT_SCENARIO_PATH / "doc" / "html"  # type: scenario.Path
 DOC_SRC_PATH = ROOT_SCENARIO_PATH / "doc" / "src"  # type: scenario.Path
+SCHEMAS_PATH = ROOT_SCENARIO_PATH / "schemas"  # type: scenario.Path
 SRC_PATH = ROOT_SCENARIO_PATH / "src"  # type: scenario.Path
 TEST_PATH = ROOT_SCENARIO_PATH / "test"  # type: scenario.Path
 TEST_CASES_PATH = ROOT_SCENARIO_PATH / "test" / "cases"  # type: scenario.Path

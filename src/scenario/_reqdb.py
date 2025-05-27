@@ -62,7 +62,7 @@ class ReqDatabase(_LoggerImpl):
     """
 
     #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
-    JSON_SCHEMA_SUBPATH = "schemas/req-db.schema.json"  # type: str
+    JSON_SCHEMA_SUBPATH = "schemas/req-db_v0.3.0.schema.json"  # type: str
 
     def __init__(
             self,

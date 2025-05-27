@@ -18,7 +18,9 @@
 ## Roadmap to v0.2.3
 
 - Issue #83: Add the ability to track requirements.
-    - Implement JSON schemas.
+    - Issue #32: Implement JSON schemas.
+        - Provide JSON schemas.
+        - Display warnings when reading a file with a higher version than the current `scenario` version.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
     - Optional `scenario.ui` improvements:
@@ -81,13 +83,6 @@
 - Issue #xxx: Don't use console colors directly, but use meta tags (like `<strong>` or `<span class=''>`).
 - Issue #xxx: Improve assertion error messages with evidence introductory text.
     - When `evidence` is fed with a text, error messages from assertions shall be prefixed with `f"{evidence}: ".
-- Issue #xxx: Strengthen JSON reading & writing:
-    - Secnario reports, requirement databases.
-    - Provide JSON schemas.
-    - Use github links for JSON schema.
-    - Store `$schema` fields.
-    - Store `$version` fields.
-    - Display warnings when reading a while with a higher version than the current `scenario` version.
 - Issue #80: Provide a subscenario step class.
     - Enable `ScenarioDefinition.getstep()` to walk through subscenarios when looking for a given step by the way.
     - And/or refactor steps as contexts => `with` statement would make it possible de define substeps under a main one, for:
@@ -121,7 +116,6 @@
 
 ## Roadmap to v1.0.0
 
-- Issue #32: Finalize scenario report JSON schema v1.
 - Issue #13: Documentation:
     - Find better step objects / subscenario demos.
 

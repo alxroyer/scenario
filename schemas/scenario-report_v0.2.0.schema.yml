@@ -1,0 +1,439 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+$schema: https://json-schema.org/draft/2020-12/schema
+
+$id: https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0.2.0.schema.json
+title: Scenario report v0.2.0
+description: Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution)
+
+$ref: "#/$defs/main-scenario-definition"
+
+$defs:
+
+  # 1. Main file attributes
+
+  # Main node: `scenario-definition` with a couple of additional attributes.
+  main-scenario-definition:
+    description: Main scenario definition
+    type: object
+    allOf:
+      # Heading properties.
+      - type: object
+        properties:
+
+          # New in v0.2.0.
+          # Optional.
+          $license:
+            description: "Ability to provide a license text for a JSON file"
+            anyOf:
+              - type: string
+              - { type: array, items: { type: string } }
+
+          # Optional.
+          $schema:
+            description: Schema reference
+            # Note:
+            #   Don't forbid backward compatible evolutions.
+            #   Accept whatever, and let JSON schema validation state on compatibility.
+            $ref: "#/$defs/non-empty-string"
+
+      # Base `scenario-definition`.
+      - $ref: "#/$defs/scenario-definition"
+
+      # Base `execution-results`.
+      - $ref: "#/$defs/execution-results"
+
+      - type: object
+        properties:
+
+          # Required.
+          # Note:
+          #   Could be inferred from `#/$defs/execution-results/errors` & `warnings`.
+          #   Keep it required whatever.
+          status:
+            anyOf:
+              - const: "SUCCESS"
+              - const: "WARNINGS"
+              - const: "FAIL"
+
+          # Optional.
+          # Note:
+          #   Can be inferred from steps with actions / results.
+          #   Actually not read by `scenario` when imported.
+          stats:
+            description: Scenario execution statistics
+            type: object
+            properties:
+
+              # Required.
+              steps:
+                description: Step counters
+                $ref: "#/$defs/stat-counters"
+
+              # Required.
+              actions:
+                description: Action counters
+                $ref: "#/$defs/stat-counters"
+
+              # Required.
+              results:
+                description: Result counters
+                $ref: "#/$defs/stat-counters"
+
+            required:
+              - steps
+              - actions
+              - results
+
+        required:
+          - status
+
+  stat-counters:
+    description: Statistic counters
+    type: object
+    properties:
+
+      # Required.
+      executed:
+        description: Number of items executed
+        type: number
+
+      # Required.
+      total:
+        description: Total number of items
+        type: number
+
+    required:
+      - executed
+      - total
+
+  # 2. Main objects
+
+  # 2.1. Scenario definition
+
+  # Scenario definition -- common definition.
+  # Defines the base object for `main-scenario-definition` and `subscenario-definition`.
+  scenario-definition:
+    description: Scenario definition
+    type: object
+    properties:
+
+      # Required.
+      name:
+        description: Name of the scenario
+        $ref: "#/$defs/non-empty-string"
+
+      # Required.
+      href:
+        description: Reference to the scenario script path
+        $ref: "#/$defs/non-empty-string"
+
+      # Required.
+      attributes:
+        description: Scenario attributes
+        $ref: "#/$defs/dict-str"
+
+      # Required.
+      steps:
+        description: List of steps
+        type: array
+        items:
+          anyOf:
+            - $ref: "#/$defs/step-section"
+            - $ref: "#/$defs/step-definition"
+
+    required:
+      - name
+      - href
+      - steps
+
+  # Subscenario definition: `scenario-definition-base` with `unevaluatedProperties=false`.
+  subscenario-definition:
+    description: Subscenario definition
+    $ref: "#/$defs/scenario-definition"
+
+
+  # 2.2. Steps
+
+  # Step section: essentially a step description.
+  step-section:
+    description: Step section
+    type: object
+    properties:
+
+      # Required.
+      location:
+        description: Location of the step
+        $ref: "#/$defs/location"
+
+      # Required.
+      description:
+        description: Description of the step
+        type: string
+
+    required:
+      - location
+      - description
+
+  # Full step definition.
+  step-definition:
+    description: Step definition
+    type: object
+    properties:
+
+      # Required.
+      location:
+        description: Location of the step
+        $ref: "#/$defs/location"
+
+      # Required.
+      description:
+        description: Description of the step
+        # Regular step description may be `None`.
+        anyOf:
+          - type: string
+          - type: "null"
+
+      # Optional.
+      executions:
+        description: Step executions
+        type: array
+        items: { $ref: "#/$defs/step-execution" }
+
+      # Required.
+      actions-results:
+        description: List of actions and expected results
+        type: array
+        items: { $ref: "#/$defs/action-result-definition" }
+
+    required:
+      - location
+      - description
+      - actions-results
+
+  step-execution:
+    description: Step execution results
+    type: object
+    allOf:
+      # Base `execution-results`.
+      - $ref: "#/$defs/execution-results"
+
+      # Additional properties.
+      - type: object
+        properties:
+
+          # Required.
+          number:
+            description: Execution number, starting from 1.
+            type: number
+            min: 1
+
+        required:
+          - number
+
+
+  # 2.3. Actions / results
+
+  action-result-definition:
+    description: Action / result definition
+    type: object
+    properties:
+
+      # Required.
+      type:
+        description: Action / result type
+        oneOf:
+          - const: "ACTION"
+          - const: "RESULT"
+
+      # Required.
+      description:
+        description: Action / result description
+        type: string
+
+      # Required.
+      executions:
+        description: Action / result executions
+        type: array
+        items: { $ref: "#/$defs/action-result-execution" }
+
+    required:
+      - type
+      - description
+      - executions
+
+  action-result-execution:
+    description: Action / result execution results
+    type: object
+    allOf:
+      # Base `execution-results`.
+      - $ref: "#/$defs/execution-results"
+
+      # Additional properties.
+      - type: object
+        properties:
+
+          # Required.
+          evidence:
+            description: Evidence
+            type: array
+            items: { type: string }
+
+          # Required.
+          subscenarios:
+            description: Subscenarios
+            type: array
+            items: { $ref: "#/$defs/subscenario-definition" }
+
+        required:
+          - evidence
+          - subscenarios
+
+
+  # 2.4. Common objects and types
+
+  location:
+    description: Location
+    type: string
+
+  execution-results:
+    description: Base execution results
+    type: object
+    properties:
+
+      # Required.
+      time:
+        description: Execution times
+        type: object
+        properties:
+
+          # Required.
+          start:
+            description: Start time
+            oneOf:
+              - $ref: "#/$defs/iso8601"
+              - type: "null"
+
+          # Required.
+          end:
+            description: End time
+            oneOf:
+              - $ref: "#/$defs/iso8601"
+              - type: "null"
+
+          # Required.
+          elapsed:
+            description: Elapsed time in seconds
+            oneOf:
+              - type: number
+              - type: "null"
+
+        required:
+          - start
+          - end
+          - elapsed
+
+      # Required.
+      errors:
+        description: Errors
+        type: array
+        items: { $ref: "#/$defs/error" }
+
+      # Required.
+      warnings:
+        description: Warnings
+        type: array
+        items: { $ref: "#/$defs/known-issue" }
+
+    required:
+      - time
+      - errors
+      - warnings
+
+  error:
+    description: Error
+    type: object
+    properties:
+
+      # Optional: `type` may not be set.
+      type:
+        description: Error type
+        type: string
+
+      # Optional: `location` may not be set when `type` is not set.
+      location:
+        description: Error location
+        $ref: "#/$defs/location"
+
+      # Required.
+      message:
+        description: Error message
+        type: string
+
+    required:
+      - message
+
+  known-issue:
+    description: Known issue
+    type: object
+    properties:
+
+      # Required.
+      type:
+        description: Error type
+        const: "known-issue"
+
+      # Required.
+      location:
+        description: Error location
+        $ref: "#/$defs/location"
+
+      # Required.
+      id:
+        description: Issue identifier
+        type: string
+
+      # Required.
+      message:
+        description: Error message
+        type: string
+
+    required:
+      - type
+      - location
+      - id
+      - message
+
+  iso8601:
+    description: ISO8601 date/time format
+    type: string
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
+
+
+  # 3. Basic types
+
+  non-empty-string:
+    description: Non empty string type
+    type: string
+    minLength: 1
+
+  dict-str:
+    description: Dictionary with string values type
+    type: object
+    patternProperties:
+      ^.*$:
+        type: string

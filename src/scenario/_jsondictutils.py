@@ -301,7 +301,7 @@ class JsonDict(abc.ABC):
             }  # type: JsonDictType
             if schema_subpath is not None:
                 _content.update({
-                    "$schema": f"{PKG_INFO.repo_url}/blob/v{PKG_INFO.version}/{schema_subpath}",
+                    "$schema": f"{PKG_INFO.repo_url}/blob/master/{schema_subpath}",
                     "$version": PKG_INFO.version,
                 })
             _content.update(content)

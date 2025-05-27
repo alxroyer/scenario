@@ -61,7 +61,7 @@ class ScenarioReport(_LoggerImpl):
     """
 
     #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
-    JSON_SCHEMA_SUBPATH = "schemas/scenario-report.schema.json"  # type: str
+    JSON_SCHEMA_SUBPATH = "schemas/scenario-report_v0.3.0.schema.json"  # type: str
 
     def __init__(self):  # type: (...) -> None
         """

@@ -1,0 +1,449 @@
+{
+  "$encoding": "utf-8",
+  "$license": [
+    "Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0.2.0.schema.json",
+  "title": "Scenario report v0.2.0",
+  "description": "Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution)",
+  "$ref": "#/$defs/main-scenario-definition",
+  "$defs": {
+    "main-scenario-definition": {
+      "description": "Main scenario definition",
+      "type": "object",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "$license": {
+              "description": "Ability to provide a license text for a JSON file",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "$schema": {
+              "description": "Schema reference",
+              "$ref": "#/$defs/non-empty-string"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/scenario-definition"
+        },
+        {
+          "$ref": "#/$defs/execution-results"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "anyOf": [
+                {
+                  "const": "SUCCESS"
+                },
+                {
+                  "const": "WARNINGS"
+                },
+                {
+                  "const": "FAIL"
+                }
+              ]
+            },
+            "stats": {
+              "description": "Scenario execution statistics",
+              "type": "object",
+              "properties": {
+                "steps": {
+                  "description": "Step counters",
+                  "$ref": "#/$defs/stat-counters"
+                },
+                "actions": {
+                  "description": "Action counters",
+                  "$ref": "#/$defs/stat-counters"
+                },
+                "results": {
+                  "description": "Result counters",
+                  "$ref": "#/$defs/stat-counters"
+                }
+              },
+              "required": [
+                "steps",
+                "actions",
+                "results"
+              ]
+            }
+          },
+          "required": [
+            "status"
+          ]
+        }
+      ]
+    },
+    "stat-counters": {
+      "description": "Statistic counters",
+      "type": "object",
+      "properties": {
+        "executed": {
+          "description": "Number of items executed",
+          "type": "number"
+        },
+        "total": {
+          "description": "Total number of items",
+          "type": "number"
+        }
+      },
+      "required": [
+        "executed",
+        "total"
+      ]
+    },
+    "scenario-definition": {
+      "description": "Scenario definition",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the scenario",
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "href": {
+          "description": "Reference to the scenario script path",
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "attributes": {
+          "description": "Scenario attributes",
+          "$ref": "#/$defs/dict-str"
+        },
+        "steps": {
+          "description": "List of steps",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/step-section"
+              },
+              {
+                "$ref": "#/$defs/step-definition"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "name",
+        "href",
+        "steps"
+      ]
+    },
+    "subscenario-definition": {
+      "description": "Subscenario definition",
+      "$ref": "#/$defs/scenario-definition"
+    },
+    "step-section": {
+      "description": "Step section",
+      "type": "object",
+      "properties": {
+        "location": {
+          "description": "Location of the step",
+          "$ref": "#/$defs/location"
+        },
+        "description": {
+          "description": "Description of the step",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location",
+        "description"
+      ]
+    },
+    "step-definition": {
+      "description": "Step definition",
+      "type": "object",
+      "properties": {
+        "location": {
+          "description": "Location of the step",
+          "$ref": "#/$defs/location"
+        },
+        "description": {
+          "description": "Description of the step",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "executions": {
+          "description": "Step executions",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/step-execution"
+          }
+        },
+        "actions-results": {
+          "description": "List of actions and expected results",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action-result-definition"
+          }
+        }
+      },
+      "required": [
+        "location",
+        "description",
+        "actions-results"
+      ]
+    },
+    "step-execution": {
+      "description": "Step execution results",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/execution-results"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "number": {
+              "description": "Execution number, starting from 1.",
+              "type": "number",
+              "min": 1
+            }
+          },
+          "required": [
+            "number"
+          ]
+        }
+      ]
+    },
+    "action-result-definition": {
+      "description": "Action / result definition",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Action / result type",
+          "oneOf": [
+            {
+              "const": "ACTION"
+            },
+            {
+              "const": "RESULT"
+            }
+          ]
+        },
+        "description": {
+          "description": "Action / result description",
+          "type": "string"
+        },
+        "executions": {
+          "description": "Action / result executions",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action-result-execution"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "description",
+        "executions"
+      ]
+    },
+    "action-result-execution": {
+      "description": "Action / result execution results",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/execution-results"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "evidence": {
+              "description": "Evidence",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "subscenarios": {
+              "description": "Subscenarios",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/subscenario-definition"
+              }
+            }
+          },
+          "required": [
+            "evidence",
+            "subscenarios"
+          ]
+        }
+      ]
+    },
+    "location": {
+      "description": "Location",
+      "type": "string"
+    },
+    "execution-results": {
+      "description": "Base execution results",
+      "type": "object",
+      "properties": {
+        "time": {
+          "description": "Execution times",
+          "type": "object",
+          "properties": {
+            "start": {
+              "description": "Start time",
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/iso8601"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "end": {
+              "description": "End time",
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/iso8601"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "elapsed": {
+              "description": "Elapsed time in seconds",
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "start",
+            "end",
+            "elapsed"
+          ]
+        },
+        "errors": {
+          "description": "Errors",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/error"
+          }
+        },
+        "warnings": {
+          "description": "Warnings",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/known-issue"
+          }
+        }
+      },
+      "required": [
+        "time",
+        "errors",
+        "warnings"
+      ]
+    },
+    "error": {
+      "description": "Error",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Error type",
+          "type": "string"
+        },
+        "location": {
+          "description": "Error location",
+          "$ref": "#/$defs/location"
+        },
+        "message": {
+          "description": "Error message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "known-issue": {
+      "description": "Known issue",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Error type",
+          "const": "known-issue"
+        },
+        "location": {
+          "description": "Error location",
+          "$ref": "#/$defs/location"
+        },
+        "id": {
+          "description": "Issue identifier",
+          "type": "string"
+        },
+        "message": {
+          "description": "Error message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "location",
+        "id",
+        "message"
+      ]
+    },
+    "iso8601": {
+      "description": "ISO8601 date/time format",
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
+    },
+    "non-empty-string": {
+      "description": "Non empty string type",
+      "type": "string",
+      "minLength": 1
+    },
+    "dict-str": {
+      "description": "Dictionary with string values type",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

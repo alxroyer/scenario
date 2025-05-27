@@ -68,7 +68,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         """
 
         #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for downstream traceability reports.
-        JSON_SCHEMA_SUBPATH = "schemas/downstream-traceability.schema.json"  # type: str
+        JSON_SCHEMA_SUBPATH = "schemas/downstream-traceability_v0.3.0.schema.json"  # type: str
 
         @staticmethod
         def tojson(
@@ -643,7 +643,7 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
         """
 
         #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for upstream traceability reports.
-        JSON_SCHEMA_SUBPATH = "schemas/upstream-traceability.schema.json"  # type: str
+        JSON_SCHEMA_SUBPATH = "schemas/upstream-traceability_v0.3.0.schema.json"  # type: str
 
         @staticmethod
         def tojson(
