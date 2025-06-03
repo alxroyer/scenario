@@ -33,6 +33,34 @@ Mandatory:
 
 Recommended:
 
+- pytz (https://pypi.org/project/pytz/):
+  extended timezone support
+
+- PyYAML (https://pypi.org/project/PyYAML/):
+  optional support for YAML files
+
+.. tip::
+
+    In order to help installing recommended packages,
+    generally in a `venv` environment,
+    a 'requirements/recommended.txt' file is provided:
+
+    .. code-block:: bash
+
+        # In your user project directory, initiate a `venv` environment.
+        $ python -m venv .venv
+        $ source .venv/Scripts/activate
+
+        # Install recommended requirements.
+        $ pip install -r /path/to/scenario/requirements/recommended.txt
+
+
+Development dependencies:
+
+- Java
+
+  - Tested with version 11.0.14.
+
 - mypy (https://pypi.org/project/mypy/)
 
   - Versions prior to 1.0.0 not supported anymore.
@@ -40,11 +68,7 @@ Recommended:
 
     - 1.0.1 (Python 3.7.9).
 
-- pytz (https://pypi.org/project/pytz/)
-
 - PyYAML (https://pypi.org/project/PyYAML/)
-
-Documentation generation (optional):
 
 - Sphinx (https://pypi.org/project/Sphinx/)
 
@@ -54,9 +78,20 @@ Documentation generation (optional):
     - 5.3.0 (Python 3.7.9, `typed_ast` installed)
     - 6.1.3 (Python 3.8.15, on readthedocs)
 
-- Java
+.. tip::
 
-  - Tested with version 11.0.14.
+    Same as for recommended packages,
+    a 'requirements/dev.txt' file is provided for Python development dependencies installation:
+
+    .. code-block:: bash
+
+        # In the scenario project directory, initiate a `venv` environment.
+        $ cd /path/to/scenario/
+        $ python -m venv .venv
+        $ source .venv/Scripts/activate
+
+        # Install development dependencies.
+        $ pip install -r ./requirements/dev.txt
 
 
 From sources

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Python venv and intermediate files.
-/.venv*/
-/venv*/
-__pycache__/
-*.pyc
 
-# Test results output directory.
-/test/results/
+# See https://scenario-testing-framework.readthedocs.io/en/latest/install.html#prerequisites for details.
 
-# Sphinx output directories.
-/doc/src/py/
-/doc/html/
 
-# Tier tool working directories.
-/.idea/
-/.mypy_cache/
+# pytz (https://pypi.org/project/pytz/)
+pytz
+
+# PyYAML (https://pypi.org/project/PyYAML/)
+pyaml

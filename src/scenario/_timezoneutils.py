@@ -74,7 +74,7 @@ def fromstr(
     if tz_desc in ("UTC", "Z"):
         return UTC
 
-    # When the timezone is described as a '[+-]0000' or '[+-]00:00' pattern, as usually
+    # When the timezone is described as a '[+-]0000' or '[+-]00:00' pattern.
     _match = re.match(r"(\+|-|)(\d{2})(:|)(\d{2})", tz_desc)  # type: typing.Optional[typing.Match[str]]
     if _match:
         _sign = -1 if _match.group(1) == "-" else 1  # type: int
