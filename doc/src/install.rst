@@ -101,12 +101,13 @@ Clone the project sources:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/alxroyer/scenario
+    $ git clone https://github.com/alxroyer/scenario /path/to/scenario
 
-Use the 'bin/run-test.py' or 'bin/run-campaign.py' launchers directly.
-Let's say you had cloned the project in '/path/to/scenario':
+Use the 'bin/' programs directly:
 
 .. code-block:: bash
 
     $ /path/to/scenario/bin/run-test.py --help
     $ /path/to/scenario/bin/run-campaign.py --help
+    $ /path/to/scenario/bin/req-mgt.py --help
+    $ /path/to/scenario/bin/ui-server.py --help
