@@ -18,6 +18,7 @@
   "$version": "0.2.2",
 
   "name": "test/data/failingscenario.py",
+  "href": "./failingscenario.py",
   "attributes": {
     "TITLE": "Failing scenario sample"
   },

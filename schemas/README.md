@@ -36,6 +36,9 @@ The version information is not held by the tag (not "/blob/vX.Y.Z/" in the URL)
 but by the file name ("xxxx-vX.Y.Z.schema.json")
 in order to be able to fix or refine these schemas after the release has been published.
 
+Usage of the '_' prefix for non-final types.
+Used by 'tools/check-schemas.py' to strengthen final object types with `"unevaluatedProperties": false`.
+
 
 ## Scenario reports
 

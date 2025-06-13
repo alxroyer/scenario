@@ -18,6 +18,7 @@
   "$version": "0.2.2",
 
   "name": "test/data/longtextsscenario.py",
+  "href": "./longtextsscenario.py",
   "attributes": {
     "DESCRIPTION": "Scenario description line#1.\n\nScenario description line#2.",
     "TITLE": "Long texts scenario sample"

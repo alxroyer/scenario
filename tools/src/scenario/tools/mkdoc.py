@@ -39,14 +39,14 @@ class MkDoc:
             self.addarg("Log generation", "logs", bool).define(
                 "--logs",
                 action="store_true", default=False,
-                help=f"Update log files only.",
+                help="Update log files only.",
             )
 
             self.uml = False  # type: bool
             self.addarg("UML diagram generation", "uml", bool).define(
                 "--uml",
                 action="store_true", default=False,
-                help=f"Update UML diagrams only.",
+                help="Update UML diagrams only.",
             )
 
         @property

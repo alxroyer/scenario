@@ -18,6 +18,7 @@
   "$version": "0.2.2",
 
   "name": "test/data/simplescenario.py",
+  "href": "./simplescenario.py",
   "attributes": {
     "TITLE": "Simple scenario sample"
   },

@@ -230,7 +230,7 @@ class JsonDump(DelayedStr):
 
 
 def jsondump(
-        json_data,  # type: _JsonDictType
+        json_data,  # type: typing.Any
         **kwargs,  # type: typing.Any
 ):  # type: (...) -> JsonDump
     """

@@ -18,6 +18,7 @@
   "$version": "0.2.2",
 
   "name": "test/data/loggingindentationscenario.py",
+  "href": "./loggingindentationscenario.py",
   "attributes": {
     "TITLE": "Logging indentation scenario sample"
   },

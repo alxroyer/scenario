@@ -18,6 +18,7 @@
   "$version": "0.2.2",
 
   "name": "test/data/superscenario.py",
+  "href": "./superscenario.py",
   "attributes": {
     "TITLE": "Subscenario sample"
   },
@@ -45,6 +46,7 @@
               "subscenarios": [
 {
   "name": "test/data/simplescenario.py",
+  "href": "./simplescenario.py",
   "attributes": {
     "TITLE": "Simple scenario sample"
   },
