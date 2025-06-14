@@ -16,8 +16,8 @@
 
 $schema: https://json-schema.org/draft/2020-12/schema
 
-$id: https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0.2.0.schema.json
-title: Scenario report v0.2.0
+$id: https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0.3.0.schema.json
+title: Scenario report v0.3.0
 description: Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution)
 
 $ref: "#/$defs/main-scenario"
@@ -37,6 +37,15 @@ $defs:
         type: object
         properties:
 
+          # New in v0.3.0.
+          # Optional.
+          $encoding:
+            description: Encoding of the file
+            # Note:
+            #   Don't use a restrictive enum definition.
+            #   Accept whatever, and let Python raise an exception if the encoding is unknown.
+            $ref: "#/$defs/_non-empty-string"
+
           # New in v0.2.0.
           # Optional.
           $license:
@@ -48,6 +57,15 @@ $defs:
           # Optional.
           $schema:
             description: Schema reference
+            # Note:
+            #   Don't forbid backward compatible evolutions.
+            #   Accept whatever, and let JSON schema validation state on compatibility.
+            $ref: "#/$defs/_non-empty-string"
+
+          # New in v0.3.0.
+          # Optional.
+          $version:
+            description: "`scenario` version used to generate the file"
             # Note:
             #   Don't forbid backward compatible evolutions.
             #   Accept whatever, and let JSON schema validation state on compatibility.
@@ -140,6 +158,13 @@ $defs:
             description: Scenario attributes
             $ref: "#/$defs/_dict-str"
 
+          # New in v0.3.0.
+          # Optional.
+          reqs:
+            description: Requirement traceability
+            type: array
+            items: { $ref: "#/$defs/upstream-req-traceability" }
+
           # Required.
           steps:
             description: List of steps
@@ -225,6 +250,13 @@ $defs:
           - type: string
           - type: "null"
 
+      # New in v0.3.0.
+      # Optional.
+      reqs:
+        description: Upstream traceability
+        type: array
+        items: { $ref: "#/$defs/upstream-req-traceability" }
+
       # Required.
       executions:
         description: Step executions
@@ -282,6 +314,12 @@ $defs:
       # Required.
       description:
         description: Action / result description
+        type: string
+
+      # New in v0.3.0.
+      # Optional.
+      indentation:
+        description: Optional action/result indentation
         type: string
 
       # Required.
@@ -427,9 +465,21 @@ $defs:
         description: Error location
         $ref: "#/$defs/_location"
 
-      # Required.
+      # New in v0.2.2.
+      # Optional.
+      level:
+        description: Issue level
+        type: number
+
+      # Optional (changed in v0.2.2, was required before).
       id:
         description: Issue identifier
+        type: string
+
+      # New in v0.2.2.
+      # Optional.
+      url:
+        description: Issue URL
         type: string
 
       # Required.
@@ -440,7 +490,6 @@ $defs:
     required:
       - type
       - location
-      - id
       - message
 
   _iso8601:
@@ -449,7 +498,32 @@ $defs:
     pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
 
 
-  # 3. Basic types
+  # 3. Traceability (new in v0.3.0)
+
+  upstream-req-traceability:
+    description: Upstream requirement traceability
+    type: object
+    properties:
+
+      # Required.
+      ref:
+        description: Requirement or subref identifier being referenced.
+        $ref: "#/$defs/_req-ref-id"
+
+      # Optional
+      comments:
+        description: Justification comment attached with this link
+        type: string
+
+    required:
+      - ref
+
+  _req-ref-id:
+    description: Requirement reference identifier
+    $ref: "#/$defs/_non-empty-string"
+
+
+  # 4. Basic types
 
   _non-empty-string:
     description: Non empty string type

@@ -19,58 +19,44 @@
   "$id": "https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0.1.0.schema.json",
   "title": "Scenario report v0.1.0",
   "description": "Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution)",
-  "$ref": "#/$defs/main-scenario-definition",
+  "$ref": "#/$defs/main-scenario",
   "$defs": {
-    "main-scenario-definition": {
-      "description": "Main scenario definition",
+    "main-scenario": {
+      "description": "Main scenario",
       "type": "object",
       "allOf": [
         {
+          "description": "Heading properties",
           "type": "object",
           "properties": {
             "$schema": {
               "description": "Schema reference",
-              "$ref": "#/$defs/non-empty-string"
+              "$ref": "#/$defs/_non-empty-string"
             }
           }
         },
         {
-          "$ref": "#/$defs/scenario-definition"
+          "$ref": "#/$defs/_scenario"
         },
         {
-          "$ref": "#/$defs/execution-results"
-        },
-        {
+          "description": "Scenario statistics",
           "type": "object",
           "properties": {
-            "status": {
-              "anyOf": [
-                {
-                  "const": "SUCCESS"
-                },
-                {
-                  "const": "WARNINGS"
-                },
-                {
-                  "const": "FAIL"
-                }
-              ]
-            },
             "stats": {
               "description": "Scenario execution statistics",
               "type": "object",
               "properties": {
                 "steps": {
                   "description": "Step counters",
-                  "$ref": "#/$defs/stat-counters"
+                  "$ref": "#/$defs/_stat-counters"
                 },
                 "actions": {
                   "description": "Action counters",
-                  "$ref": "#/$defs/stat-counters"
+                  "$ref": "#/$defs/_stat-counters"
                 },
                 "results": {
                   "description": "Result counters",
-                  "$ref": "#/$defs/stat-counters"
+                  "$ref": "#/$defs/_stat-counters"
                 }
               },
               "required": [
@@ -79,14 +65,11 @@
                 "results"
               ]
             }
-          },
-          "required": [
-            "status"
-          ]
+          }
         }
       ]
     },
-    "stat-counters": {
+    "_stat-counters": {
       "description": "Statistic counters",
       "type": "object",
       "properties": {
@@ -104,46 +87,77 @@
         "total"
       ]
     },
-    "scenario-definition": {
-      "description": "Scenario definition",
+    "_scenario": {
+      "description": "Base scenario",
       "type": "object",
-      "properties": {
-        "name": {
-          "description": "Name of the scenario",
-          "$ref": "#/$defs/non-empty-string"
-        },
-        "href": {
-          "description": "Reference to the scenario script path",
-          "$ref": "#/$defs/non-empty-string"
-        },
-        "attributes": {
-          "description": "Scenario attributes",
-          "$ref": "#/$defs/dict-str"
-        },
-        "steps": {
-          "description": "List of steps",
-          "type": "array",
-          "items": {
-            "anyOf": [
-              {
-                "$ref": "#/$defs/step-section"
-              },
-              {
-                "$ref": "#/$defs/step-definition"
+      "allOf": [
+        {
+          "description": "Scenario definition",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Name of the scenario",
+              "$ref": "#/$defs/_non-empty-string"
+            },
+            "href": {
+              "description": "Reference to the scenario script path",
+              "$ref": "#/$defs/_non-empty-string"
+            },
+            "attributes": {
+              "description": "Scenario attributes",
+              "$ref": "#/$defs/_dict-str"
+            },
+            "steps": {
+              "description": "List of steps",
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/step-section"
+                  },
+                  {
+                    "$ref": "#/$defs/step-definition"
+                  }
+                ]
               }
-            ]
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/_execution-results"
+        },
+        {
+          "description": "Scenario execution status",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Execution status",
+              "anyOf": [
+                {
+                  "const": "SUCCESS"
+                },
+                {
+                  "const": "WARNINGS"
+                },
+                {
+                  "const": "FAIL"
+                }
+              ]
+            }
           }
         }
-      },
+      ],
       "required": [
         "name",
         "href",
-        "steps"
+        "attributes",
+        "steps",
+        "status"
       ]
     },
-    "subscenario-definition": {
-      "description": "Subscenario definition",
-      "$ref": "#/$defs/scenario-definition"
+    "subscenario": {
+      "description": "Subscenario",
+      "$ref": "#/$defs/_scenario"
     },
     "step-section": {
       "description": "Step section",
@@ -151,7 +165,7 @@
       "properties": {
         "location": {
           "description": "Location of the step",
-          "$ref": "#/$defs/location"
+          "$ref": "#/$defs/_location"
         },
         "description": {
           "description": "Description of the step",
@@ -161,7 +175,8 @@
       "required": [
         "location",
         "description"
-      ]
+      ],
+      "unevaluatedProperties": false
     },
     "step-definition": {
       "description": "Step definition",
@@ -169,7 +184,7 @@
       "properties": {
         "location": {
           "description": "Location of the step",
-          "$ref": "#/$defs/location"
+          "$ref": "#/$defs/_location"
         },
         "description": {
           "description": "Description of the step",
@@ -200,6 +215,7 @@
       "required": [
         "location",
         "description",
+        "executions",
         "actions-results"
       ]
     },
@@ -208,7 +224,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/$defs/execution-results"
+          "$ref": "#/$defs/_execution-results"
         },
         {
           "type": "object",
@@ -263,7 +279,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/$defs/execution-results"
+          "$ref": "#/$defs/_execution-results"
         },
         {
           "type": "object",
@@ -279,7 +295,7 @@
               "description": "Subscenarios",
               "type": "array",
               "items": {
-                "$ref": "#/$defs/subscenario-definition"
+                "$ref": "#/$defs/subscenario"
               }
             }
           },
@@ -290,11 +306,11 @@
         }
       ]
     },
-    "location": {
+    "_location": {
       "description": "Location",
       "type": "string"
     },
-    "execution-results": {
+    "_execution-results": {
       "description": "Base execution results",
       "type": "object",
       "properties": {
@@ -306,7 +322,7 @@
               "description": "Start time",
               "oneOf": [
                 {
-                  "$ref": "#/$defs/iso8601"
+                  "$ref": "#/$defs/_iso8601"
                 },
                 {
                   "type": "null"
@@ -317,7 +333,7 @@
               "description": "End time",
               "oneOf": [
                 {
-                  "$ref": "#/$defs/iso8601"
+                  "$ref": "#/$defs/_iso8601"
                 },
                 {
                   "type": "null"
@@ -346,14 +362,25 @@
           "description": "Errors",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/error"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/error"
+              },
+              {
+                "$ref": "#/$defs/known-issue"
+              }
+            ]
           }
         },
         "warnings": {
           "description": "Warnings",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/known-issue"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/known-issue"
+              }
+            ]
           }
         }
       },
@@ -373,7 +400,7 @@
         },
         "location": {
           "description": "Error location",
-          "$ref": "#/$defs/location"
+          "$ref": "#/$defs/_location"
         },
         "message": {
           "description": "Error message",
@@ -394,7 +421,7 @@
         },
         "location": {
           "description": "Error location",
-          "$ref": "#/$defs/location"
+          "$ref": "#/$defs/_location"
         },
         "id": {
           "description": "Issue identifier",
@@ -412,17 +439,17 @@
         "message"
       ]
     },
-    "iso8601": {
+    "_iso8601": {
       "description": "ISO8601 date/time format",
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
     },
-    "non-empty-string": {
+    "_non-empty-string": {
       "description": "Non empty string type",
       "type": "string",
       "minLength": 1
     },
-    "dict-str": {
+    "_dict-str": {
       "description": "Dictionary with string values type",
       "type": "object",
       "patternProperties": {

@@ -20,25 +20,27 @@ $id: https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0
 title: Scenario report v0.2.2
 description: Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution)
 
-$ref: "#/$defs/main-scenario-definition"
+$ref: "#/$defs/main-scenario"
 
 $defs:
 
   # 1. Main file attributes
 
-  # Main node: `scenario-definition` with a couple of additional attributes.
-  main-scenario-definition:
-    description: Main scenario definition
+  # Main node: Base `_scenario` with a couple of additional attributes.
+  main-scenario:
+    description: Main scenario
     type: object
     allOf:
+
       # Heading properties.
-      - type: object
+      - description: Heading properties
+        type: object
         properties:
 
           # New in v0.2.0.
           # Optional.
           $license:
-            description: "Ability to provide a license text for a JSON file"
+            description: Ability to provide a license text for a JSON file
             anyOf:
               - type: string
               - { type: array, items: { type: string } }
@@ -49,26 +51,15 @@ $defs:
             # Note:
             #   Don't forbid backward compatible evolutions.
             #   Accept whatever, and let JSON schema validation state on compatibility.
-            $ref: "#/$defs/non-empty-string"
+            $ref: "#/$defs/_non-empty-string"
 
-      # Base `scenario-definition`.
-      - $ref: "#/$defs/scenario-definition"
+      # Base `_scenario`.
+      - $ref: "#/$defs/_scenario"
 
-      # Base `execution-results`.
-      - $ref: "#/$defs/execution-results"
-
-      - type: object
+      # Statistics.
+      - description: Scenario statistics
+        type: object
         properties:
-
-          # Required.
-          # Note:
-          #   Could be inferred from `#/$defs/execution-results/errors` & `warnings`.
-          #   Keep it required whatever.
-          status:
-            anyOf:
-              - const: "SUCCESS"
-              - const: "WARNINGS"
-              - const: "FAIL"
 
           # Optional.
           # Note:
@@ -82,27 +73,24 @@ $defs:
               # Required.
               steps:
                 description: Step counters
-                $ref: "#/$defs/stat-counters"
+                $ref: "#/$defs/_stat-counters"
 
               # Required.
               actions:
                 description: Action counters
-                $ref: "#/$defs/stat-counters"
+                $ref: "#/$defs/_stat-counters"
 
               # Required.
               results:
                 description: Result counters
-                $ref: "#/$defs/stat-counters"
+                $ref: "#/$defs/_stat-counters"
 
             required:
               - steps
               - actions
               - results
 
-        required:
-          - status
-
-  stat-counters:
+  _stat-counters:
     description: Statistic counters
     type: object
     properties:
@@ -123,48 +111,74 @@ $defs:
 
   # 2. Main objects
 
-  # 2.1. Scenario definition
+  # 2.1. Scenario
 
-  # Scenario definition -- common definition.
-  # Defines the base object for `main-scenario-definition` and `subscenario-definition`.
-  scenario-definition:
-    description: Scenario definition
+  # Scenario -- common definition.
+  # Defines the base object for `main-scenario` and `subscenario`.
+  _scenario:
+    description: Base scenario
     type: object
-    properties:
+    allOf:
 
-      # Required.
-      name:
-        description: Name of the scenario
-        $ref: "#/$defs/non-empty-string"
+      # Scenario definition.
+      - description: Scenario definition
+        type: object
+        properties:
 
-      # Required.
-      href:
-        description: Reference to the scenario script path
-        $ref: "#/$defs/non-empty-string"
+          # Required.
+          name:
+            description: Name of the scenario
+            $ref: "#/$defs/_non-empty-string"
 
-      # Required.
-      attributes:
-        description: Scenario attributes
-        $ref: "#/$defs/dict-str"
+          # Required.
+          href:
+            description: Reference to the scenario script path
+            $ref: "#/$defs/_non-empty-string"
 
-      # Required.
-      steps:
-        description: List of steps
-        type: array
-        items:
-          anyOf:
-            - $ref: "#/$defs/step-section"
-            - $ref: "#/$defs/step-definition"
+          # Required.
+          attributes:
+            description: Scenario attributes
+            $ref: "#/$defs/_dict-str"
+
+          # Required.
+          steps:
+            description: List of steps
+            type: array
+            items:
+              anyOf:
+                - $ref: "#/$defs/step-section"
+                - $ref: "#/$defs/step-definition"
+
+      # Base `_execution-results`.
+      - $ref: "#/$defs/_execution-results"
+
+      # Execution status.
+      - description: Scenario execution status
+        type: object
+        properties:
+
+          # Required.
+          # Note:
+          #   Could be inferred from `#/$defs/_execution-results/errors` & `warnings`.
+          #   Keep it required whatever.
+          status:
+            description: Execution status
+            anyOf:
+              - const: "SUCCESS"
+              - const: "WARNINGS"
+              - const: "FAIL"
 
     required:
       - name
       - href
+      - attributes
       - steps
+      - status
 
-  # Subscenario definition: `scenario-definition-base` with `unevaluatedProperties=false`.
-  subscenario-definition:
-    description: Subscenario definition
-    $ref: "#/$defs/scenario-definition"
+  # Subscenario: Base `_scenario` as a final type.
+  subscenario:
+    description: Subscenario
+    $ref: "#/$defs/_scenario"
 
 
   # 2.2. Steps
@@ -178,7 +192,7 @@ $defs:
       # Required.
       location:
         description: Location of the step
-        $ref: "#/$defs/location"
+        $ref: "#/$defs/_location"
 
       # Required.
       description:
@@ -189,6 +203,9 @@ $defs:
       - location
       - description
 
+    # Make the difference with `step-definition` below.
+    unevaluatedProperties: false
+
   # Full step definition.
   step-definition:
     description: Step definition
@@ -198,7 +215,7 @@ $defs:
       # Required.
       location:
         description: Location of the step
-        $ref: "#/$defs/location"
+        $ref: "#/$defs/_location"
 
       # Required.
       description:
@@ -208,7 +225,7 @@ $defs:
           - type: string
           - type: "null"
 
-      # Optional.
+      # Required.
       executions:
         description: Step executions
         type: array
@@ -223,14 +240,16 @@ $defs:
     required:
       - location
       - description
+      - executions
       - actions-results
 
   step-execution:
     description: Step execution results
     type: object
     allOf:
-      # Base `execution-results`.
-      - $ref: "#/$defs/execution-results"
+
+      # Base `_execution-results`.
+      - $ref: "#/$defs/_execution-results"
 
       # Additional properties.
       - type: object
@@ -280,8 +299,9 @@ $defs:
     description: Action / result execution results
     type: object
     allOf:
-      # Base `execution-results`.
-      - $ref: "#/$defs/execution-results"
+
+      # Base `_execution-results`.
+      - $ref: "#/$defs/_execution-results"
 
       # Additional properties.
       - type: object
@@ -297,7 +317,7 @@ $defs:
           subscenarios:
             description: Subscenarios
             type: array
-            items: { $ref: "#/$defs/subscenario-definition" }
+            items: { $ref: "#/$defs/subscenario" }
 
         required:
           - evidence
@@ -306,11 +326,11 @@ $defs:
 
   # 2.4. Common objects and types
 
-  location:
+  _location:
     description: Location
     type: string
 
-  execution-results:
+  _execution-results:
     description: Base execution results
     type: object
     properties:
@@ -325,14 +345,14 @@ $defs:
           start:
             description: Start time
             oneOf:
-              - $ref: "#/$defs/iso8601"
+              - $ref: "#/$defs/_iso8601"
               - type: "null"
 
           # Required.
           end:
             description: End time
             oneOf:
-              - $ref: "#/$defs/iso8601"
+              - $ref: "#/$defs/_iso8601"
               - type: "null"
 
           # Required.
@@ -351,13 +371,18 @@ $defs:
       errors:
         description: Errors
         type: array
-        items: { $ref: "#/$defs/error" }
+        items:
+          anyOf:
+            - { $ref: "#/$defs/error" }
+            - { $ref: "#/$defs/known-issue" }
 
       # Required.
       warnings:
         description: Warnings
         type: array
-        items: { $ref: "#/$defs/known-issue" }
+        items:
+          anyOf:
+            - { $ref: "#/$defs/known-issue" }
 
     required:
       - time
@@ -377,7 +402,7 @@ $defs:
       # Optional: `location` may not be set when `type` is not set.
       location:
         description: Error location
-        $ref: "#/$defs/location"
+        $ref: "#/$defs/_location"
 
       # Required.
       message:
@@ -400,13 +425,13 @@ $defs:
       # Required.
       location:
         description: Error location
-        $ref: "#/$defs/location"
+        $ref: "#/$defs/_location"
 
       # New in v0.2.2.
       # Optional.
       level:
         description: Issue level
-        type: int
+        type: number
 
       # Optional (changed in v0.2.2, was required before).
       id:
@@ -429,7 +454,7 @@ $defs:
       - location
       - message
 
-  iso8601:
+  _iso8601:
     description: ISO8601 date/time format
     type: string
     pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
@@ -437,12 +462,12 @@ $defs:
 
   # 3. Basic types
 
-  non-empty-string:
+  _non-empty-string:
     description: Non empty string type
     type: string
     minLength: 1
 
-  dict-str:
+  _dict-str:
     description: Dictionary with string values type
     type: object
     patternProperties:
