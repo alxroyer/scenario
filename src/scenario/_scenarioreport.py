@@ -18,6 +18,7 @@
 Scenario reports.
 """
 
+import copy
 import typing
 
 if True:
@@ -462,7 +463,7 @@ class ScenarioReport(_LoggerImpl):
             for _action_result_execution in action_result_definition.executions:  # type: _ActionResultExecutionType
                 _json_action_result_execution = {
                     "time": _action_result_execution.time.tojson(),
-                    "evidence": _action_result_execution.evidence.copy(),
+                    "evidence": copy.deepcopy(_action_result_execution.evidence),
                     "errors": [],
                     "warnings": [],
                     "subscenarios": [],
@@ -520,7 +521,7 @@ class ScenarioReport(_LoggerImpl):
                     _action_result_execution.time = _TimeStatsImpl.fromjson(_json_action_result_execution["time"])
                     self.debug("Time: %s", _action_result_execution.time)
 
-                    _action_result_execution.evidence = _json_action_result_execution["evidence"].copy()
+                    _action_result_execution.evidence = copy.deepcopy(_json_action_result_execution["evidence"])
                     self.debug("Evidence: %r", _action_result_execution.evidence)
 
                     for _json_error in _json_action_result_execution["errors"]:  # type: _JsonDictType
