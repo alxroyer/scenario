@@ -89,7 +89,8 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
                     evidence="Schema reference",
                 )
         if "$version" in json_scenario_ref:
-            if self.RESULT(f"The scenario report gives the file format version it follows."):
+            _scenario_version_ref = self._assertjsonref(json_scenario_ref, "$version", type=str, value=scenario.info.version)  # type: str
+            if self.RESULT(f"The scenario report gives the version of `scenario` it has been generated with: {_scenario_version_ref!r}."):
                 self.assertjson(
                     json_scenario, "$version", ref=json_scenario_ref,
                     evidence="File format version",
@@ -99,6 +100,22 @@ class CheckFullScenarioReport(_ScenarioReportFileVerificationStepImpl):
             self.assertjson(
                 json_scenario, "name", ref=json_scenario_ref,
                 evidence="Test name",
+            )
+
+        _script_path_ref = scenario.Path(
+            self._assertjsonref(json_scenario_ref, "href", type=str),
+            relative_to=self._json_path_ref.parent,
+        )  # type: scenario.Path
+        self.assertisfile(_script_path_ref, evidence=False)
+        if self.RESULT(f"The scenario report gives the reference of the test script defining the scenario: '{_script_path_ref}'."):
+            self.evidence(f"Report path: '{self.report_path}'")
+            _href = self.assertjson(
+                json_scenario, "href", type=str,
+                evidence="href",
+            )  # type: str
+            self.assertequal(
+                scenario.Path(_href, relative_to=self.report_path.parent), _script_path_ref,
+                evidence="Test script reference",
             )
 
         _attributes_ref = self._assertjsonref(json_scenario_ref, "attributes", type=dict)  # type: scenario.types.JsonDict

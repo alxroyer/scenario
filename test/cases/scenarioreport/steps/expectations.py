@@ -141,6 +141,18 @@ class CheckScenarioReportExpectations(_ScenarioReportFileVerificationStepImpl):
                     evidence="Test name",
                 )
 
+        if scenario_expectations.script_path:
+            if self.RESULT(f"The scenario report gives the reference of the test script defining the scenario: '{scenario_expectations.script_path}'."):
+                self.evidence(f"Report path: '{self.report_path}'")
+                _href = self.assertjson(
+                    json_scenario, "href", type=str,
+                    evidence="href",
+                )  # type: str
+                self.assertequal(
+                    scenario.Path(_href, relative_to=self.report_path.parent), scenario_expectations.script_path,
+                    evidence="Test script reference",
+                )
+
         if scenario_expectations.status is not None:
             if self.RESULT(f"The test status is {scenario_expectations.status}."):
                 self.assertjson(
