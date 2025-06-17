@@ -22,7 +22,7 @@
         - Provide JSON schemas for req-db files.
         - Display warnings when reading a file with a higher version than the current `scenario` version.
         - Check scenario report schema v0.3.0 v/s `ScenarioReport` implementation.
-        - Make fields optional when relevant.
+        - Make fields optional when relevant => update verification steps.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
     - Optional `scenario.ui` improvements:
@@ -43,6 +43,10 @@
         - Save campaign args in reports, in order to make it clear for partial campaign executions.
     - Add title and text with requirement subref.
     - Fix test regressions.
+        - Errors with `./test/run-test.py test/cases/knownissues/knownissues020.py test/cases/knownissues/knownissues120.py test/cases/stats/stats020.py test/cases/subscenario/subscenario003.py test/cases/errors/failingscenario001.py`
+            - `./test/run-test.py test/cases/knownissues/knownissues120.py`
+                - Log parsing confuses step location and step name.
+                - Does not work anymore now that step object location is now defined from the object instantiation instead of the class definition.
     - Implement tests:
         - Add req expectations. Check in scenario log & report.
         - Check full scenario log & report with requirements.
@@ -56,6 +60,7 @@
         - Check step requirement refinement.
     - Documentation:
         - Find out why we can't reference `scenario` symbols from `scenario.ui` with `..` in directives (like `:class:` at least).
+        - Update 'README.md'.
         - Add demo for requirement management.
         - Req management: command line & HTTP server.
         - Document logging indentation context.

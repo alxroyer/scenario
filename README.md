@@ -111,6 +111,7 @@ See the [online documentation](https://scenario-testing-framework.readthedocs.io
 > A couple of chapters still need to be filled in or improved.
 > Feel free to contribute on that point (see issue [#13](https://github.com/alxroyer/scenario/issues/13)).
 
+
 ## License
 
 > Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
