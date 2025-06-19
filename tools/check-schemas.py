@@ -217,15 +217,27 @@ class ValidateJsonFiles(abc.ABC):
         Ensures ``"unevaluatedProperties": false`` configurations in the ``schema`` JSON schema dictionary.
 
         Cross-recursive implementation.
+
+        .. warning::
+            May probably add ``"unevaluatedProperties": false`` configurations on nodes that don't require it.
+
+            For instance, if a property actually resolves in a non-object type due to ``$ref`` and/or ``anyOf`` that resolves to basic types,
+            this function does not handle this situation, and applies ``"unevaluatedProperties": false`` whatever.
+
+            Nevertheless, these extra configurations do not make the JSON validation fail,
+            so we keep it that way.
         """
-        def _check_dict(name, json):  # type: (str, scenario.types.JsonDict) -> None
-            # scenario.logging.debug("ValidateJsonFiles._strengthenschema(): _check_dict(name=%r, json=%s)",
-            #                        name, scenario.debug.jsondump(json, indent=2),
+        def _check_dict(
+                names,  # type: typing.Sequence[str]
+                json,  # type: scenario.types.JsonDict
+        ):  # type: (...) -> None
+            # scenario.logging.debug("ValidateJsonFiles._strengthenschema(): _check_dict(names=%r, json=%s)",
+            #                        names, scenario.debug.jsondump(json, indent=2),
             #                        extra={scenario.logging.Extra.LONG_TEXT_MAX_LINES: 3})
 
             # Check whether `json` is a JSON Schema object definition.
             # Add `"unevaluatedProperties": false` configurations when applicable.
-            if name and any([
+            if names and names[-1] and any([
                 "properties" in json,
                 "allOf" in json,
                 "anyOf" in json,
@@ -233,33 +245,36 @@ class ValidateJsonFiles(abc.ABC):
             ]):
                 # Memo: When the name starts with '_', we consider by design that this is a non-final object (see 'schemasREADME.md').
                 # Don't set `"unevaluatedProperties": false` for non-final objects.
-                if name.startswith("_"):
-                    scenario.logging.debug("ValidateJsonFiles._strengthenschema(): Base %r not strengthened", name)
+                if names[-1].startswith("_"):
+                    scenario.logging.debug("ValidateJsonFiles._strengthenschema(): Base %r not strengthened", names[-1])
 
                 # Don't overwrite an existing `"unevaluatedProperties"` configuration.
                 elif "unevaluatedProperties" in json:
                     scenario.logging.debug("ValidateJsonFiles._strengthenschema(): %r => `\"unevaluatedProperties\": %r` already defined",
-                                           name, json["unevaluatedProperties"])
+                                           names[-1], json["unevaluatedProperties"])
 
                 # Don't conflict with an existing `"unevaluatedProperties"` configuration.
                 elif "additionalProperties" in json:
                     scenario.logging.debug("ValidateJsonFiles._strengthenschema(): %r, 'additionalProperties' set "
-                                           "=> `\"unevaluatedProperties\": false` not added", name)
+                                           "=> `\"unevaluatedProperties\": false` not added", names[-1])
 
                 # Add an `"unevaluatedProperties": false` configuration.
                 else:
-                    scenario.logging.debug("ValidateJsonFiles._strengthenschema(): %r => `\"unevaluatedProperties\": false` added", name)
+                    scenario.logging.debug("ValidateJsonFiles._strengthenschema(): %r => `\"unevaluatedProperties\": false` added", names[-1])
                     json["unevaluatedProperties"] = False
 
             # Spread cross-recursivity.
             with scenario.logging.pushindentation("  "):
                 for _name, _value in json.items():  # type: str, typing.Any
                     if isinstance(_value, dict):
-                        _check_dict(_name, _value)
+                        _check_dict([*names, _name], _value)
                     elif isinstance(_value, list):
-                        _check_list(_value)
+                        _check_list([*names, _name], _value)
 
-        def _check_list(json_list):  # type: (typing.List[typing.Any]) -> None
+        def _check_list(
+                names,  # type: typing.Sequence[str]
+                json_list,  # type: typing.List[typing.Any]
+        ):  # type: (...) -> None
             # scenario.logging.debug("ValidateJsonFiles._strengthenschema(): _check_list(json_list=%r)",
             #                        scenario.debug.jsondump(json_list, indent=2),
             #                        extra={scenario.logging.Extra.LONG_TEXT_MAX_LINES: 3})
@@ -268,12 +283,12 @@ class ValidateJsonFiles(abc.ABC):
             with scenario.logging.pushindentation("  "):
                 for _item in json_list:  # type: typing.Any
                     if isinstance(_item, dict):
-                        _check_dict("", _item)
+                        _check_dict([*names, ""], _item)
                     elif isinstance(_item, list):
-                        _check_list(_item)
+                        _check_list([*names, ""], _item)
 
         # Launch the cross-recursivity process.
-        _check_dict("", schema)
+        _check_dict([], schema)
 
 
 if __name__ == "__main__":
