@@ -1,0 +1,108 @@
+# -*- coding: utf-8 -*-
+
+# Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+$schema: https://json-schema.org/draft/2020-12/schema
+
+$id: https://github.com/alxroyer/scenario/blob/master/schemas/req-db_v0.3.0.schema.json
+title: Scenario requirement database v0.3.0
+description: Schema that describes a database of requirements for the `scenario` library
+
+$ref: "#/$defs/main"
+
+$defs:
+
+  # 1. Main database node
+
+  main:
+    description: Scenario requirement database
+    type: object
+    properties:
+
+      # Heading properties.
+
+      # Optional.
+      $encoding:
+        description: Encoding of the file
+        # Note:
+        #   Don't use a restrictive enum definition.
+        #   Accept whatever, and let Python raise an exception if the encoding is unknown.
+        $ref: "#/$defs/_non-empty-string"
+
+      # Optional.
+      $license:
+        description: Ability to provide a license text for a JSON file
+        anyOf:
+          - type: string
+          - { type: array, items: { type: string } }
+
+      # Optional.
+      $schema:
+        description: Schema reference
+        # Note:
+        #   Don't forbid backward compatible evolutions.
+        #   Accept whatever, and let JSON schema validation state on compatibility.
+        $ref: "#/$defs/_non-empty-string"
+
+      # Optional.
+      $version:
+        description: "`scenario` version used to generate the file"
+        # Note:
+        #   Don't forbid backward compatible evolutions.
+        #   Accept whatever, and let JSON schema validation state on compatibility.
+        $ref: "#/$defs/_non-empty-string"
+
+    additionalProperties: { $ref: "#/$defs/req" }
+
+
+  # 2. Requirements
+
+  req:
+    description: Requirement
+    type: object
+    properties:
+
+      # Required.
+      id:
+        description: Requirement identifier
+        type: string
+
+      # Optional.
+      title:
+        description: Requirement title
+        type: string
+
+      # Optional.
+      text:
+        description: Requirement text
+        type: string
+
+      # Required.
+      subrefs:
+        description: Requirement subreferences
+        type: array
+        items: { type: string }
+
+    required:
+      - id
+      - subrefs
+
+
+  # 3. Basic types
+
+  _non-empty-string:
+    description: Non empty string type
+    type: string
+    minLength: 1

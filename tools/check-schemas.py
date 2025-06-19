@@ -152,11 +152,9 @@ class ValidateJsonFiles(abc.ABC):
             scenario.logging.debug("ValidateJsonFiles.execute(): _scenario_report_path='%s'", _scenario_report_path)
             ValidateJsonFiles._validate(_scenario_report_path, SCENARIO_REPORT_SCHEMA_PATH)
 
-        if CheckSchemasArgs.getinstance().req_dbs:
-            scenario.logging.warning(f"Schema '{REQ_DB_SCHEMA_PATH}' not implemented yet")
-        # for _req_db_path in CheckSchemasArgs.getinstance().req_dbs:  # type: scenario.Path
-        #     scenario.logging.debug("ValidateJsonFiles.execute(): _req_db_path='%s'", _req_db_path)
-        #     ValidateJsonFiles._validate(_req_db_path, REQ_DB_SCHEMA_PATH)
+        for _req_db_path in CheckSchemasArgs.getinstance().req_dbs:  # type: scenario.Path
+            scenario.logging.debug("ValidateJsonFiles.execute(): _req_db_path='%s'", _req_db_path)
+            ValidateJsonFiles._validate(_req_db_path, REQ_DB_SCHEMA_PATH)
 
     @classmethod
     def _validate(
@@ -242,6 +240,11 @@ class ValidateJsonFiles(abc.ABC):
                 elif "unevaluatedProperties" in json:
                     scenario.logging.debug("ValidateJsonFiles._strengthenschema(): %r => `\"unevaluatedProperties\": %r` already defined",
                                            name, json["unevaluatedProperties"])
+
+                # Don't conflict with an existing `"unevaluatedProperties"` configuration.
+                elif "additionalProperties" in json:
+                    scenario.logging.debug("ValidateJsonFiles._strengthenschema(): %r, 'additionalProperties' set "
+                                           "=> `\"unevaluatedProperties\": false` not added", name)
 
                 # Add an `"unevaluatedProperties": false` configuration.
                 else:
