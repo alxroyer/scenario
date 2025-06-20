@@ -19,8 +19,8 @@
 
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Display warnings when reading a file with a higher version than the current `scenario` version.
-        - Check scenario report schema v0.3.0 v/s `ScenarioReport` and `ReqDatabase` implementation.
+        - Check schemas v0.3.0 v/s `ScenarioReport` and `ReqDatabase` implementation.
+        - Rename '$version' into '$scenario-version' to make it clear what this field actually means.
         - Make fields optional when relevant => update verification steps.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.

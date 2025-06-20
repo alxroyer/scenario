@@ -64,6 +64,16 @@ class ReqDatabase(_LoggerImpl):
     #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
     JSON_SCHEMA_SUBPATH = "schemas/req-db_v0.3.0.schema.json"  # type: str
 
+    #: JSON schema compatibility for reading.
+    SCHEMA_COMPATIBILITY = {
+        False: [
+        ],
+        True: [
+            # v0.3.0: Initial schema.
+            "schemas/req-db_v0.3.0.schema.json",
+        ],
+    }  # type: typing.Mapping[bool, typing.Sequence[str]]
+
     def __init__(
             self,
             req_baseline,  # type: _ReqBaselineType
@@ -97,6 +107,18 @@ class ReqDatabase(_LoggerImpl):
             # Read the JSON file.
             self.debug("Reading '%s'", req_db_file_path)
             _req_db_json = JsonDict.File.read(req_db_file_path)  # type: _JsonDictType
+
+            # JSON schema.
+            _json_schema = _req_db_json.get("$schema", "")  # type: str
+            if _json_schema:
+                if any([_json_schema.endswith(_compatible) for _compatible in ReqDatabase.SCHEMA_COMPATIBILITY[True]]):
+                    self.debug("%s: Compatible schema %r", req_db_file_path, _json_schema)
+                elif any([_json_schema.endswith(_incompatible) for _incompatible in ReqDatabase.SCHEMA_COMPATIBILITY[False]]):
+                    raise ValueError(f"{req_db_file_path}: Incompatible schema {_json_schema!r}")
+                else:
+                    self.warning(f"{req_db_file_path}: Unknown schema {_json_schema!r}")
+            else:
+                self.warning(f"{req_db_file_path}: Schema not specified")
 
             # Feed the database from the JSON content.
             for _key in _req_db_json:  # type: str

@@ -64,6 +64,34 @@ class ScenarioReport(_LoggerImpl):
     #: JSON schema subpath from :attr:`._pkginfo.PackageInfo.repo_url`, for requirement database files.
     JSON_SCHEMA_SUBPATH = "schemas/scenario-report_v0.3.0.schema.json"  # type: str
 
+    #: JSON schema compatibility for reading.
+    SCHEMA_COMPATIBILITY = {
+        False: [
+        ],
+        True: [
+            # v0.1.0:
+            # - Initial schema.
+            "schemas/scenario-report.schema.json",
+            "schemas/scenario-report_v0.1.0.schema.json",
+
+            # v0.2.0:
+            # - Optional '$license' added.
+            "schemas/scenario-report_v0.2.0.schema.json",
+
+            # v0.2.2:
+            # - Optional issue 'level' added.
+            # - Issue id made optional (was required previously).
+            "schemas/scenario-report_v0.2.2.schema.json",
+
+            # v0.3.0:
+            # - Optional '$encoding' added.
+            # - Optional '$version' added.
+            # - Optional scenario and step 'reqs' added, with type: `$defs/upstream-req-traceability`.
+            # - Optional step 'indentation' added.
+            "schemas/scenario-report_v0.3.0.schema.json",
+        ],
+    }  # type: typing.Mapping[bool, typing.Sequence[str]]
+
     def __init__(self):  # type: (...) -> None
         """
         Configures logging for the :class:`ScenarioReport` class.
@@ -145,7 +173,7 @@ class ScenarioReport(_LoggerImpl):
 
             with req_baseline:
                 # Analyze the JSON content.
-                _scenario_definition = self._json2scenario(_json)  # type: _ScenarioDefinitionType
+                _scenario_definition = self._json2scenario(_json, is_main=True)  # type: _ScenarioDefinitionType
 
             return _scenario_definition
         finally:
@@ -156,6 +184,7 @@ class ScenarioReport(_LoggerImpl):
     def _scenario2json(
             self,
             scenario_definition,  # type: _ScenarioDefinitionType
+            *,
             is_main,  # type: bool
     ):  # type: (...) -> _JsonDictType
         """
@@ -224,17 +253,33 @@ class ScenarioReport(_LoggerImpl):
     def _json2scenario(
             self,
             json_scenario,  # type: _JsonDictType
+            *,
+            is_main,  # type: bool
     ):  # type: (...) -> _ScenarioDefinitionType
         """
         Scenario data reading from JSON content.
 
         :param json_scenario: Scenario JSON content to read.
+        :param is_main: True for the main scenario, False otherwise.
         :return: Scenario data.
         """
         self.debug("Reading scenario from JSON: %s", _debugutils.jsondump(json_scenario, indent=2),
                    extra={self.Extra.LONG_TEXT_MAX_LINES: 20})
 
         with self.pushindentation():
+            # JSON schema.
+            if is_main:
+                _json_schema = json_scenario.get("$schema", "")  # type: str
+                if _json_schema:
+                    if any([_json_schema.endswith(_compatible) for _compatible in ScenarioReport.SCHEMA_COMPATIBILITY[True]]):
+                        self.debug("%s: Compatible schema %r", self._report_path, _json_schema)
+                    elif any([_json_schema.endswith(_incompatible) for _incompatible in ScenarioReport.SCHEMA_COMPATIBILITY[False]]):
+                        raise ValueError(f"{self._report_path}: Incompatible schema {_json_schema!r}")
+                    else:
+                        self.warning(f"{self._report_path}: Unknown schema {_json_schema!r}")
+                else:
+                    self.warning(f"{self._report_path}: Schema not specified")
+
             # Create the scenario definition instance.
             _scenario_definition = _ScenarioDefinitionImpl()  # type: _ScenarioDefinitionType
 
@@ -536,7 +581,7 @@ class ScenarioReport(_LoggerImpl):
 
                     for _json_subscenario in _json_action_result_execution["subscenarios"]:  # type: _JsonDictType
                         with self.pushindentation("  | "):
-                            _subscenario_definition = self._json2scenario(_json_subscenario)  # type: _ScenarioDefinitionType
+                            _subscenario_definition = self._json2scenario(_json_subscenario, is_main=False)  # type: _ScenarioDefinitionType
                             if _subscenario_definition.execution:
                                 _action_result_execution.subscenarios.append(_subscenario_definition.execution)
 
