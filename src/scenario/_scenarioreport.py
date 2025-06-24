@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
+    from ._locations import CodeLocation as _CodeLocationType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
     from ._reqbl import ReqBaseline as _ReqBaselineType
@@ -395,9 +396,12 @@ class ScenarioReport(_LoggerImpl):
 
             if ("executions" not in json_step_definition) or ("actions-results" not in json_step_definition):
                 # Missing executions and/or actions/results.
-                # Replace the general `StepDefinition` instance created above by a `StepSection` one.
+                # Replace the general `StepDefinition` instance created above by a `StepSectionDescription` one.
+                # Save the code location with the new `StepSectionDescription` instance.
+                _location = _step_definition.location  # type: _CodeLocationType
                 assert _step_definition.description is not None
                 _step_definition = _FAST_PATH.step_section_description_cls(_step_definition.description)
+                _step_definition.location = _location
             else:
                 # Requirements.
                 self._json2reqverifier(json_step_definition, _step_definition)
@@ -467,20 +471,19 @@ class ScenarioReport(_LoggerImpl):
             from ._reqtypes import ReqLinkDefType
 
         # Memo: No 'reqs' until feature #83 has been developped.
-        if "reqs" in json_req_verifier:
-            for _json_req_link in json_req_verifier["reqs"]:  # type: _JsonDictType
-                _req_ref_id = _json_req_link["ref"]  # type: str
-                try:
-                    _req_ref = req_verifier.req_db.getreqref(_req_ref_id)  # type: _ReqRefType
-                except KeyError:
-                    self.warning(f"Unknown requirement reference {_req_ref_id!r}")
-                    continue
+        for _json_req_link in json_req_verifier.get("reqs", []):  # type: _JsonDictType
+            _req_ref_id = _json_req_link["ref"]  # type: str
+            try:
+                _req_ref = req_verifier.req_db.getreqref(_req_ref_id)  # type: _ReqRefType
+            except KeyError:
+                self.warning(f"Unknown requirement reference {_req_ref_id!r}")
+                continue
 
-                _req_link_def = _req_ref  # type: ReqLinkDefType
-                if "comments" in _json_req_link:
-                    _req_link_def = (_req_ref, str(_json_req_link["comments"]))
+            _req_link_def = _req_ref  # type: ReqLinkDefType
+            if "comments" in _json_req_link:
+                _req_link_def = (_req_ref, str(_json_req_link["comments"]))
 
-                req_verifier.verifies(_req_link_def)
+            req_verifier.verifies(_req_link_def)
 
     def _actionresult2json(
             self,
@@ -550,7 +553,7 @@ class ScenarioReport(_LoggerImpl):
             _action_result_definition = _ActionResultDefinitionImpl(
                 type=_action_result_type,
                 description=json_action_result_definition["description"],
-                indentation=(json_action_result_definition["indentation"] if ("indentation" in json_action_result_definition) else ""),
+                indentation=json_action_result_definition.get("indentation", ""),
             )  # type: _ActionResultDefinitionType
             self.debug("Description: %r", _action_result_definition.description)
             if _action_result_definition.indentation:

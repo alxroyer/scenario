@@ -19,7 +19,7 @@
 
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Check schemas v0.3.0 v/s `ScenarioReport` and `ReqDatabase` implementation.
+        - Move every `tojson()` and `fromjson()` methods in `ScenarioReport`.
         - Rename '$version' into '$scenario-version' to make it clear what this field actually means.
         - Make fields optional when relevant => update verification steps.
     - Implement *expect-step-req-refinement* option.

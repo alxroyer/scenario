@@ -351,12 +351,7 @@
                 }
               ]
             }
-          },
-          "required": [
-            "start",
-            "end",
-            "elapsed"
-          ]
+          }
         },
         "errors": {
           "description": "Errors",

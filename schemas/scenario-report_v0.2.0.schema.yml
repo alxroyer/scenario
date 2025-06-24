@@ -341,31 +341,26 @@ $defs:
         type: object
         properties:
 
-          # Required.
+          # Optional.
           start:
             description: Start time
             oneOf:
               - $ref: "#/$defs/_iso8601"
               - type: "null"
 
-          # Required.
+          # Optional.
           end:
             description: End time
             oneOf:
               - $ref: "#/$defs/_iso8601"
               - type: "null"
 
-          # Required.
+          # Optional.
           elapsed:
             description: Elapsed time in seconds
             oneOf:
               - type: number
               - type: "null"
-
-        required:
-          - start
-          - end
-          - elapsed
 
       # Required.
       errors:

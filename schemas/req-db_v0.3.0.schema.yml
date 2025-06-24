@@ -89,7 +89,7 @@ $defs:
         description: Requirement text
         type: string
 
-      # Required.
+      # Optional.
       subrefs:
         description: Requirement subreferences
         type: array
@@ -97,7 +97,6 @@ $defs:
 
     required:
       - id
-      - subrefs
 
 
   # 3. Basic types

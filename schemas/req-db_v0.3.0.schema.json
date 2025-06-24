@@ -81,8 +81,7 @@
         }
       },
       "required": [
-        "id",
-        "subrefs"
+        "id"
       ]
     },
     "_non-empty-string": {

@@ -124,8 +124,8 @@ class ReqDatabase(_LoggerImpl):
             for _key in _req_db_json:  # type: str
                 if _key.startswith("$"):
                     continue
-                _req_id = _key  # type: str
 
+                _req_id = _key  # type: str
                 _req_json = _req_db_json[_req_id]  # type: _JsonDictType
 
                 # Check requirement id redundancy in the input file.
