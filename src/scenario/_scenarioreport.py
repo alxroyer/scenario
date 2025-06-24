@@ -22,25 +22,31 @@ import copy
 import typing
 
 if True:
+    from . import _datetimeutils as _datetimeutils  # @perf
     from . import _debugutils as _debugutils  # @perf
     from . import _enumutils as _enumutils  # @perf
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionImpl  # @perf
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionImpl  # @perf
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
+    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionImpl  # @perf
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionImpl  # @perf
+    from ._stats import ExecTotalStats as _ExecTotalStatsImpl  # @perf
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
+    from ._testerrors import ExceptionError as _ExceptionErrorImpl  # @perf
     from ._testerrors import TestError as _TestErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
+    from ._knownissues import KnownIssue as _KnownIssueType
     from ._locations import CodeLocation as _CodeLocationType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -50,8 +56,11 @@ if typing.TYPE_CHECKING:
     from ._reqverifier import ReqVerifier as _ReqVerifierType
     from ._scenariodefinition import ScenarioDefinition as _ScenarioDefinitionType
     from ._scenarioexecution import ScenarioExecution as _ScenarioExecutionType
+    from ._stats import ExecTotalStats as _ExecTotalStatsType
+    from ._stats import TimeStats as _TimeStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
+    from ._testerrors import ExceptionError as _ExceptionErrorType
     from ._testerrors import TestError as _TestErrorType
 
 
@@ -231,20 +240,20 @@ class ScenarioReport(_LoggerImpl):
 
                 _json_scenario["errors"] = []
                 for _error in scenario_definition.execution.errors:  # type: _TestErrorType
-                    _json_scenario["errors"].append(_error.tojson())
+                    _json_scenario["errors"].append(self._error2json(_error))
 
                 _json_scenario["warnings"] = []
                 for _warning in scenario_definition.execution.warnings:  # type: _TestErrorType
-                    _json_scenario["warnings"].append(_warning.tojson())
+                    _json_scenario["warnings"].append(self._error2json(_warning))
 
                 # Time & statistics.
-                _json_scenario["time"] = scenario_definition.execution.time.tojson()
+                _json_scenario["time"] = self._timestats2json(scenario_definition.execution.time)
 
                 if is_main:
                     _json_scenario["stats"] = {
-                        "steps": scenario_definition.execution.step_stats.tojson(),
-                        "actions": scenario_definition.execution.action_stats.tojson(),
-                        "results": scenario_definition.execution.result_stats.tojson(),
+                        "steps": self._exectotalstats2json(scenario_definition.execution.step_stats),
+                        "actions": self._exectotalstats2json(scenario_definition.execution.action_stats),
+                        "results": self._exectotalstats2json(scenario_definition.execution.result_stats),
                     }
 
         self.debug("JSON content generated for scenario %r: %s", scenario_definition.name, _debugutils.jsondump(_json_scenario, indent=2),
@@ -307,17 +316,17 @@ class ScenarioReport(_LoggerImpl):
             # Status & errors.
             _scenario_definition.execution = _ScenarioExecutionImpl(_scenario_definition)
             for _json_error in json_scenario["errors"]:  # type: _JsonDictType
-                _scenario_definition.execution.errors.append(_TestErrorImpl.fromjson(_json_error))
+                _scenario_definition.execution.errors.append(self._json2error(_json_error))
                 self.debug("Error: %s", _scenario_definition.execution.errors[-1])
             self.debug("Errors: %d", len(_scenario_definition.execution.errors))
 
             for _json_warning in json_scenario["warnings"]:  # type: _JsonDictType
-                _scenario_definition.execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
+                _scenario_definition.execution.warnings.append(self._json2error(_json_warning))
                 self.debug("Warning: %s", _scenario_definition.execution.warnings[-1])
             self.debug("Warnings: %d", len(_scenario_definition.execution.warnings))
 
             # Time & statistics.
-            _scenario_definition.execution.time = _TimeStatsImpl.fromjson(json_scenario["time"])
+            _scenario_definition.execution.time = self._json2timestats(json_scenario["time"])
             self.debug("Time statistics: %s", _scenario_definition.execution.time)
 
         return _scenario_definition
@@ -355,16 +364,16 @@ class ScenarioReport(_LoggerImpl):
                 for _step_execution in step_definition.executions:  # type: _StepExecutionType
                     _json_step_execution = {
                         "number": _step_execution.number,
-                        "time": _step_execution.time.tojson(),
+                        "time": self._timestats2json(_step_execution.time),
                         "errors": [],
                         "warnings": [],
                     }  # type: _JsonDictType
 
                     for _error in _step_execution.errors:  # type: _TestErrorType
-                        _json_step_execution["errors"].append(_error.tojson())
+                        _json_step_execution["errors"].append(self._error2json(_error))
 
                     for _warning in _step_execution.warnings:  # type: _TestErrorType
-                        _json_step_execution["warnings"].append(_warning.tojson())
+                        _json_step_execution["warnings"].append(self._error2json(_warning))
 
                     _json_step_definition["executions"].append(_json_step_execution)
 
@@ -418,16 +427,16 @@ class ScenarioReport(_LoggerImpl):
 
                     with self.pushindentation():
                         _step_execution = _StepExecutionImpl(_step_definition, _json_step_execution["number"])  # type: _StepExecutionType
-                        _step_execution.time = _TimeStatsImpl.fromjson(_json_step_execution["time"])
+                        _step_execution.time = self._json2timestats(_json_step_execution["time"])
                         self.debug("Time: %s", _step_execution.time)
 
                         for _json_error in _json_step_execution["errors"]:  # type: _JsonDictType
-                            _step_execution.errors.append(_TestErrorImpl.fromjson(_json_error))
+                            _step_execution.errors.append(self._json2error(_json_error))
                             self.debug("Error: %s", _step_execution.errors[-1])
                         self.debug("Errors: %d", len(_step_execution.errors))
 
                         for _json_warning in _json_step_execution["warnings"]:  # type: _JsonDictType
-                            _step_execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
+                            _step_execution.warnings.append(self._json2error(_json_warning))
                             self.debug("Warning: %s", _step_execution.warnings[-1])
                         self.debug("Warnings: %d", len(_step_execution.warnings))
 
@@ -510,7 +519,7 @@ class ScenarioReport(_LoggerImpl):
 
             for _action_result_execution in action_result_definition.executions:  # type: _ActionResultExecutionType
                 _json_action_result_execution = {
-                    "time": _action_result_execution.time.tojson(),
+                    "time": self._timestats2json(_action_result_execution.time),
                     "evidence": copy.deepcopy(_action_result_execution.evidence),
                     "errors": [],
                     "warnings": [],
@@ -518,10 +527,10 @@ class ScenarioReport(_LoggerImpl):
                 }  # type: _JsonDictType
 
                 for _error in _action_result_execution.errors:  # type: _TestErrorType
-                    _json_action_result_execution["errors"].append(_error.tojson())
+                    _json_action_result_execution["errors"].append(self._error2json(_error))
 
                 for _warning in _action_result_execution.warnings:  # type: _TestErrorType
-                    _json_action_result_execution["warnings"].append(_warning.tojson())
+                    _json_action_result_execution["warnings"].append(self._error2json(_warning))
 
                 for _subscenario_execution in _action_result_execution.subscenarios:  # type: _ScenarioExecutionType
                     self.debug("Generating JSON content for subscenario %r", _subscenario_execution.definition)
@@ -566,19 +575,19 @@ class ScenarioReport(_LoggerImpl):
                 with self.pushindentation():
                     _action_result_execution = _ActionResultExecutionImpl(_action_result_definition)  # type: _ActionResultExecutionType
 
-                    _action_result_execution.time = _TimeStatsImpl.fromjson(_json_action_result_execution["time"])
+                    _action_result_execution.time = self._json2timestats(_json_action_result_execution["time"])
                     self.debug("Time: %s", _action_result_execution.time)
 
                     _action_result_execution.evidence = copy.deepcopy(_json_action_result_execution["evidence"])
                     self.debug("Evidence: %r", _action_result_execution.evidence)
 
                     for _json_error in _json_action_result_execution["errors"]:  # type: _JsonDictType
-                        _action_result_execution.errors.append(_TestErrorImpl.fromjson(_json_error))
+                        _action_result_execution.errors.append(self._json2error(_json_error))
                         self.debug("Error: %s", _action_result_execution.errors[-1])
                     self.debug("Error: %d", len(_action_result_execution.errors))
 
                     for _json_warning in _json_action_result_execution["warnings"]:  # type: _JsonDictType
-                        _action_result_execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
+                        _action_result_execution.warnings.append(self._json2error(_json_warning))
                         self.debug("Warning: %s", _action_result_execution.warnings[-1])
                     self.debug("Warning: %d", len(_action_result_execution.warnings))
 
@@ -591,6 +600,180 @@ class ScenarioReport(_LoggerImpl):
                     _action_result_definition.executions.append(_action_result_execution)
 
         return _action_result_definition
+
+    def _error2json(
+            self,
+            error,  # type: _TestErrorType
+    ):  # type: (...) -> _JsonDictType
+        """
+        Converts the :class:`._testerrors.TestError` instance into a JSON dictionary.
+
+        :param error:
+            Error to generate JSON content for.
+
+            May be either a base :class:`._testerrors.TestError`,
+            or an :class:`._testerrors.ExceptionError`,
+            or a :class:`._knownissues.KnownIssue`.
+        :return:
+            JSON dictionary.
+        """
+        _json = {
+            "message": error.message,
+        }  # type: _JsonDictType
+        if error.location:
+            _json["location"] = error.location.tolongstring()
+
+        if isinstance(error, _ExceptionErrorImpl):
+            _json["type"] = error.exception_type
+
+        elif isinstance(error, _KnownIssueImpl):
+            _json["type"] = "known-issue"
+
+            # Optional fields.
+            if error.level is not None:
+                _json["level"] = int(error.level)
+            if error.id is not None:
+                _json["id"] = error.id
+            if error.url is not None:
+                _json["url"] = error.url
+
+        return _json
+
+    def _json2error(
+            self,
+            json_error,  # type: _JsonDictType
+    ):  # type: (...) -> _TestErrorType
+        """
+        Builds a :class:`._testerrors.TestError` instance from its JSON representation.
+
+        :param json_error:
+            Error JSON content to read.
+        :return:
+            New :class:`._testerrors.TestError` instance.
+
+            May be either a base :class:`._testerrors.TestError`,
+            or an :class:`._testerrors.ExceptionError`,
+            or a :class:`._knownissues.KnownIssue`.
+        """
+        # Common attributes: message and optional location.
+        _message = json_error["message"]  # type: str
+        _location = None  # type: typing.Optional[_CodeLocationType]
+        if "location" in json_error:
+            _location = _CodeLocationImpl.fromlongstring(json_error["location"])
+
+        # Depending on 'type':
+        if "type" in json_error:
+            if not _location:
+                raise ValueError("Missing error location")
+
+            if json_error["type"] == "known-issue":
+                # Mandatory fields.
+                _known_issue = _KnownIssueImpl(
+                    message=_message,
+                    location=_location,
+                )  # type: _KnownIssueType
+
+                # Optional fields.
+                if "level" in json_error:
+                    _known_issue.level = _IssueLevelImpl.parse(json_error["level"])
+                if "id" in json_error:
+                    _known_issue.id = json_error["id"]
+                if "url" in json_error:
+                    _known_issue.url = json_error["url"]
+
+                return _known_issue
+
+            else:
+                _exception_error = _ExceptionErrorImpl(
+                    exception=None,
+                )  # type: _ExceptionErrorType
+                _exception_error.exception_type = json_error["type"]
+                _exception_error.message = _message
+                _exception_error.location = _location
+                return _exception_error
+
+        else:
+            _test_error = _TestErrorImpl(
+                message=_message,
+                location=_location,
+            )  # type: _TestErrorType
+            return _test_error
+
+    def _timestats2json(
+            self,
+            time_stats,  # type: _TimeStatsType
+    ):  # type: (...) -> _JsonDictType
+        """
+        Converts the :class:`._stats.TimeStats` instance into a JSON dictionary.
+
+        :param time_stats: Time statistics to generate JSON content for.
+        :return: JSON dictionary, with optional 'start', 'end' and 'elapsed' ``float`` fields, when the values are set.
+        """
+        _json = {"start": None, "end": None, "elapsed": None}  # type: _JsonDictType
+        if time_stats.start is not None:
+            _json["start"] = _datetimeutils.toiso8601(time_stats.start)
+        if time_stats.end is not None:
+            _json["end"] = _datetimeutils.toiso8601(time_stats.end)
+        if time_stats.elapsed is not None:
+            _json["elapsed"] = time_stats.elapsed
+        return _json
+
+    def _json2timestats(
+            self,
+            json_time_stats,  # type: _JsonDictType
+    ):  # type: (...) -> _TimeStatsType
+        """
+        Builds a :class:`._stats.TimeStats` instance from its JSON representation.
+
+        :param json_time_stats: JSON dictionary, with optional 'start', 'end' and 'elapsed' ``float`` fields.
+        :return: New :class:`._stats.TimeStats` instance.
+        """
+        _stat = _TimeStatsImpl()  # type: _TimeStatsType
+        if ("start" in json_time_stats) and isinstance(json_time_stats["start"], str):
+            try:
+                _stat.start = _datetimeutils.fromiso8601(json_time_stats["start"])
+            except Exception as _err:
+                self.warning(str(_err))
+        if ("end" in json_time_stats) and isinstance(json_time_stats["end"], str):
+            try:
+                _stat.end = _datetimeutils.fromiso8601(json_time_stats["end"])
+            except Exception as _err:
+                self.warning(str(_err))
+        # Do not rely on the input 'elapsed' field if given.
+        # Let it be recomputed from 'start' and 'end' values.
+        return _stat
+
+    def _exectotalstats2json(
+            self,
+            exec_stats,  # type: _ExecTotalStatsType
+    ):  # type: (...) -> _JsonDictType
+        """
+        Converts the :class:`._stats.ExecTotalStats` instance into a JSON dictionary.
+
+        :param exec_stats: :class:`._stats.ExecTotalStats` to generate JSON content for.
+        :return: JSON dictionary, with 'executed' and 'total' ``int`` fields.
+        """
+        return {
+            "executed": exec_stats.executed,
+            "total": exec_stats.total,
+        }
+
+    def _json2exectotalstats(
+            self,
+            json_exec_stats,  # type: _JsonDictType
+    ):  # type: (...) -> _ExecTotalStatsType
+        """
+        Builds a :class:`._stats.ExecTotalStats` instance from its JSON representation.
+
+        :param json_exec_stats: JSON dictionary, with 'executed' and 'total' ``int`` fields.
+        :return: New :class:`._stats.ExecTotalStats` instance.
+        """
+        _stat = _ExecTotalStatsImpl()  # type: _ExecTotalStatsType
+        if ("executed" in json_exec_stats) and isinstance(json_exec_stats["executed"], int):
+            _stat.executed = json_exec_stats["executed"]
+        if ("total" in json_exec_stats) and isinstance(json_exec_stats["total"], int):
+            _stat.total = json_exec_stats["total"]
+        return _stat
 
 
 #: Main instance of :class:`ScenarioReport`.

@@ -44,10 +44,11 @@ INFO                                         _scenarioexecution.py, _testerrors.
 INFO     <10>                  _reqbl.py => [_debugclasses.py, _fastpath.py, _logger.py, _scenariodefinition.py]
 INFO     <10>        _reqtraceability.py => [_debugclasses.py, _fastpath.py, _logger.py, _reqblobj.py, _reqref.py,
 INFO                                         _reqverifier.py, _scenariodefinition.py, _stepdefinition.py]
-INFO     <10>         _scenarioreport.py => [_actionresultdefinition.py, _actionresultexecution.py, _debugclasses.py,
-INFO                                         _debugutils.py, _enumutils.py, _fastpath.py, _locations.py, _logger.py, _path.py,
-INFO                                         _scenariodefinition.py, _scenarioexecution.py, _stats.py, _stepdefinition.py,
-INFO                                         _stepexecution.py, _testerrors.py]
+INFO     <10>         _scenarioreport.py => [_actionresultdefinition.py, _actionresultexecution.py, _datetimeutils.py,
+INFO                                         _debugclasses.py, _debugutils.py, _enumutils.py, _fastpath.py, _issuelevels.py,
+INFO                                         _knownissues.py, _locations.py, _logger.py, _path.py, _scenariodefinition.py,
+INFO                                         _scenarioexecution.py, _stats.py, _stepdefinition.py, _stepexecution.py,
+INFO                                         _testerrors.py]
 INFO     <10>         _scenariorunner.py => [_actionresultdefinition.py, _actionresultexecution.py, _debugclasses.py,
 INFO                                         _enumutils.py, _errcodes.py, _fastpath.py, _knownissues.py, _logextradata.py,
 INFO                                         _logger.py, _reqblobj.py, _scenarioargs.py, _scenariodefinition.py,
@@ -68,7 +69,7 @@ INFO     <08>      _scenarioexecution.py => [_executionstatus.py, _fastpath.py, 
 INFO     <08>        _scenariologging.py => [_datetimeutils.py, _enumutils.py, _fastpath.py, _knownissues.py, _testerrors.py]
 INFO     <08>            _stepuserapi.py => [_fastpath.py, _knownissues.py, _logger.py, _textutils.py]
 INFO     <07>           _campaignargs.py => [_args.py, _enumutils.py, _fastpath.py, _path.py, _scenarioargs.py]
-INFO     <07>            _knownissues.py => [_fastpath.py, _issuelevels.py, _locations.py, _testerrors.py]
+INFO     <07>            _knownissues.py => [_fastpath.py, _issuelevels.py, _testerrors.py]
 INFO     <07>        _scenarioresults.py => [_datetimeutils.py, _debugclasses.py, _debugutils.py, _fastpath.py, _logger.py,
 INFO                                         _stats.py, _testerrors.py]
 INFO     <06>             _reqmgtargs.py => [_args.py, _fastpath.py, _path.py]

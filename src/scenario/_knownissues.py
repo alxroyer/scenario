@@ -25,14 +25,11 @@ import typing
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
     from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
-    from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._testerrors import TestError as _TestErrorImpl  # @inheritance
 if typing.TYPE_CHECKING:
     from ._issuelevels import AnyIssueLevelType as _AnyIssueLevelType
-    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
-    from ._testerrors import TestError as _TestErrorType
 
 
 if typing.TYPE_CHECKING:
@@ -242,52 +239,3 @@ class KnownIssue(_TestErrorImpl):
 
         if self.url:
             logger.log(level, f"%s  %s", indent, self.url)
-
-    def tojson(self):  # type: (...) -> _JsonDictType
-        """
-        Converts the :class:`._testerrors.TestError` instance into a JSON dictionary.
-
-        :return: JSON dictionary.
-        """
-        # Mandatory fields.
-        _json = {
-            "type": "known-issue",
-            "message": self.message,
-            "location": self.location.tolongstring(),
-        }  # type: _JsonDictType
-
-        # Optional fields.
-        if self.level is not None:
-            _json["level"] = int(self.level)
-        if self.id is not None:
-            _json["id"] = self.id
-        if self.url is not None:
-            _json["url"] = self.url
-
-        return _json
-
-    @staticmethod
-    def fromjson(
-            json_data,  # type: _JsonDictType
-    ):  # type: (...) -> _TestErrorType
-        """
-        Builds a :class:`KnownIssue` instance from its JSON representation.
-
-        :param json_data: JSON dictionary.
-        :return: New :class:`KnownIssue` instance.
-        """
-        # Mandatory fields.
-        _known_issue = KnownIssue(
-            message=json_data["message"],
-            location=_CodeLocationImpl.fromlongstring(json_data["location"]),
-        )  # type: KnownIssue
-
-        # Optional fields.
-        if "level" in json_data:
-            _known_issue.level = _IssueLevelImpl.parse(json_data["level"])
-        if "id" in json_data:
-            _known_issue.id = json_data["id"]
-        if "url" in json_data:
-            _known_issue.url = json_data["url"]
-
-        return _known_issue

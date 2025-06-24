@@ -24,8 +24,6 @@ import typing
 if True:
     from . import _datetimeutils as _datetimeutils  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-if typing.TYPE_CHECKING:
-    from ._jsondictutils import JsonDictType as _JsonDictType
 
 
 class TimeStats:
@@ -155,46 +153,6 @@ class TimeStats:
         # In any, let's use the :attr:`end` setter this time in order to ensure everything is consistent whatever.
         self.end = time.time()
 
-    def tojson(self):  # type: (...) -> _JsonDictType
-        """
-        Converts the :class:`TimeStats` instance into a JSON dictionary.
-
-        :return: JSON dictionary, with optional 'start', 'end' and 'elapsed' ``float`` fields, when the values are set.
-        """
-        _json = {"start": None, "end": None, "elapsed": None}  # type: _JsonDictType
-        if self.start is not None:
-            _json["start"] = _datetimeutils.toiso8601(self.start)
-        if self.end is not None:
-            _json["end"] = _datetimeutils.toiso8601(self.end)
-        if self.elapsed is not None:
-            _json["elapsed"] = self.elapsed
-        return _json
-
-    @staticmethod
-    def fromjson(
-            json_data,  # type: _JsonDictType
-    ):  # type: (...) -> TimeStats
-        """
-        Builds a :class:`TimeStats` instance from its JSON representation.
-
-        :param json_data: JSON dictionary, with optional 'start', 'end' and 'elapsed' ``float`` fields.
-        :return: New :class:`TimeStats` instance.
-        """
-        _stat = TimeStats()  # type: TimeStats
-        if ("start" in json_data) and isinstance(json_data["start"], str):
-            try:
-                _stat.start = _datetimeutils.fromiso8601(json_data["start"])
-            except Exception as _err:
-                _FAST_PATH.main_logger.warning(str(_err))
-        if ("end" in json_data) and isinstance(json_data["end"], str):
-            try:
-                _stat.end = _datetimeutils.fromiso8601(json_data["end"])
-            except Exception as _err:
-                _FAST_PATH.main_logger.warning(str(_err))
-        # Do not rely on the input 'elapsed' field if given.
-        # Let it be recomputed from 'start' and 'end' values.
-        return _stat
-
 
 class ExecTotalStats:
     """
@@ -248,31 +206,3 @@ class ExecTotalStats:
         self.total += stats.total
         self.executed += stats.executed
         return self
-
-    def tojson(self):  # type: (...) -> _JsonDictType
-        """
-        Converts the :class:`ExecTotalStats` instance into a JSON dictionary.
-
-        :return: JSON dictionary, with 'executed' and 'total' ``int`` fields.
-        """
-        return {
-            "executed": self.executed,
-            "total": self.total
-        }
-
-    @staticmethod
-    def fromjson(
-            json_data,  # type: _JsonDictType
-    ):  # type: (...) -> ExecTotalStats
-        """
-        Builds a :class:`ExecTotalStats` instance from its JSON representation.
-
-        :param json_data: JSON dictionary, with 'executed' and 'total' ``int`` fields.
-        :return: New :class:`ExecTotalStats` instance.
-        """
-        _stat = ExecTotalStats()  # type: ExecTotalStats
-        if ("executed" in json_data) and isinstance(json_data["executed"], int):
-            _stat.executed = json_data["executed"]
-        if ("total" in json_data) and isinstance(json_data["total"], int):
-            _stat.total = json_data["total"]
-        return _stat

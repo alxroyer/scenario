@@ -27,7 +27,6 @@ if True:
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
-    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
 
@@ -124,42 +123,6 @@ class TestError(Exception):
             else:
                 logger.log(level, "%s%s", indent, _line)
 
-    def tojson(self):  # type: (...) -> _JsonDictType
-        """
-        Converts the :class:`TestError` instance into a JSON dictionary.
-
-        :return: JSON dictionary.
-        """
-        _json = {
-            "message": self.message,
-        }  # type: _JsonDictType
-        if self.location:
-            _json["location"] = self.location.tolongstring()
-        return _json
-
-    @staticmethod
-    def fromjson(
-            json_data,  # type: _JsonDictType
-    ):  # type: (...) -> TestError
-        """
-        Builds a :class:`TestError` instance from its JSON representation.
-
-        :param json_data: JSON dictionary.
-        :return: New :class:`TestError` instance.
-        """
-        from ._knownissues import KnownIssue  # check-imports: ignore  ## Avoid cyclic module imports with '_knownissues.py'.
-
-        if "type" in json_data:
-            if json_data["type"] == "known-issue":
-                return KnownIssue.fromjson(json_data)
-            else:
-                return ExceptionError.fromjson(json_data)
-
-        _location = None  # type: typing.Optional[_CodeLocationType]
-        if "location" in json_data:
-            _location = _CodeLocationImpl.fromlongstring(json_data["location"])
-        return TestError(message=json_data["message"], location=_location)
-
 
 class ExceptionError(TestError):
     """
@@ -228,27 +191,3 @@ class ExceptionError(TestError):
                     logger.log(level, "%s  %s", indent, _line)
         else:
             super().logerror(logger, level=level, indent=indent)
-
-    def tojson(self):  # type: (...) -> _JsonDictType
-        _json = {
-            "type": self.exception_type,
-            "message": self.message,
-            "location": self.location.tolongstring(),
-        }  # type: _JsonDictType
-        return _json
-
-    @staticmethod
-    def fromjson(
-            json_data,  # type: _JsonDictType
-    ):  # type: (...) -> ExceptionError
-        """
-        Builds a :class:`ExceptionError` instance from its JSON representation.
-
-        :param json_data: JSON dictionary.
-        :return: New :class:`ExceptionError` instance.
-        """
-        _error = ExceptionError(exception=None)  # type: ExceptionError
-        _error.exception_type = json_data["type"]
-        _error.message = json_data["message"]
-        _error.location = _CodeLocationImpl.fromlongstring(json_data["location"])
-        return _error
