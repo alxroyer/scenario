@@ -17,11 +17,18 @@
 
 ## Roadmap to v0.2.3
 
+- Replace `typing.Match` by `re.Match`?
+    - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
+        - Factorize common schema definitions in a subschema: status, errors and warnings.
+        - Improve schema hardening by analyzing the referenced item type.
+        - Implement schema version checking for `ReqTraceability` reports.
+        - Validate 'test/' `scenario` reports.
         - Provide JSON schemas for requirement traceability files.
         - Rename '$version' into '$scenario-version' to make it clear what this field actually means.
         - Make fields optional when relevant => update verification steps.
+        - Ensure license texts with 'test/' output reports.
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
     - Optional `scenario.ui` improvements:
