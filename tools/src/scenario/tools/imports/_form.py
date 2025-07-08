@@ -50,6 +50,7 @@ _IMPORT_FORMS = {
     _paths.TEST_SRC_PATH / "scenario" / "test" / "_paths.py": ImportForm.IMPORT_MODULE_AS,
     _paths.TOOLS_SRC_PATH / "scenario" / "tools" / "__init__.py": ImportForm.SYSTEM_IMPORT,
     _paths.TOOLS_SRC_PATH / "scenario" / "tools" / "imports" / "__init__.py": ImportForm.SYSTEM_IMPORT,
+    _paths.TOOLS_SRC_PATH / "scenario" / "tools" / "schemas" / "__init__.py": ImportForm.SYSTEM_IMPORT,
     _paths.TOOLS_SRC_PATH / "scenario" / "tools" / "sphinx" / "__init__.py": ImportForm.SYSTEM_IMPORT,
     _paths.TOOLS_SRC_PATH / "scenario" / "tools" / "_paths.py": ImportForm.IMPORT_MODULE_AS,
     _paths.UTILS_SRC_PATH / "scenario" / "inners" / "__init__.py": ImportForm.SYSTEM_IMPORT,

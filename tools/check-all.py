@@ -319,7 +319,7 @@ class CheckAll(abc.ABC):
             scenario.logging.warning("Skipped")
         else:
             if CheckAllArgs.getinstance().full:
-                Command.execute([sys.executable, "tools/check-schemas.py", "--validate-test-data", "--strengthen-schema"])
+                Command.execute([sys.executable, "tools/check-schemas.py", "--validate-test-data", "--harden-schemas"])
             else:
                 Command.execute([sys.executable, "tools/check-schemas.py", "--validate-test-data"])
 
