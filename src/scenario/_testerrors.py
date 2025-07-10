@@ -24,9 +24,11 @@ import typing
 
 if True:
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
+    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._path import Path as _PathImpl  # @perf
 if typing.TYPE_CHECKING:
+    from ._jsondictutils import JsonDictType as _JsonDictType
     from ._locations import CodeLocation as _CodeLocationType
     from ._logger import Logger as _LoggerType
 
@@ -122,6 +124,117 @@ class TestError(Exception):
                 logger.log(level, "%s%s (%s)", indent, _line, self.location.tolongstring())
             else:
                 logger.log(level, "%s%s", indent, _line)
+
+    def tojson(
+            self,
+    ):  # type: (...) -> _JsonDictType
+        """
+        Converts the :class:`TestError` instance into a JSON dictionary.
+
+        ``self`` may be either a base :class:`TestError`,
+        or an :class:`ExceptionError`,
+        or a :class:`._knownissues.KnownIssue`.
+
+        Serialization method implemented out of :class:`._scenarioreport.ScenarioReport` and :class:`._reqtraceability.ReqTraceability`
+        in as much as it is some common implementation.
+
+        Implementation not split over :class:`ExceptionError` and :class:`.knownissues.KnownIssue` on the other hand
+        to help tracking changes for schema maintenance.
+
+        :return:
+            JSON dictionary.
+        """
+        from ._knownissues import KnownIssue  # check-imports: ignore  ## Avoid cyclic module imports with '_knownissues.py'.
+
+        _json = {
+            "message": self.message,
+        }  # type: _JsonDictType
+        if self.location:
+            _json["location"] = self.location.tolongstring()
+
+        if isinstance(self, ExceptionError):
+            _json["type"] = self.exception_type
+
+        elif isinstance(self, KnownIssue):
+            _json["type"] = "known-issue"
+
+            # Optional fields.
+            if self.level is not None:
+                _json["level"] = int(self.level)
+            if self.id is not None:
+                _json["id"] = self.id
+            if self.url is not None:
+                _json["url"] = self.url
+
+        return _json
+
+    @staticmethod
+    def fromjson(
+            json_error,  # type: _JsonDictType
+    ):  # type: (...) -> TestError
+        """
+        Builds a :class:`TestError` instance from its JSON representation.
+
+        Parsing method implemented out of :class:`._scenarioreport.ScenarioReport` and :class:`._reqtraceability.ReqTraceability`
+        in as much as it is some common implementation.
+
+        Implementation not split over :class:`ExceptionError` and :class:`.knownissues.KnownIssue` on the other hand
+        to help tracking changes for schema maintenance.
+
+        :param json_error:
+            Error JSON content to read.
+        :return:
+            New :class:`TestError` instance.
+
+            May be either a base :class:`TestError`,
+            or an :class:`ExceptionError`,
+            or a :class:`._knownissues.KnownIssue`.
+        """
+        from ._knownissues import KnownIssue  # check-imports: ignore  ## Avoid cyclic module imports with '_knownissues.py'.
+
+        # Common attributes: message and optional location.
+        _message = json_error["message"]  # type: str
+        _location = None  # type: typing.Optional[_CodeLocationType]
+        if "location" in json_error:
+            _location = _CodeLocationImpl.fromlongstring(json_error["location"])
+
+        # Depending on 'type':
+        if "type" in json_error:
+            if not _location:
+                raise ValueError("Missing error location")
+
+            if json_error["type"] == "known-issue":
+                # Mandatory fields.
+                _known_issue = KnownIssue(
+                    message=_message,
+                    location=_location,
+                )  # type: KnownIssue
+
+                # Optional fields.
+                if "level" in json_error:
+                    _known_issue.level = _IssueLevelImpl.parse(json_error["level"])
+                if "id" in json_error:
+                    _known_issue.id = json_error["id"]
+                if "url" in json_error:
+                    _known_issue.url = json_error["url"]
+
+                return _known_issue
+
+            else:
+                _exception_error = ExceptionError(
+                    exception=None,
+                )  # type: ExceptionError
+                _exception_error.exception_type = json_error["type"]
+                _exception_error.message = _message
+                _exception_error.location = _location
+                return _exception_error
+
+        else:
+            _test_error = TestError(
+                message=_message,
+                location=_location,
+            )  # type: TestError
+            return _test_error
 
 
 class ExceptionError(TestError):

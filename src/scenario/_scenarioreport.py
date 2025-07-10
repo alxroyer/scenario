@@ -29,8 +29,6 @@ if True:
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionImpl  # @perf
     from ._debugclasses import DebugClass as _DebugClassImpl  # @perf
     from ._fastpath import FAST_PATH as _FAST_PATH  # @perf
-    from ._issuelevels import IssueLevel as _IssueLevelImpl  # @perf
-    from ._knownissues import KnownIssue as _KnownIssueImpl  # @perf
     from ._locations import CodeLocation as _CodeLocationImpl  # @perf
     from ._logger import Logger as _LoggerImpl  # @inheritance
     from ._path import Path as _PathImpl  # @perf
@@ -40,13 +38,11 @@ if True:
     from ._stats import TimeStats as _TimeStatsImpl  # @perf
     from ._stepdefinition import StepDefinition as _StepDefinitionImpl  # @perf
     from ._stepexecution import StepExecution as _StepExecutionImpl  # @perf
-    from ._testerrors import ExceptionError as _ExceptionErrorImpl  # @perf
     from ._testerrors import TestError as _TestErrorImpl  # @perf
 if typing.TYPE_CHECKING:
     from ._actionresultdefinition import ActionResultDefinition as _ActionResultDefinitionType
     from ._actionresultexecution import ActionResultExecution as _ActionResultExecutionType
     from ._jsondictutils import JsonDictType as _JsonDictType
-    from ._knownissues import KnownIssue as _KnownIssueType
     from ._locations import CodeLocation as _CodeLocationType
     from ._path import AnyPathType as _AnyPathType
     from ._path import Path as _PathType
@@ -60,7 +56,6 @@ if typing.TYPE_CHECKING:
     from ._stats import TimeStats as _TimeStatsType
     from ._stepdefinition import StepDefinition as _StepDefinitionType
     from ._stepexecution import StepExecution as _StepExecutionType
-    from ._testerrors import ExceptionError as _ExceptionErrorType
     from ._testerrors import TestError as _TestErrorType
 
 
@@ -240,11 +235,11 @@ class ScenarioReport(_LoggerImpl):
 
                 _json_scenario["errors"] = []
                 for _error in scenario_definition.execution.errors:  # type: _TestErrorType
-                    _json_scenario["errors"].append(self._error2json(_error))
+                    _json_scenario["errors"].append(_error.tojson())
 
                 _json_scenario["warnings"] = []
                 for _warning in scenario_definition.execution.warnings:  # type: _TestErrorType
-                    _json_scenario["warnings"].append(self._error2json(_warning))
+                    _json_scenario["warnings"].append(_warning.tojson())
 
                 # Time & statistics.
                 _json_scenario["time"] = self._timestats2json(scenario_definition.execution.time)
@@ -316,12 +311,12 @@ class ScenarioReport(_LoggerImpl):
             # Status & errors.
             _scenario_definition.execution = _ScenarioExecutionImpl(_scenario_definition)
             for _json_error in json_scenario["errors"]:  # type: _JsonDictType
-                _scenario_definition.execution.errors.append(self._json2error(_json_error))
+                _scenario_definition.execution.errors.append(_TestErrorImpl.fromjson(_json_error))
                 self.debug("Error: %s", _scenario_definition.execution.errors[-1])
             self.debug("Errors: %d", len(_scenario_definition.execution.errors))
 
             for _json_warning in json_scenario["warnings"]:  # type: _JsonDictType
-                _scenario_definition.execution.warnings.append(self._json2error(_json_warning))
+                _scenario_definition.execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
                 self.debug("Warning: %s", _scenario_definition.execution.warnings[-1])
             self.debug("Warnings: %d", len(_scenario_definition.execution.warnings))
 
@@ -370,10 +365,10 @@ class ScenarioReport(_LoggerImpl):
                     }  # type: _JsonDictType
 
                     for _error in _step_execution.errors:  # type: _TestErrorType
-                        _json_step_execution["errors"].append(self._error2json(_error))
+                        _json_step_execution["errors"].append(_error.tojson())
 
                     for _warning in _step_execution.warnings:  # type: _TestErrorType
-                        _json_step_execution["warnings"].append(self._error2json(_warning))
+                        _json_step_execution["warnings"].append(_warning.tojson())
 
                     _json_step_definition["executions"].append(_json_step_execution)
 
@@ -431,12 +426,12 @@ class ScenarioReport(_LoggerImpl):
                         self.debug("Time: %s", _step_execution.time)
 
                         for _json_error in _json_step_execution["errors"]:  # type: _JsonDictType
-                            _step_execution.errors.append(self._json2error(_json_error))
+                            _step_execution.errors.append(_TestErrorImpl.fromjson(_json_error))
                             self.debug("Error: %s", _step_execution.errors[-1])
                         self.debug("Errors: %d", len(_step_execution.errors))
 
                         for _json_warning in _json_step_execution["warnings"]:  # type: _JsonDictType
-                            _step_execution.warnings.append(self._json2error(_json_warning))
+                            _step_execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
                             self.debug("Warning: %s", _step_execution.warnings[-1])
                         self.debug("Warnings: %d", len(_step_execution.warnings))
 
@@ -527,10 +522,10 @@ class ScenarioReport(_LoggerImpl):
                 }  # type: _JsonDictType
 
                 for _error in _action_result_execution.errors:  # type: _TestErrorType
-                    _json_action_result_execution["errors"].append(self._error2json(_error))
+                    _json_action_result_execution["errors"].append(_error.tojson())
 
                 for _warning in _action_result_execution.warnings:  # type: _TestErrorType
-                    _json_action_result_execution["warnings"].append(self._error2json(_warning))
+                    _json_action_result_execution["warnings"].append(_warning.tojson())
 
                 for _subscenario_execution in _action_result_execution.subscenarios:  # type: _ScenarioExecutionType
                     self.debug("Generating JSON content for subscenario %r", _subscenario_execution.definition)
@@ -582,12 +577,12 @@ class ScenarioReport(_LoggerImpl):
                     self.debug("Evidence: %r", _action_result_execution.evidence)
 
                     for _json_error in _json_action_result_execution["errors"]:  # type: _JsonDictType
-                        _action_result_execution.errors.append(self._json2error(_json_error))
+                        _action_result_execution.errors.append(_TestErrorImpl.fromjson(_json_error))
                         self.debug("Error: %s", _action_result_execution.errors[-1])
                     self.debug("Error: %d", len(_action_result_execution.errors))
 
                     for _json_warning in _json_action_result_execution["warnings"]:  # type: _JsonDictType
-                        _action_result_execution.warnings.append(self._json2error(_json_warning))
+                        _action_result_execution.warnings.append(_TestErrorImpl.fromjson(_json_warning))
                         self.debug("Warning: %s", _action_result_execution.warnings[-1])
                     self.debug("Warning: %d", len(_action_result_execution.warnings))
 
@@ -600,104 +595,6 @@ class ScenarioReport(_LoggerImpl):
                     _action_result_definition.executions.append(_action_result_execution)
 
         return _action_result_definition
-
-    def _error2json(
-            self,
-            error,  # type: _TestErrorType
-    ):  # type: (...) -> _JsonDictType
-        """
-        Converts the :class:`._testerrors.TestError` instance into a JSON dictionary.
-
-        :param error:
-            Error to generate JSON content for.
-
-            May be either a base :class:`._testerrors.TestError`,
-            or an :class:`._testerrors.ExceptionError`,
-            or a :class:`._knownissues.KnownIssue`.
-        :return:
-            JSON dictionary.
-        """
-        _json = {
-            "message": error.message,
-        }  # type: _JsonDictType
-        if error.location:
-            _json["location"] = error.location.tolongstring()
-
-        if isinstance(error, _ExceptionErrorImpl):
-            _json["type"] = error.exception_type
-
-        elif isinstance(error, _KnownIssueImpl):
-            _json["type"] = "known-issue"
-
-            # Optional fields.
-            if error.level is not None:
-                _json["level"] = int(error.level)
-            if error.id is not None:
-                _json["id"] = error.id
-            if error.url is not None:
-                _json["url"] = error.url
-
-        return _json
-
-    def _json2error(
-            self,
-            json_error,  # type: _JsonDictType
-    ):  # type: (...) -> _TestErrorType
-        """
-        Builds a :class:`._testerrors.TestError` instance from its JSON representation.
-
-        :param json_error:
-            Error JSON content to read.
-        :return:
-            New :class:`._testerrors.TestError` instance.
-
-            May be either a base :class:`._testerrors.TestError`,
-            or an :class:`._testerrors.ExceptionError`,
-            or a :class:`._knownissues.KnownIssue`.
-        """
-        # Common attributes: message and optional location.
-        _message = json_error["message"]  # type: str
-        _location = None  # type: typing.Optional[_CodeLocationType]
-        if "location" in json_error:
-            _location = _CodeLocationImpl.fromlongstring(json_error["location"])
-
-        # Depending on 'type':
-        if "type" in json_error:
-            if not _location:
-                raise ValueError("Missing error location")
-
-            if json_error["type"] == "known-issue":
-                # Mandatory fields.
-                _known_issue = _KnownIssueImpl(
-                    message=_message,
-                    location=_location,
-                )  # type: _KnownIssueType
-
-                # Optional fields.
-                if "level" in json_error:
-                    _known_issue.level = _IssueLevelImpl.parse(json_error["level"])
-                if "id" in json_error:
-                    _known_issue.id = json_error["id"]
-                if "url" in json_error:
-                    _known_issue.url = json_error["url"]
-
-                return _known_issue
-
-            else:
-                _exception_error = _ExceptionErrorImpl(
-                    exception=None,
-                )  # type: _ExceptionErrorType
-                _exception_error.exception_type = json_error["type"]
-                _exception_error.message = _message
-                _exception_error.location = _location
-                return _exception_error
-
-        else:
-            _test_error = _TestErrorImpl(
-                message=_message,
-                location=_location,
-            )  # type: _TestErrorType
-            return _test_error
 
     def _timestats2json(
             self,

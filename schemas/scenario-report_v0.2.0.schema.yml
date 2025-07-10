@@ -34,24 +34,7 @@ $defs:
 
       # Heading properties.
       - description: Heading properties
-        type: object
-        properties:
-
-          # New in v0.2.0.
-          # Optional.
-          $license:
-            description: Ability to provide a license text for a JSON file
-            anyOf:
-              - type: string
-              - { type: array, items: { type: string } }
-
-          # Optional.
-          $schema:
-            description: Schema reference
-            # Note:
-            #   Don't forbid backward compatible evolutions.
-            #   Accept whatever, and let JSON schema validation state on compatibility.
-            $ref: "#/$defs/_non-empty-string"
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/_heading-properties"
 
       # Base `_scenario`.
       - $ref: "#/$defs/_scenario"
@@ -128,17 +111,18 @@ $defs:
           # Required.
           name:
             description: Name of the scenario
-            $ref: "#/$defs/_non-empty-string"
+            $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/non-empty-string"
 
           # Required.
           href:
             description: Reference to the scenario script path
-            $ref: "#/$defs/_non-empty-string"
+            $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/non-empty-string"
 
           # Required.
           attributes:
             description: Scenario attributes
-            $ref: "#/$defs/_dict-str"
+            type: object
+            additionalProperties: { type: string }
 
           # Required.
           steps:
@@ -159,14 +143,11 @@ $defs:
 
           # Required.
           # Note:
-          #   Could be inferred from `#/$defs/_execution-results/errors` & `warnings`.
+          #   Could be inferred from errors & warnings.
           #   Keep it required whatever.
           status:
             description: Execution status
-            anyOf:
-              - const: "SUCCESS"
-              - const: "WARNINGS"
-              - const: "FAIL"
+            $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/execution-status"
 
     required:
       - name
@@ -192,7 +173,7 @@ $defs:
       # Required.
       location:
         description: Location of the step
-        $ref: "#/$defs/_location"
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/location"
 
       # Required.
       description:
@@ -215,7 +196,7 @@ $defs:
       # Required.
       location:
         description: Location of the step
-        $ref: "#/$defs/_location"
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/location"
 
       # Required.
       description:
@@ -326,10 +307,6 @@ $defs:
 
   # 2.4. Common objects and types
 
-  _location:
-    description: Location
-    type: string
-
   _execution-results:
     description: Base execution results
     type: object
@@ -345,14 +322,14 @@ $defs:
           start:
             description: Start time
             oneOf:
-              - $ref: "#/$defs/_iso8601"
+              - $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/iso8601"
               - type: "null"
 
           # Optional.
           end:
             description: End time
             oneOf:
-              - $ref: "#/$defs/_iso8601"
+              - $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/iso8601"
               - type: "null"
 
           # Optional.
@@ -365,95 +342,14 @@ $defs:
       # Required.
       errors:
         description: Errors
-        type: array
-        items:
-          anyOf:
-            - { $ref: "#/$defs/error" }
-            - { $ref: "#/$defs/known-issue" }
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/array-of-errors"
 
       # Required.
       warnings:
         description: Warnings
-        type: array
-        items:
-          anyOf:
-            - { $ref: "#/$defs/known-issue" }
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.0.schema.json#/$defs/array-of-warnings"
 
     required:
       - time
       - errors
       - warnings
-
-  error:
-    description: Error
-    type: object
-    properties:
-
-      # Optional: `type` may not be set.
-      type:
-        description: Error type
-        type: string
-
-      # Optional: `location` may not be set when `type` is not set.
-      location:
-        description: Error location
-        $ref: "#/$defs/_location"
-
-      # Required.
-      message:
-        description: Error message
-        type: string
-
-    required:
-      - message
-
-  known-issue:
-    description: Known issue
-    type: object
-    properties:
-
-      # Required.
-      type:
-        description: Error type
-        const: "known-issue"
-
-      # Required.
-      location:
-        description: Error location
-        $ref: "#/$defs/_location"
-
-      # Required.
-      id:
-        description: Issue identifier
-        type: string
-
-      # Required.
-      message:
-        description: Error message
-        type: string
-
-    required:
-      - type
-      - location
-      - id
-      - message
-
-  _iso8601:
-    description: ISO8601 date/time format
-    type: string
-    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
-
-
-  # 3. Basic types
-
-  _non-empty-string:
-    description: Non empty string type
-    type: string
-    minLength: 1
-
-  _dict-str:
-    description: Dictionary with string values type
-    type: object
-    patternProperties:
-      ^.*$:
-        type: string

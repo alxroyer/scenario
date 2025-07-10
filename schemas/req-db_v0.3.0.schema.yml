@@ -29,40 +29,31 @@ $defs:
   main:
     description: Scenario requirement database
     type: object
+
+    # Heading properties.
+    # WARNING:
+    #   The following `properties` definition is a duplicate of `/$defs/_heading-properties` in 'common_v0.3.0.schema.yml',
+    #   but it seems that the `additionalProperties` after can't take effect as a complement of a `$ref` but overrides it.
+    #   An inline `properties` definition seems to be required (at least with `jsonschema` implementation).
     properties:
-
-      # Heading properties.
-
       # Optional.
       $encoding:
         description: Encoding of the file
-        # Note:
-        #   Don't use a restrictive enum definition.
-        #   Accept whatever, and let Python raise an exception if the encoding is unknown.
-        $ref: "#/$defs/_non-empty-string"
-
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
       # Optional.
       $license:
         description: Ability to provide a license text for a JSON file
         anyOf:
           - type: string
           - { type: array, items: { type: string } }
-
       # Optional.
       $schema:
         description: Schema reference
-        # Note:
-        #   Don't forbid backward compatible evolutions.
-        #   Accept whatever, and let JSON schema validation state on compatibility.
-        $ref: "#/$defs/_non-empty-string"
-
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
       # Optional.
       $version:
         description: "`scenario` version used to generate the file"
-        # Note:
-        #   Don't forbid backward compatible evolutions.
-        #   Accept whatever, and let JSON schema validation state on compatibility.
-        $ref: "#/$defs/_non-empty-string"
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
     additionalProperties: { $ref: "#/$defs/req" }
 
@@ -77,7 +68,7 @@ $defs:
       # Required.
       id:
         description: Requirement identifier
-        type: string
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
       # Optional.
       title:
@@ -97,11 +88,3 @@ $defs:
 
     required:
       - id
-
-
-  # 3. Basic types
-
-  _non-empty-string:
-    description: Non empty string type
-    type: string
-    minLength: 1

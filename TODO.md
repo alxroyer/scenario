@@ -21,7 +21,8 @@
     - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Factorize common schema definitions in a subschema: status, errors and warnings.
+        - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
+        - Add final dots to descriptions.
         - Improve schema hardening by analyzing the referenced item type.
         - Implement schema version checking for `ReqTraceability` reports.
         - Validate 'test/' `scenario` reports.
