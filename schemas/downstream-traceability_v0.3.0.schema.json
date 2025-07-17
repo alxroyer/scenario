@@ -1,0 +1,184 @@
+{
+  "$encoding": "utf-8",
+  "$license": [
+    "Copyright 2020-2023 Alexis Royer <https://github.com/alxroyer/scenario>",
+    "",
+    "Licensed under the Apache License, Version 2.0 (the \"License\");",
+    "you may not use this file except in compliance with the License.",
+    "You may obtain a copy of the License at",
+    "",
+    "    http://www.apache.org/licenses/LICENSE-2.0",
+    "",
+    "Unless required by applicable law or agreed to in writing, software",
+    "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+    "See the License for the specific language governing permissions and",
+    "limitations under the License."
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alxroyer/scenario/blob/master/schemas/downstream-traceability_v0.3.0.schema.json",
+  "title": "Scenario downstream traceability v0.3.0",
+  "description": "Schema that describes a downstream traceability report for the `scenario` library",
+  "$ref": "#/$defs/main",
+  "$defs": {
+    "main": {
+      "description": "Scenario requirements",
+      "type": "object",
+      "properties": {
+        "$encoding": {
+          "description": "Encoding of the file",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+        },
+        "$license": {
+          "description": "Ability to provide a license text for a JSON file",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "$schema": {
+          "description": "Schema reference",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+        },
+        "$version": {
+          "description": "`scenario` version used to generate the file",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/req"
+      }
+    },
+    "req": {
+      "description": "Requirement",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "Requirement title",
+          "type": "string"
+        },
+        "text": {
+          "description": "Requirement text",
+          "type": "string"
+        },
+        "subrefs": {
+          "description": "Requirement subreferences",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/subref"
+          }
+        },
+        "scenarios": {
+          "description": "Scenarios verifying this requirement",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/scenario"
+          }
+        }
+      },
+      "required": [
+        "scenarios"
+      ]
+    },
+    "subref": {
+      "description": "Requirement subreference",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "Requirement subreference title",
+          "type": "string"
+        },
+        "scenarios": {
+          "description": "Scenarios verifying this requirement subreference",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/scenario"
+          }
+        }
+      },
+      "required": [
+        "scenarios"
+      ]
+    },
+    "scenario": {
+      "description": "Scenario verifying a requirement or a requirement subreference",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "Scenario title",
+          "type": "string"
+        },
+        "comments": {
+          "description": "Comments for this scenario verifying the given requirement or requirement subreference",
+          "type": "string"
+        },
+        "steps": {
+          "description": "Steps holding traceability information",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/step"
+          }
+        },
+        "results": {
+          "description": "Execution results",
+          "$ref": "#/$defs/execution-results"
+        }
+      }
+    },
+    "step": {
+      "description": "Step verifying a requirement or a requirement subreference",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Scenario name",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+        },
+        "location": {
+          "description": "Step location",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/location"
+        },
+        "description": {
+          "description": "Step description.",
+          "type": "string"
+        },
+        "comments": {
+          "description": "Comments for this step verifying the given requirement or requirement subreference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location"
+      ]
+    },
+    "execution-results": {
+      "description": "Execution results, for scenarios and steps",
+      "type": "object",
+      "properties": {
+        "status": {
+          "description": "Execution status",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/execution-status"
+        },
+        "errors": {
+          "description": "Errors",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/array-of-errors"
+        },
+        "warnings": {
+          "description": "Warnings",
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/array-of-warnings"
+        }
+      },
+      "required": [
+        "status",
+        "errors",
+        "warnings"
+      ]
+    }
+  }
+}

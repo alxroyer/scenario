@@ -361,8 +361,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                 if allow_results and (self.scenario.execution is not None):
                     _json_scenario["results"] = {
                         "status": str(self.scenario.execution.status),
-                        "errors": [str(_error) for _error in self.scenario.execution.errors],
-                        "warnings": [str(_warning) for _warning in self.scenario.execution.warnings],
+                        "errors": [_error.tojson() for _error in self.scenario.execution.errors],
+                        "warnings": [_warning.tojson() for _warning in self.scenario.execution.warnings],
                     }
 
                 for _downstream_step in self.steps:  # type: ReqTraceability.Downstream.Step
@@ -508,8 +508,8 @@ class ReqTraceability(_LoggerImpl, _ReqBaselineObjectImpl):
                     for _step_execution in self.step.executions:  # type: _StepExecutionType
                         _json_step["results"].append({
                             "status": str(_step_execution.status),
-                            "errors": [str(_error) for _error in _step_execution.errors],
-                            "warnings": [str(_warning) for _warning in _step_execution.warnings],
+                            "errors": [_error.tojson() for _error in _step_execution.errors],
+                            "warnings": [_warning.tojson() for _warning in _step_execution.warnings],
                         })
 
                 # Remove optional information when empty.

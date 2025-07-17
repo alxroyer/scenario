@@ -46,6 +46,20 @@ class ValidateJsonFiles(abc.ABC):
                 help=f"Validate the given requirement database with '{_paths.REQ_DB_SCHEMA_PATH}'.",
             )
 
+            self.downstream_traceabilities = []  # type: typing.List[scenario.Path]
+            self.addarg("Downstream tracability report validation", "downstream_traceabilities", scenario.Path).define(
+                "--downstream-traceability", metavar="DOWNSTREAM_TRACEABILITY_PATH",
+                action="append", type=str, default=[],
+                help=f"Validate the given downstream traceability report with '{_paths.DOWNSTREAM_TRACEABILITY_SCHEMA_PATH}'",
+            )
+
+            self.upstream_traceabilities = []  # type: typing.List[scenario.Path]
+            self.addarg("Upstream traceability report validation", "upstream_traceabilities", scenario.Path).define(
+                "--upstream-traceability", metavar="UPSTREAM_TRACEABILITY_PATH",
+                action="append", type=str, default=[],
+                help=f"Validate the given upstream traceability report with '{_paths.UPSTREAM_TRACEABILITY_SCHEMA_PATH}'",
+            )
+
             self.resolve_external_refs = True  # type: bool
             self.addarg("Download external refs", "resolve_external_refs", bool).define(
                 "--dont-resolve-external-refs",
@@ -80,6 +94,15 @@ class ValidateJsonFiles(abc.ABC):
         for _req_db_path in ValidateJsonFiles.Args.getinstance().req_dbs:  # type: scenario.Path
             scenario.logging.debug("ValidateJsonFiles.execute(): _req_db_path='%s'", _req_db_path)
             ValidateJsonFiles._validate(_req_db_path, _paths.REQ_DB_SCHEMA_PATH)
+
+        for _downtream_traceability in ValidateJsonFiles.Args.getinstance().downstream_traceabilities:  # type: scenario.Path
+            scenario.logging.debug("ValidateJsonFiles.execute(): _downtream_traceability='%s'", _downtream_traceability)
+            ValidateJsonFiles._validate(_downtream_traceability, _paths.DOWNSTREAM_TRACEABILITY_SCHEMA_PATH)
+
+        scenario.logging.warning(f"'{_paths.UPSTREAM_TRACEABILITY_SCHEMA_PATH}' not implemented yet")
+        # for _upstream_traceability in CheckSchemasArgs.getinstance().upstream_traceabilities:  # type: scenario.Path
+        #     scenario.logging.debug("ValidateJsonFiles.execute(): _upstream_traceability='%s'", _upstream_traceability)
+        #     ValidateJsonFiles._validate(_upstream_traceability, UPSTREAM_TRACEABILITY_SCHEMA_PATH)
 
     @classmethod
     def _validate(

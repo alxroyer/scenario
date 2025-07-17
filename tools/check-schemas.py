@@ -44,7 +44,7 @@ class CheckSchemasArgs(scenario.tools.schemas.ValidateJsonFiles.Args):
         self.addarg("Validate test data", "validate_test_data", bool).define(
             "--validate-test-data",
             action="store_true", default=False,
-            help=f"Validate test data: .json and .yml files from '{scenario.tools.paths.TEST_DATA_PATH}'.",
+            help=f"Validate test data: .json and .yml files from '{scenario.tools.paths.TEST_PATH}' and '{scenario.tools.paths.TEST_DATA_PATH}'.",
         )
 
 
@@ -98,24 +98,38 @@ class ValidateJsonFiles(scenario.tools.schemas.ValidateJsonFiles):
 
     @staticmethod
     def listtestdatafiles():  # type: (...) -> None
-        for _json_path in scenario.tools.paths.TEST_DATA_PATH.rglob("*.json"):  # type: scenario.Path
-            scenario.logging.debug("ValidateJsonFiles.listtestdatafiles(): _json_path='%s'", _json_path)
+        def _addtestfile(
+                path,  # type: scenario.Path
+                list_of_paths,  # type: typing.List[scenario.Path]
+        ):  # type: (...) -> None
+            assert path.is_file(), f"No such file '{path}'"
+            assert path not in list_of_paths, f"'{path}' already known"
+            scenario.logging.debug(f"ValidateJsonFiles.listtestdatafiles(): '{path}'")
+            list_of_paths.append(path)
 
+        def _skiptestfile(
+                path,  # type: scenario.Path
+        ):  # type: (...) -> None
+            scenario.logging.debug(f"ValidateJsonFiles.listtestdatafiles(): '{path}' skipped")
+
+        # List test files from the 'test/' directory.
+        _addtestfile(scenario.tools.paths.TEST_PATH / "req-db.yml", CheckSchemasArgs.getinstance().req_dbs)
+        _addtestfile(scenario.tools.paths.TEST_PATH / "downstream-traceability.yml", CheckSchemasArgs.getinstance().downstream_traceabilities)
+        _addtestfile(scenario.tools.paths.TEST_PATH / "upstream-traceability.yml", CheckSchemasArgs.getinstance().upstream_traceabilities)
+
+        # List test files from the 'test/data/' directory.
+        for _json_path in scenario.tools.paths.TEST_DATA_PATH.rglob("*.json"):  # type: scenario.Path
             if _json_path.name.endswith(".doc-only.json") or _json_path.name.endswith(".executed.json"):
-                if _json_path not in CheckSchemasArgs.getinstance().scenario_reports:
-                    CheckSchemasArgs.getinstance().scenario_reports.append(_json_path)
+                _addtestfile(_json_path, CheckSchemasArgs.getinstance().scenario_reports)
             elif _json_path in [scenario.tools.paths.TEST_DATA_PATH / "req-db.json"]:
-                if _json_path not in CheckSchemasArgs.getinstance().req_dbs:
-                    CheckSchemasArgs.getinstance().req_dbs.append(_json_path)
+                _addtestfile(_json_path, CheckSchemasArgs.getinstance().req_dbs)
             elif _json_path in [scenario.tools.paths.TEST_DATA_PATH / "conf.json"]:
-                pass
+                _skiptestfile(_json_path)
             else:
                 raise ValueError(f"Unknwon JSON file type '{_json_path}'")
-
         for _yaml_path in scenario.tools.paths.TEST_DATA_PATH.rglob("*.yml"):  # type: scenario.Path
-            scenario.logging.debug("ValidateJsonFiles.listtestdatafiles(): _yaml_path='%s'", _yaml_path)
             if _yaml_path in [scenario.tools.paths.TEST_DATA_PATH / "conf.yml"]:
-                pass
+                _skiptestfile(_yaml_path)
             else:
                 raise ValueError(f"Unknwon YAML file type '{_yaml_path}'")
 
