@@ -18,7 +18,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 
 $id: https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0.2.2.schema.json
 title: Scenario report v0.2.2
-description: Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution)
+description: Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution).
 
 $ref: "#/$defs/main-scenario"
 
@@ -28,19 +28,19 @@ $defs:
 
   # Main node: Base `_scenario` with a couple of additional attributes.
   main-scenario:
-    description: Main scenario
+    description: Main scenario.
     type: object
     allOf:
 
       # Heading properties.
-      - description: Heading properties
+      - description: Heading properties.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/_heading-properties"
 
       # Base `_scenario`.
       - $ref: "#/$defs/_scenario"
 
       # Statistics.
-      - description: Scenario statistics
+      - description: Scenario statistics.
         type: object
         properties:
 
@@ -49,23 +49,23 @@ $defs:
           #   Can be inferred from steps with actions / results.
           #   Actually not read by `scenario` when imported.
           stats:
-            description: Scenario execution statistics
+            description: Scenario execution statistics.
             type: object
             properties:
 
               # Required.
               steps:
-                description: Step counters
+                description: Step counters.
                 $ref: "#/$defs/_stat-counters"
 
               # Required.
               actions:
-                description: Action counters
+                description: Action counters.
                 $ref: "#/$defs/_stat-counters"
 
               # Required.
               results:
-                description: Result counters
+                description: Result counters.
                 $ref: "#/$defs/_stat-counters"
 
             required:
@@ -74,18 +74,18 @@ $defs:
               - results
 
   _stat-counters:
-    description: Statistic counters
+    description: Statistic counters.
     type: object
     properties:
 
       # Required.
       executed:
-        description: Number of items executed
+        description: Number of items executed.
         type: number
 
       # Required.
       total:
-        description: Total number of items
+        description: Total number of items.
         type: number
 
     required:
@@ -99,34 +99,34 @@ $defs:
   # Scenario -- common definition.
   # Defines the base object for `main-scenario` and `subscenario`.
   _scenario:
-    description: Base scenario
+    description: Base scenario.
     type: object
     allOf:
 
       # Scenario definition.
-      - description: Scenario definition
+      - description: Scenario definition.
         type: object
         properties:
 
           # Required.
           name:
-            description: Name of the scenario
+            description: Name of the scenario.
             $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/non-empty-string"
 
           # Required.
           href:
-            description: Reference to the scenario script path
+            description: Reference to the scenario script path.
             $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/non-empty-string"
 
           # Required.
           attributes:
-            description: Scenario attributes
+            description: Scenario attributes.
             type: object
             additionalProperties: { type: string }
 
           # Required.
           steps:
-            description: List of steps
+            description: List of steps.
             type: array
             items:
               anyOf:
@@ -137,7 +137,7 @@ $defs:
       - $ref: "#/$defs/_execution-results"
 
       # Execution status.
-      - description: Scenario execution status
+      - description: Scenario execution status.
         type: object
         properties:
 
@@ -146,7 +146,7 @@ $defs:
           #   Could be inferred from errors & warnings.
           #   Keep it required whatever.
           status:
-            description: Execution status
+            description: Execution status.
             $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/execution-status"
 
     required:
@@ -158,7 +158,7 @@ $defs:
 
   # Subscenario: Base `_scenario` as a final type.
   subscenario:
-    description: Subscenario
+    description: Subscenario.
     $ref: "#/$defs/_scenario"
 
 
@@ -166,18 +166,18 @@ $defs:
 
   # Step section: essentially a step description.
   step-section:
-    description: Step section
+    description: Step section.
     type: object
     properties:
 
       # Required.
       location:
-        description: Location of the step
+        description: Location of the step.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/location"
 
       # Required.
       description:
-        description: Description of the step
+        description: Description of the step.
         type: string
 
     required:
@@ -189,18 +189,18 @@ $defs:
 
   # Full step definition.
   step-definition:
-    description: Step definition
+    description: Step definition.
     type: object
     properties:
 
       # Required.
       location:
-        description: Location of the step
+        description: Location of the step.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/location"
 
       # Required.
       description:
-        description: Description of the step
+        description: Description of the step.
         # Regular step description may be `None`.
         anyOf:
           - type: string
@@ -208,13 +208,13 @@ $defs:
 
       # Required.
       executions:
-        description: Step executions
+        description: Step executions.
         type: array
         items: { $ref: "#/$defs/step-execution" }
 
       # Required.
       actions-results:
-        description: List of actions and expected results
+        description: List of actions and expected results.
         type: array
         items: { $ref: "#/$defs/action-result-definition" }
 
@@ -225,7 +225,7 @@ $defs:
       - actions-results
 
   step-execution:
-    description: Step execution results
+    description: Step execution results.
     type: object
     allOf:
 
@@ -249,25 +249,25 @@ $defs:
   # 2.3. Actions / results
 
   action-result-definition:
-    description: Action / result definition
+    description: Action / result definition.
     type: object
     properties:
 
       # Required.
       type:
-        description: Action / result type
+        description: Action / result type.
         oneOf:
           - const: "ACTION"
           - const: "RESULT"
 
       # Required.
       description:
-        description: Action / result description
+        description: Action / result description.
         type: string
 
       # Required.
       executions:
-        description: Action / result executions
+        description: Action / result executions.
         type: array
         items: { $ref: "#/$defs/action-result-execution" }
 
@@ -277,7 +277,7 @@ $defs:
       - executions
 
   action-result-execution:
-    description: Action / result execution results
+    description: Action / result execution results.
     type: object
     allOf:
 
@@ -290,13 +290,13 @@ $defs:
 
           # Required.
           evidence:
-            description: Evidence
+            description: Evidence.
             type: array
             items: { type: string }
 
           # Required.
           subscenarios:
-            description: Subscenarios
+            description: Subscenarios.
             type: array
             items: { $ref: "#/$defs/subscenario" }
 
@@ -308,45 +308,45 @@ $defs:
   # 2.4. Common objects and types
 
   _execution-results:
-    description: Base execution results
+    description: Base execution results.
     type: object
     properties:
 
       # Required.
       time:
-        description: Execution times
+        description: Execution times.
         type: object
         properties:
 
           # Optional.
           start:
-            description: Start time
+            description: Start time.
             oneOf:
               - $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/iso8601"
               - type: "null"
 
           # Optional.
           end:
-            description: End time
+            description: End time.
             oneOf:
               - $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/iso8601"
               - type: "null"
 
           # Optional.
           elapsed:
-            description: Elapsed time in seconds
+            description: Elapsed time in seconds.
             oneOf:
               - type: number
               - type: "null"
 
       # Required.
       errors:
-        description: Errors
+        description: Errors.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/array-of-errors"
 
       # Required.
       warnings:
-        description: Warnings
+        description: Warnings.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/array-of-warnings"
 
     required:

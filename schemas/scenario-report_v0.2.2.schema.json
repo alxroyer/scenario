@@ -18,38 +18,38 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/alxroyer/scenario/blob/master/schemas/scenario-report_v0.2.2.schema.json",
   "title": "Scenario report v0.2.2",
-  "description": "Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution)",
+  "description": "Schema that describes the report of a scenario executed with --doc-only (scenario definition only) or not (actual scenario execution).",
   "$ref": "#/$defs/main-scenario",
   "$defs": {
     "main-scenario": {
-      "description": "Main scenario",
+      "description": "Main scenario.",
       "type": "object",
       "allOf": [
         {
-          "description": "Heading properties",
+          "description": "Heading properties.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/_heading-properties"
         },
         {
           "$ref": "#/$defs/_scenario"
         },
         {
-          "description": "Scenario statistics",
+          "description": "Scenario statistics.",
           "type": "object",
           "properties": {
             "stats": {
-              "description": "Scenario execution statistics",
+              "description": "Scenario execution statistics.",
               "type": "object",
               "properties": {
                 "steps": {
-                  "description": "Step counters",
+                  "description": "Step counters.",
                   "$ref": "#/$defs/_stat-counters"
                 },
                 "actions": {
-                  "description": "Action counters",
+                  "description": "Action counters.",
                   "$ref": "#/$defs/_stat-counters"
                 },
                 "results": {
-                  "description": "Result counters",
+                  "description": "Result counters.",
                   "$ref": "#/$defs/_stat-counters"
                 }
               },
@@ -64,15 +64,15 @@
       ]
     },
     "_stat-counters": {
-      "description": "Statistic counters",
+      "description": "Statistic counters.",
       "type": "object",
       "properties": {
         "executed": {
-          "description": "Number of items executed",
+          "description": "Number of items executed.",
           "type": "number"
         },
         "total": {
-          "description": "Total number of items",
+          "description": "Total number of items.",
           "type": "number"
         }
       },
@@ -82,30 +82,30 @@
       ]
     },
     "_scenario": {
-      "description": "Base scenario",
+      "description": "Base scenario.",
       "type": "object",
       "allOf": [
         {
-          "description": "Scenario definition",
+          "description": "Scenario definition.",
           "type": "object",
           "properties": {
             "name": {
-              "description": "Name of the scenario",
+              "description": "Name of the scenario.",
               "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/non-empty-string"
             },
             "href": {
-              "description": "Reference to the scenario script path",
+              "description": "Reference to the scenario script path.",
               "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/non-empty-string"
             },
             "attributes": {
-              "description": "Scenario attributes",
+              "description": "Scenario attributes.",
               "type": "object",
               "additionalProperties": {
                 "type": "string"
               }
             },
             "steps": {
-              "description": "List of steps",
+              "description": "List of steps.",
               "type": "array",
               "items": {
                 "anyOf": [
@@ -124,11 +124,11 @@
           "$ref": "#/$defs/_execution-results"
         },
         {
-          "description": "Scenario execution status",
+          "description": "Scenario execution status.",
           "type": "object",
           "properties": {
             "status": {
-              "description": "Execution status",
+              "description": "Execution status.",
               "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/execution-status"
             }
           }
@@ -143,19 +143,19 @@
       ]
     },
     "subscenario": {
-      "description": "Subscenario",
+      "description": "Subscenario.",
       "$ref": "#/$defs/_scenario"
     },
     "step-section": {
-      "description": "Step section",
+      "description": "Step section.",
       "type": "object",
       "properties": {
         "location": {
-          "description": "Location of the step",
+          "description": "Location of the step.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/location"
         },
         "description": {
-          "description": "Description of the step",
+          "description": "Description of the step.",
           "type": "string"
         }
       },
@@ -166,15 +166,15 @@
       "unevaluatedProperties": false
     },
     "step-definition": {
-      "description": "Step definition",
+      "description": "Step definition.",
       "type": "object",
       "properties": {
         "location": {
-          "description": "Location of the step",
+          "description": "Location of the step.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/location"
         },
         "description": {
-          "description": "Description of the step",
+          "description": "Description of the step.",
           "anyOf": [
             {
               "type": "string"
@@ -185,14 +185,14 @@
           ]
         },
         "executions": {
-          "description": "Step executions",
+          "description": "Step executions.",
           "type": "array",
           "items": {
             "$ref": "#/$defs/step-execution"
           }
         },
         "actions-results": {
-          "description": "List of actions and expected results",
+          "description": "List of actions and expected results.",
           "type": "array",
           "items": {
             "$ref": "#/$defs/action-result-definition"
@@ -207,7 +207,7 @@
       ]
     },
     "step-execution": {
-      "description": "Step execution results",
+      "description": "Step execution results.",
       "type": "object",
       "allOf": [
         {
@@ -229,11 +229,11 @@
       ]
     },
     "action-result-definition": {
-      "description": "Action / result definition",
+      "description": "Action / result definition.",
       "type": "object",
       "properties": {
         "type": {
-          "description": "Action / result type",
+          "description": "Action / result type.",
           "oneOf": [
             {
               "const": "ACTION"
@@ -244,11 +244,11 @@
           ]
         },
         "description": {
-          "description": "Action / result description",
+          "description": "Action / result description.",
           "type": "string"
         },
         "executions": {
-          "description": "Action / result executions",
+          "description": "Action / result executions.",
           "type": "array",
           "items": {
             "$ref": "#/$defs/action-result-execution"
@@ -262,7 +262,7 @@
       ]
     },
     "action-result-execution": {
-      "description": "Action / result execution results",
+      "description": "Action / result execution results.",
       "type": "object",
       "allOf": [
         {
@@ -272,14 +272,14 @@
           "type": "object",
           "properties": {
             "evidence": {
-              "description": "Evidence",
+              "description": "Evidence.",
               "type": "array",
               "items": {
                 "type": "string"
               }
             },
             "subscenarios": {
-              "description": "Subscenarios",
+              "description": "Subscenarios.",
               "type": "array",
               "items": {
                 "$ref": "#/$defs/subscenario"
@@ -294,15 +294,15 @@
       ]
     },
     "_execution-results": {
-      "description": "Base execution results",
+      "description": "Base execution results.",
       "type": "object",
       "properties": {
         "time": {
-          "description": "Execution times",
+          "description": "Execution times.",
           "type": "object",
           "properties": {
             "start": {
-              "description": "Start time",
+              "description": "Start time.",
               "oneOf": [
                 {
                   "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/iso8601"
@@ -313,7 +313,7 @@
               ]
             },
             "end": {
-              "description": "End time",
+              "description": "End time.",
               "oneOf": [
                 {
                   "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/iso8601"
@@ -324,7 +324,7 @@
               ]
             },
             "elapsed": {
-              "description": "Elapsed time in seconds",
+              "description": "Elapsed time in seconds.",
               "oneOf": [
                 {
                   "type": "number"
@@ -337,11 +337,11 @@
           }
         },
         "errors": {
-          "description": "Errors",
+          "description": "Errors.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/array-of-errors"
         },
         "warnings": {
-          "description": "Warnings",
+          "description": "Warnings.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json#/$defs/array-of-warnings"
         }
       },

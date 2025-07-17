@@ -22,7 +22,6 @@
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
         - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
-        - Add final dots to descriptions.
         - Improve schema hardening by analyzing the referenced item type.
         - Implement schema version checking for `ReqTraceability` reports.
         - Validate 'test/' `scenario` reports.

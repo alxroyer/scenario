@@ -18,19 +18,19 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/alxroyer/scenario/blob/master/schemas/req-db_v0.3.0.schema.json",
   "title": "Scenario requirement database v0.3.0",
-  "description": "Schema that describes a database of requirements for the `scenario` library",
+  "description": "Schema that describes a database of requirements for the `scenario` library.",
   "$ref": "#/$defs/main",
   "$defs": {
     "main": {
-      "description": "Scenario requirement database",
+      "description": "Scenario requirement database.",
       "type": "object",
       "properties": {
         "$encoding": {
-          "description": "Encoding of the file",
+          "description": "Encoding of the file.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
         },
         "$license": {
-          "description": "Ability to provide a license text for a JSON file",
+          "description": "Ability to provide a license text for a JSON file.",
           "anyOf": [
             {
               "type": "string"
@@ -44,11 +44,11 @@
           ]
         },
         "$schema": {
-          "description": "Schema reference",
+          "description": "Schema reference.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
         },
         "$version": {
-          "description": "`scenario` version used to generate the file",
+          "description": "`scenario` version used to generate the file.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
         }
       },
@@ -57,23 +57,23 @@
       }
     },
     "req": {
-      "description": "Requirement",
+      "description": "Requirement.",
       "type": "object",
       "properties": {
         "id": {
-          "description": "Requirement identifier",
+          "description": "Requirement identifier.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
         },
         "title": {
-          "description": "Requirement title",
+          "description": "Requirement title.",
           "type": "string"
         },
         "text": {
-          "description": "Requirement text",
+          "description": "Requirement text.",
           "type": "string"
         },
         "subrefs": {
-          "description": "Requirement subreferences",
+          "description": "Requirement subreferences.",
           "type": "array",
           "items": {
             "type": "string"

@@ -18,7 +18,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 
 $id: https://github.com/alxroyer/scenario/blob/master/schemas/downstream-traceability_v0.3.0.schema.json
 title: Scenario downstream traceability v0.3.0
-description: Schema that describes a downstream traceability report for the `scenario` library
+description: Schema that describes a downstream traceability report for the `scenario` library.
 
 $ref: "#/$defs/main"
 
@@ -27,7 +27,7 @@ $defs:
   # 1. Main database node
 
   main:
-    description: Scenario requirements
+    description: Scenario requirements.
     type: object
 
     # Heading properties.
@@ -38,21 +38,21 @@ $defs:
     properties:
       # Optional.
       $encoding:
-        description: Encoding of the file
+        description: Encoding of the file.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
       # Optional.
       $license:
-        description: Ability to provide a license text for a JSON file
+        description: Ability to provide a license text for a JSON file.
         anyOf:
           - type: string
           - { type: array, items: { type: string } }
       # Optional.
       $schema:
-        description: Schema reference
+        description: Schema reference.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
       # Optional.
       $version:
-        description: "`scenario` version used to generate the file"
+        description: "`scenario` version used to generate the file."
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
     additionalProperties: { $ref: "#/$defs/req" }
@@ -63,34 +63,34 @@ $defs:
   # 2.1. Requirements
 
   req:
-    description: Requirement
+    description: Requirement.
     type: object
     properties:
 
       # Redundant with the main entry name.
       # id:
-      #   description: Requirement identifier
+      #   description: Requirement identifier.
       #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
       # Optional.
       title:
-        description: Requirement title
+        description: Requirement title.
         type: string
 
       # Optional.
       text:
-        description: Requirement text
+        description: Requirement text.
         type: string
 
       # Optional.
       subrefs:
-        description: Requirement subreferences
+        description: Requirement subreferences.
         type: object
         additionalProperties: { $ref: "#/$defs/subref" }
 
       # Required.
       scenarios:
-        description: Scenarios verifying this requirement
+        description: Scenarios verifying this requirement.
         type: object
         additionalProperties: { $ref: "#/$defs/scenario" }
 
@@ -101,23 +101,23 @@ $defs:
   # 2.2. Requirement subreferences
 
   subref:
-    description: Requirement subreference
+    description: Requirement subreference.
     type: object
     properties:
 
       # Redundant with the requirement `subrefs` entry name.
       # id:
-      #   description: Requirement subreference identifier
+      #   description: Requirement subreference identifier.
       #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
       # Optional.
       title:
-        description: Requirement subreference title
+        description: Requirement subreference title.
         type: string
 
       # Required.
       scenarios:
-        description: Scenarios verifying this requirement subreference
+        description: Scenarios verifying this requirement subreference.
         type: object
         additionalProperties: { $ref: "#/$defs/scenario" }
 
@@ -128,39 +128,39 @@ $defs:
   # 2.3. Scenarios
 
   scenario:
-    description: Scenario verifying a requirement or a requirement subreference
+    description: Scenario verifying a requirement or a requirement subreference.
     type: object
     properties:
 
       # Redundant with the requirement or requirement subreference `scenarios` entry name.
       # id:
-      #   description: Scenario identifier (same as the scenario name)
+      #   description: Scenario identifier (same as the scenario name).
       #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
       # Redundant with the requirement or requirement subreference `scenarios` entry name.
       # name:
-      #   description: Scenario name
+      #   description: Scenario name.
       #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
       # Optional.
       title:
-        description: Scenario title
+        description: Scenario title.
         type: string
 
       # Optional.
       comments:
-        description: Comments for this scenario verifying the given requirement or requirement subreference
+        description: Comments for this scenario verifying the given requirement or requirement subreference.
         type: string
 
       # Optional.
       steps:
-        description: Steps holding traceability information
+        description: Steps holding traceability information.
         type: object
         additionalProperties: { $ref: "#/$defs/step" }
 
       # Optional.
       results:
-        description: Execution results
+        description: Execution results.
         $ref: "#/$defs/execution-results"
 
     # Nothing is required in the end for a scenario object.
@@ -170,23 +170,23 @@ $defs:
   # 2.3. Steps
 
   step:
-    description: Step verifying a requirement or a requirement subreference
+    description: Step verifying a requirement or a requirement subreference.
     type: object
     properties:
 
       # Redundant with the scenario `steps` entry name.
       # id:
-      #   description: Full step identifier
+      #   description: Full step identifier.
       #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
       # Always generated, but may be considered as optional.
       name:
-        description: Scenario name
+        description: Scenario name.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
 
       # Required.
       location:
-        description: Step location
+        description: Step location.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/location"
 
       # Optional.
@@ -196,7 +196,7 @@ $defs:
 
       # Optional.
       comments:
-        description: Comments for this step verifying the given requirement or requirement subreference
+        description: Comments for this step verifying the given requirement or requirement subreference.
         type: string
 
     required:
@@ -206,23 +206,23 @@ $defs:
   # 3. Common types
 
   execution-results:
-    description: Execution results, for scenarios and steps
+    description: Execution results, for scenarios and steps.
     type: object
     properties:
 
       # Required.
       status:
-        description: Execution status
+        description: Execution status.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/execution-status"
 
       # Required.
       errors:
-        description: Errors
+        description: Errors.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/array-of-errors"
 
       # Required.
       warnings:
-        description: Warnings
+        description: Warnings.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/array-of-warnings"
 
     required:
