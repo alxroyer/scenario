@@ -15,6 +15,8 @@
 # limitations under the License.
 
 import abc
+import copy
+import re
 import typing
 
 import scenario
@@ -23,25 +25,117 @@ import scenario.inners
 
 class Schema(abc.ABC):
 
+    #: Dictionary of *{<id>: <dict>}* subschemas,
+    #: *id* being the URL of the JSON schema,
+    #: and *dict* the JSON dictionary of the schema,
+    #: resolved itself (but not hardened, hardening is operated on final schemas only).
+    #:
+    #: Main schemas not saved in this dictionary.
+    _resolved = {}  # type: typing.Dict[str, scenario.types.JsonDict]
+
     @staticmethod
     def read(
             path,  # type: scenario.Path
             *,
+            resolve_external_refs=True,  # type: bool
             harden=False,  # type: bool
             debug_recursions=False,  # type: bool
     ):  # type: (...) -> scenario.types.JsonDict
         scenario.logging.debug("Schema.read(): Reading '%s'", path)
         _schema = scenario.inners.JsonDict.File.read(path)  # type: scenario.types.JsonDict
 
+        if resolve_external_refs:
+            scenario.logging.debug("Schema.read(): Resolving external refs for '%s'", path)
+            Schema._resolveexternalrefs(_schema, debug_recursion=debug_recursions)
+
         if harden:
-            scenario.logging.debug("Schema.read(): Hardening '%s'", path)
-            Schema._harden(_schema, debug_recursion=debug_recursions)
+            if resolve_external_refs:
+                scenario.logging.debug("Schema.read(): Hardening '%s'", path)
+                Schema._harden(_schema, debug_recursion=debug_recursions)
+            else:
+                scenario.logging.warning(f"Can't harden '{path}' when external refs aren't resolved")
 
         # Debug the resulting schema content.
         scenario.logging.debug("Schema.read('%s') -> %s", path, scenario.debug.jsondump(_schema, indent=2),
                                extra={scenario.logging.Extra.LONG_TEXT: True})
 
         return _schema
+
+    @staticmethod
+    def _resolveexternalrefs(
+            schema,  # type: scenario.types.JsonDict
+            *,
+            debug_recursion,  # type: bool
+    ):  # type: (...) -> None
+        """
+        Resolves all '$ref' that start with 'https://github.com/alxroyer/scenario/blob/master/',
+        merges the given '$def' in the current document,
+        and simplifies the '$ref' value as an internal reference.
+
+        Cross-recursive implementation.
+        """
+        from .._paths import ROOT_SCENARIO_PATH
+
+        def _walkdict(
+                json_dict,  # type: scenario.types.JsonDict
+        ):  # type: (...) -> None
+            Schema._debugrecursivecall(debug_recursion, "_resolveexternalrefs", "_walkdict", [
+                ("json_dict", "%s", scenario.debug.jsondump(json_dict, indent=2)),
+            ])
+
+            # Note: Use a copy of `json_dict.items()` with `list()` in order to enable `json_dict` modifications in this loop.
+            for _name, _value in list(json_dict.items()):  # type: str, typing.Any
+                if _name == "$ref":
+                    # Check whether the reference is external.
+                    _match = re.match(
+                        r"(https://github.com/alxroyer/scenario/blob/master/(.*))#/\$defs/(.*)",
+                        _value,
+                    )  # type: typing.Optional[typing.Match[str]]
+                    if _match:
+                        _schema_id = _match.group(1)  # type: str
+                        _schema_subpath = _match.group(2)  # type: str
+                        _def_name = _match.group(3)  # type: str
+
+                        # Load the external schema (if not already loaded).
+                        if _schema_id not in Schema._resolved:
+                            with scenario.logging.pushindentation("  "):
+                                Schema._resolved[_schema_id] = Schema.read(
+                                    ROOT_SCENARIO_PATH / _schema_subpath,
+                                    harden=False,  # Don't harden the schema now, it will be hardened (if required) in the end.
+                                )
+
+                        # Merge definitions with the ones from the external schema.
+                        schema["$defs"].update(copy.deepcopy(Schema._resolved[_schema_id]["$defs"]))
+
+                        # Change the external reference for an inner reference.
+                        json_dict["$ref"] = f"#/$defs/{_def_name}"
+
+                # Spread cross-recursivity.
+                elif isinstance(_value, dict):
+                    with scenario.logging.pushindentation("  "):
+                        _walkdict(_value)
+                elif isinstance(_value, list):
+                    with scenario.logging.pushindentation("  "):
+                        _walklist(_value)
+
+        def _walklist(
+                json_list,  # type: typing.Sequence[typing.Any]
+        ):  # type: (...) -> None
+            Schema._debugrecursivecall(debug_recursion, "_resolveexternalrefs", "_walklist", [
+                ("json_list", "%s", scenario.debug.saferepr(json_list)),
+            ])
+
+            # Spread cross-recursivity.
+            for _value in json_list:  # type: typing.Any
+                if isinstance(_value, dict):
+                    with scenario.logging.pushindentation("  "):
+                        _walkdict(_value)
+                elif isinstance(_value, list):
+                    with scenario.logging.pushindentation("  "):
+                        _walklist(_value)
+
+        # Launch the cross-recursivity process.
+        _walkdict(schema)
 
     @staticmethod
     def _harden(
@@ -67,10 +161,10 @@ class Schema(abc.ABC):
                 names,  # type: typing.Sequence[str]
                 json_dict,  # type: scenario.types.JsonDict
         ):  # type: (...) -> None
-            Schema._debugrecursivecall(debug_recursion, "_harden", "_walkdict", {
-                "names": ("%r", names),
-                "json_dict": ("%s", scenario.debug.jsondump(json_dict, indent=2)),
-            })
+            Schema._debugrecursivecall(debug_recursion, "_harden", "_walkdict", [
+                ("names", "%r", names),
+                ("json_dict", "%s", scenario.debug.jsondump(json_dict, indent=2)),
+            ])
 
             # Check whether `json` is a JSON Schema object definition.
             # Add `"unevaluatedProperties": false` configurations when applicable.
@@ -113,10 +207,10 @@ class Schema(abc.ABC):
                 names,  # type: typing.Sequence[str]
                 json_list,  # type: typing.List[typing.Any]
         ):  # type: (...) -> None
-            Schema._debugrecursivecall(debug_recursion, "_harden", "_walklist", {
-                "names": ("%r", names),
-                "json_list": ("%s", scenario.debug.saferepr(json_list)),
-            })
+            Schema._debugrecursivecall(debug_recursion, "_harden", "_walklist", [
+                ("names", "%r", names),
+                ("json_list", "%s", scenario.debug.saferepr(json_list)),
+            ])
 
             # Spread cross-recursivity.
             for _item in json_list:  # type: typing.Any
@@ -135,7 +229,7 @@ class Schema(abc.ABC):
             do_debug,  # type: bool
             main_method_name,  # type: str
             inner_function_name,  # type: str
-            args,  # type: typing.Dict[str, typing.Any]
+            args,  # type: typing.Sequence[typing.Tuple[str, str, typing.Any]]
     ):  # type: (...) -> None
         if do_debug:
             scenario.logging.debug(
@@ -144,9 +238,9 @@ class Schema(abc.ABC):
                     inner_function_name,
                     ", ".join([
                         f"{_name}={_fmt}"
-                        for _name, (_fmt, _) in args.items()
+                        for _name, _fmt, _ in args
                     ]),
                 ),
-                *[_value for _fmt, _value in args.values()],
+                *[_value for _, _, _value in args],
                 extra={scenario.logging.Extra.LONG_TEXT_MAX_LINES: 3},
             )
