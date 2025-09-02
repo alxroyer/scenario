@@ -30,32 +30,17 @@ $defs:
     description: Scenario requirements.
     type: object
 
-    # Heading properties.
-    # WARNING:
-    #   The following `properties` definition is a duplicate of `/$defs/_heading-properties` in 'common_v0.3.0.schema.yml',
-    #   but it seems that the `additionalProperties` after can't take effect as a complement of a `$ref` but overrides it.
-    #   An inline `properties` definition seems to be required (at least with `jsonschema` implementation).
-    properties:
-      # Optional.
-      $encoding:
-        description: Encoding of the file.
-        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
-      # Optional.
-      $license:
-        description: Ability to provide a license text for a JSON file.
-        anyOf:
-          - type: string
-          - { type: array, items: { type: string } }
-      # Optional.
-      $schema:
-        description: Schema reference.
-        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
-      # Optional.
-      $version:
-        description: "`scenario` version used to generate the file."
-        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+    allOf:
 
-    additionalProperties: { $ref: "#/$defs/req" }
+      # Heading properties.
+      - description: Heading properties.
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/_heading-properties"
+
+    # Memo:
+    #   Using `unevaluatedProperties` instead of `additionalProperties`
+    #   makes it possible to reference `_heading-properties` in the 'common_v0.3.0.schema.json' subschema.
+    #   See https://json-schema.org/understanding-json-schema/reference/object#unevaluatedproperties.
+    unevaluatedProperties: { $ref: "#/$defs/req" }
 
 
   # 2. Objects

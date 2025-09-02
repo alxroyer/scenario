@@ -21,16 +21,7 @@
     - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Fix heading properties `$ref`s in req-db and downstream-traceability schemas.
-            - See [Pattern properties](https://json-schema.org/understanding-json-schema/reference/object#patternProperties)
-                - See [not](https://www.learnjsonschema.com/2020-12/applicator/not/)
-            - See [Additional properties](https://json-schema.org/understanding-json-schema/reference/object#additionalproperties)
-                - Does not take `allOf` properties into account
-                    - Workaround: given properties must be redeclared as `true` in the current subschema.
-                - See `unevaluatedProperties`
-            - See [Unevaluated properties](https://json-schema.org/understanding-json-schema/reference/object#unevaluatedproperties)
-            - See [Property names](https://json-schema.org/understanding-json-schema/reference/object#propertyNames)
-            - Use `allOf` + `unevaluatedProperties`, and it should work (`unevaluatedProperties` accepts a schema, `false` is considered as a schema).
+        - Use `unevaluatedProperties` instead of `additionalProperties` everywhere?
         - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
         - Use "enum" instead of "const" for `execution-status`.
             - See [Enumerated and const values](https://json-schema.org/understanding-json-schema/reference/generic#enumerated-and-constant-values)
