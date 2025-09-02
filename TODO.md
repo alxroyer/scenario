@@ -29,7 +29,6 @@
             - See [Bundling](https://json-schema.org/understanding-json-schema/structuring#bundling)
             - Simplify external references as "/schemas/..." without the "https://..." starter.
             - Remove external ref resolution during validation.
-        - Try to use `false` schema specification for the main item in 'common' schemas.
         - Set `unevaluatedProperties` directly in source schemas.
             - Get rid of `--harden-schemas`.
         - Try to speed up validation:

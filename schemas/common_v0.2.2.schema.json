@@ -19,8 +19,7 @@
   "$id": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.2.2.schema.json",
   "title": "Common definitions for scenario schemas v0.2.2",
   "description": "Schema that contains common definitions for schemas provided by the `scenario` library.",
-  "type": "object",
-  "additionalProperties": false,
+  "type": "null",
   "$defs": {
     "_heading-properties": {
       "description": "Heading properties.",
