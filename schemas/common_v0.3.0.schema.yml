@@ -157,7 +157,7 @@ $defs:
       # Optional.
       level:
         description: Issue level.
-        type: number
+        type: integer
 
       # Optional (changed in v0.2.2, was required before).
       id:

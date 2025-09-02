@@ -32,8 +32,6 @@
             - See [Property names](https://json-schema.org/understanding-json-schema/reference/object#propertyNames)
             - Use `allOf` + `unevaluatedProperties`, and it should work (`unevaluatedProperties` accepts a schema, `false` is considered as a schema).
         - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
-        - Use "integer" instead of "number" when appropriate.
-            - See [Numeric types](https://json-schema.org/understanding-json-schema/reference/numeric#numeric-types)
         - Use "enum" instead of "const" for `execution-status`.
             - See [Enumerated and const values](https://json-schema.org/understanding-json-schema/reference/generic#enumerated-and-constant-values)
         - Bundle schemas in .json versions:

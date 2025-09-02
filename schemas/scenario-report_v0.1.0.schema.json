@@ -69,11 +69,11 @@
       "properties": {
         "executed": {
           "description": "Number of items executed.",
-          "type": "number"
+          "type": "integer"
         },
         "total": {
           "description": "Total number of items.",
-          "type": "number"
+          "type": "integer"
         }
       },
       "required": [
@@ -218,7 +218,7 @@
           "properties": {
             "number": {
               "description": "Execution number, starting from 1.",
-              "type": "number",
+              "type": "integer",
               "min": 1
             }
           },

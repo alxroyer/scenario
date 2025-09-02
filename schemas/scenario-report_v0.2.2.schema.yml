@@ -81,12 +81,12 @@ $defs:
       # Required.
       executed:
         description: Number of items executed.
-        type: number
+        type: integer
 
       # Required.
       total:
         description: Total number of items.
-        type: number
+        type: integer
 
     required:
       - executed
@@ -239,7 +239,7 @@ $defs:
           # Required.
           number:
             description: Execution number, starting from 1.
-            type: number
+            type: integer
             min: 1
 
         required:

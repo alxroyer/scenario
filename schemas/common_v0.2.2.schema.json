@@ -130,7 +130,7 @@
         },
         "level": {
           "description": "Issue level.",
-          "type": "number"
+          "type": "integer"
         },
         "id": {
           "description": "Issue identifier.",
