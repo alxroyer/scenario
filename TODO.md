@@ -21,8 +21,31 @@
     - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
+        - Fix heading properties `$ref`s in req-db and downstream-traceability schemas.
+            - See [Pattern properties](https://json-schema.org/understanding-json-schema/reference/object#patternProperties)
+                - See [not](https://www.learnjsonschema.com/2020-12/applicator/not/)
+            - See [Additional properties](https://json-schema.org/understanding-json-schema/reference/object#additionalproperties)
+                - Does not take `allOf` properties into account
+                    - Workaround: given properties must be redeclared as `true` in the current subschema.
+                - See `unevaluatedProperties`
+            - See [Unevaluated properties](https://json-schema.org/understanding-json-schema/reference/object#unevaluatedproperties)
+            - See [Property names](https://json-schema.org/understanding-json-schema/reference/object#propertyNames)
+            - Use `allOf` + `unevaluatedProperties`, and it should work (`unevaluatedProperties` accepts a schema, `false` is considered as a schema).
         - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
-        - Improve schema hardening by analyzing the referenced item type.
+        - Use "integer" instead of "number" when appropriate.
+            - See [Numeric types](https://json-schema.org/understanding-json-schema/reference/numeric#numeric-types)
+        - Use "enum" instead of "const" for `execution-status`.
+            - See [Enumerated and const values](https://json-schema.org/understanding-json-schema/reference/generic#enumerated-and-constant-values)
+        - Bundle schemas in .json versions:
+            - See [Bundling](https://json-schema.org/understanding-json-schema/structuring#bundling)
+            - Simplify external references as "/schemas/..." without the "https://..." starter.
+            - Remove external ref resolution during validation.
+        - Try to use `false` schema specification for the main item in 'common' schemas.
+        - Set `unevaluatedProperties` directly in source schemas.
+            - Get rid of `--harden-schemas`.
+        - Try to speed up validation:
+            - by using a `false` schema for unexpected properties for `error`s (like `id` for instance).
+            - by using `not: const: "known-issue"` for the `type` property of `error`s.
         - Implement schema version checking for `ReqTraceability` reports.
         - Validate 'test/' `scenario` reports.
         - Provide JSON schemas for requirement traceability files.
