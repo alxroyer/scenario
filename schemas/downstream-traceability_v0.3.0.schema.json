@@ -28,11 +28,17 @@
         {
           "description": "Heading properties.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/_heading-properties"
+        },
+        {
+          "description": "Requirements.",
+          "type": "object",
+          "patternProperties": {
+            "^[^$].*$": {
+              "$ref": "#/$defs/req"
+            }
+          }
         }
-      ],
-      "unevaluatedProperties": {
-        "$ref": "#/$defs/req"
-      }
+      ]
     },
     "req": {
       "description": "Requirement.",
@@ -49,15 +55,19 @@
         "subrefs": {
           "description": "Requirement subreferences.",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/subref"
+          "patternProperties": {
+            "^[^$].*$": {
+              "$ref": "#/$defs/subref"
+            }
           }
         },
         "scenarios": {
           "description": "Scenarios verifying this requirement.",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/scenario"
+          "patternProperties": {
+            "^[^$].*$": {
+              "$ref": "#/$defs/scenario"
+            }
           }
         }
       },
@@ -76,8 +86,10 @@
         "scenarios": {
           "description": "Scenarios verifying this requirement subreference.",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/scenario"
+          "patternProperties": {
+            "^[^$].*$": {
+              "$ref": "#/$defs/scenario"
+            }
           }
         }
       },
@@ -100,8 +112,10 @@
         "steps": {
           "description": "Steps holding traceability information.",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/step"
+          "patternProperties": {
+            "^[^$].*$": {
+              "$ref": "#/$defs/step"
+            }
           }
         },
         "results": {

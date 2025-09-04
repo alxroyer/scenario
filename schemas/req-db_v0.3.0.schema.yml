@@ -36,11 +36,11 @@ $defs:
       - description: Heading properties.
         $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/_heading-properties"
 
-    # Memo:
-    #   Using `unevaluatedProperties` instead of `additionalProperties`
-    #   makes it possible to reference `_heading-properties` in the 'common_v0.3.0.schema.json' subschema.
-    #   See https://json-schema.org/understanding-json-schema/reference/object#unevaluatedproperties.
-    unevaluatedProperties: { $ref: "#/$defs/req" }
+      # Properties not starting with '$' are considered as requirement ids.
+      - description: Requirements.
+        type: object
+        patternProperties:
+          "^[^$].*$": { $ref: "#/$defs/req" }
 
 
   # 2. Requirements

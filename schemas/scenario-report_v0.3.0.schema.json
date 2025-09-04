@@ -100,8 +100,10 @@
             "attributes": {
               "description": "Scenario attributes.",
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
+              "patternProperties": {
+                "^[^$].*$": {
+                  "type": "string"
+                }
               }
             },
             "reqs": {

@@ -21,7 +21,7 @@
     - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Use `unevaluatedProperties` instead of `additionalProperties` everywhere?
+        - Integrate 'diff-schemas.sh' as a `--history` or `--diffs` option.
         - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
         - Use "enum" instead of "const" for `execution-status`.
             - See [Enumerated and const values](https://json-schema.org/understanding-json-schema/reference/generic#enumerated-and-constant-values)
@@ -30,7 +30,8 @@
             - Simplify external references as "/schemas/..." without the "https://..." starter.
             - Remove external ref resolution during validation.
         - Set `unevaluatedProperties` directly in source schemas.
-            - Get rid of `--harden-schemas`.
+            - Get rid of the leading '_' convention.
+        - Get rid of `--harden-schemas`?
         - Try to speed up validation:
             - by using a `false` schema for unexpected properties for `error`s (like `id` for instance).
             - by using `not: const: "known-issue"` for the `type` property of `error`s.

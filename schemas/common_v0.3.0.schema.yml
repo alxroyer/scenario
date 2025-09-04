@@ -68,8 +68,8 @@ $defs:
         #   Accept whatever, and let JSON schema validation state on compatibility.
         $ref: "#/$defs/non-empty-string"
 
-    # Base object, don't forbid additional properties.
-    additionalProperties: true
+    # Base object, don't forbid unevaluated properties.
+    unevaluatedProperties: true
 
 
   # 1.2. Date / time

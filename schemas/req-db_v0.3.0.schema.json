@@ -28,11 +28,17 @@
         {
           "description": "Heading properties.",
           "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/_heading-properties"
+        },
+        {
+          "description": "Requirements.",
+          "type": "object",
+          "patternProperties": {
+            "^[^$].*$": {
+              "$ref": "#/$defs/req"
+            }
+          }
         }
-      ],
-      "unevaluatedProperties": {
-        "$ref": "#/$defs/req"
-      }
+      ]
     },
     "req": {
       "description": "Requirement.",

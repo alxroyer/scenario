@@ -170,6 +170,7 @@ class Schema(abc.ABC):
             # Add `"unevaluatedProperties": false` configurations when applicable.
             if names and names[-1] and any([
                 "properties" in json_dict,
+                "patternProperties" in json_dict,
                 "allOf" in json_dict,
                 "anyOf" in json_dict,
                 ("$ref" in json_dict) and json_dict["$ref"].startswith("#/$defs/_"),

@@ -30,7 +30,7 @@
           "$ref": "#/$defs/non-empty-string"
         }
       },
-      "additionalProperties": true
+      "unevaluatedProperties": true
     },
     "iso8601": {
       "description": "ISO8601 date/time format.",
