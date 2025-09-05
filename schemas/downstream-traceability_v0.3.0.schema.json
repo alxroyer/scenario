@@ -113,7 +113,7 @@
           "description": "Steps holding traceability information.",
           "type": "object",
           "patternProperties": {
-            "^[^$].*$": {
+            "^step#.*$": {
               "$ref": "#/$defs/step"
             }
           }

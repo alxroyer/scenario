@@ -115,7 +115,7 @@
         },
         "id": {
           "description": "Issue identifier.",
-          "$ref": "#/$defs/non-empty-string"
+          "$ref": "#/$defs/issue-id"
         },
         "message": {
           "description": "Error message.",
@@ -128,6 +128,10 @@
         "id",
         "message"
       ]
+    },
+    "issue-id": {
+      "description": "Issue identifier.",
+      "$ref": "#/$defs/non-empty-string"
     },
     "non-empty-string": {
       "description": "Non empty string type.",

@@ -129,7 +129,7 @@ $defs:
       # Required.
       id:
         description: Issue identifier.
-        $ref: "#/$defs/non-empty-string"
+        $ref: "#/$defs/issue-id"
 
       # Required.
       message:
@@ -141,6 +141,10 @@ $defs:
       - location
       - id
       - message
+
+  issue-id:
+    description: Issue identifier.
+    $ref: "#/$defs/non-empty-string"
 
 
   # 2. Basic types

@@ -40,6 +40,7 @@ $defs:
       - description: Requirements.
         type: object
         patternProperties:
+          # Pattern compliant with '#/$defs/req-id' in the related 'common' schema.
           "^[^$].*$": { $ref: "#/$defs/req" }
 
 
@@ -55,7 +56,7 @@ $defs:
       # Redundant with the main entry name.
       # id:
       #   description: Requirement identifier.
-      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-id"
 
       # Optional.
       title:
@@ -72,6 +73,7 @@ $defs:
         description: Requirement subreferences.
         type: object
         patternProperties:
+          # Pattern compliant with '#/$defs/req-subref-id' in the related 'common' schema.
           "^[^$].*$": { $ref: "#/$defs/subref" }
 
       # Required.
@@ -79,6 +81,7 @@ $defs:
         description: Scenarios verifying this requirement.
         type: object
         patternProperties:
+          # Pattern compliant with '#/$defs/req-scenario-id' in the related 'common' schema.
           "^[^$].*$": { $ref: "#/$defs/scenario" }
 
     required:
@@ -95,7 +98,7 @@ $defs:
       # Redundant with the requirement `subrefs` entry name.
       # id:
       #   description: Requirement subreference identifier.
-      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-subref-id"
 
       # Optional.
       title:
@@ -107,6 +110,7 @@ $defs:
         description: Scenarios verifying this requirement subreference.
         type: object
         patternProperties:
+          # Pattern compliant with '#/$defs/req-scenario-id' in the related 'common' schema.
           "^[^$].*$": { $ref: "#/$defs/scenario" }
 
     required:
@@ -123,12 +127,12 @@ $defs:
       # Redundant with the requirement or requirement subreference `scenarios` entry name.
       # id:
       #   description: Scenario identifier (same as the scenario name).
-      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-scenario-id"
 
       # Redundant with the requirement or requirement subreference `scenarios` entry name.
       # name:
       #   description: Scenario name.
-      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-scenario-id"
 
       # Optional.
       title:
@@ -145,7 +149,8 @@ $defs:
         description: Steps holding traceability information.
         type: object
         patternProperties:
-          "^[^$].*$": { $ref: "#/$defs/step" }
+          # Pattern compliant with '#/$defs/req-step-short-id' in the related 'common' schema.
+          "^step#.*$": { $ref: "#/$defs/step" }
 
       # Optional.
       results:
@@ -166,7 +171,7 @@ $defs:
       # Redundant with the scenario `steps` entry name.
       # id:
       #   description: Full step identifier.
-      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+      #   $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-step-full-id"
 
       # Always generated, but may be considered as optional.
       name:

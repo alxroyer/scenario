@@ -21,7 +21,6 @@
     - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
         - Use "enum" instead of "const" for `execution-status`.
             - See [Enumerated and const values](https://json-schema.org/understanding-json-schema/reference/generic#enumerated-and-constant-values)
         - Bundle schemas in .json versions:
@@ -40,6 +39,9 @@
         - Rename '$version' into '$scenario-version' to make it clear what this field actually means.
         - Make fields optional when relevant => update verification steps.
         - Ensure license texts with 'test/' output reports.
+        - Remove redundant `#$defs/req/properties/id` in 'req-db_vX.Y.Z.schema.yml'.
+        - Why no step name for `#$defs/step-definition` in 'scenario-report_vX.Y.Z.schema.yml'
+          while the name is maintained for `#$defs/step` in 'downstream-traceability_X.Y.Z.schema.yml'?
     - Implement *expect-step-req-refinement* option.
         - Warning (known issue?) on test execution.
     - Optional `scenario.ui` improvements:

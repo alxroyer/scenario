@@ -129,11 +129,11 @@
         },
         "level": {
           "description": "Issue level.",
-          "type": "integer"
+          "$ref": "#/$defs/issue-level"
         },
         "id": {
           "description": "Issue identifier.",
-          "$ref": "#/$defs/non-empty-string"
+          "$ref": "#/$defs/issue-id"
         },
         "url": {
           "description": "Issue URL.",
@@ -149,6 +149,14 @@
         "location",
         "message"
       ]
+    },
+    "issue-level": {
+      "description": "Issue level.",
+      "type": "integer"
+    },
+    "issue-id": {
+      "description": "Issue identifier.",
+      "$ref": "#/$defs/non-empty-string"
     },
     "non-empty-string": {
       "description": "Non empty string type.",

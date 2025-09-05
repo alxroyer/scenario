@@ -46,7 +46,7 @@
       "properties": {
         "id": {
           "description": "Requirement identifier.",
-          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+          "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-id"
         },
         "title": {
           "description": "Requirement title.",
@@ -60,7 +60,7 @@
           "description": "Requirement subreferences.",
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-subref-id"
           }
         }
       },

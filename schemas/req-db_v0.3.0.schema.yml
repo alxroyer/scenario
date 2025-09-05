@@ -40,6 +40,7 @@ $defs:
       - description: Requirements.
         type: object
         patternProperties:
+          # Pattern compliant with '#/$defs/req-id' in the related 'common' schema.
           "^[^$].*$": { $ref: "#/$defs/req" }
 
 
@@ -53,7 +54,7 @@ $defs:
       # Required.
       id:
         description: Requirement identifier.
-        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/non-empty-string"
+        $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-id"
 
       # Optional.
       title:
@@ -69,7 +70,7 @@ $defs:
       subrefs:
         description: Requirement subreferences.
         type: array
-        items: { type: string }
+        items: { $ref: "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json#/$defs/req-subref-id" }
 
     required:
       - id

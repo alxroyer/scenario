@@ -156,12 +156,12 @@ $defs:
       # Optional.
       level:
         description: Issue level.
-        type: integer
+        $ref: "#/$defs/issue-level"
 
       # Optional (changed in v0.2.2, was required before).
       id:
         description: Issue identifier.
-        $ref: "#/$defs/non-empty-string"
+        $ref: "#/$defs/issue-id"
 
       # New in v0.2.2.
       # Optional.
@@ -179,11 +179,46 @@ $defs:
       - location
       - message
 
+  # New in v0.2.2.
+  issue-level:
+    description: Issue level.
+    type: integer
+
+  issue-id:
+    description: Issue identifier.
+    $ref: "#/$defs/non-empty-string"
+
 
   # 1.6. Requirement management (new in v0.3.0)
 
+  req-scenario-id:
+    description: Scenario identifier, for requirement management.
+    # See `ReqTraceabilityHelper.mkscenarioid()`.
+    $ref: "#/$defs/non-empty-string"
+
+  req-step-full-id:
+    description: Full step identifier, in the context of its owner scenario, for requirement management.
+    type: string
+    # See `ReqTraceabilityHelper.mkstepfullid()`.
+    pattern: "^step#.*$"
+
+  req-step-short-id:
+    description: Short step identifier, in the context of its owner scenario, for requirement management.
+    type: string
+    # See `ReqTraceabilityHelper.mkstepshortid()`.
+    pattern: "^step#.*$"
+
+  req-id:
+    description: Requirement identifier.
+    $ref: "#/$defs/non-empty-string"
+
+  req-subref-id:
+    description: Requirement subreference identifier.
+    type: string
+    pattern: "^.+/.+"
+
   req-ref-id:
-    description: Requirement reference identifier.
+    description: Any requirement reference identifier (i.e. either a `req-id` or a `req-subref-id`).
     $ref: "#/$defs/non-empty-string"
 
 
