@@ -21,7 +21,6 @@
     - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Integrate 'diff-schemas.sh' as a `--history` or `--diffs` option.
         - Clarify `issue-id`, `issue-level`, `req-id`, `req-ref-id`...
         - Use "enum" instead of "const" for `execution-status`.
             - See [Enumerated and const values](https://json-schema.org/understanding-json-schema/reference/generic#enumerated-and-constant-values)

@@ -17,6 +17,7 @@
 
 import abc
 import pathlib
+import subprocess
 import sys
 import typing
 
@@ -37,8 +38,18 @@ class CheckSchemasArgs(scenario.tools.schemas.ValidateJsonFiles.Args):
     def __init__(self):  # type: (...) -> None
         scenario.tools.schemas.ValidateJsonFiles.Args.__init__(self)
 
-        self.setdescription("Schema checker. "
-                            "Updates .json schemas from .yml files, then apply options.")
+        self.setdescription(
+            "Schema checker.\n"
+            "\n"
+            "Unless `--show-diffs` is used, updates .json schemas from .yml files, then apply validation options."
+        )
+
+        self.show_diffs = False  # type: bool
+        self.addarg("Show version diffs", "show_diffs", bool).define(
+            "--show-diffs",
+            action="store_true", default=False,
+            help="Check diffs between consecutive versions of YAML schemas.",
+        )
 
         self.validate_test_data = False  # type: bool
         self.addarg("Validate test data", "validate_test_data", bool).define(
@@ -46,6 +57,46 @@ class CheckSchemasArgs(scenario.tools.schemas.ValidateJsonFiles.Args):
             action="store_true", default=False,
             help=f"Validate test data: .json and .yml files from '{scenario.tools.paths.TEST_PATH}' and '{scenario.tools.paths.TEST_DATA_PATH}'.",
         )
+
+
+class ShowYamlDiffs(abc.ABC):
+
+    @staticmethod
+    def execute():  # type: (...) -> None
+        # Find out diffs to execute.
+        _diffs = []  # type: typing.List[typing.Tuple[scenario.Path, scenario.Path]]
+        # For each type of YAML schema.
+        for _type in [
+            "common",
+            "downstream-traceability",
+            "req-db",
+            "scenario-report",
+            "upstream-traceability",
+        ]:  # type: str
+            # For pair of consecutive versions.
+            for _va, _vb in [
+                ("v0.1.0", "v0.2.0"),
+                ("v0.2.0", "v0.2.2"),
+                ("v0.2.2", "v0.3.0"),
+            ]:  # type: str, str
+                # Check whether the two versions of the schema exist.
+                _schema1 = scenario.tools.paths.SCHEMAS_PATH / f"{_type}_{_va}.schema.yml"  # type: scenario.Path
+                _schema2 = scenario.tools.paths.SCHEMAS_PATH / f"{_type}_{_vb}.schema.yml"  # type: scenario.Path
+                if _schema1.is_file() and _schema2.is_file():
+                    _diffs.append((_schema1, _schema2))
+
+        # Execute all diffs identified.
+        while _diffs:
+            _schema1, _schema2 = _diffs.pop(0)  # Type already declared above.
+
+            scenario.logging.info(f"diff '{_schema1}' '{_schema2}'")
+            print("")
+            subprocess.run(["diff", _schema1.abspath, _schema2.abspath])
+
+            if _diffs:
+                print("")
+                print("---")
+                input("Press ENTER for next diff")
 
 
 class ConvertYaml2JsonSchema(abc.ABC):
@@ -142,10 +193,13 @@ if __name__ == "__main__":
 
     scenario.Path.setmainpath(scenario.tools.paths.ROOT_SCENARIO_PATH)
 
-    # Convert all YAML to JSON schemas.
-    ConvertYaml2JsonSchema.convertall()
+    if CheckSchemasArgs.getinstance().show_diffs:
+        ShowYamlDiffs.execute()
+    else:
+        # Convert all YAML to JSON schemas.
+        ConvertYaml2JsonSchema.convertall()
 
-    # Scenario reports and reqdb files validation.
-    if CheckSchemasArgs.getinstance().validate_test_data:
-        ValidateJsonFiles.listtestdatafiles()
-    ValidateJsonFiles.execute()
+        # Scenario reports and reqdb files validation.
+        if CheckSchemasArgs.getinstance().validate_test_data:
+            ValidateJsonFiles.listtestdatafiles()
+        ValidateJsonFiles.execute()
