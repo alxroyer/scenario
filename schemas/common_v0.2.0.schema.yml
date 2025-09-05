@@ -73,10 +73,10 @@ $defs:
 
   execution-status:
     description: Execution status.
-    anyOf:
-      - const: "SUCCESS"
-      - const: "WARNINGS"
-      - const: "FAIL"
+    enum:
+      - "SUCCESS"
+      - "WARNINGS"
+      - "FAIL"
 
 
   # 1.5. Errors and known issues

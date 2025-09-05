@@ -250,13 +250,9 @@
       "properties": {
         "type": {
           "description": "Action / result type.",
-          "oneOf": [
-            {
-              "const": "ACTION"
-            },
-            {
-              "const": "RESULT"
-            }
+          "enum": [
+            "ACTION",
+            "RESULT"
           ]
         },
         "description": {

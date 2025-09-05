@@ -65,16 +65,10 @@
     },
     "execution-status": {
       "description": "Execution status.",
-      "anyOf": [
-        {
-          "const": "SUCCESS"
-        },
-        {
-          "const": "WARNINGS"
-        },
-        {
-          "const": "FAIL"
-        }
+      "enum": [
+        "SUCCESS",
+        "WARNINGS",
+        "FAIL"
       ]
     },
     "array-of-errors": {

@@ -21,8 +21,6 @@
     - Check for backward compatibility, versus `re`/Python versions among others.
 - Issue #83: Add the ability to track requirements.
     - Issue #32: Implement JSON schemas.
-        - Use "enum" instead of "const" for `execution-status`.
-            - See [Enumerated and const values](https://json-schema.org/understanding-json-schema/reference/generic#enumerated-and-constant-values)
         - Bundle schemas in .json versions:
             - See [Bundling](https://json-schema.org/understanding-json-schema/structuring#bundling)
             - Simplify external references as "/schemas/..." without the "https://..." starter.
