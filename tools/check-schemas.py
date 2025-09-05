@@ -115,7 +115,8 @@ class ConvertYaml2JsonSchema(abc.ABC):
         scenario.logging.info(f"Updating '{_json_path}' from '{yaml_path}'")
 
         # Read from the input YAML file.
-        _json_schema = scenario.inners.JsonDict.File.read(yaml_path)  # type: scenario.types.JsonDict
+        # Bundle subschemas meanwhile.
+        _json_schema = scenario.tools.schemas.Schema.read(yaml_path, bundle=True)  # type: scenario.types.JsonDict
 
         # Add the license header, as a first JSON '$license' property.
         _json_schema = {

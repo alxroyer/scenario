@@ -60,11 +60,11 @@ class ValidateJsonFiles(abc.ABC):
                 help=f"Validate the given upstream traceability report with '{_paths.UPSTREAM_TRACEABILITY_SCHEMA_PATH}'",
             )
 
-            self.resolve_external_refs = True  # type: bool
-            self.addarg("Download external refs", "resolve_external_refs", bool).define(
-                "--dont-resolve-external-refs",
-                action="store_false", default=True,
-                help="Don't resolve external schema references from local files, let the JSON schema validation get them from the Internet.",
+            self.bundle = False  # type: bool
+            self.addarg("Bundle", "bundle", bool).define(
+                "--bundle",
+                action="store_true", default=False,
+                help="Bundle local YAML files for unresolved external subschema references.",
             )
 
             self.harden_schemas = False  # type: bool
@@ -117,7 +117,7 @@ class ValidateJsonFiles(abc.ABC):
         if _schema is None:
             _schema = cls._schemas[schema_path] = Schema.read(
                 schema_path,
-                resolve_external_refs=ValidateJsonFiles.Args.getinstance().resolve_external_refs,
+                bundle=ValidateJsonFiles.Args.getinstance().bundle,
                 harden=ValidateJsonFiles.Args.getinstance().harden_schemas,
                 debug_recursions=ValidateJsonFiles.Args.getinstance().debug_recursions,
             )

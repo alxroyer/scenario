@@ -15,7 +15,6 @@
 # limitations under the License.
 
 import abc
-import copy
 import re
 import typing
 
@@ -37,23 +36,20 @@ class Schema(abc.ABC):
     def read(
             path,  # type: scenario.Path
             *,
-            resolve_external_refs=True,  # type: bool
+            bundle=True,  # type: bool
             harden=False,  # type: bool
             debug_recursions=False,  # type: bool
     ):  # type: (...) -> scenario.types.JsonDict
         scenario.logging.debug("Schema.read(): Reading '%s'", path)
         _schema = scenario.inners.JsonDict.File.read(path)  # type: scenario.types.JsonDict
 
-        if resolve_external_refs:
-            scenario.logging.debug("Schema.read(): Resolving external refs for '%s'", path)
-            Schema._resolveexternalrefs(_schema, debug_recursion=debug_recursions)
+        if bundle:
+            scenario.logging.debug("Schema.read(): Bundling external subschema refs for '%s'", path)
+            Schema._bundle(_schema, debug_recursion=debug_recursions)
 
         if harden:
-            if resolve_external_refs:
-                scenario.logging.debug("Schema.read(): Hardening '%s'", path)
-                Schema._harden(_schema, debug_recursion=debug_recursions)
-            else:
-                scenario.logging.warning(f"Can't harden '{path}' when external refs aren't resolved")
+            scenario.logging.debug("Schema.read(): Hardening '%s'", path)
+            Schema._harden(_schema, debug_recursion=debug_recursions)
 
         # Debug the resulting schema content.
         scenario.logging.debug("Schema.read('%s') -> %s", path, scenario.debug.jsondump(_schema, indent=2),
@@ -62,15 +58,16 @@ class Schema(abc.ABC):
         return _schema
 
     @staticmethod
-    def _resolveexternalrefs(
+    def _bundle(
             schema,  # type: scenario.types.JsonDict
             *,
             debug_recursion,  # type: bool
     ):  # type: (...) -> None
         """
-        Resolves all '$ref' that start with 'https://github.com/alxroyer/scenario/blob/master/',
-        merges the given '$def' in the current document,
-        and simplifies the '$ref' value as an internal reference.
+        Resolves all ``$ref``s that start with 'https://github.com/alxroyer/scenario/blob/master/',
+        and bundles them in the ``$defs`` section of ``schema``.
+
+        See `JSON Schema bundling <https://json-schema.org/understanding-json-schema/structuring#bundling>`_.
 
         Cross-recursive implementation.
         """
@@ -79,7 +76,7 @@ class Schema(abc.ABC):
         def _walkdict(
                 json_dict,  # type: scenario.types.JsonDict
         ):  # type: (...) -> None
-            Schema._debugrecursivecall(debug_recursion, "_resolveexternalrefs", "_walkdict", [
+            Schema._debugrecursivecall(debug_recursion, "_bundle", "_walkdict", [
                 ("json_dict", "%s", scenario.debug.jsondump(json_dict, indent=2)),
             ])
 
@@ -96,19 +93,25 @@ class Schema(abc.ABC):
                         _schema_subpath = _match.group(2)  # type: str
                         _def_name = _match.group(3)  # type: str
 
-                        # Load the external schema (if not already loaded).
+                        # Load the external schema (if not already loaded) from its YAML local file version.
                         if _schema_id not in Schema._resolved:
                             with scenario.logging.pushindentation("  "):
                                 Schema._resolved[_schema_id] = Schema.read(
-                                    ROOT_SCENARIO_PATH / _schema_subpath,
-                                    harden=False,  # Don't harden the schema now, it will be hardened (if required) in the end.
+                                    (ROOT_SCENARIO_PATH / _schema_subpath).with_suffix(".yml"),
+                                    # Don't bundle recursive external references, the subschema will be walked through if installed just below.
+                                    bundle=False,
+                                    # Don't harden the schema now, it will be hardened (if required) in the end in `Schema.read()`.
+                                    harden=False,
+                                    # Hence, no need to debug recursion while reading the subschema.
+                                    debug_recursions=False,
                                 )
 
-                        # Merge definitions with the ones from the external schema.
-                        schema["$defs"].update(copy.deepcopy(Schema._resolved[_schema_id]["$defs"]))
+                        # Install (if not already) the schema in the `$defs` section of `schema`, with the schema id as the entry.
+                        if _schema_id not in schema["$defs"]:
+                            schema["$defs"][_schema_id] = Schema._resolved[_schema_id]
 
-                        # Change the external reference for an inner reference.
-                        json_dict["$ref"] = f"#/$defs/{_def_name}"
+                            # Spread cross-recursivity on the subschema just installed.
+                            _walkdict(schema["$defs"][_schema_id])
 
                 # Spread cross-recursivity.
                 elif isinstance(_value, dict):
@@ -121,7 +124,7 @@ class Schema(abc.ABC):
         def _walklist(
                 json_list,  # type: typing.Sequence[typing.Any]
         ):  # type: (...) -> None
-            Schema._debugrecursivecall(debug_recursion, "_resolveexternalrefs", "_walklist", [
+            Schema._debugrecursivecall(debug_recursion, "_bundle", "_walklist", [
                 ("json_list", "%s", scenario.debug.saferepr(json_list)),
             ])
 

@@ -171,6 +171,186 @@
         "errors",
         "warnings"
       ]
+    },
+    "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "$id": "https://github.com/alxroyer/scenario/blob/master/schemas/common_v0.3.0.schema.json",
+      "title": "Common definitions for scenario schemas v0.3.0",
+      "description": "Schema that contains common definitions for schemas provided by the `scenario` library.",
+      "type": "null",
+      "$defs": {
+        "_heading-properties": {
+          "description": "Heading properties.",
+          "type": "object",
+          "properties": {
+            "$encoding": {
+              "description": "Encoding of the file.",
+              "$ref": "#/$defs/non-empty-string"
+            },
+            "$license": {
+              "description": "Ability to provide a license text for a JSON file.",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "$schema": {
+              "description": "Schema reference.",
+              "$ref": "#/$defs/non-empty-string"
+            },
+            "$version": {
+              "description": "`scenario` version used to generate the file.",
+              "$ref": "#/$defs/non-empty-string"
+            }
+          },
+          "unevaluatedProperties": true
+        },
+        "iso8601": {
+          "description": "ISO8601 date/time format.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(((\\+|-)[0-9]{2}:[0-9]{2})|(Z([0-9]{4})?))?$"
+        },
+        "location": {
+          "description": "Location.",
+          "type": "string"
+        },
+        "execution-status": {
+          "description": "Execution status.",
+          "enum": [
+            "SUCCESS",
+            "WARNINGS",
+            "FAIL"
+          ]
+        },
+        "array-of-errors": {
+          "description": "Array of errors.",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/error"
+              },
+              {
+                "$ref": "#/$defs/known-issue"
+              }
+            ]
+          }
+        },
+        "array-of-warnings": {
+          "description": "Array of warnings.",
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/known-issue"
+              }
+            ]
+          }
+        },
+        "error": {
+          "description": "Error.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "Error type.",
+              "type": "string"
+            },
+            "location": {
+              "description": "Error location.",
+              "$ref": "#/$defs/location"
+            },
+            "message": {
+              "description": "Error message.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "message"
+          ]
+        },
+        "known-issue": {
+          "description": "Known issue.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "Error type.",
+              "const": "known-issue"
+            },
+            "location": {
+              "description": "Error location.",
+              "$ref": "#/$defs/location"
+            },
+            "level": {
+              "description": "Issue level.",
+              "$ref": "#/$defs/issue-level"
+            },
+            "id": {
+              "description": "Issue identifier.",
+              "$ref": "#/$defs/issue-id"
+            },
+            "url": {
+              "description": "Issue URL.",
+              "type": "string"
+            },
+            "message": {
+              "description": "Error message.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "location",
+            "message"
+          ]
+        },
+        "issue-level": {
+          "description": "Issue level.",
+          "type": "integer"
+        },
+        "issue-id": {
+          "description": "Issue identifier.",
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "req-scenario-id": {
+          "description": "Scenario identifier, for requirement management.",
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "req-step-full-id": {
+          "description": "Full step identifier, in the context of its owner scenario, for requirement management.",
+          "type": "string",
+          "pattern": "^step#.*$"
+        },
+        "req-step-short-id": {
+          "description": "Short step identifier, in the context of its owner scenario, for requirement management.",
+          "type": "string",
+          "pattern": "^step#.*$"
+        },
+        "req-id": {
+          "description": "Requirement identifier.",
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "req-subref-id": {
+          "description": "Requirement subreference identifier.",
+          "type": "string",
+          "pattern": "^.+/.+"
+        },
+        "req-ref-id": {
+          "description": "Any requirement reference identifier (i.e. either a `req-id` or a `req-subref-id`).",
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "non-empty-string": {
+          "description": "Non empty string type.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   }
 }

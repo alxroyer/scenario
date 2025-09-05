@@ -16,6 +16,7 @@
 
 
 try:
+    from ._schema import Schema as Schema
     from ._validatejsonfiles import ValidateJsonFiles as ValidateJsonFiles
 finally:
     pass
